@@ -1,0 +1,61 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+       <!-- <item name="android:windowBackground">@drawable/splash_background</item>-->
+
+        <item name="android:navigationBarColor">@color/darkBackground</item>
+        <item name="android:statusBarColor">@color/grayBackground</item>
+
+        <item name="android:textColorHint">@color/searchColor</item>
+        <item name="android:editTextColor">@color/textColor</item>
+
+        <item name="android:scrollbarThumbVertical">@null</item>
+        <item name="android:scrollbarThumbHorizontal">@null</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <!--
+        <item name="alertDialogTheme">@style/Theme.AlertDialog</item>
+
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+        <item name="materialButtonStyle">@style/RobotoMaterialButtonStyle</item>
+        <item name="preferenceFragmentCompatStyle">@style/PreferenceTheme</item>-->
+    </style>
+
+    <style name="PreferenceTheme" parent="@style/AppTheme">
+    </style>
+
+<!--
+    <style name="Theme.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="android:windowBackground">@drawable/dialog__window_background</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="RoundedBgTextView" parent="@android:style/Widget.TextView">
+        <item name="roundedTextHorizontalPadding">2dp</item>
+        <item name="roundedTextVerticalPadding">2dp</item>
+        <item name="roundedTextDrawable">@drawable/rounded_text_bg</item>
+        <item name="roundedTextDrawableLeft">@drawable/rounded_text_bg_left</item>
+        <item name="roundedTextDrawableMid">@drawable/rounded_text_bg_mid</item>
+        <item name="roundedTextDrawableRight">@drawable/rounded_text_bg_right</item>
+    </style>
+
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/google_sans</item>
+    </style>
+
+    <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">@font/google_sans</item>
+    </style>
+
+    <style name="RobotoMaterialButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/google_sans</item>
+    </style>-->
+</resources>
