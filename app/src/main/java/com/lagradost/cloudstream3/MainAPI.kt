@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.lagradost.cloudstream3.animeproviders.ShiroProvider
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -11,7 +12,14 @@ val baseHeader = mapOf("User-Agent" to USER_AGENT)
 val mapper = JsonMapper.builder().addModule(KotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
-open class MainAPI {
+object APIHolder {
+    val apis = arrayListOf<MainAPI>(
+        ShiroProvider()
+    )
+}
+
+
+abstract class MainAPI {
     open val name = "NONE"
     open val mainUrl = "NONE"
     open fun search(query: String): ArrayList<Any>? { // SearchResponse
@@ -29,14 +37,14 @@ open class MainAPI {
 
 data class Link(
     val name: String,
-    val url : String,
+    val url: String,
     val quality: Int?,
-    val referer : String?,
+    val referer: String?,
 )
 
 interface LinkExtractor {
-    val linkStart : String // THIS IS USED TO AUTO-EXTRACT LINKS FROM URL
-    fun extract(link : String, referer : String) : ArrayList<Link>
+    val linkStart: String // THIS IS USED TO AUTO-EXTRACT LINKS FROM URL
+    fun extract(link: String, referer: String): ArrayList<Link>
 }
 
 enum class ShowStatus {

@@ -43,44 +43,40 @@ class ShiroProvider : MainAPI() {
         @JsonProperty("slug") val slug: String,
         @JsonProperty("name") val name: String,
     )
+
     data class ShiroSearchResponse(
         @JsonProperty("data") val data: List<ShiroSearchResponseShow>,
-        @JsonProperty("status") val status: String
+        @JsonProperty("status") val status: String,
     )
 
     data class ShiroFullSearchResponseCurrentPage(
-        @JsonProperty("items") val items: List<ShiroSearchResponseShow>
+        @JsonProperty("items") val items: List<ShiroSearchResponseShow>,
     )
+
     data class ShiroFullSearchResponseNavItems(
-        @JsonProperty("currentPage") val currentPage: ShiroFullSearchResponseCurrentPage
+        @JsonProperty("currentPage") val currentPage: ShiroFullSearchResponseCurrentPage,
     )
 
     data class ShiroFullSearchResponseNav(
-        @JsonProperty("nav") val nav: ShiroFullSearchResponseNavItems
+        @JsonProperty("nav") val nav: ShiroFullSearchResponseNavItems,
     )
+
     data class ShiroFullSearchResponse(
         @JsonProperty("data") val data: ShiroFullSearchResponseNav,
-        @JsonProperty("status") val status: String
+        @JsonProperty("status") val status: String,
     )
 
     override fun search(query: String): ArrayList<Any>? {
-        if(!autoLoadToken()) return null
-        try {
-            val returnValue: ArrayList<Any> = ArrayList()
-            val response = khttp.get("https://tapi.shiro.is/advanced?search=${
-                URLEncoder.encode(
-                    query,
-                    "UTF-8"
-                )
-            }&token=$token")
-            val mapped = response.let { mapper.readValue<ShiroSearchResponse>(it.text) }
+        if (!autoLoadToken()) return null
+        val returnValue: ArrayList<Any> = ArrayList()
+        val response = khttp.get("https://tapi.shiro.is/advanced?search=${
+            URLEncoder.encode(
+                query,
+                "UTF-8"
+            )
+        }&token=$token")
+        val mapped = response.let { mapper.readValue<ShiroSearchResponse>(it.text) }
 
-
-
-            return returnValue
-        }
-        catch (e : Exception) {
-            return null
-        }
+        return returnValue
     }
 }

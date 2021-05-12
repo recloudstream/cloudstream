@@ -16,21 +16,41 @@
         <item name="android:scrollbarThumbVertical">@null</item>
         <item name="android:scrollbarThumbHorizontal">@null</item>
 
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentStatus">true</item> <!--true-->
         <item name="android:windowTranslucentNavigation">false</item>
-        <!--
         <item name="alertDialogTheme">@style/Theme.AlertDialog</item>
 
-        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
-        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
-        <item name="materialButtonStyle">@style/RobotoMaterialButtonStyle</item>
-        <item name="preferenceFragmentCompatStyle">@style/PreferenceTheme</item>-->
+        <item name="android:textViewStyle">@style/AppTextViewStyle</item>
+        <item name="android:buttonStyle">@style/AppButtonStyle</item>
+        <item name="materialButtonStyle">@style/AppMaterialButtonStyle</item>
+        <item name="preferenceFragmentCompatStyle">@style/PreferenceTheme</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+        <item name="searchViewStyle">@style/AppSearchViewStyle</item>
+        <item name="tabStyle">@style/Theme.Widget.Tabs</item>
     </style>
+
+    <style name="AppSearchViewStyle"
+           parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:searchIcon">@drawable/search_icon</item>
+        <item name="android:queryHint">@string/search_hint</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:fontFamily">@font/google_sans</item>
+    </style>
+    <style name="AppBottomSheetDialogTheme"
+           parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+           parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/rounded_dialog</item>
+    </style>
+
 
     <style name="PreferenceTheme" parent="@style/AppTheme">
     </style>
 
-<!--
+
     <style name="Theme.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
         <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
@@ -38,24 +58,28 @@
         <item name="textAllCaps">false</item>
     </style>
 
-    <style name="RoundedBgTextView" parent="@android:style/Widget.TextView">
-        <item name="roundedTextHorizontalPadding">2dp</item>
-        <item name="roundedTextVerticalPadding">2dp</item>
-        <item name="roundedTextDrawable">@drawable/rounded_text_bg</item>
-        <item name="roundedTextDrawableLeft">@drawable/rounded_text_bg_left</item>
-        <item name="roundedTextDrawableMid">@drawable/rounded_text_bg_mid</item>
-        <item name="roundedTextDrawableRight">@drawable/rounded_text_bg_right</item>
-    </style>
-
-    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+    <style name="AppTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">@font/google_sans</item>
     </style>
 
-    <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
+    <style name="AppButtonStyle" parent="android:Widget.Holo.Button">
         <item name="android:fontFamily">@font/google_sans</item>
     </style>
 
-    <style name="RobotoMaterialButtonStyle" parent="Widget.MaterialComponents.Button">
+    <style name="AppMaterialButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="android:fontFamily">@font/google_sans</item>
-    </style>-->
+    </style>
+
+    <style name="Theme.Widget.Tabs" parent="Widget.MaterialComponents.TabLayout.Colored">
+        <item name="tabGravity">center</item>
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="tabIndicator">@drawable/tab_selector</item>
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
+        <item name="tabTextColor">@color/colorPrimary</item>
+        <item name="tabIndicatorFullWidth">false</item>
+        <item name="tabIndicatorHeight">3dp</item>
+        <item name="tabInlineLabel">true</item>
+        <item name="tabMinWidth">75dp</item>
+        <item name="tabMode">scrollable</item>
+    </style>
 </resources>

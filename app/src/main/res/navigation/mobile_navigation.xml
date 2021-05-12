@@ -3,23 +3,23 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/mobile_navigation"
-            app:startDestination="@+id/navigation_home">
+            app:startDestination="@+id/navigation_search">
 
-    <fragment
+   <!-- <fragment
             android:id="@+id/navigation_home"
             android:name="com.lagradost.cloudstream3.ui.home.HomeFragment"
             android:label="@string/title_home"
             tools:layout="@layout/fragment_home"/>
-
+-->
     <fragment
-            android:id="@+id/navigation_dashboard"
-            android:name="com.lagradost.cloudstream3.ui.dashboard.DashboardFragment"
-            android:label="@string/title_dashboard"
-            tools:layout="@layout/fragment_dashboard"/>
+            android:id="@+id/navigation_search"
+            android:name="com.lagradost.cloudstream3.ui.search.SearchFragment"
+            android:label="@string/title_search"
+            tools:layout="@layout/fragment_search"/>
 
     <fragment
             android:id="@+id/navigation_notifications"
             android:name="com.lagradost.cloudstream3.ui.notifications.NotificationsFragment"
-            android:label="@string/title_notifications"
+            android:label="@string/title_downloads"
             tools:layout="@layout/fragment_notifications"/>
 </navigation>

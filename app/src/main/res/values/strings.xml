@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_search">Search</string>
+    <string name="title_downloads">Downloads</string>
+    <string name="search_hint">Search...</string>
+    <string name="change_providers_descript">Change Providers</string>
 </resources>
