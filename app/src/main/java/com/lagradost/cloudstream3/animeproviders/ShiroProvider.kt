@@ -3,9 +3,9 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import org.jsoup.Jsoup
-import java.lang.Exception
 import java.net.URLEncoder
+import java.util.*
+
 
 class ShiroProvider : MainAPI() {
     companion object {
@@ -42,6 +42,12 @@ class ShiroProvider : MainAPI() {
         @JsonProperty("_id") val _id: String,
         @JsonProperty("slug") val slug: String,
         @JsonProperty("name") val name: String,
+        @JsonProperty("episodeCount") val episodeCount: String,
+        @JsonProperty("language") val language: String,
+        @JsonProperty("type") val type: String,
+        @JsonProperty("year") val year: String,
+        @JsonProperty("canonicalTitle") val canonicalTitle: String,
+        @JsonProperty("english") val english: String?,
     )
 
     data class ShiroSearchResponse(
@@ -67,16 +73,50 @@ class ShiroProvider : MainAPI() {
     )
 
     override fun search(query: String): ArrayList<Any>? {
-        if (!autoLoadToken()) return null
-        val returnValue: ArrayList<Any> = ArrayList()
-        val response = khttp.get("https://tapi.shiro.is/advanced?search=${
-            URLEncoder.encode(
-                query,
-                "UTF-8"
-            )
-        }&token=$token")
-        val mapped = response.let { mapper.readValue<ShiroSearchResponse>(it.text) }
+        try {
+            if (!autoLoadToken()) return null
+            val returnValue: ArrayList<Any> = ArrayList()
+            val response = khttp.get("https://tapi.shiro.is/advanced?search=${
+                URLEncoder.encode(
+                    query,
+                    "UTF-8"
+                )
+            }&token=$token".replace("+", "%20"))
+            println(response.text)
+            val mapped = response.let { mapper.readValue<ShiroFullSearchResponse>(it.text) }
+            for (i in mapped.data.nav.currentPage.items) {
 
-        return returnValue
+                val type = when (i.type) {
+                    "TV" -> TvType.Anime
+                    "OVA" -> TvType.ONA
+                    "movie" -> TvType.Movie
+                    else -> TvType.Anime
+                }
+                val isDubbed = i.language == "dubbed"
+                val set: EnumSet<DubStatus> = EnumSet.noneOf(DubStatus::class.java)
+
+                if (isDubbed)
+                    set.add(DubStatus.HasDub)
+                else
+                    set.add(DubStatus.HasSub)
+                val episodeCount = i.episodeCount.toInt()
+
+                returnValue.add(AnimeSearchResponse(
+                    i.english ?: i.canonicalTitle,
+                    "$mainUrl/${i.slug}",
+                    this.name,
+                    type,
+                    "https://cdn.shiro.is/${i.image}",
+                    i.year.toInt(),
+                    i.canonicalTitle,
+                    set,
+                    if (isDubbed) episodeCount else null,
+                    if (!isDubbed) episodeCount else null,
+                ))
+            }
+            return returnValue
+        } catch (e: Exception) {
+            return null
+        }
     }
 }

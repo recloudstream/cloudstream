@@ -21,4 +21,10 @@
     <color name="transparent">#00000000</color>
 
     <color name="white">#FFF</color>
+    <color name="dubColor">#3b65f5</color>
+    <color name="dubColorBg">#4D3B65F5</color>
+    <color name="subColor">#F53B66</color>
+    <color name="subColorBg">#4DF53B66</color>
+    <color name="typeColor">#F54A3B</color>
+    <color name="typeColorBg">#4DF54A3B</color>
 </resources>

@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3
 
+import android.app.Activity
+import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -13,9 +15,20 @@ val mapper = JsonMapper.builder().addModule(KotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
 object APIHolder {
+    val allApi = AllProvider()
+
+    private const val defProvider = 0
+
     val apis = arrayListOf<MainAPI>(
         ShiroProvider()
     )
+
+    fun Activity.getApiSettings(): HashSet<String> {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+
+        return settingsManager.getStringSet(this.getString(R.string.search_providers_list_key),
+            setOf(apis[defProvider].name))?.toHashSet() ?: hashSetOf(apis[defProvider].name)
+    }
 }
 
 
@@ -34,6 +47,17 @@ abstract class MainAPI {
         return false
     }
 }
+
+fun MainAPI.fixUrl(url: String): String {
+    if (url.startsWith('/')) {
+        return mainUrl + url
+    }
+    else if(!url.startsWith("http") && !url.startsWith("//")) {
+        return "$mainUrl/$url"
+    }
+    return url
+}
+
 
 data class Link(
     val name: String,
