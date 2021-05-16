@@ -143,6 +143,8 @@ interface LoadResponse {
 }
 
 data class AnimeLoadResponse(
+    val engName: String?,
+    val japName: String?,
     override val name: String,
     override val url: String,
     override val apiName: String,
@@ -151,9 +153,8 @@ data class AnimeLoadResponse(
     override val posterUrl: String?,
     override val year: Int?,
 
-    val dubEpisodes: ArrayList<String>?,
-    val subEpisodes: ArrayList<String>?,
-    val otherName: String?,
+    val dubEpisodes: ArrayList<Any>?,
+    val subEpisodes: ArrayList<Any>?,
     val showStatus: ShowStatus?,
 
     val tags: ArrayList<String>?,

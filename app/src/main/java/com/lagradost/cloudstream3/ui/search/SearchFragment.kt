@@ -1,18 +1,15 @@
 package com.lagradost.cloudstream3.ui.search
 
-import android.content.DialogInterface
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,8 +19,9 @@ import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.observe
 import kotlinx.android.synthetic.main.fragment_search.*
-import kotlin.concurrent.thread
 
 class SearchFragment : Fragment() {
 
@@ -106,19 +104,7 @@ class SearchFragment : Fragment() {
             override fun onQueryTextSubmit(query: String): Boolean {
                 search_exit_icon.alpha = 0f
                 search_loading_bar.alpha = 1f
-                thread {
-                    val data = allApi.search(query)//MainActivity.activeAPI.search(query)
-                    activity?.runOnUiThread {
-                        if (data == null) {
-                            Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
-                        } else {
-                            (cardSpace.adapter as SearchAdapter).cardList = data
-                            (cardSpace.adapter as SearchAdapter).notifyDataSetChanged()
-                        }
-                        search_exit_icon.alpha = 1f
-                        search_loading_bar.alpha = 0f
-                    }
-                }
+                searchViewModel.search(query)
                 return true
             }
 
@@ -126,6 +112,20 @@ class SearchFragment : Fragment() {
                 return true
             }
         })
+
+        observe(searchViewModel.searchResponse) {
+            when (it) {
+                is Resource.Success -> {
+                    (cardSpace.adapter as SearchAdapter).cardList = it.value
+                    (cardSpace.adapter as SearchAdapter).notifyDataSetChanged()
+                }
+                is Resource.Failure -> {
+                    Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
+                }
+            }
+            search_exit_icon.alpha = 1f
+            search_loading_bar.alpha = 0f
+        }
 
         main_search.onActionViewExpanded()
 
