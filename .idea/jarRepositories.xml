@@ -26,5 +26,10 @@
       <option name="name" value="maven" />
       <option name="url" value="https://jitpack.io" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="https://github.com/psiegman/mvn-repo/raw/master/releases" />
+    </remote-repository>
   </component>
 </project>

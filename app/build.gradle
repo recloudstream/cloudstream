@@ -34,6 +34,9 @@ android {
 }
 
 repositories {
+    maven {
+        url 'https://github.com/psiegman/mvn-repo/raw/master/releases'
+    }
     maven { url 'https://jitpack.io' }
 }
 

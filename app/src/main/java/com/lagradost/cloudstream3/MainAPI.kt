@@ -23,6 +23,14 @@ object APIHolder {
         ShiroProvider()
     )
 
+    fun getApiFromName(apiName: String): MainAPI {
+        for (api in apis) {
+            if (apiName == api.name)
+                return api
+        }
+        return apis[defProvider]
+    }
+
     fun Activity.getApiSettings(): HashSet<String> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -39,11 +47,11 @@ abstract class MainAPI {
         return null
     }
 
-    open fun load(url: String): Any? { //LoadResponse
+    open fun load(slug: String): Any? { //LoadResponse
         return null
     }
 
-    open fun loadLinks(url: String, id: Int): Boolean {
+    open fun loadLinks(data: Any, id: Int): Boolean {
         return false
     }
 }
@@ -51,8 +59,7 @@ abstract class MainAPI {
 fun MainAPI.fixUrl(url: String): String {
     if (url.startsWith('/')) {
         return mainUrl + url
-    }
-    else if(!url.startsWith("http") && !url.startsWith("//")) {
+    } else if (!url.startsWith("http") && !url.startsWith("//")) {
         return "$mainUrl/$url"
     }
     return url
@@ -90,7 +97,8 @@ enum class TvType {
 
 interface SearchResponse {
     val name: String
-    val url: String
+    val url: String // PUBLIC URL FOR OPEN IN APP
+    val slug: String // USED FOR INTERNAL DATA
     val apiName: String
     val type: TvType
     val posterUrl: String?
@@ -100,6 +108,7 @@ interface SearchResponse {
 data class AnimeSearchResponse(
     override val name: String,
     override val url: String,
+    override val slug: String,
     override val apiName: String,
     override val type: TvType,
 
@@ -115,6 +124,7 @@ data class AnimeSearchResponse(
 data class MovieSearchResponse(
     override val name: String,
     override val url: String,
+    override val slug: String,
     override val apiName: String,
     override val type: TvType,
 
@@ -125,6 +135,7 @@ data class MovieSearchResponse(
 data class TvSeriesSearchResponse(
     override val name: String,
     override val url: String,
+    override val slug: String,
     override val apiName: String,
     override val type: TvType,
 

@@ -152,6 +152,7 @@ class ShiroProvider : MainAPI() {
             returnValue.add(AnimeSearchResponse(
                 i.english ?: i.canonicalTitle,
                 "$mainUrl/${i.slug}",
+                i.slug,
                 this.name,
                 type,
                 "https://cdn.shiro.is/${i.image}",
@@ -165,9 +166,9 @@ class ShiroProvider : MainAPI() {
         return returnValue
     }
 
-    override fun load(url: String): Any? {
+    override fun load(slug: String): Any? {
         if (!autoLoadToken()) return null
-        val rurl = "https://tapi.shiro.is/anime/slug/${url}?token=${token}"
+        val rurl = "https://tapi.shiro.is/anime/slug/${slug}?token=${token}"
         val response = khttp.get(rurl, timeout = 120.0)
         val mapped = response.let { mapper.readValue<AnimePage>(it.text) }
         val data = mapped.data
@@ -183,7 +184,7 @@ class ShiroProvider : MainAPI() {
             data.english,
             data.japanese,
             data.canonicalTitle ?: data.name.replace("Dubbed", ""),
-            url,
+            "$mainUrl/${slug}",
             this.name,
             getType(data.type ?: ""),
             "https://cdn.shiro.is/${data.image}",
@@ -197,6 +198,5 @@ class ShiroProvider : MainAPI() {
             null,
             null,
         )
-
     }
 }

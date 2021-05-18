@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
@@ -105,7 +106,7 @@ class SearchAdapter(
                 }
 
                 bg.setOnClickListener {
-                    activity.loadResult(card.url, card.apiName)
+                    (activity as AppCompatActivity).loadResult(card.url, card.slug, card.apiName)
                 }
 
                 when (card) {

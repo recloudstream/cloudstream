@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        app:cardCornerRadius="@dimen/roundedImageRadius"
+        app:cardBackgroundColor="@color/itemBackground"
+        android:layout_marginBottom="2dp"
+>
+    <!-- IDK BUT THIS DOES NOT SEAM LIKE A GOOD WAY OF DOING IT -->
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal">
+        <View
+                android:layout_weight="0.5"
+                android:id="@+id/episode_view_procentage"
+                android:alpha="0.2"
+                android:background="@color/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+        </View>
+        <View
+                android:id="@+id/episode_view_procentage_off"
+                android:layout_weight="0.10"
+                android:alpha="0"
+                android:background="@color/transparent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+        </View>
+    </LinearLayout>
+
+    <GridLayout android:layout_width="match_parent" android:layout_height="match_parent">
+        <ImageView
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/episode_play"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_baseline_play_arrow_24"
+                android:contentDescription="@string/episode_play_descript"/>
+        <TextView
+                android:id="@+id/episode_text"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="center_vertical" android:gravity="center_vertical" tools:text="Episode 1"
+                android:textColor="@color/textColor" android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+        </TextView>
+        <ImageView
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:id="@+id/episode_extra"
+                android:background="?selectableItemBackgroundBorderless"
+                android:layout_gravity="center_vertical|end"
+                android:src="@drawable/ic_baseline_more_vert_24"
+                android:contentDescription="@string/episode_more_options_descript"/>
+    </GridLayout>
+
+
+</androidx.cardview.widget.CardView>

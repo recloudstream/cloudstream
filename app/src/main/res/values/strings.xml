@@ -10,4 +10,6 @@
     <string name="search_poster_descript">Poster</string>
     <string name="no_data">No Data</string>
     <string name="shadow_descript">Shadow</string>
+    <string name="episode_more_options_descript">More Options</string>
+    <string name="episode_play_descript">Play Episode</string>
 </resources>

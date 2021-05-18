@@ -1,6 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent">
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:id="@+id/result_root"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:background="@color/bitDarkerGrayBackground"
+        android:clickable="true"
+        android:focusable="true"
+>
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/result_barstatus"
+            android:background="@color/grayBackground"
+            android:layout_width="match_parent"
+            android:alpha="0"
+            tools:alpha="1"
+            android:layout_height="wrap_content">
+        <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/result_toolbar"
+                android:paddingTop="@dimen/navbarHeight"
+                app:title="Perfect Run"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:layout_width="match_parent" android:layout_height="wrap_content">
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="200dp">
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:alpha="0.3"
+                tools:src="@drawable/example_poster"
+                android:background="@color/darkBackground"
+                android:id="@+id/result_poster_blur"
+                android:contentDescription=""/>
+        <ImageView android:src="@drawable/background_shadow" android:layout_gravity="bottom"
+                   android:layout_width="match_parent" android:layout_height="100dp">
+
+        </ImageView>
+    </FrameLayout>
+    <androidx.core.widget.NestedScrollView android:id="@+id/result_scroll" android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginTop="100dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <GridLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <LinearLayout android:gravity="center_vertical" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content">
+                    <TextView
+                            tools:text="The Perfect Run"
+                            android:id="@+id/result_title"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textColor" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                    </TextView>
+                    <TextView
+                            android:id="@+id/result_year"
+                            tools:text="2021"
+                            android:textSize="15sp"
+                            android:textColor="@color/textColor" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                    </TextView>
+                </LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                        android:layout_gravity="end"
+                        app:cornerRadius="1000dp"
+                        android:id="@+id/result_bookmark_button"
+                        tools:text="Bookmark"
+                        app:rippleColor="@color/colorPrimary"
+                        app:strokeColor="@color/colorPrimary"
+                        android:textColor="@color/textColor"
+                        android:textAllCaps="false"
+                        android:backgroundTint="@color/colorPrimary"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp">
+                </com.google.android.material.button.MaterialButton>
+            </GridLayout>
+
+
+            <TextView
+                    android:id="@+id/result_tags"
+                    android:layout_marginTop="10dp"
+                    tools:text="Adventure | Fantasy World | Comedy | Ecchi | Action | Science Fiction | Fantasy"
+                    android:gravity="center"
+                    android:layout_width="match_parent" android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/result_descript"
+                    tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. "
+                    android:layout_width="match_parent" android:layout_height="wrap_content">
+
+            </TextView>
+            <TextView
+                    android:textColor="@color/textColor"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/result_episodes_text"
+                    tools:text="8 Episodes"
+                    android:gravity="start"
+                    android:layout_width="match_parent" android:layout_height="wrap_content">
+            </TextView>
+            <androidx.recyclerview.widget.RecyclerView
+                    tools:listitem="@layout/result_episode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/result_episodes"
+            />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+    <!--
+    <androidx.cardview.widget.CardView
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            app:cardCornerRadius="@dimen/roundedImageRadius"
+            android:elevation="10dp"
+    >
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:id="@+id/result_poster"
+                android:clickable="true"
+                android:focusable="true"
+                tools:src="@drawable/example_poster"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/search_poster_descript"/>
+    </androidx.cardview.widget.CardView>-->
+
+</FrameLayout>
