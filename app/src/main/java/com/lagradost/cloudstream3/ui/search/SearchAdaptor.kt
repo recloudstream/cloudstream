@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
@@ -63,8 +64,10 @@ class SearchAdapter(
         val cardView: ImageView = itemView.imageView
         val cardText: TextView = itemView.imageText
         val text_type: TextView? = itemView.text_type
-        val text_is_dub: TextView? = itemView.text_is_dub
-        val text_is_sub: TextView? = itemView.text_is_sub
+        val search_result_lang: ImageView? = itemView.search_result_lang
+        /*
+        val text_is_dub: View? = itemView.text_is_dub
+        val text_is_sub: View? = itemView.text_is_sub*/
 
         //val cardTextExtra: TextView? = itemView.imageTextExtra
         //val imageTextProvider: TextView? = itemView.imageTextProvider
@@ -89,9 +92,10 @@ class SearchAdapter(
                     TvType.ONA -> "ONA"
                     TvType.TvSeries -> "TV"
                 }
-
+                search_result_lang?.visibility = View.GONE
+                /*
                 text_is_dub?.visibility = View.GONE
-                text_is_sub?.visibility = View.GONE
+                text_is_sub?.visibility = View.GONE*/
 
                 cardText.text = card.name
 
@@ -111,11 +115,14 @@ class SearchAdapter(
 
                 when (card) {
                     is AnimeSearchResponse -> {
-                        if (card.dubStatus?.contains(DubStatus.HasDub) == true) {
-                            text_is_dub?.visibility = View.VISIBLE
-                        }
-                        if (card.dubStatus?.contains(DubStatus.HasSub) == true) {
-                            text_is_sub?.visibility = View.VISIBLE
+                        if (card.dubStatus?.size == 1) {
+                            search_result_lang?.visibility = View.VISIBLE
+                            if (card.dubStatus.contains(DubStatus.HasDub)) {
+                                search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.dubColor))
+                            } else if (card.dubStatus.contains(DubStatus.HasSub)) {
+                                search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.subColor))
+                                //  text_is_sub?.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }

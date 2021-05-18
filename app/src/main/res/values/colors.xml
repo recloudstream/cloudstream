@@ -2,28 +2,28 @@
 <resources>
     <color name="colorPrimary">#3d50fa</color>
     <color name="colorRipple">#1A3D50FA</color>
-    <color name="colorSearch">@color/itemBackground</color> <!--#3444D1-->
+    <color name="colorSearch">#303135</color> <!--#3444D1 @color/itemBackground-->
     <color name="colorItemSeen">#1E1E32</color>
     <color name="colorOngoing">#F53B66</color> <!--FF8181-->
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#3b65f5</color> <!-- 818fff-->
 
-    <color name="darkBackground">#0E0E10</color> <!--0f0f10-->
-    <color name="bitDarkerGrayBackground">#19181E</color> <!--191a1f-->
-    <color name="grayBackground">#141419</color>
+    <color name="darkBackground">#2B2C30</color> <!--0f0f10 0E0E10 303135 2B2C30-->
+    <color name="bitDarkerGrayBackground">#1C1C20</color> <!--191a1f 19181E 202125 1C1C20-->
+    <color name="grayBackground">#1C1C20</color> <!--141419 202125-->
     <color name="itemBackground">#131217</color> <!--1B1B20-->
 
-    <color name="textColor">#FFF</color>
-    <color name="grayTextColor">#5e5f62</color>
+    <color name="textColor">#e9eaee</color> <!--FFF-->
+    <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->
     <color name="lightGrayTextColor">#9f9fa0</color>
     <color name="searchColor">@color/textColor</color> <!--DADADA-->
     <color name="searchColorTransparent">#1AFFFFFF</color> <!--DADADA-->
     <color name="transparent">#00000000</color>
 
     <color name="white">#FFF</color>
-    <color name="dubColor">#3b65f5</color>
+    <color name="dubColor">#3d50fa</color> <!--3b65f5 f18c82 8294F1-->
     <color name="dubColorBg">#4D3B65F5</color>
-    <color name="subColor">#F53B66</color>
+    <color name="subColor">#F54A3B</color> <!--F53B66 FA3D79-->
     <color name="subColorBg">#4DF53B66</color>
     <color name="typeColor">#F54A3B</color>
     <color name="typeColorBg">#4DF54A3B</color>
