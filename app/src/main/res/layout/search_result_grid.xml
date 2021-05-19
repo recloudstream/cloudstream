@@ -79,7 +79,7 @@
                 android:alpha="0.9">
 
         </View>-->
-        <ImageView
+        <!--<ImageView
                 android:src="@drawable/ic_baseline_bookmark_24"
                 android:id="@+id/search_result_lang"
                 android:layout_gravity="right"
@@ -87,20 +87,22 @@
                 android:layout_marginRight="-6.5dp"
                 android:layout_width="30dp"
                 android:layout_height="30dp">
-        </ImageView>
+        </ImageView>-->
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_gravity="end"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <!--
-            <ImageView android:id="@+id/text_is_dub" android:tint="@color/colorPrimary" android:src="@drawable/ic_baseline_subtitles_24" android:layout_width="wrap_content" android:layout_height="20dp">
+<!--
+            <ImageView android:id="@+id/text_is_dub" android:tint="@color/colorPrimary"
+                       android:src="@drawable/ic_baseline_subtitles_24" android:layout_width="wrap_content"
+                       android:layout_height="20dp">
 
-            </ImageView>
+            </ImageView>-->
             <TextView
                     android:text="Dub"
-                    android:id="@+id/_text_is_dub"
+                    android:id="@+id/text_is_dub"
                     android:textColor="@color/textColor"
                     android:paddingRight="10dp"
                     android:paddingLeft="10dp"
@@ -125,9 +127,9 @@
                     android:minWidth="50dp"
                     android:gravity="center"
                     android:background="@drawable/sub_bg_color"
-                    android:layout_width="wrap_content" android:layout_height="match_parent"
-                    android:baselineAligned="false">
-            </TextView>-->
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+            >
+            </TextView>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

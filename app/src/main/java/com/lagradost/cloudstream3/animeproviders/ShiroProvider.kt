@@ -47,6 +47,9 @@ class ShiroProvider : MainAPI() {
     override val mainUrl: String
         get() = "https://shiro.is"
 
+    override val name: String
+        get() = "Shiro"
+
     data class ShiroSearchResponseShow(
         @JsonProperty("image") val image: String,
         @JsonProperty("_id") val _id: String,
@@ -150,7 +153,7 @@ class ShiroProvider : MainAPI() {
             val episodeCount = i.episodeCount.toInt()
 
             returnValue.add(AnimeSearchResponse(
-                i.english ?: i.canonicalTitle,
+                i.name.replace("Dubbed",""), // i.english ?: i.canonicalTitle,
                 "$mainUrl/${i.slug}",
                 i.slug,
                 this.name,
