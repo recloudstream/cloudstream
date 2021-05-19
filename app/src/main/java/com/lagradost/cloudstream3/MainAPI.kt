@@ -73,11 +73,6 @@ data class Link(
     val referer: String?,
 )
 
-interface LinkExtractor {
-    val linkStart: String // THIS IS USED TO AUTO-EXTRACT LINKS FROM URL
-    fun extract(link: String, referer: String): ArrayList<Link>
-}
-
 enum class ShowStatus {
     Completed,
     Ongoing,
