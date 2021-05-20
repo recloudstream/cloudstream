@@ -1,16 +1,21 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ComponentName
+import android.content.Intent
+import android.content.Intent.*
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.marginBottom
-import androidx.core.view.marginLeft
-import androidx.core.view.marginRight
-import androidx.core.view.marginTop
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -19,19 +24,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
-import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.AnimeLoadResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
+import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
-import kotlinx.android.synthetic.main.fragment_search.*
+import java.io.File
 
 
 const val MAX_SYNO_LENGH = 600
@@ -128,9 +132,64 @@ class ResultFragment : Fragment() {
 
                         fun playEpisode(data: ArrayList<ExtractorLink>?) {
                             if (data != null) {
-                                for (d in data) {
-                                    println(d)
+                                if (activity?.checkWrite() != true) {
+                                    activity?.requestRW()
+                                    if (activity?.checkWrite() == true) return
                                 }
+
+                                val outputDir = context!!.cacheDir // context being the Activity pointer
+                                val outputFile = File.createTempFile("mirrorlist", ".m3u8", outputDir)
+                                var text = "#EXTM3U";
+                                for (d in data.sortedBy { -it.quality }) {
+                                    text += "\n#EXTINF:, ${d.name}\n${d.url}"
+                                }
+                                outputFile.writeText(text)
+                                val VLC_PACKAGE = "org.videolan.vlc"
+                                val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
+                                val VLC_COMPONENT: ComponentName =
+                                    ComponentName(VLC_PACKAGE, "org.videolan.vlc.gui.video.VideoPlayerActivity")
+                                val REQUEST_CODE = 42
+
+                                val FROM_START = -1
+                                val FROM_PROGRESS = -2
+
+
+                                val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
+
+                                vlcIntent.setPackage(VLC_PACKAGE)
+                              //  vlcIntent.setDataAndTypeAndNormalize(outputFile.toUri(), "video/*")
+                                vlcIntent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                                vlcIntent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION)
+                                vlcIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+                                vlcIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
+
+                                vlcIntent.setDataAndType(FileProvider.getUriForFile(activity!!,
+                                    activity!!.applicationContext.packageName + ".provider",
+                                    outputFile), "video/*")
+
+                                val startId = FROM_PROGRESS
+
+                                var position = startId
+                                if (startId == FROM_START) {
+                                    position = 1
+                                } else if (startId == FROM_PROGRESS) {
+                                    position = 0
+                                }
+
+                                vlcIntent.putExtra("position", position)
+                                //vlcIntent.putExtra("title", episodeName)
+/*
+                                if (subFile != null) {
+                                    val sfile: Unit = Android.Net.Uri.FromFile(subFile)
+                                    vlcIntent.PutExtra("subtitles_location", sfile.Path)
+                                    //vlcIntent.PutExtra("sub_mrl", "file://" sfile.Path);
+                                    //vlcIntent.PutExtra("subtitles_location", "file:///storage/emulated/0/Download/mirrorlist.srt");
+                                }*/
+
+                                vlcIntent.setComponent(VLC_COMPONENT)
+
+                                //lastId = episodeId
+                                activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                             }
                         }
 
@@ -198,7 +257,7 @@ class ResultFragment : Fragment() {
                                         i,
                                         apiName,
                                         (slug + index).hashCode(),
-                                        (index * 0.1f),//TODO TEST; REMOVE
+                                        0f,//(index * 0.1f),//TODO TEST; REMOVE
                                     ))
                                 }
                                 (result_episodes.adapter as EpisodeAdapter).cardList = episodes

@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.lagradost.cloudstream3.UIHelper.checkWrite
+import com.lagradost.cloudstream3.UIHelper.requestRW
 
 class MainActivity : AppCompatActivity() {
     private fun AppCompatActivity.backPressed(): Boolean {
@@ -41,5 +43,10 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_home, R.id.navigation_search, R.id.navigation_notifications))
         //setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        if (!checkWrite()) {
+            requestRW()
+            if (checkWrite()) return
+        }
     }
 }

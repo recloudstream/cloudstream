@@ -1,9 +1,13 @@
 package com.lagradost.cloudstream3
 
+import android.Manifest
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 
@@ -12,6 +16,21 @@ object UIHelper {
     val Float.toPx: Float get() = (this * Resources.getSystem().displayMetrics.density)
     val Int.toDp: Int get() = (this / Resources.getSystem().displayMetrics.density).toInt()
     val Float.toDp: Float get() = (this / Resources.getSystem().displayMetrics.density)
+
+    fun Activity.checkWrite(): Boolean {
+        return (ContextCompat.checkSelfPermission(this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED)
+    }
+
+    fun Activity.requestRW() {
+        ActivityCompat.requestPermissions(this,
+            arrayOf(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ),
+            1337)
+    }
 
     fun AppCompatActivity.loadResult(url: String, slug: String, apiName: String) {
         this.runOnUiThread {
