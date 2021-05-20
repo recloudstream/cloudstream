@@ -207,7 +207,7 @@ class ShiroProvider : MainAPI() {
 
     override fun loadLinks(data: Any, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
         if (data is ShiroEpisodes) {
-            return Vidstream().getUrl(data._id, isCasting) {
+            return Vidstream().getUrl(data.videos[0].video_id, isCasting) {
                 callback.invoke(it)
             }
         }

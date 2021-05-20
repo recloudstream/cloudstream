@@ -13,12 +13,16 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.android.synthetic.main.result_episode.view.*
 
+const val ACTION_PLAY_EPISODE = 1
+const val ACTION_RELOAD_EPISODE = 2
+
+data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
     private var activity: Activity,
     var cardList: ArrayList<ResultEpisode>,
     val resView: RecyclerView,
-    val clickCallback: (ResultEpisode) -> Unit
+    val clickCallback: (EpisodeClickEvent) -> Unit,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -44,7 +48,12 @@ class EpisodeAdapter(
     }
 
     class CardViewHolder
-    constructor(itemView: View, _activity: Activity, resView: RecyclerView, clickCallback: (ResultEpisode) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    constructor(
+        itemView: View,
+        _activity: Activity,
+        resView: RecyclerView,
+        clickCallback: (EpisodeClickEvent) -> Unit,
+    ) : RecyclerView.ViewHolder(itemView) {
         val activity = _activity
         val episode_view_procentage: View = itemView.episode_view_procentage
         val episode_view_procentage_off: View = itemView.episode_view_procentage_off
@@ -68,7 +77,7 @@ class EpisodeAdapter(
             setWidth(episode_view_procentage_off, 1 - card.watchProgress)
 
             episode_play.setOnClickListener {
-                clickCallback.invoke(card)
+                clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE, card))
             }
         }
     }

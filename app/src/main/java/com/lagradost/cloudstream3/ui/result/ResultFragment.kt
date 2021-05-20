@@ -56,6 +56,7 @@ class ResultFragment : Fragment() {
         }
 
     private lateinit var viewModel: ResultViewModel
+    private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,6 +92,10 @@ class ResultFragment : Fragment() {
             activity?.onBackPressed()
         }
 
+        observe(viewModel.allEpisodes) {
+            allEpisodes = it
+        }
+
         observe(viewModel.resultResponse) { data ->
             when (data) {
                 is Resource.Success -> {
@@ -121,13 +126,39 @@ class ResultFragment : Fragment() {
                             }
                         }
 
-                        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let {
+                        fun playEpisode(data: ArrayList<ExtractorLink>?) {
+                            if (data != null) {
+                                for (d in data) {
+                                    println(d)
+                                }
+                            }
+                        }
+
+                        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let { it ->
                             EpisodeAdapter(
                                 it,
                                 ArrayList(),
                                 result_episodes,
-                            ) {
-                               viewModel.loadEpisode(it)
+                            ) { episodeClick ->
+                                val id = episodeClick.data.id
+                                when (episodeClick.action) {
+                                    ACTION_PLAY_EPISODE -> {
+                                        if (allEpisodes.containsKey(id)) {
+                                            playEpisode(allEpisodes[id])
+                                        } else {
+                                            viewModel.loadEpisode(episodeClick.data) { res ->
+                                                if (res is Resource.Success) {
+                                                    playEpisode(allEpisodes[id])
+                                                }
+                                            }
+                                        }
+                                    }
+                                    ACTION_RELOAD_EPISODE -> viewModel.loadEpisode(episodeClick.data) { res ->
+                                        if (res is Resource.Success) {
+                                            playEpisode(allEpisodes[id])
+                                        }
+                                    }
+                                }
                             }
                         }
 

@@ -24,19 +24,21 @@ class ResultViewModel : ViewModel() {
         _resultResponse.postValue(data)
     }
 
-    val allEpisodes : MutableLiveData<HashMap<Int,ArrayList<ExtractorLink>>> = MutableLiveData()
-    private val _episodeResponse: MutableLiveData<Resource<Boolean>> = MutableLiveData()
-    val episodeResponse: LiveData<Resource<Boolean>> get() = _episodeResponse
+    private val _allEpisodes: MutableLiveData<HashMap<Int, ArrayList<ExtractorLink>>> = MutableLiveData(HashMap())
+    val allEpisodes: LiveData<HashMap<Int, ArrayList<ExtractorLink>>> get() = _allEpisodes
 
-    fun loadEpisode(episode: ResultEpisode) = viewModelScope.launch {
-        if(allEpisodes.value?.contains(episode.id) == true) {
-            allEpisodes.value?.remove(episode.id)
+    fun loadEpisode(episode: ResultEpisode, callback: (Resource<Boolean>) -> Unit) = viewModelScope.launch {
+        if (_allEpisodes.value?.contains(episode.id) == true) {
+            _allEpisodes.value?.remove(episode.id)
         }
+        val links = ArrayList<ExtractorLink>()
         val data = safeApiCall {
             getApiFromName(episode.apiName).loadLinks(episode.data, false) { //TODO IMPLEMENT CASTING
-                allEpisodes.value?.get(episode.id)?.add(it)
+                links.add(it)
+                _allEpisodes.value?.set(episode.id, links)
+                // _allEpisodes.value?.get(episode.id)?.add(it)
             }
         }
-        _episodeResponse.postValue(data)
+        callback.invoke(data)
     }
 }
