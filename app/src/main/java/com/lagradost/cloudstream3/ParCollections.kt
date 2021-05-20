@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -25,4 +27,8 @@ fun <T, R> Iterable<T>.pmap(
     exec.awaitTermination(1, TimeUnit.DAYS)
 
     return ArrayList<R>(destination)
+}
+
+fun <A, B>List<A>.apmap(f: suspend (A) -> B): List<B> = runBlocking {
+    map { async { f(it) } }.map { it.await() }
 }

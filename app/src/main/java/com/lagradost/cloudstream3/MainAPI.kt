@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.ShiroProvider
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -51,7 +52,8 @@ abstract class MainAPI {
         return null
     }
 
-    open fun loadLinks(data: Any, id: Int): Boolean {
+    // callback is fired once a link is found, will return true if method is executed successfully
+    open fun loadLinks(data: Any, isCasting : Boolean, callback: (ExtractorLink) -> Unit): Boolean {
         return false
     }
 }

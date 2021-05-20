@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
+import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.AnimeLoadResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
@@ -26,6 +27,8 @@ import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -70,17 +73,17 @@ class ResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         activity?.fixPaddingStatusbar(result_scroll)
         activity?.fixPaddingStatusbar(result_barstatus)
-       // activity?.fixPaddingStatusbar(result_toolbar)
+        // activity?.fixPaddingStatusbar(result_toolbar)
 
         val url = arguments?.getString("url")
         val slug = arguments?.getString("slug")
         val apiName = arguments?.getString("apiName")
 
         result_scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-            if(result_poster_blur == null) return@OnScrollChangeListener
+            if (result_poster_blur == null) return@OnScrollChangeListener
             result_poster_blur.alpha = maxOf(0f, (0.3f - scrollY / 1000f))
             result_barstatus.alpha = scrollY / 200f
-            result_barstatus.visibility = if(scrollY > 0) View.VISIBLE else View.GONE
+            result_barstatus.visibility = if (scrollY > 0) View.VISIBLE else View.GONE
         })
 
         result_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
@@ -123,7 +126,9 @@ class ResultFragment : Fragment() {
                                 it,
                                 ArrayList(),
                                 result_episodes,
-                            )
+                            ) {
+                               viewModel.loadEpisode(it)
+                            }
                         }
 
                         result_episodes.adapter = adapter

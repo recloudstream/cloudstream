@@ -16,6 +16,7 @@ class Mp4Upload : ExtractorApi() {
                         return listOf(
                             ExtractorLink(
                                 name,
+                                name,
                                 link,
                                 url,
                                 Qualities.Unknown.value,

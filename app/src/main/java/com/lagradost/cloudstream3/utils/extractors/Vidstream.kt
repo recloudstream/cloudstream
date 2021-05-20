@@ -1,9 +1,8 @@
 package com.lagradost.cloudstream3.utils.extractors
 
+import com.lagradost.cloudstream3.pmap
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.APIS
-import com.lagradost.cloudstream3.utils.extractors.MultiQuality
-import com.lagradost.cloudstream3.utils.extractors.Shiro
+import com.lagradost.cloudstream3.utils.extractorApis
 import org.jsoup.Jsoup
 
 class Vidstream {
@@ -13,9 +12,10 @@ class Vidstream {
     private fun getExtractorUrl(id: String): String {
         return "$mainUrl/streaming.php?id=$id"
     }
+    private val normalApis = arrayListOf(Shiro(), MultiQuality())
 
     // https://gogo-stream.com/streaming.php?id=MTE3NDg5
-    fun getUrl(id: String, isCasting: Boolean = false): List<ExtractorLink> {
+    fun getUrl(id: String, isCasting: Boolean = false, callback: (ExtractorLink) -> Unit) : Boolean {
         try {
             val url = getExtractorUrl(id)
             with(khttp.get(url)) {
@@ -23,15 +23,11 @@ class Vidstream {
                 val primaryLinks = document.select("ul.list-server-items > li.linkserver")
                 val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
 
-                // --- Shiro ---
-                val shiroUrl = Shiro().getExtractorUrl(id)
-                val shiroSource = Shiro().getUrl(shiroUrl)
-                shiroSource?.forEach { extractedLinksList.add(it) }
-                // --- MultiQuality ---
-                val multiQualityUrl = MultiQuality().getExtractorUrl(id)
-                val multiQualitySource = MultiQuality().getUrl(multiQualityUrl)
-                multiQualitySource?.forEach { extractedLinksList.add(it) }
-                // --------------------
+                normalApis.pmap { api ->
+                    val url = api.getExtractorUrl(id)
+                    val source = api.getUrl(url)
+                    source?.forEach { callback.invoke(it) }
+                }
 
                 // All vidstream links passed to extractors
                 primaryLinks.forEach { element ->
@@ -39,21 +35,21 @@ class Vidstream {
                     //val name = element.text()
 
                     // Matches vidstream links with extractors
-                    APIS.filter { !it.requiresReferer || !isCasting}.forEach { api ->
+                    extractorApis.filter { !it.requiresReferer || !isCasting}.pmap { api ->
                         if (link.startsWith(api.mainUrl)) {
                             val extractedLinks = api.getUrl(link, url)
                             if (extractedLinks?.isNotEmpty() == true) {
                                 extractedLinks.forEach {
-                                    extractedLinksList.add(it)
+                                    callback.invoke(it)
                                 }
                             }
                         }
                     }
                 }
-                return extractedLinksList
+                return true
             }
         } catch (e: Exception) {
-            return listOf()
+            return false
         }
     }
 }

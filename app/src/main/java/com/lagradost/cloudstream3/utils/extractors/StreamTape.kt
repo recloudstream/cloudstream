@@ -21,6 +21,7 @@ class StreamTape : ExtractorApi() {
                     return listOf(
                         ExtractorLink(
                             name,
+                            name,
                             extractedUrl,
                             url,
                             Qualities.Unknown.value,

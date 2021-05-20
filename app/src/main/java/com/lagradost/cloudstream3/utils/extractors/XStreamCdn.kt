@@ -51,6 +51,7 @@ class XStreamCdn : ExtractorApi() {
                         it.data.forEach { data ->
                             extractedLinksList.add(
                                 ExtractorLink(
+                                    name,
                                     "$name ${data.label}",
                                     data.file,
                                     url,

@@ -38,6 +38,7 @@ class MultiQuality : ExtractorApi() {
                             m3u8Regex.findAll(this.text).forEach { match ->
                                 extractedLinksList.add(
                                     ExtractorLink(
+                                        name,
                                         "$name ${match.groupValues[1]}p",
                                         urlRegex.find(this.url)!!.groupValues[1] + match.groupValues[0],
                                         url,
@@ -51,6 +52,7 @@ class MultiQuality : ExtractorApi() {
                     } else if (extractedUrl.endsWith(".mp4")) {
                         extractedLinksList.add(
                             ExtractorLink(
+                                name,
                                 "$name ${sourceMatch.groupValues[2]}",
                                 extractedUrl,
                                 url.replace(" ", "%20"),

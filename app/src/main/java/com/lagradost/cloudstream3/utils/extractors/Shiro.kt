@@ -21,6 +21,7 @@ class Shiro : ExtractorApi() {
             return listOf(
                 ExtractorLink(
                     name,
+                    name,
                     it.replace(" ", "%20"),
                     "https://cherry.subsplea.se/",
                     // UHD to give top priority

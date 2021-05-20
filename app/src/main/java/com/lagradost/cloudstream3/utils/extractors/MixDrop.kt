@@ -20,6 +20,7 @@ class MixDrop : ExtractorApi() {
                         return listOf(
                             ExtractorLink(
                                 name,
+                                name,
                                 httpsify(link),
                                 url,
                                 Qualities.Unknown.value,

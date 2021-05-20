@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.extractors.Vidstream
 import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList
@@ -153,7 +155,7 @@ class ShiroProvider : MainAPI() {
             val episodeCount = i.episodeCount.toInt()
 
             returnValue.add(AnimeSearchResponse(
-                i.name.replace("Dubbed",""), // i.english ?: i.canonicalTitle,
+                i.name.replace("Dubbed", ""), // i.english ?: i.canonicalTitle,
                 "$mainUrl/${i.slug}",
                 i.slug,
                 this.name,
@@ -201,5 +203,14 @@ class ShiroProvider : MainAPI() {
             null,
             null,
         )
+    }
+
+    override fun loadLinks(data: Any, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+        if (data is ShiroEpisodes) {
+            return Vidstream().getUrl(data._id, isCasting) {
+                callback.invoke(it)
+            }
+        }
+        return false
     }
 }

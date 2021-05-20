@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.cloudstream3.extractors.StreamTape
 import com.lagradost.cloudstream3.utils.extractors.XStreamCdn
 
 data class ExtractorLink(
+    val source: String,
     val name: String,
     val url: String,
     val referer: String,
@@ -32,7 +33,7 @@ fun getAndUnpack(string: String): String? {
     return JsUnpacker(packedText).unpack()
 }
 
-val APIS: Array<ExtractorApi> = arrayOf(
+val extractorApis: Array<ExtractorApi> = arrayOf(
     //AllProvider(),
     Shiro(),
     Mp4Upload(),
@@ -40,6 +41,17 @@ val APIS: Array<ExtractorApi> = arrayOf(
     MixDrop(),
     XStreamCdn()
 )
+
+fun getExtractorApiFromName(name: String): ExtractorApi {
+    for (api in extractorApis) {
+        if (api.name == name) return api
+    }
+    return extractorApis[0]
+}
+
+fun requireReferer(name: String): Boolean {
+    return getExtractorApiFromName(name).requiresReferer
+}
 
 fun httpsify(url: String): String {
     return if (url.startsWith("//")) "https:$url" else url
@@ -52,7 +64,7 @@ abstract class ExtractorApi {
 
     abstract fun getUrl(url: String, referer: String? = null): List<ExtractorLink>?
 
-    open fun getExtractorUrl(id: String): String{
+    open fun getExtractorUrl(id: String): String {
         return id
     }
 }
