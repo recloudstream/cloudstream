@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.search
 
 import android.app.Activity
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
@@ -19,7 +17,6 @@ import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.UIHelper.loadResult
 import com.lagradost.cloudstream3.UIHelper.toPx
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
-import kotlinx.android.synthetic.main.search_result_compact.view.*
 import kotlinx.android.synthetic.main.search_result_compact.view.backgroundCard
 import kotlinx.android.synthetic.main.search_result_compact.view.imageText
 import kotlinx.android.synthetic.main.search_result_compact.view.imageView
@@ -117,10 +114,10 @@ class SearchAdapter(
                     is AnimeSearchResponse -> {
                         if (card.dubStatus?.size == 1) {
                             //search_result_lang?.visibility = View.VISIBLE
-                            if (card.dubStatus.contains(DubStatus.HasDub)) {
+                            if (card.dubStatus.contains(DubStatus.Dubbed)) {
                                 text_is_dub?.visibility = View.VISIBLE
                                 //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.dubColor))
-                            } else if (card.dubStatus.contains(DubStatus.HasSub)) {
+                            } else if (card.dubStatus.contains(DubStatus.Subbed)) {
                                 //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.subColor))
                                 text_is_sub?.visibility = View.VISIBLE
                             }

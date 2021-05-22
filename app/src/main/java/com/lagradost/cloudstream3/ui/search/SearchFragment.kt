@@ -126,8 +126,5 @@ class SearchFragment : Fragment() {
             search_exit_icon.alpha = 1f
             search_loading_bar.alpha = 0f
         }
-
-        main_search.onActionViewExpanded()
-
     }
 }

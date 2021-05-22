@@ -12,4 +12,5 @@
     <string name="shadow_descript">Shadow</string>
     <string name="episode_more_options_descript">More Options</string>
     <string name="episode_play_descript">Play Episode</string>
+    <string name="go_back">Go back</string>
 </resources>

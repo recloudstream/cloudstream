@@ -3,13 +3,23 @@ package com.lagradost.cloudstream3
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.requestRW
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {/*, ViewModelStoreOwner {
+    private val appViewModelStore: ViewModelStore by lazy {
+        ViewModelStore()
+    }
+
+    override fun getViewModelStore(): ViewModelStore {
+        return appViewModelStore
+    }*/
+
     private fun AppCompatActivity.backPressed(): Boolean {
         val currentFragment = supportFragmentManager.fragments.last {
             it.isVisible

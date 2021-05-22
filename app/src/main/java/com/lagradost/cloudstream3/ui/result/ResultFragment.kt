@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -24,14 +25,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
-import com.lagradost.cloudstream3.AnimeLoadResponse
-import com.lagradost.cloudstream3.LoadResponse
-import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.UIHelper.loadResult
 import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.player.PlayerData
+import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
@@ -46,18 +48,22 @@ data class ResultEpisode(
     val data: Any,
     val apiName: String,
     val id: Int,
+    val index: Int,
     val watchProgress: Float, // 0-1
 )
 
 class ResultFragment : Fragment() {
-    fun newInstance(url: String, slug: String, apiName: String) =
-        ResultFragment().apply {
-            arguments = Bundle().apply {
-                putString("url", url)
-                putString("slug", slug)
-                putString("apiName", apiName)
+    companion object {
+        fun newInstance(url: String, slug: String, apiName: String) =
+            ResultFragment().apply {
+                arguments = Bundle().apply {
+                    putString("url", url)
+                    putString("slug", slug)
+                    putString("apiName", apiName)
+                }
             }
-        }
+    }
+
 
     private lateinit var viewModel: ResultViewModel
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
@@ -68,9 +74,13 @@ class ResultFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         viewModel =
-            ViewModelProvider(this).get(ResultViewModel::class.java)
-
+            ViewModelProvider(requireActivity()).get(ResultViewModel::class.java)
         return inflater.inflate(R.layout.fragment_result, container, false)
+    }
+
+    override fun onDestroy() {
+        //requireActivity().viewModelStore.clear() // REMEMBER THE CLEAR
+        super.onDestroy()
     }
 
     @SuppressLint("SetTextI18n")
@@ -98,6 +108,11 @@ class ResultFragment : Fragment() {
 
         observe(viewModel.allEpisodes) {
             allEpisodes = it
+        }
+
+        observe(viewModel.episodes) { episodes ->
+            (result_episodes.adapter as EpisodeAdapter).cardList = episodes
+            (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
         }
 
         observe(viewModel.resultResponse) { data ->
@@ -130,66 +145,60 @@ class ResultFragment : Fragment() {
                             }
                         }
 
-                        fun playEpisode(data: ArrayList<ExtractorLink>?) {
+                        fun playEpisode(data: ArrayList<ExtractorLink>?, episodeIndex: Int) {
                             if (data != null) {
-                                if (activity?.checkWrite() != true) {
-                                    activity?.requestRW()
-                                    if (activity?.checkWrite() == true) return
-                                }
 
-                                val outputDir = context!!.cacheDir // context being the Activity pointer
-                                val outputFile = File.createTempFile("mirrorlist", ".m3u8", outputDir)
-                                var text = "#EXTM3U";
-                                for (d in data.sortedBy { -it.quality }) {
-                                    text += "\n#EXTINF:, ${d.name}\n${d.url}"
-                                }
-                                outputFile.writeText(text)
-                                val VLC_PACKAGE = "org.videolan.vlc"
-                                val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
-                                val VLC_COMPONENT: ComponentName =
-                                    ComponentName(VLC_PACKAGE, "org.videolan.vlc.gui.video.VideoPlayerActivity")
-                                val REQUEST_CODE = 42
-
-                                val FROM_START = -1
-                                val FROM_PROGRESS = -2
-
-
-                                val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
-
-                                vlcIntent.setPackage(VLC_PACKAGE)
-                              //  vlcIntent.setDataAndTypeAndNormalize(outputFile.toUri(), "video/*")
-                                vlcIntent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-                                vlcIntent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION)
-                                vlcIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
-                                vlcIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
-
-                                vlcIntent.setDataAndType(FileProvider.getUriForFile(activity!!,
-                                    activity!!.applicationContext.packageName + ".provider",
-                                    outputFile), "video/*")
-
-                                val startId = FROM_PROGRESS
-
-                                var position = startId
-                                if (startId == FROM_START) {
-                                    position = 1
-                                } else if (startId == FROM_PROGRESS) {
-                                    position = 0
-                                }
-
-                                vlcIntent.putExtra("position", position)
-                                //vlcIntent.putExtra("title", episodeName)
 /*
-                                if (subFile != null) {
-                                    val sfile: Unit = Android.Net.Uri.FromFile(subFile)
-                                    vlcIntent.PutExtra("subtitles_location", sfile.Path)
-                                    //vlcIntent.PutExtra("sub_mrl", "file://" sfile.Path);
-                                    //vlcIntent.PutExtra("subtitles_location", "file:///storage/emulated/0/Download/mirrorlist.srt");
-                                }*/
+if (activity?.checkWrite() != true) {
+    activity?.requestRW()
+    if (activity?.checkWrite() == true) return
+}
 
-                                vlcIntent.setComponent(VLC_COMPONENT)
+val outputDir = context!!.cacheDir
+val outputFile = File.createTempFile("mirrorlist", ".m3u8", outputDir)
+var text = "#EXTM3U";
+for (link in data.sortedBy { -it.quality }) {
+    text += "\n#EXTINF:, ${link.name}\n${link.url}"
+}
+outputFile.writeText(text)
+val VLC_PACKAGE = "org.videolan.vlc"
+val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
+val VLC_COMPONENT: ComponentName =
+    ComponentName(VLC_PACKAGE, "org.videolan.vlc.gui.video.VideoPlayerActivity")
+val REQUEST_CODE = 42
 
-                                //lastId = episodeId
-                                activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
+val FROM_START = -1
+val FROM_PROGRESS = -2
+
+val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
+
+vlcIntent.setPackage(VLC_PACKAGE)
+vlcIntent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+vlcIntent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION)
+vlcIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+vlcIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
+
+vlcIntent.setDataAndType(FileProvider.getUriForFile(activity!!,
+    activity!!.applicationContext.packageName + ".provider",
+    outputFile), "video/*")
+
+val startId = FROM_PROGRESS
+
+var position = startId
+if (startId == FROM_START) {
+    position = 1
+} else if (startId == FROM_PROGRESS) {
+    position = 0
+}
+
+vlcIntent.putExtra("position", position)
+//vlcIntent.putExtra("title", episodeName)
+
+vlcIntent.setComponent(VLC_COMPONENT)
+
+activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
+*/
+ */
                             }
                         }
 
@@ -200,22 +209,36 @@ class ResultFragment : Fragment() {
                                 result_episodes,
                             ) { episodeClick ->
                                 val id = episodeClick.data.id
-                                when (episodeClick.action) {
-                                    ACTION_PLAY_EPISODE -> {
-                                        if (allEpisodes.containsKey(id)) {
-                                            playEpisode(allEpisodes[id])
-                                        } else {
-                                            viewModel.loadEpisode(episodeClick.data) { res ->
-                                                if (res is Resource.Success) {
-                                                    playEpisode(allEpisodes[id])
+                                val index = episodeClick.data.index
+                                val buildInPlayer = true
+                                if (buildInPlayer) {
+                                    (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
+                                        .setCustomAnimations(R.anim.enter_anim,
+                                            R.anim.exit_anim,
+                                            R.anim.pop_enter,
+                                            R.anim.pop_exit)
+                                        .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(index)))
+                                        .commit()
+                                } else {
+                                    when (episodeClick.action) {
+
+                                        /*
+                                        ACTION_PLAY_EPISODE -> {
+                                            if (allEpisodes.containsKey(id)) {
+                                                playEpisode(allEpisodes[id], index)
+                                            } else {
+                                                viewModel.loadEpisode(episodeClick.data) { res ->
+                                                    if (res is Resource.Success) {
+                                                        playEpisode(allEpisodes[id], index)
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                    ACTION_RELOAD_EPISODE -> viewModel.loadEpisode(episodeClick.data) { res ->
-                                        if (res is Resource.Success) {
-                                            playEpisode(allEpisodes[id])
-                                        }
+                                        ACTION_RELOAD_EPISODE -> viewModel.loadEpisode(episodeClick.data) { res ->
+                                            if (res is Resource.Success) {
+                                                playEpisode(allEpisodes[id], index)
+                                            }
+                                        }*/
                                     }
                                 }
                             }
@@ -224,47 +247,31 @@ class ResultFragment : Fragment() {
                         result_episodes.adapter = adapter
                         result_episodes.layoutManager = GridLayoutManager(context, 1)
 
-                        if (d is AnimeLoadResponse) {
-                            val preferEnglish = true
-                            val titleName = (if (preferEnglish) d.engName else d.japName) ?: d.name
-                            result_title.text = titleName
-                            result_toolbar.title = titleName
-
-                            if (d.plot != null) {
-                                var syno = d.plot
-                                if (syno.length > MAX_SYNO_LENGH) {
-                                    syno = syno.substring(0, MAX_SYNO_LENGH) + "..."
-                                }
-                                result_descript.setOnClickListener {
-                                    val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-                                    builder.setMessage(d.plot).setTitle("Synopsis")
-                                        .show()
-                                }
-                                result_descript.text = syno
-                            } else {
-                                result_descript.text = "No Plot found"
+                        if (d.plot != null) {
+                            var syno = d.plot!!
+                            if (syno.length > MAX_SYNO_LENGH) {
+                                syno = syno.substring(0, MAX_SYNO_LENGH) + "..."
                             }
-
-                            result_tags.text = (d.tags ?: ArrayList()).joinToString(separator = " | ")
-                            val isDub = d.dubEpisodes != null && d.dubEpisodes.size > 0
-                            val dataList = (if (isDub) d.dubEpisodes else d.subEpisodes)
-                            if (dataList != null && apiName != null) {
-                                val episodes = ArrayList<ResultEpisode>()
-                                for ((index, i) in dataList.withIndex()) {
-                                    episodes.add(ResultEpisode(
-                                        null, // TODO ADD NAMES
-                                        index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
-                                        i,
-                                        apiName,
-                                        (slug + index).hashCode(),
-                                        0f,//(index * 0.1f),//TODO TEST; REMOVE
-                                    ))
-                                }
-                                (result_episodes.adapter as EpisodeAdapter).cardList = episodes
-                                (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
+                            result_descript.setOnClickListener {
+                                val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                                builder.setMessage(d.plot).setTitle("Synopsis")
+                                    .show()
                             }
+                            result_descript.text = syno
                         } else {
-                            result_title.text = d.name
+                            result_descript.text = "No Plot found"
+                        }
+
+                        when (d) {
+                            is AnimeLoadResponse -> {
+                                val preferEnglish = true
+                                val titleName = (if (preferEnglish) d.engName else d.japName) ?: d.name
+                                result_title.text = titleName
+                                result_toolbar.title = titleName
+
+                                result_tags.text = (d.tags ?: ArrayList()).joinToString(separator = " | ")
+                            }
+                            else -> result_title.text = d.name
                         }
                     }
                 }

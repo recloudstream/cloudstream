@@ -24,7 +24,7 @@ object APIHolder {
         ShiroProvider()
     )
 
-    fun getApiFromName(apiName: String): MainAPI {
+    fun getApiFromName(apiName: String?): MainAPI {
         for (api in apis) {
             if (apiName == api.name)
                 return api
@@ -53,7 +53,7 @@ abstract class MainAPI {
     }
 
     // callback is fired once a link is found, will return true if method is executed successfully
-    open fun loadLinks(data: Any, isCasting : Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+    open fun loadLinks(data: Any, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
         return false
     }
 }
@@ -81,8 +81,8 @@ enum class ShowStatus {
 }
 
 enum class DubStatus {
-    HasDub,
-    HasSub,
+    Dubbed,
+    Subbed,
 }
 
 enum class TvType {
@@ -148,6 +148,7 @@ interface LoadResponse {
     val type: TvType
     val posterUrl: String?
     val year: Int?
+    val plot: String?
 }
 
 data class AnimeLoadResponse(
@@ -165,8 +166,8 @@ data class AnimeLoadResponse(
     val subEpisodes: ArrayList<Any>?,
     val showStatus: ShowStatus?,
 
+    override val plot: String?,
     val tags: ArrayList<String>?,
-    val plot: String?,
     val synonyms: ArrayList<String>?,
 
     val malId: Int?,
@@ -182,6 +183,7 @@ data class MovieLoadResponse(
 
     override val posterUrl: String?,
     override val year: Int?,
+    override val plot: String?,
 
     val imdbId: Int?,
 ) : LoadResponse
@@ -195,6 +197,7 @@ data class TvSeriesLoadResponse(
 
     override val posterUrl: String?,
     override val year: Int?,
+    override val plot: String?,
 
     val showStatus: ShowStatus?,
     val imdbId: Int?,

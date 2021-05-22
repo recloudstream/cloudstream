@@ -149,9 +149,9 @@ class ShiroProvider : MainAPI() {
             val set: EnumSet<DubStatus> = EnumSet.noneOf(DubStatus::class.java)
 
             if (isDubbed)
-                set.add(DubStatus.HasDub)
+                set.add(DubStatus.Dubbed)
             else
-                set.add(DubStatus.HasSub)
+                set.add(DubStatus.Subbed)
             val episodeCount = i.episodeCount.toInt()
 
             returnValue.add(AnimeSearchResponse(

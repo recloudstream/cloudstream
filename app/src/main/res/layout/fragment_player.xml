@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:keepScreenOn="true"
+        app:backgroundTint="@android:color/black"
+        android:background="@android:color/black"
+        android:screenOrientation="userLandscape"
+        app:surface_type="texture_view"
+>
+    <!--  app:controller_layout_id="@layout/player_custom_layout"-->
+
+    <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/player_view"
+            app:show_timeout="0"
+            app:hide_on_touch="false"
+            app:auto_show="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:fastforward_increment="10000"
+            app:rewind_increment="10000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+    />
+    <FrameLayout
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/loading_overlay"
+            android:background="@android:color/black"
+            android:backgroundTint="@android:color/black"
+    >
+
+
+        <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:id="@+id/main_load"
+        >
+        </ProgressBar>
+        <FrameLayout
+                android:layout_margin="5dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        >
+            <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_arrow_back_24"
+                    android:contentDescription="@string/go_back">
+            </ImageView>
+            <ImageView
+                    android:id="@+id/video_go_back_holder"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:layout_gravity="center"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:background="@drawable/video_tap_button"
+                    android:contentDescription="@string/go_back">
+            </ImageView>
+        </FrameLayout>
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

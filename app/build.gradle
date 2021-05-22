@@ -68,4 +68,10 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:4.0.0'
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+
+    // Exoplayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.14.0'
+    implementation 'com.google.android.exoplayer:extension-cast:2.14.0'
+    implementation "com.google.android.exoplayer:extension-mediasession:2.14.0"
+    implementation "com.google.android.exoplayer:extension-leanback:2.14.0"
 }

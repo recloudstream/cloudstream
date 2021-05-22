@@ -36,7 +36,7 @@ object UIHelper {
         this.runOnUiThread {
             this.supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
-                .add(R.id.homeRoot, ResultFragment().newInstance(url, slug, apiName))
+                .add(R.id.homeRoot, ResultFragment.newInstance(url, slug, apiName))
                 .commit()
         }
     }
