@@ -93,7 +93,7 @@ class ResultViewModel : ViewModel() {
 
     val allEpisodes: LiveData<HashMap<Int, ArrayList<ExtractorLink>>> get() = _allEpisodes
 
-    private lateinit var _apiName: MutableLiveData<String>
+    private var _apiName: MutableLiveData<String> = MutableLiveData()
 
     fun loadEpisode(episode: ResultEpisode, callback: (Resource<Boolean>) -> Unit) {
         loadEpisode(episode.id, episode.data, callback)

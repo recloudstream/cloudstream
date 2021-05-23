@@ -111,6 +111,7 @@ class ResultFragment : Fragment() {
         }
 
         observe(viewModel.episodes) { episodes ->
+            if(result_episodes == null) return@observe
             (result_episodes.adapter as EpisodeAdapter).cardList = episodes
             (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
         }

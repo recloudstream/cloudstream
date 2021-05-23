@@ -11,8 +11,6 @@
         android:screenOrientation="userLandscape"
         app:surface_type="texture_view"
 >
-    <!--  app:controller_layout_id="@layout/player_custom_layout"-->
-
     <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/player_view"
             app:show_timeout="0"
@@ -26,6 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:controller_layout_id="@layout/player_custom_layout"
     />
     <FrameLayout
             app:layout_constraintBottom_toBottomOf="parent"

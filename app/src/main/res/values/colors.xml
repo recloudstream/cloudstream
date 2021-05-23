@@ -7,7 +7,6 @@
     <color name="colorOngoing">#F53B66</color> <!--FF8181-->
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#3b65f5</color> <!-- 818fff-->
-    <color name="video_ripple">#80FFFFFF</color>
 
     <color name="darkBackground">#2B2C30</color> <!--0f0f10 0E0E10 303135 2B2C30-->
     <color name="bitDarkerGrayBackground">#1C1C20</color> <!--191a1f 19181E 202125 1C1C20-->
@@ -28,4 +27,9 @@
     <color name="subColorBg">#4DF53B66</color>
     <color name="typeColor">#F54A3B</color>
     <color name="typeColorBg">#4DF54A3B</color>
+
+    <color name="video_ripple">#80FFFFFF</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="darkBarTransparent">#C0121212</color>
+    <color name="darkBar">#121212</color>
 </resources>

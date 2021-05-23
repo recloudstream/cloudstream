@@ -1,0 +1,18 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="8dp"/>
+            <solid android:color="@color/darkBarTransparent"/>
+        </shape>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <scale android:scaleGravity="bottom" android:scaleWidth="0%" android:scaleHeight="100%">
+            <shape>
+                <solid android:color="?attr/colorPrimary"/>
+                <corners android:radius="3dp"/>
+            </shape>
+        </scale>
+    </item>
+</layer-list>

@@ -4,4 +4,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="roundedImageRadius">4dp</dimen>
     <dimen name="navbarHeight">0dp</dimen>
+    <dimen name="card_corner_radius">2dp</dimen>
 </resources>
