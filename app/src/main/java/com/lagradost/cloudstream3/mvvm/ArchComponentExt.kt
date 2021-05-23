@@ -11,6 +11,13 @@ fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
     liveData.observe(this, Observer { it?.let { t -> action(t) } })
 }
 
+fun <T> LifecycleOwner.observeDirectly(liveData: LiveData<T>, action: (t: T) -> Unit) {
+    liveData.observe(this, Observer { it?.let { t -> action(t) } })
+    val currentValue = liveData.value
+    if (currentValue != null)
+        action(currentValue)
+}
+
 sealed class Resource<out T> {
     data class Success<out T>(val value: T) : Resource<T>()
     data class Failure(

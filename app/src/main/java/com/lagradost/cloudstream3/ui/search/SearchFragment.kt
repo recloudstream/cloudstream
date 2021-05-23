@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -21,6 +22,8 @@ import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.player.PlayerData
+import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment() {
@@ -126,5 +129,14 @@ class SearchFragment : Fragment() {
             search_exit_icon.alpha = 1f
             search_loading_bar.alpha = 0f
         }
+
+
+        (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
+            .setCustomAnimations(R.anim.enter_anim,
+                R.anim.exit_anim,
+                R.anim.pop_enter,
+                R.anim.pop_exit)
+            .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(0)))
+            .commit()
     }
 }

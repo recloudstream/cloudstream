@@ -106,12 +106,58 @@ class ResultFragment : Fragment() {
             activity?.onBackPressed()
         }
 
+
+        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let { it ->
+            EpisodeAdapter(
+                it,
+                ArrayList(),
+                result_episodes,
+            ) { episodeClick ->
+                val id = episodeClick.data.id
+                val index = episodeClick.data.index
+                val buildInPlayer = true
+                if (buildInPlayer) {
+                    (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.enter_anim,
+                            R.anim.exit_anim,
+                            R.anim.pop_enter,
+                            R.anim.pop_exit)
+                        .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(index)))
+                        .commit()
+                } else {
+                    when (episodeClick.action) {
+
+                        /*
+                        ACTION_PLAY_EPISODE -> {
+                            if (allEpisodes.containsKey(id)) {
+                                playEpisode(allEpisodes[id], index)
+                            } else {
+                                viewModel.loadEpisode(episodeClick.data) { res ->
+                                    if (res is Resource.Success) {
+                                        playEpisode(allEpisodes[id], index)
+                                    }
+                                }
+                            }
+                        }
+                        ACTION_RELOAD_EPISODE -> viewModel.loadEpisode(episodeClick.data) { res ->
+                            if (res is Resource.Success) {
+                                playEpisode(allEpisodes[id], index)
+                            }
+                        }*/
+                    }
+                }
+            }
+        }
+
+        result_episodes.adapter = adapter
+        result_episodes.layoutManager = GridLayoutManager(context, 1)
+
         observe(viewModel.allEpisodes) {
             allEpisodes = it
         }
 
         observe(viewModel.episodes) { episodes ->
-            if(result_episodes == null) return@observe
+            if(result_episodes == null || result_episodes.adapter == null) return@observe
             (result_episodes.adapter as EpisodeAdapter).cardList = episodes
             (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
         }
@@ -202,51 +248,6 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
  */
                             }
                         }
-
-                        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let { it ->
-                            EpisodeAdapter(
-                                it,
-                                ArrayList(),
-                                result_episodes,
-                            ) { episodeClick ->
-                                val id = episodeClick.data.id
-                                val index = episodeClick.data.index
-                                val buildInPlayer = true
-                                if (buildInPlayer) {
-                                    (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
-                                        .setCustomAnimations(R.anim.enter_anim,
-                                            R.anim.exit_anim,
-                                            R.anim.pop_enter,
-                                            R.anim.pop_exit)
-                                        .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(index)))
-                                        .commit()
-                                } else {
-                                    when (episodeClick.action) {
-
-                                        /*
-                                        ACTION_PLAY_EPISODE -> {
-                                            if (allEpisodes.containsKey(id)) {
-                                                playEpisode(allEpisodes[id], index)
-                                            } else {
-                                                viewModel.loadEpisode(episodeClick.data) { res ->
-                                                    if (res is Resource.Success) {
-                                                        playEpisode(allEpisodes[id], index)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        ACTION_RELOAD_EPISODE -> viewModel.loadEpisode(episodeClick.data) { res ->
-                                            if (res is Resource.Success) {
-                                                playEpisode(allEpisodes[id], index)
-                                            }
-                                        }*/
-                                    }
-                                }
-                            }
-                        }
-
-                        result_episodes.adapter = adapter
-                        result_episodes.layoutManager = GridLayoutManager(context, 1)
 
                         if (d.plot != null) {
                             var syno = d.plot!!
