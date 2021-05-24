@@ -28,8 +28,10 @@
     <color name="typeColor">#F54A3B</color>
     <color name="typeColorBg">#4DF54A3B</color>
 
-    <color name="video_ripple">#80FFFFFF</color>
+    <color name="video_ripple">#73FFFFFF</color>
     <color name="black_overlay">#66000000</color>
     <color name="darkBarTransparent">#C0121212</color>
     <color name="darkBar">#121212</color>
+    <color name="videoProgress">#66B5B5B5</color>
+    <color name="videoColorPrimary">#617EFF</color>
 </resources>

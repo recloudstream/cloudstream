@@ -1,7 +1,10 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Context.AUDIO_SERVICE
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.database.ContentObserver
 import android.media.AudioManager
@@ -15,6 +18,8 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
@@ -48,6 +53,7 @@ import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
 import kotlin.concurrent.thread
+
 
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
 const val STATE_RESUME_WINDOW = "resumeWindow"
@@ -95,6 +101,8 @@ class PlayerFragment : Fragment() {
     private lateinit var playerData: PlayerData
     private var isLoading = true
     private lateinit var exoPlayer: SimpleExoPlayer
+
+    private lateinit var settingsManager: SharedPreferences
 
     private fun seekTime(time: Long) {
         exoPlayer.seekTo(maxOf(minOf(exoPlayer.currentPosition + time, exoPlayer.duration), 0))
@@ -220,6 +228,38 @@ class PlayerFragment : Fragment() {
         }
 
         println(episodes)
+        settingsManager = PreferenceManager.getDefaultSharedPreferences(activity)
+
+        val fastForwardTime = settingsManager.getInt("fast_forward_button_time", 10)
+        exo_rew_text.text = fastForwardTime.toString()
+        exo_ffwd_text.text = fastForwardTime.toString()
+        exo_rew.setOnClickListener {
+            val rotateLeft = AnimationUtils.loadAnimation(context, R.anim.rotate_left)
+            exo_rew.startAnimation(rotateLeft)
+
+            val goLeft = AnimationUtils.loadAnimation(context, R.anim.go_left)
+           goLeft.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {
+                }
+
+                override fun onAnimationRepeat(animation: Animation?) {
+
+                }
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    exo_rew_text.text = "$fastForwardTime"
+                }
+            })
+            exo_rew_text.startAnimation(goLeft)
+            exo_rew_text.text = "-$fastForwardTime"
+            seekTime(fastForwardTime * -1000L)
+
+        }
+        exo_ffwd.setOnClickListener {
+            val rotateRight = AnimationUtils.loadAnimation(context, R.anim.rotate_right)
+            exo_ffwd.startAnimation(rotateRight)
+            seekTime(fastForwardTime * 1000L)
+        }
     }
 
     fun getCurrentUrl(): ExtractorLink {
@@ -249,7 +289,7 @@ class PlayerFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-       // releasePlayer()
+        // releasePlayer()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
     }
 
@@ -280,6 +320,7 @@ class PlayerFragment : Fragment() {
 
     private var currentWindow = 0
     private var playbackPosition: Long = 0
+
     //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
     private fun initPlayer() {
         println("INIT PLAYER")
@@ -292,7 +333,7 @@ class PlayerFragment : Fragment() {
                     //MainActivity.popCurrentPage()
                 }
             } else {
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(activity)
+
                 try {
                     activity?.runOnUiThread {
                         val isOnline =
@@ -371,11 +412,11 @@ class PlayerFragment : Fragment() {
 
                         //https://stackoverflow.com/questions/47731779/detect-pause-resume-in-exoplayer
                         exoPlayer.addListener(object : Player.Listener {
-                         //   @SuppressLint("NewApi")
+                            //   @SuppressLint("NewApi")
                             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                              //  updatePIPModeActions()
+                                //  updatePIPModeActions()
                                 if (playWhenReady && playbackState == Player.STATE_READY) {
-                                 //   focusRequest?.let { activity?.requestAudioFocus(it) }
+                                    //   focusRequest?.let { activity?.requestAudioFocus(it) }
                                 }
                             }
 

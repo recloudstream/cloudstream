@@ -193,8 +193,9 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_gravity="center"
                 android:id="@+id/centerMenu"
@@ -203,23 +204,26 @@
             <FrameLayout android:layout_width="wrap_content"
                          android:layout_marginEnd="140dp"
                          android:layout_gravity="center_vertical"
-                         android:layout_height="wrap_content">
+                         android:layout_height="wrap_content" tools:ignore="RtlSymmetry">
                 <TextView
                         android:id="@+id/exo_rew_text"
                         android:textColor="@color/white"
                         android:text="@string/player_skip_button_text"
-                        android:textSize="15sp"
+                        android:textSize="19sp"
+
                         android:layout_gravity="center"
                         android:textFontWeight="900"
                         android:gravity="center"
-                        android:layout_width="40dp"
+
+                        android:layout_width="wrap_content"
                         android:layout_height="40dp">
                 </TextView>
                 <ImageButton
                         android:id="@id/exo_rew"
-                        android:layout_height="50dp"
-                        android:layout_width="50dp"
-                        android:padding="5dp"
+                        android:layout_height="70dp"
+                        android:layout_width="70dp"
+                        android:layout_gravity="center"
+                        android:padding="10dp"
                         android:background="@drawable/video_tap_button_skip"
                         android:src="@drawable/netflix_skip_back"
                         android:scaleType="fitCenter"
@@ -234,21 +238,21 @@
             <ImageButton
                     android:id="@id/exo_play"
                     android:scaleType="fitCenter"
-                    android:layout_height="70dp"
-                    android:layout_width="70dp"
+                    android:layout_height="100dp"
+                    android:layout_width="100dp"
                     android:layout_gravity="center"
                     android:background="@drawable/video_tap_button_always_white"
-                    android:foreground="@drawable/netflix_play"
+                    android:foreground="@drawable/video_play"
                     android:clickable="true"
                     android:focusable="true"/>
             <ImageButton
                     android:id="@id/exo_pause"
                     android:scaleType="fitCenter"
-                    android:layout_height="70dp"
-                    android:layout_width="70dp"
+                    android:layout_height="100dp"
+                    android:layout_width="100dp"
                     android:layout_gravity="center"
                     android:background="@drawable/video_tap_button_always_white"
-                    android:foreground="@drawable/netflix_pause"
+                    android:foreground="@drawable/video_pause"
                     android:clickable="true"
                     android:focusable="true"/>
 
@@ -261,9 +265,9 @@
                         android:id="@+id/exo_ffwd_text"
                         android:textColor="@color/white"
                         android:text="@string/player_skip_button_text"
-                        android:textSize="15sp"
+                        android:textSize="19sp"
                         android:layout_gravity="center"
-                        android:textFontWeight="900"
+                        android:textStyle="bold"
                         android:gravity="center"
                         android:layout_width="40dp"
                         android:layout_height="40dp">
@@ -271,18 +275,15 @@
                 <ImageButton
                         android:layout_gravity="center"
                         android:id="@id/exo_ffwd"
-                        android:layout_height="50dp"
-                        android:layout_width="50dp"
-                        android:padding="5dp"
+                        android:layout_height="70dp"
+                        android:layout_width="70dp"
+                        android:padding="10dp"
                         android:background="@drawable/video_tap_button_skip"
                         android:src="@drawable/netflix_skip_forward"
                         android:scaleType="fitCenter"
                         android:tintMode="src_in"
-
                 />
             </FrameLayout>
-
-
         </LinearLayout>
 
 
@@ -324,7 +325,6 @@
                     style="@style/ExoMediaButton.VR"
                     android:tint="?attr/colorPrimaryDark"
                     android:tintMode="src_in"/>
-
         </LinearLayout>
 
         <LinearLayout
@@ -354,17 +354,23 @@
                         android:includeFontPadding="false"
                         android:paddingLeft="4dp"
                         android:paddingRight="4dp"
+                        android:gravity="end"
+                        android:minWidth="50dp"
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="normal"/>
 
                 <com.google.android.exoplayer2.ui.DefaultTimeBar
                         android:id="@id/exo_progress"
                         android:layout_width="0dp"
-                        android:layout_height="26dp"
+                        android:layout_height="30dp"
                         android:layout_weight="1"
-                        app:played_color="?attr/colorPrimary"
-                        app:unplayed_color="@color/darkBar"/>
+                        app:scrubber_enabled_size="24dp"
+                        app:scrubber_dragged_size="26dp"
+                        app:scrubber_color="@color/videoColorPrimary"
+                        app:bar_height="2dp"
+                        app:played_color="@color/videoColorPrimary"
+                        app:unplayed_color="@color/videoProgress"/>
 
                 <TextView
                         tools:text="23:20"
@@ -374,9 +380,10 @@
                         android:includeFontPadding="false"
                         android:paddingLeft="4dp"
                         android:paddingRight="4dp"
+                        android:minWidth="50dp"
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
-                        android:textStyle="bold"
+                        android:textStyle="normal"
                         android:layout_marginEnd="20dp"
                         android:layout_gravity="center"
                 />
@@ -387,6 +394,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
             >
 
                 <androidx.cardview.widget.CardView
@@ -426,6 +435,8 @@
                                 android:gravity="center"
                                 android:paddingStart="10dp"
                                 android:paddingEnd="10dp"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
                                 android:layout_gravity="center"
                                 android:textColor="@android:color/white"
                         >
@@ -473,6 +484,9 @@
                                 android:paddingEnd="10dp"
                                 android:id="@+id/player_speed_text"
                                 android:layout_gravity="center"
+
+                                android:textSize="10sp"
+                                android:textStyle="bold"
                                 android:textColor="@android:color/white"
                         >
                         </TextView>
@@ -517,6 +531,9 @@
                                 android:text="Source"
                                 android:gravity="center"
                                 android:paddingStart="10dp"
+
+                                android:textSize="10sp"
+                                android:textStyle="bold"
                                 android:paddingEnd="10dp"
                                 android:layout_gravity="center"
                                 android:textColor="@android:color/white"
@@ -561,6 +578,9 @@
                                 android:text="Skip OP"
                                 android:gravity="start|center"
                                 android:paddingStart="10dp"
+
+                                android:textSize="10sp"
+                                android:textStyle="bold"
                                 android:paddingEnd="10dp"
                                 android:layout_gravity="center"
                                 android:textColor="@android:color/white"
@@ -671,8 +691,6 @@
                     android:progress="100"
                     android:progressDrawable="@drawable/progress_drawable_vertical"
             >
-
-
             </ProgressBar>
         </RelativeLayout>
     </LinearLayout>
