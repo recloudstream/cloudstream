@@ -2,11 +2,13 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context.AUDIO_SERVICE
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.database.ContentObserver
+import android.graphics.Color
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
@@ -14,8 +16,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -23,6 +24,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -102,6 +104,8 @@ class PlayerFragment : Fragment() {
     private var isLoading = true
     private lateinit var exoPlayer: SimpleExoPlayer
 
+    private var isLocked = false
+
     private lateinit var settingsManager: SharedPreferences
 
     private fun seekTime(time: Long) {
@@ -162,11 +166,47 @@ class PlayerFragment : Fragment() {
         AspectRatioFrameLayout.RESIZE_MODE_ZOOM,
     )
 
+    private fun updateLock() {
+        video_locked_img.setImageResource(if (isLocked) R.drawable.video_locked else R.drawable.video_unlocked)
+        val color = if (isLocked) ContextCompat.getColor(requireContext(), R.color.videoColorPrimary)
+        else Color.WHITE
+
+        video_locked_text.setTextColor(color)
+        video_locked_img.setColorFilter(color)
+
+        val isClick = !isLocked
+        println("UPDATED LOCK $isClick")
+        exo_play.isClickable = isClick
+        exo_pause.isClickable = isClick
+        exo_ffwd.isClickable = isClick
+        exo_rew.isClickable = isClick
+        exo_prev.isClickable = isClick
+        video_go_back.isClickable = isClick
+        exo_progress.isClickable = isClick
+        //next_episode_btt.isClickable = isClick
+        playback_speed_btt.isClickable = isClick
+        skip_op.isClickable = isClick
+        resize_player.isClickable = isClick
+        exo_progress.isEnabled = isClick
+
+        // Clickable doesn't seem to work on com.google.android.exoplayer2.ui.DefaultTimeBar
+        //exo_progress.visibility = if (isLocked) INVISIBLE else VISIBLE
+
+        val fadeTo = if (!isLocked) 1f else 0f
+        val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
+
+        fadeAnimation.duration = 100
+        fadeAnimation.fillAfter = true
+
+        shadow_overlay.startAnimation(fadeAnimation)
+    }
+
     private var resizeMode = 0
     private var playbackSpeed = 0f
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
     private var episodes: ArrayList<ResultEpisode> = ArrayList()
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -238,7 +278,7 @@ class PlayerFragment : Fragment() {
             exo_rew.startAnimation(rotateLeft)
 
             val goLeft = AnimationUtils.loadAnimation(context, R.anim.go_left)
-           goLeft.setAnimationListener(object : Animation.AnimationListener {
+            goLeft.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {
                 }
 
@@ -247,7 +287,7 @@ class PlayerFragment : Fragment() {
                 }
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    exo_rew_text.text = "$fastForwardTime"
+                    exo_rew_text.post { exo_rew_text.text = "$fastForwardTime" }
                 }
             })
             exo_rew_text.startAnimation(goLeft)
@@ -258,7 +298,46 @@ class PlayerFragment : Fragment() {
         exo_ffwd.setOnClickListener {
             val rotateRight = AnimationUtils.loadAnimation(context, R.anim.rotate_right)
             exo_ffwd.startAnimation(rotateRight)
+
+            val goRight = AnimationUtils.loadAnimation(context, R.anim.go_right)
+            goRight.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {
+                }
+
+                override fun onAnimationRepeat(animation: Animation?) {
+
+                }
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    exo_ffwd_text.post { exo_ffwd_text.text = "$fastForwardTime" }
+                }
+            })
+            exo_ffwd_text.startAnimation(goRight)
+            exo_ffwd_text.text = "+$fastForwardTime"
             seekTime(fastForwardTime * 1000L)
+        }
+
+
+        lock_player.setOnClickListener {
+            isLocked = !isLocked
+            val fadeTo = if (isLocked) 0f else 1f
+
+            val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
+            fadeAnimation.duration = 100
+            //   fadeAnimation.startOffset = 100
+            fadeAnimation.fillAfter = true
+
+            // MENUS
+            centerMenu.startAnimation(fadeAnimation)
+            //video_bar.startAnimation(fadeAnimation)
+
+            // BOTTOM
+            resize_player.startAnimation(fadeAnimation)
+            playback_speed_btt.startAnimation(fadeAnimation)
+            sources_btt.startAnimation(fadeAnimation)
+            skip_op.startAnimation(fadeAnimation)
+
+            updateLock()
         }
     }
 
