@@ -2,11 +2,13 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context.AUDIO_SERVICE
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
+import android.content.res.Resources
 import android.database.ContentObserver
 import android.graphics.Color
 import android.media.AudioManager
@@ -14,13 +16,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
+import android.view.animation.*
 import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
@@ -28,6 +30,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import androidx.transition.Fade
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -41,6 +46,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.MimeTypes
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.UIHelper.toPx
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
@@ -50,11 +56,14 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
+import kotlinx.coroutines.*
 import java.io.File
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
 import kotlin.concurrent.thread
+import kotlin.math.abs
+import kotlin.math.ceil
 
 
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
@@ -99,14 +108,299 @@ class PlayerFragment : Fragment() {
 
     private var isFullscreen = false
     private var isPlayerPlaying = true
+    private var doubleTapEnabled = false
     private lateinit var viewModel: ResultViewModel
     private lateinit var playerData: PlayerData
     private var isLoading = true
+    private var isShowing = true
     private lateinit var exoPlayer: SimpleExoPlayer
+
+    private var width = Resources.getSystem().displayMetrics.heightPixels
+    private var height = Resources.getSystem().displayMetrics.widthPixels
 
     private var isLocked = false
 
     private lateinit var settingsManager: SharedPreferences
+
+    abstract class DoubleClickListener(private val ctx: PlayerFragment) : OnTouchListener {
+        // The time in which the second tap should be done in order to qualify as
+        // a double click
+
+        private var doubleClickQualificationSpanInMillis: Long = 300L
+        private var singleClickQualificationSpanInMillis: Long = 300L
+        private var timestampLastClick: Long = 0
+        private var timestampLastSingleClick: Long = 0
+        private var clicksLeft = 0
+        private var clicksRight = 0
+        private var fingerLeftScreen = true
+        abstract fun onDoubleClickRight(clicks: Int)
+        abstract fun onDoubleClickLeft(clicks: Int)
+        abstract fun onSingleClick()
+        abstract fun onMotionEvent(event: MotionEvent)
+
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            onMotionEvent(event)
+            if (event.action == MotionEvent.ACTION_UP) {
+                fingerLeftScreen = true
+            }
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                fingerLeftScreen = false
+
+                if ((SystemClock.elapsedRealtime() - timestampLastClick) < doubleClickQualificationSpanInMillis) {
+                    if (event.rawX >= ctx.width / 2) {
+                        clicksRight++
+                        if (!ctx.isLocked && ctx.doubleTapEnabled) onDoubleClickRight(clicksRight)
+                        if (!ctx.isShowing) onSingleClick()
+                    } else {
+                        clicksLeft++
+                        if (!ctx.isLocked && ctx.doubleTapEnabled) onDoubleClickLeft(clicksLeft)
+                        if (!ctx.isShowing) onSingleClick()
+                    }
+                } else if (clicksLeft == 0 && clicksRight == 0 && fingerLeftScreen) {
+                    // onSingleClick()
+                    // timestampLastSingleClick = SystemClock.elapsedRealtime()
+                } else {
+                    clicksLeft = 0
+                    clicksRight = 0
+                    val job = Job()
+                    val uiScope = CoroutineScope(Dispatchers.Main + job)
+
+                    fun check() {
+                        if ((SystemClock.elapsedRealtime() - timestampLastSingleClick) > singleClickQualificationSpanInMillis && (SystemClock.elapsedRealtime() - timestampLastClick) > doubleClickQualificationSpanInMillis) {
+                            timestampLastSingleClick = SystemClock.elapsedRealtime()
+                            onSingleClick()
+                        }
+                    }
+
+                    if (ctx.isShowing && !ctx.isLocked && ctx.doubleTapEnabled) {
+                        uiScope.launch {
+                            delay(doubleClickQualificationSpanInMillis)
+                            check()
+                        }
+                    } else {
+                        check()
+                    }
+                }
+                timestampLastClick = SystemClock.elapsedRealtime()
+
+            }
+
+            return true
+        }
+    }
+
+    private fun onClickChange() {
+        isShowing = !isShowing
+
+        click_overlay?.visibility = if (isShowing) GONE else VISIBLE
+
+        val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
+        ObjectAnimator.ofFloat(video_title, "translationY", titleMove).apply {
+            duration = 200
+            start()
+        }
+
+        val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
+        ObjectAnimator.ofFloat(bottom_player_bar, "translationY", playerBarMove).apply {
+            duration = 200
+            start()
+        }
+
+
+        val fadeTo = if (isShowing) 1f else 0f
+        val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
+
+        fadeAnimation.duration = 100
+        fadeAnimation.fillAfter = true
+
+        if (!isLocked) {
+            shadow_overlay?.startAnimation(fadeAnimation)
+        }
+        video_holder?.startAnimation(fadeAnimation)
+        //video_lock_holder?.startAnimation(fadeAnimation)
+    }
+
+    private fun forceLetters(inp: Int, letters: Int = 2): String {
+        val added: Int = letters - inp.toString().length
+        return if (added > 0) {
+            "0".repeat(added) + inp.toString()
+        } else {
+            inp.toString()
+        }
+    }
+
+    private fun convertTimeToString(time: Double): String {
+        val sec = time.toInt()
+        val rsec = sec % 60
+        val min = ceil((sec - rsec) / 60.0).toInt()
+        val rmin = min % 60
+        val h = ceil((min - rmin) / 60.0).toInt()
+        //int rh = h;// h % 24;
+        return (if (h > 0) forceLetters(h) + ":" else "") + (if (rmin >= 0 || h >= 0) forceLetters(rmin) + ":" else "") + forceLetters(
+            rsec
+        )
+    }
+
+    fun skipOP() {
+        seekTime(85000L)
+    }
+
+    private var skipTime = 0L
+    private var prevDiffX = 0.0
+    private var preventHorizontalSwipe = false
+    private var hasPassedVerticalSwipeThreshold = false
+    private var hasPassedSkipLimit = false
+    private val swipeEnabled = true //<settingsManager!!.getBoolean("swipe_enabled", true)
+    private val swipeVerticalEnabled = true//settingsManager.getBoolean("swipe_vertical_enabled", true)
+    private var isMovingStartTime = 0L
+    private var currentX = 0F
+    private var currentY = 0F
+    private var cachedVolume = 0f
+
+    fun handleMotionEvent(motionEvent: MotionEvent) {
+        // TIME_UNSET   ==   -9223372036854775807L
+        // No swiping on unloaded
+        // https://exoplayer.dev/doc/reference/constant-values.html
+        if (isLocked || exoPlayer.duration == -9223372036854775807L || (!swipeEnabled && !swipeVerticalEnabled)) return
+        val audioManager = activity?.getSystemService(AUDIO_SERVICE) as? AudioManager
+
+        when (motionEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+                currentX = motionEvent.rawX
+                currentY = motionEvent.rawY
+                //println("DOWN: " + currentX)
+                isMovingStartTime = exoPlayer.currentPosition
+            }
+            MotionEvent.ACTION_MOVE -> {
+                if (swipeVerticalEnabled) {
+                    val distanceMultiplierY = 2F
+                    val distanceY = (motionEvent.rawY - currentY) * distanceMultiplierY
+                    val diffY = distanceY * 2.0 / height
+
+                    // Forces 'smooth' moving preventing a bug where you
+                    // can make it think it moved half a screen in a frame
+
+                    if (abs(diffY) >= 0.2 && !hasPassedSkipLimit) {
+                        hasPassedVerticalSwipeThreshold = true
+                        preventHorizontalSwipe = true
+                    }
+                    if (hasPassedVerticalSwipeThreshold) {
+                        if (currentX > width * 0.5) {
+                            if (audioManager != null && progressBarLeftHolder != null) {
+                                val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                                val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+
+                                if (progressBarLeftHolder.alpha <= 0f) {
+                                    cachedVolume = currentVolume.toFloat() / maxVolume.toFloat()
+                                }
+
+                                progressBarLeftHolder?.alpha = 1f
+                                val vol = minOf(1f,
+                                    cachedVolume - diffY.toFloat() * 0.5f) // 0.05f *if (diffY > 0) 1 else -1
+                                cachedVolume = vol
+                                //progressBarRight?.progress = ((1f - alpha) * 100).toInt()
+
+                                progressBarLeft?.max = 100 * 100
+                                progressBarLeft?.progress = ((vol) * 100 * 100).toInt()
+
+                                if (audioManager.isVolumeFixed) {
+                                    // Lmao might earrape, we'll see in bug reports
+                                    exoPlayer.volume = minOf(1f, maxOf(vol, 0f))
+                                } else {
+                                    // audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, vol*, 0)
+                                    val desiredVol = (vol * maxVolume).toInt()
+                                    if (desiredVol != currentVolume) {
+                                        val newVolumeAdjusted =
+                                            if (desiredVol < currentVolume) AudioManager.ADJUST_LOWER else AudioManager.ADJUST_RAISE
+
+                                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, newVolumeAdjusted, 0)
+                                    }
+                                    //audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
+                                }
+                                currentY = motionEvent.rawY
+                            }
+                        } else if (progressBarRightHolder != null) {
+                            progressBarRightHolder?.alpha = 1f
+                            val alpha = minOf(0.95f,
+                                brightness_overlay.alpha + diffY.toFloat() * 0.5f) // 0.05f *if (diffY > 0) 1 else -1
+                            brightness_overlay?.alpha = alpha
+                            //progressBarRight?.progress = ((1f - alpha) * 100).toInt()
+
+                            progressBarRight?.max = 100 * 100
+                            progressBarRight?.progress = ((1f - alpha) * 100 * 100).toInt()
+                            /* val animation: ObjectAnimator = ObjectAnimator.ofInt(progressBarRight,
+                                 "progress",
+                                 progressBarRight.progress,
+                                .toInt())
+                             animation.duration = 100
+                             animation.setAutoCancel(true)
+                             animation.interpolator = DecelerateInterpolator()
+                             animation.start()*/
+
+                            currentY = motionEvent.rawY
+                        }
+                    }
+                }
+
+                if (swipeEnabled) {
+                    val distanceMultiplierX = 2F
+                    val distanceX = (motionEvent.rawX - currentX) * distanceMultiplierX
+                    val diffX = distanceX * 2.0 / width
+                    if (abs(diffX - prevDiffX) > 0.5) {
+                        return
+                    }
+                    prevDiffX = diffX
+
+                    skipTime = ((exoPlayer.duration * (diffX * diffX) / 10) * (if (diffX < 0) -1 else 1)).toLong()
+                    if (isMovingStartTime + skipTime < 0) {
+                        skipTime = -isMovingStartTime
+                    } else if (isMovingStartTime + skipTime > exoPlayer.duration) {
+                        skipTime = exoPlayer.duration - isMovingStartTime
+                    }
+                    if ((abs(skipTime) > 3000 || hasPassedSkipLimit) && !preventHorizontalSwipe) {
+                        hasPassedSkipLimit = true
+                        val timeString =
+                            "${convertTimeToString((isMovingStartTime + skipTime) / 1000.0)} [${(if (abs(skipTime) < 1000) "" else (if (skipTime > 0) "+" else "-"))}${
+                                convertTimeToString(abs(skipTime / 1000.0))
+                            }]"
+                        timeText.alpha = 1f
+                        timeText.text = timeString
+                    } else {
+                        timeText.alpha = 0f
+                    }
+                }
+            }
+            MotionEvent.ACTION_UP -> {
+                val transition: Transition = Fade()
+                transition.duration = 1000
+
+                TransitionManager.beginDelayedTransition(player_holder, transition)
+
+                if (abs(skipTime) > 7000 && !preventHorizontalSwipe && swipeEnabled) {
+                    exoPlayer.seekTo(maxOf(minOf(skipTime + isMovingStartTime, exoPlayer.duration), 0))
+                }
+                hasPassedSkipLimit = false
+                hasPassedVerticalSwipeThreshold = false
+                preventHorizontalSwipe = false
+                prevDiffX = 0.0
+                skipTime = 0
+
+                timeText.animate().alpha(0f).setDuration(200)
+                    .setInterpolator(AccelerateInterpolator()).start()
+                progressBarRightHolder.animate().alpha(0f).setDuration(200)
+                    .setInterpolator(AccelerateInterpolator()).start()
+                progressBarLeftHolder.animate().alpha(0f).setDuration(200)
+                    .setInterpolator(AccelerateInterpolator()).start()
+                //val fadeAnimation = AlphaAnimation(1f, 0f)
+                //fadeAnimation.duration = 100
+                //fadeAnimation.fillAfter = true
+                //progressBarLeftHolder.startAnimation(fadeAnimation)
+                //progressBarRightHolder.startAnimation(fadeAnimation)
+                //timeText.startAnimation(fadeAnimation)
+
+            }
+        }
+    }
 
     private fun seekTime(time: Long) {
         exoPlayer.seekTo(maxOf(minOf(exoPlayer.currentPosition + time, exoPlayer.duration), 0))
@@ -188,6 +482,7 @@ class PlayerFragment : Fragment() {
         skip_op.isClickable = isClick
         resize_player.isClickable = isClick
         exo_progress.isEnabled = isClick
+        //video_go_back_holder2.isEnabled = isClick
 
         // Clickable doesn't seem to work on com.google.android.exoplayer2.ui.DefaultTimeBar
         //exo_progress.visibility = if (isLocked) INVISIBLE else VISIBLE
@@ -273,7 +568,7 @@ class PlayerFragment : Fragment() {
         val fastForwardTime = settingsManager.getInt("fast_forward_button_time", 10)
         exo_rew_text.text = fastForwardTime.toString()
         exo_ffwd_text.text = fastForwardTime.toString()
-        exo_rew.setOnClickListener {
+        fun rewnd() {
             val rotateLeft = AnimationUtils.loadAnimation(context, R.anim.rotate_left)
             exo_rew.startAnimation(rotateLeft)
 
@@ -293,9 +588,13 @@ class PlayerFragment : Fragment() {
             exo_rew_text.startAnimation(goLeft)
             exo_rew_text.text = "-$fastForwardTime"
             seekTime(fastForwardTime * -1000L)
-
         }
-        exo_ffwd.setOnClickListener {
+
+        exo_rew.setOnClickListener {
+            rewnd()
+        }
+
+        fun ffwrd() {
             val rotateRight = AnimationUtils.loadAnimation(context, R.anim.rotate_right)
             exo_ffwd.startAnimation(rotateRight)
 
@@ -317,6 +616,10 @@ class PlayerFragment : Fragment() {
             seekTime(fastForwardTime * 1000L)
         }
 
+        exo_ffwd.setOnClickListener {
+            ffwrd()
+        }
+
 
         lock_player.setOnClickListener {
             isLocked = !isLocked
@@ -336,9 +639,43 @@ class PlayerFragment : Fragment() {
             playback_speed_btt.startAnimation(fadeAnimation)
             sources_btt.startAnimation(fadeAnimation)
             skip_op.startAnimation(fadeAnimation)
+            video_go_back_holder2.startAnimation(fadeAnimation)
 
             updateLock()
         }
+
+        class Listener : DoubleClickListener(this) {
+            // Declaring a seekAnimation here will cause a bug
+
+            override fun onDoubleClickRight(clicks: Int) {
+                if (!isLocked) {
+                    ffwrd()
+                }
+            }
+
+            override fun onDoubleClickLeft(clicks: Int) {
+                if (!isLocked) {
+                    rewnd()
+                }
+            }
+
+            override fun onSingleClick() {
+                onClickChange()
+                //  activity?.hideSystemUI()
+            }
+
+            override fun onMotionEvent(event: MotionEvent) {
+                handleMotionEvent(event)
+            }
+        }
+
+        player_holder.setOnTouchListener(
+            Listener()
+        )
+
+        click_overlay?.setOnTouchListener(
+            Listener()
+        )
     }
 
     fun getCurrentUrl(): ExtractorLink {

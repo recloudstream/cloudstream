@@ -164,6 +164,7 @@
             </androidx.cardview.widget.CardView>
         </LinearLayout>-->
         <FrameLayout
+                android:id="@+id/video_go_back_holder2"
                 android:layout_margin="5dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -686,7 +687,7 @@
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
                     android:layout_width="4dp"
-                    android:layout_height="180dp"
+                    android:layout_height="150dp"
                     android:id="@+id/progressBarLeft"
                     android:indeterminate="false"
                     style="@android:style/Widget.Material.ProgressBar.Horizontal"
@@ -729,7 +730,7 @@
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
                     android:layout_width="4dp"
-                    android:layout_height="180dp"
+                    android:layout_height="150dp"
                     android:id="@+id/progressBarRight"
                     android:indeterminate="false"
                     style="@android:style/Widget.Material.ProgressBar.Horizontal"
