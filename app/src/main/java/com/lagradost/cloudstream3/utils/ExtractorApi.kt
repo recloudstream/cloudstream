@@ -15,6 +15,10 @@ data class ExtractorLink(
     val isM3u8: Boolean = false,
 )
 
+fun ExtractorLink.getId() : Int {
+    return url.hashCode()
+}
+
 enum class Qualities(var value: Int) {
     Unknown(0),
     SD(-1), // 360p - 480p

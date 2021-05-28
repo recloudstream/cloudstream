@@ -109,11 +109,25 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:gravity="center"
-                android:textFontWeight="900"
                 android:layout_marginTop="15dp"
+                android:textStyle="bold"
                 android:textColor="@color/white"
                 android:id="@+id/video_title"
                 tools:text="Hello world"
+        >
+        </TextView>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="250dp"
+                android:layout_marginStart="250dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:gravity="center"
+                android:layout_marginTop="35dp"
+                android:textColor="@color/white"
+                android:id="@+id/video_title_rez"
+                tools:text="1920x1080"
         >
         </TextView>
         <!--
@@ -374,6 +388,7 @@
                         app:played_color="@color/videoColorPrimary"
                         app:unplayed_color="@color/videoProgress"/>
 
+                <!-- exo_duration-->
                 <TextView
                         tools:text="23:20"
                         android:id="@id/exo_duration"
@@ -625,6 +640,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:text="Skip OP"
+                                android:id="@+id/skip_op_text"
                                 android:gravity="start|center"
                                 android:paddingStart="10dp"
 

@@ -82,4 +82,19 @@
         <item name="tabMinWidth">75dp</item>
         <item name="tabMode">scrollable</item>
     </style>
+    <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textColorPrimary">@color/textColor</item>
+        <!--<item name="android:background">@color/darkBackground</item>-->
+        <item name="android:textAllCaps">false</item>
+        <!--<item name="android:colorBackground">@color/darkBackground</item>-->
+        <item name="textColorAlertDialogListItem">@color/textColor</item>
+        <item name="colorControlNormal">@color/textColor</item>
+        <!-- colorPrimarySecond used because colorPrimary fails for no reason -->
+        <item name="colorControlActivated">@color/colorPrimarySecond</item>
+
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="android:windowBackground">@drawable/dialog__window_background</item>
+    </style>
 </resources>

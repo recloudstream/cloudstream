@@ -45,6 +45,7 @@ const val MAX_SYNO_LENGH = 600
 data class ResultEpisode(
     val name: String?,
     val episode: Int,
+    val season: Int?,
     val data: Any,
     val apiName: String,
     val id: Int,
@@ -122,7 +123,7 @@ class ResultFragment : Fragment() {
                             R.anim.exit_anim,
                             R.anim.pop_enter,
                             R.anim.pop_exit)
-                        .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(index)))
+                        .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(index, null, 0)))
                         .commit()
                 } else {
                     when (episodeClick.action) {
@@ -157,7 +158,7 @@ class ResultFragment : Fragment() {
         }
 
         observe(viewModel.episodes) { episodes ->
-            if(result_episodes == null || result_episodes.adapter == null) return@observe
+            if (result_episodes == null || result_episodes.adapter == null) return@observe
             (result_episodes.adapter as EpisodeAdapter).cardList = episodes
             (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
         }

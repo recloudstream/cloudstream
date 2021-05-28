@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3d50fa</color>
+    <color name="colorPrimarySecond">@color/colorPrimary</color>
     <color name="colorRipple">#1A3D50FA</color>
     <color name="colorSearch">#303135</color> <!--#3444D1 @color/itemBackground-->
     <color name="colorItemSeen">#1E1E32</color>

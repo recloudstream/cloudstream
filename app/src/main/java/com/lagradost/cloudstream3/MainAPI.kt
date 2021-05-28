@@ -151,6 +151,10 @@ interface LoadResponse {
     val plot: String?
 }
 
+fun LoadResponse.isEpisodeBased(): Boolean {
+    return this is AnimeLoadResponse || this is TvSeriesLoadResponse
+}
+
 data class AnimeLoadResponse(
     val engName: String?,
     val japName: String?,

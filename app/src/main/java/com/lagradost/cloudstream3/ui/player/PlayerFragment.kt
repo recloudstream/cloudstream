@@ -1,7 +1,5 @@
 package com.lagradost.cloudstream3.ui.player
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -13,10 +11,7 @@ import android.database.ContentObserver
 import android.graphics.Color
 import android.media.AudioManager
 import android.net.Uri
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
+import android.os.*
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -26,6 +21,7 @@ import android.view.animation.*
 import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -44,20 +40,24 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.MimeTypes
-import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.UIHelper.getFocusRequest
+import com.lagradost.cloudstream3.UIHelper.requestLocalAudioFocus
 import com.lagradost.cloudstream3.UIHelper.toPx
-import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.observeDirectly
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultViewModel
 import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.coroutines.*
 import java.io.File
+import java.util.*
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -76,6 +76,9 @@ const val EXTRA_CONTROL_TYPE = "control_type"
 const val PLAYBACK_SPEED = "playback_speed"
 const val RESIZE_MODE_KEY = "resize_mode" // Last used resize mode
 const val PLAYBACK_SPEED_KEY = "playback_speed" // Last used playback speed
+
+const val OPENING_PROCENTAGE = 50
+const val AUTOLOAD_NEXT_EPISODE_PROCENTAGE = 80
 
 enum class PlayerEventType(val value: Int) {
     Stop(-1),
@@ -100,6 +103,8 @@ data class PlayerData(
 )*/
 data class PlayerData(
     val episodeIndex: Int,
+    val seasonIndex: Int?,
+    val mirrorId: Int,
 )
 
 class PlayerFragment : Fragment() {
@@ -114,6 +119,12 @@ class PlayerFragment : Fragment() {
     private var isLoading = true
     private var isShowing = true
     private lateinit var exoPlayer: SimpleExoPlayer
+
+    //private var currentPercentage = 0
+    // private var hasNextEpisode = true
+
+    val formatBuilder = StringBuilder()
+    val formatter = Formatter(formatBuilder, Locale.getDefault())
 
     private var width = Resources.getSystem().displayMetrics.heightPixels
     private var height = Resources.getSystem().displayMetrics.widthPixels
@@ -200,13 +211,18 @@ class PlayerFragment : Fragment() {
             start()
         }
 
+        ObjectAnimator.ofFloat(video_title_rez, "translationY", titleMove).apply {
+            duration = 200
+            start()
+        }
+
         val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
         ObjectAnimator.ofFloat(bottom_player_bar, "translationY", playerBarMove).apply {
             duration = 200
             start()
         }
 
-
+        changeSkip()
         val fadeTo = if (isShowing) 1f else 0f
         val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
 
@@ -217,6 +233,7 @@ class PlayerFragment : Fragment() {
             shadow_overlay?.startAnimation(fadeAnimation)
         }
         video_holder?.startAnimation(fadeAnimation)
+
         //video_lock_holder?.startAnimation(fadeAnimation)
     }
 
@@ -252,6 +269,9 @@ class PlayerFragment : Fragment() {
     private var hasPassedSkipLimit = false
     private val swipeEnabled = true //<settingsManager!!.getBoolean("swipe_enabled", true)
     private val swipeVerticalEnabled = true//settingsManager.getBoolean("swipe_vertical_enabled", true)
+    private val playBackSpeedEnabled = true//settingsManager!!.getBoolean("playback_speed_enabled", false)
+    private val playerResizeEnabled = true//settingsManager!!.getBoolean("player_resize_enabled", false)
+
     private var isMovingStartTime = 0L
     private var currentX = 0F
     private var currentY = 0F
@@ -290,7 +310,7 @@ class PlayerFragment : Fragment() {
                                 val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
                                 val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
-                                if (progressBarLeftHolder.alpha <= 0f) {
+                                if (progressBarLeftHolder?.alpha ?: 0f <= 0f) {
                                     cachedVolume = currentVolume.toFloat() / maxVolume.toFloat()
                                 }
 
@@ -324,18 +344,9 @@ class PlayerFragment : Fragment() {
                             val alpha = minOf(0.95f,
                                 brightness_overlay.alpha + diffY.toFloat() * 0.5f) // 0.05f *if (diffY > 0) 1 else -1
                             brightness_overlay?.alpha = alpha
-                            //progressBarRight?.progress = ((1f - alpha) * 100).toInt()
 
                             progressBarRight?.max = 100 * 100
                             progressBarRight?.progress = ((1f - alpha) * 100 * 100).toInt()
-                            /* val animation: ObjectAnimator = ObjectAnimator.ofInt(progressBarRight,
-                                 "progress",
-                                 progressBarRight.progress,
-                                .toInt())
-                             animation.duration = 100
-                             animation.setAutoCancel(true)
-                             animation.interpolator = DecelerateInterpolator()
-                             animation.start()*/
 
                             currentY = motionEvent.rawY
                         }
@@ -377,8 +388,11 @@ class PlayerFragment : Fragment() {
                 TransitionManager.beginDelayedTransition(player_holder, transition)
 
                 if (abs(skipTime) > 7000 && !preventHorizontalSwipe && swipeEnabled) {
-                    exoPlayer.seekTo(maxOf(minOf(skipTime + isMovingStartTime, exoPlayer.duration), 0))
+                    seekTo(skipTime + isMovingStartTime)
+                    //exoPlayer.seekTo(maxOf(minOf(skipTime + isMovingStartTime, exoPlayer.duration), 0))
                 }
+                changeSkip()
+
                 hasPassedSkipLimit = false
                 hasPassedVerticalSwipeThreshold = false
                 preventHorizontalSwipe = false
@@ -402,9 +416,43 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun seekTime(time: Long) {
-        exoPlayer.seekTo(maxOf(minOf(exoPlayer.currentPosition + time, exoPlayer.duration), 0))
+    fun changeSkip(position: Long? = null) {
+        if (exoPlayer.currentPosition >= 0) {
+            val percentage = ((position ?: exoPlayer.currentPosition) * 100 / exoPlayer.contentDuration).toInt()
+            val hasNext = hasNextEpisode()
+
+            if (percentage >= AUTOLOAD_NEXT_EPISODE_PROCENTAGE && hasNext) {
+                val ep =
+                    episodes[playerData.episodeIndex + 1]
+
+                if ((allEpisodes[ep.id]?.size ?: 0) <= 0) {
+                    viewModel.loadEpisode(ep, false) {
+                        //NOTHING
+                    }
+                }
+            }
+            val nextEp = percentage >= OPENING_PROCENTAGE
+
+            skip_op_text.text = if (nextEp) "Next Episode" else "Skip OP"
+            val isVis =
+                if (nextEp) hasNext //&& !isCurrentlySkippingEp
+                else (localData is AnimeLoadResponse)
+            skip_op.visibility = if (isVis) View.VISIBLE else View.GONE
+        }
     }
+
+    private fun seekTime(time: Long) {
+        changeSkip()
+        seekTo(exoPlayer.currentPosition + time)
+    }
+
+    private fun seekTo(time: Long) {
+        val correctTime = maxOf(minOf(time, exoPlayer.duration), 0)
+        exoPlayer.seekTo(correctTime)
+        changeSkip(correctTime)
+    }
+
+    private var hasUsedFirstRender = false
 
     private fun releasePlayer() {
         val alphaAnimation = AlphaAnimation(0f, 1f)
@@ -459,6 +507,8 @@ class PlayerFragment : Fragment() {
         AspectRatioFrameLayout.RESIZE_MODE_FILL,
         AspectRatioFrameLayout.RESIZE_MODE_ZOOM,
     )
+
+    private var localData: LoadResponse? = null
 
     private fun updateLock() {
         video_locked_img.setImageResource(if (isLocked) R.drawable.video_locked else R.drawable.video_unlocked)
@@ -533,7 +583,7 @@ class PlayerFragment : Fragment() {
             playerData = mapper.readValue(it, PlayerData::class.java)
         }
 
-        observe(viewModel.episodes) { _episodes ->
+        observeDirectly(viewModel.episodes) { _episodes ->
             episodes = _episodes
             if (isLoading) {
                 if (playerData.episodeIndex > 0 && playerData.episodeIndex < episodes.size) {
@@ -544,16 +594,16 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        observe(viewModel.allEpisodes) { _allEpisodes ->
+        observeDirectly(viewModel.allEpisodes) { _allEpisodes ->
             allEpisodes = _allEpisodes
         }
 
-        observe(viewModel.resultResponse) { data ->
+        observeDirectly(viewModel.resultResponse) { data ->
             when (data) {
                 is Resource.Success -> {
                     val d = data.value
                     if (d is LoadResponse) {
-
+                        localData = d
                     }
                 }
                 is Resource.Failure -> {
@@ -574,12 +624,9 @@ class PlayerFragment : Fragment() {
 
             val goLeft = AnimationUtils.loadAnimation(context, R.anim.go_left)
             goLeft.setAnimationListener(object : Animation.AnimationListener {
-                override fun onAnimationStart(animation: Animation?) {
-                }
+                override fun onAnimationStart(animation: Animation?) {}
 
-                override fun onAnimationRepeat(animation: Animation?) {
-
-                }
+                override fun onAnimationRepeat(animation: Animation?) {}
 
                 override fun onAnimationEnd(animation: Animation?) {
                     exo_rew_text.post { exo_rew_text.text = "$fastForwardTime" }
@@ -600,12 +647,9 @@ class PlayerFragment : Fragment() {
 
             val goRight = AnimationUtils.loadAnimation(context, R.anim.go_right)
             goRight.setAnimationListener(object : Animation.AnimationListener {
-                override fun onAnimationStart(animation: Animation?) {
-                }
+                override fun onAnimationStart(animation: Animation?) {}
 
-                override fun onAnimationRepeat(animation: Animation?) {
-
-                }
+                override fun onAnimationRepeat(animation: Animation?) {}
 
                 override fun onAnimationEnd(animation: Animation?) {
                     exo_ffwd_text.post { exo_ffwd_text.text = "$fastForwardTime" }
@@ -633,6 +677,10 @@ class PlayerFragment : Fragment() {
             // MENUS
             centerMenu.startAnimation(fadeAnimation)
             //video_bar.startAnimation(fadeAnimation)
+
+            //TITLE
+            video_title_rez.startAnimation(fadeAnimation)
+            video_title.startAnimation(fadeAnimation)
 
             // BOTTOM
             resize_player.startAnimation(fadeAnimation)
@@ -676,14 +724,136 @@ class PlayerFragment : Fragment() {
         click_overlay?.setOnTouchListener(
             Listener()
         )
+
+        playback_speed_btt.visibility = if (playBackSpeedEnabled) VISIBLE else GONE
+        playback_speed_btt.setOnClickListener {
+            lateinit var dialog: AlertDialog
+            // Lmao kind bad
+            val speedsText = arrayOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x")
+            val speedsNumbers = arrayOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
+            val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
+            builder.setTitle("Pick playback speed")
+
+            builder.setSingleChoiceItems(speedsText, speedsNumbers.indexOf(playbackSpeed)) { _, which ->
+
+                //val speed = speedsText[which]
+                //Toast.makeText(requireContext(), "$speed selected.", Toast.LENGTH_SHORT).show()
+
+                playbackSpeed = speedsNumbers[which]
+                requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
+                val param = PlaybackParameters(playbackSpeed)
+                exoPlayer.playbackParameters = param
+                player_speed_text.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
+
+                dialog.dismiss()
+            }
+            dialog = builder.create()
+            dialog.show()
+        }
+
+        sources_btt.setOnClickListener {
+            lateinit var dialog: AlertDialog
+            getUrls()?.let { it1 ->
+                sortUrls(it1).let { sources ->
+                    val sourcesText = sources.map { it.name }
+                    val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
+                    builder.setTitle("Pick source")
+                    builder.setSingleChoiceItems(sourcesText.toTypedArray(),
+                        sources.indexOf(getCurrentUrl())) { _, which ->
+                        //val speed = speedsText[which]
+                        //Toast.makeText(requireContext(), "$speed selected.", Toast.LENGTH_SHORT).show()
+                        setMirrorId(sources[which].getId())
+                        initPlayer(getCurrentUrl())
+
+                        dialog.dismiss()
+                    }
+                    dialog = builder.create()
+                    dialog.show()
+                }
+            }
+        }
+
+        player_view.resizeMode = resizeModes[resizeMode]
+        if (playerResizeEnabled) {
+            resize_player.visibility = VISIBLE
+            resize_player.setOnClickListener {
+                resizeMode = (resizeMode + 1) % resizeModes.size
+
+                requireContext().setKey(RESIZE_MODE_KEY, resizeMode)
+                player_view.resizeMode = resizeModes[resizeMode]
+                //exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+            }
+        } else {
+            resize_player.visibility = GONE
+        }
+
+        skip_op.setOnClickListener {
+            if (exoPlayer.currentPosition * 100 / exoPlayer.duration >= OPENING_PROCENTAGE) {
+                if (hasNextEpisode()) {
+                   // skip_op.visibility = View.GONE
+                    skipToNextEpisode()
+                }
+            } else {
+                skipOP()
+            }
+        }
     }
 
-    fun getCurrentUrl(): ExtractorLink {
-        return ExtractorLink("",
-            "TEST",
-            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-            "",
-            0)
+    private fun getCurrentUrl(): ExtractorLink? {
+        val urls = getUrls() ?: return null
+        for (i in urls) {
+            if (i.getId() == playerData.mirrorId) {
+                return i
+            }
+        }
+
+        return null
+        /*ExtractorLink("",
+                "TEST",
+                "https://v6.4animu.me/Overlord/Overlord-Episode-01-1080p.mp4",
+                //"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                "",
+                0)*/
+    }
+
+    private fun getUrls(): List<ExtractorLink>? {
+        return try {
+            allEpisodes[getEpisode()?.id]
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun sortUrls(urls: List<ExtractorLink>): List<ExtractorLink> {
+        return urls.sortedBy { t -> -t.quality }
+    }
+
+    private fun getEpisode(): ResultEpisode? {
+        return try {
+            episodes[playerData.episodeIndex]
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun hasNextEpisode(): Boolean {
+        return episodes.size > playerData.episodeIndex + 1
+    }
+
+    private var isCurrentlySkippingEp = false
+
+    private fun skipToNextEpisode() {
+        if (isCurrentlySkippingEp) return
+        isCurrentlySkippingEp = true
+        val copy = playerData.copy(episodeIndex = playerData.episodeIndex + 1)
+        playerData = copy
+        initPlayer()
+    }
+
+    private fun setMirrorId(id: Int) {
+        val copy = playerData.copy(mirrorId = id)
+        playerData = copy
+        initPlayer()
     }
 
     override fun onStart() {
@@ -730,153 +900,284 @@ class PlayerFragment : Fragment() {
         outState.putBoolean(STATE_PLAYER_PLAYING, isPlayerPlaying)
         outState.putInt(RESIZE_MODE_KEY, resizeMode)
         outState.putFloat(PLAYBACK_SPEED, playbackSpeed)
+        outState.putString("data", mapper.writeValueAsString(playerData))
         savePos()
         super.onSaveInstanceState(outState)
     }
 
     private var currentWindow = 0
     private var playbackPosition: Long = 0
+/*
+    private fun updateProgressBar() {
+        val duration: Long =exoPlayer.getDuration()
+        val position: Long =exoPlayer.getCurrentPosition()
+
+        handler.removeCallbacks(updateProgressAction)
+        val playbackState =  exoPlayer.getPlaybackState()
+        if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_ENDED) {
+            var delayMs: Long
+            if (player.getPlayWhenReady() && playbackState == Player.STATE_READY) {
+                delayMs = 1000 - position % 1000
+                if (delayMs < 200) {
+                    delayMs += 1000
+                }
+            } else {
+                delayMs = 1000
+            }
+            handler.postDelayed(updateProgressAction, delayMs)
+        }
+    }
+
+    private val updateProgressAction = Runnable { updateProgressBar() }*/
+
+    @SuppressLint("SetTextI18n")
+    fun initPlayer(currentUrl: ExtractorLink?) {
+        if (currentUrl == null) return
+        hasUsedFirstRender = false
+
+        try {
+            if (this::exoPlayer.isInitialized) {
+                savePos()
+                exoPlayer.release()
+            }
+            val isOnline =
+                currentUrl.url.startsWith("https://") || currentUrl.url.startsWith("http://")
+
+            if (settingsManager.getBoolean("ignore_ssl", true)) {
+                // Disables ssl check
+                val sslContext: SSLContext = SSLContext.getInstance("TLS")
+                sslContext.init(null, arrayOf(SSLTrustManager()), java.security.SecureRandom())
+                sslContext.createSSLEngine()
+                HttpsURLConnection.setDefaultHostnameVerifier { _: String, _: SSLSession ->
+                    true
+                }
+                HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
+            }
+
+            class CustomFactory : DataSource.Factory {
+                override fun createDataSource(): DataSource {
+                    return if (isOnline) {
+                        val dataSource = DefaultHttpDataSourceFactory(USER_AGENT).createDataSource()
+                        /*FastAniApi.currentHeaders?.forEach {
+                            dataSource.setRequestProperty(it.key, it.value)
+                        }*/
+                        dataSource.setRequestProperty("Referer", currentUrl.referer)
+                        dataSource
+                    } else {
+                        DefaultDataSourceFactory(requireContext(), USER_AGENT).createDataSource()
+                    }
+                }
+            }
+
+            val mimeType = if (currentUrl.isM3u8) MimeTypes.APPLICATION_M3U8 else MimeTypes.APPLICATION_MP4
+            val _mediaItem = MediaItem.Builder()
+                //Replace needed for android 6.0.0  https://github.com/google/ExoPlayer/issues/5983
+                .setMimeType(mimeType)
+
+            if (isOnline) {
+                _mediaItem.setUri(currentUrl.url)
+            } else {
+                _mediaItem.setUri(Uri.fromFile(File(currentUrl.url)))
+            }
+
+            val mediaItem = _mediaItem.build()
+            val trackSelector = DefaultTrackSelector(requireContext())
+            // Disable subtitles
+            trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(requireContext())
+                .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
+                .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
+                .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
+                .clearSelectionOverrides()
+                .build()
+
+            val _exoPlayer =
+                SimpleExoPlayer.Builder(this.requireContext())
+                    .setTrackSelector(trackSelector)
+
+            _exoPlayer.setMediaSourceFactory(DefaultMediaSourceFactory(CustomFactory()))
+            exoPlayer = _exoPlayer.build().apply {
+                playWhenReady = isPlayerPlaying
+                seekTo(currentWindow, playbackPosition)
+                setMediaItem(mediaItem, false)
+                prepare()
+            }
+
+            val alphaAnimation = AlphaAnimation(1f, 0f)
+            alphaAnimation.duration = 300
+            alphaAnimation.fillAfter = true
+            loading_overlay.startAnimation(alphaAnimation)
+            video_go_back_holder.visibility = GONE
+
+            exoPlayer.setHandleAudioBecomingNoisy(true) // WHEN HEADPHONES ARE PLUGGED OUT https://github.com/google/ExoPlayer/issues/7288
+            player_view.player = exoPlayer
+            // Sets the speed
+            exoPlayer.playbackParameters = PlaybackParameters(playbackSpeed)
+            player_speed_text?.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
+
+            if (localData != null) {
+                val data = localData!!
+                val localEpisode = getEpisode()
+                if (localEpisode != null) {
+                    val episode = localEpisode.episode
+                    val season: Int? = localEpisode.season
+                    val isEpisodeBased = data.isEpisodeBased()
+                    video_title?.text = data.name +
+                            if (isEpisodeBased)
+                                if (season == null)
+                                    " - Episode $episode"
+                                else
+                                    " \"S${season}:E${episode}\""
+                            else ""
+                    video_title_rez?.text = currentUrl.name
+                }
+            }
+
+/*
+            exo_remaining.text = Util.getStringForTime(formatBuilder,
+                formatter,
+                exoPlayer.contentDuration - exoPlayer.currentPosition)
+
+            */
+
+
+            //https://stackoverflow.com/questions/47731779/detect-pause-resume-in-exoplayer
+            exoPlayer.addListener(object : Player.Listener {
+                override fun onRenderedFirstFrame() {
+                    super.onRenderedFirstFrame()
+                    isCurrentlySkippingEp = false
+
+                    val height = exoPlayer.videoFormat?.height
+                    val width = exoPlayer.videoFormat?.width
+                    video_title_rez?.text =
+                        if (height == null || width == null) currentUrl.name else "${currentUrl.name} - ${width}x${height}"
+
+                    if(!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
+                        println("FIRST RENDER")
+                        changeSkip()
+                        exoPlayer
+                            .createMessage { messageType, payload ->
+                                changeSkip()
+                            }
+                            .setLooper(Looper.getMainLooper())
+                            .setPosition( /* positionMs= */exoPlayer.contentDuration * OPENING_PROCENTAGE / 100)
+                            //   .setPayload(customPayloadData)
+                            .setDeleteAfterDelivery(false)
+                            .send()
+                        exoPlayer
+                            .createMessage { messageType, payload ->
+                                changeSkip()
+                            }
+                            .setLooper(Looper.getMainLooper())
+                            .setPosition( /* positionMs= */exoPlayer.contentDuration * AUTOLOAD_NEXT_EPISODE_PROCENTAGE / 100)
+                            //   .setPayload(customPayloadData)
+                            .setDeleteAfterDelivery(false)
+
+                            .send()
+
+                    }
+                    else {
+                        changeSkip()
+                    }
+                    hasUsedFirstRender = true
+                }
+
+                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                    //  updatePIPModeActions()
+                    if (playWhenReady) {
+                        when (playbackState) {
+                            Player.STATE_READY -> {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    requireActivity().requestLocalAudioFocus(getFocusRequest())
+                                }
+                            }
+                            Player.STATE_ENDED -> {
+                                if (hasNextEpisode()) {
+                                    skipToNextEpisode()
+                                }
+                            }
+                            Player.STATE_BUFFERING -> {
+                                changeSkip()
+                            }
+                            else -> {
+                            }
+                        }
+                    }
+                }
+
+                override fun onPlayerError(error: ExoPlaybackException) {
+                    // Lets pray this doesn't spam Toasts :)
+                    when (error.type) {
+                        ExoPlaybackException.TYPE_SOURCE -> {
+                            if (currentUrl.url != "") {
+                                Toast.makeText(
+                                    activity,
+                                    "Source error\n" + error.sourceException.message,
+                                    LENGTH_LONG
+                                )
+                                    .show()
+                            }
+                        }
+                        ExoPlaybackException.TYPE_REMOTE -> {
+                            Toast.makeText(activity, "Remote error", LENGTH_LONG)
+                                .show()
+                        }
+                        ExoPlaybackException.TYPE_RENDERER -> {
+                            Toast.makeText(
+                                activity,
+                                "Renderer error\n" + error.rendererException.message,
+                                LENGTH_LONG
+                            )
+                                .show()
+                        }
+                        ExoPlaybackException.TYPE_UNEXPECTED -> {
+                            Toast.makeText(
+                                activity,
+                                "Unexpected player error\n" + error.unexpectedException.message,
+                                LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                }
+            })
+        } catch (e: java.lang.IllegalStateException) {
+            println("Warning: Illegal state exception in PlayerFragment")
+        }
+    }
 
     //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
+    @SuppressLint("SetTextI18n")
     private fun initPlayer() {
         println("INIT PLAYER")
         view?.setOnTouchListener { _, _ -> return@setOnTouchListener true } // VERY IMPORTANT https://stackoverflow.com/questions/28818926/prevent-clicking-on-a-button-in-an-activity-while-showing-a-fragment
-        thread {
-            val currentUrl = getCurrentUrl()
-            if (currentUrl == null) {
-                activity?.runOnUiThread {
-                    Toast.makeText(activity, "Error getting link", LENGTH_LONG).show()
-                    //MainActivity.popCurrentPage()
-                }
-            } else {
-
-                try {
-                    activity?.runOnUiThread {
-                        val isOnline =
-                            currentUrl.url.startsWith("https://") || currentUrl.url.startsWith("http://")
-
-                        if (settingsManager?.getBoolean("ignore_ssl", true) == true) {
-                            // Disables ssl check
-                            val sslContext: SSLContext = SSLContext.getInstance("TLS")
-                            sslContext.init(null, arrayOf(SSLTrustManager()), java.security.SecureRandom())
-                            sslContext.createSSLEngine()
-                            HttpsURLConnection.setDefaultHostnameVerifier { _: String, _: SSLSession ->
-                                true
-                            }
-                            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
-                        }
-
-                        class CustomFactory : DataSource.Factory {
-                            override fun createDataSource(): DataSource {
-                                return if (isOnline) {
-                                    val dataSource = DefaultHttpDataSourceFactory(USER_AGENT).createDataSource()
-                                    /*FastAniApi.currentHeaders?.forEach {
-                                        dataSource.setRequestProperty(it.key, it.value)
-                                    }*/
-                                    dataSource.setRequestProperty("Referer", currentUrl.referer)
-                                    dataSource
-                                } else {
-                                    DefaultDataSourceFactory(requireContext(), USER_AGENT).createDataSource()
-                                }
-                            }
-                        }
-
-                        val mimeType = if (currentUrl.isM3u8) MimeTypes.APPLICATION_M3U8 else MimeTypes.APPLICATION_MP4
-                        val _mediaItem = MediaItem.Builder()
-                            //Replace needed for android 6.0.0  https://github.com/google/ExoPlayer/issues/5983
-                            .setMimeType(mimeType)
-
-                        if (isOnline) {
-                            _mediaItem.setUri(currentUrl.url)
-                        } else {
-                            _mediaItem.setUri(Uri.fromFile(File(currentUrl.url)))
-                        }
-
-                        val mediaItem = _mediaItem.build()
-                        val trackSelector = DefaultTrackSelector(requireContext())
-                        // Disable subtitles
-                        trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(requireContext())
-                            .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
-                            .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
-                            .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
-                            .clearSelectionOverrides()
-                            .build()
-
-                        val _exoPlayer =
-                            SimpleExoPlayer.Builder(this.requireContext())
-                                .setTrackSelector(trackSelector)
-
-                        _exoPlayer.setMediaSourceFactory(DefaultMediaSourceFactory(CustomFactory()))
-                        exoPlayer = _exoPlayer.build().apply {
-                            playWhenReady = isPlayerPlaying
-                            seekTo(currentWindow, playbackPosition)
-                            setMediaItem(mediaItem, false)
-                            prepare()
-                        }
-
-                        val alphaAnimation = AlphaAnimation(1f, 0f)
-                        alphaAnimation.duration = 300
-                        alphaAnimation.fillAfter = true
-                        loading_overlay.startAnimation(alphaAnimation)
-                        video_go_back_holder.visibility = GONE
-
-                        exoPlayer.setHandleAudioBecomingNoisy(true) // WHEN HEADPHONES ARE PLUGGED OUT https://github.com/google/ExoPlayer/issues/7288
-                        player_view.player = exoPlayer
-                        // Sets the speed
-                        exoPlayer.setPlaybackParameters(PlaybackParameters(playbackSpeed!!))
-                        player_speed_text?.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
-
-                        //https://stackoverflow.com/questions/47731779/detect-pause-resume-in-exoplayer
-                        exoPlayer.addListener(object : Player.Listener {
-                            //   @SuppressLint("NewApi")
-                            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                                //  updatePIPModeActions()
-                                if (playWhenReady && playbackState == Player.STATE_READY) {
-                                    //   focusRequest?.let { activity?.requestAudioFocus(it) }
-                                }
-                            }
-
-                            override fun onPlayerError(error: ExoPlaybackException) {
-                                // Lets pray this doesn't spam Toasts :)
-                                when (error.type) {
-                                    ExoPlaybackException.TYPE_SOURCE -> {
-                                        if (currentUrl.url != "") {
-                                            Toast.makeText(
-                                                activity,
-                                                "Source error\n" + error.sourceException.message,
-                                                LENGTH_LONG
-                                            )
-                                                .show()
-                                        }
-                                    }
-                                    ExoPlaybackException.TYPE_REMOTE -> {
-                                        Toast.makeText(activity, "Remote error", LENGTH_LONG)
-                                            .show()
-                                    }
-                                    ExoPlaybackException.TYPE_RENDERER -> {
-                                        Toast.makeText(
-                                            activity,
-                                            "Renderer error\n" + error.rendererException.message,
-                                            LENGTH_LONG
-                                        )
-                                            .show()
-                                    }
-                                    ExoPlaybackException.TYPE_UNEXPECTED -> {
-                                        Toast.makeText(
-                                            activity,
-                                            "Unexpected player error\n" + error.unexpectedException.message,
-                                            LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-                            }
-                        })
+        val tempUrl = getCurrentUrl()
+        println("TEMP:" + tempUrl?.name)
+        if (tempUrl == null) {
+            val localEpisode = getEpisode()
+            if (localEpisode != null) {
+                viewModel.loadEpisode(localEpisode, false) {
+                    //if(it is Resource.Success && it.value == true)
+                    val currentUrls = getUrls()
+                    if (currentUrls != null && currentUrls.isNotEmpty()) {
+                        setMirrorId(sortUrls(currentUrls)[0].getId()) // BECAUSE URLS CANT BE REORDERED
                     }
-                } catch (e: java.lang.IllegalStateException) {
-                    println("Warning: Illegal state exception in PlayerFragment")
+                    initPlayer(getCurrentUrl())
                 }
             }
+        } else {
+            initPlayer(tempUrl)
         }
+
+        /*
+        val currentUrl = tempUrl
+        if (currentUrl == null) {
+            activity?.runOnUiThread {
+                Toast.makeText(activity, "Error getting link", LENGTH_LONG).show()
+                //MainActivity.popCurrentPage()
+            }
+        } else {
+
+        }*/
+
         //isLoadingNextEpisode = false
     }
 

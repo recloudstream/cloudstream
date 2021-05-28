@@ -42,6 +42,7 @@ class ResultViewModel : ViewModel() {
                                     episodes.add(ResultEpisode(
                                         null, // TODO ADD NAMES
                                         index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
+                                        null, // TODO FIX SEASON
                                         i,
                                         apiName,
                                         (d.url + index).hashCode(),
@@ -59,6 +60,7 @@ class ResultViewModel : ViewModel() {
                                 episodes.add(ResultEpisode(
                                     null, // TODO ADD NAMES
                                     index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
+                                    null, // TODO FIX SEASON
                                     i,
                                     apiName,
                                     (d.url + index).hashCode(),
@@ -70,7 +72,7 @@ class ResultViewModel : ViewModel() {
                         }
                         is MovieLoadResponse -> {
                             _episodes.postValue(arrayListOf(ResultEpisode(null,
-                                0,
+                                0, null,
                                 d.movieUrl,
                                 d.apiName,
                                 (d.url).hashCode(),
@@ -78,9 +80,7 @@ class ResultViewModel : ViewModel() {
                                 0f)))
                         }
                     }
-
                 }
-
             }
             else -> {
 
@@ -95,20 +95,25 @@ class ResultViewModel : ViewModel() {
 
     private var _apiName: MutableLiveData<String> = MutableLiveData()
 
-    fun loadEpisode(episode: ResultEpisode, callback: (Resource<Boolean>) -> Unit) {
-        loadEpisode(episode.id, episode.data, callback)
+    fun loadEpisode(episode: ResultEpisode, isCasting : Boolean, callback: (Resource<Boolean>) -> Unit) {
+        loadEpisode(episode.id, episode.data, isCasting, callback)
     }
 
-    fun loadEpisode(id: Int, data: Any, callback: (Resource<Boolean>) -> Unit) =
+    fun loadEpisode(id: Int, data: Any, isCasting : Boolean, callback: (Resource<Boolean>) -> Unit) =
         viewModelScope.launch {
             if (_allEpisodes.value?.contains(id) == true) {
                 _allEpisodes.value?.remove(id)
             }
             val links = ArrayList<ExtractorLink>()
             val data = safeApiCall {
-                getApiFromName(_apiName.value).loadLinks(data, true) { //TODO IMPLEMENT CASTING
+                getApiFromName(_apiName.value).loadLinks(data, isCasting) { //TODO IMPLEMENT CASTING
+                    for (i in links) {
+                        if (i.url == it.url) return@loadLinks
+                    }
+
                     links.add(it)
                     _allEpisodes.value?.set(id, links)
+
                     // _allEpisodes.value?.get(episode.id)?.add(it)
                 }
             }
