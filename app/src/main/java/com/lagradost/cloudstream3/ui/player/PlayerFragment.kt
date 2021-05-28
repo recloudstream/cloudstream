@@ -433,10 +433,12 @@ class PlayerFragment : Fragment() {
             }
             val nextEp = percentage >= OPENING_PROCENTAGE
 
+            val data = localData
+
             skip_op_text.text = if (nextEp) "Next Episode" else "Skip OP"
             val isVis =
                 if (nextEp) hasNext //&& !isCurrentlySkippingEp
-                else (localData is AnimeLoadResponse)
+                else (data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
             skip_op.visibility = if (isVis) View.VISIBLE else View.GONE
         }
     }
@@ -790,7 +792,7 @@ class PlayerFragment : Fragment() {
         skip_op.setOnClickListener {
             if (exoPlayer.currentPosition * 100 / exoPlayer.duration >= OPENING_PROCENTAGE) {
                 if (hasNextEpisode()) {
-                   // skip_op.visibility = View.GONE
+                    // skip_op.visibility = View.GONE
                     skipToNextEpisode()
                 }
             } else {
@@ -1051,7 +1053,7 @@ class PlayerFragment : Fragment() {
                     video_title_rez?.text =
                         if (height == null || width == null) currentUrl.name else "${currentUrl.name} - ${width}x${height}"
 
-                    if(!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
+                    if (!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
                         println("FIRST RENDER")
                         changeSkip()
                         exoPlayer
@@ -1074,8 +1076,7 @@ class PlayerFragment : Fragment() {
 
                             .send()
 
-                    }
-                    else {
+                    } else {
                         changeSkip()
                     }
                     hasUsedFirstRender = true
