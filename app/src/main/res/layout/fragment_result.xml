@@ -146,16 +146,6 @@
                             android:visibility="gone"
                     />
                     <ImageView
-                            android:id="@+id/result_browser"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:layout_margin="5dp"
-                            android:elevation="10dp"
-                            android:background="?android:attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_baseline_public_24"
-                            android:layout_gravity="center" android:contentDescription="@string/result_open_in_browser">
-                    </ImageView>
-                    <ImageView
                             android:id="@+id/result_share"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
@@ -165,7 +155,16 @@
                             android:src="@drawable/ic_outline_share_24"
                             android:layout_gravity="center" android:contentDescription="@string/result_share">
                     </ImageView>
-
+                    <ImageView
+                            android:id="@+id/result_browser"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_margin="5dp"
+                            android:elevation="10dp"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_baseline_public_24"
+                            android:layout_gravity="center" android:contentDescription="@string/result_open_in_browser">
+                    </ImageView>
                 </LinearLayout>
             </GridLayout>
 
