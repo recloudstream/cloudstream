@@ -102,30 +102,73 @@
 
                 </LinearLayout>
 
+
+            </LinearLayout>
+            <GridLayout android:layout_width="match_parent" android:layout_height="50dp">
+
                 <com.google.android.material.button.MaterialButton
-                        android:visibility="gone"
-                        android:layout_gravity="end"
-                        app:cornerRadius="1000dp"
+                        android:visibility="visible"
+                        android:layout_gravity="center_vertical"
+                        app:cornerRadius="4dp"
                         android:id="@+id/result_bookmark_button"
                         tools:text="Bookmark"
-                        app:rippleColor="@color/colorPrimary"
-                        app:strokeColor="@color/colorPrimary"
-                        android:textColor="@color/textColor"
+
+                        app:rippleColor="?attr/colorPrimary"
+                        android:textColor="?attr/textColor"
+                        app:iconTint="?attr/textColor"
                         android:textAllCaps="false"
-                        android:backgroundTint="@color/colorPrimary"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        app:icon="@drawable/ic_outline_remove_red_eye_24"
+                        android:backgroundTint="@color/transparent"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="45dp">
                 </com.google.android.material.button.MaterialButton>
-            </LinearLayout>
 
-            <androidx.mediarouter.app.MediaRouteButton
-                    android:id="@+id/media_route_button"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:mediaRouteTypes="user"
-                    android:visibility="gone"
-            />
+
+                <!--<ImageView
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_baseline_bookmark_border_24"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                </ImageView>-->
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/media_route_button_holder"
+                        android:layout_gravity="center_vertical|end"
+                >
+                    <androidx.mediarouter.app.MediaRouteButton
+                            android:id="@+id/media_route_button"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:mediaRouteTypes="user"
+                            android:visibility="gone"
+                    />
+                    <ImageView
+                            android:id="@+id/result_browser"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_margin="5dp"
+                            android:elevation="10dp"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_baseline_public_24"
+                            android:layout_gravity="center" android:contentDescription="@string/result_open_in_browser">
+                    </ImageView>
+                    <ImageView
+                            android:id="@+id/result_share"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_margin="5dp"
+                            android:elevation="10dp"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_outline_share_24"
+                            android:layout_gravity="center" android:contentDescription="@string/result_share">
+                    </ImageView>
+
+                </LinearLayout>
+            </GridLayout>
+
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

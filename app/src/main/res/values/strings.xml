@@ -18,4 +18,6 @@
     <string name="result_poster">Poster</string>
     <string name="result_plot">Plot</string>
     <string name="result_tags">Genres</string>
+    <string name="result_share">Share</string>
+    <string name="result_open_in_browser">Open In Browser</string>
 </resources>
