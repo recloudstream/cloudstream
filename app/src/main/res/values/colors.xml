@@ -12,11 +12,11 @@
     <color name="darkBackground">#2B2C30</color> <!--0f0f10 0E0E10 303135 2B2C30-->
     <color name="bitDarkerGrayBackground">#1C1C20</color> <!--191a1f 19181E 202125 1C1C20-->
     <color name="grayBackground">#1C1C20</color> <!--141419 202125-->
-    <color name="itemBackground">#131217</color> <!--1B1B20-->
+    <color name="itemBackground">#17171B</color> <!--1B1B20-->
 
     <color name="textColor">#e9eaee</color> <!--FFF-->
     <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->
-    <color name="lightGrayTextColor">#9f9fa0</color>
+
     <color name="searchColor">@color/textColor</color> <!--DADADA-->
     <color name="searchColorTransparent">#1AFFFFFF</color> <!--DADADA-->
     <color name="transparent">#00000000</color>
@@ -33,6 +33,9 @@
     <color name="black_overlay">#66000000</color>
     <color name="darkBarTransparent">#C0121212</color>
     <color name="darkBar">#121212</color>
-    <color name="videoProgress">#66B5B5B5</color>
-    <color name="videoColorPrimary">#617EFF</color>
+    <color name="videoProgress">#66B5B5B5</color> <!--66B5B5B5-->
+    <!--<color name="videoCache">#663D50FA</color>--> <!--66B5B5B5-->
+    <color name="videoColorPrimary">@color/colorPrimary</color> <!--0e09df 617EFF 3d50fa-->
+
+    <color name="iconColor">#9ba0a6</color>
 </resources>

@@ -10,10 +10,15 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.Event
 
@@ -40,6 +45,7 @@ object UIHelper {
 
     fun AppCompatActivity.loadResult(url: String, slug: String, apiName: String) {
         this.runOnUiThread {
+            viewModelStore.clear()
             this.supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
                 .add(R.id.homeRoot, ResultFragment.newInstance(url, slug, apiName))
@@ -47,9 +53,18 @@ object UIHelper {
         }
     }
 
-    fun Activity.getStatusBarHeight(): Int {
+    fun Context.getStatusBarHeight(): Int {
         var result = 0
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
+    fun Context.getNavigationBarHeight(): Int {
+        var result = 0
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         if (resourceId > 0) {
             result = resources.getDimensionPixelSize(resourceId)
         }
@@ -97,7 +112,7 @@ object UIHelper {
     var onAudioFocusEvent = Event<Boolean>()
 
     fun getAudioListener(): AudioManager.OnAudioFocusChangeListener? {
-        if(_OnAudioFocusChangeListener != null) return _OnAudioFocusChangeListener
+        if (_OnAudioFocusChangeListener != null) return _OnAudioFocusChangeListener
         _OnAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
             onAudioFocusEvent.invoke(
                 when (it) {
@@ -109,6 +124,20 @@ object UIHelper {
             )
         }
         return _OnAudioFocusChangeListener
+    }
+
+    fun Context.isCastApiAvailable(): Boolean {
+        val isCastApiAvailable =
+            GoogleApiAvailability.getInstance()
+                .isGooglePlayServicesAvailable(applicationContext) == ConnectionResult.SUCCESS
+        try {
+            applicationContext?.let { CastContext.getSharedInstance(it) }
+        } catch (e: Exception) {
+            println(e)
+            // track non-fatal
+            return false
+        }
+        return isCastApiAvailable
     }
 
     fun getFocusRequest(): AudioFocusRequest? {
@@ -129,5 +158,90 @@ object UIHelper {
         } else {
             null
         }
+    }
+
+    fun Activity.hideSystemUI() {
+        // Enables regular immersive mode.
+        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                // Set the content to appear under the system bars so that the
+                // content doesn't resize when the system bars hide and show.
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                // Hide the nav bar and status bar
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                //  or View.SYSTEM_UI_FLAG_LOW_PROFILE
+                )
+        // window.addFlags(View.KEEP_SCREEN_ON)
+    }
+
+    fun FragmentActivity.popCurrentPage(isInPlayer: Boolean, isInExpandedView: Boolean, isInResults: Boolean) {
+        val currentFragment = supportFragmentManager.fragments.lastOrNull {
+            it.isVisible
+        }
+            ?: //this.onBackPressed()
+            return
+
+/*
+        if (tvActivity == null) {
+            requestedOrientation = if (settingsManager?.getBoolean("force_landscape", false) == true) {
+                ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+            } else {
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
+        }*/
+
+        // No fucked animations leaving the player :)
+        when {
+            isInPlayer -> {
+                supportFragmentManager.beginTransaction()
+                    //.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+                    .remove(currentFragment)
+                    .commitAllowingStateLoss()
+            }
+            isInExpandedView && !isInResults -> {
+                supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(
+                        R.anim.enter_anim,//R.anim.enter_from_right,
+                        R.anim.exit_anim,//R.anim.exit_to_right,
+                        R.anim.pop_enter,
+                        R.anim.pop_exit
+                    )
+                    .remove(currentFragment)
+                    .commitAllowingStateLoss()
+            }
+            else -> {
+                supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
+                    .remove(currentFragment)
+                    .commitAllowingStateLoss()
+            }
+        }
+    }
+
+
+    fun Activity.changeStatusBarState(hide: Boolean): Int {
+        return if (hide) {
+            window?.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+            0
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            this.getStatusBarHeight()
+        }
+    }
+
+    // Shows the system bars by removing all the flags
+    // except for the ones that make the content appear under the system bars.
+    fun Activity.showSystemUI() {
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+        // window.clearFlags(View.KEEP_SCREEN_ON)
     }
 }

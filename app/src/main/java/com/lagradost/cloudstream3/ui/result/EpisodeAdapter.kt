@@ -9,8 +9,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.APIHolder.getApiFromName
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.android.synthetic.main.result_episode.view.*
 
 const val ACTION_PLAY_EPISODE = 1
@@ -50,20 +48,19 @@ class EpisodeAdapter(
     class CardViewHolder
     constructor(
         itemView: View,
-        _activity: Activity,
+        val activity: Activity,
         resView: RecyclerView,
-        clickCallback: (EpisodeClickEvent) -> Unit,
+        private val clickCallback: (EpisodeClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
-        val activity = _activity
-        val episode_view_procentage: View = itemView.episode_view_procentage
-        val episode_view_procentage_off: View = itemView.episode_view_procentage_off
-        val episode_text: TextView = itemView.episode_text
-        val episode_extra: ImageView = itemView.episode_extra
-        val episode_play: ImageView = itemView.episode_play
-        val clickCallback = clickCallback
+        private val episodeViewPrecentage: View = itemView.episode_view_procentage
+        private val episodeViewPercentageOff: View = itemView.episode_view_procentage_off
+        private val episodeText: TextView = itemView.episode_text
+        val episodeExtra: ImageView = itemView.episode_extra
+        private val episodePlay: ImageView = itemView.episode_play
+        private val episodeHolder = itemView.episode_holder
 
         fun bind(card: ResultEpisode) {
-            episode_text.text = card.name ?: "Episode ${card.episode}"
+            episodeText.text = card.name ?: "Episode ${card.episode}"
 
             fun setWidth(v: View, procentage: Float) {
                 val param = LinearLayout.LayoutParams(
@@ -73,10 +70,10 @@ class EpisodeAdapter(
                 )
                 v.layoutParams = param
             }
-            setWidth(episode_view_procentage, card.watchProgress)
-            setWidth(episode_view_procentage_off, 1 - card.watchProgress)
+            setWidth(episodeViewPrecentage, card.watchProgress)
+            setWidth(episodeViewPercentageOff, 1 - card.watchProgress)
 
-            episode_play.setOnClickListener {
+            episodeHolder.setOnClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE, card))
             }
         }

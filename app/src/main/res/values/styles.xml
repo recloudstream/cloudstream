@@ -27,6 +27,17 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="searchViewStyle">@style/AppSearchViewStyle</item>
         <item name="tabStyle">@style/Theme.Widget.Tabs</item>
+
+        <!-- DEF STYLE -->
+        <item name="textColor">@color/textColor</item>
+        <item name="colorItemSeen">@color/colorItemSeen</item>
+        <item name="grayTextColor">@color/grayTextColor</item>
+        <item name="darkBackground">@color/darkBackground</item>
+        <item name="bitDarkerGrayBackground">@color/bitDarkerGrayBackground</item>
+        <item name="grayBackground">@color/grayBackground</item>
+        <item name="boxItemBackground">@color/itemBackground</item>
+        <item name="iconColor">@color/iconColor</item>
+        <item name="white">#FFF</item>
     </style>
 
     <style name="AppSearchViewStyle"

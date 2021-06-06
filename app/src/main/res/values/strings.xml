@@ -15,4 +15,7 @@
     <string name="go_back">Go back</string>
     <string name="next_episode">Next episode</string>
     <string name="player_skip_button_text">10</string>
+    <string name="result_poster">Poster</string>
+    <string name="result_plot">Plot</string>
+    <string name="result_tags">Genres</string>
 </resources>

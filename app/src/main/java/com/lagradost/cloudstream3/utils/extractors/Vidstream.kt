@@ -17,17 +17,18 @@ class Vidstream {
     // https://gogo-stream.com/streaming.php?id=MTE3NDg5
     fun getUrl(id: String, isCasting: Boolean = false, callback: (ExtractorLink) -> Unit) : Boolean {
         try {
+            normalApis.pmap { api ->
+                val url = api.getExtractorUrl(id)
+                val source = api.getUrl(url)
+                source?.forEach { callback.invoke(it) }
+            }
+
             val url = getExtractorUrl(id)
             with(khttp.get(url)) {
                 val document = Jsoup.parse(this.text)
                 val primaryLinks = document.select("ul.list-server-items > li.linkserver")
                 val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
 
-                normalApis.pmap { api ->
-                    val url = api.getExtractorUrl(id)
-                    val source = api.getUrl(url)
-                    source?.forEach { callback.invoke(it) }
-                }
 
                 // All vidstream links passed to extractors
                 primaryLinks.forEach { element ->

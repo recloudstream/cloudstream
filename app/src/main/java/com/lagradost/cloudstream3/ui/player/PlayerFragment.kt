@@ -12,6 +12,7 @@ import android.graphics.Color
 import android.media.AudioManager
 import android.net.Uri
 import android.os.*
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -20,7 +21,7 @@ import android.view.ViewGroup
 import android.view.animation.*
 import android.widget.ProgressBar
 import android.widget.Toast
-import android.widget.Toast.LENGTH_LONG
+import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -33,6 +34,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C.TIME_UNSET
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
@@ -43,7 +45,12 @@ import com.google.android.exoplayer2.util.MimeTypes
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.getFocusRequest
+import com.lagradost.cloudstream3.UIHelper.getNavigationBarHeight
+import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
+import com.lagradost.cloudstream3.UIHelper.hideSystemUI
+import com.lagradost.cloudstream3.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.UIHelper.requestLocalAudioFocus
+import com.lagradost.cloudstream3.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.UIHelper.toPx
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observeDirectly
@@ -64,6 +71,7 @@ import javax.net.ssl.SSLSession
 import kotlin.concurrent.thread
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.properties.Delegates
 
 
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
@@ -123,11 +131,13 @@ class PlayerFragment : Fragment() {
     //private var currentPercentage = 0
     // private var hasNextEpisode = true
 
-    val formatBuilder = StringBuilder()
-    val formatter = Formatter(formatBuilder, Locale.getDefault())
+    // val formatBuilder = StringBuilder()
+    //  val formatter = Formatter(formatBuilder, Locale.getDefault())
 
     private var width = Resources.getSystem().displayMetrics.heightPixels
     private var height = Resources.getSystem().displayMetrics.widthPixels
+    private var statusBarHeight by Delegates.notNull<Int>()
+    private var navigationBarHeight by Delegates.notNull<Int>()
 
     private var isLocked = false
 
@@ -271,27 +281,38 @@ class PlayerFragment : Fragment() {
     private val swipeVerticalEnabled = true//settingsManager.getBoolean("swipe_vertical_enabled", true)
     private val playBackSpeedEnabled = true//settingsManager!!.getBoolean("playback_speed_enabled", false)
     private val playerResizeEnabled = true//settingsManager!!.getBoolean("player_resize_enabled", false)
+    private val swipeEdgeSize = 10.toPx
 
     private var isMovingStartTime = 0L
     private var currentX = 0F
     private var currentY = 0F
     private var cachedVolume = 0f
+    private var isValidTouch = false
 
     fun handleMotionEvent(motionEvent: MotionEvent) {
         // TIME_UNSET   ==   -9223372036854775807L
         // No swiping on unloaded
         // https://exoplayer.dev/doc/reference/constant-values.html
-        if (isLocked || exoPlayer.duration == -9223372036854775807L || (!swipeEnabled && !swipeVerticalEnabled)) return
+        if (isLocked || exoPlayer.duration == TIME_UNSET || (!swipeEnabled && !swipeVerticalEnabled)) return
+
+
         val audioManager = activity?.getSystemService(AUDIO_SERVICE) as? AudioManager
 
         when (motionEvent.action) {
             MotionEvent.ACTION_DOWN -> {
-                currentX = motionEvent.rawX
-                currentY = motionEvent.rawY
-                //println("DOWN: " + currentX)
-                isMovingStartTime = exoPlayer.currentPosition
+                // SO YOU CAN PULL DOWN STATUSBAR OR NAVBAR
+                if (motionEvent.rawY > statusBarHeight && motionEvent.rawX < width - navigationBarHeight) {
+                    currentX = motionEvent.rawX
+                    currentY = motionEvent.rawY
+                    isValidTouch = true
+                    //println("DOWN: " + currentX)
+                    isMovingStartTime = exoPlayer.currentPosition
+                } else {
+                    isValidTouch = false
+                }
             }
             MotionEvent.ACTION_MOVE -> {
+                if (!isValidTouch) return
                 if (swipeVerticalEnabled) {
                     val distanceMultiplierY = 2F
                     val distanceY = (motionEvent.rawY - currentY) * distanceMultiplierY
@@ -382,6 +403,7 @@ class PlayerFragment : Fragment() {
                 }
             }
             MotionEvent.ACTION_UP -> {
+                if (!isValidTouch) return
                 val transition: Transition = Fade()
                 transition.duration = 1000
 
@@ -417,7 +439,9 @@ class PlayerFragment : Fragment() {
     }
 
     fun changeSkip(position: Long? = null) {
-        if (exoPlayer.currentPosition >= 0) {
+        val data = localData
+
+        if (this::exoPlayer.isInitialized && exoPlayer.currentPosition >= 0) {
             val percentage = ((position ?: exoPlayer.currentPosition) * 100 / exoPlayer.contentDuration).toInt()
             val hasNext = hasNextEpisode()
 
@@ -433,13 +457,17 @@ class PlayerFragment : Fragment() {
             }
             val nextEp = percentage >= OPENING_PROCENTAGE
 
-            val data = localData
-
             skip_op_text.text = if (nextEp) "Next Episode" else "Skip OP"
             val isVis =
                 if (nextEp) hasNext //&& !isCurrentlySkippingEp
                 else (data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
             skip_op.visibility = if (isVis) View.VISIBLE else View.GONE
+        } else {
+            if(data is AnimeLoadResponse) {
+                val isVis = ((data.type == TvType.Anime || data.type == TvType.ONA))
+                skip_op_text.text = "Skip OP"
+                skip_op.visibility = if (isVis) View.VISIBLE else View.GONE
+            }
         }
     }
 
@@ -556,6 +584,9 @@ class PlayerFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navigationBarHeight = requireContext().getNavigationBarHeight()
+        statusBarHeight = requireContext().getStatusBarHeight()
 
         if (savedInstanceState != null) {
             currentWindow = savedInstanceState.getInt(STATE_RESUME_WINDOW)
@@ -711,7 +742,7 @@ class PlayerFragment : Fragment() {
 
             override fun onSingleClick() {
                 onClickChange()
-                //  activity?.hideSystemUI()
+                activity?.hideSystemUI()
             }
 
             override fun onMotionEvent(event: MotionEvent) {
@@ -726,6 +757,14 @@ class PlayerFragment : Fragment() {
         click_overlay?.setOnTouchListener(
             Listener()
         )
+
+        video_go_back.setOnClickListener {
+            activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
+        }
+        video_go_back_holder.setOnClickListener {
+            println("video_go_back_pressed")
+            activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
+        }
 
         playback_speed_btt.visibility = if (playBackSpeedEnabled) VISIBLE else GONE
         playback_speed_btt.setOnClickListener {
@@ -799,6 +838,8 @@ class PlayerFragment : Fragment() {
                 skipOP()
             }
         }
+
+        changeSkip()
     }
 
     private fun getCurrentUrl(): ExtractorLink? {
@@ -844,6 +885,24 @@ class PlayerFragment : Fragment() {
 
     private var isCurrentlySkippingEp = false
 
+
+    fun tryNextMirror() {
+        val urls = getUrls()
+        val current = getCurrentUrl()
+        if (urls != null && current != null) {
+            val id = current.getId()
+            val sorted = sortUrls(urls)
+            for ((i, item) in sorted.withIndex()) {
+                if (item.getId() == id) {
+                    if (sorted.size > i + 1) {
+                        setMirrorId(sorted[i + 1].getId())
+                        initPlayer()
+                    }
+                }
+            }
+        }
+    }
+
     private fun skipToNextEpisode() {
         if (isCurrentlySkippingEp) return
         isCurrentlySkippingEp = true
@@ -868,6 +927,7 @@ class PlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        activity?.hideSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         thread {
             initPlayer()
@@ -878,6 +938,8 @@ class PlayerFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         // releasePlayer()
+
+        activity?.showSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
     }
 
@@ -1084,11 +1146,12 @@ class PlayerFragment : Fragment() {
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     //  updatePIPModeActions()
+                    if(activity == null) return
                     if (playWhenReady) {
                         when (playbackState) {
                             Player.STATE_READY -> {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    requireActivity().requestLocalAudioFocus(getFocusRequest())
+                                    activity?.requestLocalAudioFocus(getFocusRequest())
                                 }
                             }
                             Player.STATE_ENDED -> {
@@ -1113,20 +1176,21 @@ class PlayerFragment : Fragment() {
                                 Toast.makeText(
                                     activity,
                                     "Source error\n" + error.sourceException.message,
-                                    LENGTH_LONG
+                                    LENGTH_SHORT
                                 )
                                     .show()
+                                tryNextMirror()
                             }
                         }
                         ExoPlaybackException.TYPE_REMOTE -> {
-                            Toast.makeText(activity, "Remote error", LENGTH_LONG)
+                            Toast.makeText(activity, "Remote error", LENGTH_SHORT)
                                 .show()
                         }
                         ExoPlaybackException.TYPE_RENDERER -> {
                             Toast.makeText(
                                 activity,
                                 "Renderer error\n" + error.rendererException.message,
-                                LENGTH_LONG
+                                LENGTH_SHORT
                             )
                                 .show()
                         }
@@ -1134,7 +1198,7 @@ class PlayerFragment : Fragment() {
                             Toast.makeText(
                                 activity,
                                 "Unexpected player error\n" + error.unexpectedException.message,
-                                LENGTH_LONG
+                                LENGTH_SHORT
                             ).show()
                         }
                     }

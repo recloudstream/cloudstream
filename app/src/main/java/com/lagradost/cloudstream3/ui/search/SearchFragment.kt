@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
+import com.lagradost.cloudstream3.UIHelper.loadResult
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.player.PlayerData
@@ -41,11 +42,7 @@ class SearchFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_search, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        activity?.fixPaddingStatusbar(searchRoot)
-
+    private fun fixGrid() {
         val compactView = activity?.getGridIsCompact() ?: false
         val spanCountLandscape = if (compactView) 2 else 6
         val spanCountPortrait = if (compactView) 1 else 3
@@ -56,6 +53,18 @@ class SearchFragment : Fragment() {
         } else {
             cardSpace.spanCount = spanCountPortrait
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        fixGrid()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        activity?.fixPaddingStatusbar(searchRoot)
+        fixGrid()
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let {
             SearchAdapter(
@@ -129,7 +138,7 @@ class SearchFragment : Fragment() {
             search_exit_icon.alpha = 1f
             search_loading_bar.alpha = 0f
         }
-
+        (activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*
         (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
             .setCustomAnimations(R.anim.enter_anim,

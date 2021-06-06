@@ -20,7 +20,7 @@
             android:elevation="0dp"
 
             app:cardCornerRadius="@dimen/roundedImageRadius"
-            app:cardBackgroundColor="@color/itemBackground"
+            app:cardBackgroundColor="?attr/boxItemBackground"
             android:clickable="true"
             android:focusable="true"
     >
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="17sp"
-                    android:textColor="@color/textColor"
+                    android:textColor="?attr/textColor"
                     android:id="@+id/imageText"
                     android:textStyle="bold"
                     android:maxLines="3"
@@ -59,7 +59,7 @@
                     tools:text="@string/no_data"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/lightGrayTextColor"
+                    android:textColor="?attr/grayTextColor"
                     android:id="@+id/imageTextExtra"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -70,7 +70,7 @@
                     android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?attr/colorPrimary"
                     android:id="@+id/imageTextProvider"
                     android:maxLines="1"
             />

@@ -24,21 +24,18 @@ import kotlinx.android.synthetic.main.search_result_grid.view.*
 import kotlin.math.roundToInt
 
 class SearchAdapter(
-    activity: Activity,
-    animeList: ArrayList<Any>,
-    resView: AutofitRecyclerView,
+    private var activity: Activity,
+    var cardList: ArrayList<Any>,
+    private val resView: AutofitRecyclerView,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var cardList = animeList
-    private var activity: Activity = activity
-    var resView: AutofitRecyclerView? = resView
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layout = activity.getGridFormatId()
         return CardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
             activity,
-            resView!!
+            resView
         )
     }
 

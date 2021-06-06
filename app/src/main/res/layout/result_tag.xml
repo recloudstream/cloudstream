@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:paddingLeft="2dp" android:paddingRight="2dp"
+        android:paddingTop="-10dp"
+        android:layout_marginTop="-4dp"
+        android:layout_marginBottom="-4dp"
+>
+    <!--app:strokeColor="@color/colorAccent"-->
+
+    <com.google.android.material.button.MaterialButton
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:layout_height="40dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            app:cornerRadius="100dp"
+            tools:text="Test"
+            android:textColor="?attr/textColor"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:id="@+id/result_tag_card">
+
+    </com.google.android.material.button.MaterialButton>
+</FrameLayout>

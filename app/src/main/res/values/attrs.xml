@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FlowLayout_Layout"/>
+    <declare-styleable name="FlowLayout_Layout_layout_space"/>
+    <declare-styleable name="MainColors">
+        <attr name="colorPrimary" format="color"/>
+        <attr name="colorSearch" format="color"/>
+        <attr name="colorOngoing" format="color"/>
+        <attr name="colorPrimaryDark" format="color"/>
+        <attr name="colorItemSeen" format="color"/>
+
+        <attr name="darkBackground" format="color"/>
+        <attr name="bitDarkerGrayBackground" format="color"/>
+        <attr name="grayBackground" format="color"/>
+        <attr name="boxItemBackground" format="color"/>
+
+        <attr name="textColor" format="color"/>
+        <attr name="grayTextColor" format="color"/>
+        <attr name="iconColor" format="color"/>
+        <attr name="white" format="color"/>
+    </declare-styleable>
+</resources>

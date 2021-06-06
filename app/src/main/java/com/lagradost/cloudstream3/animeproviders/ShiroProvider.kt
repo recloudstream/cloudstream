@@ -24,12 +24,12 @@ class ShiroProvider : MainAPI() {
         }
     }
 
-    fun autoLoadToken(): Boolean {
+    private fun autoLoadToken(): Boolean {
         if (token != null) return true
         return loadToken()
     }
 
-    fun loadToken(): Boolean {
+    private fun loadToken(): Boolean {
         return try {
             val response = khttp.get(mainUrl, headers = baseHeader)
 
@@ -188,7 +188,7 @@ class ShiroProvider : MainAPI() {
         return AnimeLoadResponse(
             data.english,
             data.japanese,
-            data.canonicalTitle ?: data.name.replace("Dubbed", ""),
+            data.name.replace("Dubbed", ""),//data.canonicalTitle ?: data.name.replace("Dubbed", ""),
             "$mainUrl/${slug}",
             this.name,
             getType(data.type ?: ""),

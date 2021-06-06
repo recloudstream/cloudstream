@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.mvvm.safeApiCall
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
-    val api: MainAPI = apis[0]
+    val api: MainAPI = apis[0] //TODO MULTI API
 
     private val _searchResponse: MutableLiveData<Resource<ArrayList<Any>>> = MutableLiveData()
     val searchResponse: LiveData<Resource<ArrayList<Any>>> get() = _searchResponse

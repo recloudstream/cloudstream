@@ -10,6 +10,7 @@
         android:focusable="true"
 >
     <com.google.android.material.appbar.AppBarLayout
+            android:visibility="gone"
             android:id="@+id/result_barstatus"
             android:background="@color/grayBackground"
             android:layout_width="match_parent"
@@ -25,49 +26,84 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout android:layout_width="match_parent" android:layout_height="200dp">
+    <FrameLayout android:layout_width="match_parent" android:id="@+id/result_poster_blur_holder"
+                 android:layout_height="200dp">
         <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:alpha="0.3"
+                android:alpha="0.7"
                 tools:src="@drawable/example_poster"
                 android:background="@color/darkBackground"
                 android:id="@+id/result_poster_blur"
                 android:contentDescription=""/>
         <ImageView android:src="@drawable/background_shadow" android:layout_gravity="bottom"
-                   android:layout_width="match_parent" android:layout_height="100dp">
+                   android:layout_width="match_parent" android:layout_height="30dp">
 
         </ImageView>
     </FrameLayout>
-    <androidx.core.widget.NestedScrollView android:id="@+id/result_scroll" android:layout_width="match_parent" android:layout_height="wrap_content">
-
+    <androidx.core.widget.NestedScrollView
+            android:id="@+id/result_scroll" android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_marginTop="100dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            <GridLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <LinearLayout android:gravity="center_vertical" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <!--
+                        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
+                                      android:layout_height="30dp">
+                            <ImageView android:id="@+id/result_back" android:src="@drawable/ic_baseline_arrow_back_24"
+                                       android:layout_width="wrap_content" android:layout_height="match_parent">
+
+                            </ImageView>
+                        </LinearLayout>-->
+            <LinearLayout
+                    android:layout_marginTop="10dp"
+
+                    android:orientation="horizontal" android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <ImageView
+                        android:id="@+id/result_poster"
+                        android:layout_width="100dp" android:layout_height="150dp"
+                        tools:src="@drawable/example_poster"
+                        android:contentDescription="@string/result_poster"/>
+
+                <LinearLayout android:layout_marginLeft="10dp"
+                              android:gravity="center_vertical"
+                              android:orientation="vertical"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content">
                     <TextView
-                            tools:text="The Perfect Run"
+                            tools:text="The Perfect Run The Perfect Run The Perfect Run"
                             android:id="@+id/result_title"
-                            android:textSize="15sp"
+                            android:textSize="20sp"
                             android:textStyle="bold"
-                            android:textColor="@color/textColor" android:layout_width="wrap_content"
+                            android:textColor="?attr/textColor" android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
                     </TextView>
                     <TextView
                             android:id="@+id/result_year"
                             tools:text="2021"
+                            android:textStyle="bold"
                             android:textSize="15sp"
-                            android:textColor="@color/textColor" android:layout_width="wrap_content"
+                            android:textColor="?attr/textColor" android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
                     </TextView>
+                    <TextView
+                            android:id="@+id/result_status"
+                            tools:text="Finished"
+                            android:textSize="15sp"
+                            android:textColor="?attr/textColor" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                    </TextView>
+
+
                 </LinearLayout>
+
                 <com.google.android.material.button.MaterialButton
+                        android:visibility="gone"
                         android:layout_gravity="end"
                         app:cornerRadius="1000dp"
                         android:id="@+id/result_bookmark_button"
@@ -81,33 +117,60 @@
                         android:layout_width="wrap_content"
                         android:layout_height="45dp">
                 </com.google.android.material.button.MaterialButton>
-            </GridLayout>
+            </LinearLayout>
 
+            <androidx.mediarouter.app.MediaRouteButton
+                    android:id="@+id/media_route_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:mediaRouteTypes="user"
+                    android:visibility="gone"
+            />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/result_plot"
+                    android:textSize="17sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="normal"
+                    android:textColor="?attr/textColor"
+            />
 
             <TextView
-                    android:id="@+id/result_tags"
-                    android:layout_marginTop="10dp"
-                    tools:text="Adventure | Fantasy World | Comedy | Ecchi | Action | Science Fiction | Fantasy"
-                    android:gravity="center"
-                    android:layout_width="match_parent" android:layout_height="wrap_content">
-            </TextView>
-
-            <TextView
-                    android:layout_marginTop="10dp"
                     android:id="@+id/result_descript"
                     tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. "
                     android:layout_width="match_parent" android:layout_height="wrap_content">
-
             </TextView>
             <TextView
-                    android:textColor="@color/textColor"
+                    android:id="@+id/result_tag_holder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/result_tags"
+                    android:textSize="17sp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="normal"
+                    android:textColor="?attr/textColor"
+            />
+            <com.lagradost.cloudstream3.widget.FlowLayout android:id="@+id/result_tag"
+                                                          android:layout_width="match_parent"
+                                                          android:layout_height="wrap_content">
+
+            </com.lagradost.cloudstream3.widget.FlowLayout>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:id="@+id/result_episodes_text"
                     tools:text="8 Episodes"
-                    android:gravity="start"
-                    android:layout_width="match_parent" android:layout_height="wrap_content">
-            </TextView>
+                    android:textSize="17sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="normal"
+                    android:textColor="?attr/textColor"
+            />
             <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="10dp"
                     tools:listitem="@layout/result_episode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

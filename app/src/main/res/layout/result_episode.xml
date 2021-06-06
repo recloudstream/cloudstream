@@ -6,8 +6,11 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         app:cardCornerRadius="@dimen/roundedImageRadius"
-        app:cardBackgroundColor="@color/itemBackground"
-        android:layout_marginBottom="2dp"
+        app:cardBackgroundColor="@color/transparent"
+        app:cardElevation="0dp"
+        android:id="@+id/episode_holder"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_marginBottom="5dp"
 >
     <!-- IDK BUT THIS DOES NOT SEAM LIKE A GOOD WAY OF DOING IT -->
     <LinearLayout
@@ -38,7 +41,6 @@
                 android:layout_marginEnd="10dp"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/episode_play"
-                android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_baseline_play_arrow_24"
                 android:contentDescription="@string/episode_play_descript"/>
         <TextView
@@ -50,6 +52,7 @@
                 android:layout_height="match_parent">
         </TextView>
         <ImageView
+                android:visibility="gone"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
                 android:id="@+id/episode_extra"

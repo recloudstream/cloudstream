@@ -1,35 +1,33 @@
 package com.lagradost.cloudstream3.ui.result
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.ComponentName
-import android.content.Intent
-import android.content.Intent.*
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.mediarouter.app.MediaRouteButton
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
-import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.UIHelper.checkWrite
+import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastState
+import com.google.android.material.button.MaterialButton
+import com.lagradost.cloudstream3.AnimeLoadResponse
+import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.UIHelper.loadResult
-import com.lagradost.cloudstream3.UIHelper.requestRW
+import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.player.PlayerData
@@ -37,10 +35,8 @@ import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
-import java.io.File
 
-
-const val MAX_SYNO_LENGH = 600
+const val MAX_SYNO_LENGH = 300
 
 data class ResultEpisode(
     val name: String?,
@@ -89,17 +85,34 @@ class ResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         activity?.fixPaddingStatusbar(result_scroll)
         activity?.fixPaddingStatusbar(result_barstatus)
+
+        if (activity?.isCastApiAvailable() == true) {
+            val mMediaRouteButton = view.findViewById<MediaRouteButton>(R.id.media_route_button)
+
+            CastButtonFactory.setUpMediaRouteButton(activity, media_route_button)
+            val castContext = CastContext.getSharedInstance(requireActivity().applicationContext)
+
+            if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = VISIBLE
+            castContext.addCastStateListener { state ->
+                if (media_route_button != null) {
+                    if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = GONE else {
+                        if (media_route_button.visibility == GONE) media_route_button.visibility = VISIBLE
+                    }
+                }
+            }
+        }
         // activity?.fixPaddingStatusbar(result_toolbar)
 
         val url = arguments?.getString("url")
         val slug = arguments?.getString("slug")
         val apiName = arguments?.getString("apiName")
 
-        result_scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+        result_scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
             if (result_poster_blur == null) return@OnScrollChangeListener
-            result_poster_blur.alpha = maxOf(0f, (0.3f - scrollY / 1000f))
-            result_barstatus.alpha = scrollY / 200f
-            result_barstatus.visibility = if (scrollY > 0) View.VISIBLE else View.GONE
+            result_poster_blur.alpha = maxOf(0f, (0.7f - scrollY / 1000f))
+            result_poster_blur_holder.translationY = -scrollY.toFloat()
+            //result_barstatus.alpha = scrollY / 200f
+            //result_barstatus.visibility = if (scrollY > 0) View.VISIBLE else View.GONE§
         })
 
         result_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
@@ -159,6 +172,7 @@ class ResultFragment : Fragment() {
 
         observe(viewModel.episodes) { episodes ->
             if (result_episodes == null || result_episodes.adapter == null) return@observe
+            result_episodes_text.text = "${episodes.size} Episode${if (episodes.size == 1) "" else "s"}"
             (result_episodes.adapter as EpisodeAdapter).cardList = episodes
             (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
         }
@@ -180,15 +194,15 @@ class ResultFragment : Fragment() {
                         if (d.posterUrl != null) {
                             val glideUrl =
                                 GlideUrl(d.posterUrl)
-                            context!!.let {
-                                /*
-                            Glide.with(it)
-                                .load(glideUrl)
-                                .into(result_poster)*/
+                            requireContext().let {
 
                                 Glide.with(it)
                                     .load(glideUrl)
-                                    .apply(bitmapTransform(BlurTransformation(10, 3)))
+                                    .into(result_poster)
+
+                                Glide.with(it)
+                                    .load(glideUrl)
+                                    .apply(bitmapTransform(BlurTransformation(80, 3)))
                                     .into(result_poster_blur)
                             }
                         }
@@ -265,14 +279,38 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                             result_descript.text = "No Plot found"
                         }
 
+                        result_tag.removeAllViews()
+                        result_tag_holder.visibility = View.GONE
+                        result_status.visibility = View.GONE
+
                         when (d) {
                             is AnimeLoadResponse -> {
-                                val preferEnglish = true
-                                val titleName = (if (preferEnglish) d.engName else d.japName) ?: d.name
+                                result_status.visibility = View.VISIBLE
+                                result_status.text = when (d.showStatus) {
+                                    null -> ""
+                                    ShowStatus.Ongoing -> "Ongoing"
+                                    ShowStatus.Completed -> "Completed"
+                                }
+
+                                // val preferEnglish = true
+                                //val titleName = (if (preferEnglish) d.engName else d.japName) ?: d.name
+                                val titleName = d.name
                                 result_title.text = titleName
                                 result_toolbar.title = titleName
 
-                                result_tags.text = (d.tags ?: ArrayList()).joinToString(separator = " | ")
+                                if (d.tags == null) {
+                                    result_tag_holder.visibility = View.GONE
+                                } else {
+                                    result_tag_holder.visibility = View.VISIBLE
+
+                                    for ((index, tag) in d.tags.withIndex()) {
+                                        val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
+                                        val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
+                                        btt.text = tag
+
+                                        result_tag.addView(viewBtt, index)
+                                    }
+                                }
                             }
                             else -> result_title.text = d.name
                         }
