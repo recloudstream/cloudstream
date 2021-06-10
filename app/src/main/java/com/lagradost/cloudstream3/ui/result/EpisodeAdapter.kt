@@ -8,19 +8,23 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastState
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import kotlinx.android.synthetic.main.result_episode.view.*
 
-const val ACTION_PLAY_EPISODE = 1
-const val ACTION_RELOAD_EPISODE = 2
+const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
+const val ACTION_RELOAD_EPISODE = 4
+const val ACTION_CHROME_CAST_EPISODE = 2
 
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
     private var activity: Activity,
     var cardList: ArrayList<ResultEpisode>,
-    val resView: RecyclerView,
-    val clickCallback: (EpisodeClickEvent) -> Unit,
+    private val resView: RecyclerView,
+    private val clickCallback: (EpisodeClickEvent) -> Unit,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -70,11 +74,23 @@ class EpisodeAdapter(
                 )
                 v.layoutParams = param
             }
-            setWidth(episodeViewPrecentage, card.watchProgress)
-            setWidth(episodeViewPercentageOff, 1 - card.watchProgress)
+
+            val watchProgress = card.getWatchProgress()
+            setWidth(episodeViewPrecentage, watchProgress)
+            setWidth(episodeViewPercentageOff, 1 - watchProgress)
 
             episodeHolder.setOnClickListener {
-                clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE, card))
+                if (activity.isCastApiAvailable()) {
+                    val castContext = CastContext.getSharedInstance(activity)
+                    println("SSTATE: " + castContext.castState + "<<")
+                    if (castContext.castState == CastState.CONNECTED) {
+                        clickCallback.invoke(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
+                    } else {
+                        clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                    }
+                } else {
+                    clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                }
             }
         }
     }

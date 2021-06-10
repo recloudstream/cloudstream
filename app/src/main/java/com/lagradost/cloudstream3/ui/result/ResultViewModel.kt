@@ -41,13 +41,15 @@ class ResultViewModel : ViewModel() {
                                 for ((index, i) in dataList.withIndex()) {
                                     episodes.add(ResultEpisode(
                                         null, // TODO ADD NAMES
+                                        null,
                                         index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
                                         null, // TODO FIX SEASON
                                         i,
                                         apiName,
                                         (d.url + index).hashCode(),
                                         index,
-                                        0f,//(index * 0.1f),//TODO TEST; REMOVE
+                                        0,//(index * 0.1f),//TODO TEST; REMOVE
+                                        0,
                                     ))
                                 }
                                 _episodes.postValue(episodes)
@@ -59,25 +61,28 @@ class ResultViewModel : ViewModel() {
                             for ((index, i) in d.episodes.withIndex()) {
                                 episodes.add(ResultEpisode(
                                     null, // TODO ADD NAMES
+                                    null,
                                     index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
                                     null, // TODO FIX SEASON
                                     i,
                                     apiName,
                                     (d.url + index).hashCode(),
                                     index,
-                                    0f,//(index * 0.1f),//TODO TEST; REMOVE
+                                    0,//(index * 0.1f),//TODO TEST; REMOVE
+                                    0,
                                 ))
                             }
                             _episodes.postValue(episodes)
                         }
                         is MovieLoadResponse -> {
                             _episodes.postValue(arrayListOf(ResultEpisode(null,
+                                null,
                                 0, null,
                                 d.movieUrl,
                                 d.apiName,
                                 (d.url).hashCode(),
                                 0,
-                                0f)))
+                                0, 0)))
                         }
                     }
                 }
@@ -95,17 +100,26 @@ class ResultViewModel : ViewModel() {
 
     private var _apiName: MutableLiveData<String> = MutableLiveData()
 
-    fun loadEpisode(episode: ResultEpisode, isCasting : Boolean, callback: (Resource<Boolean>) -> Unit) {
+    fun loadEpisode(
+        episode: ResultEpisode,
+        isCasting: Boolean,
+        callback: (Resource<ArrayList<ExtractorLink>>) -> Unit,
+    ) {
         loadEpisode(episode.id, episode.data, isCasting, callback)
     }
 
-    fun loadEpisode(id: Int, data: Any, isCasting : Boolean, callback: (Resource<Boolean>) -> Unit) =
+    private fun loadEpisode(
+        id: Int,
+        data: Any,
+        isCasting: Boolean,
+        callback: (Resource<ArrayList<ExtractorLink>>) -> Unit,
+    ) =
         viewModelScope.launch {
             if (_allEpisodes.value?.contains(id) == true) {
                 _allEpisodes.value?.remove(id)
             }
             val links = ArrayList<ExtractorLink>()
-            val data = safeApiCall {
+            val localData = safeApiCall {
                 getApiFromName(_apiName.value).loadLinks(data, isCasting) { //TODO IMPLEMENT CASTING
                     for (i in links) {
                         if (i.url == it.url) return@loadLinks
@@ -116,8 +130,9 @@ class ResultViewModel : ViewModel() {
 
                     // _allEpisodes.value?.get(episode.id)?.add(it)
                 }
+                links
             }
-            callback.invoke(data)
+            callback.invoke(localData)
         }
 
     fun loadIndex(index: Int): ResultEpisode? {

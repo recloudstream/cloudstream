@@ -27,7 +27,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout android:layout_width="match_parent" android:id="@+id/result_poster_blur_holder"
-                 android:layout_height="200dp">
+                 android:layout_height="180dp">
         <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -149,14 +149,14 @@
                             android:id="@+id/result_share"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
-                            android:layout_margin="5dp"
+                            android:layout_marginRight="10dp"
                             android:elevation="10dp"
                             android:background="?android:attr/selectableItemBackgroundBorderless"
                             android:src="@drawable/ic_outline_share_24"
                             android:layout_gravity="center" android:contentDescription="@string/result_share">
                     </ImageView>
                     <ImageView
-                            android:id="@+id/result_browser"
+                            android:id="@+id/result_openinbrower"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
                             android:layout_margin="5dp"

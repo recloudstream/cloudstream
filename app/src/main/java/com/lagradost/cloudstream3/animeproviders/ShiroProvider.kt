@@ -189,7 +189,7 @@ class ShiroProvider : MainAPI() {
             data.english,
             data.japanese,
             data.name.replace("Dubbed", ""),//data.canonicalTitle ?: data.name.replace("Dubbed", ""),
-            "$mainUrl/${slug}",
+            "$mainUrl/anime/${slug}",
             this.name,
             getType(data.type ?: ""),
             "https://cdn.shiro.is/${data.image}",

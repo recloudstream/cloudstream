@@ -1,12 +1,16 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
@@ -18,9 +22,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
+import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.util.MimeTypes
+import com.google.android.gms.cast.MediaInfo
+import com.google.android.gms.cast.MediaMetadata
+import com.google.android.gms.cast.MediaQueueItem
+import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_SINGLE
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
+import com.google.android.gms.common.images.WebImage
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.AnimeLoadResponse
 import com.lagradost.cloudstream3.LoadResponse
@@ -35,19 +46,26 @@ import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
+import org.json.JSONObject
 
 const val MAX_SYNO_LENGH = 300
 
 data class ResultEpisode(
     val name: String?,
+    val poster: String?,
     val episode: Int,
     val season: Int?,
     val data: Any,
     val apiName: String,
     val id: Int,
     val index: Int,
-    val watchProgress: Float, // 0-1
+    val progress: Long, // time in MS
+    val duration: Long, // duration in MS
 )
+
+fun ResultEpisode.getWatchProgress(): Float {
+    return progress.toFloat() / duration
+}
 
 class ResultFragment : Fragment() {
     companion object {
@@ -79,6 +97,8 @@ class ResultFragment : Fragment() {
         //requireActivity().viewModelStore.clear() // REMEMBER THE CLEAR
         super.onDestroy()
     }
+
+    var currentPoster: String? = null
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -120,7 +140,6 @@ class ResultFragment : Fragment() {
             activity?.onBackPressed()
         }
 
-
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let { it ->
             EpisodeAdapter(
                 it,
@@ -130,35 +149,82 @@ class ResultFragment : Fragment() {
                 val id = episodeClick.data.id
                 val index = episodeClick.data.index
                 val buildInPlayer = true
-                if (buildInPlayer) {
-                    (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
-                        .setCustomAnimations(R.anim.enter_anim,
-                            R.anim.exit_anim,
-                            R.anim.pop_enter,
-                            R.anim.pop_exit)
-                        .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(index, null, 0)))
-                        .commit()
-                } else {
-                    when (episodeClick.action) {
+                when (episodeClick.action) {
+                    ACTION_CHROME_CAST_EPISODE -> {
+                        Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
 
-                        /*
-                        ACTION_PLAY_EPISODE -> {
-                            if (allEpisodes.containsKey(id)) {
-                                playEpisode(allEpisodes[id], index)
-                            } else {
-                                viewModel.loadEpisode(episodeClick.data) { res ->
-                                    if (res is Resource.Success) {
-                                        playEpisode(allEpisodes[id], index)
-                                    }
+                        viewModel.loadEpisode(episodeClick.data, true) { data ->
+                            when (data) {
+                                is Resource.Failure -> {
+                                    Toast.makeText(activity, "Failed to load links", Toast.LENGTH_SHORT).show()
+                                }
+                                is Resource.Success -> {
+                                    val epData = episodeClick.data
+                                    val links = data.value
+
+                                    val castContext = CastContext.getSharedInstance(requireContext())
+
+                                    val mediaItems = links.map {
+                                        val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
+                                        movieMetadata.putString(
+                                            MediaMetadata.KEY_TITLE,
+
+                                            "Episode ${epData.episode}" +
+                                                    if (epData.name != null)
+                                                        "- ${epData.name}"
+                                                    else
+                                                        ""
+                                        )
+                                        movieMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
+                                            epData.name ?: "Episode ${epData.episode}")
+
+                                        val srcPoster = epData.poster ?: currentPoster
+                                        if (srcPoster != null) {
+                                            movieMetadata.addImage(WebImage(Uri.parse(srcPoster)))
+                                        }
+
+                                        MediaQueueItem.Builder(
+                                            MediaInfo.Builder(it.url)
+                                                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                                                .setContentType(MimeTypes.VIDEO_UNKNOWN)
+                                                .setCustomData(JSONObject().put("data", it.name))
+                                                .setMetadata(movieMetadata)
+                                                .build()
+                                        )
+                                            .build()
+                                    }.toTypedArray()
+
+                                    val castPlayer = CastPlayer(castContext)
+                                    castPlayer.loadItems(
+                                        mediaItems,
+                                        0,
+                                        epData.progress,
+                                        REPEAT_MODE_REPEAT_SINGLE
+                                    )
                                 }
                             }
                         }
-                        ACTION_RELOAD_EPISODE -> viewModel.loadEpisode(episodeClick.data) { res ->
+                    }
+
+                    ACTION_PLAY_EPISODE_IN_PLAYER -> {
+                        if (buildInPlayer) {
+                            (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.enter_anim,
+                                    R.anim.exit_anim,
+                                    R.anim.pop_enter,
+                                    R.anim.pop_exit)
+                                .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(index, null, 0)))
+                                .commit()
+                        }
+                    }
+                    ACTION_RELOAD_EPISODE -> {
+                        /*viewModel.load(episodeClick.data) { res ->
                             if (res is Resource.Success) {
                                 playEpisode(allEpisodes[id], index)
                             }
                         }*/
                     }
+
                 }
             }
         }
@@ -183,6 +249,22 @@ class ResultFragment : Fragment() {
                     val d = data.value
                     if (d is LoadResponse) {
                         result_bookmark_button.text = "Watching"
+
+                        currentPoster = d.posterUrl
+
+                        result_openinbrower.setOnClickListener {
+                            val i = Intent(Intent.ACTION_VIEW)
+                            i.data = Uri.parse(d.url)
+                            startActivity(i)
+                        }
+
+                        result_share.setOnClickListener {
+                            val i = Intent(Intent.ACTION_SEND)
+                            i.type = "text/plain"
+                            i.putExtra(Intent.EXTRA_SUBJECT, d.name)
+                            i.putExtra(Intent.EXTRA_TEXT, d.url)
+                            startActivity(Intent.createChooser(i, d.name))
+                        }
 
                         if (d.year != null) {
                             result_year.visibility = View.VISIBLE
