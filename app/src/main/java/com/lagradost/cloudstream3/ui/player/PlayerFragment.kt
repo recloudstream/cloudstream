@@ -3,22 +3,28 @@ package com.lagradost.cloudstream3.ui.player
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.PendingIntent
+import android.app.PictureInPictureParams
+import android.app.RemoteAction
+import android.content.*
 import android.content.Context.AUDIO_SERVICE
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.database.ContentObserver
 import android.graphics.Color
+import android.graphics.drawable.Icon
 import android.media.AudioManager
 import android.net.Uri
 import android.os.*
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.view.animation.*
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -26,7 +32,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.mediarouter.app.MediaRouteButton
 import androidx.preference.PreferenceManager
 import androidx.transition.Fade
 import androidx.transition.Transition
@@ -44,6 +49,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.MimeTypes
+import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.MediaQueueItem
@@ -53,10 +59,13 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.images.WebImage
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.MainActivity.Companion.isInPIPMode
+import com.lagradost.cloudstream3.MainActivity.Companion.isInPlayer
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.getFocusRequest
 import com.lagradost.cloudstream3.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
+import com.lagradost.cloudstream3.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.UIHelper.popCurrentPage
@@ -72,12 +81,10 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.fragment_player.*
-import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.File
-import java.util.*
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -129,12 +136,12 @@ data class PlayerData(
 )
 
 class PlayerFragment : Fragment() {
+    private var isCurrentlyPlaying: Boolean = false
     private val mapper = JsonMapper.builder().addModule(KotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
     private var isFullscreen = false
     private var isPlayerPlaying = true
-    private var doubleTapEnabled = false
     private lateinit var viewModel: ResultViewModel
     private lateinit var playerData: PlayerData
     private var isLoading = true
@@ -281,20 +288,21 @@ class PlayerFragment : Fragment() {
         )
     }
 
-    fun skipOP() {
+    private fun skipOP() {
         seekTime(85000L)
     }
+
+    private var swipeEnabled = true //<settingsManager!!.getBoolean("swipe_enabled", true)
+    private var swipeVerticalEnabled = true//settingsManager.getBoolean("swipe_vertical_enabled", true)
+    private var playBackSpeedEnabled = true//settingsManager!!.getBoolean("playback_speed_enabled", false)
+    private var playerResizeEnabled = true//settingsManager!!.getBoolean("player_resize_enabled", false)
+    private var doubleTapEnabled = false
 
     private var skipTime = 0L
     private var prevDiffX = 0.0
     private var preventHorizontalSwipe = false
     private var hasPassedVerticalSwipeThreshold = false
     private var hasPassedSkipLimit = false
-    private val swipeEnabled = true //<settingsManager!!.getBoolean("swipe_enabled", true)
-    private val swipeVerticalEnabled = true//settingsManager.getBoolean("swipe_vertical_enabled", true)
-    private val playBackSpeedEnabled = true//settingsManager!!.getBoolean("playback_speed_enabled", false)
-    private val playerResizeEnabled = true//settingsManager!!.getBoolean("player_resize_enabled", false)
-    private val swipeEdgeSize = 10.toPx
 
     private var isMovingStartTime = 0L
     private var currentX = 0F
@@ -499,6 +507,7 @@ class PlayerFragment : Fragment() {
     private var hasUsedFirstRender = false
 
     private fun releasePlayer() {
+        isCurrentlyPlaying = false
         val alphaAnimation = AlphaAnimation(0f, 1f)
         alphaAnimation.duration = 100
         alphaAnimation.fillAfter = true
@@ -563,7 +572,7 @@ class PlayerFragment : Fragment() {
         video_locked_img.setColorFilter(color)
 
         val isClick = !isLocked
-        println("UPDATED LOCK $isClick")
+
         exo_play.isClickable = isClick
         exo_pause.isClickable = isClick
         exo_ffwd.isClickable = isClick
@@ -597,9 +606,108 @@ class PlayerFragment : Fragment() {
     private var episodes: ArrayList<ResultEpisode> = ArrayList()
     var currentPoster: String? = null
 
+    //region PIP MODE
+    private fun getPen(code: PlayerEventType): PendingIntent {
+        return getPen(code.value)
+    }
+
+    private fun getPen(code: Int): PendingIntent {
+        return PendingIntent.getBroadcast(
+            activity,
+            code,
+            Intent("media_control").putExtra("control_type", code),
+            0
+        )
+    }
+
+    @SuppressLint("NewApi")
+    private fun getRemoteAction(id: Int, title: String, event: PlayerEventType): RemoteAction {
+        return RemoteAction(
+            Icon.createWithResource(activity, id),
+            title,
+            title,
+            getPen(event)
+        )
+    }
+
+    @SuppressLint("NewApi")
+    private fun updatePIPModeActions() {
+        if (!isInPIPMode || !this::exoPlayer.isInitialized) return
+
+        val actions: ArrayList<RemoteAction> = ArrayList()
+
+        actions.add(getRemoteAction(R.drawable.go_back_30, "Go Back", PlayerEventType.SeekBack))
+
+        if (exoPlayer.isPlaying) {
+            actions.add(getRemoteAction(R.drawable.netflix_pause, "Pause", PlayerEventType.Pause))
+        } else {
+            actions.add(getRemoteAction(R.drawable.ic_baseline_play_arrow_24, "Play", PlayerEventType.Play))
+        }
+
+        actions.add(getRemoteAction(R.drawable.go_forward_30, "Go Forward", PlayerEventType.SeekForward))
+        activity?.setPictureInPictureParams(PictureInPictureParams.Builder().setActions(actions).build())
+    }
+
+    private var receiver: BroadcastReceiver? = null
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        isInPIPMode = isInPictureInPictureMode
+        if (isInPictureInPictureMode) {
+            // Hide the full-screen UI (controls, etc.) while in picture-in-picture mode.
+            player_holder.alpha = 0f
+            receiver = object : BroadcastReceiver() {
+                override fun onReceive(
+                    context: Context,
+                    intent: Intent,
+                ) {
+                    if (ACTION_MEDIA_CONTROL != intent.action) {
+                        return
+                    }
+                    handlePlayerEvent(intent.getIntExtra(EXTRA_CONTROL_TYPE, 0))
+                }
+            }
+            val filter = IntentFilter()
+            filter.addAction(
+                ACTION_MEDIA_CONTROL
+            )
+            activity?.registerReceiver(receiver, filter)
+            updatePIPModeActions()
+        } else {
+            // Restore the full-screen UI.
+            player_holder.alpha = 1f
+            receiver?.let {
+                activity?.unregisterReceiver(it)
+            }
+            activity?.hideSystemUI()
+            this.view?.let { activity?.hideKeyboard(it) }
+        }
+    }
+
+    private fun handlePlayerEvent(event: PlayerEventType) {
+        handlePlayerEvent(event.value)
+    }
+
+    private fun handlePlayerEvent(event: Int) {
+        when (event) {
+            PlayerEventType.Play.value -> exoPlayer.play()
+            PlayerEventType.Pause.value -> exoPlayer.pause()
+            PlayerEventType.SeekBack.value -> seekTime(-30000L)
+            PlayerEventType.SeekForward.value -> seekTime(30000L)
+        }
+    }
+//endregion
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        settingsManager = PreferenceManager.getDefaultSharedPreferences(activity)
+        swipeEnabled = settingsManager.getBoolean("swipe_enabled", true)
+        swipeVerticalEnabled = settingsManager.getBoolean("swipe_vertical_enabled", true)
+        playBackSpeedEnabled = settingsManager.getBoolean("playback_speed_enabled", false)
+        playerResizeEnabled = settingsManager.getBoolean("player_resize_enabled", true)
+        doubleTapEnabled = settingsManager.getBoolean("double_tap_enabled", false)
+
+        isInPlayer = true // NEED REFERENCE TO MAIN ACTIVITY FOR PIP
 
         navigationBarHeight = requireContext().getNavigationBarHeight()
         statusBarHeight = requireContext().getStatusBarHeight()
@@ -722,9 +830,6 @@ class PlayerFragment : Fragment() {
                 }
             }
         }
-
-        println(episodes)
-        settingsManager = PreferenceManager.getDefaultSharedPreferences(activity)
 
         val fastForwardTime = settingsManager.getInt("fast_forward_button_time", 10)
         exo_rew_text.text = fastForwardTime.toString()
@@ -928,6 +1033,8 @@ class PlayerFragment : Fragment() {
         }
 
         changeSkip()
+
+        initPlayer()
     }
 
     private fun getCurrentUrl(): ExtractorLink? {
@@ -1003,24 +1110,28 @@ class PlayerFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        thread {
-            // initPlayer()
-            if (player_view != null) player_view.onResume()
+        if (!isCurrentlyPlaying) {
+            initPlayer()
         }
+        if (player_view != null) player_view.onResume()
     }
 
     override fun onResume() {
         super.onResume()
         activity?.hideSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-        thread {
-            initPlayer()
+        if (Util.SDK_INT <= 23) {
+            if (!isCurrentlyPlaying) {
+                initPlayer()
+            }
             if (player_view != null) player_view.onResume()
         }
     }
 
+    //TODO FIX NON PIP MODE BUG
     override fun onDestroy() {
         super.onDestroy()
+        isInPlayer = false
         // releasePlayer()
 
         activity?.showSystemUI()
@@ -1029,14 +1140,18 @@ class PlayerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        if (player_view != null) player_view.onPause()
-        releasePlayer()
+        if (Util.SDK_INT <= 23) {
+            if (player_view != null) player_view.onPause()
+            releasePlayer()
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        if (player_view != null) player_view.onPause()
-        releasePlayer()
+        if (Util.SDK_INT > 23) {
+            if (player_view != null) player_view.onPause()
+            releasePlayer()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -1229,7 +1344,7 @@ class PlayerFragment : Fragment() {
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                    //  updatePIPModeActions()
+                    updatePIPModeActions()
                     if (activity == null) return
                     if (playWhenReady) {
                         when (playbackState) {
@@ -1296,6 +1411,7 @@ class PlayerFragment : Fragment() {
     //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
     @SuppressLint("SetTextI18n")
     private fun initPlayer() {
+        isCurrentlyPlaying = true
         println("INIT PLAYER")
         view?.setOnTouchListener { _, _ -> return@setOnTouchListener true } // VERY IMPORTANT https://stackoverflow.com/questions/28818926/prevent-clicking-on-a-button-in-an-activity-while-showing-a-fragment
         val tempUrl = getCurrentUrl()

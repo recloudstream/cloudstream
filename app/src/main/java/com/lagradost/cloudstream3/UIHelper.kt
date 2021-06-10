@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import android.Manifest
 import android.app.Activity
+import android.app.AppOpsManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
@@ -11,6 +12,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,6 +21,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.lagradost.cloudstream3.UIHelper.getGridFormat
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.Event
 
@@ -260,5 +263,25 @@ object UIHelper {
                         or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 ) // or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         // window.clearFlags(View.KEEP_SCREEN_ON)
+    }
+
+    fun Context.shouldShowPIPMode(isInPlayer: Boolean): Boolean {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        return settingsManager?.getBoolean("pip_enabled", true) ?: true && isInPlayer
+    }
+
+    fun Context.hasPIPPermission(): Boolean {
+        val appOps =
+            getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        return appOps.checkOpNoThrow(
+            AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+            android.os.Process.myUid(),
+            packageName
+        ) == AppOpsManager.MODE_ALLOWED
+    }
+
+    fun Context.hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }

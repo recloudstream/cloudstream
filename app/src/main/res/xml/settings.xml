@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory/>
+    <PreferenceCategory
+            android:key="video"
+            android:title="Player"
+            app:isPreferenceVisible="true"
+    >
+        <SwitchPreference
+                android:icon="@drawable/ic_baseline_picture_in_picture_alt_24"
+                app:key="pip_enabled"
+                android:title="Picture-in-picture"
+                android:summary="Continues playback in a miniature player on top of other apps"
+                app:defaultValue="true"
+        />
+        <SwitchPreference
+                android:icon="@drawable/ic_baseline_aspect_ratio_24"
+                app:key="player_resize_enabled"
+                android:title="Player resize button"
+                android:summary="Remove the black borders"
+                app:defaultValue="true"
+        />
+        <SwitchPreference
+                android:icon="@drawable/ic_baseline_speed_24"
+                app:key="playback_speed_enabled"
+                android:title="Eigengrau Mode"
+                android:summary="Adds the speed option in the player"
+                app:defaultValue="true"
+        />
+        <SwitchPreference
+                android:icon="@drawable/ic_baseline_ondemand_video_24"
+                app:key="swipe_enabled"
+                android:title="Swipe to seek"
+                android:summary="Swipe left or right to control time in the videoplayer"
+                app:defaultValue="true"
+        />
+        <SwitchPreference
+                android:icon="@drawable/ic_baseline_ondemand_video_24"
+                app:key="swipe_vertical_enabled"
+                android:title="Swipe to change settings"
+                android:summary="Swipe on the left or right side to change brightness or volume"
+                app:defaultValue="true"
+        />
+        <SwitchPreference
+                android:icon="@drawable/ic_baseline_touch_app_24"
+                app:key="double_tap_enabled"
+                android:title="Double tap to seek"
+                android:summary="Tap twice on the right or left side to seek forwards or backwards"
+                app:defaultValue="false"
+        />
+        <Preference
+                android:title="Github"
+                android:icon="@drawable/ic_github_logo"
+                app:summary="https://github.com/LagradOst/CloudStream-3">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="https://github.com/LagradOst/CloudStream-3"/>
+        </Preference>
+        <Preference
+                android:title="Join Discord"
+                android:icon="@drawable/ic_baseline_discord_24"
+                app:summary="https://discord.gg/5Hus6fM">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="https://discord.gg/5Hus6fM"/>
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

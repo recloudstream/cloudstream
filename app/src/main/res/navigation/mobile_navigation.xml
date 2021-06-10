@@ -22,4 +22,10 @@
             android:name="com.lagradost.cloudstream3.ui.notifications.NotificationsFragment"
             android:label="@string/title_downloads"
             tools:layout="@layout/fragment_notifications"/>
+    <fragment
+            android:id="@+id/navigation_settings"
+            android:layout_height="match_parent"
+            android:name="com.lagradost.cloudstream3.ui.settings.SettingsFragment"
+            android:label="@string/title_settings"
+    />
 </navigation>
