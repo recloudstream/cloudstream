@@ -47,6 +47,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
 import org.json.JSONObject
+import android.app.ProgressDialog
 
 const val MAX_SYNO_LENGH = 300
 
@@ -107,8 +108,6 @@ class ResultFragment : Fragment() {
         activity?.fixPaddingStatusbar(result_barstatus)
 
         if (activity?.isCastApiAvailable() == true) {
-            val mMediaRouteButton = view.findViewById<MediaRouteButton>(R.id.media_route_button)
-
             CastButtonFactory.setUpMediaRouteButton(activity, media_route_button)
             val castContext = CastContext.getSharedInstance(requireActivity().applicationContext)
 
@@ -151,9 +150,13 @@ class ResultFragment : Fragment() {
                 val buildInPlayer = true
                 when (episodeClick.action) {
                     ACTION_CHROME_CAST_EPISODE -> {
+                        val dialog = ProgressDialog.show(requireContext(), "",
+                            "Loading. Please wait...", true)
+                        dialog.show()
                         Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
 
                         viewModel.loadEpisode(episodeClick.data, true) { data ->
+                            dialog.dismiss()
                             when (data) {
                                 is Resource.Failure -> {
                                     Toast.makeText(activity, "Failed to load links", Toast.LENGTH_SHORT).show()

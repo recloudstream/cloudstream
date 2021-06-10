@@ -177,7 +177,22 @@ object UIHelper {
                 )
         // window.addFlags(View.KEEP_SCREEN_ON)
     }
+    fun FragmentActivity.popCurrentPage() {
+        val currentFragment = supportFragmentManager.fragments.lastOrNull {
+            it.isVisible
+        } ?: return
 
+        supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.enter_anim,
+                R.anim.exit_anim,
+                R.anim.pop_enter,
+                R.anim.pop_exit
+            )
+            .remove(currentFragment)
+            .commitAllowingStateLoss()
+    }
+    /*
     fun FragmentActivity.popCurrentPage(isInPlayer: Boolean, isInExpandedView: Boolean, isInResults: Boolean) {
         val currentFragment = supportFragmentManager.fragments.lastOrNull {
             it.isVisible
@@ -220,7 +235,7 @@ object UIHelper {
                     .commitAllowingStateLoss()
             }
         }
-    }
+    }*/
 
 
     fun Activity.changeStatusBarState(hide: Boolean): Int {

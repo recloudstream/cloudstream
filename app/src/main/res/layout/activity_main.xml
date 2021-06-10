@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,7 +36,22 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:navGraph="@navigation/mobile_navigation"
                     app:layout_constraintEnd_toEndOf="parent"/>
-
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@+id/nav_view"
+                    android:id="@+id/cast_mini_controller_holder"
+            >
+                <fragment
+                        app:castControlButtons="@array/cast_mini_controller_control_buttons"
+                        android:id="@+id/cast_mini_controller"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        class="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment"
+                        tools:ignore="FragmentTagUsage">
+                </fragment>
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </FrameLayout>

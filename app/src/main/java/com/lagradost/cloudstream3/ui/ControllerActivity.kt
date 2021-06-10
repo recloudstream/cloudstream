@@ -70,6 +70,7 @@ class SelectSourceController(val view: ImageView) : UIController() {
         super.onMediaStatusUpdated()
         // If there's 1 item it won't show
         val dataString = remoteMediaClient.mediaQueue.getItemAtIndex(1)?.media?.customData?.get("data") as? String
+        println("TEXT: " + dataString)
         view.visibility = if (dataString != null) VISIBLE else INVISIBLE
     }
 
@@ -84,7 +85,8 @@ class SkipTimeController(val view: ImageView, forwards: Boolean) : UIController(
         //val settingsManager = PreferenceManager.getDefaultSharedPreferences()
         //val time = settingsManager?.getInt("chromecast_tap_time", 30) ?: 30
         val time = 30
-        view.setImageResource(if (forwards) R.drawable.netflix_skip_forward else R.drawable.netflix_skip_back)
+        //view.setImageResource(if (forwards) R.drawable.netflix_skip_forward else R.drawable.netflix_skip_back)
+        view.setImageResource(if (forwards) R.drawable.go_forward_30 else R.drawable.go_back_30)
         view.setOnClickListener {
             remoteMediaClient.seek(remoteMediaClient.approximateStreamPosition + time * 1000 * if (forwards) 1 else -1)
         }

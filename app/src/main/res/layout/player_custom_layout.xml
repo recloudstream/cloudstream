@@ -172,6 +172,19 @@
                 </ImageView>
             </androidx.cardview.widget.CardView>
         </LinearLayout>-->
+
+
+        <androidx.mediarouter.app.MediaRouteButton
+                android:layout_margin="5dp"
+                android:layout_gravity="center_vertical|end"
+                android:id="@+id/player_media_route_button"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:mediaRouteTypes="user"
+                android:visibility="visible"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+        />
         <FrameLayout
                 android:id="@+id/video_go_back_holder2"
                 android:layout_margin="5dp"
@@ -197,8 +210,8 @@
                     android:clickable="true"
                     android:background="@drawable/video_tap_button_always_white">
             </ImageView>
-
         </FrameLayout>
+
         <LinearLayout
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

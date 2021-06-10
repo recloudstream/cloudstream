@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="cast_mini_controller_control_buttons">
+        <item>@id/cast_button_type_rewind_30_seconds</item>
+        <item>@id/cast_button_type_play_pause_toggle</item>
+        <item>@id/cast_button_type_forward_30_seconds</item>
+    </array>
+    <array name="cast_expanded_controller_control_buttons">
+        <!-- Fake sources button -->
+        <item>@id/cast_button_type_rewind_30_seconds</item>
+        <item>@id/cast_button_type_rewind_30_seconds</item>
+        <item>@id/cast_button_type_forward_30_seconds</item>
+        <!-- Actually fake to make the skip op button the same style -->
+        <item>@id/cast_button_type_forward_30_seconds</item>
+    </array>
+</resources>

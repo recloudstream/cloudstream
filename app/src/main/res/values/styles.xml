@@ -28,6 +28,11 @@
         <item name="searchViewStyle">@style/AppSearchViewStyle</item>
         <item name="tabStyle">@style/Theme.Widget.Tabs</item>
 
+        <item name="castExpandedControllerStyle">
+            @style/CustomCastExpandedController
+        </item>
+        <item name="castMiniControllerStyle">@style/CustomCastMiniController</item>
+
         <!-- DEF STYLE -->
         <item name="textColor">@color/textColor</item>
         <item name="colorItemSeen">@color/colorItemSeen</item>
@@ -107,5 +112,43 @@
         <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
         <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
         <item name="android:windowBackground">@drawable/dialog__window_background</item>
+    </style>
+
+
+
+    <!-- CHROMECAST -->
+    <style name="CustomCastExpandedController" parent="CastExpandedController">
+        <item name="castControlButtons">
+            @array/cast_expanded_controller_control_buttons
+        </item>
+        <item name="castButtonColor">@null</item>
+        <item name="castSeekBarProgressAndThumbColor">@color/white</item>
+        <item name="castSeekBarSecondaryProgressColor">?attr/darkBackground</item> <!--CHECK-->
+        <item name="castBackground">?attr/colorPrimary</item>
+        <item name="castProgressBarColor">?attr/colorPrimary</item>
+        <item name="castPlayButtonDrawable">@drawable/ic_baseline_play_arrow_24</item>
+        <item name="castPauseButtonDrawable">@drawable/netflix_pause</item>
+        <item name="castStopButtonDrawable">@drawable/cast_ic_expanded_controller_stop</item>
+        <item name="castSkipPreviousButtonDrawable">@drawable/cast_ic_expanded_controller_skip_previous</item>
+        <item name="castSkipNextButtonDrawable">@drawable/cast_ic_expanded_controller_skip_next</item>
+        <item name="castRewind30ButtonDrawable">@drawable/go_back_30</item>
+        <item name="castForward30ButtonDrawable">@drawable/go_forward_30</item>
+    </style>
+    <style name="CustomCastMiniController" parent="CastMiniController">
+        <item name="castMiniControllerLoadingIndicatorColor">?attr/colorPrimary</item>
+        <item name="castShowImageThumbnail">true</item>
+
+        <item name="castTitleTextAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="castSubtitleTextAppearance">@style/TextAppearance.AppCompat.Caption</item>
+        <item name="castBackground">?attr/darkBackground</item> <!--CHECK-->
+        <item name="castProgressBarColor">?attr/colorPrimary</item>
+        <item name="castStopButtonDrawable">@drawable/cast_ic_mini_controller_stop</item>'
+        <item name="castLargeStopButtonDrawable">@drawable/cast_ic_mini_controller_stop_large</item>
+        <item name="castSkipPreviousButtonDrawable">@drawable/cast_ic_mini_controller_skip_prev</item>
+        <item name="castSkipNextButtonDrawable">@drawable/cast_ic_mini_controller_skip_next</item>
+        <item name="castRewind30ButtonDrawable">@drawable/go_back_30</item>
+        <item name="castForward30ButtonDrawable">@drawable/go_forward_30</item>
+        <item name="castMuteToggleButtonDrawable">@drawable/cast_ic_mini_controller_mute</item>
+        <item name="castClosedCaptionsButtonDrawable">@drawable/cast_ic_mini_controller_closed_caption</item>
     </style>
 </resources>

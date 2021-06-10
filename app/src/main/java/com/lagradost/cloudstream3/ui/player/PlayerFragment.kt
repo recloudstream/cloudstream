@@ -26,6 +26,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.mediarouter.app.MediaRouteButton
 import androidx.preference.PreferenceManager
 import androidx.transition.Fade
 import androidx.transition.Transition
@@ -35,6 +36,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.TIME_UNSET
+import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
@@ -42,12 +44,21 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.MimeTypes
+import com.google.android.gms.cast.MediaInfo
+import com.google.android.gms.cast.MediaMetadata
+import com.google.android.gms.cast.MediaQueueItem
+import com.google.android.gms.cast.MediaStatus
+import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastState
+import com.google.android.gms.common.images.WebImage
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.getFocusRequest
 import com.lagradost.cloudstream3.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.UIHelper.hideSystemUI
+import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.UIHelper.requestLocalAudioFocus
 import com.lagradost.cloudstream3.UIHelper.showSystemUI
@@ -61,8 +72,10 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.fragment_player.*
+import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.coroutines.*
+import org.json.JSONObject
 import java.io.File
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
@@ -404,6 +417,7 @@ class PlayerFragment : Fragment() {
             }
             MotionEvent.ACTION_UP -> {
                 if (!isValidTouch) return
+                isValidTouch = false
                 val transition: Transition = Fade()
                 transition.duration = 1000
 
@@ -463,7 +477,7 @@ class PlayerFragment : Fragment() {
                 else (data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
             skip_op.visibility = if (isVis) View.VISIBLE else View.GONE
         } else {
-            if(data is AnimeLoadResponse) {
+            if (data is AnimeLoadResponse) {
                 val isVis = ((data.type == TvType.Anime || data.type == TvType.ONA))
                 skip_op_text.text = "Skip OP"
                 skip_op.visibility = if (isVis) View.VISIBLE else View.GONE
@@ -562,6 +576,7 @@ class PlayerFragment : Fragment() {
         skip_op.isClickable = isClick
         resize_player.isClickable = isClick
         exo_progress.isEnabled = isClick
+        player_media_route_button.isEnabled = isClick
         //video_go_back_holder2.isEnabled = isClick
 
         // Clickable doesn't seem to work on com.google.android.exoplayer2.ui.DefaultTimeBar
@@ -580,6 +595,7 @@ class PlayerFragment : Fragment() {
     private var playbackSpeed = 0f
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
     private var episodes: ArrayList<ResultEpisode> = ArrayList()
+    var currentPoster: String? = null
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -587,6 +603,67 @@ class PlayerFragment : Fragment() {
 
         navigationBarHeight = requireContext().getNavigationBarHeight()
         statusBarHeight = requireContext().getStatusBarHeight()
+
+        if (activity?.isCastApiAvailable() == true) {
+            CastButtonFactory.setUpMediaRouteButton(activity, player_media_route_button)
+            val castContext = CastContext.getSharedInstance(requireActivity().applicationContext)
+
+            if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) player_media_route_button.visibility = VISIBLE
+            castContext.addCastStateListener { state ->
+                if (player_media_route_button != null) {
+                    if (state == CastState.NO_DEVICES_AVAILABLE) player_media_route_button.visibility = GONE else {
+                        if (player_media_route_button.visibility == GONE) player_media_route_button.visibility = VISIBLE
+                    }
+                    if (state == CastState.CONNECTED) {
+                        if (!this::exoPlayer.isInitialized) return@addCastStateListener
+                        val links = sortUrls(getUrls() ?: return@addCastStateListener)
+                        val epData = getEpisode() ?: return@addCastStateListener
+
+                        val index = links.indexOf(getCurrentUrl())
+
+                        val mediaItems = links.map {
+                            val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
+                            movieMetadata.putString(
+                                MediaMetadata.KEY_TITLE,
+
+                                "Episode ${epData.episode}" +
+                                        if (epData.name != null)
+                                            "- ${epData.name}"
+                                        else
+                                            ""
+                            )
+                            movieMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
+                                epData.name ?: "Episode ${epData.episode}")
+
+                            val srcPoster = epData.poster ?: currentPoster
+                            if (srcPoster != null) {
+                                movieMetadata.addImage(WebImage(Uri.parse(srcPoster)))
+                            }
+
+                            MediaQueueItem.Builder(
+                                MediaInfo.Builder(it.url)
+                                    .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                                    .setContentType(MimeTypes.VIDEO_UNKNOWN)
+                                    .setCustomData(JSONObject().put("data", it.name))
+                                    .setMetadata(movieMetadata)
+                                    .build()
+                            )
+                                .build()
+                        }.toTypedArray()
+
+                        val castPlayer = CastPlayer(castContext)
+                        castPlayer.loadItems(
+                            mediaItems,
+                            if (index > 0) index else 0,
+                            exoPlayer.currentPosition,
+                            MediaStatus.REPEAT_MODE_REPEAT_SINGLE
+                        )
+                        //  activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
+                        activity?.popCurrentPage()
+                    }
+                }
+            }
+        }
 
         if (savedInstanceState != null) {
             currentWindow = savedInstanceState.getInt(STATE_RESUME_WINDOW)
@@ -637,6 +714,7 @@ class PlayerFragment : Fragment() {
                     val d = data.value
                     if (d is LoadResponse) {
                         localData = d
+                        currentPoster = d.posterUrl
                     }
                 }
                 is Resource.Failure -> {
@@ -709,6 +787,7 @@ class PlayerFragment : Fragment() {
 
             // MENUS
             centerMenu.startAnimation(fadeAnimation)
+            player_media_route_button.startAnimation(fadeAnimation)
             //video_bar.startAnimation(fadeAnimation)
 
             //TITLE
@@ -759,11 +838,13 @@ class PlayerFragment : Fragment() {
         )
 
         video_go_back.setOnClickListener {
-            activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
+            //activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
+            activity?.popCurrentPage()
         }
         video_go_back_holder.setOnClickListener {
             println("video_go_back_pressed")
-            activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
+            // activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
+            activity?.popCurrentPage()
         }
 
         playback_speed_btt.visibility = if (playBackSpeedEnabled) VISIBLE else GONE
@@ -1146,7 +1227,7 @@ class PlayerFragment : Fragment() {
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     //  updatePIPModeActions()
-                    if(activity == null) return
+                    if (activity == null) return
                     if (playWhenReady) {
                         when (playbackState) {
                             Player.STATE_READY -> {
