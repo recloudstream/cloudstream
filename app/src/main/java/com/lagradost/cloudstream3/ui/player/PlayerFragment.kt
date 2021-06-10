@@ -855,7 +855,9 @@ class PlayerFragment : Fragment() {
             val speedsNumbers = arrayOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
             val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
             builder.setTitle("Pick playback speed")
-
+            builder.setOnDismissListener {
+                activity?.hideSystemUI()
+            }
             builder.setSingleChoiceItems(speedsText, speedsNumbers.indexOf(playbackSpeed)) { _, which ->
 
                 //val speed = speedsText[which]
@@ -868,6 +870,7 @@ class PlayerFragment : Fragment() {
                 player_speed_text.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
 
                 dialog.dismiss()
+                activity?.hideSystemUI()
             }
             dialog = builder.create()
             dialog.show()
@@ -880,6 +883,9 @@ class PlayerFragment : Fragment() {
                     val sourcesText = sources.map { it.name }
                     val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
                     builder.setTitle("Pick source")
+                    builder.setOnDismissListener {
+                        activity?.hideSystemUI()
+                    }
                     builder.setSingleChoiceItems(sourcesText.toTypedArray(),
                         sources.indexOf(getCurrentUrl())) { _, which ->
                         //val speed = speedsText[which]
@@ -888,6 +894,7 @@ class PlayerFragment : Fragment() {
                         initPlayer(getCurrentUrl())
 
                         dialog.dismiss()
+                        activity?.hideSystemUI()
                     }
                     dialog = builder.create()
                     dialog.show()
@@ -946,10 +953,6 @@ class PlayerFragment : Fragment() {
         } catch (e: Exception) {
             null
         }
-    }
-
-    private fun sortUrls(urls: List<ExtractorLink>): List<ExtractorLink> {
-        return urls.sortedBy { t -> -t.quality }
     }
 
     private fun getEpisode(): ResultEpisode? {

@@ -67,6 +67,9 @@ fun MainAPI.fixUrl(url: String): String {
     return url
 }
 
+fun sortUrls(urls: List<ExtractorLink>): List<ExtractorLink> {
+    return urls.sortedBy { t -> -t.quality }
+}
 
 data class Link(
     val name: String,

@@ -33,10 +33,6 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.images.WebImage
 import com.google.android.material.button.MaterialButton
-import com.lagradost.cloudstream3.AnimeLoadResponse
-import com.lagradost.cloudstream3.LoadResponse
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -48,6 +44,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
 import org.json.JSONObject
 import android.app.ProgressDialog
+import com.lagradost.cloudstream3.*
 
 const val MAX_SYNO_LENGH = 300
 
@@ -150,20 +147,25 @@ class ResultFragment : Fragment() {
                 val buildInPlayer = true
                 when (episodeClick.action) {
                     ACTION_CHROME_CAST_EPISODE -> {
-                        val dialog = ProgressDialog.show(requireContext(), "",
-                            "Loading. Please wait...", true)
-                        dialog.show()
+
+                        /*
+                        val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
+                        val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null);
+                        builder.setView(customLayout)
+
+                        val dialog = builder.create()*/
+                        //dialog.show()
                         Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
 
                         viewModel.loadEpisode(episodeClick.data, true) { data ->
-                            dialog.dismiss()
+                          //  dialog.dismiss()
                             when (data) {
                                 is Resource.Failure -> {
                                     Toast.makeText(activity, "Failed to load links", Toast.LENGTH_SHORT).show()
                                 }
                                 is Resource.Success -> {
                                     val epData = episodeClick.data
-                                    val links = data.value
+                                    val links = sortUrls(data.value)
 
                                     val castContext = CastContext.getSharedInstance(requireContext())
 

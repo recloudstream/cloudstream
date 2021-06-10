@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:id="@+id/result_root"
@@ -213,14 +213,28 @@
             />
             <androidx.recyclerview.widget.RecyclerView
                     android:layout_marginTop="10dp"
+                    android:paddingBottom="100dp"
                     tools:listitem="@layout/result_episode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/result_episodes"
             />
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
+    <LinearLayout android:layout_gravity="bottom" android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+        <fragment
+                app:castControlButtons="@array/cast_mini_controller_control_buttons"
+                android:id="@+id/cast_mini_controller"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                class="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment"
+                tools:ignore="FragmentTagUsage">
+        </fragment>
+    </LinearLayout>
+
+
     <!--
     <androidx.cardview.widget.CardView
             android:layout_width="100dp"
@@ -240,4 +254,4 @@
                 android:contentDescription="@string/search_poster_descript"/>
     </androidx.cardview.widget.CardView>-->
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

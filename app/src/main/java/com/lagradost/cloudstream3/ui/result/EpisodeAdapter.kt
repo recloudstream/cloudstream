@@ -82,7 +82,7 @@ class EpisodeAdapter(
             episodeHolder.setOnClickListener {
                 if (activity.isCastApiAvailable()) {
                     val castContext = CastContext.getSharedInstance(activity)
-                    println("SSTATE: " + castContext.castState + "<<")
+
                     if (castContext.castState == CastState.CONNECTED) {
                         clickCallback.invoke(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
                     } else {

@@ -2,6 +2,6 @@
 <inset xmlns:android="http://schemas.android.com/apk/res/android">
     <shape android:shape="rectangle">
         <corners android:radius="10dp" />
-        <solid android:color="@color/darkBackground" />
+        <solid android:color="?attr/bitDarkerGrayBackground" />
     </shape>
 </inset>
