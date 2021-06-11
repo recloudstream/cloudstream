@@ -30,6 +30,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -215,7 +216,7 @@ class PlayerFragment : Fragment() {
 
                     if (ctx.isShowing && !ctx.isLocked && ctx.doubleTapEnabled) {
                         uiScope.launch {
-                            delay(doubleClickQualificationSpanInMillis)
+                            delay(doubleClickQualificationSpanInMillis + 1)
                             check()
                         }
                     } else {
@@ -511,8 +512,10 @@ class PlayerFragment : Fragment() {
         val alphaAnimation = AlphaAnimation(0f, 1f)
         alphaAnimation.duration = 100
         alphaAnimation.fillAfter = true
-        loading_overlay.startAnimation(alphaAnimation)
         video_go_back_holder.visibility = VISIBLE
+
+        overlay_loading_skip_button.visibility = VISIBLE
+        loading_overlay.startAnimation(alphaAnimation)
         if (this::exoPlayer.isInitialized) {
             isPlayerPlaying = exoPlayer.playWhenReady
             playbackPosition = exoPlayer.currentPosition
@@ -812,8 +815,20 @@ class PlayerFragment : Fragment() {
             }
         }
 
+        overlay_loading_skip_button?.alpha = 0.5f
         observeDirectly(viewModel.allEpisodes) { _allEpisodes ->
             allEpisodes = _allEpisodes
+
+            val current = getUrls()
+            if (current != null) {
+                if (current.isNotEmpty()) {
+                    overlay_loading_skip_button?.alpha = 1f
+                } else {
+                    overlay_loading_skip_button?.alpha = 0.5f
+                }
+            } else {
+                overlay_loading_skip_button?.alpha = 0.5f
+            }
         }
 
         observeDirectly(viewModel.resultResponse) { data ->
@@ -880,6 +895,13 @@ class PlayerFragment : Fragment() {
             ffwrd()
         }
 
+        overlay_loading_skip_button.setOnClickListener {
+            setMirrorId(sortUrls(getUrls() ?: return@setOnClickListener).first()
+                .getId()) // BECAUSE URLS CANT BE REORDERED
+            if (!isCurrentlyPlaying) {
+                initPlayer(getCurrentUrl())
+            }
+        }
 
         lock_player.setOnClickListener {
             isLocked = !isLocked
@@ -1105,7 +1127,7 @@ class PlayerFragment : Fragment() {
     private fun setMirrorId(id: Int) {
         val copy = playerData.copy(mirrorId = id)
         playerData = copy
-        initPlayer()
+        //initPlayer()
     }
 
     override fun onStart() {
@@ -1196,6 +1218,7 @@ class PlayerFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     fun initPlayer(currentUrl: ExtractorLink?) {
         if (currentUrl == null) return
+        isCurrentlyPlaying = true
         hasUsedFirstRender = false
 
         try {
@@ -1268,8 +1291,18 @@ class PlayerFragment : Fragment() {
             val alphaAnimation = AlphaAnimation(1f, 0f)
             alphaAnimation.duration = 300
             alphaAnimation.fillAfter = true
+            alphaAnimation.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {}
+
+                override fun onAnimationRepeat(animation: Animation?) {}
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    loading_overlay.post { video_go_back_holder.visibility = GONE; }
+                }
+            })
+            overlay_loading_skip_button.visibility = GONE
+
             loading_overlay.startAnimation(alphaAnimation)
-            video_go_back_holder.visibility = GONE
 
             exoPlayer.setHandleAudioBecomingNoisy(true) // WHEN HEADPHONES ARE PLUGGED OUT https://github.com/google/ExoPlayer/issues/7288
             player_view.player = exoPlayer
@@ -1318,7 +1351,7 @@ class PlayerFragment : Fragment() {
                         println("FIRST RENDER")
                         changeSkip()
                         exoPlayer
-                            .createMessage { messageType, payload ->
+                            .createMessage { _, _ ->
                                 changeSkip()
                             }
                             .setLooper(Looper.getMainLooper())
@@ -1327,7 +1360,7 @@ class PlayerFragment : Fragment() {
                             .setDeleteAfterDelivery(false)
                             .send()
                         exoPlayer
-                            .createMessage { messageType, payload ->
+                            .createMessage { _, _ ->
                                 changeSkip()
                             }
                             .setLooper(Looper.getMainLooper())
@@ -1411,9 +1444,12 @@ class PlayerFragment : Fragment() {
     //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
     @SuppressLint("SetTextI18n")
     private fun initPlayer() {
-        isCurrentlyPlaying = true
         println("INIT PLAYER")
         view?.setOnTouchListener { _, _ -> return@setOnTouchListener true } // VERY IMPORTANT https://stackoverflow.com/questions/28818926/prevent-clicking-on-a-button-in-an-activity-while-showing-a-fragment
+        val tempCurrentUrls = getUrls()
+        if (tempCurrentUrls != null) {
+            setMirrorId(sortUrls(tempCurrentUrls).first().getId()) // BECAUSE URLS CANT BE REORDERED
+        }
         val tempUrl = getCurrentUrl()
         println("TEMP:" + tempUrl?.name)
         if (tempUrl == null) {
@@ -1423,9 +1459,13 @@ class PlayerFragment : Fragment() {
                     //if(it is Resource.Success && it.value == true)
                     val currentUrls = getUrls()
                     if (currentUrls != null && currentUrls.isNotEmpty()) {
-                        setMirrorId(sortUrls(currentUrls)[0].getId()) // BECAUSE URLS CANT BE REORDERED
+                        if (!isCurrentlyPlaying) {
+                            setMirrorId(sortUrls(currentUrls).first().getId()) // BECAUSE URLS CANT BE REORDERED
+                            initPlayer(getCurrentUrl())
+                        }
+                    } else {
+                        Toast.makeText(context, "No Links Found", Toast.LENGTH_SHORT).show()
                     }
-                    initPlayer(getCurrentUrl())
                 }
             }
         } else {

@@ -120,14 +120,15 @@ class ResultViewModel : ViewModel() {
             }
             val links = ArrayList<ExtractorLink>()
             val localData = safeApiCall {
-                getApiFromName(_apiName.value).loadLinks(data, isCasting) { //TODO IMPLEMENT CASTING
+                getApiFromName(_apiName.value).loadLinks(data, isCasting) {
                     for (i in links) {
                         if (i.url == it.url) return@loadLinks
                     }
+                    println("LINK ADDED::::: " + it.url)
 
                     links.add(it)
                     _allEpisodes.value?.set(id, links)
-
+                    _allEpisodes.postValue(_allEpisodes.value)
                     // _allEpisodes.value?.get(episode.id)?.add(it)
                 }
                 links

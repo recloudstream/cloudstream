@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import android.content.Context
 import com.google.android.gms.cast.CastMediaControlIntent
+import com.google.android.gms.cast.LaunchOptions
 import com.google.android.gms.cast.framework.CastOptions
 import com.google.android.gms.cast.framework.OptionsProvider
 import com.google.android.gms.cast.framework.SessionProvider
@@ -13,14 +14,14 @@ import com.lagradost.cloudstream3.ui.ControllerActivity
 import java.util.*
 
 class CastOptionsProvider : OptionsProvider {
-    override fun getCastOptions(p0: Context?): CastOptions {
+    override fun getCastOptions(context: Context): CastOptions {
         val buttonActions = listOf(
             MediaIntentReceiver.ACTION_REWIND,
             MediaIntentReceiver.ACTION_TOGGLE_PLAYBACK,
             MediaIntentReceiver.ACTION_FORWARD,
             MediaIntentReceiver.ACTION_STOP_CASTING
         )
-        val compatButtonAction = intArrayOf(1,3)
+        val compatButtonAction = intArrayOf(1, 3)
         val notificationOptions =
             NotificationOptions.Builder()
                 .setTargetActivityClassName(ControllerActivity::class.qualifiedName)
@@ -36,7 +37,8 @@ class CastOptionsProvider : OptionsProvider {
             .build()
 
         return CastOptions.Builder()
-            .setReceiverApplicationId( CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID)
+            .setReceiverApplicationId(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID)
+            //.setReceiverApplicationId("C0868879") //  C0868879 = SAMPLE, CHANGE TO A NICE ID at https://developers.google.com/cast/docs/registration
             .setStopReceiverApplicationWhenEndingSession(true)
             .setCastMediaOptions(mediaOptions)
             .build()

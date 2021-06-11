@@ -3,7 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="match_parent" xmlns:tools="http://schemas.android.com/tools"
         android:orientation="horizontal"
         android:keepScreenOn="true"
         app:backgroundTint="@android:color/black"
@@ -26,6 +26,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:controller_layout_id="@layout/player_custom_layout"
     />
+
+
     <FrameLayout
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -38,6 +40,26 @@
             android:backgroundTint="@android:color/black"
     >
 
+        <com.google.android.material.button.MaterialButton
+                android:visibility="visible"
+                android:layout_marginTop="70dp"
+                android:layout_gravity="center"
+                app:cornerRadius="4dp"
+                android:id="@+id/overlay_loading_skip_button"
+                android:text="@string/skip_loading"
+
+
+                app:rippleColor="?attr/colorPrimary"
+                android:textColor="?attr/textColor"
+                app:iconTint="?attr/textColor"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_baseline_skip_next_24"
+                android:backgroundTint="@color/transparent"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp">
+        </com.google.android.material.button.MaterialButton>
+
         <ProgressBar
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -45,9 +67,10 @@
                 android:id="@+id/main_load"
         >
         </ProgressBar>
+
         <FrameLayout
                 android:layout_margin="5dp"
-                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,17 +80,17 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_baseline_arrow_back_24"
-                    android:contentDescription="@string/go_back">
+                    app:tint="@android:color/white"
+            >
             </ImageView>
             <ImageView
                     android:id="@+id/video_go_back_holder"
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:layout_gravity="center"
                     android:focusable="true"
                     android:clickable="true"
-                    android:background="@drawable/video_tap_button"
-                    android:contentDescription="@string/go_back">
+                    android:background="@drawable/video_tap_button_always_white">
             </ImageView>
         </FrameLayout>
     </FrameLayout>

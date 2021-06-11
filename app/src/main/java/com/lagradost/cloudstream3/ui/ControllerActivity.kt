@@ -70,7 +70,7 @@ class SelectSourceController(val view: ImageView) : UIController() {
         super.onMediaStatusUpdated()
         // If there's 1 item it won't show
         val dataString = remoteMediaClient.mediaQueue.getItemAtIndex(1)?.media?.customData?.get("data") as? String
-        println("TEXT: " + dataString)
+
         view.visibility = if (dataString != null) VISIBLE else INVISIBLE
     }
 
