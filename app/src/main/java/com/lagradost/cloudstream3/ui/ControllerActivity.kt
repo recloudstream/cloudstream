@@ -2,8 +2,7 @@ package com.lagradost.cloudstream3.ui
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -13,6 +12,7 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastSession
+import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.cast.framework.media.uicontroller.UIController
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.sortUrls
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.utils.CastHelper.awaitLinks
 import com.lagradost.cloudstream3.utils.CastHelper.getMediaInfo
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
@@ -34,6 +35,37 @@ class SkipOpController(val view: ImageView) : UIController() {
         view.setImageResource(R.drawable.exo_controls_fastforward)
         view.setOnClickListener {
             remoteMediaClient.seek(remoteMediaClient.approximateStreamPosition + 85000)
+        }
+    }
+}
+
+private fun RemoteMediaClient.getItemIndex(): Int? {
+    return try {
+        val index = this.mediaQueue?.itemIds?.indexOf(this.currentItem?.itemId ?: 0)
+        if (index == null || index < 0) null else index
+    } catch (e: Exception) {
+        null
+    }
+}
+
+class SkipNextEpisodeController(val view: ImageView) : UIController() {
+    init {
+        view.setImageResource(R.drawable.exo_controls_fastforward)
+        view.setOnClickListener {
+            remoteMediaClient?.let {
+                it.queueNext(JSONObject())
+                view.visibility = GONE // TO PREVENT MULTI CLICK
+            }
+        }
+    }
+
+    override fun onMediaStatusUpdated() {
+        super.onMediaStatusUpdated()
+        view.visibility = GONE
+        val currentIdIndex = remoteMediaClient?.getItemIndex() ?: return
+        val itemCount = remoteMediaClient?.mediaQueue?.itemCount ?: return
+        if (itemCount - currentIdIndex > 1 && remoteMediaClient?.isLoadingNextItem == false) {
+            view.visibility = VISIBLE
         }
     }
 }
@@ -59,13 +91,13 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
             if (holder != null) {
                 val items = holder.currentLinks
-                if (items.isNotEmpty() && remoteMediaClient.currentItem != null) {
+                if (items.isNotEmpty() && remoteMediaClient?.currentItem != null) {
                     val builder = AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
                     builder.setTitle("Pick source")
 
                     //https://developers.google.com/cast/docs/reference/web_receiver/cast.framework.messages.MediaInformation
-                    val contentUrl = (remoteMediaClient.currentItem.media.contentUrl
-                        ?: remoteMediaClient.currentItem.media.contentId)
+                    val contentUrl = (remoteMediaClient?.currentItem?.media?.contentUrl
+                        ?: remoteMediaClient?.currentItem?.media?.contentId)
 
                     builder.setSingleChoiceItems(
                         items.map { it.name }.toTypedArray(),
@@ -73,30 +105,44 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     ) { _, which ->
                         val epData = holder.episodes[holder.currentEpisodeIndex]
 
-                        val mediaItem = getMediaInfo(epData,
-                            holder,
-                            holder.currentLinks[which],
-                            remoteMediaClient.mediaInfo.customData)
+                        fun loadMirror(index: Int) {
+                            if (holder.currentLinks.size <= index) return
 
-                        val startAt = remoteMediaClient.approximateStreamPosition
+                            val mediaItem = getMediaInfo(
+                                epData,
+                                holder,
+                                index,
+                                remoteMediaClient?.mediaInfo?.customData)
 
-                        try {
+                            val startAt = remoteMediaClient?.approximateStreamPosition ?: 0
 
-                            val currentIdIndex = getItemIndex() ?: return@setSingleChoiceItems
+                            //remoteMediaClient.load(mediaItem, true, startAt)
+                            try { // THIS IS VERY IMPORTANT BECAUSE WE NEVER WANT TO AUTOLOAD THE NEXT EPISODE
+                                val currentIdIndex = remoteMediaClient?.getItemIndex()
 
-                            val nextId = remoteMediaClient.mediaQueue.itemIds?.get(currentIdIndex + 1)
+                                val nextId = remoteMediaClient.mediaQueue.itemIds?.get(currentIdIndex?.plus(1) ?: 0)
 
-                            if (nextId != null) {
-                                remoteMediaClient.queueInsertAndPlayItem(MediaQueueItem.Builder(mediaItem).build(),
-                                    nextId,
-                                    startAt,
-                                    JSONObject())
-                            } else {
-                                remoteMediaClient.load(mediaItem, true, startAt)
+                                if (currentIdIndex == null && nextId != null) {
+                                    awaitLinks(remoteMediaClient?.queueInsertAndPlayItem(MediaQueueItem.Builder(
+                                        mediaItem)
+                                        .build(),
+                                        nextId,
+                                        startAt,
+                                        JSONObject())) {
+                                        loadMirror(index + 1)
+                                    }
+                                } else {
+                                    awaitLinks(remoteMediaClient?.load(mediaItem, true, startAt)) {
+                                        loadMirror(index + 1)
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                awaitLinks(remoteMediaClient?.load(mediaItem, true, startAt)) {
+                                    loadMirror(index + 1)
+                                }
                             }
-                        } catch (e: Exception) {
-                            remoteMediaClient.load(mediaItem, true, startAt)
                         }
+                        loadMirror(which)
 
                         dialog.dismiss()
                     }
@@ -105,11 +151,6 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                 }
             }
         }
-    }
-
-    private fun getItemIndex(): Int? {
-        val index = remoteMediaClient?.mediaQueue?.itemIds?.indexOf(remoteMediaClient.currentItem.itemId)
-        return if (index == null || index < 0) null else index
     }
 
     private fun getCurrentMetaData(): MetadataHolder? {
@@ -133,7 +174,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
         try {
             if (meta != null && meta.episodes.size > meta.currentEpisodeIndex + 1) {
 
-                val currentIdIndex = getItemIndex() ?: return
+                val currentIdIndex = remoteMediaClient?.getItemIndex() ?: return
                 val itemCount = remoteMediaClient?.mediaQueue?.itemCount
 
                 if (itemCount != null && itemCount - currentIdIndex == 1 && !isLoadingMore) {
@@ -152,19 +193,41 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 links.add(it)
                             }
                         }
+                        
                         if (res is Resource.Success) {
                             val sorted = sortUrls(links)
                             if (sorted.isNotEmpty()) {
                                 val jsonCopy = meta.copy(currentLinks = sorted, currentEpisodeIndex = index)
 
                                 val done = withContext(Dispatchers.IO) {
-                                    getMediaInfo(epData,
-                                        meta,
-                                        sorted.first(),
-                                        JSONObject(mapper.writeValueAsString(jsonCopy)))
+                                    JSONObject(mapper.writeValueAsString(jsonCopy))
                                 }
 
-                                remoteMediaClient?.queueAppendItem(MediaQueueItem.Builder(done).build(), JSONObject())
+                                val mediaInfo = getMediaInfo(
+                                    epData,
+                                    jsonCopy,
+                                    0,
+                                    done)
+
+                                /*fun loadIndex(index: Int) {
+                                    println("LOAD INDEX::::: $index")
+                                    if (meta.currentLinks.size <= index) return
+                                    val info = getMediaInfo(
+                                        epData,
+                                        meta,
+                                        index,
+                                        done)
+                                    awaitLinks(remoteMediaClient?.load(info, true, 0)) {
+                                        loadIndex(index + 1)
+                                    }
+                                }*/
+
+                                awaitLinks(remoteMediaClient?.queueAppendItem(MediaQueueItem.Builder(mediaInfo).build(),
+                                    JSONObject())) {
+                                    println("FAILED TO LOAD NEXT ITEM")
+                                    //  loadIndex(1)
+                                }
+
                                 isLoadingMore = false
                             }
                         }
@@ -212,6 +275,6 @@ class ControllerActivity : ExpandedControllerActivity() {
         uiMediaController.bindViewToUIController(sourcesButton, SelectSourceController(sourcesButton, this))
         uiMediaController.bindViewToUIController(skipBackButton, SkipTimeController(skipBackButton, false))
         uiMediaController.bindViewToUIController(skipForwardButton, SkipTimeController(skipForwardButton, true))
-        uiMediaController.bindViewToUIController(skipOpButton, SkipOpController(skipOpButton))
+        uiMediaController.bindViewToUIController(skipOpButton, SkipNextEpisodeController(skipOpButton))
     }
 }

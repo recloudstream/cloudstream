@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -19,7 +20,9 @@ import com.google.android.gms.common.images.WebImage
 import com.lagradost.cloudstream3.ui.MetadataHolder
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import kotlin.concurrent.thread
 
@@ -27,7 +30,8 @@ object CastHelper {
     private val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
-    fun getMediaInfo(epData: ResultEpisode, holder: MetadataHolder, link: ExtractorLink, data: JSONObject?): MediaInfo {
+    fun getMediaInfo(epData: ResultEpisode, holder: MetadataHolder, index: Int, data: JSONObject?): MediaInfo {
+        val link = holder.currentLinks[index]
         val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
             (epData.name ?: "Episode ${epData.episode}") + " - ${link.name}")
@@ -47,20 +51,22 @@ object CastHelper {
             .build()
     }
 
-    fun awaitLinks(pending: PendingResult<RemoteMediaClient.MediaChannelResult>?) {
+    fun awaitLinks(pending: PendingResult<RemoteMediaClient.MediaChannelResult>?, callback: (Boolean) -> Unit) {
         if (pending == null) return
-        thread {
-            val res = pending.await()
+        main {
+            val res = withContext(Dispatchers.IO) { pending.await() }
             when (res.status?.statusCode) {
                 CastStatusCodes.FAILED -> {
-                    println("FAILED WITH DATA: " + res.customData)
+                    callback.invoke(true)
+                    println("FAILED AND LOAD NEXT")
                 }
                 else -> {
-
+                    println("FAILED::: " + res.status)
                 }
             }
         }
     }
+
 
     fun Context.startCast(
         apiName: String,
@@ -80,16 +86,20 @@ object CastHelper {
 
         val holder = MetadataHolder(apiName, title, poster, currentEpisodeIndex, episodes, currentLinks)
 
+        val index = startIndex ?: 0
         val mediaItem =
-            getMediaInfo(epData, holder, currentLinks[startIndex ?: 0], JSONObject(mapper.writeValueAsString(holder)))
+            getMediaInfo(epData, holder, index, JSONObject(mapper.writeValueAsString(holder)))
 
         val castPlayer = CastPlayer(castContext)
 
         castPlayer.repeatMode = REPEAT_MODE_REPEAT_OFF
-        castPlayer.stop()
+
         awaitLinks(castPlayer.loadItem(
             MediaQueueItem.Builder(mediaItem).build(),
             startTime ?: 0,
-        ))
+        )) {
+            if (currentLinks.size > index + 1)
+                startCast(apiName, title, poster, currentEpisodeIndex, episodes, currentLinks, index + 1, startTime)
+        }
     }
 }

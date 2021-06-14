@@ -517,10 +517,10 @@ class PlayerFragment : Fragment() {
         val alphaAnimation = AlphaAnimation(0f, 1f)
         alphaAnimation.duration = 100
         alphaAnimation.fillAfter = true
-        video_go_back_holder.visibility = VISIBLE
+        video_go_back_holder?.visibility = VISIBLE
 
-        overlay_loading_skip_button.visibility = VISIBLE
-        loading_overlay.startAnimation(alphaAnimation)
+        overlay_loading_skip_button?.visibility = VISIBLE
+        loading_overlay?.startAnimation(alphaAnimation)
         if (this::exoPlayer.isInitialized) {
             isPlayerPlaying = exoPlayer.playWhenReady
             playbackPosition = exoPlayer.currentPosition
@@ -555,11 +555,10 @@ class PlayerFragment : Fragment() {
 
     private fun savePos() {
         if (this::exoPlayer.isInitialized) {
-            /*if (
-                    && exoPlayer.duration > 0 && exoPlayer.currentPosition > 0
-            ) {
-                setViewPosDur(data!!, exoPlayer.currentPosition, exoPlayer.duration)
-            }*/
+            if (exoPlayer.duration > 0 && exoPlayer.currentPosition > 0) {
+                //TODO FIX SAVE POS
+               // setViewPosDur(data!!, exoPlayer.currentPosition, exoPlayer.duration)
+            }
         }
     }
 
@@ -1175,11 +1174,10 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    //TODO FIX NON PIP MODE BUG
     override fun onDestroy() {
         super.onDestroy()
         isInPlayer = false
-        // releasePlayer()
+        releasePlayer()
 
         activity?.showSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
@@ -1247,6 +1245,7 @@ class PlayerFragment : Fragment() {
         hasUsedFirstRender = false
 
         try {
+            if (!isInPlayer) return
             if (this::exoPlayer.isInitialized) {
                 savePos()
                 exoPlayer.release()
