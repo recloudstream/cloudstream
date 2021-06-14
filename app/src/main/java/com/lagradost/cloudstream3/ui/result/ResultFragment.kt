@@ -20,11 +20,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.MediaQueueItem
+import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF
 import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_SINGLE
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
@@ -38,6 +40,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
+import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
@@ -52,7 +55,7 @@ data class ResultEpisode(
     val poster: String?,
     val episode: Int,
     val season: Int?,
-    val data: Any,
+    val data: String,
     val apiName: String,
     val id: Int,
     val index: Int,
@@ -80,6 +83,7 @@ class ResultFragment : Fragment() {
     private lateinit var viewModel: ResultViewModel
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
     var currentHeaderName: String? = null
+    var currentEpisodes: ArrayList<ResultEpisode>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -142,70 +146,79 @@ class ResultFragment : Fragment() {
                 ArrayList(),
                 result_episodes,
             ) { episodeClick ->
-                val id = episodeClick.data.id
+                //val id = episodeClick.data.id
                 val index = episodeClick.data.index
                 val buildInPlayer = true
                 when (episodeClick.action) {
                     ACTION_CHROME_CAST_EPISODE -> {
-
-                        /*
                         val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
                         val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null);
                         builder.setView(customLayout)
 
-                        val dialog = builder.create()*/
-                        //dialog.show()
+                        val dialog = builder.create()
+                        dialog.show()
                         Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
 
-                        viewModel.loadEpisode(episodeClick.data, false) { data ->
-                            //  dialog.dismiss()
+                        viewModel.loadEpisode(episodeClick.data, true) { data ->
+                            dialog.dismiss()
                             when (data) {
                                 is Resource.Failure -> {
                                     Toast.makeText(activity, "Failed to load links", Toast.LENGTH_SHORT).show()
                                 }
                                 is Resource.Success -> {
-                                    val epData = episodeClick.data
-                                    val links = sortUrls(data.value)
+                                    val eps = currentEpisodes ?: return@loadEpisode
+                                    context?.startCast(
+                                        apiName ?: return@loadEpisode,
+                                        currentHeaderName,
+                                        currentPoster,
+                                        episodeClick.data.index,
+                                        eps,
+                                        sortUrls(data.value))
+                                    /*
+                                        val epData = episodeClick.data
+                                        val links = sortUrls(data.value)
 
-                                    val castContext = CastContext.getSharedInstance(requireContext())
+                                        val castContext = CastContext.getSharedInstance(requireContext())
 
-                                    val customData =
-                                        links.map { JSONObject().put("name", it.name) }
-                                    val jsonArray = JSONArray()
-                                    for (item in customData) {
-                                        jsonArray.put(item)
-                                    }
-
-                                    val mediaItems = links.map {
-                                        val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
-                                        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
-                                            epData.name ?: "Episode ${epData.episode}")
-
-                                        if (currentHeaderName != null)
-                                            movieMetadata.putString(MediaMetadata.KEY_TITLE, currentHeaderName)
-
-                                        val srcPoster = epData.poster ?: currentPoster
-                                        if (srcPoster != null) {
-                                            movieMetadata.addImage(WebImage(Uri.parse(srcPoster)))
+                                        val customData =
+                                            links.map { JSONObject().put("name", it.name) }
+                                        val jsonArray = JSONArray()
+                                        for (item in customData) {
+                                            jsonArray.put(item)
                                         }
-                                        MediaQueueItem.Builder(
-                                            MediaInfo.Builder(it.url)
-                                                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                                                .setContentType(MimeTypes.VIDEO_UNKNOWN)
-                                                .setCustomData(JSONObject().put("data", jsonArray))
-                                                .setMetadata(movieMetadata)
-                                                .build()
-                                        )
-                                            .build()
-                                    }.toTypedArray()
 
-                                    val castPlayer = CastPlayer(castContext)
-                                    castPlayer.loadItems(
-                                        mediaItems,
-                                        0,
-                                        epData.progress,
-                                        REPEAT_MODE_REPEAT_SINGLE
-                                    )
+                                        val mediaItems = links.map {
+                                            val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
+                                            movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
+                                                epData.name ?: "Episode ${epData.episode}")
+
+                                            if (currentHeaderName != null)
+                                                movieMetadata.putString(MediaMetadata.KEY_TITLE, currentHeaderName)
+
+                                            val srcPoster = epData.poster ?: currentPoster
+                                            if (srcPoster != null) {
+                                                movieMetadata.addImage(WebImage(Uri.parse(srcPoster)))
+                                            }
+                                            MediaQueueItem.Builder(
+                                                MediaInfo.Builder(it.url)
+                                                    .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                                                    .setContentType(MimeTypes.VIDEO_UNKNOWN)
+                                                    .setCustomData(JSONObject().put("data", jsonArray))
+                                                    .setMetadata(movieMetadata)
+                                                    .build()
+                                            )
+                                                .build()
+                                        }.toTypedArray()
+
+                                        val castPlayer = CastPlayer(castContext)
+
+                                        castPlayer.loadItems(
+                                            mediaItems,
+                                            0,
+                                            epData.progress,
+                                            REPEAT_MODE_REPEAT_SINGLE
+                                            //REPEAT_MODE_REPEAT_SINGLE
+                                        )*/
                                 }
                             }
                         }
@@ -244,6 +257,7 @@ class ResultFragment : Fragment() {
         observe(viewModel.episodes) { episodes ->
             if (result_episodes == null || result_episodes.adapter == null) return@observe
             result_episodes_text.text = "${episodes.size} Episode${if (episodes.size == 1) "" else "s"}"
+            currentEpisodes = episodes
             (result_episodes.adapter as EpisodeAdapter).cardList = episodes
             (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
         }

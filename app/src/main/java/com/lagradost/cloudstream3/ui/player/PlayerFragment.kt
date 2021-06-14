@@ -74,9 +74,11 @@ import com.lagradost.cloudstream3.UIHelper.requestLocalAudioFocus
 import com.lagradost.cloudstream3.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.UIHelper.toPx
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeDirectly
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultViewModel
+import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -141,6 +143,8 @@ class PlayerFragment : Fragment() {
     private var isCurrentlyPlaying: Boolean = false
     private val mapper = JsonMapper.builder().addModule(KotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
+
+    lateinit var apiName: String
 
     private var isFullscreen = false
     private var isPlayerPlaying = true
@@ -733,7 +737,17 @@ class PlayerFragment : Fragment() {
                         val epData = getEpisode() ?: return@addCastStateListener
 
                         val index = links.indexOf(getCurrentUrl())
+                        context?.startCast(
+                            apiName,
+                            currentHeaderName,
+                            currentPoster,
+                            epData.index,
+                            episodes,
+                            links,
+                            index,
+                            exoPlayer.currentPosition)
 
+                        /*
                         val customData =
                             links.map { JSONObject().put("name", it.name) }
                         val jsonArray = JSONArray()
@@ -773,8 +787,9 @@ class PlayerFragment : Fragment() {
                             if (index > 0) index else 0,
                             exoPlayer.currentPosition,
                             MediaStatus.REPEAT_MODE_REPEAT_SINGLE
-                        )
+                        )*/
                         //  activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
+                        releasePlayer()
                         activity?.popCurrentPage()
                     }
                 }
@@ -818,6 +833,10 @@ class PlayerFragment : Fragment() {
                     // WHAT THE FUCK DID YOU DO
                 }
             }
+        }
+
+        observe(viewModel.apiName) {
+            apiName = it
         }
 
         overlay_loading_skip_button?.alpha = 0.5f

@@ -82,7 +82,8 @@ class ResultViewModel : ViewModel() {
                                 d.apiName,
                                 (d.url).hashCode(),
                                 0,
-                                0, 0)))
+                                0, 0,
+                            )))
                         }
                     }
                 }
@@ -99,6 +100,8 @@ class ResultViewModel : ViewModel() {
     val allEpisodes: LiveData<HashMap<Int, ArrayList<ExtractorLink>>> get() = _allEpisodes
 
     private var _apiName: MutableLiveData<String> = MutableLiveData()
+    val apiName: LiveData<String> get() = _apiName
+
 
     fun loadEpisode(
         episode: ResultEpisode,
@@ -110,7 +113,7 @@ class ResultViewModel : ViewModel() {
 
     private fun loadEpisode(
         id: Int,
-        data: Any,
+        data: String,
         isCasting: Boolean,
         callback: (Resource<ArrayList<ExtractorLink>>) -> Unit,
     ) =
@@ -124,7 +127,6 @@ class ResultViewModel : ViewModel() {
                     for (i in links) {
                         if (i.url == it.url) return@loadLinks
                     }
-                    println("LINK ADDED::::: " + it.url)
 
                     links.add(it)
                     _allEpisodes.value?.set(id, links)

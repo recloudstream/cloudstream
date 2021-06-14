@@ -3,7 +3,7 @@ package com.lagradost.cloudstream3.utils
 import com.lagradost.cloudstream3.utils.extractors.MixDrop
 import com.lagradost.cloudstream3.utils.extractors.Mp4Upload
 import com.lagradost.cloudstream3.utils.extractors.Shiro
-import com.lagradost.cloudstream3.cloudstream3.extractors.StreamTape
+import com.lagradost.cloudstream3.utils.extractors.StreamTape
 import com.lagradost.cloudstream3.utils.extractors.XStreamCdn
 
 data class ExtractorLink(
@@ -18,8 +18,6 @@ data class ExtractorLink(
 fun ExtractorLink.getId() : Int {
     return url.hashCode()
 }
-
-
 
 enum class Qualities(var value: Int) {
     Unknown(0),

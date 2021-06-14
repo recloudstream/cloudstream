@@ -53,7 +53,7 @@ abstract class MainAPI {
     }
 
     // callback is fired once a link is found, will return true if method is executed successfully
-    open fun loadLinks(data: Any, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+    open fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
         return false
     }
 }
@@ -169,8 +169,8 @@ data class AnimeLoadResponse(
     override val posterUrl: String?,
     override val year: Int?,
 
-    val dubEpisodes: ArrayList<Any>?,
-    val subEpisodes: ArrayList<Any>?,
+    val dubEpisodes: ArrayList<String>?,
+    val subEpisodes: ArrayList<String>?,
     val showStatus: ShowStatus?,
 
     override val plot: String?,

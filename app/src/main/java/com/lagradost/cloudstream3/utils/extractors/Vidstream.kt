@@ -12,10 +12,11 @@ class Vidstream {
     private fun getExtractorUrl(id: String): String {
         return "$mainUrl/streaming.php?id=$id"
     }
+
     private val normalApis = arrayListOf(Shiro(), MultiQuality())
 
     // https://gogo-stream.com/streaming.php?id=MTE3NDg5
-    fun getUrl(id: String, isCasting: Boolean = false, callback: (ExtractorLink) -> Unit) : Boolean {
+    fun getUrl(id: String, isCasting: Boolean = false, callback: (ExtractorLink) -> Unit): Boolean {
         try {
             normalApis.pmap { api ->
                 val url = api.getExtractorUrl(id)
@@ -36,7 +37,7 @@ class Vidstream {
                     //val name = element.text()
 
                     // Matches vidstream links with extractors
-                    extractorApis.filter { !it.requiresReferer || !isCasting}.pmap { api ->
+                    extractorApis.filter { !it.requiresReferer || !isCasting }.pmap { api ->
                         if (link.startsWith(api.mainUrl)) {
                             val extractedLinks = api.getUrl(link, url)
                             if (extractedLinks?.isNotEmpty() == true) {

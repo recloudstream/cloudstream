@@ -2,31 +2,26 @@ package com.lagradost.cloudstream3
 
 import android.app.PictureInPictureParams
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.android.exoplayer2.util.MimeTypes
-import com.google.android.gms.cast.MediaInfo
-import com.google.android.gms.cast.MediaMetadata
-import com.google.android.gms.cast.MediaQueueItem
-import com.google.android.gms.cast.MediaStatus
+import com.google.android.gms.cast.ApplicationMetadata
+import com.google.android.gms.cast.Cast
+import com.google.android.gms.cast.LaunchOptions
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.cast.framework.CastState
+import com.google.android.gms.cast.framework.CastSession
+import com.google.android.gms.cast.framework.SessionManagerListener
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.UIHelper.shouldShowPIPMode
 import kotlinx.android.synthetic.main.fragment_result.*
+
 
 class MainActivity : AppCompatActivity() {
     /*, ViewModelStoreOwner {
@@ -110,8 +105,8 @@ class MainActivity : AppCompatActivity() {
             requestRW()
             if (checkWrite()) return
         }
-
         CastButtonFactory.setUpMediaRouteButton(this, media_route_button)
+
         /*
         val castContext = CastContext.getSharedInstance(applicationContext)
          fun buildMediaQueueItem(video: String): MediaQueueItem {

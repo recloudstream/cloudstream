@@ -6,7 +6,7 @@ class MixDrop : ExtractorApi() {
     override val name: String = "MixDrop"
     override val mainUrl: String = "https://mixdrop.co"
     private val srcRegex = Regex("""wurl.*?=.*?"(.*?)";""")
-    override val requiresReferer = true
+    override val requiresReferer = false
 
     override fun getExtractorUrl(id: String): String {
         return "$mainUrl/e/$id"

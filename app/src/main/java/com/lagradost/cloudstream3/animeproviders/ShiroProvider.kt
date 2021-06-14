@@ -178,7 +178,7 @@ class ShiroProvider : MainAPI() {
         val mapped = response.let { mapper.readValue<AnimePage>(it.text) }
         val data = mapped.data
         val isDubbed = data.language == "dubbed"
-        val episodes = ArrayList<Any>(data.episodes ?: ArrayList())
+        val episodes = ArrayList<String>(data.episodes?.map { it.videos[0].video_id } ?: ArrayList<String>())
         val status = when (data.status) {
             "current" -> ShowStatus.Ongoing
             "finished" -> ShowStatus.Completed
@@ -205,12 +205,9 @@ class ShiroProvider : MainAPI() {
         )
     }
 
-    override fun loadLinks(data: Any, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
-        if (data is ShiroEpisodes) {
-            return Vidstream().getUrl(data.videos[0].video_id, isCasting) {
-                callback.invoke(it)
-            }
+    override fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+        return Vidstream().getUrl(data, isCasting) {
+            callback.invoke(it)
         }
-        return false
     }
 }
