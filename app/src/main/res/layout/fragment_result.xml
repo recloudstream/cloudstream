@@ -229,7 +229,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                class="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment"
+                class="com.lagradost.cloudstream3.ui.MyMiniControllerFragment"
                 tools:ignore="FragmentTagUsage">
         </fragment>
     </LinearLayout>

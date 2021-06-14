@@ -38,7 +38,8 @@ class CastOptionsProvider : OptionsProvider {
 
         return CastOptions.Builder()
             .setReceiverApplicationId(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID)
-            //.setReceiverApplicationId("C0868879") //  C0868879 = SAMPLE, CHANGE TO A NICE ID at https://developers.google.com/cast/docs/registration
+            //.setReceiverApplicationId("")
+            //  C0868879 = SAMPLE, CHANGE TO A NICE ID at https://developers.google.com/cast/docs/registration
             .setStopReceiverApplicationWhenEndingSession(true)
             .setCastMediaOptions(mediaOptions)
             .build()

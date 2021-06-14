@@ -84,6 +84,7 @@ import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.coroutines.*
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import javax.net.ssl.HttpsURLConnection
@@ -608,6 +609,7 @@ class PlayerFragment : Fragment() {
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
     private var episodes: ArrayList<ResultEpisode> = ArrayList()
     var currentPoster: String? = null
+    var currentHeaderName: String? = null
 
     //region PIP MODE
     private fun getPen(code: PlayerEventType): PendingIntent {
@@ -717,7 +719,7 @@ class PlayerFragment : Fragment() {
 
         if (activity?.isCastApiAvailable() == true) {
             CastButtonFactory.setUpMediaRouteButton(activity, player_media_route_button)
-            val castContext = CastContext.getSharedInstance(requireActivity().applicationContext)
+            val castContext = CastContext.getSharedInstance(requireContext())
 
             if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) player_media_route_button.visibility = VISIBLE
             castContext.addCastStateListener { state ->
@@ -732,19 +734,21 @@ class PlayerFragment : Fragment() {
 
                         val index = links.indexOf(getCurrentUrl())
 
+                        val customData =
+                            links.map { JSONObject().put("name", it.name) }
+                        val jsonArray = JSONArray()
+                        for (item in customData) {
+                            jsonArray.put(item)
+                        }
+
                         val mediaItems = links.map {
                             val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
-                            movieMetadata.putString(
-                                MediaMetadata.KEY_TITLE,
 
-                                "Episode ${epData.episode}" +
-                                        if (epData.name != null)
-                                            "- ${epData.name}"
-                                        else
-                                            ""
-                            )
-                            movieMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
+                            movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
                                 epData.name ?: "Episode ${epData.episode}")
+
+                            if (currentHeaderName != null)
+                                movieMetadata.putString(MediaMetadata.KEY_TITLE, currentHeaderName)
 
                             val srcPoster = epData.poster ?: currentPoster
                             if (srcPoster != null) {
@@ -755,7 +759,8 @@ class PlayerFragment : Fragment() {
                                 MediaInfo.Builder(it.url)
                                     .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                                     .setContentType(MimeTypes.VIDEO_UNKNOWN)
-                                    .setCustomData(JSONObject().put("data", it.name))
+
+                                    .setCustomData(JSONObject().put("data", jsonArray))
                                     .setMetadata(movieMetadata)
                                     .build()
                             )
@@ -838,6 +843,7 @@ class PlayerFragment : Fragment() {
                     if (d is LoadResponse) {
                         localData = d
                         currentPoster = d.posterUrl
+                        currentHeaderName = d.name
                     }
                 }
                 is Resource.Failure -> {

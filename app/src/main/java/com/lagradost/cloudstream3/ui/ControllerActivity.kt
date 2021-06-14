@@ -6,14 +6,22 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_SINGLE
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.media.uicontroller.UIController
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.UIHelper.hideSystemUI
+import com.lagradost.cloudstream3.utils.Coroutines
+import kotlinx.coroutines.delay
 
 import org.json.JSONObject
+import java.lang.Exception
 
 class SkipOpController(val view: ImageView) : UIController() {
     init {
@@ -24,7 +32,12 @@ class SkipOpController(val view: ImageView) : UIController() {
     }
 }
 
-class SelectSourceController(val view: ImageView) : UIController() {
+data class MetadataSource(val name: String)
+data class MetadataHolder(val data: List<MetadataSource>)
+
+class SelectSourceController(val view: ImageView, val activity: ControllerActivity) : UIController() {
+    private val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
     init {
         view.setImageResource(R.drawable.ic_baseline_playlist_play_24)
@@ -33,45 +46,52 @@ class SelectSourceController(val view: ImageView) : UIController() {
             //println(remoteMediaClient.mediaInfo.customData)
             //remoteMediaClient.queueJumpToItem()
             lateinit var dialog: AlertDialog
-            val items = mutableListOf<Pair<Int, String>>()
-            for (i in 0 until remoteMediaClient.mediaQueue.itemCount) {
-                (remoteMediaClient.mediaQueue.getItemAtIndex(i)?.media?.customData?.get("data") as? String)?.let { name ->
-                    items.add(
-                        remoteMediaClient.mediaQueue.getItemAtIndex(i)!!.itemId to name
-                    )
+            val holder = getCurrentMetaData()
+
+            if (holder != null) {
+                val items = holder.data
+                if (items.isNotEmpty() && remoteMediaClient.currentItem != null) {
+                    val builder = AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
+                    builder.setTitle("Pick source")
+
+                    builder.setSingleChoiceItems(
+                        items.map { it.name }.toTypedArray(),
+                        remoteMediaClient.mediaQueue.indexOfItemWithId(remoteMediaClient.currentItem.itemId)
+                    ) { _, which ->
+                        val itemId = remoteMediaClient.mediaQueue.itemIds?.get(which)
+
+                        itemId?.let { id ->
+                            remoteMediaClient.queueJumpToItem(
+                                id,
+                                remoteMediaClient.approximateStreamPosition,
+                                remoteMediaClient.mediaInfo.customData
+                            )
+                        }
+
+                        dialog.dismiss()
+                    }
+                    dialog = builder.create()
+                    dialog.show()
                 }
             }
+        }
+    }
 
-            // TODO FIX
-            if (items.isNotEmpty()) {
-                val builder = AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
-                builder.setTitle("Pick source")
-
-                builder.setSingleChoiceItems(
-                    items.map { it.second }.toTypedArray(),
-                    remoteMediaClient.currentItem.itemId - 1
-                ) { _, which ->
-                    println(
-                        remoteMediaClient.queueJumpToItem(
-                            items[which].first,
-                            remoteMediaClient.approximateStreamPosition,
-                            null
-                        )
-                    )
-                    dialog.dismiss()
-                }
-                dialog = builder.create()
-                dialog.show()
-            }
+    private fun getCurrentMetaData(): MetadataHolder? {
+        return try {
+            val data = remoteMediaClient.mediaInfo.customData
+            mapper.readValue<MetadataHolder>(data.toString())
+        } catch (e: Exception) {
+            null
         }
     }
 
     override fun onMediaStatusUpdated() {
         super.onMediaStatusUpdated()
-        // If there's 1 item it won't show
-        val dataString = remoteMediaClient.mediaQueue.getItemAtIndex(1)?.media?.customData?.get("data") as? String
-
-        view.visibility = if (dataString != null) VISIBLE else INVISIBLE
+        view.visibility =
+            if ((getCurrentMetaData()?.data?.size
+                    ?: 0) > 1
+            ) VISIBLE else INVISIBLE
     }
 
     override fun onSessionConnected(castSession: CastSession?) {
@@ -107,7 +127,7 @@ class ControllerActivity : ExpandedControllerActivity() {
         val skipBackButton: ImageView = getButtonImageViewAt(1)
         val skipForwardButton: ImageView = getButtonImageViewAt(2)
         val skipOpButton: ImageView = getButtonImageViewAt(3)
-        uiMediaController.bindViewToUIController(sourcesButton, SelectSourceController(sourcesButton))
+        uiMediaController.bindViewToUIController(sourcesButton, SelectSourceController(sourcesButton, this))
         uiMediaController.bindViewToUIController(skipBackButton, SkipTimeController(skipBackButton, false))
         uiMediaController.bindViewToUIController(skipForwardButton, SkipTimeController(skipForwardButton, true))
         uiMediaController.bindViewToUIController(skipOpButton, SkipOpController(skipOpButton))

@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -16,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.mediarouter.app.MediaRouteButton
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -33,6 +31,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.images.WebImage
 import com.google.android.material.button.MaterialButton
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -42,9 +41,9 @@ import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
+import org.json.JSONArray
 import org.json.JSONObject
-import android.app.ProgressDialog
-import com.lagradost.cloudstream3.*
+
 
 const val MAX_SYNO_LENGH = 300
 
@@ -80,6 +79,7 @@ class ResultFragment : Fragment() {
 
     private lateinit var viewModel: ResultViewModel
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
+    var currentHeaderName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -157,8 +157,8 @@ class ResultFragment : Fragment() {
                         //dialog.show()
                         Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
 
-                        viewModel.loadEpisode(episodeClick.data, true) { data ->
-                          //  dialog.dismiss()
+                        viewModel.loadEpisode(episodeClick.data, false) { data ->
+                            //  dialog.dismiss()
                             when (data) {
                                 is Resource.Failure -> {
                                     Toast.makeText(activity, "Failed to load links", Toast.LENGTH_SHORT).show()
@@ -169,30 +169,30 @@ class ResultFragment : Fragment() {
 
                                     val castContext = CastContext.getSharedInstance(requireContext())
 
+                                    val customData =
+                                        links.map { JSONObject().put("name", it.name) }
+                                    val jsonArray = JSONArray()
+                                    for (item in customData) {
+                                        jsonArray.put(item)
+                                    }
+
                                     val mediaItems = links.map {
                                         val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
-                                        movieMetadata.putString(
-                                            MediaMetadata.KEY_TITLE,
-
-                                            "Episode ${epData.episode}" +
-                                                    if (epData.name != null)
-                                                        "- ${epData.name}"
-                                                    else
-                                                        ""
-                                        )
-                                        movieMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
+                                        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
                                             epData.name ?: "Episode ${epData.episode}")
+
+                                        if (currentHeaderName != null)
+                                            movieMetadata.putString(MediaMetadata.KEY_TITLE, currentHeaderName)
 
                                         val srcPoster = epData.poster ?: currentPoster
                                         if (srcPoster != null) {
                                             movieMetadata.addImage(WebImage(Uri.parse(srcPoster)))
                                         }
-
                                         MediaQueueItem.Builder(
                                             MediaInfo.Builder(it.url)
                                                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                                                 .setContentType(MimeTypes.VIDEO_UNKNOWN)
-                                                .setCustomData(JSONObject().put("data", it.name))
+                                                .setCustomData(JSONObject().put("data", jsonArray))
                                                 .setMetadata(movieMetadata)
                                                 .build()
                                         )
@@ -254,6 +254,8 @@ class ResultFragment : Fragment() {
                     val d = data.value
                     if (d is LoadResponse) {
                         result_bookmark_button.text = "Watching"
+
+                        currentHeaderName = d.name
 
                         currentPoster = d.posterUrl
 

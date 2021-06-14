@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import android.app.PictureInPictureParams
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -12,10 +13,20 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.util.MimeTypes
+import com.google.android.gms.cast.MediaInfo
+import com.google.android.gms.cast.MediaMetadata
+import com.google.android.gms.cast.MediaQueueItem
+import com.google.android.gms.cast.MediaStatus
+import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastState
 import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.UIHelper.shouldShowPIPMode
+import kotlinx.android.synthetic.main.fragment_result.*
 
 class MainActivity : AppCompatActivity() {
     /*, ViewModelStoreOwner {
@@ -99,5 +110,32 @@ class MainActivity : AppCompatActivity() {
             requestRW()
             if (checkWrite()) return
         }
+
+        CastButtonFactory.setUpMediaRouteButton(this, media_route_button)
+        /*
+        val castContext = CastContext.getSharedInstance(applicationContext)
+         fun buildMediaQueueItem(video: String): MediaQueueItem {
+           // val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO)
+            //movieMetadata.putString(MediaMetadata.KEY_TITLE, "CloudStream")
+            val mediaInfo = MediaInfo.Builder(Uri.parse(video).toString())
+                .setStreamType(MediaInfo.STREAM_TYPE_NONE)
+                .setContentType(MimeTypes.IMAGE_JPEG)
+               // .setMetadata(movieMetadata).build()
+                .build()
+            return MediaQueueItem.Builder(mediaInfo).build()
+        }*/
+        /*
+        castContext.addCastStateListener { state ->
+            if (state == CastState.CONNECTED) {
+                println("TESTING")
+                val isCasting = castContext?.sessionManager?.currentCastSession?.remoteMediaClient?.currentItem != null
+                if(!isCasting) {
+                    val castPlayer = CastPlayer(castContext)
+                    println("LOAD ITEM")
+
+                    castPlayer.loadItem(buildMediaQueueItem("https://cdn.discordapp.com/attachments/551382684560261121/730169809408622702/ChromecastLogo6.png"),0)
+                }
+            }
+        }*/
     }
 }

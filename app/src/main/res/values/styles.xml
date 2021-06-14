@@ -99,6 +99,7 @@
         <item name="tabMode">scrollable</item>
     </style>
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowFullscreen">true</item>
         <item name="android:textColor">@color/textColor</item>
         <item name="android:textColorPrimary">@color/textColor</item>
         <!--<item name="android:background">@color/darkBackground</item>-->
