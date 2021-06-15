@@ -32,6 +32,7 @@
             @style/CustomCastExpandedController
         </item>
         <item name="castMiniControllerStyle">@style/CustomCastMiniController</item>
+        <!--<item name="mediaRouteButtonTint">?attr/colorPrimary</item>-->
 
         <!-- DEF STYLE -->
         <item name="textColor">@color/textColor</item>
@@ -118,6 +119,9 @@
         <item name="android:windowBackground">@color/transparent</item>
     </style>
 
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:backgroundTint">?attr/bitDarkerGrayBackground</item>
+    </style>
 
     <!-- CHROMECAST -->
     <style name="CustomCastExpandedController" parent="CastExpandedController">

@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -21,10 +20,8 @@ import com.lagradost.cloudstream3.ui.MetadataHolder
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import kotlin.concurrent.thread
 
 object CastHelper {
     private val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())

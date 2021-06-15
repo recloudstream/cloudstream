@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AppOpsManager
 import android.content.Context
@@ -11,13 +12,19 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
+import android.view.Gravity
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ContextThemeWrapper
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastContext
@@ -112,12 +119,11 @@ object UIHelper {
             )
         }
     }
-
     private var _AudioFocusRequest: AudioFocusRequest? = null
     private var _OnAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
     var onAudioFocusEvent = Event<Boolean>()
 
-    fun getAudioListener(): AudioManager.OnAudioFocusChangeListener? {
+    private fun getAudioListener(): AudioManager.OnAudioFocusChangeListener? {
         if (_OnAudioFocusChangeListener != null) return _OnAudioFocusChangeListener
         _OnAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
             onAudioFocusEvent.invoke(
@@ -301,5 +307,51 @@ object UIHelper {
     fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+
+    @SuppressLint("RestrictedApi")
+    inline fun View.popupMenu(
+        items: List<Triple<Int, Int, Int>>,
+        noinline onMenuItemClick: MenuItem.() -> Unit,
+    ): PopupMenu {
+        val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
+        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, R.attr.actionOverflowMenuStyle, 0)
+
+        items.forEach { (id, icon, stringRes) ->
+            popup.menu.add(0, id, 0, stringRes).setIcon(icon)
+        }
+
+        (popup.menu as? MenuBuilder)?.setOptionalIconsVisible(true)
+
+        popup.setOnMenuItemClickListener {
+            it.onMenuItemClick()
+            true
+        }
+
+        popup.show()
+        return popup
+    }
+
+    inline fun View.popupMenuNoIcons(
+        items: List<Pair<Int, Int>>,
+        noinline onMenuItemClick: MenuItem.() -> Unit,
+    ): PopupMenu {
+        val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
+        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, R.attr.actionOverflowMenuStyle, 0)
+
+        items.forEach { (id, stringRes) ->
+            popup.menu.add(0, id, 0, stringRes)
+        }
+
+        (popup.menu as? MenuBuilder)?.setOptionalIconsVisible(true)
+
+        popup.setOnMenuItemClickListener {
+            it.onMenuItemClick()
+            true
+        }
+
+        popup.show()
+        return popup
     }
 }

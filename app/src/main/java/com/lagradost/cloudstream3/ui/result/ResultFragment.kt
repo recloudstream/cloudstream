@@ -28,8 +28,11 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
+import com.lagradost.cloudstream3.UIHelper.popupMenu
+import com.lagradost.cloudstream3.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
@@ -184,10 +187,10 @@ class ResultFragment : Fragment() {
                         dialog.setOnDismissListener {
                             currentLoadingCount++
                         }
-                       // Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
+                        // Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
 
                         viewModel.loadEpisode(episodeClick.data, true) { data ->
-                            if(currentLoadingCount != currentLoad) return@loadEpisode
+                            if (currentLoadingCount != currentLoad) return@loadEpisode
                             dialog.dismiss()
                             when (data) {
                                 is Resource.Failure -> {
@@ -237,6 +240,23 @@ class ResultFragment : Fragment() {
 
         result_episodes.adapter = adapter
         result_episodes.layoutManager = GridLayoutManager(context, 1)
+
+        result_bookmark_button.setOnClickListener {
+            it.popupMenuNoIcons(
+                items = WatchType.values()
+                    .map { watchType -> Pair(watchType.internalId, watchType.stringRes) },
+                    //.map { watchType -> Triple(watchType.internalId, watchType.iconRes, watchType.stringRes) },
+            ) {
+                context?.let { localContext ->
+                    viewModel.updateWatchStatus(localContext, WatchType.fromInternalId(this.itemId))
+                }
+            }
+        }
+
+        observe(viewModel.watchStatus) {
+            //result_bookmark_button.setIconResource(it.iconRes)
+            result_bookmark_button.text = getString(it.stringRes)
+        }
 
         observe(viewModel.allEpisodes) {
             allEpisodes = it

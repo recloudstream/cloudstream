@@ -9,7 +9,10 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.launch
 
@@ -20,6 +23,24 @@ class ResultViewModel : ViewModel() {
     val episodes: LiveData<List<ResultEpisode>> get() = _episodes
     private val dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
 
+    private val page: MutableLiveData<LoadResponse> = MutableLiveData()
+    private val id: MutableLiveData<Int> = MutableLiveData()
+
+    private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData()
+    val watchStatus: LiveData<WatchType> get() = _watchStatus
+
+    fun updateWatchStatus(context: Context, status: WatchType) {
+        val currentId = id.value ?: return
+        _watchStatus.postValue(status)
+        context.setResultWatchState(currentId, status.internalId)
+    }
+
+    private fun loadWatchStatus(context: Context, localId: Int? = null) {
+        val currentId = localId ?: id.value ?: return
+        val currentWatch = context.getResultWatchState(currentId)
+        _watchStatus.postValue(currentWatch)
+    }
+
     fun reloadEpisodes(context: Context) {
         val current = _episodes.value ?: return
         val copy = current.map {
@@ -29,10 +50,16 @@ class ResultViewModel : ViewModel() {
         _episodes.postValue(copy)
     }
 
+    // THIS SHOULD AT LEAST CLEAN IT UP, SO APIS CAN SWITCH DOMAIN
+    private fun getId(url: String, api: MainAPI): Int {
+        return url.replace(api.mainUrl, "").hashCode()
+    }
+
     fun load(context: Context, url: String, apiName: String) = viewModelScope.launch {
         _apiName.postValue(apiName)
+        val api = getApiFromName(apiName)
         val data = safeApiCall {
-            getApiFromName(apiName).load(url)
+            api.load(url)
         }
         _resultResponse.postValue(data)
 
@@ -40,6 +67,11 @@ class ResultViewModel : ViewModel() {
             is Resource.Success -> {
                 val d = data.value
                 if (d is LoadResponse) {
+                    page.postValue(d)
+                    val mainId = getId(d.url, api)
+                    id.postValue(mainId)
+                    loadWatchStatus(context, mainId)
+
                     when (d) {
                         is AnimeLoadResponse -> {
                             val isDub = d.dubEpisodes != null && d.dubEpisodes.size > 0
@@ -57,14 +89,14 @@ class ResultViewModel : ViewModel() {
                                         null, // TODO FIX SEASON
                                         i,
                                         apiName,
-                                        (d.url + index).hashCode(),
+                                        (mainId + index + 1),
                                         index,
                                     ))
                                 }
                                 _episodes.postValue(episodes)
                             }
-
                         }
+
                         is TvSeriesLoadResponse -> {
                             val episodes = ArrayList<ResultEpisode>()
                             for ((index, i) in d.episodes.withIndex()) {
@@ -75,7 +107,7 @@ class ResultViewModel : ViewModel() {
                                     null, // TODO FIX SEASON
                                     i,
                                     apiName,
-                                    (d.url + index).hashCode(),
+                                    (mainId + index + 1).hashCode(),
                                     index,
                                 ))
                             }
@@ -88,7 +120,7 @@ class ResultViewModel : ViewModel() {
                                 0, null,
                                 d.movieUrl,
                                 d.apiName,
-                                (d.url).hashCode(),
+                                (mainId + 1),
                                 0,
                             )))
                         }

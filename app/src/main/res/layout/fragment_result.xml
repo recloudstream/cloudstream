@@ -61,14 +61,22 @@
                         </LinearLayout>-->
             <LinearLayout
                     android:layout_marginTop="10dp"
-
                     android:orientation="horizontal" android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                <ImageView
-                        android:id="@+id/result_poster"
-                        android:layout_width="100dp" android:layout_height="150dp"
-                        tools:src="@drawable/example_poster"
-                        android:contentDescription="@string/result_poster"/>
+
+                <androidx.cardview.widget.CardView
+                        app:cardCornerRadius="@dimen/roundedImageRadius"
+                        android:layout_width="100dp"
+                        android:layout_height="140dp">
+                    <ImageView
+                            android:id="@+id/result_poster"
+                            android:scaleType="centerCrop"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            tools:src="@drawable/example_poster"
+                            android:contentDescription="@string/result_poster"/>
+                </androidx.cardview.widget.CardView>
+
 
                 <LinearLayout android:layout_marginLeft="10dp"
                               android:gravity="center_vertical"

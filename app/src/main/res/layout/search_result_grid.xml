@@ -23,7 +23,7 @@
             android:id="@+id/backgroundCard"
             app:cardBackgroundColor="@color/darkBackground"
     >
-        <!-- USING CROP RATIO (182/268), centerCrop for fill -->
+
         <ImageView
                 android:duplicateParentState="true"
                 android:id="@+id/imageView"

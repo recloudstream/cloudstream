@@ -22,5 +22,12 @@
     <string name="result_share">Share</string>
     <string name="result_open_in_browser">Open In Browser</string>
     <string name="skip_loading">Skip Loading</string>
-    <string name="loading_chromecast">Loading...</string>
+    <string name="loading_chromecast">Loading…</string>
+
+    <string name="type_watching">Watching</string>
+    <string name="type_on_hold">On-Hold</string>
+    <string name="type_completed">Completed</string>
+    <string name="type_dropped">Dropped</string>
+    <string name="type_plan_to_watch">Plan to Watch</string>
+    <string name="type_none">None</string>
 </resources>
