@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -20,18 +21,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.android.exoplayer2.util.MimeTypes
-import com.google.android.gms.cast.MediaInfo
-import com.google.android.gms.cast.MediaMetadata
-import com.google.android.gms.cast.MediaQueueItem
-import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF
-import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_SINGLE
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
-import com.google.android.gms.common.images.WebImage
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
@@ -41,11 +33,10 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
-import org.json.JSONArray
-import org.json.JSONObject
 
 
 const val MAX_SYNO_LENGH = 300
@@ -59,12 +50,42 @@ data class ResultEpisode(
     val apiName: String,
     val id: Int,
     val index: Int,
-    val progress: Long, // time in MS
+    val position: Long, // time in MS
     val duration: Long, // duration in MS
 )
 
+fun ResultEpisode.getRealPosition(): Long {
+    if (duration <= 0) return 0
+    val percentage = position * 100 / duration
+    if (percentage <= 5 || percentage >= 95) return 0
+    return position
+}
+
+fun Context.buildResultEpisode(
+    name: String?,
+    poster: String?,
+    episode: Int,
+    season: Int?,
+    data: String,
+    apiName: String,
+    id: Int,
+    index: Int,
+): ResultEpisode {
+    val posDur = getViewPos(id)
+    return ResultEpisode(name,
+        poster,
+        episode,
+        season,
+        data,
+        apiName,
+        id,
+        index,
+        posDur?.position ?: 0,
+        posDur?.duration ?: 0)
+}
+
 fun ResultEpisode.getWatchProgress(): Float {
-    return progress.toFloat() / duration
+    return position.toFloat() / duration
 }
 
 class ResultFragment : Fragment() {
@@ -79,11 +100,11 @@ class ResultFragment : Fragment() {
             }
     }
 
-
+    private var currentLoadingCount = 0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
     private lateinit var viewModel: ResultViewModel
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
-    var currentHeaderName: String? = null
-    var currentEpisodes: ArrayList<ResultEpisode>? = null
+    private var currentHeaderName: String? = null
+    private var currentEpisodes: List<ResultEpisode>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,7 +121,7 @@ class ResultFragment : Fragment() {
         super.onDestroy()
     }
 
-    var currentPoster: String? = null
+    private var currentPoster: String? = null
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -149,17 +170,24 @@ class ResultFragment : Fragment() {
                 //val id = episodeClick.data.id
                 val index = episodeClick.data.index
                 val buildInPlayer = true
+                currentLoadingCount++
                 when (episodeClick.action) {
                     ACTION_CHROME_CAST_EPISODE -> {
-                        val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
-                        val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null);
+                        val currentLoad = currentLoadingCount
+                        val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
+                        val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
                         builder.setView(customLayout)
 
                         val dialog = builder.create()
+
                         dialog.show()
-                        Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
+                        dialog.setOnDismissListener {
+                            currentLoadingCount++
+                        }
+                       // Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
 
                         viewModel.loadEpisode(episodeClick.data, true) { data ->
+                            if(currentLoadingCount != currentLoad) return@loadEpisode
                             dialog.dismiss()
                             when (data) {
                                 is Resource.Failure -> {
@@ -173,52 +201,9 @@ class ResultFragment : Fragment() {
                                         currentPoster,
                                         episodeClick.data.index,
                                         eps,
-                                        sortUrls(data.value))
-                                    /*
-                                        val epData = episodeClick.data
-                                        val links = sortUrls(data.value)
-
-                                        val castContext = CastContext.getSharedInstance(requireContext())
-
-                                        val customData =
-                                            links.map { JSONObject().put("name", it.name) }
-                                        val jsonArray = JSONArray()
-                                        for (item in customData) {
-                                            jsonArray.put(item)
-                                        }
-
-                                        val mediaItems = links.map {
-                                            val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
-                                            movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
-                                                epData.name ?: "Episode ${epData.episode}")
-
-                                            if (currentHeaderName != null)
-                                                movieMetadata.putString(MediaMetadata.KEY_TITLE, currentHeaderName)
-
-                                            val srcPoster = epData.poster ?: currentPoster
-                                            if (srcPoster != null) {
-                                                movieMetadata.addImage(WebImage(Uri.parse(srcPoster)))
-                                            }
-                                            MediaQueueItem.Builder(
-                                                MediaInfo.Builder(it.url)
-                                                    .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                                                    .setContentType(MimeTypes.VIDEO_UNKNOWN)
-                                                    .setCustomData(JSONObject().put("data", jsonArray))
-                                                    .setMetadata(movieMetadata)
-                                                    .build()
-                                            )
-                                                .build()
-                                        }.toTypedArray()
-
-                                        val castPlayer = CastPlayer(castContext)
-
-                                        castPlayer.loadItems(
-                                            mediaItems,
-                                            0,
-                                            epData.progress,
-                                            REPEAT_MODE_REPEAT_SINGLE
-                                            //REPEAT_MODE_REPEAT_SINGLE
-                                        )*/
+                                        sortUrls(data.value),
+                                        startTime = episodeClick.data.getRealPosition()
+                                    )
                                 }
                             }
                         }
@@ -231,7 +216,10 @@ class ResultFragment : Fragment() {
                                     R.anim.exit_anim,
                                     R.anim.pop_enter,
                                     R.anim.pop_exit)
-                                .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(index, null, 0)))
+                                .add(R.id.homeRoot,
+                                    PlayerFragment.newInstance(PlayerData(index, null, 0),
+                                        episodeClick.data.getRealPosition())
+                                )
                                 .commit()
                         }
                     }
@@ -288,10 +276,10 @@ class ResultFragment : Fragment() {
                         }
 
                         if (d.year != null) {
-                            result_year.visibility = View.VISIBLE
+                            result_year.visibility = VISIBLE
                             result_year.text = d.year.toString()
                         } else {
-                            result_year.visibility = View.GONE
+                            result_year.visibility = GONE
                         }
 
                         if (d.posterUrl != null) {
@@ -383,12 +371,12 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                         }
 
                         result_tag.removeAllViews()
-                        result_tag_holder.visibility = View.GONE
-                        result_status.visibility = View.GONE
+                        result_tag_holder.visibility = GONE
+                        result_status.visibility = GONE
 
                         when (d) {
                             is AnimeLoadResponse -> {
-                                result_status.visibility = View.VISIBLE
+                                result_status.visibility = VISIBLE
                                 result_status.text = when (d.showStatus) {
                                     null -> ""
                                     ShowStatus.Ongoing -> "Ongoing"
@@ -402,9 +390,9 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                                 result_toolbar.title = titleName
 
                                 if (d.tags == null) {
-                                    result_tag_holder.visibility = View.GONE
+                                    result_tag_holder.visibility = GONE
                                 } else {
-                                    result_tag_holder.visibility = View.VISIBLE
+                                    result_tag_holder.visibility = VISIBLE
 
                                     for ((index, tag) in d.tags.withIndex()) {
                                         val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
@@ -426,6 +414,6 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
         }
 
         if (viewModel.resultResponse.value == null && apiName != null && slug != null)
-            viewModel.load(slug, apiName)
+            viewModel.load(requireContext(), slug, apiName)
     }
 }

@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,17 +9,27 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.launch
 
 class ResultViewModel : ViewModel() {
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
-    private val _episodes: MutableLiveData<ArrayList<ResultEpisode>> = MutableLiveData()
+    private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
     val resultResponse: LiveData<Resource<Any?>> get() = _resultResponse
-    val episodes: LiveData<ArrayList<ResultEpisode>> get() = _episodes
+    val episodes: LiveData<List<ResultEpisode>> get() = _episodes
     private val dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
 
-    fun load(url: String, apiName: String) = viewModelScope.launch {
+    fun reloadEpisodes(context: Context) {
+        val current = _episodes.value ?: return
+        val copy = current.map {
+            val posDur = context.getViewPos(it.id)
+            it.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
+        }
+        _episodes.postValue(copy)
+    }
+
+    fun load(context: Context, url: String, apiName: String) = viewModelScope.launch {
         _apiName.postValue(apiName)
         val data = safeApiCall {
             getApiFromName(apiName).load(url)
@@ -39,7 +50,7 @@ class ResultViewModel : ViewModel() {
                             if (dataList != null) {
                                 val episodes = ArrayList<ResultEpisode>()
                                 for ((index, i) in dataList.withIndex()) {
-                                    episodes.add(ResultEpisode(
+                                    episodes.add(context.buildResultEpisode(
                                         null, // TODO ADD NAMES
                                         null,
                                         index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
@@ -48,8 +59,6 @@ class ResultViewModel : ViewModel() {
                                         apiName,
                                         (d.url + index).hashCode(),
                                         index,
-                                        0,//(index * 0.1f),//TODO TEST; REMOVE
-                                        0,
                                     ))
                                 }
                                 _episodes.postValue(episodes)
@@ -59,7 +68,7 @@ class ResultViewModel : ViewModel() {
                         is TvSeriesLoadResponse -> {
                             val episodes = ArrayList<ResultEpisode>()
                             for ((index, i) in d.episodes.withIndex()) {
-                                episodes.add(ResultEpisode(
+                                episodes.add(context.buildResultEpisode(
                                     null, // TODO ADD NAMES
                                     null,
                                     index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
@@ -68,21 +77,19 @@ class ResultViewModel : ViewModel() {
                                     apiName,
                                     (d.url + index).hashCode(),
                                     index,
-                                    0,//(index * 0.1f),//TODO TEST; REMOVE
-                                    0,
                                 ))
                             }
                             _episodes.postValue(episodes)
                         }
                         is MovieLoadResponse -> {
-                            _episodes.postValue(arrayListOf(ResultEpisode(null,
+                            _episodes.postValue(arrayListOf(context.buildResultEpisode(
+                                null,
                                 null,
                                 0, null,
                                 d.movieUrl,
                                 d.apiName,
                                 (d.url).hashCode(),
                                 0,
-                                0, 0,
                             )))
                         }
                     }
@@ -141,5 +148,4 @@ class ResultViewModel : ViewModel() {
     fun loadIndex(index: Int): ResultEpisode? {
         return episodes.value?.get(index)
     }
-
 }

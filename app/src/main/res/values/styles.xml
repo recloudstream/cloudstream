@@ -114,7 +114,9 @@
         <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
         <item name="android:windowBackground">@drawable/dialog__window_background</item>
     </style>
-
+    <style name="AlertDialogCustomTransparent" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
 
 
     <!-- CHROMECAST -->

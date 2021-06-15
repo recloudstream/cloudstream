@@ -81,6 +81,8 @@ import com.lagradost.cloudstream3.ui.result.ResultViewModel
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.saveViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.fragment_player.*
@@ -544,11 +546,15 @@ class PlayerFragment : Fragment() {
     private lateinit var volumeObserver: SettingsContentObserver
 
     companion object {
-        fun newInstance(data: PlayerData) =
+        fun newInstance(data: PlayerData, startPos: Long? = null) =
             PlayerFragment().apply {
                 arguments = Bundle().apply {
                     //println(data)
                     putString("data", mapper.writeValueAsString(data))
+                    println("PUT START: " + startPos)
+                    if (startPos != null) {
+                        putLong(STATE_RESUME_POSITION, startPos)
+                    }
                 }
             }
     }
@@ -556,8 +562,7 @@ class PlayerFragment : Fragment() {
     private fun savePos() {
         if (this::exoPlayer.isInitialized) {
             if (exoPlayer.duration > 0 && exoPlayer.currentPosition > 0) {
-                //TODO FIX SAVE POS
-               // setViewPosDur(data!!, exoPlayer.currentPosition, exoPlayer.duration)
+                context?.saveViewPos(getEpisode()?.id, exoPlayer.currentPosition, exoPlayer.duration)
             }
         }
     }
@@ -610,7 +615,7 @@ class PlayerFragment : Fragment() {
     private var resizeMode = 0
     private var playbackSpeed = 0f
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
-    private var episodes: ArrayList<ResultEpisode> = ArrayList()
+    private var episodes: List<ResultEpisode> = ArrayList()
     var currentPoster: String? = null
     var currentHeaderName: String? = null
 
@@ -795,6 +800,14 @@ class PlayerFragment : Fragment() {
             }
         }
 
+        arguments?.getString("data")?.let {
+            playerData = mapper.readValue(it, PlayerData::class.java)
+        }
+
+        arguments?.getLong(STATE_RESUME_POSITION)?.let {
+            playbackPosition = it
+        }
+
         if (savedInstanceState != null) {
             currentWindow = savedInstanceState.getInt(STATE_RESUME_WINDOW)
             playbackPosition = savedInstanceState.getLong(STATE_RESUME_POSITION)
@@ -819,9 +832,7 @@ class PlayerFragment : Fragment() {
             )
 
         viewModel = ViewModelProvider(requireActivity()).get(ResultViewModel::class.java)
-        arguments?.getString("data")?.let {
-            playerData = mapper.readValue(it, PlayerData::class.java)
-        }
+
 
         observeDirectly(viewModel.episodes) { _episodes ->
             episodes = _episodes
@@ -1175,6 +1186,8 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        savePos()
+
         super.onDestroy()
         isInPlayer = false
         releasePlayer()
@@ -1184,6 +1197,7 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onPause() {
+        savePos()
         super.onPause()
         if (Util.SDK_INT <= 23) {
             if (player_view != null) player_view.onPause()
@@ -1192,6 +1206,7 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onStop() {
+        savePos()
         super.onStop()
         if (Util.SDK_INT > 23) {
             if (player_view != null) player_view.onPause()
@@ -1200,6 +1215,8 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        savePos()
+
         if (this::exoPlayer.isInitialized) {
             outState.putInt(STATE_RESUME_WINDOW, exoPlayer.currentWindowIndex)
             outState.putLong(STATE_RESUME_POSITION, exoPlayer.currentPosition)
@@ -1209,7 +1226,6 @@ class PlayerFragment : Fragment() {
         outState.putInt(RESIZE_MODE_KEY, resizeMode)
         outState.putFloat(PLAYBACK_SPEED, playbackSpeed)
         outState.putString("data", mapper.writeValueAsString(playerData))
-        savePos()
         super.onSaveInstanceState(outState)
     }
 
@@ -1305,6 +1321,7 @@ class PlayerFragment : Fragment() {
                     .setTrackSelector(trackSelector)
 
             _exoPlayer.setMediaSourceFactory(DefaultMediaSourceFactory(CustomFactory()))
+            println("START POS: " + playbackPosition)
             exoPlayer = _exoPlayer.build().apply {
                 playWhenReady = isPlayerPlaying
                 seekTo(currentWindow, playbackPosition)

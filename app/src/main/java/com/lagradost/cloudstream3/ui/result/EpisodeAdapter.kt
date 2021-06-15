@@ -22,7 +22,7 @@ data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
     private var activity: Activity,
-    var cardList: ArrayList<ResultEpisode>,
+    var cardList: List<ResultEpisode>,
     private val resView: RecyclerView,
     private val clickCallback: (EpisodeClickEvent) -> Unit,
 ) :

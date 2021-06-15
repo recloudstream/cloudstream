@@ -50,7 +50,7 @@ private fun RemoteMediaClient.getItemIndex(): Int? {
 
 class SkipNextEpisodeController(val view: ImageView) : UIController() {
     init {
-        view.setImageResource(R.drawable.exo_controls_fastforward)
+        view.setImageResource(R.drawable.ic_baseline_skip_next_24)
         view.setOnClickListener {
             remoteMediaClient?.let {
                 it.queueNext(JSONObject())
