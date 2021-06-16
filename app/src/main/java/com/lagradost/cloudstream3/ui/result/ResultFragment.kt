@@ -70,6 +70,15 @@ fun ResultEpisode.getRealPosition(): Long {
     return position
 }
 
+fun ResultEpisode.getDisplayPosition(): Long {
+    if (duration <= 0) return 0
+    val percentage = position * 100 / duration
+    if (percentage <= 1) return 0
+    if (percentage <= 5) return 5 * duration / 100
+    if (percentage >= 95) return duration
+    return position
+}
+
 fun Context.buildResultEpisode(
     name: String?,
     poster: String?,
@@ -94,7 +103,7 @@ fun Context.buildResultEpisode(
 }
 
 fun ResultEpisode.getWatchProgress(): Float {
-    return position.toFloat() / duration
+    return getDisplayPosition().toFloat() / duration
 }
 
 class ResultFragment : Fragment() {

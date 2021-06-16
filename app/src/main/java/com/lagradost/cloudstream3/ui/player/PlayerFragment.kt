@@ -130,6 +130,7 @@ data class PlayerData(
     val mirrorId: Int,
 )
 
+// YE, I KNOW, THIS COULD BE HANDLED A LOT BETTER
 class PlayerFragment : Fragment() {
     private var isCurrentlyPlaying: Boolean = false
     private val mapper = JsonMapper.builder().addModule(KotlinModule())
@@ -294,6 +295,7 @@ class PlayerFragment : Fragment() {
     private var playBackSpeedEnabled = true//settingsManager!!.getBoolean("playback_speed_enabled", false)
     private var playerResizeEnabled = true//settingsManager!!.getBoolean("player_resize_enabled", false)
     private var doubleTapEnabled = false
+    private var useSystemBrightness = false
 
     private var skipTime = 0L
     private var prevDiffX = 0.0
@@ -380,12 +382,36 @@ class PlayerFragment : Fragment() {
                             }
                         } else if (progressBarRightHolder != null) {
                             progressBarRightHolder?.alpha = 1f
-                            val alpha = minOf(0.95f,
-                                brightness_overlay.alpha + diffY.toFloat() * 0.5f) // 0.05f *if (diffY > 0) 1 else -1
-                            brightness_overlay?.alpha = alpha
 
-                            progressBarRight?.max = 100 * 100
-                            progressBarRight?.progress = ((1f - alpha) * 100 * 100).toInt()
+                            if (useSystemBrightness) {
+                                // https://developer.android.com/reference/android/view/WindowManager.LayoutParams#screenBrightness
+                                val lp = activity?.window?.attributes
+                                val currentBrightness = if (lp?.screenBrightness ?: -1.0f <= 0f) (android.provider.Settings.System.getInt(
+                                    context?.contentResolver,
+                                    android.provider.Settings.System.SCREEN_BRIGHTNESS
+                                ) * (1 / 255).toFloat())
+                                else lp?.screenBrightness!!
+
+                                val alpha = minOf(
+                                    maxOf(
+                                        0.005f, // BRIGHTNESS_OVERRIDE_OFF doesn't seem to work
+                                        currentBrightness - diffY.toFloat() * 0.5f
+                                    ), 1.0f
+                                )// 0.05f *if (diffY > 0) 1 else -1
+                                lp?.screenBrightness = alpha
+                                activity?.window?.attributes = lp
+
+                                progressBarRight?.max = 100 * 100
+                                progressBarRight?.progress = (alpha * 100 * 100).toInt()
+                            }
+                            else {
+                                val alpha = minOf(0.95f,
+                                    brightness_overlay.alpha + diffY.toFloat() * 0.5f) // 0.05f *if (diffY > 0) 1 else -1
+                                brightness_overlay?.alpha = alpha
+
+                                progressBarRight?.max = 100 * 100
+                                progressBarRight?.progress = ((1f - alpha) * 100 * 100).toInt()
+                            }
 
                             currentY = motionEvent.rawY
                         }
@@ -457,6 +483,7 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     fun changeSkip(position: Long? = null) {
         val data = localData
 
@@ -504,6 +531,7 @@ class PlayerFragment : Fragment() {
     private var hasUsedFirstRender = false
 
     private fun releasePlayer() {
+        savePos()
         isCurrentlyPlaying = false
         val alphaAnimation = AlphaAnimation(0f, 1f)
         alphaAnimation.duration = 100
@@ -551,7 +579,10 @@ class PlayerFragment : Fragment() {
     private fun savePos() {
         if (this::exoPlayer.isInitialized) {
             if (exoPlayer.duration > 0 && exoPlayer.currentPosition > 0) {
-                context?.setViewPos(getEpisode()?.id, exoPlayer.currentPosition, exoPlayer.duration)
+                context?.let { ctx ->
+                    ctx.setViewPos(getEpisode()?.id, exoPlayer.currentPosition, exoPlayer.duration)
+                    viewModel.reloadEpisodes(ctx)
+                }
             }
         }
     }
@@ -1142,9 +1173,11 @@ class PlayerFragment : Fragment() {
 
     private fun skipToNextEpisode() {
         if (isCurrentlySkippingEp) return
+        releasePlayer()
         isCurrentlySkippingEp = true
         val copy = playerData.copy(episodeIndex = playerData.episodeIndex + 1)
         playerData = copy
+        playbackPosition = 0
         initPlayer()
     }
 
@@ -1164,6 +1197,8 @@ class PlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        UIHelper.onAudioFocusEvent += ::handlePauseEvent
+
         activity?.hideSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         if (Util.SDK_INT <= 23) {
@@ -1174,12 +1209,20 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    private fun handlePauseEvent(pause : Boolean) {
+        if(pause) {
+            handlePlayerEvent(PlayerEventType.Pause)
+        }
+    }
+
     override fun onDestroy() {
         savePos()
 
         super.onDestroy()
         isInPlayer = false
         releasePlayer()
+
+        UIHelper.onAudioFocusEvent -= ::handlePauseEvent
 
         activity?.showSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER

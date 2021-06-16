@@ -24,7 +24,6 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastContext
@@ -119,23 +118,23 @@ object UIHelper {
             )
         }
     }
-    private var _AudioFocusRequest: AudioFocusRequest? = null
-    private var _OnAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
+    private var currentAudioFocusRequest: AudioFocusRequest? = null
+    private var currentAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
     var onAudioFocusEvent = Event<Boolean>()
 
     private fun getAudioListener(): AudioManager.OnAudioFocusChangeListener? {
-        if (_OnAudioFocusChangeListener != null) return _OnAudioFocusChangeListener
-        _OnAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
+        if (currentAudioFocusChangeListener != null) return currentAudioFocusChangeListener
+        currentAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
             onAudioFocusEvent.invoke(
                 when (it) {
-                    AudioManager.AUDIOFOCUS_GAIN -> true
-                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE -> true
-                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT -> true
-                    else -> false
+                    AudioManager.AUDIOFOCUS_GAIN -> false
+                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE -> false
+                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT -> false
+                    else -> true
                 }
             )
         }
-        return _OnAudioFocusChangeListener
+        return currentAudioFocusChangeListener
     }
 
     fun Context.isCastApiAvailable(): Boolean {
@@ -168,8 +167,8 @@ object UIHelper {
     }
 
     fun getFocusRequest(): AudioFocusRequest? {
-        if (_AudioFocusRequest != null) return _AudioFocusRequest
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (currentAudioFocusRequest != null) return currentAudioFocusRequest
+        currentAudioFocusRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
                 setAudioAttributes(AudioAttributes.Builder().run {
                     setUsage(AudioAttributes.USAGE_MEDIA)
@@ -185,6 +184,7 @@ object UIHelper {
         } else {
             null
         }
+        return currentAudioFocusRequest
     }
 
     fun Activity.hideSystemUI() {
