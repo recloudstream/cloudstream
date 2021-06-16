@@ -147,7 +147,7 @@
 
         <item name="castTitleTextAppearance">@style/TextAppearance.AppCompat.Subhead</item>
         <item name="castSubtitleTextAppearance">@style/TextAppearance.AppCompat.Caption</item>
-        <item name="castBackground">?attr/darkBackground</item> <!--CHECK-->
+        <item name="castBackground">@color/transparent</item> <!--CHECK bitDarkerGrayBackground darkBackground-->
         <item name="castProgressBarColor">?attr/colorPrimary</item>
         <item name="castStopButtonDrawable">@drawable/cast_ic_mini_controller_stop</item>'
         <item name="castLargeStopButtonDrawable">@drawable/cast_ic_mini_controller_stop_large</item>

@@ -26,6 +26,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.UIHelper.popupMenu
@@ -122,6 +123,18 @@ class ResultFragment : Fragment() {
     override fun onDestroy() {
         //requireActivity().viewModelStore.clear() // REMEMBER THE CLEAR
         super.onDestroy()
+        activity?.let {
+            it.window?.navigationBarColor =
+                it.colorFromAttribute(R.attr.darkBackground)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity?.let {
+            it.window?.navigationBarColor =
+                it.colorFromAttribute(R.attr.bitDarkerGrayBackground)
+        }
     }
 
     private var currentPoster: String? = null
@@ -245,7 +258,7 @@ class ResultFragment : Fragment() {
             it.popupMenuNoIcons(
                 items = WatchType.values()
                     .map { watchType -> Pair(watchType.internalId, watchType.stringRes) },
-                    //.map { watchType -> Triple(watchType.internalId, watchType.iconRes, watchType.stringRes) },
+                //.map { watchType -> Triple(watchType.internalId, watchType.iconRes, watchType.stringRes) },
             ) {
                 context?.let { localContext ->
                     viewModel.updateWatchStatus(localContext, WatchType.fromInternalId(this.itemId))

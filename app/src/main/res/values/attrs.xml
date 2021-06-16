@@ -2,6 +2,15 @@
 <resources>
     <declare-styleable name="FlowLayout_Layout"/>
     <declare-styleable name="FlowLayout_Layout_layout_space"/>
+
+    <declare-styleable name="CustomCast">
+        <attr name="customCastBackgroundColor" format="color"/>
+    </declare-styleable>
+
+    <style name="customCastDefColor">
+        <item name="customCastBackgroundColor">?attr/colorPrimary</item>
+    </style>
+
     <declare-styleable name="MainColors">
         <attr name="colorPrimary" format="color"/>
         <attr name="colorSearch" format="color"/>
