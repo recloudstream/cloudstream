@@ -114,8 +114,6 @@ class SearchFragment : Fragment() {
 
         main_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                search_exit_icon.alpha = 0f
-                search_loading_bar.alpha = 1f
                 searchViewModel.search(query)
                 return true
             }
@@ -128,17 +126,26 @@ class SearchFragment : Fragment() {
         observe(searchViewModel.searchResponse) {
             when (it) {
                 is Resource.Success -> {
-                    (cardSpace.adapter as SearchAdapter).cardList = it.value
-                    (cardSpace.adapter as SearchAdapter).notifyDataSetChanged()
+                    it?.value?.let { data ->
+                        (cardSpace.adapter as SearchAdapter).cardList = data
+                        (cardSpace.adapter as SearchAdapter).notifyDataSetChanged()
+                    }
+                    search_exit_icon.alpha = 1f
+                    search_loading_bar.alpha = 0f
                 }
                 is Resource.Failure -> {
                     Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
+                    search_exit_icon.alpha = 1f
+                    search_loading_bar.alpha = 0f
+                }
+                is Resource.Loading -> {
+                    search_exit_icon.alpha = 0f
+                    search_loading_bar.alpha = 1f
                 }
             }
-            search_exit_icon.alpha = 1f
-            search_loading_bar.alpha = 0f
         }
-        (activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
+        searchViewModel.search("overlord")
+        //  (activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*
         (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
             .setCustomAnimations(R.anim.enter_anim,

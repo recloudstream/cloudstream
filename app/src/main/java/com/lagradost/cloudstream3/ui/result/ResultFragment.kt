@@ -10,11 +10,14 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +31,9 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
+import com.lagradost.cloudstream3.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.UIHelper.popupMenu
 import com.lagradost.cloudstream3.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -137,13 +142,46 @@ class ResultFragment : Fragment() {
         }
     }
 
+    /// 0 = LOADING, 1 = ERROR LOADING, 2 = LOADED
+    fun updateVisStatus(state: Int) {
+        when (state) {
+            0 -> {
+                result_loading.visibility = VISIBLE
+                result_finish_loading.visibility = GONE
+                result_reload_connectionerror.visibility = GONE
+                result_reload_connection_open_in_browser.visibility = GONE
+            }
+            1 -> {
+                result_loading.visibility = GONE
+                result_finish_loading.visibility = GONE
+                result_reload_connectionerror.visibility = VISIBLE
+                result_reload_connection_open_in_browser.visibility = if (url == null) GONE else VISIBLE
+            }
+            2 -> {
+                result_loading.visibility = GONE
+                result_finish_loading.visibility = VISIBLE
+                result_reload_connectionerror.visibility = GONE
+                result_reload_connection_open_in_browser.visibility = GONE
+            }
+        }
+    }
+
     private var currentPoster: String? = null
+
+    var url: String? = null
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.fixPaddingStatusbar(result_scroll)
         activity?.fixPaddingStatusbar(result_barstatus)
+
+        val backParameter = result_back.layoutParams as CoordinatorLayout.LayoutParams
+        backParameter.setMargins(backParameter.leftMargin,
+            backParameter.topMargin + requireContext().getStatusBarHeight(),
+            backParameter.rightMargin,
+            backParameter.bottomMargin)
+        result_back.layoutParams = backParameter
 
         if (activity?.isCastApiAvailable() == true) {
             CastButtonFactory.setUpMediaRouteButton(activity, media_route_button)
@@ -160,21 +198,97 @@ class ResultFragment : Fragment() {
         }
         // activity?.fixPaddingStatusbar(result_toolbar)
 
-        val url = arguments?.getString("url")
+        url = arguments?.getString("url")
         val slug = arguments?.getString("slug")
         val apiName = arguments?.getString("apiName")
 
         result_scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
             if (result_poster_blur == null) return@OnScrollChangeListener
             result_poster_blur.alpha = maxOf(0f, (0.7f - scrollY / 1000f))
+            val setAlpha = 1f - scrollY / 200f
+            result_back.alpha = setAlpha
             result_poster_blur_holder.translationY = -scrollY.toFloat()
+            // result_back.translationY = -scrollY.toFloat()
             //result_barstatus.alpha = scrollY / 200f
             //result_barstatus.visibility = if (scrollY > 0) View.VISIBLE else View.GONE§
+            result_back.visibility = if (setAlpha > 0) VISIBLE else GONE
         })
 
         result_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
         result_toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
+        }
+
+        result_back.setOnClickListener {
+            requireActivity().popCurrentPage()
+        }
+
+        fun handleAction(episodeClick: EpisodeClickEvent) {
+            //val id = episodeClick.data.id
+            val index = episodeClick.data.index
+            val buildInPlayer = true
+            currentLoadingCount++
+            when (episodeClick.action) {
+                ACTION_CHROME_CAST_EPISODE -> {
+                    val currentLoad = currentLoadingCount
+                    val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
+                    val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
+                    builder.setView(customLayout)
+
+                    val dialog = builder.create()
+
+                    dialog.show()
+                    dialog.setOnDismissListener {
+                        currentLoadingCount++
+                    }
+                    // Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
+
+                    viewModel.loadEpisode(episodeClick.data, true) { data ->
+                        if (currentLoadingCount != currentLoad) return@loadEpisode
+                        dialog.dismiss()
+                        when (data) {
+                            is Resource.Failure -> {
+                                Toast.makeText(activity, "Failed to load links", Toast.LENGTH_SHORT).show()
+                            }
+                            is Resource.Success -> {
+                                val eps = currentEpisodes ?: return@loadEpisode
+                                context?.startCast(
+                                    apiName ?: return@loadEpisode,
+                                    currentHeaderName,
+                                    currentPoster,
+                                    episodeClick.data.index,
+                                    eps,
+                                    sortUrls(data.value),
+                                    startTime = episodeClick.data.getRealPosition()
+                                )
+                            }
+                        }
+                    }
+                }
+
+                ACTION_PLAY_EPISODE_IN_PLAYER -> {
+                    if (buildInPlayer) {
+                        (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_anim,
+                                R.anim.exit_anim,
+                                R.anim.pop_enter,
+                                R.anim.pop_exit)
+                            .add(R.id.homeRoot,
+                                PlayerFragment.newInstance(PlayerData(index, null, 0),
+                                    episodeClick.data.getRealPosition())
+                            )
+                            .commit()
+                    }
+                }
+                ACTION_RELOAD_EPISODE -> {
+                    /*viewModel.load(episodeClick.data) { res ->
+                        if (res is Resource.Success) {
+                            playEpisode(allEpisodes[id], index)
+                        }
+                    }*/
+                }
+
+            }
         }
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let { it ->
@@ -183,71 +297,7 @@ class ResultFragment : Fragment() {
                 ArrayList(),
                 result_episodes,
             ) { episodeClick ->
-                //val id = episodeClick.data.id
-                val index = episodeClick.data.index
-                val buildInPlayer = true
-                currentLoadingCount++
-                when (episodeClick.action) {
-                    ACTION_CHROME_CAST_EPISODE -> {
-                        val currentLoad = currentLoadingCount
-                        val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
-                        val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
-                        builder.setView(customLayout)
-
-                        val dialog = builder.create()
-
-                        dialog.show()
-                        dialog.setOnDismissListener {
-                            currentLoadingCount++
-                        }
-                        // Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
-
-                        viewModel.loadEpisode(episodeClick.data, true) { data ->
-                            if (currentLoadingCount != currentLoad) return@loadEpisode
-                            dialog.dismiss()
-                            when (data) {
-                                is Resource.Failure -> {
-                                    Toast.makeText(activity, "Failed to load links", Toast.LENGTH_SHORT).show()
-                                }
-                                is Resource.Success -> {
-                                    val eps = currentEpisodes ?: return@loadEpisode
-                                    context?.startCast(
-                                        apiName ?: return@loadEpisode,
-                                        currentHeaderName,
-                                        currentPoster,
-                                        episodeClick.data.index,
-                                        eps,
-                                        sortUrls(data.value),
-                                        startTime = episodeClick.data.getRealPosition()
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    ACTION_PLAY_EPISODE_IN_PLAYER -> {
-                        if (buildInPlayer) {
-                            (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.enter_anim,
-                                    R.anim.exit_anim,
-                                    R.anim.pop_enter,
-                                    R.anim.pop_exit)
-                                .add(R.id.homeRoot,
-                                    PlayerFragment.newInstance(PlayerData(index, null, 0),
-                                        episodeClick.data.getRealPosition())
-                                )
-                                .commit()
-                        }
-                    }
-                    ACTION_RELOAD_EPISODE -> {
-                        /*viewModel.load(episodeClick.data) { res ->
-                            if (res is Resource.Success) {
-                                playEpisode(allEpisodes[id], index)
-                            }
-                        }*/
-                    }
-
-                }
+                handleAction(episodeClick)
             }
         }
 
@@ -288,6 +338,8 @@ class ResultFragment : Fragment() {
                 is Resource.Success -> {
                     val d = data.value
                     if (d is LoadResponse) {
+                        updateVisStatus(2)
+
                         result_bookmark_button.text = "Watching"
 
                         currentHeaderName = d.name
@@ -407,6 +459,34 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                         result_tag_holder.visibility = GONE
                         result_status.visibility = GONE
 
+                        when (d.type) {
+                            TvType.Movie -> {
+                                result_play_movie.visibility = VISIBLE
+                                result_episodes_text.visibility = GONE
+                                result_episodes.visibility = GONE
+
+                                result_play_movie.setOnClickListener {
+                                    val card = currentEpisodes?.first() ?: return@setOnClickListener
+                                    if (requireContext().isCastApiAvailable()) {
+                                        val castContext = CastContext.getSharedInstance(requireContext())
+
+                                        if (castContext.castState == CastState.CONNECTED) {
+                                            handleAction(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
+                                        } else {
+                                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                                        }
+                                    } else {
+                                        handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                                    }
+                                }
+                            }
+                            else -> {
+                                result_play_movie.visibility = GONE
+                                result_episodes_text.visibility = VISIBLE
+                                result_episodes.visibility = VISIBLE
+                            }
+                        }
+
                         when (d) {
                             is AnimeLoadResponse -> {
                                 result_status.visibility = VISIBLE
@@ -438,15 +518,34 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                             }
                             else -> result_title.text = d.name
                         }
+                    } else {
+                        updateVisStatus(1)
                     }
                 }
                 is Resource.Failure -> {
-
+                    updateVisStatus(1)
+                }
+                is Resource.Loading -> {
+                    updateVisStatus(0)
                 }
             }
         }
 
-        if (viewModel.resultResponse.value == null && apiName != null && slug != null)
-            viewModel.load(requireContext(), slug, apiName)
+        if (apiName != null && slug != null) {
+            result_reload_connectionerror.setOnClickListener {
+                viewModel.load(requireContext(), slug, apiName)
+            }
+
+            if (url != null) {
+                result_reload_connection_open_in_browser.setOnClickListener {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(url)
+                    startActivity(i)
+                }
+            }
+
+            if (viewModel.resultResponse.value == null)
+                viewModel.load(requireContext(), slug, apiName)
+        }
     }
 }

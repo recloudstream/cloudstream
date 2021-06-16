@@ -156,7 +156,7 @@ class ShiroProvider : MainAPI() {
 
             returnValue.add(AnimeSearchResponse(
                 i.name.replace("Dubbed", ""), // i.english ?: i.canonicalTitle,
-                "$mainUrl/${i.slug}",
+                "$mainUrl/anime/${i.slug}",
                 i.slug,
                 this.name,
                 type,

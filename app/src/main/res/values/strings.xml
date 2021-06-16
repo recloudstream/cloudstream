@@ -30,4 +30,8 @@
     <string name="type_dropped">Dropped</string>
     <string name="type_plan_to_watch">Plan to Watch</string>
     <string name="type_none">None</string>
+    <string name="play_movie_button">Play Movie</string>
+    <string name="pick_source">Pick Source</string>
+    <string name="reload_error">Retry connection…</string>
+    <string name="result_go_back">Go Back</string>
 </resources>

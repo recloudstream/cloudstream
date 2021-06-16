@@ -17,6 +17,7 @@ class SearchViewModel : ViewModel() {
     val searchResponse: LiveData<Resource<ArrayList<Any>>> get() = _searchResponse
 
     fun search(query: String) = viewModelScope.launch {
+        _searchResponse.postValue(Resource.Loading())
         val data = safeApiCall {
             api.search(query)
         }

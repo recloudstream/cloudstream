@@ -56,11 +56,14 @@ class ResultViewModel : ViewModel() {
     }
 
     fun load(context: Context, url: String, apiName: String) = viewModelScope.launch {
+        _resultResponse.postValue(Resource.Loading(url))
+
         _apiName.postValue(apiName)
         val api = getApiFromName(apiName)
         val data = safeApiCall {
             api.load(url)
         }
+
         _resultResponse.postValue(data)
 
         when (data) {

@@ -26,6 +26,7 @@ sealed class Resource<out T> {
         val errorResponse: Any?, //ResponseBody
         val errorString: String,
     ) : Resource<Nothing>()
+    data class Loading(val url : String? = null)  : Resource<Nothing>()
 }
 
 suspend fun <T> safeApiCall(

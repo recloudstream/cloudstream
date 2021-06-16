@@ -3,8 +3,9 @@ package com.lagradost.cloudstream3.ui
 import android.os.Bundle
 import android.view.Menu
 import android.view.View.*
-import android.widget.ImageView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -14,9 +15,13 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.cast.framework.media.uicontroller.UIController
+import com.google.android.gms.cast.framework.media.widget.CastSeekBar
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.UIHelper
+import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.sortUrls
@@ -86,23 +91,35 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
     init {
         view.setImageResource(R.drawable.ic_baseline_playlist_play_24)
         view.setOnClickListener {
-            lateinit var dialog: AlertDialog
+          //  lateinit var dialog: AlertDialog
             val holder = getCurrentMetaData()
 
             if (holder != null) {
                 val items = holder.currentLinks
                 if (items.isNotEmpty() && remoteMediaClient?.currentItem != null) {
-                    val builder = AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
-                    builder.setTitle("Pick source")
+                   // val builder = AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
+                    /*val builder = BottomSheetDialog(view.context, R.style.AlertDialogCustom)
+                    builder.setTitle("Pick source")*/
+                    val bottomSheetDialog = BottomSheetDialog(view.context)
+                    bottomSheetDialog.setContentView(R.layout.sort_bottom_sheet)
+                    val res = bottomSheetDialog.findViewById<ListView>(R.id.sort_click)!!
 
                     //https://developers.google.com/cast/docs/reference/web_receiver/cast.framework.messages.MediaInformation
                     val contentUrl = (remoteMediaClient?.currentItem?.media?.contentUrl
                         ?: remoteMediaClient?.currentItem?.media?.contentId)
 
-                    builder.setSingleChoiceItems(
-                        items.map { it.name }.toTypedArray(),
-                        items.indexOfFirst { it.url == contentUrl }
-                    ) { _, which ->
+                    val sortingMethods = items.map { it.name }.toTypedArray()
+                    val sotringIndex = items.indexOfFirst { it.url == contentUrl }
+
+                    val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
+                    arrayAdapter.addAll(sortingMethods.toMutableList())
+
+                    res.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                    res.adapter = arrayAdapter
+                    res.setItemChecked(sotringIndex, true)
+
+
+                    res.setOnItemClickListener { _, _, which, _ ->
                         val epData = holder.episodes[holder.currentEpisodeIndex]
 
                         fun loadMirror(index: Int) {
@@ -144,10 +161,12 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         }
                         loadMirror(which)
 
-                        dialog.dismiss()
+                        bottomSheetDialog.dismiss()
                     }
+                    bottomSheetDialog.show()
+                    /*
                     dialog = builder.create()
-                    dialog.show()
+                    dialog.show()*/
                 }
             }
         }
@@ -276,5 +295,9 @@ class ControllerActivity : ExpandedControllerActivity() {
         uiMediaController.bindViewToUIController(skipBackButton, SkipTimeController(skipBackButton, false))
         uiMediaController.bindViewToUIController(skipForwardButton, SkipTimeController(skipForwardButton, true))
         uiMediaController.bindViewToUIController(skipOpButton, SkipNextEpisodeController(skipOpButton))
+  /*      val progressBar: CastSeekBar? = findViewById(R.id.cast_seek_bar)
+
+        progressBar?.backgroundTintList = (UIHelper.adjustAlpha(colorFromAttribute(R.attr.colorPrimary), 0.35f))
+*/
     }
 }

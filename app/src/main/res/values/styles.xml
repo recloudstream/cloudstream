@@ -129,8 +129,8 @@
             @array/cast_expanded_controller_control_buttons
         </item>
         <item name="castButtonColor">@null</item>
-        <item name="castSeekBarProgressAndThumbColor">@color/white</item>
-        <item name="castSeekBarSecondaryProgressColor">?attr/darkBackground</item> <!--CHECK-->
+        <item name="castSeekBarProgressAndThumbColor">@color/white</item> <!--@color/white ?attr/colorPrimary-->
+        <item name="castSeekBarSecondaryProgressColor">?attr/darkBackground</item> <!--CHECK ?attr/darkBackground ?attr/colorPrimary-->
         <item name="castBackground">?attr/colorPrimary</item>
         <item name="castProgressBarColor">?attr/colorPrimary</item>
         <item name="castPlayButtonDrawable">@drawable/ic_baseline_play_arrow_24</item>
