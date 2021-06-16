@@ -144,7 +144,9 @@ class SearchFragment : Fragment() {
                 }
             }
         }
-        searchViewModel.search("overlord")
+        allApi.providersActive = requireActivity().getApiSettings()
+
+        searchViewModel.search("iron man")
         //  (activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*
         (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()

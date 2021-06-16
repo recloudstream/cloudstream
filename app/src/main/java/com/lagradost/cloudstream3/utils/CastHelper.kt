@@ -31,7 +31,10 @@ object CastHelper {
         val link = holder.currentLinks[index]
         val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
-            (epData.name ?: "Episode ${epData.episode}") + " - ${link.name}")
+            if (holder.isMovie)
+                link.name
+            else
+                (epData.name ?: "Episode ${epData.episode}") + " - ${link.name}")
 
         movieMetadata.putString(MediaMetadata.KEY_TITLE, holder.title)
 
@@ -58,7 +61,7 @@ object CastHelper {
                     println("FAILED AND LOAD NEXT")
                 }
                 else -> {
-                    println("FAILED::: " + res.status)
+                    //IDK DO SMTH HERE
                 }
             }
         }
@@ -67,6 +70,7 @@ object CastHelper {
 
     fun Context.startCast(
         apiName: String,
+        isMovie: Boolean,
         title: String?,
         poster: String?,
         currentEpisodeIndex: Int,
@@ -81,7 +85,7 @@ object CastHelper {
 
         val epData = episodes[currentEpisodeIndex]
 
-        val holder = MetadataHolder(apiName, title, poster, currentEpisodeIndex, episodes, currentLinks)
+        val holder = MetadataHolder(apiName, isMovie, title, poster, currentEpisodeIndex, episodes, currentLinks)
 
         val index = startIndex ?: 0
         val mediaItem =
@@ -96,7 +100,15 @@ object CastHelper {
             startTime ?: 0,
         )) {
             if (currentLinks.size > index + 1)
-                startCast(apiName, title, poster, currentEpisodeIndex, episodes, currentLinks, index + 1, startTime)
+                startCast(apiName,
+                    isMovie,
+                    title,
+                    poster,
+                    currentEpisodeIndex,
+                    episodes,
+                    currentLinks,
+                    index + 1,
+                    startTime)
         }
     }
 }

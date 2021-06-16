@@ -386,11 +386,12 @@ class PlayerFragment : Fragment() {
                             if (useSystemBrightness) {
                                 // https://developer.android.com/reference/android/view/WindowManager.LayoutParams#screenBrightness
                                 val lp = activity?.window?.attributes
-                                val currentBrightness = if (lp?.screenBrightness ?: -1.0f <= 0f) (android.provider.Settings.System.getInt(
-                                    context?.contentResolver,
-                                    android.provider.Settings.System.SCREEN_BRIGHTNESS
-                                ) * (1 / 255).toFloat())
-                                else lp?.screenBrightness!!
+                                val currentBrightness =
+                                    if (lp?.screenBrightness ?: -1.0f <= 0f) (android.provider.Settings.System.getInt(
+                                        context?.contentResolver,
+                                        android.provider.Settings.System.SCREEN_BRIGHTNESS
+                                    ) * (1 / 255).toFloat())
+                                    else lp?.screenBrightness!!
 
                                 val alpha = minOf(
                                     maxOf(
@@ -403,8 +404,7 @@ class PlayerFragment : Fragment() {
 
                                 progressBarRight?.max = 100 * 100
                                 progressBarRight?.progress = (alpha * 100 * 100).toInt()
-                            }
-                            else {
+                            } else {
                                 val alpha = minOf(0.95f,
                                     brightness_overlay.alpha + diffY.toFloat() * 0.5f) // 0.05f *if (diffY > 0) 1 else -1
                                 brightness_overlay?.alpha = alpha
@@ -638,6 +638,7 @@ class PlayerFragment : Fragment() {
     private var episodes: List<ResultEpisode> = ArrayList()
     var currentPoster: String? = null
     var currentHeaderName: String? = null
+    var currentIsMovie: Boolean? = null
 
     //region PIP MODE
     private fun getPen(code: PlayerEventType): PendingIntent {
@@ -763,6 +764,7 @@ class PlayerFragment : Fragment() {
                         val index = links.indexOf(getCurrentUrl())
                         context?.startCast(
                             apiName,
+                            currentIsMovie ?: return@addCastStateListener,
                             currentHeaderName,
                             currentPoster,
                             epData.index,
@@ -893,6 +895,7 @@ class PlayerFragment : Fragment() {
                         localData = d
                         currentPoster = d.posterUrl
                         currentHeaderName = d.name
+                        currentIsMovie = !d.isEpisodeBased()
                     }
                 }
                 is Resource.Failure -> {
@@ -1209,8 +1212,8 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun handlePauseEvent(pause : Boolean) {
-        if(pause) {
+    private fun handlePauseEvent(pause: Boolean) {
+        if (pause) {
             handlePlayerEvent(PlayerEventType.Pause)
         }
     }
@@ -1474,6 +1477,7 @@ class PlayerFragment : Fragment() {
                 }
 
                 override fun onPlayerError(error: ExoPlaybackException) {
+                    println("CURRENT URL: " + currentUrl.url)
                     // Lets pray this doesn't spam Toasts :)
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE -> {

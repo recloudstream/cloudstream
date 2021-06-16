@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.ShiroProvider
+import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 import kotlin.collections.ArrayList
@@ -20,8 +21,9 @@ object APIHolder {
 
     private const val defProvider = 0
 
-    val apis = arrayListOf<MainAPI>(
-        ShiroProvider()
+    val apis = arrayListOf(
+        ShiroProvider(),
+        MeloMovieProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
@@ -44,6 +46,7 @@ object APIHolder {
 abstract class MainAPI {
     open val name = "NONE"
     open val mainUrl = "NONE"
+    open val instantLinkLoading = false // THIS IS IF THE LINK IS STORED IN THE "DATA"
     open fun search(query: String): ArrayList<Any>? { // SearchResponse
         return null
     }
@@ -195,12 +198,14 @@ data class MovieLoadResponse(
     val imdbId: Int?,
 ) : LoadResponse
 
+data class TvSeriesEpisode(val name: String?, val season : Int?, val episode: Int?, val data : String)
+
 data class TvSeriesLoadResponse(
     override val name: String,
     override val url: String,
     override val apiName: String,
     override val type: TvType,
-    val episodes: ArrayList<String>,
+    val episodes: ArrayList<TvSeriesEpisode>,
 
     override val posterUrl: String?,
     override val year: Int?,

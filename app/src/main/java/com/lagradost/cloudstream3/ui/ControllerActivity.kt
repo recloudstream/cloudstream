@@ -77,6 +77,7 @@ class SkipNextEpisodeController(val view: ImageView) : UIController() {
 
 data class MetadataHolder(
     val apiName: String,
+    val isMovie: Boolean,
     val title: String?,
     val poster: String?,
     val currentEpisodeIndex: Int,
@@ -91,13 +92,13 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
     init {
         view.setImageResource(R.drawable.ic_baseline_playlist_play_24)
         view.setOnClickListener {
-          //  lateinit var dialog: AlertDialog
+            //  lateinit var dialog: AlertDialog
             val holder = getCurrentMetaData()
 
             if (holder != null) {
                 val items = holder.currentLinks
                 if (items.isNotEmpty() && remoteMediaClient?.currentItem != null) {
-                   // val builder = AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
+                    // val builder = AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
                     /*val builder = BottomSheetDialog(view.context, R.style.AlertDialogCustom)
                     builder.setTitle("Pick source")*/
                     val bottomSheetDialog = BottomSheetDialog(view.context)
@@ -212,7 +213,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 links.add(it)
                             }
                         }
-                        
+
                         if (res is Resource.Success) {
                             val sorted = sortUrls(links)
                             if (sorted.isNotEmpty()) {
@@ -295,9 +296,9 @@ class ControllerActivity : ExpandedControllerActivity() {
         uiMediaController.bindViewToUIController(skipBackButton, SkipTimeController(skipBackButton, false))
         uiMediaController.bindViewToUIController(skipForwardButton, SkipTimeController(skipForwardButton, true))
         uiMediaController.bindViewToUIController(skipOpButton, SkipNextEpisodeController(skipOpButton))
-  /*      val progressBar: CastSeekBar? = findViewById(R.id.cast_seek_bar)
+        /*      val progressBar: CastSeekBar? = findViewById(R.id.cast_seek_bar)
 
-        progressBar?.backgroundTintList = (UIHelper.adjustAlpha(colorFromAttribute(R.attr.colorPrimary), 0.35f))
-*/
+              progressBar?.backgroundTintList = (UIHelper.adjustAlpha(colorFromAttribute(R.attr.colorPrimary), 0.35f))
+      */
     }
 }

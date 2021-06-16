@@ -29,6 +29,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
@@ -176,6 +177,7 @@ class ResultFragment : Fragment() {
     }
 
     private var currentPoster: String? = null
+    private var currentIsMovie: Boolean? = null
 
     var url: String? = null
 
@@ -239,22 +241,33 @@ class ResultFragment : Fragment() {
             currentLoadingCount++
             when (episodeClick.action) {
                 ACTION_CHROME_CAST_EPISODE -> {
+
+                    val skipLoading = if (apiName != null) {
+                        getApiFromName(apiName).instantLinkLoading
+                    } else false
+
+                    var dialog : AlertDialog? = null
                     val currentLoad = currentLoadingCount
-                    val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
-                    val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
-                    builder.setView(customLayout)
 
-                    val dialog = builder.create()
+                    if(!skipLoading) {
+                        val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
+                        val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
+                        builder.setView(customLayout)
 
-                    dialog.show()
-                    dialog.setOnDismissListener {
-                        currentLoadingCount++
+                        dialog = builder.create()
+
+                        dialog.show()
+                        dialog.setOnDismissListener {
+                            currentLoadingCount++
+                        }
                     }
+
                     // Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
 
                     viewModel.loadEpisode(episodeClick.data, true) { data ->
                         if (currentLoadingCount != currentLoad) return@loadEpisode
-                        dialog.dismiss()
+                        dialog?.dismiss()
+
                         when (data) {
                             is Resource.Failure -> {
                                 Toast.makeText(activity, "Failed to load links", Toast.LENGTH_SHORT).show()
@@ -263,6 +276,7 @@ class ResultFragment : Fragment() {
                                 val eps = currentEpisodes ?: return@loadEpisode
                                 context?.startCast(
                                     apiName ?: return@loadEpisode,
+                                    currentIsMovie ?: return@loadEpisode,
                                     currentHeaderName,
                                     currentPoster,
                                     episodeClick.data.index,
@@ -354,6 +368,7 @@ class ResultFragment : Fragment() {
                         currentHeaderName = d.name
 
                         currentPoster = d.posterUrl
+                        currentIsMovie = !d.isEpisodeBased()
 
                         result_openinbrower.setOnClickListener {
                             val i = Intent(Intent.ACTION_VIEW)

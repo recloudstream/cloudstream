@@ -248,6 +248,7 @@
 
                 <TextView
                         android:id="@+id/result_descript"
+                        android:textSize="15sp"
                         tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. "
                         android:layout_width="match_parent" android:layout_height="wrap_content">
                 </TextView>

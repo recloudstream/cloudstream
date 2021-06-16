@@ -15,7 +15,7 @@ data class ExtractorLink(
     val isM3u8: Boolean = false,
 )
 
-fun ExtractorLink.getId() : Int {
+fun ExtractorLink.getId(): Int {
     return url.hashCode()
 }
 
@@ -25,6 +25,20 @@ enum class Qualities(var value: Int) {
     HD(1), // 720p
     FullHd(2), // 1080p
     UHD(3) // 4k
+}
+
+fun getQualityFromName(qualityName: String): Int {
+    return when (qualityName.replace("p", "").replace("P", "")) {
+        "360" -> Qualities.SD
+        "480" -> Qualities.SD
+        "720" -> Qualities.HD
+        "1080" -> Qualities.FullHd
+        "1440" -> Qualities.UHD // I KNOW KINDA MISLEADING
+        "2160" -> Qualities.UHD
+        "4k" -> Qualities.UHD
+        "4K" -> Qualities.UHD
+        else -> Qualities.Unknown
+    }.value
 }
 
 private val packedRegex = Regex("""eval\(function\(p,a,c,k,e,.*\)\)""")

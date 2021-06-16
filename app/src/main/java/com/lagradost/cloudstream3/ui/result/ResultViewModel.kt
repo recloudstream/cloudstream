@@ -104,11 +104,12 @@ class ResultViewModel : ViewModel() {
                             val episodes = ArrayList<ResultEpisode>()
                             for ((index, i) in d.episodes.withIndex()) {
                                 episodes.add(context.buildResultEpisode(
-                                    null, // TODO ADD NAMES
+                                    (i.name
+                                        ?: (if (i.season != null && i.episode != null) "S${i.season}:E${i.episode}" else null)), // TODO ADD NAMES
                                     null,
-                                    index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
-                                    null, // TODO FIX SEASON
-                                    i,
+                                    i.episode ?: (index + 1),
+                                    i.season,
+                                    i.data,
                                     apiName,
                                     (mainId + index + 1).hashCode(),
                                     index,
