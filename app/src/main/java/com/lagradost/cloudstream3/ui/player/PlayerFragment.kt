@@ -1075,6 +1075,7 @@ class PlayerFragment : Fragment() {
                         sources.indexOf(getCurrentUrl())) { _, which ->
                         //val speed = speedsText[which]
                         //Toast.makeText(requireContext(), "$speed selected.", Toast.LENGTH_SHORT).show()
+                        playbackPosition = if(this::exoPlayer.isInitialized) exoPlayer.currentPosition else 0
                         setMirrorId(sources[which].getId())
                         initPlayer(getCurrentUrl())
 

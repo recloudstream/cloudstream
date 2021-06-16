@@ -39,6 +39,7 @@ suspend fun <T> safeApiCall(
             Log.d("ApiError", "-------------------------------------------------------------------")
             Log.d("ApiError", "safeApiCall: " + throwable.localizedMessage)
             Log.d("ApiError", "safeApiCall: " + throwable.message)
+            throwable.printStackTrace()
             Log.d("ApiError", "-------------------------------------------------------------------")
             when (throwable) {
                 /*is HttpException -> {

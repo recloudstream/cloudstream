@@ -109,7 +109,7 @@ class MeloMovieProvider : MainAPI() {
         val type = findUsingRegex("var posttype = ([0-9]*)")?.toInt() ?: return null
         val titleInfo = document.selectFirst("div.movie_detail_title > div > div > h1")
         val title = titleInfo.ownText()
-        val year = titleInfo.selectFirst("> a").text().replace("(", "").replace(")", "").toIntOrNull()
+        val year = titleInfo.selectFirst("> a")?.text()?.replace("(", "")?.replace(")", "")?.toIntOrNull()
         val plot = document.selectFirst("div.col-lg-12 > p").text()
 
         if (type == 1) { // MOVIE
