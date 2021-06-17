@@ -157,8 +157,14 @@ interface LoadResponse {
     val plot: String?
 }
 
-fun LoadResponse.isEpisodeBased(): Boolean {
-    return this is AnimeLoadResponse || this is TvSeriesLoadResponse
+fun LoadResponse?.isEpisodeBased(): Boolean {
+    if (this == null) return false
+    return (this is AnimeLoadResponse || this is TvSeriesLoadResponse) && (this.type == TvType.TvSeries || this.type == TvType.Anime)
+}
+
+fun LoadResponse?.isAnimeBased(): Boolean {
+    if (this == null) return false
+    return (this.type == TvType.Anime || this.type == TvType.ONA) // && (this is AnimeLoadResponse)
 }
 
 data class AnimeLoadResponse(
@@ -198,7 +204,7 @@ data class MovieLoadResponse(
     val imdbId: Int?,
 ) : LoadResponse
 
-data class TvSeriesEpisode(val name: String?, val season : Int?, val episode: Int?, val data : String)
+data class TvSeriesEpisode(val name: String?, val season: Int?, val episode: Int?, val data: String)
 
 data class TvSeriesLoadResponse(
     override val name: String,

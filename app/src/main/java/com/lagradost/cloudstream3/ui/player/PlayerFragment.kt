@@ -483,6 +483,10 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    private fun View.setVis(visible: Boolean) {
+        this.visibility = if (visible) VISIBLE else GONE
+    }
+
     @SuppressLint("SetTextI18n")
     fun changeSkip(position: Long? = null) {
         val data = localData
@@ -502,17 +506,20 @@ class PlayerFragment : Fragment() {
                 }
             }
             val nextEp = percentage >= OPENING_PROCENTAGE
+            val isAnime =
+                data.isAnimeBased()//(data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
 
-            skip_op_text.text = if (nextEp) "Next Episode" else "Skip OP"
-            val isVis =
-                if (nextEp) hasNext //&& !isCurrentlySkippingEp
-                else (data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
-            skip_op.visibility = if (isVis) View.VISIBLE else View.GONE
+            skip_op.setVis(isAnime && !nextEp)
+            skip_episode.setVis((!isAnime || nextEp) && hasNext)
         } else {
-            if (data is AnimeLoadResponse) {
-                val isVis = ((data.type == TvType.Anime || data.type == TvType.ONA))
-                skip_op_text.text = "Skip OP"
-                skip_op.visibility = if (isVis) View.VISIBLE else View.GONE
+            val isAnime = data.isAnimeBased()
+
+            if (isAnime) {
+                skip_op.setVis(true)
+                skip_episode.setVis(false)
+            } else {
+                skip_episode.setVis(data.isEpisodeBased())
+                skip_op.setVis(false)
             }
         }
     }
@@ -530,9 +537,23 @@ class PlayerFragment : Fragment() {
 
     private var hasUsedFirstRender = false
 
+    private fun savePositionInPlayer() {
+        if (this::exoPlayer.isInitialized) {
+            isPlayerPlaying = exoPlayer.playWhenReady
+            playbackPosition = exoPlayer.currentPosition
+            currentWindow = exoPlayer.currentWindowIndex
+        }
+    }
+
+    private fun safeReleasePlayer() {
+        if (this::exoPlayer.isInitialized) {
+            exoPlayer.release()
+        }
+        isCurrentlyPlaying = false
+    }
+
     private fun releasePlayer() {
         savePos()
-        isCurrentlyPlaying = false
         val alphaAnimation = AlphaAnimation(0f, 1f)
         alphaAnimation.duration = 100
         alphaAnimation.fillAfter = true
@@ -540,12 +561,8 @@ class PlayerFragment : Fragment() {
 
         overlay_loading_skip_button?.visibility = VISIBLE
         loading_overlay?.startAnimation(alphaAnimation)
-        if (this::exoPlayer.isInitialized) {
-            isPlayerPlaying = exoPlayer.playWhenReady
-            playbackPosition = exoPlayer.currentPosition
-            currentWindow = exoPlayer.currentWindowIndex
-            exoPlayer.release()
-        }
+        savePositionInPlayer()
+        safeReleasePlayer()
     }
 
     private class SettingsContentObserver(handler: Handler?, val activity: Activity) : ContentObserver(handler) {
@@ -615,6 +632,7 @@ class PlayerFragment : Fragment() {
         //next_episode_btt.isClickable = isClick
         playback_speed_btt.isClickable = isClick
         skip_op.isClickable = isClick
+        skip_episode.isClickable = isClick
         resize_player.isClickable = isClick
         exo_progress.isEnabled = isClick
         player_media_route_button.isEnabled = isClick
@@ -815,7 +833,7 @@ class PlayerFragment : Fragment() {
                             MediaStatus.REPEAT_MODE_REPEAT_SINGLE
                         )*/
                         //  activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
-                        releasePlayer()
+                        safeReleasePlayer()
                         activity?.popCurrentPage()
                     }
                 }
@@ -980,10 +998,7 @@ class PlayerFragment : Fragment() {
             video_title.startAnimation(fadeAnimation)
 
             // BOTTOM
-            resize_player.startAnimation(fadeAnimation)
-            playback_speed_btt.startAnimation(fadeAnimation)
-            sources_btt.startAnimation(fadeAnimation)
-            skip_op.startAnimation(fadeAnimation)
+            lock_holder.startAnimation(fadeAnimation)
             video_go_back_holder2.startAnimation(fadeAnimation)
 
             updateLock()
@@ -1075,7 +1090,7 @@ class PlayerFragment : Fragment() {
                         sources.indexOf(getCurrentUrl())) { _, which ->
                         //val speed = speedsText[which]
                         //Toast.makeText(requireContext(), "$speed selected.", Toast.LENGTH_SHORT).show()
-                        playbackPosition = if(this::exoPlayer.isInitialized) exoPlayer.currentPosition else 0
+                        playbackPosition = if (this::exoPlayer.isInitialized) exoPlayer.currentPosition else 0
                         setMirrorId(sources[which].getId())
                         initPlayer(getCurrentUrl())
 
@@ -1103,13 +1118,12 @@ class PlayerFragment : Fragment() {
         }
 
         skip_op.setOnClickListener {
-            if (exoPlayer.currentPosition * 100 / exoPlayer.duration >= OPENING_PROCENTAGE) {
-                if (hasNextEpisode()) {
-                    // skip_op.visibility = View.GONE
-                    skipToNextEpisode()
-                }
-            } else {
-                skipOP()
+            skipOP()
+        }
+
+        skip_episode.setOnClickListener {
+            if (hasNextEpisode()) {
+                skipToNextEpisode()
             }
         }
 
@@ -1177,7 +1191,8 @@ class PlayerFragment : Fragment() {
 
     private fun skipToNextEpisode() {
         if (isCurrentlySkippingEp) return
-        releasePlayer()
+        savePos()
+        safeReleasePlayer()
         isCurrentlySkippingEp = true
         val copy = playerData.copy(episodeIndex = playerData.episodeIndex + 1)
         playerData = copy
@@ -1224,7 +1239,10 @@ class PlayerFragment : Fragment() {
 
         super.onDestroy()
         isInPlayer = false
-        releasePlayer()
+
+        savePos()
+        savePositionInPlayer()
+        safeReleasePlayer()
 
         UIHelper.onAudioFocusEvent -= ::handlePauseEvent
 

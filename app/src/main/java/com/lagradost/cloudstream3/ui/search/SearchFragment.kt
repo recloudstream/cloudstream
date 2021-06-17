@@ -146,8 +146,8 @@ class SearchFragment : Fragment() {
         }
         allApi.providersActive = requireActivity().getApiSettings()
 
-        searchViewModel.search("iron man")
-        //  (activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
+        //searchViewModel.search("iron man")
+        (activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*
         (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
             .setCustomAnimations(R.anim.enter_anim,
