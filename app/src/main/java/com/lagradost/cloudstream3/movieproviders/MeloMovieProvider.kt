@@ -15,6 +15,8 @@ class MeloMovieProvider : MainAPI() {
         get() = "https://melomovie.com"
     override val instantLinkLoading: Boolean
         get() = true
+    override val hasQuickSearch: Boolean
+        get() = true
 
     data class MeloMovieSearchResult(
         @JsonProperty("id") val id: Int,
@@ -26,6 +28,10 @@ class MeloMovieProvider : MainAPI() {
     )
 
     data class MeloMovieLink(val name: String, val link: String)
+
+    override fun quickSearch(query: String): ArrayList<Any>? {
+        return search(query)
+    }
 
     override fun search(query: String): ArrayList<Any>? {
         val url = "$mainUrl/movie/search/?name=$query"

@@ -14,7 +14,7 @@ class ShiroProvider : MainAPI() {
     companion object {
         var token: String? = null
 
-        fun getType(t: String): TvType {
+        fun getType(t: String?): TvType {
             return when (t) {
                 "TV" -> TvType.Anime
                 "OVA" -> TvType.ONA
@@ -52,14 +52,17 @@ class ShiroProvider : MainAPI() {
     override val name: String
         get() = "Shiro"
 
+    override val hasQuickSearch: Boolean
+        get() = true
+
     data class ShiroSearchResponseShow(
         @JsonProperty("image") val image: String,
         @JsonProperty("_id") val _id: String,
         @JsonProperty("slug") val slug: String,
         @JsonProperty("name") val name: String,
-        @JsonProperty("episodeCount") val episodeCount: String,
-        @JsonProperty("language") val language: String,
-        @JsonProperty("type") val type: String,
+        @JsonProperty("episodeCount") val episodeCount: String?,
+        @JsonProperty("language") val language: String?,
+        @JsonProperty("type") val type: String?,
         @JsonProperty("year") val year: String?,
         @JsonProperty("canonicalTitle") val canonicalTitle: String,
         @JsonProperty("english") val english: String?,
@@ -131,6 +134,56 @@ class ShiroProvider : MainAPI() {
         @JsonProperty("status") val status: String,
     )
 
+    private fun turnSearchIntoResponse(data: ShiroSearchResponseShow): AnimeSearchResponse {
+        val type = getType(data.type)
+        val isDubbed =
+            if (data.language != null)
+                data.language == "dubbed"
+            else
+                data.slug.contains("dubbed")
+        val set: EnumSet<DubStatus> = EnumSet.noneOf(DubStatus::class.java)
+
+        if (isDubbed)
+            set.add(DubStatus.Dubbed)
+        else
+            set.add(DubStatus.Subbed)
+        val episodeCount = data.episodeCount?.toIntOrNull()
+
+        return AnimeSearchResponse(
+            data.name.replace("Dubbed", ""), // i.english ?: i.canonicalTitle,
+            "$mainUrl/anime/${data.slug}",
+            data.slug,
+            this.name,
+            type,
+            "https://cdn.shiro.is/${data.image}",
+            data.year?.toIntOrNull(),
+            data.canonicalTitle,
+            set,
+            if (isDubbed) episodeCount else null,
+            if (!isDubbed) episodeCount else null,
+        )
+    }
+
+    override fun quickSearch(query: String): ArrayList<Any> {
+        val returnValue: ArrayList<Any> = ArrayList()
+
+        val response = khttp.get("https://tapi.shiro.is/anime/auto-complete/${
+            URLEncoder.encode(
+                query,
+                "UTF-8"
+            )
+        }?token=$token".replace("+", "%20"))
+        if (response.text == "{\"status\":\"Found\",\"data\":[]}") return returnValue // OR ELSE WILL CAUSE WEIRD ERROR
+        println("QUICK: " + response.text)
+        val mapped = response.let { mapper.readValue<ShiroSearchResponse>(it.text) }
+        println("SIZE: " + mapped.data.size)
+        println("TOTAL: " + mapped)
+        for (i in mapped.data) {
+            returnValue.add(turnSearchIntoResponse(i))
+        }
+        return returnValue
+    }
+
     override fun search(query: String): ArrayList<Any>? {
         if (!autoLoadToken()) return null
         val returnValue: ArrayList<Any> = ArrayList()
@@ -144,29 +197,7 @@ class ShiroProvider : MainAPI() {
 
         val mapped = response.let { mapper.readValue<ShiroFullSearchResponse>(it.text) }
         for (i in mapped.data.nav.currentPage.items) {
-            val type = getType(i.type)
-            val isDubbed = i.language == "dubbed"
-            val set: EnumSet<DubStatus> = EnumSet.noneOf(DubStatus::class.java)
-
-            if (isDubbed)
-                set.add(DubStatus.Dubbed)
-            else
-                set.add(DubStatus.Subbed)
-            val episodeCount = i.episodeCount.toInt()
-
-            returnValue.add(AnimeSearchResponse(
-                i.name.replace("Dubbed", ""), // i.english ?: i.canonicalTitle,
-                "$mainUrl/anime/${i.slug}",
-                i.slug,
-                this.name,
-                type,
-                "https://cdn.shiro.is/${i.image}",
-                i.year?.toIntOrNull(),
-                i.canonicalTitle,
-                set,
-                if (isDubbed) episodeCount else null,
-                if (!isDubbed) episodeCount else null,
-            ))
+            returnValue.add(turnSearchIntoResponse(i))
         }
         return returnValue
     }

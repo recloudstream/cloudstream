@@ -17,6 +17,9 @@ val mapper = JsonMapper.builder().addModule(KotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
 object APIHolder {
+    val unixTime: Long
+        get() = System.currentTimeMillis() / 1000L
+
     val allApi = AllProvider()
 
     private const val defProvider = 0
@@ -47,7 +50,12 @@ abstract class MainAPI {
     open val name = "NONE"
     open val mainUrl = "NONE"
     open val instantLinkLoading = false // THIS IS IF THE LINK IS STORED IN THE "DATA"
+    open val hasQuickSearch = false
     open fun search(query: String): ArrayList<Any>? { // SearchResponse
+        return null
+    }
+
+    open fun quickSearch(query: String) : ArrayList<Any>? {
         return null
     }
 
@@ -73,13 +81,6 @@ fun MainAPI.fixUrl(url: String): String {
 fun sortUrls(urls: List<ExtractorLink>): List<ExtractorLink> {
     return urls.sortedBy { t -> -t.quality }
 }
-
-data class Link(
-    val name: String,
-    val url: String,
-    val quality: Int?,
-    val referer: String?,
-)
 
 enum class ShowStatus {
     Completed,
