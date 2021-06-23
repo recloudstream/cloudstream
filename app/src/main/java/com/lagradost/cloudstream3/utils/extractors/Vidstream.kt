@@ -28,8 +28,7 @@ class Vidstream {
             with(khttp.get(url)) {
                 val document = Jsoup.parse(this.text)
                 val primaryLinks = document.select("ul.list-server-items > li.linkserver")
-                val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
-
+                //val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
 
                 // All vidstream links passed to extractors
                 primaryLinks.forEach { element ->

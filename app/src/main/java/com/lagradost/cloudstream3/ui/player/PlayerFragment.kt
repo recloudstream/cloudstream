@@ -1129,7 +1129,7 @@ class PlayerFragment : Fragment() {
 
         changeSkip()
 
-        initPlayer()
+       // initPlayer()
     }
 
     private fun getCurrentUrl(): ExtractorLink? {

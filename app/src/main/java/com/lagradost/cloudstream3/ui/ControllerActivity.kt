@@ -3,9 +3,10 @@ package com.lagradost.cloudstream3.ui
 import android.os.Bundle
 import android.view.Menu
 import android.view.View.*
-import android.widget.*
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContentProviderCompat.requireContext
+import android.widget.AbsListView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.ListView
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -15,13 +16,10 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.cast.framework.media.uicontroller.UIController
-import com.google.android.gms.cast.framework.media.widget.CastSeekBar
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.UIHelper
-import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.sortUrls

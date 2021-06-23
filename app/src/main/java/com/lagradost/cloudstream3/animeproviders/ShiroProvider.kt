@@ -209,7 +209,8 @@ class ShiroProvider : MainAPI() {
         val mapped = response.let { mapper.readValue<AnimePage>(it.text) }
         val data = mapped.data
         val isDubbed = data.language == "dubbed"
-        val episodes = ArrayList<String>(data.episodes?.map { it.videos[0].video_id } ?: ArrayList<String>())
+        val episodes = ArrayList<AnimeEpisode>(data.episodes?.map { AnimeEpisode(it.videos[0].video_id) }
+            ?: ArrayList<AnimeEpisode>())
         val status = when (data.status) {
             "current" -> ShowStatus.Ongoing
             "finished" -> ShowStatus.Completed

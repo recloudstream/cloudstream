@@ -5,6 +5,7 @@ import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.lagradost.cloudstream3.animeproviders.DubbedAnimeProvider
 import com.lagradost.cloudstream3.animeproviders.ShiroProvider
 import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -27,6 +28,7 @@ object APIHolder {
     val apis = arrayListOf(
         ShiroProvider(),
         MeloMovieProvider(),
+        DubbedAnimeProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
@@ -70,12 +72,20 @@ abstract class MainAPI {
 }
 
 fun MainAPI.fixUrl(url: String): String {
-    if (url.startsWith('/')) {
-        return mainUrl + url
-    } else if (!url.startsWith("http") && !url.startsWith("//")) {
+    if(url.startsWith("http")) {
+        return url
+    }
+
+    val startsWithNoHttp = url.startsWith("//")
+    if(startsWithNoHttp) {
+        return "https:$url"
+    }
+    else {
+        if(url.startsWith('/')) {
+            return mainUrl + url
+        }
         return "$mainUrl/$url"
     }
-    return url
 }
 
 fun sortUrls(urls: List<ExtractorLink>): List<ExtractorLink> {
@@ -168,6 +178,8 @@ fun LoadResponse?.isAnimeBased(): Boolean {
     return (this.type == TvType.Anime || this.type == TvType.ONA) // && (this is AnimeLoadResponse)
 }
 
+data class AnimeEpisode(val url: String, val name : String? = null)
+
 data class AnimeLoadResponse(
     val engName: String?,
     val japName: String?,
@@ -179,16 +191,16 @@ data class AnimeLoadResponse(
     override val posterUrl: String?,
     override val year: Int?,
 
-    val dubEpisodes: ArrayList<String>?,
-    val subEpisodes: ArrayList<String>?,
+    val dubEpisodes: ArrayList<AnimeEpisode>?,
+    val subEpisodes: ArrayList<AnimeEpisode>?,
     val showStatus: ShowStatus?,
 
     override val plot: String?,
-    val tags: ArrayList<String>?,
-    val synonyms: ArrayList<String>?,
+    val tags: ArrayList<String>? = null,
+    val synonyms: ArrayList<String>? = null,
 
-    val malId: Int?,
-    val anilistId: Int?,
+    val malId: Int? = null,
+    val anilistId: Int? = null,
 ) : LoadResponse
 
 data class MovieLoadResponse(
@@ -196,7 +208,7 @@ data class MovieLoadResponse(
     override val url: String,
     override val apiName: String,
     override val type: TvType,
-    val movieUrl: String,
+    val dataUrl: String,
 
     override val posterUrl: String?,
     override val year: Int?,
