@@ -162,7 +162,7 @@ class DubbedAnimeProvider : MainAPI() {
                         getQualityFromName(quality)))
                 }
             } catch (e: Exception) {
-
+                //IDK
             }
         }
         return true
