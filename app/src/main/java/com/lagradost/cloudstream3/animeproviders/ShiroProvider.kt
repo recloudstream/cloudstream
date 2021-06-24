@@ -174,10 +174,8 @@ class ShiroProvider : MainAPI() {
             )
         }?token=$token".replace("+", "%20"))
         if (response.text == "{\"status\":\"Found\",\"data\":[]}") return returnValue // OR ELSE WILL CAUSE WEIRD ERROR
-        println("QUICK: " + response.text)
+
         val mapped = response.let { mapper.readValue<ShiroSearchResponse>(it.text) }
-        println("SIZE: " + mapped.data.size)
-        println("TOTAL: " + mapped)
         for (i in mapped.data) {
             returnValue.add(turnSearchIntoResponse(i))
         }

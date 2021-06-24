@@ -5,7 +5,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
 
-class HDMMoveProvider : MainAPI() {
+class HDMProvider : MainAPI() {
     override val name: String
         get() = "HD Movies"
     override val mainUrl: String

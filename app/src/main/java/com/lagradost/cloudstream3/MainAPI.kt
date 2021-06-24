@@ -7,7 +7,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.DubbedAnimeProvider
 import com.lagradost.cloudstream3.animeproviders.ShiroProvider
-import com.lagradost.cloudstream3.movieproviders.HDMMoveProvider
+import com.lagradost.cloudstream3.movieproviders.HDMProvider
+import com.lagradost.cloudstream3.movieproviders.LookMovieProvider
 import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
@@ -30,7 +31,8 @@ object APIHolder {
         ShiroProvider(),
         MeloMovieProvider(),
         DubbedAnimeProvider(),
-        HDMMoveProvider(),
+        HDMProvider(),
+        LookMovieProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
@@ -71,6 +73,12 @@ abstract class MainAPI {
     open fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
         return false
     }
+}
+
+fun parseRating(ratingString : String?) : Int? {
+    if(ratingString == null) return null
+    val floatRating = ratingString.toFloatOrNull() ?: return null
+    return (floatRating * 10).toInt()
 }
 
 fun MainAPI.fixUrl(url: String): String {
@@ -168,6 +176,7 @@ interface LoadResponse {
     val posterUrl: String?
     val year: Int?
     val plot: String?
+    val rating : Int? // 0-100
 }
 
 fun LoadResponse?.isEpisodeBased(): Boolean {
@@ -203,6 +212,7 @@ data class AnimeLoadResponse(
 
     val malId: Int? = null,
     val anilistId: Int? = null,
+    override val rating: Int? = null,
 ) : LoadResponse
 
 data class MovieLoadResponse(
@@ -217,6 +227,7 @@ data class MovieLoadResponse(
     override val plot: String?,
 
     val imdbId: Int?,
+    override val rating: Int? = null,
 ) : LoadResponse
 
 data class TvSeriesEpisode(val name: String?, val season: Int?, val episode: Int?, val data: String)
@@ -234,4 +245,5 @@ data class TvSeriesLoadResponse(
 
     val showStatus: ShowStatus?,
     val imdbId: Int?,
+    override val rating: Int? = null,
 ) : LoadResponse

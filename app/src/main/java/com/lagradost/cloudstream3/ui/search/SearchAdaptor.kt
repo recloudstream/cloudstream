@@ -94,13 +94,15 @@ class SearchAdapter(
                 cardText.text = card.name
 
                 //imageTextProvider.text = card.apiName
+                if (!card.posterUrl.isNullOrEmpty()) {
 
-                val glideUrl =
-                    GlideUrl(card.posterUrl)
-                activity.let {
-                    Glide.with(it)
-                        .load(glideUrl)
-                        .into(cardView)
+                    val glideUrl =
+                        GlideUrl(card.posterUrl)
+                    activity.let {
+                        Glide.with(it)
+                            .load(glideUrl)
+                            .into(cardView)
+                    }
                 }
 
                 bg.setOnClickListener {
