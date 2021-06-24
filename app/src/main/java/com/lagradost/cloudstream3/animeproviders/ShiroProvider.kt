@@ -164,8 +164,8 @@ class ShiroProvider : MainAPI() {
         )
     }
 
-    override fun quickSearch(query: String): ArrayList<Any> {
-        val returnValue: ArrayList<Any> = ArrayList()
+    override fun quickSearch(query: String): ArrayList<SearchResponse> {
+        val returnValue: ArrayList<SearchResponse> = ArrayList()
 
         val response = khttp.get("https://tapi.shiro.is/anime/auto-complete/${
             URLEncoder.encode(
@@ -184,9 +184,9 @@ class ShiroProvider : MainAPI() {
         return returnValue
     }
 
-    override fun search(query: String): ArrayList<Any>? {
+    override fun search(query: String): ArrayList<SearchResponse>? {
         if (!autoLoadToken()) return null
-        val returnValue: ArrayList<Any> = ArrayList()
+        val returnValue: ArrayList<SearchResponse> = ArrayList()
         val response = khttp.get("https://tapi.shiro.is/advanced?search=${
             URLEncoder.encode(
                 query,
@@ -202,7 +202,7 @@ class ShiroProvider : MainAPI() {
         return returnValue
     }
 
-    override fun load(slug: String): Any? {
+    override fun load(slug: String): LoadResponse? {
         if (!autoLoadToken()) return null
         val rurl = "https://tapi.shiro.is/anime/slug/${slug}?token=${token}"
         val response = khttp.get(rurl, timeout = 120.0)

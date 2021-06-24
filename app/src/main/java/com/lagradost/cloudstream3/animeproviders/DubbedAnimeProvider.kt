@@ -10,7 +10,6 @@ import org.jsoup.Jsoup
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class DubbedAnimeProvider : MainAPI() {
     override val mainUrl: String
         get() = "https://bestdubbedanime.com"
@@ -70,13 +69,13 @@ class DubbedAnimeProvider : MainAPI() {
         return href.replace("$mainUrl/", "")
     }
 
-    override fun quickSearch(query: String): ArrayList<Any> {
+    override fun quickSearch(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/xz/searchgrid.php?p=1&limit=12&s=$query&_=${unixTime}"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
         val items = document.select("div.grid__item > a")
         if (items.isEmpty()) return ArrayList()
-        val returnValue = ArrayList<Any>()
+        val returnValue = ArrayList<SearchResponse>()
         for (i in items) {
             val href = fixUrl(i.attr("href"))
             val title = i.selectFirst("div.gridtitlek").text()
@@ -103,13 +102,13 @@ class DubbedAnimeProvider : MainAPI() {
         return returnValue
     }
 
-    override fun search(query: String): ArrayList<Any> {
+    override fun search(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/search/$query"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
         val items = document.select("div.resultinner > a.resulta")
         if (items.isEmpty()) return ArrayList()
-        val returnValue = ArrayList<Any>()
+        val returnValue = ArrayList<SearchResponse>()
         for (i in items) {
             val innerDiv = i.selectFirst("> div.result")
             val href = fixUrl(i.attr("href"))
@@ -168,7 +167,7 @@ class DubbedAnimeProvider : MainAPI() {
         return true
     }
 
-    override fun load(slug: String): Any {
+    override fun load(slug: String): LoadResponse {
         if (getIsMovie(slug)) {
             val realSlug = slug.replace("movies/", "")
             val episode = getAnimeEpisode(realSlug, true)

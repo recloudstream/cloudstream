@@ -29,13 +29,13 @@ class MeloMovieProvider : MainAPI() {
 
     data class MeloMovieLink(val name: String, val link: String)
 
-    override fun quickSearch(query: String): ArrayList<Any>? {
+    override fun quickSearch(query: String): ArrayList<SearchResponse> {
         return search(query)
     }
 
-    override fun search(query: String): ArrayList<Any>? {
+    override fun search(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/movie/search/?name=$query"
-        val returnValue: ArrayList<Any> = ArrayList()
+        val returnValue: ArrayList<SearchResponse> = ArrayList()
         val response = khttp.get(url)
         val mapped = response.let { mapper.readValue<List<MeloMovieSearchResult>>(it.text) }
         if (mapped.isEmpty()) return returnValue
@@ -101,7 +101,7 @@ class MeloMovieProvider : MainAPI() {
         return true
     }
 
-    override fun load(slug: String): Any? {
+    override fun load(slug: String): LoadResponse? {
         val response = khttp.get(slug).text
 
         //backdrop = imgurl

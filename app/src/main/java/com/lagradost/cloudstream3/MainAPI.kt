@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.DubbedAnimeProvider
 import com.lagradost.cloudstream3.animeproviders.ShiroProvider
+import com.lagradost.cloudstream3.movieproviders.HDMMoveProvider
 import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
@@ -29,6 +30,7 @@ object APIHolder {
         ShiroProvider(),
         MeloMovieProvider(),
         DubbedAnimeProvider(),
+        HDMMoveProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
@@ -53,15 +55,15 @@ abstract class MainAPI {
     open val mainUrl = "NONE"
     open val instantLinkLoading = false // THIS IS IF THE LINK IS STORED IN THE "DATA"
     open val hasQuickSearch = false
-    open fun search(query: String): ArrayList<Any>? { // SearchResponse
+    open fun search(query: String): ArrayList<SearchResponse>? { // SearchResponse
         return null
     }
 
-    open fun quickSearch(query: String) : ArrayList<Any>? {
+    open fun quickSearch(query: String) : ArrayList<SearchResponse>? {
         return null
     }
 
-    open fun load(slug: String): Any? { //LoadResponse
+    open fun load(slug: String): LoadResponse? {
         return null
     }
 

@@ -10,7 +10,7 @@ class AllProvider : MainAPI() {
 
     var providersActive = HashSet<String>()
 
-    override fun quickSearch(query: String): ArrayList<Any>? {
+    override fun quickSearch(query: String): ArrayList<SearchResponse>? {
         val list = apis.filter { a ->
             a.name != this.name && (providersActive.size == 0 || providersActive.contains(a.name))
         }.filter { a -> a.hasQuickSearch }.pmap { a ->
@@ -34,7 +34,7 @@ class AllProvider : MainAPI() {
         if (providerCount == 0) return null
         if (maxCount == 0) return ArrayList()
 
-        val result = ArrayList<Any>()
+        val result = ArrayList<SearchResponse>()
         for (i in 0..maxCount) {
             for (res in list) {
                 if (res != null) {
@@ -48,7 +48,7 @@ class AllProvider : MainAPI() {
         return result
     }
 
-    override fun search(query: String): ArrayList<Any>? {
+    override fun search(query: String): ArrayList<SearchResponse>? {
         val list = apis.filter { a ->
             a.name != this.name && (providersActive.size == 0 || providersActive.contains(a.name))
         }.pmap { a ->
@@ -71,7 +71,7 @@ class AllProvider : MainAPI() {
         if (providerCount == 0) return null
         if (maxCount == 0) return ArrayList()
 
-        val result = ArrayList<Any>()
+        val result = ArrayList<SearchResponse>()
         for (i in 0..maxCount) {
             for (res in list) {
                 if (res != null) {
