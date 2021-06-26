@@ -483,6 +483,21 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                         result_tag_holder.visibility = GONE
                         result_status.visibility = GONE
 
+                        val tags = d.tags
+                        if (tags == null) {
+                            result_tag_holder.visibility = GONE
+                        } else {
+                            result_tag_holder.visibility = VISIBLE
+
+                            for ((index, tag) in tags.withIndex()) {
+                                val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
+                                val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
+                                btt.text = tag
+
+                                result_tag.addView(viewBtt, index)
+                            }
+                        }
+
                         when (d.type) {
                             TvType.Movie -> {
                                 result_play_movie.visibility = VISIBLE
@@ -525,20 +540,6 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                                 val titleName = d.name
                                 result_title.text = titleName
                                 result_toolbar.title = titleName
-
-                                if (d.tags == null) {
-                                    result_tag_holder.visibility = GONE
-                                } else {
-                                    result_tag_holder.visibility = VISIBLE
-
-                                    for ((index, tag) in d.tags.withIndex()) {
-                                        val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
-                                        val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
-                                        btt.text = tag
-
-                                        result_tag.addView(viewBtt, index)
-                                    }
-                                }
                             }
                             else -> result_title.text = d.name
                         }

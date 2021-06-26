@@ -109,7 +109,7 @@ class MeloMovieProvider : MainAPI() {
             return src.toRegex().find(response)?.groups?.get(1)?.value ?: return null
         }
 
-        val imdbId = findUsingRegex("var imdb = \"(tt[0-9]*)\"")?.toIntOrNull()
+        val imdbUrl = findUsingRegex("var imdb = \"(.*?)\"")
         val document = Jsoup.parse(response)
         val poster = document.selectFirst("img.img-fluid").attr("src")
         val type = findUsingRegex("var posttype = ([0-9]*)")?.toInt() ?: return null
@@ -128,7 +128,7 @@ class MeloMovieProvider : MainAPI() {
                 poster,
                 year,
                 plot,
-                imdbId)
+                imdbUrl)
         } else if (type == 2) {
             val episodes = ArrayList<TvSeriesEpisode>()
             val seasons = document.select("div.accordion__card")
@@ -154,7 +154,7 @@ class MeloMovieProvider : MainAPI() {
                 year,
                 plot,
                 null,
-                imdbId)
+                imdbUrl)
         }
         return null
     }

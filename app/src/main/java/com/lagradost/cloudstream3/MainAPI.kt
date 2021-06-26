@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.animeproviders.ShiroProvider
 import com.lagradost.cloudstream3.movieproviders.HDMProvider
 import com.lagradost.cloudstream3.movieproviders.LookMovieProvider
 import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
+import com.lagradost.cloudstream3.movieproviders.TrailersToProvider
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 import kotlin.collections.ArrayList
@@ -33,6 +34,7 @@ object APIHolder {
         DubbedAnimeProvider(),
         HDMProvider(),
         LookMovieProvider(),
+        TrailersToProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
@@ -61,7 +63,7 @@ abstract class MainAPI {
         return null
     }
 
-    open fun quickSearch(query: String) : ArrayList<SearchResponse>? {
+    open fun quickSearch(query: String): ArrayList<SearchResponse>? {
         return null
     }
 
@@ -75,23 +77,22 @@ abstract class MainAPI {
     }
 }
 
-fun parseRating(ratingString : String?) : Int? {
-    if(ratingString == null) return null
+fun parseRating(ratingString: String?): Int? {
+    if (ratingString == null) return null
     val floatRating = ratingString.toFloatOrNull() ?: return null
     return (floatRating * 10).toInt()
 }
 
 fun MainAPI.fixUrl(url: String): String {
-    if(url.startsWith("http")) {
+    if (url.startsWith("http")) {
         return url
     }
 
     val startsWithNoHttp = url.startsWith("//")
-    if(startsWithNoHttp) {
+    if (startsWithNoHttp) {
         return "https:$url"
-    }
-    else {
-        if(url.startsWith('/')) {
+    } else {
+        if (url.startsWith('/')) {
             return mainUrl + url
         }
         return "$mainUrl/$url"
@@ -176,7 +177,10 @@ interface LoadResponse {
     val posterUrl: String?
     val year: Int?
     val plot: String?
-    val rating : Int? // 0-100
+    val rating: Int? // 0-100
+    val tags: ArrayList<String>?
+    val duration: String?
+    val trailerUrl: String?
 }
 
 fun LoadResponse?.isEpisodeBased(): Boolean {
@@ -189,7 +193,7 @@ fun LoadResponse?.isAnimeBased(): Boolean {
     return (this.type == TvType.Anime || this.type == TvType.ONA) // && (this is AnimeLoadResponse)
 }
 
-data class AnimeEpisode(val url: String, val name : String? = null)
+data class AnimeEpisode(val url: String, val name: String? = null)
 
 data class AnimeLoadResponse(
     val engName: String?,
@@ -207,12 +211,14 @@ data class AnimeLoadResponse(
     val showStatus: ShowStatus?,
 
     override val plot: String?,
-    val tags: ArrayList<String>? = null,
+    override val tags: ArrayList<String>? = null,
     val synonyms: ArrayList<String>? = null,
 
     val malId: Int? = null,
     val anilistId: Int? = null,
     override val rating: Int? = null,
+    override val duration: String? = null,
+    override val trailerUrl: String? = null,
 ) : LoadResponse
 
 data class MovieLoadResponse(
@@ -226,11 +232,23 @@ data class MovieLoadResponse(
     override val year: Int?,
     override val plot: String?,
 
-    val imdbId: Int?,
+    val imdbUrl: String?,
     override val rating: Int? = null,
+    override val tags: ArrayList<String>? = null,
+    override val duration: String? = null,
+    override val trailerUrl: String? = null,
 ) : LoadResponse
 
-data class TvSeriesEpisode(val name: String?, val season: Int?, val episode: Int?, val data: String)
+data class TvSeriesEpisode(
+    val name: String?,
+    val season: Int?,
+    val episode: Int?,
+    val data: String,
+    val posterUrl: String? = null,
+    val date: String? = null,
+    val rating: Int? = null,
+    val descript: String? = null,
+)
 
 data class TvSeriesLoadResponse(
     override val name: String,
@@ -244,6 +262,9 @@ data class TvSeriesLoadResponse(
     override val plot: String?,
 
     val showStatus: ShowStatus?,
-    val imdbId: Int?,
+    val imdbUrl: String?,
     override val rating: Int? = null,
+    override val tags: ArrayList<String>? = null,
+    override val duration: String? = null,
+    override val trailerUrl: String? = null,
 ) : LoadResponse

@@ -6,9 +6,11 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.extractors.M3u8Manifest
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 
+//BE AWARE THAT weboas.is is a clone of lookmovie
 class LookMovieProvider : MainAPI() {
     override val hasQuickSearch: Boolean
         get() = true
@@ -62,7 +64,7 @@ class LookMovieProvider : MainAPI() {
         @JsonProperty("season") var season: String,
     )
 
-    override fun quickSearch(query: String): ArrayList<SearchResponse>? {
+    override fun quickSearch(query: String): ArrayList<SearchResponse> {
         val movieUrl = "$mainUrl/api/v1/movies/search/?q=$query"
         val movieResponse = khttp.get(movieUrl)
         val movies = mapper.readValue<LookMovieSearchResultRoot>(movieResponse.text).result
@@ -138,12 +140,13 @@ class LookMovieProvider : MainAPI() {
 
     override fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
         val response = khttp.get(data.replace("\$unixtime", unixTime.toString()))
-
-        "\"(.*?)\":\"(.*?)\"".toRegex().findAll(response.text).forEach {
-            var quality = it.groupValues[1].replace("auto", "Auto")
-            if (quality != "Auto") quality += "p"
-            val url = it.groupValues[2]
-            callback.invoke(ExtractorLink(this.name, "${this.name} - $quality", url, "", getQualityFromName(quality),true))
+        M3u8Manifest.extractLinks(response.text).forEach {
+            callback.invoke(ExtractorLink(this.name,
+                "${this.name} - ${it.second}",
+                fixUrl(it.first),
+                "",
+                getQualityFromName(it.second),
+                true))
         }
         return true
     }
@@ -174,9 +177,6 @@ class LookMovieProvider : MainAPI() {
         val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse.text)
         val accessToken = root.data?.accessToken ?: return null
 
-        //https://lookmovie.io/api/v1/security/show-access?slug=9140554-loki-2021&token=&sk=null&step=1
-        //https://lookmovie.io/api/v1/security/movie-access?id_movie=11582&token=1&sk=&step=1
-
         if (isMovie) {
             return MovieLoadResponse(name,
                 slug,
@@ -197,10 +197,6 @@ class LookMovieProvider : MainAPI() {
             fun String.fixSeasonJson(replace: String): String {
                 return this.replace("$replace:", "\"$replace\":")
             }
-
-            //https://lookmovie.io/api/v1/security/show-access?slug=9140554-loki-2021&token=&sk=null&step=1
-            //https://lookmovie.io/manifests/shows/json/TGv3dO0pcwomftMrywOnmw/1624571222/128848/master.m3u8
-            //https://lookmovie.io/api/v1/shows/episode-subtitles/?id_episode=128848
 
             val json = season
                 .replace("\'", "\"")
@@ -230,6 +226,5 @@ class LookMovieProvider : MainAPI() {
                 null,
                 rating)
         }
-        //watch-heading
     }
 }
