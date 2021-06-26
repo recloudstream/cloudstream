@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +37,7 @@ import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.UIHelper.popupMenuNoIcons
+import com.lagradost.cloudstream3.UIHelper.popupMenuNoIconsAndNoStringres
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
@@ -190,6 +189,14 @@ class ResultFragment : Fragment() {
     private var currentIsMovie: Boolean? = null
 
     var url: String? = null
+
+    private fun fromIndexToSeasonText(selection: Int?): String {
+        return when (selection) {
+            null -> "No Season"
+            -2 -> "No Season"
+            else -> "Season $selection"
+        }
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -358,7 +365,26 @@ class ResultFragment : Fragment() {
             allEpisodes = it
         }
 
-        observe(viewModel.episodes) { episodes ->
+        observe(viewModel.selectedSeason) { season ->
+            result_season_button?.text = fromIndexToSeasonText(season)
+        }
+
+        observe(viewModel.seasonSelections) { seasonList ->
+            result_season_button?.visibility = if (seasonList.size <= 1) GONE else VISIBLE
+            result_season_button?.setOnClickListener {
+                result_season_button?.popupMenuNoIconsAndNoStringres(
+                    items = seasonList
+                        .map { Pair(it ?: -2, fromIndexToSeasonText(it)) },
+                ) {
+                    val id = this.itemId
+                    context?.let {
+                        viewModel.changeSeason(it, if (id == -2) null else id)
+                    }
+                }
+            }
+        }
+
+        observe(viewModel.publicEpisodes) { episodes ->
             if (result_episodes == null || result_episodes.adapter == null) return@observe
             result_episodes_text.text = "${episodes.size} Episode${if (episodes.size == 1) "" else "s"}"
             currentEpisodes = episodes

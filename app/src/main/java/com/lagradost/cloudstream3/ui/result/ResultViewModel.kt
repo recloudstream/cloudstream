@@ -1,17 +1,16 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.launch
@@ -19,12 +18,17 @@ import kotlinx.coroutines.launch
 class ResultViewModel : ViewModel() {
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
     private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
+    private val _publicEpisodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
     val resultResponse: LiveData<Resource<Any?>> get() = _resultResponse
     val episodes: LiveData<List<ResultEpisode>> get() = _episodes
+    val publicEpisodes: LiveData<List<ResultEpisode>> get() = _publicEpisodes
+
     private val dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
 
     private val page: MutableLiveData<LoadResponse> = MutableLiveData()
     private val id: MutableLiveData<Int> = MutableLiveData()
+    val selectedSeason: MutableLiveData<Int> = MutableLiveData(-2)
+    val seasonSelections: MutableLiveData<List<Int?>> = MutableLiveData()
 
     private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData()
     val watchStatus: LiveData<WatchType> get() = _watchStatus
@@ -41,13 +45,43 @@ class ResultViewModel : ViewModel() {
         _watchStatus.postValue(currentWatch)
     }
 
+    private fun filterEpisodes(context: Context, list: List<ResultEpisode>?, selection: Int?) {
+        if (list == null) return
+        val seasonTypes = HashMap<Int?, Boolean>()
+        for (i in list) {
+            if (!seasonTypes.containsKey(i.season)) {
+                seasonTypes[i.season] = true
+            }
+        }
+        val seasons = seasonTypes.toList().map { it.first }
+        seasonSelections.postValue(seasons)
+        val realSelection = if (!seasonTypes.containsKey(selection)) seasons[0] else selection
+        val internalId = id.value
+
+        if (internalId != null) context.setResultSeason(internalId, realSelection)
+
+        selectedSeason.postValue(realSelection ?: -2)
+        _publicEpisodes.postValue(list.filter { it.season == realSelection })
+    }
+
+    fun changeSeason(context: Context, selection: Int?) {
+        filterEpisodes(context, _episodes.value, selection)
+    }
+
+    private fun updateEpisodes(context: Context, localId: Int?, list: List<ResultEpisode>, selection: Int?) {
+        _episodes.postValue(list)
+        filterEpisodes(context,
+            list,
+            if (selection == -1) context.getResultSeason(localId ?: id.value ?: return) else selection)
+    }
+
     fun reloadEpisodes(context: Context) {
         val current = _episodes.value ?: return
         val copy = current.map {
             val posDur = context.getViewPos(it.id)
             it.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
         }
-        _episodes.postValue(copy)
+        updateEpisodes(context, null, copy, selectedSeason.value)
     }
 
     // THIS SHOULD AT LEAST CLEAN IT UP, SO APIS CAN SWITCH DOMAIN
@@ -98,7 +132,7 @@ class ResultViewModel : ViewModel() {
                                         i.descript,
                                     ))
                                 }
-                                _episodes.postValue(episodes)
+                                updateEpisodes(context, mainId, episodes, -1)
                             }
                         }
 
@@ -106,8 +140,8 @@ class ResultViewModel : ViewModel() {
                             val episodes = ArrayList<ResultEpisode>()
                             for ((index, i) in d.episodes.withIndex()) {
                                 episodes.add(context.buildResultEpisode(
-                                    (i.name
-                                        ?: (if (i.season != null && i.episode != null) "S${i.season}:E${i.episode}" else null)), // TODO ADD NAMES
+                                    i.name,
+                                    //?: (if (i.season != null && i.episode != null) "S${i.season}:E${i.episode}" else null)), // TODO ADD NAMES
                                     i.posterUrl,
                                     i.episode ?: (index + 1),
                                     i.season,
@@ -119,10 +153,10 @@ class ResultViewModel : ViewModel() {
                                     i.descript
                                 ))
                             }
-                            _episodes.postValue(episodes)
+                            updateEpisodes(context, mainId, episodes, -1)
                         }
                         is MovieLoadResponse -> {
-                            _episodes.postValue(arrayListOf(context.buildResultEpisode(
+                            updateEpisodes(context, mainId, arrayListOf(context.buildResultEpisode(
                                 null,
                                 null,
                                 0, null,
@@ -132,7 +166,7 @@ class ResultViewModel : ViewModel() {
                                 0,
                                 null,
                                 null,
-                            )))
+                            )), -1)
                         }
                     }
                 }

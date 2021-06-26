@@ -873,7 +873,6 @@ class PlayerFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(ResultViewModel::class.java)
 
-
         observeDirectly(viewModel.episodes) { _episodes ->
             episodes = _episodes
             if (isLoading) {
@@ -1129,7 +1128,7 @@ class PlayerFragment : Fragment() {
 
         changeSkip()
 
-       // initPlayer()
+        // initPlayer()
     }
 
     private fun getCurrentUrl(): ExtractorLink? {

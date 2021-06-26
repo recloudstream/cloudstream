@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 
 const val VIDEO_POS_DUR = "video_pos_dur"
 const val RESULT_WATCH_STATE = "result_watch_state"
+const val RESULT_SEASON = "result_season"
 
 data class PosDur(val position: Long, val duration: Long)
 
@@ -29,5 +30,12 @@ object DataStoreHelper {
 
     fun Context.getResultWatchState(id: Int): WatchType {
         return WatchType.fromInternalId(getKey<Int>("$currentAccount/$RESULT_WATCH_STATE", id.toString(), null))
+    }
+
+    fun Context.getResultSeason(id: Int): Int {
+        return getKey("$currentAccount/$RESULT_SEASON", id.toString(), -1)!!
+    }
+    fun Context.setResultSeason(id: Int, value : Int?) {
+        return setKey("$currentAccount/$RESULT_SEASON", id.toString(), value)
     }
 }

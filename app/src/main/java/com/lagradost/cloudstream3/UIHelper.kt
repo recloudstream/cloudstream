@@ -354,4 +354,26 @@ object UIHelper {
         popup.show()
         return popup
     }
+
+    inline fun View.popupMenuNoIconsAndNoStringres(
+        items: List<Pair<Int, String>>,
+        noinline onMenuItemClick: MenuItem.() -> Unit,
+    ): PopupMenu {
+        val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
+        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, R.attr.actionOverflowMenuStyle, 0)
+
+        items.forEach { (id, stringRes) ->
+            popup.menu.add(0, id, 0, stringRes)
+        }
+
+        (popup.menu as? MenuBuilder)?.setOptionalIconsVisible(true)
+
+        popup.setOnMenuItemClickListener {
+            it.onMenuItemClick()
+            true
+        }
+
+        popup.show()
+        return popup
+    }
 }

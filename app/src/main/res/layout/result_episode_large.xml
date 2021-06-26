@@ -9,7 +9,7 @@
         app:cardBackgroundColor="@color/itemBackground"
         android:id="@+id/episode_holder"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="10dp"
 >
     <LinearLayout
             android:padding="10dp"
@@ -20,8 +20,9 @@
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
                 android:layout_height="wrap_content">
+            <!--app:cardCornerRadius="@dimen/roundedImageRadius"-->
             <androidx.cardview.widget.CardView
-                    app:cardCornerRadius="@dimen/roundedImageRadius"
+
                     android:layout_width="126dp"
                     android:layout_height="72dp"
             >
@@ -41,7 +42,10 @@
                         android:contentDescription="@string/play_episode">
                 </ImageView>
                 <androidx.core.widget.ContentLoadingProgressBar
+                        android:layout_marginBottom="-1.5dp"
                         android:id="@+id/episode_progress"
+                        android:progressTint="@color/colorPrimary"
+                        android:progressBackgroundTint="@color/colorPrimary"
                         style="@android:style/Widget.Material.ProgressBar.Horizontal"
                         android:layout_width="match_parent"
                         tools:progress="50"
@@ -58,13 +62,14 @@
                 <TextView
                         android:id="@+id/episode_text"
                         tools:text="1. Jobless"
+                        android:textStyle="bold"
                         android:textColor="@color/textColor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                 </TextView>
                 <TextView
                         android:id="@+id/episode_rating"
-                        tools:text="8.8"
+                        tools:text="Rated: 8.8"
                         android:textColor="@color/grayTextColor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">

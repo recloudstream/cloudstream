@@ -89,7 +89,8 @@ class EpisodeAdapter(
 
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
-            episodeText.text = card.name ?: "Episode ${card.episode}"
+            val name = if (card.name == null) "Episode ${card.episode}" else "${card.episode}. ${card.name}"
+            episodeText.text = name
 
             fun setWidth(v: View, procentage: Float) {
                 val param = LinearLayout.LayoutParams(
@@ -125,7 +126,7 @@ class EpisodeAdapter(
             }
 
             if (card.rating != null) {
-                episodeRating?.text = "%.1f".format(card.rating.toFloat() / 10f).replace(",", ".")
+                episodeRating?.text = "Rated: %.1f".format(card.rating.toFloat() / 10f).replace(",", ".")
             } else {
                 episodeRating?.text = ""
             }

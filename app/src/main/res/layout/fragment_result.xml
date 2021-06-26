@@ -183,15 +183,15 @@
                             android:id="@+id/result_bookmark_button"
                             tools:text="Bookmark"
 
-                            app:rippleColor="?attr/colorPrimary"
+                            app:rippleColor="?attr/bitDarkerGrayBackground"
                             android:textColor="?attr/textColor"
                             app:iconTint="?attr/textColor"
                             android:textAllCaps="false"
                             app:icon="@drawable/ic_outline_remove_red_eye_24"
-                            android:backgroundTint="@color/transparent"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:backgroundTint="@color/itemBackground"
+                            style="@style/Widget.MaterialComponents.Button"
                             android:layout_width="wrap_content"
-                            android:layout_height="45dp">
+                            android:layout_height="50dp">
                     </com.google.android.material.button.MaterialButton>
 
 
@@ -294,19 +294,40 @@
                         android:layout_height="45dp">
                 </com.google.android.material.button.MaterialButton>
 
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/result_episodes_text"
-                        tools:text="8 Episodes"
-                        android:textSize="17sp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:textStyle="normal"
-                        android:textColor="?attr/textColor"
-                />
+                <LinearLayout android:orientation="horizontal" android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                            android:visibility="visible"
+                            android:layout_gravity="center_vertical"
+                            app:cornerRadius="4dp"
+                            android:id="@+id/result_season_button"
+                            tools:text="Bookmark"
+
+                            app:rippleColor="?attr/bitDarkerGrayBackground"
+                            android:textColor="?attr/textColor"
+                            app:iconTint="?attr/textColor"
+                            android:textAllCaps="false"
+
+                            android:backgroundTint="@color/itemBackground"
+                            style="@style/Widget.MaterialComponents.Button"
+                            android:layout_width="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:layout_height="50dp">
+                    </com.google.android.material.button.MaterialButton>
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/result_episodes_text"
+                            tools:text="8 Episodes"
+                            android:textSize="17sp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:textStyle="normal"
+                            android:textColor="?attr/textColor"
+                    />
+                </LinearLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="0dp"
                         android:paddingBottom="100dp"
                         tools:listitem="@layout/result_episode"
                         android:layout_width="match_parent"

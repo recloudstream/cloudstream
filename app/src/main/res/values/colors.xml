@@ -10,9 +10,9 @@
     <color name="colorAccent">#3b65f5</color> <!-- 818fff-->
 
     <color name="darkBackground">#2B2C30</color> <!--0f0f10 0E0E10 303135 2B2C30-->
-    <color name="bitDarkerGrayBackground">#1C1C20</color> <!--191a1f 19181E 202125 1C1C20-->
+    <color name="bitDarkerGrayBackground">#111111</color> <!--1C1C20 191a1f 19181E 202125 1C1C20-->
     <color name="grayBackground">#1C1C20</color> <!--141419 202125-->
-    <color name="itemBackground">#17171B</color> <!-- 17171B 1B1B20-->
+    <color name="itemBackground">#161616</color> <!-- 17171B 1B1B20-->
 
     <color name="textColor">#e9eaee</color> <!--FFF-->
     <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->
