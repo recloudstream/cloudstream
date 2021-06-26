@@ -193,7 +193,14 @@ fun LoadResponse?.isAnimeBased(): Boolean {
     return (this.type == TvType.Anime || this.type == TvType.ONA) // && (this is AnimeLoadResponse)
 }
 
-data class AnimeEpisode(val url: String, val name: String? = null)
+data class AnimeEpisode(
+    val url: String,
+    val name: String? = null,
+    val posterUrl: String? = null,
+    val date: String? = null,
+    val rating: Int? = null,
+    val descript: String? = null,
+)
 
 data class AnimeLoadResponse(
     val engName: String?,

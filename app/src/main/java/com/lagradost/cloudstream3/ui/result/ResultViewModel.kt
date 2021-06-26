@@ -87,13 +87,15 @@ class ResultViewModel : ViewModel() {
                                 for ((index, i) in dataList.withIndex()) {
                                     episodes.add(context.buildResultEpisode(
                                         i.name,
-                                        null,
+                                        i.posterUrl,
                                         index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
                                         null, // TODO FIX SEASON
                                         i.url,
                                         apiName,
                                         (mainId + index + 1),
                                         index,
+                                        i.rating,
+                                        i.descript,
                                     ))
                                 }
                                 _episodes.postValue(episodes)
@@ -106,13 +108,15 @@ class ResultViewModel : ViewModel() {
                                 episodes.add(context.buildResultEpisode(
                                     (i.name
                                         ?: (if (i.season != null && i.episode != null) "S${i.season}:E${i.episode}" else null)), // TODO ADD NAMES
-                                    null,
+                                    i.posterUrl,
                                     i.episode ?: (index + 1),
                                     i.season,
                                     i.data,
                                     apiName,
                                     (mainId + index + 1).hashCode(),
                                     index,
+                                    i.rating,
+                                    i.descript
                                 ))
                             }
                             _episodes.postValue(episodes)
@@ -126,6 +130,8 @@ class ResultViewModel : ViewModel() {
                                 d.apiName,
                                 (mainId + 1),
                                 0,
+                                null,
+                                null,
                             )))
                         }
                     }

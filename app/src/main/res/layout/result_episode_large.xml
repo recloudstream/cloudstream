@@ -6,7 +6,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         app:cardCornerRadius="@dimen/roundedImageRadius"
-        app:cardBackgroundColor="?attr/itemBackground"
+        app:cardBackgroundColor="@color/itemBackground"
         android:id="@+id/episode_holder"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
         android:layout_marginBottom="5dp"
@@ -16,9 +16,12 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <LinearLayout android:layout_width="match_parent" android:orientation="horizontal"
-                      android:layout_height="wrap_content">
-            <FrameLayout
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                    app:cardCornerRadius="@dimen/roundedImageRadius"
                     android:layout_width="126dp"
                     android:layout_height="72dp"
             >
@@ -30,11 +33,12 @@
                         android:layout_height="match_parent"
                         android:contentDescription="@string/episode_poster">
                 </ImageView>
-                <ImageView tools:src="@drawable/play_button"
-                           android:layout_gravity="center"
-                           android:layout_width="36dp"
-                           android:layout_height="36dp"
-                           android:contentDescription="@string/play_episode">
+                <ImageView
+                        android:src="@drawable/play_button"
+                        android:layout_gravity="center"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:contentDescription="@string/play_episode">
                 </ImageView>
                 <androidx.core.widget.ContentLoadingProgressBar
                         android:id="@+id/episode_progress"
@@ -44,26 +48,34 @@
                         android:layout_gravity="bottom"
                         android:layout_height="5dp">
                 </androidx.core.widget.ContentLoadingProgressBar>
-            </FrameLayout>
-            <LinearLayout android:layout_marginStart="10dp" android:orientation="vertical"
-                          android:layout_gravity="center" android:layout_width="match_parent"
-                          android:layout_height="wrap_content">
-                <TextView android:id="@+id/episode_text" tools:text="1. Jobless" android:textColor="?attr/textColor"
-                          android:layout_width="wrap_content" android:layout_height="wrap_content">
-
+            </androidx.cardview.widget.CardView>
+            <LinearLayout
+                    android:layout_marginStart="15dp"
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <TextView
+                        android:id="@+id/episode_text"
+                        tools:text="1. Jobless"
+                        android:textColor="@color/textColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
                 </TextView>
-                <TextView android:id="@+id/episode_rating"
-                          tools:text="8.8"
-                          android:textColor="?attr/grayTextColor"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content">
+                <TextView
+                        android:id="@+id/episode_rating"
+                        tools:text="8.8"
+                        android:textColor="@color/grayTextColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
                 </TextView>
             </LinearLayout>
         </LinearLayout>
         <TextView
-                android:paddingTop="2.5dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:id="@+id/episode_descript"
-                android:textColor="?attr/grayTextColor"
+                android:textColor="@color/grayTextColor"
                 tools:text="Jon and Daenerys arrive in Winterfell and are met with skepticism. Sam learns about the fate of his family. Cersei gives Euron the reward he aims for. Theon follows his heart. "
                 android:layout_width="match_parent" android:layout_height="wrap_content">
         </TextView>

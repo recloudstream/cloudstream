@@ -64,6 +64,8 @@ data class ResultEpisode(
     val index: Int,
     val position: Long, // time in MS
     val duration: Long, // duration in MS
+    val rating: Int?,
+    val descript: String?,
 )
 
 fun ResultEpisode.getRealPosition(): Long {
@@ -91,9 +93,12 @@ fun Context.buildResultEpisode(
     apiName: String,
     id: Int,
     index: Int,
+    rating: Int?,
+    descript: String?,
 ): ResultEpisode {
     val posDur = getViewPos(id)
-    return ResultEpisode(name,
+    return ResultEpisode(
+        name,
         poster,
         episode,
         season,
@@ -102,7 +107,10 @@ fun Context.buildResultEpisode(
         id,
         index,
         posDur?.position ?: 0,
-        posDur?.duration ?: 0)
+        posDur?.duration ?: 0,
+        rating,
+        descript,
+    )
 }
 
 fun ResultEpisode.getWatchProgress(): Float {
@@ -355,6 +363,7 @@ class ResultFragment : Fragment() {
             result_episodes_text.text = "${episodes.size} Episode${if (episodes.size == 1) "" else "s"}"
             currentEpisodes = episodes
             (result_episodes.adapter as EpisodeAdapter).cardList = episodes
+            (result_episodes.adapter as EpisodeAdapter).updateLayout()
             (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
         }
 
@@ -400,7 +409,7 @@ class ResultFragment : Fragment() {
                         if (d.year != null) metadataInfoArray.add(Pair("Year", d.year.toString()))
                         val rating = d.rating
                         if (rating != null) metadataInfoArray.add(Pair("Rating",
-                            "%.2f/10.0".format(rating.toFloat() / 10f).replace(",", ".")))
+                            "%.1f/10.0".format(rating.toFloat() / 10f).replace(",", ".")))
                         val duration = d.duration
                         if (duration != null) metadataInfoArray.add(Pair("Duration", duration))
 
