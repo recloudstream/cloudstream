@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        app:cardCornerRadius="@dimen/roundedImageRadius"
+        app:cardBackgroundColor="?attr/itemBackground"
+        android:id="@+id/episode_holder"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_marginBottom="5dp"
+>
+    <LinearLayout
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout android:layout_width="match_parent" android:orientation="horizontal"
+                      android:layout_height="wrap_content">
+            <FrameLayout
+                    android:layout_width="126dp"
+                    android:layout_height="72dp"
+            >
+                <ImageView
+                        android:id="@+id/episode_poster"
+                        tools:src="@drawable/example_poster"
+                        android:scaleType="centerCrop"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/episode_poster">
+                </ImageView>
+                <ImageView tools:src="@drawable/play_button"
+                           android:layout_gravity="center"
+                           android:layout_width="36dp"
+                           android:layout_height="36dp"
+                           android:contentDescription="@string/play_episode">
+                </ImageView>
+                <androidx.core.widget.ContentLoadingProgressBar
+                        android:id="@+id/episode_progress"
+                        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        tools:progress="50"
+                        android:layout_gravity="bottom"
+                        android:layout_height="5dp">
+                </androidx.core.widget.ContentLoadingProgressBar>
+            </FrameLayout>
+            <LinearLayout android:layout_marginStart="10dp" android:orientation="vertical"
+                          android:layout_gravity="center" android:layout_width="match_parent"
+                          android:layout_height="wrap_content">
+                <TextView android:id="@+id/episode_text" tools:text="1. Jobless" android:textColor="?attr/textColor"
+                          android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+                </TextView>
+                <TextView android:id="@+id/episode_rating"
+                          tools:text="8.8"
+                          android:textColor="?attr/grayTextColor"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content">
+                </TextView>
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+                android:paddingTop="2.5dp"
+                android:id="@+id/episode_descript"
+                android:textColor="?attr/grayTextColor"
+                tools:text="Jon and Daenerys arrive in Winterfell and are met with skepticism. Sam learns about the fate of his family. Cersei gives Euron the reward he aims for. Theon follows his heart. "
+                android:layout_width="match_parent" android:layout_height="wrap_content">
+        </TextView>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -63,7 +63,8 @@
     <FrameLayout
             android:visibility="gone"
             tools:visibility="visible"
-            android:id="@+id/result_finish_loading" android:layout_width="match_parent"
+            android:id="@+id/result_finish_loading"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
         <com.google.android.material.appbar.AppBarLayout
                 android:visibility="gone"
@@ -82,8 +83,11 @@
             </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <FrameLayout android:layout_width="match_parent" android:id="@+id/result_poster_blur_holder"
-                     android:layout_height="180dp">
+        <FrameLayout
+                android:alpha="0"
+                android:layout_width="match_parent"
+                android:id="@+id/result_poster_blur_holder"
+                android:layout_height="180dp">
             <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -103,8 +107,8 @@
                 android:layout_height="wrap_content">
             <LinearLayout
                     android:orientation="vertical"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="@dimen/result_padding"
+                    android:layout_marginEnd="@dimen/result_padding"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                 <!--
@@ -116,7 +120,7 @@
                                 </ImageView>
                             </LinearLayout>-->
                 <LinearLayout
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="@dimen/result_padding"
                         android:orientation="horizontal" android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -145,33 +149,33 @@
                                 tools:text="The Perfect Run The Perfect Run The Perfect Run"
                                 android:id="@+id/result_title"
                                 android:textSize="20sp"
-                                android:textStyle="bold"
+                                android:textStyle="normal"
                                 android:textColor="?attr/textColor" android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
                         </TextView>
                         <TextView
-                                android:id="@+id/result_year"
+                                android:id="@+id/result_metadata"
+                                tools:text="2021\nda"
+                                android:paddingTop="3sp"
+                                android:lineSpacingExtra="3sp"
+                                android:textStyle="normal"
+                                android:textSize="15sp"
+                                android:textColor="?attr/textColor" android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                        </TextView>
+                        <!--<TextView
+                                android:id="@+id/result_rating"
                                 tools:text="2021"
-                                android:textStyle="bold"
+                                android:textStyle="normal"
                                 android:textSize="15sp"
                                 android:textColor="?attr/textColor" android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
-                        </TextView>
-                        <TextView
-                                android:id="@+id/result_status"
-                                tools:text="Finished"
-                                android:textSize="15sp"
-                                android:textColor="?attr/textColor" android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-                        </TextView>
-
-
+                        </TextView>-->
                     </LinearLayout>
-
-
                 </LinearLayout>
-                <GridLayout android:layout_width="match_parent" android:layout_height="50dp">
-
+                <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp">
                     <com.google.android.material.button.MaterialButton
                             android:visibility="visible"
                             android:layout_gravity="center_vertical"
@@ -353,7 +357,7 @@
             android:focusable="true"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/result_padding"
             android:layout_gravity="end"
             android:tint="?attr/white"
             android:src="@drawable/ic_baseline_clear_24"

@@ -5,19 +5,22 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
+import androidx.core.text.color
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,7 +38,6 @@ import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.UIHelper.popCurrentPage
-import com.lagradost.cloudstream3.UIHelper.popupMenu
 import com.lagradost.cloudstream3.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
@@ -246,10 +248,10 @@ class ResultFragment : Fragment() {
                         getApiFromName(apiName).instantLinkLoading
                     } else false
 
-                    var dialog : AlertDialog? = null
+                    var dialog: AlertDialog? = null
                     val currentLoad = currentLoadingCount
 
-                    if(!skipLoading) {
+                    if (!skipLoading) {
                         val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
                         val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
                         builder.setView(customLayout)
@@ -384,11 +386,36 @@ class ResultFragment : Fragment() {
                             startActivity(Intent.createChooser(i, d.name))
                         }
 
-                        if (d.year != null) {
-                            result_year.visibility = VISIBLE
-                            result_year.text = d.year.toString()
+                        val metadataInfoArray = ArrayList<Pair<String, String>>()
+                        if (d is AnimeLoadResponse) {
+                            val status = when (d.showStatus) {
+                                null -> null
+                                ShowStatus.Ongoing -> "Ongoing"
+                                ShowStatus.Completed -> "Completed"
+                            }
+                            if (status != null) {
+                                metadataInfoArray.add(Pair("Status", status))
+                            }
+                        }
+                        if (d.year != null) metadataInfoArray.add(Pair("Year", d.year.toString()))
+                        val rating = d.rating
+                        if (rating != null) metadataInfoArray.add(Pair("Rating",
+                            "%.2f/10.0".format(rating.toFloat() / 10f).replace(",", ".")))
+                        val duration = d.duration
+                        if (duration != null) metadataInfoArray.add(Pair("Duration", duration))
+
+                        if (metadataInfoArray.size > 0) {
+                            result_metadata.visibility = VISIBLE
+                            val text = SpannableStringBuilder()
+                            val grayColor = ContextCompat.getColor(requireContext(), R.color.grayTextColor)
+                            val textColor = ContextCompat.getColor(requireContext(), R.color.textColor)
+                            for (meta in metadataInfoArray) {
+                                text.color(grayColor) { append("${meta.first}: ") }
+                                    .color(textColor) { append("${meta.second}\n") }
+                            }
+                            result_metadata.text = text
                         } else {
-                            result_year.visibility = GONE
+                            result_metadata.visibility = GONE
                         }
 
                         if (d.posterUrl != null) {
@@ -481,7 +508,7 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
 
                         result_tag.removeAllViews()
                         result_tag_holder.visibility = GONE
-                        result_status.visibility = GONE
+                        // result_status.visibility = GONE
 
                         val tags = d.tags
                         if (tags == null) {
@@ -528,12 +555,6 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
 
                         when (d) {
                             is AnimeLoadResponse -> {
-                                result_status.visibility = VISIBLE
-                                result_status.text = when (d.showStatus) {
-                                    null -> ""
-                                    ShowStatus.Ongoing -> "Ongoing"
-                                    ShowStatus.Completed -> "Completed"
-                                }
 
                                 // val preferEnglish = true
                                 //val titleName = (if (preferEnglish) d.engName else d.japName) ?: d.name

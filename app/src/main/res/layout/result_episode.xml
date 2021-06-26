@@ -34,7 +34,6 @@
                 android:layout_height="match_parent">
         </View>
     </LinearLayout>
-
     <GridLayout android:layout_width="match_parent" android:layout_height="match_parent">
         <ImageView
                 android:layout_marginStart="10dp"
@@ -61,6 +60,4 @@
                 android:src="@drawable/ic_baseline_more_vert_24"
                 android:contentDescription="@string/episode_more_options_descript"/>
     </GridLayout>
-
-
 </androidx.cardview.widget.CardView>

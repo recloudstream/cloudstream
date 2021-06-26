@@ -34,4 +34,6 @@
     <string name="pick_source">Pick Source</string>
     <string name="reload_error">Retry connection…</string>
     <string name="result_go_back">Go Back</string>
+    <string name="episode_poster">Episode Poster</string>
+    <string name="play_episode">Play Episode</string>
 </resources>
