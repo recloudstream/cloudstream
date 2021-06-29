@@ -45,7 +45,9 @@ import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
 
@@ -258,7 +260,6 @@ class ResultFragment : Fragment() {
             currentLoadingCount++
             when (episodeClick.action) {
                 ACTION_CHROME_CAST_EPISODE -> {
-
                     val skipLoading = if (apiName != null) {
                         getApiFromName(apiName).instantLinkLoading
                     } else false
@@ -327,7 +328,19 @@ class ResultFragment : Fragment() {
                         }
                     }*/
                 }
-
+                ACTION_DOWNLOAD_EPISODE -> {
+                    val tempUrl = url
+                    if (tempUrl != null) {
+                        viewModel.loadEpisode(episodeClick.data, true) { data ->
+                            if (data is Resource.Success) {
+                                VideoDownloadManager.DownloadEpisode(requireContext(),
+                                    tempUrl,
+                                    episodeClick.data,
+                                    data.value)
+                            }
+                        }
+                    }
+                }
             }
         }
 

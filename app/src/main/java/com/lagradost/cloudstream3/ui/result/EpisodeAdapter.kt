@@ -22,9 +22,10 @@ import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
 
-const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
 const val ACTION_RELOAD_EPISODE = 4
 const val ACTION_CHROME_CAST_EPISODE = 2
+const val ACTION_DOWNLOAD_EPISODE = 3
+const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
 
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
@@ -145,10 +146,12 @@ class EpisodeAdapter(
                     if (castContext.castState == CastState.CONNECTED) {
                         clickCallback.invoke(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
                     } else {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                        // clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                        clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
                     }
                 } else {
-                    clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                    // clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                    clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
                 }
             }
         }

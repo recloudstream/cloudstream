@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3
 
 import android.app.PictureInPictureParams
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         var isInPlayer: Boolean = false
         var canShowPipMode: Boolean = false
         var isInPIPMode: Boolean = false
+        lateinit var mainContext : MainActivity
     }
 
     private fun enterPIPMode() {
@@ -83,6 +85,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mainContext = this
+
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
