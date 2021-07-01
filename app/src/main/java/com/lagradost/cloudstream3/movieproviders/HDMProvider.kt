@@ -29,17 +29,26 @@ class HDMProvider : MainAPI() {
         return returnValue
     }
 
-    override fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+    override fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
         if (data == "") return false
         val slug = ".*/(.*?)\\.mp4".toRegex().find(data)?.groupValues?.get(1) ?: return false
         val response = khttp.get(data)
         val key = "playlist\\.m3u8(.*?)\"".toRegex().find(response.text)?.groupValues?.get(1) ?: return false
-        callback.invoke(ExtractorLink(this.name,
-            this.name,
-            "https://hls.1o.to/vod/$slug/playlist.m3u8$key",
-            "",
-            Qualities.HD.value,
-            true))
+        callback.invoke(
+            ExtractorLink(
+                this.name,
+                this.name,
+                "https://hls.1o.to/vod/$slug/playlist.m3u8$key",
+                "",
+                Qualities.HD.value,
+                true
+            )
+        )
         return true
     }
 
@@ -51,9 +60,11 @@ class HDMProvider : MainAPI() {
         val descript = document.selectFirst("div.synopsis > p").text()
         val year = document.select("div.movieInfoAll > div.row > div.col-md-6")?.get(1)?.selectFirst("> p > a")?.text()
             ?.toIntOrNull()
-        val data = "src/player/\\?v=(.*?)\"".toRegex().find(response.text)?.groupValues?.get(1) ?: return  null
+        val data = "src/player/\\?v=(.*?)\"".toRegex().find(response.text)?.groupValues?.get(1) ?: return null
 
-        return MovieLoadResponse(title, slug, this.name, TvType.Movie,
-            "$mainUrl/src/player/?v=$data", poster, year, descript, null)
+        return MovieLoadResponse(
+            title, slug, this.name, TvType.Movie,
+            "$mainUrl/src/player/?v=$data", poster, year, descript, null
+        )
     }
 }

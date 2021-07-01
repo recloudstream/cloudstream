@@ -7,7 +7,7 @@ object M3u8Manifest {
         val data: ArrayList<Pair<String, String>> = ArrayList()
         "\"(.*?)\":\"(.*?)\"".toRegex().findAll(m3u8Data).forEach {
             var quality = it.groupValues[1].replace("auto", "Auto")
-            if (quality != "Auto") quality += "p"
+            if (quality != "Auto" && !quality.endsWith('p')) quality += "p"
             val url = it.groupValues[2]
             data.add(Pair(url, quality))
         }

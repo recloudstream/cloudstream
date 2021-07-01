@@ -44,22 +44,30 @@ class MeloMovieProvider : MainAPI() {
             val currentUrl = "$mainUrl/movie/${i.id}"
             val currentPoster = "$mainUrl/assets/images/poster/${i.imdbId}.jpg"
             if (i.type == 2) { // TV-SERIES
-                returnValue.add(TvSeriesSearchResponse(i.title,
-                    currentUrl,
-                    currentUrl,
-                    this.name,
-                    TvType.TvSeries,
-                    currentPoster,
-                    i.year,
-                    null))
+                returnValue.add(
+                    TvSeriesSearchResponse(
+                        i.title,
+                        currentUrl,
+                        currentUrl,
+                        this.name,
+                        TvType.TvSeries,
+                        currentPoster,
+                        i.year,
+                        null
+                    )
+                )
             } else if (i.type == 1) { // MOVIE
-                returnValue.add(MovieSearchResponse(i.title,
-                    currentUrl,
-                    currentUrl,
-                    this.name,
-                    TvType.Movie,
-                    currentUrl,
-                    i.year))
+                returnValue.add(
+                    MovieSearchResponse(
+                        i.title,
+                        currentUrl,
+                        currentUrl,
+                        this.name,
+                        TvType.Movie,
+                        currentUrl,
+                        i.year
+                    )
+                )
             }
         }
         return returnValue
@@ -67,7 +75,7 @@ class MeloMovieProvider : MainAPI() {
 
     // http not https, the links are not https!
     private fun fixUrl(url: String): String {
-        if(url.isEmpty()) return ""
+        if (url.isEmpty()) return ""
 
         if (url.startsWith("//")) {
             return "http:$url"
@@ -93,7 +101,12 @@ class MeloMovieProvider : MainAPI() {
         return mapper.writeValueAsString(parsed)
     }
 
-    override fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+    override fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
         val links = mapper.readValue<List<MeloMovieLink>>(data)
         for (link in links) {
             callback.invoke(ExtractorLink(this.name, link.name, link.link, "", getQualityFromName(link.name), false))
@@ -120,7 +133,8 @@ class MeloMovieProvider : MainAPI() {
 
         if (type == 1) { // MOVIE
             val serialize = document.selectFirst("table.accordion__list")
-            return MovieLoadResponse(title,
+            return MovieLoadResponse(
+                title,
                 slug,
                 this.name,
                 TvType.Movie,
@@ -128,7 +142,8 @@ class MeloMovieProvider : MainAPI() {
                 poster,
                 year,
                 plot,
-                imdbUrl)
+                imdbUrl
+            )
         } else if (type == 2) {
             val episodes = ArrayList<TvSeriesEpisode>()
             val seasons = document.select("div.accordion__card")
@@ -145,7 +160,8 @@ class MeloMovieProvider : MainAPI() {
                 }
             }
             episodes.reverse()
-            return TvSeriesLoadResponse(title,
+            return TvSeriesLoadResponse(
+                title,
                 slug,
                 this.name,
                 TvType.TvSeries,
@@ -154,7 +170,8 @@ class MeloMovieProvider : MainAPI() {
                 year,
                 plot,
                 null,
-                imdbUrl)
+                imdbUrl
+            )
         }
         return null
     }

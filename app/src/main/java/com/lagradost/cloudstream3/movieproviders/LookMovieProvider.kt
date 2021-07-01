@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.extractors.M3u8Manifest
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -43,7 +42,7 @@ class LookMovieProvider : MainAPI() {
 
     data class LookMovieTokenSubtitle(
         @JsonProperty("language") val language: String,
-        //@JsonProperty("source") val source: String,
+        @JsonProperty("source") val source: String?,
         //@JsonProperty("source_id") val source_id: String,
         //@JsonProperty("kind") val kind: String,
         //@JsonProperty("id") val id: String,
@@ -77,26 +76,34 @@ class LookMovieProvider : MainAPI() {
         if (!movies.isNullOrEmpty()) {
             for (m in movies) {
                 val url = "$mainUrl/movies/view/${m.slug}"
-                returnValue.add(MovieSearchResponse(m.title,
-                    url,
-                    url,//m.slug,
-                    this.name,
-                    TvType.Movie,
-                    m.poster ?: m.backdrop,
-                    m.year?.toIntOrNull()))
+                returnValue.add(
+                    MovieSearchResponse(
+                        m.title,
+                        url,
+                        url,//m.slug,
+                        this.name,
+                        TvType.Movie,
+                        m.poster ?: m.backdrop,
+                        m.year?.toIntOrNull()
+                    )
+                )
             }
         }
 
         if (!shows.isNullOrEmpty()) {
             for (s in shows) {
                 val url = "$mainUrl/shows/view/${s.slug}"
-                returnValue.add(MovieSearchResponse(s.title,
-                    url,
-                    url,//s.slug,
-                    this.name,
-                    TvType.TvSeries,
-                    s.poster ?: s.backdrop,
-                    s.year?.toIntOrNull()))
+                returnValue.add(
+                    MovieSearchResponse(
+                        s.title,
+                        url,
+                        url,//s.slug,
+                        this.name,
+                        TvType.TvSeries,
+                        s.poster ?: s.backdrop,
+                        s.year?.toIntOrNull()
+                    )
+                )
             }
         }
 
@@ -119,14 +126,15 @@ class LookMovieProvider : MainAPI() {
                 val poster = posterHolder.selectFirst("> img")?.attr("data-src")
                 val year = posterHolder.selectFirst("> p.year")?.text()?.toIntOrNull()
 
-                returnValue.add(if (isMovie) {
-                    MovieSearchResponse(
-                        name, href, href, this.name, TvType.Movie, poster, year
-                    )
-                } else
-                    TvSeriesSearchResponse(
-                        name, href, href, this.name, TvType.TvSeries, poster, year, null
-                    )
+                returnValue.add(
+                    if (isMovie) {
+                        MovieSearchResponse(
+                            name, href, href, this.name, TvType.Movie, poster, year
+                        )
+                    } else
+                        TvSeriesSearchResponse(
+                            name, href, href, this.name, TvType.TvSeries, poster, year, null
+                        )
                 )
             }
             return returnValue
@@ -138,15 +146,52 @@ class LookMovieProvider : MainAPI() {
         return movieList
     }
 
-    override fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
-        val response = khttp.get(data.replace("\$unixtime", unixTime.toString()))
+    data class LookMovieLinkLoad(val url: String, val extraUrl: String, val isMovie: Boolean)
+
+    private fun addSubtitles(subs: List<LookMovieTokenSubtitle>?, subtitleCallback: (SubtitleFile) -> Unit) {
+        if (subs == null) return
+        subs.forEach {
+            if (it.source != "opensubtitle")
+                subtitleCallback.invoke(SubtitleFile(it.language, fixUrl(it.file)))
+        }
+    }
+
+    private fun loadCurrentLinks(url: String, callback: (ExtractorLink) -> Unit) {
+        val response = khttp.get(url.replace("\$unixtime", unixTime.toString()))
         M3u8Manifest.extractLinks(response.text).forEach {
-            callback.invoke(ExtractorLink(this.name,
-                "${this.name} - ${it.second}",
-                fixUrl(it.first),
-                "",
-                getQualityFromName(it.second),
-                true))
+            callback.invoke(
+                ExtractorLink(
+                    this.name,
+                    "${this.name} - ${it.second}",
+                    fixUrl(it.first),
+                    "",
+                    getQualityFromName(it.second),
+                    true
+                )
+            )
+        }
+    }
+
+    override fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
+        val localData: LookMovieLinkLoad = mapper.readValue(data)
+
+        if (localData.isMovie) {
+            val tokenResponse = khttp.get(localData.url)
+            val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse.text)
+            val accessToken = root.data?.accessToken ?: return false
+            addSubtitles(root.data.subtitles, subtitleCallback)
+            loadCurrentLinks(localData.extraUrl.replace("\$accessToken", accessToken), callback)
+            return true
+        } else {
+            loadCurrentLinks(localData.url, callback)
+            val subResponse = khttp.get(localData.extraUrl)
+            val subs = mapper.readValue<List<LookMovieTokenSubtitle>>(subResponse.text)
+            addSubtitles(subs, subtitleCallback)
         }
         return true
     }
@@ -159,7 +204,7 @@ class LookMovieProvider : MainAPI() {
         val watchHeader = document.selectFirst("div.watch-heading")
         val nameHeader = watchHeader.selectFirst("> h1.bd-hd")
         val year = nameHeader.selectFirst("> span")?.text()?.toIntOrNull()
-        val name = nameHeader.ownText()
+        val title = nameHeader.ownText()
         val rating = parseRating(watchHeader.selectFirst("> div.movie-rate > div.rate > p > span").text())
         val imgElement = document.selectFirst("div.movie-img > p.movie__poster")
         val img = imgElement?.attr("style")
@@ -173,22 +218,31 @@ class LookMovieProvider : MainAPI() {
         val realUrl =
             "$mainUrl/api/v1/security/${if (isMovie) "movie" else "show"}-access?${if (isMovie) "id_movie=$id" else "slug=$realSlug"}&token=1&sk=&step=1"
 
-        val tokenResponse = khttp.get(realUrl)
-        val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse.text)
-        val accessToken = root.data?.accessToken ?: return null
-
         if (isMovie) {
-            return MovieLoadResponse(name,
+            val localData = mapper.writeValueAsString(
+                LookMovieLinkLoad(
+                    realUrl,
+                    "$mainUrl/manifests/movies/json/$id/\$unixtime/\$accessToken/master.m3u8",
+                    true
+                )
+            )
+            return MovieLoadResponse(
+                title,
                 slug,
                 this.name,
                 TvType.Movie,
-                "$mainUrl/manifests/movies/json/$id/\$unixtime/$accessToken/master.m3u8",
+                localData,
                 poster,
                 year,
                 descript,
                 null,
-                rating)
+                rating
+            )
         } else {
+            val tokenResponse = khttp.get(realUrl)
+            val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse.text)
+            val accessToken = root.data?.accessToken ?: return null
+
             val window =
                 "window\\[\\'show_storage\\'\\] =((.|\\n)*?\\<)".toRegex().find(response.text)?.groupValues?.get(1)
                     ?: return null
@@ -208,13 +262,24 @@ class LookMovieProvider : MainAPI() {
             val realJson = "[" + json.substring(0, json.lastIndexOf(',')) + "]"
 
             val episodes = mapper.readValue<List<LookMovieEpisode>>(realJson).map {
-                TvSeriesEpisode(it.title,
+                val localData = mapper.writeValueAsString(
+                    LookMovieLinkLoad(
+                        "$mainUrl/manifests/shows/json/$accessToken/\$unixtime/${it.idEpisode}/master.m3u8",
+                        "https://lookmovie.io/api/v1/shows/episode-subtitles/?id_episode=${it.idEpisode}",
+                        false
+                    )
+                )
+
+                TvSeriesEpisode(
+                    it.title,
                     it.season.toIntOrNull(),
                     it.episode.toIntOrNull(),
-                    "$mainUrl/manifests/shows/json/$accessToken/\$unixtime/${it.idEpisode}/master.m3u8")
+                    localData
+                )
             }.toList()
 
-            return TvSeriesLoadResponse(name,
+            return TvSeriesLoadResponse(
+                title,
                 slug,
                 this.name,
                 TvType.TvSeries,
@@ -224,7 +289,8 @@ class LookMovieProvider : MainAPI() {
                 descript,
                 null,
                 null,
-                rating)
+                rating
+            )
         }
     }
 }

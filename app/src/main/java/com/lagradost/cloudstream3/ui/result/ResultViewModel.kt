@@ -206,7 +206,7 @@ class ResultViewModel : ViewModel() {
             }
             val links = ArrayList<ExtractorLink>()
             val localData = safeApiCall {
-                getApiFromName(_apiName.value).loadLinks(data, isCasting) {
+                getApiFromName(_apiName.value).loadLinks(data, isCasting,  { subtitleFile ->  }) {
                     for (i in links) {
                         if (i.url == it.url) return@loadLinks
                     }

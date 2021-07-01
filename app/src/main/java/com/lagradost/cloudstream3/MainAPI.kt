@@ -72,7 +72,7 @@ abstract class MainAPI {
     }
 
     // callback is fired once a link is found, will return true if method is executed successfully
-    open fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+    open fun loadLinks(data: String, isCasting: Boolean, subtitleCallback : (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit): Boolean {
         return false
     }
 }
@@ -119,6 +119,8 @@ enum class TvType {
     Anime,
     ONA,
 }
+
+data class SubtitleFile(val lang : String, val url : String)
 
 interface SearchResponse {
     val name: String

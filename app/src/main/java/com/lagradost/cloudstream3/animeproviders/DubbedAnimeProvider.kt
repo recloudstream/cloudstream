@@ -86,7 +86,8 @@ class DubbedAnimeProvider : MainAPI() {
                         title, href, getSlug(href), this.name, TvType.Movie, img, null
                     )
                 } else {
-                    AnimeSearchResponse(title,
+                    AnimeSearchResponse(
+                        title,
                         href,
                         getSlug(href),
                         this.name,
@@ -96,8 +97,10 @@ class DubbedAnimeProvider : MainAPI() {
                         null,
                         EnumSet.of(DubStatus.Dubbed),
                         null,
-                        null)
-                })
+                        null
+                    )
+                }
+            )
         }
         return returnValue
     }
@@ -121,7 +124,8 @@ class DubbedAnimeProvider : MainAPI() {
                         title, href, getSlug(href), this.name, TvType.Movie, img, null
                     )
                 } else {
-                    AnimeSearchResponse(title,
+                    AnimeSearchResponse(
+                        title,
                         href,
                         getSlug(href),
                         this.name,
@@ -131,14 +135,21 @@ class DubbedAnimeProvider : MainAPI() {
                         null,
                         EnumSet.of(DubStatus.Dubbed),
                         null,
-                        null)
-                })
+                        null
+                    )
+                }
+            )
         }
 
         return returnValue
     }
 
-    override fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+    override fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
         val serversHTML = (if (data.startsWith(mainUrl)) { // CLASSIC EPISODE
             val slug = getSlug(data)
             getAnimeEpisode(slug, false).serversHTML
@@ -154,11 +165,15 @@ class DubbedAnimeProvider : MainAPI() {
                 val find = "src=\"(.*?)\".*?label=\"(.*?)\"".toRegex().find(txt)
                 if (find != null) {
                     val quality = find.groupValues[2]
-                    callback.invoke(ExtractorLink(this.name,
-                        this.name + " " + quality + if (quality.endsWith('p')) "" else 'p',
-                        fixUrl(find.groupValues[1]),
-                        this.mainUrl,
-                        getQualityFromName(quality)))
+                    callback.invoke(
+                        ExtractorLink(
+                            this.name,
+                            this.name + " " + quality + if (quality.endsWith('p')) "" else 'p',
+                            fixUrl(find.groupValues[1]),
+                            this.mainUrl,
+                            getQualityFromName(quality)
+                        )
+                    )
                 }
             } catch (e: Exception) {
                 //IDK
@@ -172,7 +187,8 @@ class DubbedAnimeProvider : MainAPI() {
             val realSlug = slug.replace("movies/", "")
             val episode = getAnimeEpisode(realSlug, true)
             val poster = episode.previewImg ?: episode.wideImg
-            return MovieLoadResponse(episode.title,
+            return MovieLoadResponse(
+                episode.title,
                 realSlug,
                 this.name,
                 TvType.Movie,
@@ -180,7 +196,8 @@ class DubbedAnimeProvider : MainAPI() {
                 if (poster == null) null else fixUrl(poster),
                 episode.year?.toIntOrNull(),
                 episode.desc,
-                null)
+                null
+            )
         } else {
             val response = khttp.get("$mainUrl/$slug")
             val document = Jsoup.parse(response.text)

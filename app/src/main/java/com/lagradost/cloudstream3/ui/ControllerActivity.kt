@@ -128,7 +128,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 epData,
                                 holder,
                                 index,
-                                remoteMediaClient?.mediaInfo?.customData)
+                                remoteMediaClient?.mediaInfo?.customData
+                            )
 
                             val startAt = remoteMediaClient?.approximateStreamPosition ?: 0
 
@@ -139,12 +140,17 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 val nextId = remoteMediaClient.mediaQueue.itemIds?.get(currentIdIndex?.plus(1) ?: 0)
 
                                 if (currentIdIndex == null && nextId != null) {
-                                    awaitLinks(remoteMediaClient?.queueInsertAndPlayItem(MediaQueueItem.Builder(
-                                        mediaItem)
-                                        .build(),
-                                        nextId,
-                                        startAt,
-                                        JSONObject())) {
+                                    awaitLinks(
+                                        remoteMediaClient?.queueInsertAndPlayItem(
+                                            MediaQueueItem.Builder(
+                                                mediaItem
+                                            )
+                                                .build(),
+                                            nextId,
+                                            startAt,
+                                            JSONObject()
+                                        )
+                                    ) {
                                         loadMirror(index + 1)
                                     }
                                 } else {
@@ -204,7 +210,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         val links = ArrayList<ExtractorLink>()
 
                         val res = safeApiCall {
-                            getApiFromName(meta.apiName).loadLinks(epData.data, true) {
+                            getApiFromName(meta.apiName).loadLinks(epData.data, true, { subtitleFile ->  }) {
                                 for (i in links) {
                                     if (i.url == it.url) return@loadLinks
                                 }
@@ -225,7 +231,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                     epData,
                                     jsonCopy,
                                     0,
-                                    done)
+                                    done
+                                )
 
                                 /*fun loadIndex(index: Int) {
                                     println("LOAD INDEX::::: $index")
@@ -240,8 +247,12 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                     }
                                 }*/
 
-                                awaitLinks(remoteMediaClient?.queueAppendItem(MediaQueueItem.Builder(mediaInfo).build(),
-                                    JSONObject())) {
+                                awaitLinks(
+                                    remoteMediaClient?.queueAppendItem(
+                                        MediaQueueItem.Builder(mediaInfo).build(),
+                                        JSONObject()
+                                    )
+                                ) {
                                     println("FAILED TO LOAD NEXT ITEM")
                                     //  loadIndex(1)
                                 }

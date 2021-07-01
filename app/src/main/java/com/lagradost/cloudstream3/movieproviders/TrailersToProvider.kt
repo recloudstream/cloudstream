@@ -80,7 +80,12 @@ class TrailersToProvider : MainAPI() {
         return false
     }
 
-    override fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+    override fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
         if (isCasting) return false
         val isMovie = data.contains("/web-sources/")
         if (isMovie) {
@@ -142,7 +147,8 @@ class TrailersToProvider : MainAPI() {
                 val epDescript = main.selectFirst("> p")?.text()
                 TvSeriesEpisode(epName, season, episode, href, epPoster, date, epRating, epDescript)
             }
-            return TvSeriesLoadResponse(title,
+            return TvSeriesLoadResponse(
+                title,
                 slug,
                 this.name,
                 TvType.TvSeries,
@@ -155,10 +161,12 @@ class TrailersToProvider : MainAPI() {
                 rating,
                 tags,
                 duration,
-                trailer)
+                trailer
+            )
         } else {
             val data = fixUrl(document.selectFirst("content").attr("data-url") ?: return null)
-            return MovieLoadResponse(title,
+            return MovieLoadResponse(
+                title,
                 slug,
                 this.name,
                 TvType.Movie,
@@ -170,7 +178,8 @@ class TrailersToProvider : MainAPI() {
                 rating,
                 tags,
                 duration,
-                trailer)
+                trailer
+            )
         }
     }
 }

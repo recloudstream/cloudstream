@@ -167,12 +167,14 @@ class ShiroProvider : MainAPI() {
     override fun quickSearch(query: String): ArrayList<SearchResponse> {
         val returnValue: ArrayList<SearchResponse> = ArrayList()
 
-        val response = khttp.get("https://tapi.shiro.is/anime/auto-complete/${
-            URLEncoder.encode(
-                query,
-                "UTF-8"
-            )
-        }?token=$token".replace("+", "%20"))
+        val response = khttp.get(
+            "https://tapi.shiro.is/anime/auto-complete/${
+                URLEncoder.encode(
+                    query,
+                    "UTF-8"
+                )
+            }?token=$token".replace("+", "%20")
+        )
         if (response.text == "{\"status\":\"Found\",\"data\":[]}") return returnValue // OR ELSE WILL CAUSE WEIRD ERROR
 
         val mapped = response.let { mapper.readValue<ShiroSearchResponse>(it.text) }
@@ -185,12 +187,14 @@ class ShiroProvider : MainAPI() {
     override fun search(query: String): ArrayList<SearchResponse>? {
         if (!autoLoadToken()) return null
         val returnValue: ArrayList<SearchResponse> = ArrayList()
-        val response = khttp.get("https://tapi.shiro.is/advanced?search=${
-            URLEncoder.encode(
-                query,
-                "UTF-8"
-            )
-        }&token=$token".replace("+", "%20"))
+        val response = khttp.get(
+            "https://tapi.shiro.is/advanced?search=${
+                URLEncoder.encode(
+                    query,
+                    "UTF-8"
+                )
+            }&token=$token".replace("+", "%20")
+        )
         if (response.text == "{\"status\":\"Found\",\"data\":[]}") return returnValue // OR ELSE WILL CAUSE WEIRD ERROR
 
         val mapped = response.let { mapper.readValue<ShiroFullSearchResponse>(it.text) }
@@ -235,7 +239,12 @@ class ShiroProvider : MainAPI() {
         )
     }
 
-    override fun loadLinks(data: String, isCasting: Boolean, callback: (ExtractorLink) -> Unit): Boolean {
+    override fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
         return Vidstream().getUrl(data, isCasting) {
             callback.invoke(it)
         }
