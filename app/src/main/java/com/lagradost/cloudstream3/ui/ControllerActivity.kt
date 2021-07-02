@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.View.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.graphics.toColorInt
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -118,10 +117,19 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     } else {
                         val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
                         arrayAdapter.add("No Subtitles")
-                        arrayAdapter.addAll(subTracks.map { it.name }.filterNotNull())
+                        arrayAdapter.addAll(subTracks.mapNotNull { it.name })
 
                         subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
                         subtitleList.adapter = arrayAdapter
+
+                        val currentTracks = remoteMediaClient?.mediaStatus?.activeTrackIds
+
+                        val subtitleIndex =
+                            if (currentTracks == null) 0 else subTracks.map { it.id }
+                                .indexOfFirst { currentTracks.contains(it) } + 1
+
+                        subtitleList.setSelection(subtitleIndex)
+                        subtitleList.setItemChecked(subtitleIndex, true)
 
                         subtitleList.setOnItemClickListener { _, _, which, _ ->
                             if (which == 0) {
@@ -164,6 +172,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
                     providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
                     providerList.adapter = arrayAdapter
+                    providerList.setSelection(sotringIndex)
                     providerList.setItemChecked(sotringIndex, true)
 
                     providerList.setOnItemClickListener { _, _, which, _ ->
@@ -359,11 +368,5 @@ class ControllerActivity : ExpandedControllerActivity() {
         uiMediaController.bindViewToUIController(skipBackButton, SkipTimeController(skipBackButton, false))
         uiMediaController.bindViewToUIController(skipForwardButton, SkipTimeController(skipForwardButton, true))
         uiMediaController.bindViewToUIController(skipOpButton, SkipNextEpisodeController(skipOpButton))
-
-
-        /*      val progressBar: CastSeekBar? = findViewById(R.id.cast_seek_bar)
-
-              progressBar?.backgroundTintList = (UIHelper.adjustAlpha(colorFromAttribute(R.attr.colorPrimary), 0.35f))
-      */
     }
 }

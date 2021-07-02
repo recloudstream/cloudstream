@@ -14,6 +14,7 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.api.PendingResult
 import com.google.android.gms.common.images.WebImage
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.sortSubs
 import com.lagradost.cloudstream3.ui.MetadataHolder
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -50,7 +51,7 @@ object CastHelper {
         }
 
         var subIndex = 0
-        val tracks = subtitles.map {
+        val tracks = sortSubs(subtitles).map {
             MediaTrack.Builder(subIndex++.toLong(), MediaTrack.TYPE_TEXT)
                 .setName(it.lang)
                 .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)

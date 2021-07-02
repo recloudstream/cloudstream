@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.movieproviders.TrailersToProvider
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
 val baseHeader = mapOf("User-Agent" to USER_AGENT)
@@ -48,8 +49,10 @@ object APIHolder {
     fun Activity.getApiSettings(): HashSet<String> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
-        return settingsManager.getStringSet(this.getString(R.string.search_providers_list_key),
-            setOf(apis[defProvider].name))?.toHashSet() ?: hashSetOf(apis[defProvider].name)
+        return settingsManager.getStringSet(
+            this.getString(R.string.search_providers_list_key),
+            setOf(apis[defProvider].name)
+        )?.toHashSet() ?: hashSetOf(apis[defProvider].name)
     }
 }
 
@@ -72,7 +75,12 @@ abstract class MainAPI {
     }
 
     // callback is fired once a link is found, will return true if method is executed successfully
-    open fun loadLinks(data: String, isCasting: Boolean, subtitleCallback : (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit): Boolean {
+    open fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
         return false
     }
 }
@@ -103,6 +111,16 @@ fun sortUrls(urls: List<ExtractorLink>): List<ExtractorLink> {
     return urls.sortedBy { t -> -t.quality }
 }
 
+fun sortSubs(urls: List<SubtitleFile>): List<SubtitleFile> {
+    val encounteredTimes = HashMap<String, Int>()
+    return urls.sortedBy { t -> t.lang }.map {
+        val times = encounteredTimes[it.lang]?.plus(1) ?: 1
+        encounteredTimes[it.lang] = times
+
+        SubtitleFile("${it.lang} ${if (times > 1) "($times)" else ""}", it.url)
+    }
+}
+
 enum class ShowStatus {
     Completed,
     Ongoing,
@@ -120,7 +138,7 @@ enum class TvType {
     ONA,
 }
 
-data class SubtitleFile(val lang : String, val url : String)
+data class SubtitleFile(val lang: String, val url: String)
 
 interface SearchResponse {
     val name: String
