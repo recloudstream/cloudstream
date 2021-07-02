@@ -31,7 +31,8 @@
     <string name="type_plan_to_watch">Plan to Watch</string>
     <string name="type_none">None</string>
     <string name="play_movie_button">Play Movie</string>
-    <string name="pick_source">Pick Source</string>
+    <string name="pick_source">Sources</string>
+    <string name="pick_subtitle">Subtitles</string>
     <string name="reload_error">Retry connection…</string>
     <string name="result_go_back">Go Back</string>
     <string name="episode_poster">Episode Poster</string>

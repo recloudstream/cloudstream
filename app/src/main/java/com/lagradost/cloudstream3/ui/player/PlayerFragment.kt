@@ -356,8 +356,10 @@ class PlayerFragment : Fragment() {
                                 }
 
                                 progressBarLeftHolder?.alpha = 1f
-                                val vol = minOf(1f,
-                                    cachedVolume - diffY.toFloat() * 0.5f) // 0.05f *if (diffY > 0) 1 else -1
+                                val vol = minOf(
+                                    1f,
+                                    cachedVolume - diffY.toFloat() * 0.5f
+                                ) // 0.05f *if (diffY > 0) 1 else -1
                                 cachedVolume = vol
                                 //progressBarRight?.progress = ((1f - alpha) * 100).toInt()
 
@@ -405,8 +407,10 @@ class PlayerFragment : Fragment() {
                                 progressBarRight?.max = 100 * 100
                                 progressBarRight?.progress = (alpha * 100 * 100).toInt()
                             } else {
-                                val alpha = minOf(0.95f,
-                                    brightness_overlay.alpha + diffY.toFloat() * 0.5f) // 0.05f *if (diffY > 0) 1 else -1
+                                val alpha = minOf(
+                                    0.95f,
+                                    brightness_overlay.alpha + diffY.toFloat() * 0.5f
+                                ) // 0.05f *if (diffY > 0) 1 else -1
                                 brightness_overlay?.alpha = alpha
 
                                 progressBarRight?.max = 100 * 100
@@ -653,6 +657,7 @@ class PlayerFragment : Fragment() {
     private var resizeMode = 0
     private var playbackSpeed = 0f
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
+    private var allEpisodesSubs: HashMap<Int, ArrayList<SubtitleFile>> = HashMap()
     private var episodes: List<ResultEpisode> = ArrayList()
     var currentPoster: String? = null
     var currentHeaderName: String? = null
@@ -788,8 +793,10 @@ class PlayerFragment : Fragment() {
                             epData.index,
                             episodes,
                             links,
+                            getSubs() ?: ArrayList(),
                             index,
-                            exoPlayer.currentPosition)
+                            exoPlayer.currentPosition
+                        )
 
                         /*
                         val customData =
@@ -904,6 +911,10 @@ class PlayerFragment : Fragment() {
             }
         }
 
+        observeDirectly(viewModel.allEpisodesSubs) { _allEpisodesSubs ->
+            allEpisodesSubs = _allEpisodesSubs
+        }
+
         observeDirectly(viewModel.resultResponse) { data ->
             when (data) {
                 is Resource.Success -> {
@@ -971,8 +982,10 @@ class PlayerFragment : Fragment() {
         }
 
         overlay_loading_skip_button.setOnClickListener {
-            setMirrorId(sortUrls(getUrls() ?: return@setOnClickListener).first()
-                .getId()) // BECAUSE URLS CANT BE REORDERED
+            setMirrorId(
+                sortUrls(getUrls() ?: return@setOnClickListener).first()
+                    .getId()
+            ) // BECAUSE URLS CANT BE REORDERED
             if (!isCurrentlyPlaying) {
                 initPlayer(getCurrentUrl())
             }
@@ -1085,8 +1098,10 @@ class PlayerFragment : Fragment() {
                     builder.setOnDismissListener {
                         activity?.hideSystemUI()
                     }
-                    builder.setSingleChoiceItems(sourcesText.toTypedArray(),
-                        sources.indexOf(getCurrentUrl())) { _, which ->
+                    builder.setSingleChoiceItems(
+                        sourcesText.toTypedArray(),
+                        sources.indexOf(getCurrentUrl())
+                    ) { _, which ->
                         //val speed = speedsText[which]
                         //Toast.makeText(requireContext(), "$speed selected.", Toast.LENGTH_SHORT).show()
                         playbackPosition = if (this::exoPlayer.isInitialized) exoPlayer.currentPosition else 0
@@ -1151,6 +1166,14 @@ class PlayerFragment : Fragment() {
     private fun getUrls(): List<ExtractorLink>? {
         return try {
             allEpisodes[getEpisode()?.id]
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun getSubs(): List<SubtitleFile>? {
+        return try {
+            allEpisodesSubs[getEpisode()?.id]
         } catch (e: Exception) {
             null
         }

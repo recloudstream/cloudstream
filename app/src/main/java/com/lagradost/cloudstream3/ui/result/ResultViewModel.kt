@@ -70,9 +70,11 @@ class ResultViewModel : ViewModel() {
 
     private fun updateEpisodes(context: Context, localId: Int?, list: List<ResultEpisode>, selection: Int?) {
         _episodes.postValue(list)
-        filterEpisodes(context,
+        filterEpisodes(
+            context,
             list,
-            if (selection == -1) context.getResultSeason(localId ?: id.value ?: return) else selection)
+            if (selection == -1) context.getResultSeason(localId ?: id.value ?: return) else selection
+        )
     }
 
     fun reloadEpisodes(context: Context) {
@@ -119,18 +121,20 @@ class ResultViewModel : ViewModel() {
                             if (dataList != null) {
                                 val episodes = ArrayList<ResultEpisode>()
                                 for ((index, i) in dataList.withIndex()) {
-                                    episodes.add(context.buildResultEpisode(
-                                        i.name,
-                                        i.posterUrl,
-                                        index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
-                                        null, // TODO FIX SEASON
-                                        i.url,
-                                        apiName,
-                                        (mainId + index + 1),
-                                        index,
-                                        i.rating,
-                                        i.descript,
-                                    ))
+                                    episodes.add(
+                                        context.buildResultEpisode(
+                                            i.name,
+                                            i.posterUrl,
+                                            index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
+                                            null, // TODO FIX SEASON
+                                            i.url,
+                                            apiName,
+                                            (mainId + index + 1),
+                                            index,
+                                            i.rating,
+                                            i.descript,
+                                        )
+                                    )
                                 }
                                 updateEpisodes(context, mainId, episodes, -1)
                             }
@@ -139,34 +143,40 @@ class ResultViewModel : ViewModel() {
                         is TvSeriesLoadResponse -> {
                             val episodes = ArrayList<ResultEpisode>()
                             for ((index, i) in d.episodes.withIndex()) {
-                                episodes.add(context.buildResultEpisode(
-                                    i.name,
-                                    //?: (if (i.season != null && i.episode != null) "S${i.season}:E${i.episode}" else null)), // TODO ADD NAMES
-                                    i.posterUrl,
-                                    i.episode ?: (index + 1),
-                                    i.season,
-                                    i.data,
-                                    apiName,
-                                    (mainId + index + 1).hashCode(),
-                                    index,
-                                    i.rating,
-                                    i.descript
-                                ))
+                                episodes.add(
+                                    context.buildResultEpisode(
+                                        i.name,
+                                        //?: (if (i.season != null && i.episode != null) "S${i.season}:E${i.episode}" else null)), // TODO ADD NAMES
+                                        i.posterUrl,
+                                        i.episode ?: (index + 1),
+                                        i.season,
+                                        i.data,
+                                        apiName,
+                                        (mainId + index + 1).hashCode(),
+                                        index,
+                                        i.rating,
+                                        i.descript
+                                    )
+                                )
                             }
                             updateEpisodes(context, mainId, episodes, -1)
                         }
                         is MovieLoadResponse -> {
-                            updateEpisodes(context, mainId, arrayListOf(context.buildResultEpisode(
-                                null,
-                                null,
-                                0, null,
-                                d.dataUrl,
-                                d.apiName,
-                                (mainId + 1),
-                                0,
-                                null,
-                                null,
-                            )), -1)
+                            updateEpisodes(
+                                context, mainId, arrayListOf(
+                                    context.buildResultEpisode(
+                                        null,
+                                        null,
+                                        0, null,
+                                        d.dataUrl,
+                                        d.apiName,
+                                        (mainId + 1),
+                                        0,
+                                        null,
+                                        null,
+                                    )
+                                ), -1
+                            )
                         }
                     }
                 }
@@ -179,17 +189,21 @@ class ResultViewModel : ViewModel() {
 
     private val _allEpisodes: MutableLiveData<HashMap<Int, ArrayList<ExtractorLink>>> =
         MutableLiveData(HashMap()) // LOOKUP BY ID
+    private val _allEpisodesSubs: MutableLiveData<HashMap<Int, ArrayList<SubtitleFile>>> =
+        MutableLiveData(HashMap()) // LOOKUP BY ID
 
     val allEpisodes: LiveData<HashMap<Int, ArrayList<ExtractorLink>>> get() = _allEpisodes
+    val allEpisodesSubs: LiveData<HashMap<Int, ArrayList<SubtitleFile>>> get() = _allEpisodesSubs
 
     private var _apiName: MutableLiveData<String> = MutableLiveData()
     val apiName: LiveData<String> get() = _apiName
 
+    data class EpisodeData(val links: ArrayList<ExtractorLink>, val subs: ArrayList<SubtitleFile>)
 
     fun loadEpisode(
         episode: ResultEpisode,
         isCasting: Boolean,
-        callback: (Resource<ArrayList<ExtractorLink>>) -> Unit,
+        callback: (Resource<EpisodeData>) -> Unit,
     ) {
         loadEpisode(episode.id, episode.data, isCasting, callback)
     }
@@ -198,25 +212,29 @@ class ResultViewModel : ViewModel() {
         id: Int,
         data: String,
         isCasting: Boolean,
-        callback: (Resource<ArrayList<ExtractorLink>>) -> Unit,
+        callback: (Resource<EpisodeData>) -> Unit,
     ) =
         viewModelScope.launch {
             if (_allEpisodes.value?.contains(id) == true) {
                 _allEpisodes.value?.remove(id)
             }
             val links = ArrayList<ExtractorLink>()
+            val subs = ArrayList<SubtitleFile>()
             val localData = safeApiCall {
-                getApiFromName(_apiName.value).loadLinks(data, isCasting,  { subtitleFile ->  }) {
-                    for (i in links) {
-                        if (i.url == it.url) return@loadLinks
+                getApiFromName(_apiName.value).loadLinks(data, isCasting, { subtitleFile ->
+                    if (!subs.any { it.url == subtitleFile.url }) {
+                        subs.add(subtitleFile)
+                        _allEpisodesSubs.value?.set(id, subs)
+                        _allEpisodesSubs.postValue(_allEpisodesSubs.value)
                     }
-
-                    links.add(it)
-                    _allEpisodes.value?.set(id, links)
-                    _allEpisodes.postValue(_allEpisodes.value)
-                    // _allEpisodes.value?.get(episode.id)?.add(it)
+                }) { link ->
+                    if (!links.any { it.url == link.url }) {
+                        links.add(link)
+                        _allEpisodes.value?.set(id, links)
+                        _allEpisodes.postValue(_allEpisodes.value)
+                    }
                 }
-                links
+                EpisodeData(links, subs)
             }
             callback.invoke(localData)
         }

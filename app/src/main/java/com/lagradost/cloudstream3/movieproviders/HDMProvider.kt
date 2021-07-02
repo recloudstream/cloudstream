@@ -64,7 +64,7 @@ class HDMProvider : MainAPI() {
 
         return MovieLoadResponse(
             title, slug, this.name, TvType.Movie,
-            "$mainUrl/src/player/?v=$data", poster, year, descript, null
+                "$mainUrl/src/player/?v=$data", poster, year, descript, null
         )
     }
 }

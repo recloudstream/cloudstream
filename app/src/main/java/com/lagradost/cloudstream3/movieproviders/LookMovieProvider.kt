@@ -151,7 +151,7 @@ class LookMovieProvider : MainAPI() {
     private fun addSubtitles(subs: List<LookMovieTokenSubtitle>?, subtitleCallback: (SubtitleFile) -> Unit) {
         if (subs == null) return
         subs.forEach {
-            if (it.source != "opensubtitle")
+            if (it.file.endsWith(".vtt"))
                 subtitleCallback.invoke(SubtitleFile(it.language, fixUrl(it.file)))
         }
     }

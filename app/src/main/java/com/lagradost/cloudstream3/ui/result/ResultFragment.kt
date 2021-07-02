@@ -164,7 +164,7 @@ class ResultFragment : Fragment() {
     }
 
     /// 0 = LOADING, 1 = ERROR LOADING, 2 = LOADED
-    fun updateVisStatus(state: Int) {
+    private fun updateVisStatus(state: Int) {
         when (state) {
             0 -> {
                 result_loading.visibility = VISIBLE
@@ -207,10 +207,12 @@ class ResultFragment : Fragment() {
         activity?.fixPaddingStatusbar(result_barstatus)
 
         val backParameter = result_back.layoutParams as CoordinatorLayout.LayoutParams
-        backParameter.setMargins(backParameter.leftMargin,
+        backParameter.setMargins(
+            backParameter.leftMargin,
             backParameter.topMargin + requireContext().getStatusBarHeight(),
             backParameter.rightMargin,
-            backParameter.bottomMargin)
+            backParameter.bottomMargin
+        )
         result_back.layoutParams = backParameter
 
         if (activity?.isCastApiAvailable() == true) {
@@ -299,8 +301,9 @@ class ResultFragment : Fragment() {
                                     currentPoster,
                                     episodeClick.data.index,
                                     eps,
-                                    sortUrls(data.value),
-                                    startTime = episodeClick.data.getRealPosition()
+                                    sortUrls(data.value.links),
+                                    data.value.subs,
+                                    startTime = episodeClick.data.getRealPosition(),
                                 )
                             }
                         }
@@ -310,13 +313,18 @@ class ResultFragment : Fragment() {
                 ACTION_PLAY_EPISODE_IN_PLAYER -> {
                     if (buildInPlayer) {
                         (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.enter_anim,
+                            .setCustomAnimations(
+                                R.anim.enter_anim,
                                 R.anim.exit_anim,
                                 R.anim.pop_enter,
-                                R.anim.pop_exit)
-                            .add(R.id.homeRoot,
-                                PlayerFragment.newInstance(PlayerData(index, null, 0),
-                                    episodeClick.data.getRealPosition())
+                                R.anim.pop_exit
+                            )
+                            .add(
+                                R.id.homeRoot,
+                                PlayerFragment.newInstance(
+                                    PlayerData(index, null, 0),
+                                    episodeClick.data.getRealPosition()
+                                )
                             )
                             .commit()
                     }
@@ -333,10 +341,12 @@ class ResultFragment : Fragment() {
                     if (tempUrl != null) {
                         viewModel.loadEpisode(episodeClick.data, true) { data ->
                             if (data is Resource.Success) {
-                                VideoDownloadManager.DownloadEpisode(requireContext(),
+                                VideoDownloadManager.DownloadEpisode(
+                                    requireContext(),
                                     tempUrl,
                                     episodeClick.data,
-                                    data.value)
+                                    data.value.links
+                                )
                             }
                         }
                     }
@@ -447,8 +457,12 @@ class ResultFragment : Fragment() {
                         }
                         if (d.year != null) metadataInfoArray.add(Pair("Year", d.year.toString()))
                         val rating = d.rating
-                        if (rating != null) metadataInfoArray.add(Pair("Rating",
-                            "%.1f/10.0".format(rating.toFloat() / 10f).replace(",", ".")))
+                        if (rating != null) metadataInfoArray.add(
+                            Pair(
+                                "Rating",
+                                "%.1f/10.0".format(rating.toFloat() / 10f).replace(",", ".")
+                            )
+                        )
                         val duration = d.duration
                         if (duration != null) metadataInfoArray.add(Pair("Duration", duration))
 

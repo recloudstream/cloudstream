@@ -91,6 +91,6 @@ object DataStore {
     }
 
     inline fun <reified T : Any> Context.getKey(folder: String, path: String, defVal: T?): T? {
-        return getKey(getFolderName(folder, path), defVal)
+        return getKey(getFolderName(folder, path), defVal) ?: defVal
     }
 }

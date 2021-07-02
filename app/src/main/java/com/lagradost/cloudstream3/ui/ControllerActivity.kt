@@ -1,25 +1,29 @@
 package com.lagradost.cloudstream3.ui
 
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View.*
-import android.widget.AbsListView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.ListView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.toColorInt
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF
+import com.google.android.gms.cast.MediaTrack
+import com.google.android.gms.cast.TextTrackStyle
+import com.google.android.gms.cast.TextTrackStyle.EDGE_TYPE_OUTLINE
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.cast.framework.media.uicontroller.UIController
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.sortUrls
@@ -81,6 +85,7 @@ data class MetadataHolder(
     val currentEpisodeIndex: Int,
     val episodes: List<ResultEpisode>,
     val currentLinks: List<ExtractorLink>,
+    val currentSubtitles: List<SubtitleFile>
 )
 
 class SelectSourceController(val view: ImageView, val activity: ControllerActivity) : UIController() {
@@ -93,15 +98,59 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
             //  lateinit var dialog: AlertDialog
             val holder = getCurrentMetaData()
 
+
             if (holder != null) {
                 val items = holder.currentLinks
                 if (items.isNotEmpty() && remoteMediaClient?.currentItem != null) {
-                    // val builder = AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
-                    /*val builder = BottomSheetDialog(view.context, R.style.AlertDialogCustom)
-                    builder.setTitle("Pick source")*/
-                    val bottomSheetDialog = BottomSheetDialog(view.context)
-                    bottomSheetDialog.setContentView(R.layout.sort_bottom_sheet)
-                    val res = bottomSheetDialog.findViewById<ListView>(R.id.sort_click)!!
+                    val subTracks =
+                        remoteMediaClient?.mediaInfo?.mediaTracks?.filter { it.type == MediaTrack.TYPE_TEXT }
+                            ?: ArrayList()
+
+                    val bottomSheetDialogBuilder = AlertDialog.Builder(view.context, R.style.AlertDialogCustomBlack)
+                    bottomSheetDialogBuilder.setView(R.layout.sort_bottom_sheet)
+                    val bottomSheetDialog = bottomSheetDialogBuilder.create()
+                    bottomSheetDialog.show()
+                    //  bottomSheetDialog.setContentView(R.layout.sort_bottom_sheet)
+                    val providerList = bottomSheetDialog.findViewById<ListView>(R.id.sort_providers)!!
+                    val subtitleList = bottomSheetDialog.findViewById<ListView>(R.id.sort_subtitles)!!
+                    if (subTracks.isEmpty()) {
+                        bottomSheetDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility = GONE
+                    } else {
+                        val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
+                        arrayAdapter.add("No Subtitles")
+                        arrayAdapter.addAll(subTracks.map { it.name }.filterNotNull())
+
+                        subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                        subtitleList.adapter = arrayAdapter
+
+                        subtitleList.setOnItemClickListener { _, _, which, _ ->
+                            if (which == 0) {
+                                remoteMediaClient.setActiveMediaTracks(longArrayOf()) // NO SUBS
+                            } else {
+                                val font = TextTrackStyle()
+                                font.fontFamily = "Google Sans" //TODO FONT SETTINGS
+                                font.backgroundColor = 0x00FFFFFF // TRANSPARENT
+
+                                font.edgeColor = Color.BLACK
+                                font.edgeType = EDGE_TYPE_OUTLINE
+                                font.foregroundColor = Color.WHITE
+                                font.fontScale = 1.05f
+
+                                remoteMediaClient.setTextTrackStyle(font)
+
+                                remoteMediaClient.setActiveMediaTracks(longArrayOf(subTracks[which - 1].id))
+                                    .setResultCallback {
+                                        if (!it.status.isSuccess) {
+                                            Log.e(
+                                                "CHROMECAST", "Failed with status code:" +
+                                                        it.status.statusCode + " > " + it.status.statusMessage
+                                            )
+                                        }
+                                    }
+                            }
+                            bottomSheetDialog.dismiss()
+                        }
+                    }
 
                     //https://developers.google.com/cast/docs/reference/web_receiver/cast.framework.messages.MediaInformation
                     val contentUrl = (remoteMediaClient?.currentItem?.media?.contentUrl
@@ -113,12 +162,11 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
                     arrayAdapter.addAll(sortingMethods.toMutableList())
 
-                    res.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-                    res.adapter = arrayAdapter
-                    res.setItemChecked(sotringIndex, true)
+                    providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                    providerList.adapter = arrayAdapter
+                    providerList.setItemChecked(sotringIndex, true)
 
-
-                    res.setOnItemClickListener { _, _, which, _ ->
+                    providerList.setOnItemClickListener { _, _, which, _ ->
                         val epData = holder.episodes[holder.currentEpisodeIndex]
 
                         fun loadMirror(index: Int) {
@@ -128,7 +176,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 epData,
                                 holder,
                                 index,
-                                remoteMediaClient?.mediaInfo?.customData
+                                remoteMediaClient?.mediaInfo?.customData,
+                                holder.currentSubtitles,
                             )
 
                             val startAt = remoteMediaClient?.approximateStreamPosition ?: 0
@@ -168,10 +217,6 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
                         bottomSheetDialog.dismiss()
                     }
-                    bottomSheetDialog.show()
-                    /*
-                    dialog = builder.create()
-                    dialog.show()*/
                 }
             }
         }
@@ -208,20 +253,28 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         val index = meta.currentEpisodeIndex + 1
                         val epData = meta.episodes[index]
                         val links = ArrayList<ExtractorLink>()
+                        val subs = ArrayList<SubtitleFile>()
 
                         val res = safeApiCall {
-                            getApiFromName(meta.apiName).loadLinks(epData.data, true, { subtitleFile ->  }) {
-                                for (i in links) {
-                                    if (i.url == it.url) return@loadLinks
+                            getApiFromName(meta.apiName).loadLinks(epData.data, true, { subtitleFile ->
+                                if (!subs.any { it.url == subtitleFile.url }) {
+                                    subs.add(subtitleFile)
                                 }
-                                links.add(it)
+                            }) { link ->
+                                if (!links.any { it.url == link.url }) {
+                                    links.add(link)
+                                }
                             }
                         }
 
                         if (res is Resource.Success) {
                             val sorted = sortUrls(links)
                             if (sorted.isNotEmpty()) {
-                                val jsonCopy = meta.copy(currentLinks = sorted, currentEpisodeIndex = index)
+                                val jsonCopy = meta.copy(
+                                    currentLinks = sorted,
+                                    currentSubtitles = subs,
+                                    currentEpisodeIndex = index
+                                )
 
                                 val done = withContext(Dispatchers.IO) {
                                     JSONObject(mapper.writeValueAsString(jsonCopy))
@@ -231,7 +284,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                     epData,
                                     jsonCopy,
                                     0,
-                                    done
+                                    done,
+                                    subs
                                 )
 
                                 /*fun loadIndex(index: Int) {
@@ -305,6 +359,8 @@ class ControllerActivity : ExpandedControllerActivity() {
         uiMediaController.bindViewToUIController(skipBackButton, SkipTimeController(skipBackButton, false))
         uiMediaController.bindViewToUIController(skipForwardButton, SkipTimeController(skipForwardButton, true))
         uiMediaController.bindViewToUIController(skipOpButton, SkipNextEpisodeController(skipOpButton))
+
+
         /*      val progressBar: CastSeekBar? = findViewById(R.id.cast_seek_bar)
 
               progressBar?.backgroundTintList = (UIHelper.adjustAlpha(colorFromAttribute(R.attr.colorPrimary), 0.35f))

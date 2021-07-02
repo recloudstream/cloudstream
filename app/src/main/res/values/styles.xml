@@ -118,6 +118,15 @@
     <style name="AlertDialogCustomTransparent" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowBackground">@color/transparent</item>
     </style>
+    <style name="AlertDialogCustomBlack" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@color/bitDarkerGrayBackground</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <!-- No backgrounds, titles or window float -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:navigationBarColor">@color/bitDarkerGrayBackground</item>
+    </style>
 
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:backgroundTint">?attr/bitDarkerGrayBackground</item>
