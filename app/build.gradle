@@ -71,8 +71,11 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // Exoplayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.14.0'
-    implementation 'com.google.android.exoplayer:extension-cast:2.14.0'
-    implementation "com.google.android.exoplayer:extension-mediasession:2.14.0"
+    implementation 'com.google.android.exoplayer:exoplayer:2.14.1'
+    implementation 'com.google.android.exoplayer:extension-cast:2.14.1'
+    implementation "com.google.android.exoplayer:extension-mediasession:2.14.1"
     //implementation "com.google.android.exoplayer:extension-leanback:2.14.0"
+
+    //download manager
+    implementation "com.anggrayudi:storage:0.9.0"
 }

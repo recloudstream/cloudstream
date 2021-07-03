@@ -341,10 +341,19 @@ class ResultFragment : Fragment() {
                     if (tempUrl != null) {
                         viewModel.loadEpisode(episodeClick.data, true) { data ->
                             if (data is Resource.Success) {
+                                val meta = VideoDownloadManager.DownloadEpisodeMetadata(
+                                    episodeClick.data.id,
+                                    currentHeaderName ?: return@loadEpisode,
+                                    apiName ?: return@loadEpisode,
+                                    episodeClick.data.poster,
+                                    episodeClick.data.name,
+                                    episodeClick.data.season,
+                                    episodeClick.data.episode
+                                )
                                 VideoDownloadManager.DownloadEpisode(
                                     requireContext(),
                                     tempUrl,
-                                    episodeClick.data,
+                                    meta,
                                     data.value.links
                                 )
                             }

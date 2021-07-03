@@ -6,31 +6,23 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
+import com.anggrayudi.storage.extension.closeStream
+import com.anggrayudi.storage.file.DocumentFileCompat
+import com.anggrayudi.storage.file.openOutputStream
 import com.bumptech.glide.Glide
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
-import com.google.android.exoplayer2.offline.DownloadManager
-import com.google.android.exoplayer2.offline.DownloadRequest
 import com.google.android.exoplayer2.offline.DownloadService
-import com.google.android.exoplayer2.offline.DownloadService.sendAddDownload
-import com.google.android.exoplayer2.offline.StreamKey
-import com.google.android.exoplayer2.scheduler.Requirements
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
-import com.lagradost.cloudstream3.USER_AGENT
-import com.lagradost.cloudstream3.ui.result.ResultEpisode
-import java.io.File
-import java.util.concurrent.Executor
+import java.io.BufferedInputStream
+import java.io.InputStream
+import java.net.URL
+import java.net.URLConnection
 
 
 const val CHANNEL_ID = "cloudstream3.general"
@@ -38,6 +30,11 @@ const val CHANNEL_NAME = "Downloads"
 const val CHANNEL_DESCRIPT = "The download notification channel"
 
 object VideoDownloadManager {
+    var maxConcurrentDownloads = 3
+
+    private const val USER_AGENT =
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+
     @DrawableRes
     const val imgDone = R.drawable.rddone
 
@@ -76,6 +73,16 @@ object VideoDownloadManager {
         Stop,
     }
 
+    data class DownloadEpisodeMetadata(
+        val id: Int,
+        val mainName: String,
+        val sourceApiName: String?,
+        val poster: String?,
+        val name: String?,
+        val season: Int?,
+        val episode: Int?
+    )
+
     private var hasCreatedNotChanel = false
     private fun Context.createNotificationChannel() {
         hasCreatedNotChanel = true
@@ -111,29 +118,22 @@ object VideoDownloadManager {
         return null
     }
 
-    fun createNotification(
+    private fun createNotification(
         context: Context,
-        text: String,
-        source: String,
-        ep: ResultEpisode,
+        source: String?,
+        linkName: String?,
+        ep: DownloadEpisodeMetadata,
         state: DownloadType,
         progress: Long,
         total: Long,
     ) {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            data = source.toUri()
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setAutoCancel(true)
             .setColorized(true)
-            .setAutoCancel(true)
             .setOnlyAlertOnce(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setColor(context.colorFromAttribute(R.attr.colorPrimary))
-            .setContentText(text)
+            .setContentTitle(ep.mainName)
             .setSmallIcon(
                 when (state) {
                     DownloadType.IsDone -> imgDone
@@ -143,10 +143,31 @@ object VideoDownloadManager {
                     DownloadType.IsStopped -> imgStopped
                 }
             )
-            .setContentIntent(pendingIntent)
+
+        if (ep.sourceApiName != null) {
+            builder.setSubText(ep.sourceApiName)
+        }
+
+        if (source != null) {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                data = source.toUri()
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            builder.setContentIntent(pendingIntent)
+        }
 
         if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
             builder.setProgress(total.toInt(), progress.toInt(), false)
+        }
+
+        val rowTwoExtra = if (ep.name != null) " - ${ep.name}\n" else ""
+        val rowTwo = if (ep.season != null && ep.episode != null) {
+            "S${ep.season}:E${ep.episode}" + rowTwoExtra
+        } else if (ep.episode != null) {
+            "Episode ${ep.episode}" + rowTwoExtra
+        } else {
+            (ep.name ?: "") + ""
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -155,7 +176,39 @@ object VideoDownloadManager {
                 if (poster != null)
                     builder.setLargeIcon(poster)
             }
+
+            val progressPercentage = progress * 100 / total
+            val progressMbString = "%.1f".format(progress / 1000000f)
+            val totalMbString = "%.1f".format(total / 1000000f)
+
+            val bigText =
+                if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
+                    (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString MB/$totalMbString MB)"
+                } else if (state == DownloadType.IsFailed) {
+                    "Download Failed - $rowTwo"
+                } else if (state == DownloadType.IsDone) {
+                    "Download Done - $rowTwo"
+                } else {
+                    "Download Stopped - $rowTwo"
+                }
+
+            val bodyStyle = NotificationCompat.BigTextStyle()
+            bodyStyle.bigText(bigText)
+            builder.setStyle(bodyStyle)
+        } else {
+            val txt = if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
+                rowTwo
+            } else if (state == DownloadType.IsFailed) {
+                "Download Failed - $rowTwo"
+            } else if (state == DownloadType.IsDone) {
+                "Download Done - $rowTwo"
+            } else {
+                "Download Stopped - $rowTwo"
+            }
+
+            builder.setContentText(txt)
         }
+
         if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val actionTypes: MutableList<DownloadActionType> = ArrayList()
             // INIT
@@ -171,9 +224,9 @@ object VideoDownloadManager {
 
             // ADD ACTIONS
             for ((index, i) in actionTypes.withIndex()) {
-                val _resultIntent = Intent(context, DownloadService::class.java)
+                val actionResultIntent = Intent(context, DownloadService::class.java)
 
-                _resultIntent.putExtra(
+                actionResultIntent.putExtra(
                     "type", when (i) {
                         DownloadActionType.Resume -> "resume"
                         DownloadActionType.Pause -> "pause"
@@ -181,11 +234,11 @@ object VideoDownloadManager {
                     }
                 )
 
-                _resultIntent.putExtra("id", ep.id)
+                actionResultIntent.putExtra("id", ep.id)
 
                 val pending: PendingIntent = PendingIntent.getService(
                     context, 4337 + index + ep.id,
-                    _resultIntent,
+                    actionResultIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
 
@@ -215,96 +268,86 @@ object VideoDownloadManager {
         }
     }
 
-    //https://exoplayer.dev/downloading-media.html
-    fun DownloadSingleEpisode(context: Context, source: String, ep: ResultEpisode, link: ExtractorLink) {
-        val url = link.url
-        val headers = mapOf("User-Agent" to USER_AGENT, "Referer" to link.referer)
+    fun DownloadSingleEpisode(
+        context: Context,
+        source: String?,
+        ep: DownloadEpisodeMetadata,
+        link: ExtractorLink
+    ): Boolean {
+        val name = (ep.name ?: "Episode ${ep.episode}")
+        val path = "Downloads/Anime/$name.mp4"
+        val dFile = DocumentFileCompat.fromSimplePath(context, basePath = path) ?: return false
 
-        // Note: This should be a singleton in your app.
-        val databaseProvider = ExoDatabaseProvider(context)
+        val resume = false
 
-        val downloadDirectory = File(Environment.getExternalStorageDirectory().path + "/Download/" + (ep.name ?: "Episode ${ep.episode}")) // File(context.cacheDir, "video_${ep.id}")
+        if (!resume && dFile.exists()) {
+            if (!dFile.delete()) {
+                return false
+            }
+        }
+        if (!dFile.exists()) {
+            dFile.createFile("video/mp4", name)
+        }
 
-        // A download cache should not evict media, so should use a NoopCacheEvictor.
-        val downloadCache = SimpleCache(
-            downloadDirectory,
-            NoOpCacheEvictor(),
-            databaseProvider)
+        // OPEN FILE
+        val fileStream = dFile.openOutputStream(context, resume) ?: return false
 
-        // Create a factory for reading the data from the network.
-        val dataSourceFactory = DefaultHttpDataSourceFactory()
+        // CONNECT
+        val connection: URLConnection = URL(link.url).openConnection()
 
-        // Choose an executor for downloading data. Using Runnable::run will cause each download task to
-        // download data on its own thread. Passing an executor that uses multiple threads will speed up
-        // download tasks that can be split into smaller parts for parallel execution. Applications that
-        // already have an executor for background downloads may wish to reuse their existing executor.
-        val downloadExecutor = Executor { obj: Runnable -> obj.run() }
+        // SET CONNECTION SETTINGS
+        connection.connectTimeout = 10000
+        connection.setRequestProperty("Accept-Encoding", "identity")
+        connection.setRequestProperty("User-Agent", USER_AGENT)
+        if (link.referer.isNotEmpty()) connection.setRequestProperty("Referer", link.referer)
+        if (resume) connection.setRequestProperty("Range", "bytes=${dFile.length()}-")
+        val resumeLength = (if (resume) dFile.length() else 0)
 
+        // ON CONNECTION
+        connection.connect()
+        val contentLength = connection.contentLength
+        if (contentLength < 5000000) return false // less than 5mb
+        val bytesTotal = contentLength + resumeLength
 
-        // Create the download manager.
-        val downloadManager = DownloadManager(
-            context,
-            databaseProvider,
-            downloadCache,
-            dataSourceFactory,
-            downloadExecutor)
+        // READ DATA FROM CONNECTION
+        val connectionInputStream: InputStream = BufferedInputStream(connection.inputStream)
+        val buffer = ByteArray(1024)
+        var count: Int
+        var bytesDownloaded = resumeLength
 
-        val requirements = Requirements(Requirements.NETWORK)
-        // Optionally, setters can be called to configure the download manager.
-        downloadManager.requirements = requirements
-        downloadManager.maxParallelDownloads = 3
-        val builder = DownloadRequest.Builder(ep.id.toString(), link.url.toUri())
+        fun updateNotification(type : DownloadType) {
+            createNotification(
+                context,
+                source,
+                link.name,
+                ep,
+                type,
+                bytesDownloaded,
+                bytesTotal
+            )
+        }
 
-        val downloadRequest: DownloadRequest = builder.build()
+        while (true) {
+            count = connectionInputStream.read(buffer)
+            if (count < 0) break
+            bytesDownloaded += count
 
-        DownloadService.sendAddDownload(
-            context,
-            VideoDownloadService::class.java,
-            downloadRequest,
-            /* foreground= */ true)
-/*
-        val disposable = url.download(header = headers)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onNext = { progress ->
-                    createNotification(
-                        context,
-                        "Downloading ${progress.downloadSizeStr()}/${progress.totalSizeStr()}",
-                        source,
-                        ep,
-                        DownloadType.IsDownloading,
-                        progress.downloadSize,
-                        progress.totalSize
-                    )
-                },
-                onComplete = {
-                    createNotification(
-                        context,
-                        "Download Done",
-                        source,
-                        ep,
-                        DownloadType.IsDone,
-                        0, 0
-                    )
-                },
-                onError = {
-                    createNotification(
-                        context,
-                        "Download Failed",
-                        source,
-                        ep,
-                        DownloadType.IsFailed,
-                        0, 0
-                    )
-                }
-            )*/
+            updateNotification(DownloadType.IsDownloading)
+            fileStream.write(buffer, 0, count)
+        }
+
+        // DOWNLOAD EXITED CORRECTLY
+        updateNotification(DownloadType.IsDone)
+        fileStream.closeStream()
+        connectionInputStream.closeStream()
+
+        return true
     }
 
-    public fun DownloadEpisode(context: Context, source: String, ep: ResultEpisode, links: List<ExtractorLink>) {
+    public fun DownloadEpisode(context: Context, source: String, ep: DownloadEpisodeMetadata, links: List<ExtractorLink>) {
         val validLinks = links.filter { !it.isM3u8 }
         if (validLinks.isNotEmpty()) {
             DownloadSingleEpisode(context, source, ep, validLinks.first())
         }
     }
-
 }
