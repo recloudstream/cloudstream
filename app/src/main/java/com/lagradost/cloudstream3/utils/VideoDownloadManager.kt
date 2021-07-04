@@ -19,11 +19,13 @@ import com.google.android.exoplayer2.offline.DownloadService
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.Coroutines.main
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
 import java.io.InputStream
 import java.net.URL
 import java.net.URLConnection
-
 
 const val CHANNEL_ID = "cloudstream3.general"
 const val CHANNEL_NAME = "Downloads"
@@ -268,25 +270,47 @@ object VideoDownloadManager {
         }
     }
 
+    private const val reservedChars = "|\\?*<\":>+[]/'"
+    private fun sanitizeFilename(name: String): String {
+        var tempName = name
+        for (c in reservedChars) {
+            tempName = tempName.replace(c, ' ')
+        }
+        return tempName.replace("  ", " ")
+    }
+
     fun DownloadSingleEpisode(
         context: Context,
         source: String?,
+        folder: String?,
         ep: DownloadEpisodeMetadata,
         link: ExtractorLink
     ): Boolean {
         val name = (ep.name ?: "Episode ${ep.episode}")
-        val path = "Downloads/Anime/$name.mp4"
-        val dFile = DocumentFileCompat.fromSimplePath(context, basePath = path) ?: return false
+        val path = sanitizeFilename("Download/${if (folder == null) "" else "$folder/"}$name")
+        var resume = false
 
-        val resume = false
+        // IF RESUME, DELETE FILE IF FOUND AND RECREATE
+        // IF NOT RESUME CREATE FILE
+        val tempFile = DocumentFileCompat.fromSimplePath(context, basePath = path)
+        val fileExists = tempFile?.exists() ?: false
 
-        if (!resume && dFile.exists()) {
-            if (!dFile.delete()) {
+        if (!fileExists) resume = false
+        if (fileExists && !resume) {
+            if (tempFile?.delete() == false) { // DELETE FAILED ON RESUME FILE
                 return false
             }
         }
-        if (!dFile.exists()) {
-            dFile.createFile("video/mp4", name)
+
+        val dFile =
+            if (resume) tempFile
+            else DocumentFileCompat.createFile(context, basePath = path, mimeType = "video/mp4")
+
+        // END OF FILE CREATION
+
+        if (dFile == null) {
+            println("FUCK YOU")
+            return false
         }
 
         // OPEN FILE
@@ -306,8 +330,16 @@ object VideoDownloadManager {
         // ON CONNECTION
         connection.connect()
         val contentLength = connection.contentLength
-        if (contentLength < 5000000) return false // less than 5mb
         val bytesTotal = contentLength + resumeLength
+        if (bytesTotal < 5000000) return false // DATA IS LESS THAN 5MB, SOMETHING IS WRONG
+
+        // Could use connection.contentType for mime types when creating the file,
+        // however file is already created and players don't go of file type
+
+        // https://stackoverflow.com/questions/23714383/what-are-all-the-possible-values-for-http-content-type-header
+        if(!connection.contentType.isNullOrEmpty() && !connection.contentType.startsWith("video")) {
+            return false // CONTENT IS NOT VIDEO, SHOULD NEVER HAPPENED, BUT JUST IN CASE
+        }
 
         // READ DATA FROM CONNECTION
         val connectionInputStream: InputStream = BufferedInputStream(connection.inputStream)
@@ -315,7 +347,8 @@ object VideoDownloadManager {
         var count: Int
         var bytesDownloaded = resumeLength
 
-        fun updateNotification(type : DownloadType) {
+        // TO NOT REUSE CODE
+        fun updateNotification(type: DownloadType) {
             createNotification(
                 context,
                 source,
@@ -327,7 +360,7 @@ object VideoDownloadManager {
             )
         }
 
-        while (true) {
+        while (true) { // TODO PAUSE
             count = connectionInputStream.read(buffer)
             if (count < 0) break
             bytesDownloaded += count
@@ -344,10 +377,25 @@ object VideoDownloadManager {
         return true
     }
 
-    public fun DownloadEpisode(context: Context, source: String, ep: DownloadEpisodeMetadata, links: List<ExtractorLink>) {
+    public fun DownloadEpisode(
+        context: Context,
+        source: String,
+        folder: String?,
+        ep: DownloadEpisodeMetadata,
+        links: List<ExtractorLink>
+    ) {
         val validLinks = links.filter { !it.isM3u8 }
         if (validLinks.isNotEmpty()) {
-            DownloadSingleEpisode(context, source, ep, validLinks.first())
+            try {
+                main {
+                    withContext(Dispatchers.IO) {
+                        DownloadSingleEpisode(context, source, folder, ep, validLinks.first())
+                    }
+                }
+            } catch (e: Exception) {
+                println(e)
+                e.printStackTrace()
+            }
         }
     }
 }

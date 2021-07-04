@@ -151,7 +151,7 @@ class EpisodeAdapter(
                     }
                 } else {
                     // clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
-                    clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                    clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card)) //TODO REDO TO MAIN
                 }
             }
         }

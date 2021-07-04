@@ -134,6 +134,7 @@ class ResultFragment : Fragment() {
     private lateinit var viewModel: ResultViewModel
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
     private var currentHeaderName: String? = null
+    private var currentType: TvType? = null
     private var currentEpisodes: List<ResultEpisode>? = null
 
     override fun onCreateView(
@@ -341,18 +342,30 @@ class ResultFragment : Fragment() {
                     if (tempUrl != null) {
                         viewModel.loadEpisode(episodeClick.data, true) { data ->
                             if (data is Resource.Success) {
+                                val isMovie = currentIsMovie ?: return@loadEpisode
+                                val titleName = currentHeaderName?: return@loadEpisode
                                 val meta = VideoDownloadManager.DownloadEpisodeMetadata(
                                     episodeClick.data.id,
-                                    currentHeaderName ?: return@loadEpisode,
+                                    titleName ,
                                     apiName ?: return@loadEpisode,
-                                    episodeClick.data.poster,
+                                    episodeClick.data.poster ?: currentPoster,
                                     episodeClick.data.name,
-                                    episodeClick.data.season,
-                                    episodeClick.data.episode
+                                    if (isMovie) null else episodeClick.data.season,
+                                    if (isMovie) null else episodeClick.data.episode
                                 )
+
+                                val folder = when (currentType) {
+                                    TvType.Anime -> "Anime/$titleName"
+                                    TvType.Movie -> "Movies"
+                                    TvType.TvSeries -> "TVSeries/$titleName"
+                                    TvType.ONA -> "ONA"
+                                    else -> null
+                                }
+
                                 VideoDownloadManager.DownloadEpisode(
                                     requireContext(),
                                     tempUrl,
+                                    folder,
                                     meta,
                                     data.value.links
                                 )
@@ -435,6 +448,7 @@ class ResultFragment : Fragment() {
                         result_bookmark_button.text = "Watching"
 
                         currentHeaderName = d.name
+                        currentType = d.type
 
                         currentPoster = d.posterUrl
                         currentIsMovie = !d.isEpisodeBased()
@@ -610,10 +624,15 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                                         if (castContext.castState == CastState.CONNECTED) {
                                             handleAction(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
                                         } else {
-                                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                                            handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
                                         }
                                     } else {
-                                        handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                                        handleAction(
+                                            EpisodeClickEvent(
+                                                ACTION_DOWNLOAD_EPISODE,
+                                                card
+                                            )
+                                        ) //TODO REDO TO MAIN
                                     }
                                 }
                             }

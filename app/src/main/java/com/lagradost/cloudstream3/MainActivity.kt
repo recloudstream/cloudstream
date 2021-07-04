@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import android.app.PictureInPictureParams
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.anggrayudi.storage.SimpleStorage
 import com.google.android.gms.cast.ApplicationMetadata
 import com.google.android.gms.cast.Cast
 import com.google.android.gms.cast.LaunchOptions
@@ -37,8 +39,16 @@ class MainActivity : AppCompatActivity() {
         var isInPlayer: Boolean = false
         var canShowPipMode: Boolean = false
         var isInPIPMode: Boolean = false
-        lateinit var mainContext : MainActivity
+        lateinit var mainContext: MainActivity
+
+        //https://github.com/anggrayudi/SimpleStorage/blob/4eb6306efb6cdfae4e34f170c8b9d4e135b04d51/sample/src/main/java/com/anggrayudi/storage/sample/activity/MainActivity.kt#L624
+        const val REQUEST_CODE_STORAGE_ACCESS = 1
+        const val REQUEST_CODE_PICK_FOLDER = 2
+        const val REQUEST_CODE_PICK_FILE = 3
+        const val REQUEST_CODE_ASK_PERMISSIONS = 4
     }
+
+    private lateinit var storage: SimpleStorage
 
     private fun enterPIPMode() {
         if (!shouldShowPIPMode(isInPlayer) || !canShowPipMode) return
@@ -83,9 +93,32 @@ class MainActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
+
+    private fun setupSimpleStorage() {
+        storage = SimpleStorage(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Mandatory for Activity, but not for Fragment
+        storage.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        storage.onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        storage.onRestoreInstanceState(savedInstanceState)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainContext = this
+        setupSimpleStorage()
+        storage.requestStorageAccess(REQUEST_CODE_STORAGE_ACCESS)
 
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -100,8 +133,11 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.navigation_home, R.id.navigation_search, R.id.navigation_notifications))
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navigation_home, R.id.navigation_search, R.id.navigation_notifications
+            )
+        )
         //setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
