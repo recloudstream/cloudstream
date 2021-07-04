@@ -33,6 +33,12 @@
             </intent-filter>
         </activity>
 
+        <service
+                android:name=".services.VideoDownloadService"
+                android:enabled="true"
+                android:exported="false">
+        </service>
+
         <activity android:name=".ui.ControllerActivity">
         </activity>
 

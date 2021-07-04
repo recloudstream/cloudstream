@@ -1,16 +1,24 @@
 package com.lagradost.cloudstream3
 
+import android.Manifest
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.anggrayudi.storage.SimpleStorage
+import com.anggrayudi.storage.callback.StorageAccessCallback
+import com.anggrayudi.storage.file.StorageId
+import com.anggrayudi.storage.file.StorageType
+import com.anggrayudi.storage.file.getStorageId
 import com.google.android.gms.cast.ApplicationMetadata
 import com.google.android.gms.cast.Cast
 import com.google.android.gms.cast.LaunchOptions
@@ -19,6 +27,9 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener
 import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.UIHelper.requestRW
@@ -118,7 +129,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mainContext = this
         setupSimpleStorage()
-        storage.requestStorageAccess(REQUEST_CODE_STORAGE_ACCESS)
+
+        if(!storage.isStorageAccessGranted(StorageId.PRIMARY)) {
+            storage.requestStorageAccess(REQUEST_CODE_STORAGE_ACCESS)
+        }
 
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)

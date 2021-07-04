@@ -48,6 +48,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
 
@@ -343,10 +344,10 @@ class ResultFragment : Fragment() {
                         viewModel.loadEpisode(episodeClick.data, true) { data ->
                             if (data is Resource.Success) {
                                 val isMovie = currentIsMovie ?: return@loadEpisode
-                                val titleName = currentHeaderName?: return@loadEpisode
+                                val titleName = sanitizeFilename(currentHeaderName ?: return@loadEpisode)
                                 val meta = VideoDownloadManager.DownloadEpisodeMetadata(
                                     episodeClick.data.id,
-                                    titleName ,
+                                    titleName,
                                     apiName ?: return@loadEpisode,
                                     episodeClick.data.poster ?: currentPoster,
                                     episodeClick.data.name,
@@ -362,7 +363,7 @@ class ResultFragment : Fragment() {
                                     else -> null
                                 }
 
-                                VideoDownloadManager.DownloadEpisode(
+                                VideoDownloadManager.downloadEpisode(
                                     requireContext(),
                                     tempUrl,
                                     folder,
