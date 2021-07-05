@@ -625,12 +625,12 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                                         if (castContext.castState == CastState.CONNECTED) {
                                             handleAction(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
                                         } else {
-                                            handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
                                         }
                                     } else {
                                         handleAction(
                                             EpisodeClickEvent(
-                                                ACTION_DOWNLOAD_EPISODE,
+                                                ACTION_PLAY_EPISODE_IN_PLAYER,
                                                 card
                                             )
                                         ) //TODO REDO TO MAIN

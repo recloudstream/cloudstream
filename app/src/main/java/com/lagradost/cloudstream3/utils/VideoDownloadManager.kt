@@ -3,11 +3,13 @@ package com.lagradost.cloudstream3.utils
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -329,9 +331,25 @@ object VideoDownloadManager {
         link: ExtractorLink
     ): Int {
         val name = sanitizeFilename(ep.name ?: "Episode ${ep.episode}")
-        val path = "${Environment.DIRECTORY_DOWNLOADS}/${if (folder == null) "" else "$folder/"}$name.mp4"
+        val path = "${if (folder == null) "" else "$folder/"}$name.mp4" //${Environment.DIRECTORY_DOWNLOADS}/
         var resume = false
 
+
+        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+
+        } else {
+            TODO("VERSION.SDK_INT < Q")
+        }
+
+        val newFile = ContentValues().apply {
+            put(MediaStore.Downloads.DISPLAY_NAME, "$name.mp4")
+           // put(MediaStore.Downloads.RELATIVE_PATH, if (folder == null) "" else "$folder")
+        }
+        val newFileUri = context.contentResolver.insert(collection, newFile) ?: throw Exception("FUCK YOU")
+        val outputStream = context.contentResolver.openOutputStream(newFileUri, "w")
+            ?: throw Exception("ContentResolver couldn't open $newFileUri outputStream")
+        return 0
         // IF RESUME, DON'T DELETE FILE, CONTINUE, RECREATE IF NOT FOUND
         // IF NOT RESUME CREATE FILE
         val tempFile = DocumentFileCompat.fromSimplePath(context, basePath = path)
