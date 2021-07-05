@@ -16,7 +16,7 @@ class VideoDownloadService : IntentService("VideoDownloadService") {
                     "stop" -> VideoDownloadManager.DownloadActionType.Stop
                     else -> return
                 }
-                VideoDownloadManager.events.invoke(Pair(id, state))
+                VideoDownloadManager.downloadEvent.invoke(Pair(id, state))
             }
         }
     }
