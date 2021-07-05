@@ -3,21 +3,18 @@ package com.lagradost.cloudstream3.utils
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ContentValues
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.anggrayudi.storage.extension.closeStream
-import com.anggrayudi.storage.file.DocumentFileCompat
-import com.anggrayudi.storage.file.forceDelete
-import com.anggrayudi.storage.file.openOutputStream
 import com.bumptech.glide.Glide
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -26,11 +23,12 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStore.removeKey
+import com.lagradost.cloudstream3.utils.DataStore.setKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.io.BufferedInputStream
-import java.io.InputStream
+import java.io.*
 import java.lang.Thread.sleep
 import java.net.URL
 import java.net.URLConnection
@@ -103,18 +101,27 @@ object VideoDownloadManager {
         val links: List<ExtractorLink>
     )
 
+    data class DownloadResumePackage(
+        val item: DownloadItem,
+        val linkIndex: Int?,
+    )
+
     private const val SUCCESS_DOWNLOAD_DONE = 1
     private const val SUCCESS_STOPPED = 2
     private const val ERROR_DELETING_FILE = -1
-    private const val ERROR_FILE_NOT_FOUND = -2
+    private const val ERROR_CREATE_FILE = -2
     private const val ERROR_OPEN_FILE = -3
     private const val ERROR_TOO_SMALL_CONNECTION = -4
     private const val ERROR_WRONG_CONTENT = -5
     private const val ERROR_CONNECTION_ERROR = -6
+    private const val ERROR_MEDIA_STORE_URI_CANT_BE_CREATED = -7
+    private const val ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM = -8
+    private const val ERROR_CONTENT_RESOLVER_NOT_FOUND = -9
+
+    private const val KEY_RESUME_STORAGE = "download_resume"
 
     val events = Event<Pair<Int, DownloadActionType>>()
-    private val downloadQueue = LinkedList<DownloadItem>()
-
+    private val downloadQueue = LinkedList<DownloadResumePackage>()
 
     private var hasCreatedNotChanel = false
     private fun Context.createNotificationChannel() {
@@ -323,68 +330,143 @@ object VideoDownloadManager {
         return tempName.replace("  ", " ").trim(' ')
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun ContentResolver.getExistingDownloadUriOrNullQ(relativePath: String, displayName: String): Uri? {
+        val projection = arrayOf(
+            MediaStore.MediaColumns._ID,
+            //MediaStore.MediaColumns.DISPLAY_NAME,   // unused (for verification use only)
+            //MediaStore.MediaColumns.RELATIVE_PATH,  // unused (for verification use only)
+        )
+
+        val selection =
+            "${MediaStore.MediaColumns.RELATIVE_PATH}='$relativePath' AND " + "${MediaStore.MediaColumns.DISPLAY_NAME}='$displayName'"
+
+        val result = this.query(
+            MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+            projection, selection, null, null
+        )
+
+        result.use { c ->
+            if (c != null && c.count >= 1) {
+                c.moveToFirst().let {
+                    val id = c.getLong(c.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
+                    /*
+                    val cDisplayName = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
+                    val cRelativePath = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.RELATIVE_PATH))*/
+
+                    return ContentUris.withAppendedId(
+                        MediaStore.Downloads.EXTERNAL_CONTENT_URI, id
+                    )
+                }
+            }
+        }
+        return null
+    }
+
+    private fun isScopedStorage(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+    }
+
     private fun downloadSingleEpisode(
         context: Context,
         source: String?,
         folder: String?,
         ep: DownloadEpisodeMetadata,
-        link: ExtractorLink
+        link: ExtractorLink,
+        tryResume: Boolean = false,
     ): Int {
         val name = sanitizeFilename(ep.name ?: "Episode ${ep.episode}")
-        val path = "${if (folder == null) "" else "$folder/"}$name.mp4" //${Environment.DIRECTORY_DOWNLOADS}/
-        var resume = false
 
+        val relativePath = (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace('/', File.separatorChar)
+        val displayName = "$name.mp4"
 
-        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        val normalPath = "${Environment.getExternalStorageDirectory()}${File.separatorChar}$relativePath$displayName"
+        var resume = tryResume
 
-        } else {
-            TODO("VERSION.SDK_INT < Q")
-        }
+        val fileStream: OutputStream
+        val fileLength: Long
 
-        val newFile = ContentValues().apply {
-            put(MediaStore.Downloads.DISPLAY_NAME, "$name.mp4")
-           // put(MediaStore.Downloads.RELATIVE_PATH, if (folder == null) "" else "$folder")
-        }
-        val newFileUri = context.contentResolver.insert(collection, newFile) ?: throw Exception("FUCK YOU")
-        val outputStream = context.contentResolver.openOutputStream(newFileUri, "w")
-            ?: throw Exception("ContentResolver couldn't open $newFileUri outputStream")
-        return 0
-        // IF RESUME, DON'T DELETE FILE, CONTINUE, RECREATE IF NOT FOUND
-        // IF NOT RESUME CREATE FILE
-        val tempFile = DocumentFileCompat.fromSimplePath(context, basePath = path)
-        val fileExists = tempFile?.exists() ?: false
-
-        if (!fileExists) resume = false
-        if (fileExists && !resume) {
-            if (tempFile?.delete() == false) { // DELETE FAILED ON RESUME FILE
-                return ERROR_DELETING_FILE
+        fun deleteFile(): Int {
+            if (isScopedStorage()) {
+                val lastContent = context.contentResolver.getExistingDownloadUriOrNullQ(relativePath, displayName)
+                if (lastContent != null) {
+                    context.contentResolver.delete(lastContent, null, null)
+                }
+            } else {
+                if (!File(normalPath).delete()) return ERROR_DELETING_FILE
             }
+            return SUCCESS_STOPPED
         }
 
-        val dFile =
-            if (resume) tempFile
-            else DocumentFileCompat.createFile(context, basePath = path, mimeType = "video/mp4")
+        if (isScopedStorage()) {
+            val cr = context.contentResolver ?: return ERROR_CONTENT_RESOLVER_NOT_FOUND
 
-        // END OF FILE CREATION
+            val currentExistingFile = cr.getExistingDownloadUriOrNullQ(relativePath, displayName) // CURRENT FILE WITH THE SAME PATH
 
-        if (dFile == null || !dFile.exists()) {
-            return ERROR_FILE_NOT_FOUND
+            fileLength =
+                if (currentExistingFile == null || !resume) 0 else cr.openFileDescriptor(currentExistingFile, "r")
+                    .use { it?.statSize ?: 0 } // IF NOT RESUME THEN 0, OTHERWISE THE CURRENT FILE SIZE
+
+            if (!resume && currentExistingFile != null) { // DELETE FILE IF FILE EXITS AND NOT RESUME
+                val rowsDeleted = context.contentResolver.delete(currentExistingFile, null, null)
+                if (rowsDeleted < 1) {
+                    println("ERROR DELETING FILE!!!")
+                }
+            }
+
+            val newFileUri = if (resume && currentExistingFile != null) currentExistingFile else {
+                val contentUri =
+                    MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) // USE INSTEAD OF MediaStore.Downloads.EXTERNAL_CONTENT_URI
+
+                val newFile = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+                    put(MediaStore.MediaColumns.TITLE, name)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+                    put(
+                        MediaStore.MediaColumns.RELATIVE_PATH,
+                        relativePath
+                    )
+                }
+
+                cr.insert(
+                    contentUri,
+                    newFile
+                ) ?: return ERROR_MEDIA_STORE_URI_CANT_BE_CREATED
+            }
+
+            fileStream = cr.openOutputStream(newFileUri, "w")
+                ?: return ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM
+        } else {
+            // NORMAL NON SCOPED STORAGE FILE CREATION
+            val rFile = File(normalPath)
+            if (!rFile.exists()) {
+                fileLength = 0
+                rFile.parentFile?.mkdirs()
+                if (!rFile.createNewFile()) return ERROR_CREATE_FILE
+            } else {
+                if (resume) {
+                    fileLength = rFile.length()
+                } else {
+                    fileLength = 0
+                    rFile.parentFile?.mkdirs()
+                    if (!rFile.delete()) return ERROR_DELETING_FILE
+                    if (!rFile.createNewFile()) return ERROR_CREATE_FILE
+                }
+            }
+            fileStream = FileOutputStream(rFile, false)
         }
-
-        // OPEN FILE
-        val fileStream = dFile.openOutputStream(context, resume) ?: return ERROR_OPEN_FILE
+        if (fileLength == 0L) resume = false
 
         // CONNECT
-        val connection: URLConnection = URL(link.url).openConnection()
+        val connection: URLConnection = URL(link.url.replace(" ", "%20")).openConnection() // IDK OLD PHONES BE WACK
 
         // SET CONNECTION SETTINGS
         connection.connectTimeout = 10000
         connection.setRequestProperty("Accept-Encoding", "identity")
         connection.setRequestProperty("User-Agent", USER_AGENT)
         if (link.referer.isNotEmpty()) connection.setRequestProperty("Referer", link.referer)
-        if (resume) connection.setRequestProperty("Range", "bytes=${dFile.length()}-")
-        val resumeLength = (if (resume) dFile.length() else 0)
+        if (resume) connection.setRequestProperty("Range", "bytes=${fileLength}-")
+        val resumeLength = (if (resume) fileLength else 0)
 
         // ON CONNECTION
         connection.connect()
@@ -497,8 +579,7 @@ object VideoDownloadManager {
                 ERROR_CONNECTION_ERROR
             }
             isStopped -> {
-                dFile.delete()
-                SUCCESS_STOPPED
+                deleteFile()
             }
             else -> {
                 isDone = true
@@ -510,17 +591,23 @@ object VideoDownloadManager {
 
     private fun downloadCheck(context: Context) {
         if (currentDownloads < maxConcurrentDownloads && downloadQueue.size > 0) {
-            val item = downloadQueue.removeFirst()
+            val pkg = downloadQueue.removeFirst()
+            val item = pkg.item
             currentDownloads++
             try {
                 main {
-                    for (link in item.links) {
+                    for (index in (pkg.linkIndex ?: 0) until item.links.size) {
+                        val link = item.links[index]
+                        val resume = pkg.linkIndex == index
+
+                        context.setKey(KEY_RESUME_STORAGE, item.ep.id.toString(), DownloadResumePackage(item, index))
                         val connectionResult = withContext(Dispatchers.IO) {
                             normalSafeApiCall {
-                                downloadSingleEpisode(context, item.source, item.folder, item.ep, link)
+                                downloadSingleEpisode(context, item.source, item.folder, item.ep, link, resume)
                             }
                         }
                         if (connectionResult != null && connectionResult > 0) { // SUCCESS
+                            context.removeKey(KEY_RESUME_STORAGE, item.ep.id.toString())
                             break
                         }
                     }
@@ -534,6 +621,11 @@ object VideoDownloadManager {
         }
     }
 
+    fun downloadFromResume(context: Context, pkg: DownloadResumePackage) {
+        downloadQueue.addLast(pkg)
+        downloadCheck(context)
+    }
+
     fun downloadEpisode(
         context: Context,
         source: String,
@@ -543,8 +635,7 @@ object VideoDownloadManager {
     ) {
         val validLinks = links.filter { !it.isM3u8 }
         if (validLinks.isNotEmpty()) {
-            downloadQueue.addLast(DownloadItem(source, folder, ep, validLinks))
-            downloadCheck(context)
+            downloadFromResume(context, DownloadResumePackage(DownloadItem(source, folder, ep, validLinks), null))
         }
     }
 }
