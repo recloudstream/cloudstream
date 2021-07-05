@@ -41,7 +41,7 @@ const val CHANNEL_DESCRIPT = "The download notification channel"
 
 object VideoDownloadManager {
     var maxConcurrentDownloads = 3
-    var currentDownloads = 0
+    private var currentDownloads: Int = 0
 
     private const val USER_AGENT =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -280,7 +280,8 @@ object VideoDownloadManager {
                     actionResultIntent.putExtra("id", ep.id)
 
                     val pending: PendingIntent = PendingIntent.getService(
-                        context, 4337 + index + ep.id,
+                        // BECAUSE episodes lying near will have the same id +1, index will give the same requested as the previous episode, *100000 fixes this
+                        context, (4337 + index*100000 + ep.id),
                         actionResultIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT
                     )
@@ -401,7 +402,8 @@ object VideoDownloadManager {
         if (isScopedStorage()) {
             val cr = context.contentResolver ?: return ERROR_CONTENT_RESOLVER_NOT_FOUND
 
-            val currentExistingFile = cr.getExistingDownloadUriOrNullQ(relativePath, displayName) // CURRENT FILE WITH THE SAME PATH
+            val currentExistingFile =
+                cr.getExistingDownloadUriOrNullQ(relativePath, displayName) // CURRENT FILE WITH THE SAME PATH
 
             fileLength =
                 if (currentExistingFile == null || !resume) 0 else cr.openFileDescriptor(currentExistingFile, "r")
@@ -515,7 +517,7 @@ object VideoDownloadManager {
             )
         }
 
-        fun onEvent(event: Pair<Int, DownloadActionType>) {
+        events += { event ->
             if (event.first == ep.id) {
                 when (event.second) {
                     DownloadActionType.Pause -> {
@@ -530,8 +532,6 @@ object VideoDownloadManager {
                 }
             }
         }
-
-        events += ::onEvent
 
         // UPDATE DOWNLOAD NOTIFICATION
         val notificationCoroutine = main {
@@ -568,7 +568,6 @@ object VideoDownloadManager {
         }
 
         // REMOVE AND EXIT ALL
-        events -= ::onEvent
         fileStream.closeStream()
         connectionInputStream.closeStream()
         notificationCoroutine.cancel()
@@ -591,11 +590,12 @@ object VideoDownloadManager {
 
     private fun downloadCheck(context: Context) {
         if (currentDownloads < maxConcurrentDownloads && downloadQueue.size > 0) {
+            currentDownloads++
             val pkg = downloadQueue.removeFirst()
             val item = pkg.item
-            currentDownloads++
-            try {
-                main {
+
+            main {
+                try {
                     for (index in (pkg.linkIndex ?: 0) until item.links.size) {
                         val link = item.links[index]
                         val resume = pkg.linkIndex == index
@@ -611,12 +611,12 @@ object VideoDownloadManager {
                             break
                         }
                     }
+                } catch (e: Exception) {
+                    logError(e)
+                } finally {
+                    currentDownloads--
+                    downloadCheck(context)
                 }
-            } catch (e: Exception) {
-                logError(e)
-            } finally {
-                currentDownloads--
-                downloadCheck(context)
             }
         }
     }
