@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import com.anggrayudi.storage.extension.closeStream
 import com.bumptech.glide.Glide
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -35,10 +34,11 @@ import java.net.URL
 import java.net.URLConnection
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
-const val CHANNEL_ID = "cloudstream3.general"
-const val CHANNEL_NAME = "Downloads"
-const val CHANNEL_DESCRIPT = "The download notification channel"
+const val DOWNLOAD_CHANNEL_ID = "cloudstream3.general"
+const val DOWNLOAD_CHANNEL_NAME = "Downloads"
+const val DOWNLOAD_CHANNEL_DESCRIPT = "The download notification channel"
 
 object VideoDownloadManager {
     var maxConcurrentDownloads = 3
@@ -96,7 +96,7 @@ object VideoDownloadManager {
     )
 
     data class DownloadItem(
-        val source: String,
+        val source: String?,
         val folder: String?,
         val ep: DownloadEpisodeMetadata,
         val links: List<ExtractorLink>
@@ -114,6 +114,7 @@ object VideoDownloadManager {
     )
 
     data class DownloadedFileInfoResult(
+        val fileLength: Long,
         val totalBytes: Long,
         val path: Uri,
     )
@@ -133,6 +134,8 @@ object VideoDownloadManager {
     private const val KEY_RESUME_PACKAGES = "download_resume"
     private const val KEY_DOWNLOAD_INFO = "download_info"
 
+    val downloadStatus = HashMap<Int, DownloadType>()
+    val downloadStatusEvent = Event<Pair<Int, DownloadType>>()
     val downloadEvent = Event<Pair<Int, DownloadActionType>>()
     val downloadProgressEvent = Event<Pair<Int, Long>>()
     private val downloadQueue = LinkedList<DownloadResumePackage>()
@@ -143,10 +146,10 @@ object VideoDownloadManager {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = CHANNEL_NAME //getString(R.string.channel_name)
-            val descriptionText = CHANNEL_DESCRIPT//getString(R.string.channel_description)
+            val name = DOWNLOAD_CHANNEL_NAME //getString(R.string.channel_name)
+            val descriptionText = DOWNLOAD_CHANNEL_DESCRIPT//getString(R.string.channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            val channel = NotificationChannel(DOWNLOAD_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
             // Register the channel with the system
@@ -182,7 +185,7 @@ object VideoDownloadManager {
         total: Long,
     ) {
         main { // DON'T WANT TO SLOW IT DOWN
-            val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            val builder = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
                 .setAutoCancel(true)
                 .setColorized(true)
                 .setOnlyAlertOnce(true)
@@ -518,6 +521,14 @@ object VideoDownloadManager {
                 isPaused -> DownloadType.IsPaused
                 else -> DownloadType.IsDownloading
             }
+
+            try {
+                downloadStatus[ep.id] = type
+                downloadStatusEvent.invoke(Pair(ep.id, type))
+            } catch (e: Exception) {
+                // IDK MIGHT ERROR
+            }
+
             createNotification(
                 context,
                 source,
@@ -582,9 +593,15 @@ object VideoDownloadManager {
         }
 
         // REMOVE AND EXIT ALL
-        fileStream.closeStream()
-        connectionInputStream.closeStream()
+        fileStream.close()
+        connectionInputStream.close()
         notificationCoroutine.cancel()
+
+        try {
+            downloadStatus.remove(ep.id)
+        } catch (e: Exception) {
+            // IDK MIGHT ERROR
+        }
 
         // RETURN MESSAGE
         return when {
@@ -655,7 +672,7 @@ object VideoDownloadManager {
                 cr.getExistingDownloadUriOrNullQ(info.relativePath, info.displayName) ?: return null
             val fileLength = cr.getFileLength(fileUri)
             if (fileLength == 0L) return null
-            return DownloadedFileInfoResult(fileLength, fileUri)
+            return DownloadedFileInfoResult(fileLength, info.totalBytes, fileUri)
         } else {
             val normalPath =
                 "${Environment.getExternalStorageDirectory()}${File.separatorChar}${info.relativePath}${info.displayName}".replace(
@@ -664,7 +681,7 @@ object VideoDownloadManager {
                 )
             val dFile = File(normalPath)
             if (!dFile.exists()) return null
-            return DownloadedFileInfoResult(dFile.length(), dFile.toUri())
+            return DownloadedFileInfoResult(dFile.length(), info.totalBytes, dFile.toUri())
         }
     }
 
@@ -707,7 +724,7 @@ object VideoDownloadManager {
 
     fun downloadEpisode(
         context: Context,
-        source: String,
+        source: String?,
         folder: String?,
         ep: DownloadEpisodeMetadata,
         links: List<ExtractorLink>
