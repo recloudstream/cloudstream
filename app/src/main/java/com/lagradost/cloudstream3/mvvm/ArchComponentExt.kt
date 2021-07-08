@@ -4,8 +4,11 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.bumptech.glide.load.HttpException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
     liveData.observe(this, Observer { it?.let { t -> action(t) } })
@@ -55,17 +58,22 @@ suspend fun <T> safeApiCall(
         } catch (throwable: Throwable) {
             logError(throwable)
             when (throwable) {
-                /*is HttpException -> {
-                    Resource.Failure(false, throwable.code(), throwable.response()?.errorBody(), throwable.localizedMessage)
-                }
                 is SocketTimeoutException -> {
-                    Resource.Failure(true,null,null,"Please try again later.")
+                    Resource.Failure(true, null, null, "Please try again later.")
                 }
-                is UnknownHostException ->{
-                    Resource.Failure(true,null,null,"Cannot connect to server, try again later.")
-                }*/
+                is HttpException -> {
+                    Resource.Failure(false, throwable.statusCode, null, throwable.localizedMessage)
+                }
+                is UnknownHostException -> {
+                    Resource.Failure(true, null, null, "Cannot connect to server, try again later.")
+                }
                 else -> {
-                    Resource.Failure(true, null, null, throwable.localizedMessage)
+                    val stackTraceMsg = throwable.localizedMessage + "\n\n" + throwable.stackTrace.joinToString(
+                        separator = "\n"
+                    ) {
+                        "${it.fileName} ${it.lineNumber}"
+                    }
+                    Resource.Failure(false, null, null, stackTraceMsg) //
                 }
             }
         }

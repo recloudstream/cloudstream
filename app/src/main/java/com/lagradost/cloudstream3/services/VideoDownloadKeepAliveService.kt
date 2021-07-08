@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.services
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import com.lagradost.cloudstream3.recivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
@@ -19,6 +20,8 @@ class VideoDownloadKeepAliveService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val startValue = intent?.getIntExtra(START_VALUE_KEY, RESTART_NONE) ?: RESTART_NONE
+        Log.i("Service", "Restarted with start value of $startValue")
+
         if (startValue == RESTART_ALL_DOWNLOADS_AND_QUEUE) {
             val keys = this.getKeys(VideoDownloadManager.KEY_RESUME_PACKAGES)
             val resumePkg = keys.mapNotNull { k -> this.getKey<VideoDownloadManager.DownloadResumePackage>(k) }

@@ -171,20 +171,18 @@ class ResultFragment : Fragment() {
             0 -> {
                 result_loading.visibility = VISIBLE
                 result_finish_loading.visibility = GONE
-                result_reload_connectionerror.visibility = GONE
-                result_reload_connection_open_in_browser.visibility = GONE
+                result_loading_error.visibility = GONE
             }
             1 -> {
                 result_loading.visibility = GONE
                 result_finish_loading.visibility = GONE
-                result_reload_connectionerror.visibility = VISIBLE
+                result_loading_error.visibility = VISIBLE
                 result_reload_connection_open_in_browser.visibility = if (url == null) GONE else VISIBLE
             }
             2 -> {
                 result_loading.visibility = GONE
                 result_finish_loading.visibility = VISIBLE
-                result_reload_connectionerror.visibility = GONE
-                result_reload_connection_open_in_browser.visibility = GONE
+                result_loading_error.visibility = GONE
             }
         }
     }
@@ -660,6 +658,7 @@ activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
                     }
                 }
                 is Resource.Failure -> {
+                    result_error_text.text = data.errorString
                     updateVisStatus(1)
                 }
                 is Resource.Loading -> {
