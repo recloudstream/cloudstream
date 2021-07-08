@@ -17,9 +17,8 @@ import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.UIHelper.shouldShowPIPMode
-import com.lagradost.cloudstream3.recivers.VideoDownloadRestartReceiver
+import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.RESTART_ALL_DOWNLOADS_AND_QUEUE
-import com.lagradost.cloudstream3.services.RESTART_NONE
 import com.lagradost.cloudstream3.services.START_VALUE_KEY
 import com.lagradost.cloudstream3.services.VideoDownloadKeepAliveService
 import com.lagradost.cloudstream3.utils.VideoDownloadManager

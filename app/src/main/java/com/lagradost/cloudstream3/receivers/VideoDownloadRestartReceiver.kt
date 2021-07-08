@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.recivers
+package com.lagradost.cloudstream3.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context

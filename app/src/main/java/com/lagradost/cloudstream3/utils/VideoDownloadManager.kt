@@ -147,7 +147,7 @@ object VideoDownloadManager {
     val downloadStatusEvent = Event<Pair<Int, DownloadType>>()
     val downloadEvent = Event<Pair<Int, DownloadActionType>>()
     val downloadProgressEvent = Event<Pair<Int, Long>>()
-    private val downloadQueue = LinkedList<DownloadResumePackage>()
+    val downloadQueue = LinkedList<DownloadResumePackage>()
 
     private var hasCreatedNotChanel = false
     private fun Context.createNotificationChannel() {

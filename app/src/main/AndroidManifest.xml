@@ -35,7 +35,7 @@
 
 
         <receiver
-                android:name=".recivers.VideoDownloadRestartReceiver"
+                android:name=".receivers.VideoDownloadRestartReceiver"
                 android:enabled="true"
                 android:exported="true">
             <intent-filter>
