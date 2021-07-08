@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -20,6 +21,9 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.services.RESTART_NONE
+import com.lagradost.cloudstream3.services.START_VALUE_KEY
+import com.lagradost.cloudstream3.services.VideoDownloadKeepAliveService
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -33,8 +37,7 @@ import java.lang.Thread.sleep
 import java.net.URL
 import java.net.URLConnection
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+
 
 const val DOWNLOAD_CHANNEL_ID = "cloudstream3.general"
 const val DOWNLOAD_CHANNEL_NAME = "Downloads"
@@ -119,6 +122,11 @@ object VideoDownloadManager {
         val path: Uri,
     )
 
+    data class DownloadQueueResumePackage(
+        val index: Int,
+        val pkg: DownloadResumePackage,
+    )
+
     private const val SUCCESS_DOWNLOAD_DONE = 1
     private const val SUCCESS_STOPPED = 2
     private const val ERROR_DELETING_FILE = -1
@@ -131,8 +139,9 @@ object VideoDownloadManager {
     private const val ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM = -8
     private const val ERROR_CONTENT_RESOLVER_NOT_FOUND = -9
 
-    private const val KEY_RESUME_PACKAGES = "download_resume"
-    private const val KEY_DOWNLOAD_INFO = "download_info"
+    const val KEY_RESUME_PACKAGES = "download_resume"
+    const val KEY_DOWNLOAD_INFO = "download_info"
+    const val KEY_RESUME_QUEUE_PACKAGES = "download_q_resume"
 
     val downloadStatus = HashMap<Int, DownloadType>()
     val downloadStatusEvent = Event<Pair<Int, DownloadType>>()
@@ -249,7 +258,7 @@ object VideoDownloadManager {
                     } else if (state == DownloadType.IsDone) {
                         "Download Done - $rowTwo"
                     } else {
-                        "Download Stopped - $rowTwo"
+                        "Download Canceled - $rowTwo"
                     }
 
                 val bodyStyle = NotificationCompat.BigTextStyle()
@@ -263,7 +272,7 @@ object VideoDownloadManager {
                 } else if (state == DownloadType.IsDone) {
                     "Download Done - $rowTwo"
                 } else {
-                    "Download Stopped - $rowTwo"
+                    "Download Canceled - $rowTwo"
                 }
 
                 builder.setContentText(txt)
@@ -312,7 +321,7 @@ object VideoDownloadManager {
                             }, when (i) {
                                 DownloadActionType.Resume -> "Resume"
                                 DownloadActionType.Pause -> "Pause"
-                                DownloadActionType.Stop -> "Stop"
+                                DownloadActionType.Stop -> "Cancel"
                             }, pending
                         )
                     )
@@ -628,6 +637,9 @@ object VideoDownloadManager {
                 downloadEvent.invoke(Pair(id, DownloadActionType.Resume))
                 return
             }
+
+            val dQueue = downloadQueue.toList().mapIndexed { index, any -> DownloadQueueResumePackage(index, any) }
+            context.setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
             currentDownloads.add(id)
 
             main {
@@ -720,6 +732,16 @@ object VideoDownloadManager {
     fun downloadFromResume(context: Context, pkg: DownloadResumePackage) {
         downloadQueue.addLast(pkg)
         downloadCheck(context)
+    }
+
+    fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+        for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 
     fun downloadEpisode(

@@ -1,39 +1,28 @@
 package com.lagradost.cloudstream3
 
-import android.Manifest
 import android.app.PictureInPictureParams
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.anggrayudi.storage.SimpleStorage
-import com.anggrayudi.storage.callback.StorageAccessCallback
 import com.anggrayudi.storage.file.StorageId
-import com.anggrayudi.storage.file.StorageType
-import com.anggrayudi.storage.file.getStorageId
-import com.google.android.gms.cast.ApplicationMetadata
-import com.google.android.gms.cast.Cast
-import com.google.android.gms.cast.LaunchOptions
 import com.google.android.gms.cast.framework.CastButtonFactory
-import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.cast.framework.CastSession
-import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener
 import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.UIHelper.shouldShowPIPMode
+import com.lagradost.cloudstream3.recivers.VideoDownloadRestartReceiver
+import com.lagradost.cloudstream3.services.RESTART_ALL_DOWNLOADS_AND_QUEUE
+import com.lagradost.cloudstream3.services.RESTART_NONE
+import com.lagradost.cloudstream3.services.START_VALUE_KEY
+import com.lagradost.cloudstream3.services.VideoDownloadKeepAliveService
+import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_result.*
 
 
@@ -125,6 +114,14 @@ class MainActivity : AppCompatActivity() {
         storage.onRestoreInstanceState(savedInstanceState)
     }
 
+    override fun onDestroy() {
+        val broadcastIntent = Intent()
+        broadcastIntent.action = "restart_service"
+        broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
+        this.sendBroadcast(broadcastIntent)
+        super.onDestroy()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainContext = this
@@ -160,6 +157,12 @@ class MainActivity : AppCompatActivity() {
             if (checkWrite()) return
         }
         CastButtonFactory.setUpMediaRouteButton(this, media_route_button)
+
+        if (!VideoDownloadManager.isMyServiceRunning(this, VideoDownloadKeepAliveService::class.java)) {
+            val mYourService = VideoDownloadKeepAliveService()
+            val mServiceIntent = Intent(this, mYourService::class.java).putExtra(START_VALUE_KEY, RESTART_ALL_DOWNLOADS_AND_QUEUE)
+            this.startService(mServiceIntent)
+        }
 
         /*
         val castContext = CastContext.getSharedInstance(applicationContext)
