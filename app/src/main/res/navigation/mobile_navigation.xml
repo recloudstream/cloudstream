@@ -19,7 +19,7 @@
 
     <fragment
             android:id="@+id/navigation_notifications"
-            android:name="com.lagradost.cloudstream3.ui.notifications.NotificationsFragment"
+            android:name="com.lagradost.cloudstream3.ui.download.DownloadFragment"
             android:label="@string/title_downloads"
             tools:layout="@layout/fragment_notifications"/>
     <fragment

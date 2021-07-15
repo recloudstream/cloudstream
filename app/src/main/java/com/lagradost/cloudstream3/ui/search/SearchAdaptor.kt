@@ -31,7 +31,7 @@ class SearchAdapter(
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layout = activity.getGridFormatId()
+        val layout = parent.context.getGridFormatId()
         return CardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
             activity,
@@ -66,7 +66,7 @@ class SearchAdapter(
         //val cardTextExtra: TextView? = itemView.imageTextExtra
         //val imageTextProvider: TextView? = itemView.imageTextProvider
         val bg = itemView.backgroundCard
-        val compactView = activity.getGridIsCompact()
+        val compactView = itemView.context.getGridIsCompact()
         private val coverHeight: Int = if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
 
         fun bind(card: Any) {
@@ -98,11 +98,11 @@ class SearchAdapter(
 
                     val glideUrl =
                         GlideUrl(card.posterUrl)
-                    activity.let {
-                        Glide.with(it)
+
+                        Glide.with(cardView.context)
                             .load(glideUrl)
                             .into(cardView)
-                    }
+
                 }
 
                 bg.setOnClickListener {

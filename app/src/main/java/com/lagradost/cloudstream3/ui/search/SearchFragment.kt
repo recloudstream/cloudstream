@@ -23,8 +23,6 @@ import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.UIHelper.loadResult
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.ui.player.PlayerData
-import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment() {
@@ -77,10 +75,10 @@ class SearchFragment : Fragment() {
         cardSpace.adapter = adapter
         search_loading_bar.alpha = 0f
 
-        val search_exit_icon = main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
-        val search_mag_icon = main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
-        search_mag_icon.scaleX = 0.65f
-        search_mag_icon.scaleY = 0.65f
+        val searchExitIcon = main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        val searchMagIcon = main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
+        searchMagIcon.scaleX = 0.65f
+        searchMagIcon.scaleY = 0.65f
         search_filter.setOnClickListener {
             val apiNamesSetting = activity?.getApiSettings()
             if (apiNamesSetting != null) {
@@ -131,16 +129,16 @@ class SearchFragment : Fragment() {
                         (cardSpace.adapter as SearchAdapter).cardList = data
                         (cardSpace.adapter as SearchAdapter).notifyDataSetChanged()
                     }
-                    search_exit_icon.alpha = 1f
+                    searchExitIcon.alpha = 1f
                     search_loading_bar.alpha = 0f
                 }
                 is Resource.Failure -> {
                     Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
-                    search_exit_icon.alpha = 1f
+                    searchExitIcon.alpha = 1f
                     search_loading_bar.alpha = 0f
                 }
                 is Resource.Loading -> {
-                    search_exit_icon.alpha = 0f
+                    searchExitIcon.alpha = 0f
                     search_loading_bar.alpha = 1f
                 }
             }

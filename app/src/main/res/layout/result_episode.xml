@@ -13,7 +13,7 @@
         android:layout_marginBottom="5dp"
 >
     <!-- IDK BUT THIS DOES NOT SEAM LIKE A GOOD WAY OF DOING IT -->
-    <LinearLayout
+    <!--<LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="horizontal">
@@ -33,7 +33,18 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent">
         </View>
-    </LinearLayout>
+    </LinearLayout>-->
+    <androidx.core.widget.ContentLoadingProgressBar
+            android:layout_marginBottom="-1.5dp"
+            android:id="@+id/episode_progress"
+            android:progressTint="@color/colorPrimary"
+            android:progressBackgroundTint="@color/colorPrimary"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            tools:progress="50"
+            android:layout_gravity="bottom"
+            android:layout_height="5dp">
+    </androidx.core.widget.ContentLoadingProgressBar>
     <GridLayout android:layout_width="match_parent" android:layout_height="match_parent">
         <ImageView
                 android:layout_marginStart="10dp"
@@ -51,13 +62,15 @@
                 android:layout_height="match_parent">
         </TextView>
         <ImageView
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:id="@+id/episode_extra"
+                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:id="@+id/episode_download"
                 android:background="?selectableItemBackgroundBorderless"
                 android:layout_gravity="center_vertical|end"
-                android:src="@drawable/ic_baseline_more_vert_24"
-                android:contentDescription="@string/episode_more_options_descript"/>
+                android:src="@drawable/netflix_download"
+                android:contentDescription="@string/download_descript"/>
     </GridLayout>
 </androidx.cardview.widget.CardView>

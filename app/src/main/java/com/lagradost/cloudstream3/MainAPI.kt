@@ -138,6 +138,11 @@ enum class TvType {
     ONA,
 }
 
+// IN CASE OF FUTURE ANIME MOVIE OR SMTH
+fun TvType.isMovieType() : Boolean {
+    return this == TvType.Movie
+}
+
 data class SubtitleFile(val lang: String, val url: String)
 
 interface SearchResponse {

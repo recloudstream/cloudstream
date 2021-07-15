@@ -17,7 +17,6 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
-import kotlinx.android.synthetic.main.result_episode.view.*
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
@@ -30,9 +29,7 @@ const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
-    private var activity: Activity,
     var cardList: List<ResultEpisode>,
-    private val resView: RecyclerView,
     private val clickCallback: (EpisodeClickEvent) -> Unit,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -51,8 +48,6 @@ class EpisodeAdapter(
 
         return CardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
-            activity,
-            resView,
             clickCallback
         )
     }
@@ -72,17 +67,16 @@ class EpisodeAdapter(
     class CardViewHolder
     constructor(
         itemView: View,
-        val activity: Activity,
-        resView: RecyclerView,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
-        private val episodeViewPrecentage: View? = itemView.episode_view_procentage
-        private val episodeViewPercentageOff: View? = itemView.episode_view_procentage_off
+        //private val episodeViewPrecentage: View? = itemView.episode_view_procentage
+        // private val episodeViewPercentageOff: View? = itemView.episode_view_procentage_off
         private val episodeText: TextView = itemView.episode_text
         private val episodeRating: TextView? = itemView.episode_rating
         private val episodeDescript: TextView? = itemView.episode_descript
         private val episodeProgress: ContentLoadingProgressBar? = itemView.episode_progress
         private val episodePoster: ImageView? = itemView.episode_poster
+        private val episodeDownload: ImageView? = itemView.episode_download
 
         // val episodeExtra: ImageView = itemView.episode_extra
         // private val episodePlay: ImageView = itemView.episode_play
@@ -103,10 +97,10 @@ class EpisodeAdapter(
             }
 
             val watchProgress = card.getWatchProgress()
-            if (episodeViewPrecentage != null && episodeViewPercentageOff != null) {
+            /*if (episodeViewPrecentage != null && episodeViewPercentageOff != null) {
                 setWidth(episodeViewPrecentage, watchProgress)
                 setWidth(episodeViewPercentageOff, 1 - watchProgress)
-            }
+            }*/
 
             episodeProgress?.progress = (watchProgress * 50).toInt()
             episodeProgress?.visibility = if (watchProgress > 0.0f) View.VISIBLE else View.GONE
@@ -116,11 +110,9 @@ class EpisodeAdapter(
                 if (episodePoster != null) {
                     val glideUrl =
                         GlideUrl(card.poster)
-                    activity.let {
-                        Glide.with(it)
-                            .load(glideUrl)
-                            .into(episodePoster)
-                    }
+                    Glide.with(episodePoster.context)
+                        .load(glideUrl)
+                        .into(episodePoster)
                 }
             } else {
                 episodePoster?.visibility = View.GONE
@@ -140,19 +132,26 @@ class EpisodeAdapter(
             }
 
             episodeHolder.setOnClickListener {
-                if (activity.isCastApiAvailable()) {
-                    val castContext = CastContext.getSharedInstance(activity)
+                episodeHolder.context?.let { ctx ->
+                    if (ctx.isCastApiAvailable()) {
+                        val castContext = CastContext.getSharedInstance(ctx)
 
-                    if (castContext.castState == CastState.CONNECTED) {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
+                        if (castContext.castState == CastState.CONNECTED) {
+                            clickCallback.invoke(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
+                        } else {
+                            // clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                            clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
+                        }
                     } else {
                         // clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                        clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card)) //TODO REDO TO MAIN
                     }
-                } else {
-                    // clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
-                    clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card)) //TODO REDO TO MAIN
                 }
+
+            }
+
+            episodeDownload?.setOnClickListener {
+                clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
             }
         }
     }

@@ -83,16 +83,16 @@ object UIHelper {
         return result
     }
 
-    fun Activity.fixPaddingStatusbar(v: View) {
+    fun Context.fixPaddingStatusbar(v: View) {
         v.setPadding(v.paddingLeft, v.paddingTop + getStatusBarHeight(), v.paddingRight, v.paddingBottom)
     }
 
-    private fun Activity.getGridFormat(): String {
+    private fun Context.getGridFormat(): String {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         return settingsManager.getString(getString(R.string.grid_format_key), "grid")!!
     }
 
-    fun Activity.getGridFormatId(): Int {
+    fun Context.getGridFormatId(): Int {
         return when (getGridFormat()) {
             "list" -> R.layout.search_result_compact
             "compact_list" -> R.layout.search_result_super_compact
@@ -100,7 +100,7 @@ object UIHelper {
         }
     }
 
-    fun Activity.getGridIsCompact(): Boolean {
+    fun Context.getGridIsCompact(): Boolean {
         return getGridFormat() != "grid"
     }
 

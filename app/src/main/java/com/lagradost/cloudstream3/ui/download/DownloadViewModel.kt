@@ -1,10 +1,10 @@
-package com.lagradost.cloudstream3.ui.notifications
+package com.lagradost.cloudstream3.ui.download
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
+class DownloadViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is notifications Fragment"

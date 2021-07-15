@@ -38,4 +38,5 @@
     <string name="episode_poster">Episode Poster</string>
     <string name="play_episode">Play Episode</string>
     <string name="need_storage">Allow to download episodes</string>
+    <string name="download_descript">Download</string>
 </resources>

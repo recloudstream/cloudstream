@@ -58,6 +58,7 @@
                     android:orientation="vertical"
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
+                    android:layout_marginEnd="50dp"
                     android:layout_height="wrap_content">
                 <TextView
                         android:id="@+id/episode_text"
@@ -75,6 +76,16 @@
                         android:layout_height="wrap_content">
                 </TextView>
             </LinearLayout>
+            <ImageView
+                    android:visibility="visible"
+                    android:layout_marginStart="-40dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="30dp"
+                    android:id="@+id/episode_download"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:layout_gravity="center_vertical|end"
+                    android:src="@drawable/netflix_download"
+                    android:contentDescription="@string/download_descript"/>
         </LinearLayout>
         <TextView
                 android:paddingTop="10dp"

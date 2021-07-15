@@ -157,11 +157,12 @@ class MainActivity : AppCompatActivity() {
         }
         CastButtonFactory.setUpMediaRouteButton(this, media_route_button)
 
-        if (!VideoDownloadManager.isMyServiceRunning(this, VideoDownloadKeepAliveService::class.java)) {
-            val mYourService = VideoDownloadKeepAliveService()
-            val mServiceIntent = Intent(this, mYourService::class.java).putExtra(START_VALUE_KEY, RESTART_ALL_DOWNLOADS_AND_QUEUE)
-            this.startService(mServiceIntent)
-        }
+        // THIS IS CURRENTLY REMOVED BECAUSE HIGHER VERS OF ANDROID NEEDS A NOTIFICATION
+        //if (!VideoDownloadManager.isMyServiceRunning(this, VideoDownloadKeepAliveService::class.java)) {
+        //    val mYourService = VideoDownloadKeepAliveService()
+        //    val mServiceIntent = Intent(this, mYourService::class.java).putExtra(START_VALUE_KEY, RESTART_ALL_DOWNLOADS_AND_QUEUE)
+        //    this.startService(mServiceIntent)
+        //}
 
         /*
         val castContext = CastContext.getSharedInstance(applicationContext)
