@@ -8,6 +8,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 const val DOWNLOAD_EPISODE_CACHE = "download_episode_cache"
+const val VIDEO_PLAYER_BRIGHTNESS = "video_player_alpha"
 
 const val PREFERENCES_NAME: String = "rebuild_preference"
 

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -21,6 +22,9 @@ import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.RESTART_ALL_DOWNLOADS_AND_QUEUE
 import com.lagradost.cloudstream3.services.START_VALUE_KEY
 import com.lagradost.cloudstream3.services.VideoDownloadKeepAliveService
+import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStore.getKeys
+import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_result.*
 
@@ -126,7 +130,7 @@ class MainActivity : AppCompatActivity() {
         mainContext = this
         setupSimpleStorage()
 
-        if(!storage.isStorageAccessGranted(StorageId.PRIMARY)) {
+        if (!storage.isStorageAccessGranted(StorageId.PRIMARY)) {
             storage.requestStorageAccess(REQUEST_CODE_STORAGE_ACCESS)
         }
 
@@ -163,7 +167,29 @@ class MainActivity : AppCompatActivity() {
         //    val mServiceIntent = Intent(this, mYourService::class.java).putExtra(START_VALUE_KEY, RESTART_ALL_DOWNLOADS_AND_QUEUE)
         //    this.startService(mServiceIntent)
         //}
+//settingsManager.getBoolean("disable_automatic_data_downloads", true) &&
+        if ( isUsingMobileData()) {
+            Toast.makeText(this, "Downloads not resumed on mobile data", Toast.LENGTH_LONG).show()
+        } else {
+            val keys = getKeys(VideoDownloadManager.KEY_RESUME_PACKAGES)
+            val resumePkg = keys.mapNotNull { k -> getKey<VideoDownloadManager.DownloadResumePackage>(k) }
 
+            // To remove a bug where this is permanent
+            removeKeys(VideoDownloadManager.KEY_RESUME_PACKAGES)
+
+            for (pkg in resumePkg) { // ADD ALL CURRENT DOWNLOADS
+                VideoDownloadManager.downloadFromResume(this, pkg, false)
+            }
+
+            // ADD QUEUE
+            // array needed because List gets cast exception to linkedList for some unknown reason
+            val resumeQueue =
+                getKey<Array<VideoDownloadManager.DownloadQueueResumePackage>>(VideoDownloadManager.KEY_RESUME_QUEUE_PACKAGES)
+
+            resumeQueue?.sortedBy { it.index }?.forEach {
+                VideoDownloadManager.downloadFromResume(this, it.pkg)
+            }
+        }
         /*
         val castContext = CastContext.getSharedInstance(applicationContext)
          fun buildMediaQueueItem(video: String): MediaQueueItem {

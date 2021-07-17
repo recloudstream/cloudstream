@@ -76,6 +76,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.VIDEO_PLAYER_BRIGHTNESS
 import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
@@ -412,6 +413,8 @@ class PlayerFragment : Fragment() {
                                     brightness_overlay.alpha + diffY.toFloat() * 0.5f
                                 ) // 0.05f *if (diffY > 0) 1 else -1
                                 brightness_overlay?.alpha = alpha
+
+                                context?.setKey(VIDEO_PLAYER_BRIGHTNESS, alpha)
 
                                 progressBarRight?.max = 100 * 100
                                 progressBarRight?.progress = ((1f - alpha) * 100 * 100).toInt()
@@ -763,6 +766,8 @@ class PlayerFragment : Fragment() {
         playBackSpeedEnabled = settingsManager.getBoolean("playback_speed_enabled", false)
         playerResizeEnabled = settingsManager.getBoolean("player_resize_enabled", true)
         doubleTapEnabled = settingsManager.getBoolean("double_tap_enabled", false)
+
+        brightness_overlay?.alpha = context?.getKey(VIDEO_PLAYER_BRIGHTNESS, 0f) ?: 0f
 
         isInPlayer = true // NEED REFERENCE TO MAIN ACTIVITY FOR PIP
 

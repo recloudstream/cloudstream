@@ -21,6 +21,7 @@ import com.google.android.gms.cast.framework.CastState
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
+import com.lagradost.cloudstream3.UIHelper.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text

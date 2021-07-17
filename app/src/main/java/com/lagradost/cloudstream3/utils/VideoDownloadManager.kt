@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -638,8 +639,6 @@ object VideoDownloadManager {
                 return
             }
 
-            val dQueue = downloadQueue.toList().mapIndexed { index, any -> DownloadQueueResumePackage(index, any) }
-            context.setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
             currentDownloads.add(id)
 
             main {
@@ -729,9 +728,28 @@ object VideoDownloadManager {
         return context.getKey(KEY_RESUME_PACKAGES, id.toString())
     }
 
-    fun downloadFromResume(context: Context, pkg: DownloadResumePackage) {
-        downloadQueue.addLast(pkg)
-        downloadCheck(context)
+    fun downloadFromResume(context: Context, pkg: DownloadResumePackage, setKey: Boolean = true) {
+        if (!currentDownloads.any { it == pkg.item.ep.id }) {
+            if (currentDownloads.size == maxConcurrentDownloads) {
+                main {
+                    Toast.makeText(
+                        context,
+                        "${pkg.item.ep.mainName}${pkg.item.ep.episode?.let { " Episode $it " } ?: " "}queued",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            downloadQueue.addLast(pkg)
+            downloadCheck(context)
+            if (setKey) saveQueue(context)
+        }
+    }
+
+    private fun saveQueue(context: Context) {
+        val dQueue =
+            downloadQueue.toList().mapIndexed { index, any -> DownloadQueueResumePackage(index, any) }
+                .toTypedArray()
+        context.setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
     }
 
     fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
