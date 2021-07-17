@@ -13,4 +13,27 @@
         <!-- Actually fake to make the skip op button the same style -->
         <item>@id/cast_button_type_forward_30_seconds</item>
     </array>
+
+    <array name="episode_long_click_options">
+        <item>Chromecast Episode</item>
+        <item>Chromecast Mirror</item>
+        <item>Play In App</item>
+        <item>Play In External App</item>
+        <item>Play In Browser</item>
+        <item>Copy Link</item>
+        <item>Auto Download</item>
+        <item>Download Mirror</item>
+        <item>Reload Links</item>
+    </array>
+    <array name="episode_long_click_options_values">
+        <item>4</item>
+        <item>5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>9</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </array>
 </resources>

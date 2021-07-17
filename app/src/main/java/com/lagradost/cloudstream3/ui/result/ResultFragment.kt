@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
+import com.lagradost.cloudstream3.UIHelper.isConnectedToChromecast
 import com.lagradost.cloudstream3.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.UIHelper.popupMenuNoIconsAndNoStringres
@@ -43,14 +44,16 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
+import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
+import kotlinx.coroutines.Job
 
 
 const val MAX_SYNO_LENGH = 300
@@ -134,6 +137,7 @@ class ResultFragment : Fragment() {
     private var currentLoadingCount = 0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
     private lateinit var viewModel: ResultViewModel
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
+    private var allEpisodesSubs: HashMap<Int, ArrayList<SubtitleFile>> = HashMap()
     private var currentHeaderName: String? = null
     private var currentType: TvType? = null
     private var currentEpisodes: List<ResultEpisode>? = null
@@ -188,6 +192,7 @@ class ResultFragment : Fragment() {
     }
 
     private var currentPoster: String? = null
+    private var currentId: Int? = null
     private var currentIsMovie: Boolean? = null
 
     var url: String? = null
@@ -255,59 +260,126 @@ class ResultFragment : Fragment() {
             requireActivity().popCurrentPage()
         }
 
-        fun handleAction(episodeClick: EpisodeClickEvent) {
+        fun handleAction(episodeClick: EpisodeClickEvent): Job = main {
             //val id = episodeClick.data.id
             val index = episodeClick.data.index
             val buildInPlayer = true
             currentLoadingCount++
+            var currentLinks: ArrayList<ExtractorLink>? = null
+            var currentSubs: ArrayList<SubtitleFile>? = null
+
+            suspend fun requireLinks(isCasting: Boolean = false): Boolean {
+                val currentLinksTemp =
+                    if (allEpisodes.containsKey(episodeClick.data.id)) allEpisodes[episodeClick.data.id] else null
+                val currentSubsTemp =
+                    if (allEpisodes.containsKey(episodeClick.data.id)) allEpisodes[episodeClick.data.id] else null
+                if (currentLinksTemp != null && currentLinksTemp.size > 0) {
+                    currentLinks = currentLinksTemp
+                    return true
+                }
+
+                val skipLoading = if (apiName != null) {
+                    getApiFromName(apiName).instantLinkLoading
+                } else false
+
+                var loadingDialog: AlertDialog? = null
+                val currentLoad = currentLoadingCount
+
+                if (!skipLoading) {
+                    val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
+                    val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
+                    builder.setView(customLayout)
+
+                    loadingDialog = builder.create()
+
+                    loadingDialog.show()
+                    loadingDialog.setOnDismissListener {
+                        currentLoadingCount++
+                    }
+                }
+
+                val data = viewModel.loadEpisode(episodeClick.data, isCasting)
+                if (currentLoadingCount != currentLoad) return false
+                loadingDialog?.dismiss()
+
+                when (data) {
+                    is Resource.Success -> {
+                        currentLinks = data.value.links
+                        currentSubs = data.value.subs
+                        return true
+                    }
+                    is Resource.Failure -> {
+                        Toast.makeText(requireContext(), R.string.error_loading_links, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+
+                    }
+                }
+                return false
+            }
+
+            val isLoaded = when (episodeClick.action) {
+                ACTION_PLAY_EPISODE_IN_PLAYER -> true
+                ACTION_CHROME_CAST_EPISODE -> requireLinks(true)
+                ACTION_CHROME_CAST_MIRROR -> requireLinks(true)
+                else -> requireLinks()
+            }
+            if (!isLoaded) return@main // CANT LOAD
+
             when (episodeClick.action) {
-                ACTION_CHROME_CAST_EPISODE -> {
-                    val skipLoading = if (apiName != null) {
-                        getApiFromName(apiName).instantLinkLoading
-                    } else false
-
+                ACTION_SHOW_OPTIONS -> {
+                    val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
                     var dialog: AlertDialog? = null
-                    val currentLoad = currentLoadingCount
+                    builder.setTitle(episodeClick.data.name)
+                    val options = requireContext().resources.getStringArray(R.array.episode_long_click_options)
+                    val optionsValues =
+                        requireContext().resources.getIntArray(R.array.episode_long_click_options_values)
 
-                    if (!skipLoading) {
-                        val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
-                        val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
-                        builder.setView(customLayout)
+                    val verifiedOptions = ArrayList<String>()
+                    val verifiedOptionsValues = ArrayList<Int>()
 
-                        dialog = builder.create()
+                    for (i in options.indices) {
+                        val opv = optionsValues[i]
+                        val op = options[i]
 
-                        dialog.show()
-                        dialog.setOnDismissListener {
-                            currentLoadingCount++
+                        val isConnected = requireContext().isConnectedToChromecast()
+                        val add = when (opv) {
+                            ACTION_CHROME_CAST_EPISODE -> isConnected
+                            ACTION_CHROME_CAST_MIRROR -> isConnected
+                            else -> true
+                        }
+                        if (add) {
+                            verifiedOptions.add(op)
+                            verifiedOptionsValues.add(opv)
                         }
                     }
 
-                    // Toast.makeText(activity, "Loading links", Toast.LENGTH_SHORT).show()
-
-                    viewModel.loadEpisode(episodeClick.data, true) { data ->
-                        if (currentLoadingCount != currentLoad) return@loadEpisode
+                    builder.setItems(
+                        verifiedOptions.toTypedArray()
+                    ) { _, which ->
+                        handleAction(EpisodeClickEvent(verifiedOptionsValues[which], episodeClick.data))
                         dialog?.dismiss()
-
-                        when (data) {
-                            is Resource.Failure -> {
-                                Toast.makeText(activity, "Failed to load links", Toast.LENGTH_SHORT).show()
-                            }
-                            is Resource.Success -> {
-                                val eps = currentEpisodes ?: return@loadEpisode
-                                context?.startCast(
-                                    apiName ?: return@loadEpisode,
-                                    currentIsMovie ?: return@loadEpisode,
-                                    currentHeaderName,
-                                    currentPoster,
-                                    episodeClick.data.index,
-                                    eps,
-                                    sortUrls(data.value.links),
-                                    data.value.subs,
-                                    startTime = episodeClick.data.getRealPosition(),
-                                )
-                            }
-                        }
                     }
+
+                    dialog = builder.create()
+                    dialog.show()
+                }
+
+
+                ACTION_CHROME_CAST_EPISODE -> {
+
+                    val eps = currentEpisodes ?: return@main
+                    context?.startCast(
+                        apiName ?: return@main,
+                        currentIsMovie ?: return@main,
+                        currentHeaderName,
+                        currentPoster,
+                        episodeClick.data.index,
+                        eps,
+                        sortUrls(currentLinks ?: return@main),
+                        currentSubs ?: return@main,
+                        startTime = episodeClick.data.getRealPosition(),
+                    )
                 }
 
                 ACTION_PLAY_EPISODE_IN_PLAYER -> {
@@ -330,60 +402,80 @@ class ResultFragment : Fragment() {
                     }
                 }
                 ACTION_RELOAD_EPISODE -> {
-                    /*viewModel.load(episodeClick.data) { res ->
-                        if (res is Resource.Success) {
-                            playEpisode(allEpisodes[id], index)
-                        }
-                    }*/
+                    viewModel.loadEpisode(episodeClick.data, false)
                 }
                 ACTION_DOWNLOAD_EPISODE -> {
-                    val tempUrl = url
-                    if (tempUrl != null) {
-                        viewModel.loadEpisode(episodeClick.data, true) { data ->
-                            if (data is Resource.Success) {
-                                val isMovie = currentIsMovie ?: return@loadEpisode
-                                val titleName = sanitizeFilename(currentHeaderName ?: return@loadEpisode)
-                                val meta = VideoDownloadManager.DownloadEpisodeMetadata(
-                                    episodeClick.data.id,
-                                    titleName,
-                                    apiName ?: return@loadEpisode,
-                                    episodeClick.data.poster ?: currentPoster,
-                                    episodeClick.data.name,
-                                    if (isMovie) null else episodeClick.data.season,
-                                    if (isMovie) null else episodeClick.data.episode
-                                )
+                    val isMovie = currentIsMovie ?: return@main
+                    val titleName = sanitizeFilename(currentHeaderName ?: return@main)
 
-                                val folder = when (currentType) {
-                                    TvType.Anime -> "Anime/$titleName"
-                                    TvType.Movie -> "Movies"
-                                    TvType.TvSeries -> "TVSeries/$titleName"
-                                    TvType.ONA -> "ONA"
-                                    else -> null
-                                }
+                    val meta = VideoDownloadManager.DownloadEpisodeMetadata(
+                        episodeClick.data.id,
+                        titleName,
+                        apiName ?: return@main,
+                        episodeClick.data.poster ?: currentPoster,
+                        episodeClick.data.name,
+                        if (isMovie) null else episodeClick.data.season,
+                        if (isMovie) null else episodeClick.data.episode
+                    )
 
-                                VideoDownloadManager.downloadEpisode(
-                                    requireContext(),
-                                    tempUrl,
-                                    folder,
-                                    meta,
-                                    data.value.links
-                                )
-                            }
-                        }
+                    val folder = when (currentType) {
+                        TvType.Anime -> "Anime/$titleName"
+                        TvType.Movie -> "Movies"
+                        TvType.TvSeries -> "TVSeries/$titleName"
+                        TvType.ONA -> "ONA"
+                        else -> null
+                    }
+
+                    context?.let { ctx ->
+                        // SET VISUAL KEYS
+                        ctx.setKey(
+                            DOWNLOAD_HEADER_CACHE, (currentId ?: return@let).toString(),
+                            VideoDownloadHelper.DownloadHeaderCached(
+                                apiName,
+                                url ?: return@let,
+                                currentType ?: return@let,
+                                currentHeaderName ?: return@let,
+                                currentPoster ?: return@let,
+                                currentId ?: return@let
+                            )
+                        )
+
+                        val epData = episodeClick.data
+                        ctx.setKey(
+                            DOWNLOAD_EPISODE_CACHE,
+                            epData.id.toString(),
+                            VideoDownloadHelper.DownloadEpisodeCached(
+                                epData.name,
+                                epData.poster,
+                                epData.episode,
+                                epData.season,
+                                epData.id,
+                                currentId ?: return@let,
+                                epData.rating,
+                                epData.descript
+                            )
+                        )
+
+                        // DOWNLOAD VIDEO
+                        VideoDownloadManager.downloadEpisode(
+                            ctx,
+                            url ?: return@main,
+                            folder,
+                            meta,
+                            currentLinks ?: return@main
+                        )
                     }
                 }
             }
         }
 
-        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let { it ->
+        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             EpisodeAdapter(
-                it,
                 ArrayList(),
-                result_episodes,
             ) { episodeClick ->
                 handleAction(episodeClick)
             }
-        }
+
 
         result_episodes.adapter = adapter
         result_episodes.layoutManager = GridLayoutManager(context, 1)
@@ -408,6 +500,12 @@ class ResultFragment : Fragment() {
         observe(viewModel.allEpisodes) {
             allEpisodes = it
         }
+
+        observe(viewModel.allEpisodesSubs) {
+            allEpisodesSubs = it
+        }
+
+
 
         observe(viewModel.selectedSeason) { season ->
             result_season_button?.text = fromIndexToSeasonText(season)
@@ -435,6 +533,10 @@ class ResultFragment : Fragment() {
             (result_episodes.adapter as EpisodeAdapter).cardList = episodes
             (result_episodes.adapter as EpisodeAdapter).updateLayout()
             (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
+        }
+
+        observe(viewModel.id) {
+            currentId = it
         }
 
         observe(viewModel.resultResponse) { data ->

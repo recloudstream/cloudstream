@@ -26,7 +26,7 @@ class ResultViewModel : ViewModel() {
     private val dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
 
     private val page: MutableLiveData<LoadResponse> = MutableLiveData()
-    private val id: MutableLiveData<Int> = MutableLiveData()
+    val id: MutableLiveData<Int> = MutableLiveData()
     val selectedSeason: MutableLiveData<Int> = MutableLiveData(-2)
     val seasonSelections: MutableLiveData<List<Int?>> = MutableLiveData()
 
@@ -208,6 +208,41 @@ class ResultViewModel : ViewModel() {
         loadEpisode(episode.id, episode.data, isCasting, callback)
     }
 
+    suspend fun loadEpisode(
+        episode: ResultEpisode,
+        isCasting: Boolean,
+    ) : Resource<ResultViewModel.EpisodeData> {
+        return loadEpisode(episode.id, episode.data, isCasting)
+    }
+
+    private suspend fun loadEpisode(
+        id: Int,
+        data: String,
+        isCasting: Boolean,
+    ): Resource<ResultViewModel.EpisodeData> {
+        if (_allEpisodes.value?.contains(id) == true) {
+            _allEpisodes.value?.remove(id)
+        }
+        val links = ArrayList<ExtractorLink>()
+        val subs = ArrayList<SubtitleFile>()
+        return safeApiCall {
+            getApiFromName(_apiName.value).loadLinks(data, isCasting, { subtitleFile ->
+                if (!subs.any { it.url == subtitleFile.url }) {
+                    subs.add(subtitleFile)
+                    _allEpisodesSubs.value?.set(id, subs)
+                    _allEpisodesSubs.postValue(_allEpisodesSubs.value)
+                }
+            }) { link ->
+                if (!links.any { it.url == link.url }) {
+                    links.add(link)
+                    _allEpisodes.value?.set(id, links)
+                    _allEpisodes.postValue(_allEpisodes.value)
+                }
+            }
+            EpisodeData(links, subs)
+        }
+    }
+
     private fun loadEpisode(
         id: Int,
         data: String,
@@ -215,27 +250,7 @@ class ResultViewModel : ViewModel() {
         callback: (Resource<EpisodeData>) -> Unit,
     ) =
         viewModelScope.launch {
-            if (_allEpisodes.value?.contains(id) == true) {
-                _allEpisodes.value?.remove(id)
-            }
-            val links = ArrayList<ExtractorLink>()
-            val subs = ArrayList<SubtitleFile>()
-            val localData = safeApiCall {
-                getApiFromName(_apiName.value).loadLinks(data, isCasting, { subtitleFile ->
-                    if (!subs.any { it.url == subtitleFile.url }) {
-                        subs.add(subtitleFile)
-                        _allEpisodesSubs.value?.set(id, subs)
-                        _allEpisodesSubs.postValue(_allEpisodesSubs.value)
-                    }
-                }) { link ->
-                    if (!links.any { it.url == link.url }) {
-                        links.add(link)
-                        _allEpisodes.value?.set(id, links)
-                        _allEpisodes.postValue(_allEpisodes.value)
-                    }
-                }
-                EpisodeData(links, subs)
-            }
+            val localData = loadEpisode(id, data, isCasting)
             callback.invoke(localData)
         }
 

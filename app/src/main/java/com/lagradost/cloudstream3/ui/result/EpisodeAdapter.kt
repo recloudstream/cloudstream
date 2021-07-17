@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +11,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,15 +19,27 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
+import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
 
-const val ACTION_RELOAD_EPISODE = 4
-const val ACTION_CHROME_CAST_EPISODE = 2
-const val ACTION_DOWNLOAD_EPISODE = 3
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
+const val ACTION_PLAY_EPISODE_IN_EXTERNAL_PLAYER = 2
+const val ACTION_PLAY_EPISODE_IN_BROWSER = 3
+
+const val ACTION_CHROME_CAST_EPISODE = 4
+const val ACTION_CHROME_CAST_MIRROR = 5
+
+const val ACTION_DOWNLOAD_EPISODE = 6
+const val ACTION_DOWNLOAD_MIRROR = 7
+
+const val ACTION_RELOAD_EPISODE = 8
+const val ACTION_COPY_LINK = 9
+
+const val ACTION_SHOW_OPTIONS = 10
 
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
@@ -69,8 +84,6 @@ class EpisodeAdapter(
         itemView: View,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
-        //private val episodeViewPrecentage: View? = itemView.episode_view_procentage
-        // private val episodeViewPercentageOff: View? = itemView.episode_view_procentage_off
         private val episodeText: TextView = itemView.episode_text
         private val episodeRating: TextView? = itemView.episode_rating
         private val episodeDescript: TextView? = itemView.episode_descript
@@ -78,8 +91,6 @@ class EpisodeAdapter(
         private val episodePoster: ImageView? = itemView.episode_poster
         private val episodeDownload: ImageView? = itemView.episode_download
 
-        // val episodeExtra: ImageView = itemView.episode_extra
-        // private val episodePlay: ImageView = itemView.episode_play
         private val episodeHolder = itemView.episode_holder
 
         @SuppressLint("SetTextI18n")
@@ -87,20 +98,7 @@ class EpisodeAdapter(
             val name = if (card.name == null) "Episode ${card.episode}" else "${card.episode}. ${card.name}"
             episodeText.text = name
 
-            fun setWidth(v: View, procentage: Float) {
-                val param = LinearLayout.LayoutParams(
-                    v.layoutParams.width,
-                    v.layoutParams.height,
-                    procentage
-                )
-                v.layoutParams = param
-            }
-
             val watchProgress = card.getWatchProgress()
-            /*if (episodeViewPrecentage != null && episodeViewPercentageOff != null) {
-                setWidth(episodeViewPrecentage, watchProgress)
-                setWidth(episodeViewPercentageOff, 1 - watchProgress)
-            }*/
 
             episodeProgress?.progress = (watchProgress * 50).toInt()
             episodeProgress?.visibility = if (watchProgress > 0.0f) View.VISIBLE else View.GONE
@@ -133,21 +131,18 @@ class EpisodeAdapter(
 
             episodeHolder.setOnClickListener {
                 episodeHolder.context?.let { ctx ->
-                    if (ctx.isCastApiAvailable()) {
-                        val castContext = CastContext.getSharedInstance(ctx)
-
-                        if (castContext.castState == CastState.CONNECTED) {
-                            clickCallback.invoke(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
-                        } else {
-                            // clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
-                            clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
-                        }
+                    if (ctx.isConnectedToChromecast()) {
+                        clickCallback.invoke(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
                     } else {
-                        // clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card)) //TODO REDO TO MAIN
+                        clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
                     }
                 }
+            }
 
+            episodeHolder.setOnLongClickListener {
+                clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
+
+                return@setOnLongClickListener true
             }
 
             episodeDownload?.setOnClickListener {

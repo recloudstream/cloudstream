@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
+const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
+const val DOWNLOAD_EPISODE_CACHE = "download_episode_cache"
+
 const val PREFERENCES_NAME: String = "rebuild_preference"
 
 object DataStore {

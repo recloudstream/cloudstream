@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.lagradost.cloudstream3.ui.result.ResultFragment
@@ -150,6 +151,17 @@ object UIHelper {
         }
         return isCastApiAvailable
     }
+
+    fun Context.isConnectedToChromecast(): Boolean {
+        if (isCastApiAvailable()) {
+            val castContext = CastContext.getSharedInstance(this)
+            if (castContext.castState == CastState.CONNECTED) {
+                return true
+            }
+        }
+        return false
+    }
+
 
     fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
         val alpha = (Color.alpha(color) * factor).roundToInt()
