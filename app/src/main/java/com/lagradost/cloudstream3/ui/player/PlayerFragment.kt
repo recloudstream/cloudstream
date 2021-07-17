@@ -101,8 +101,8 @@ const val PLAYBACK_SPEED = "playback_speed"
 const val RESIZE_MODE_KEY = "resize_mode" // Last used resize mode
 const val PLAYBACK_SPEED_KEY = "playback_speed" // Last used playback speed
 
-const val OPENING_PROCENTAGE = 50
-const val AUTOLOAD_NEXT_EPISODE_PROCENTAGE = 80
+const val OPENING_PRECENTAGE = 50
+const val AUTOLOAD_NEXT_EPISODE_PRECENTAGE = 80
 
 enum class PlayerEventType(val value: Int) {
     Stop(-1),
@@ -502,7 +502,7 @@ class PlayerFragment : Fragment() {
             val percentage = ((position ?: exoPlayer.currentPosition) * 100 / exoPlayer.contentDuration).toInt()
             val hasNext = hasNextEpisode()
 
-            if (percentage >= AUTOLOAD_NEXT_EPISODE_PROCENTAGE && hasNext) {
+            if (percentage >= AUTOLOAD_NEXT_EPISODE_PRECENTAGE && hasNext) {
                 val ep =
                     episodes[playerData.episodeIndex + 1]
 
@@ -512,7 +512,7 @@ class PlayerFragment : Fragment() {
                     }
                 }
             }
-            val nextEp = percentage >= OPENING_PROCENTAGE
+            val nextEp = percentage >= OPENING_PRECENTAGE
             val isAnime =
                 data.isAnimeBased()//(data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
 
@@ -1267,7 +1267,6 @@ class PlayerFragment : Fragment() {
         super.onDestroy()
         isInPlayer = false
 
-        savePos()
         savePositionInPlayer()
         safeReleasePlayer()
 
@@ -1377,17 +1376,17 @@ class PlayerFragment : Fragment() {
             }
 
             val mimeType = if (currentUrl.isM3u8) MimeTypes.APPLICATION_M3U8 else MimeTypes.APPLICATION_MP4
-            val _mediaItem = MediaItem.Builder()
+            val mediaItemBuilder = MediaItem.Builder()
                 //Replace needed for android 6.0.0  https://github.com/google/ExoPlayer/issues/5983
                 .setMimeType(mimeType)
 
             if (isOnline) {
-                _mediaItem.setUri(currentUrl.url)
+                mediaItemBuilder.setUri(currentUrl.url)
             } else {
-                _mediaItem.setUri(Uri.fromFile(File(currentUrl.url)))
+                mediaItemBuilder.setUri(Uri.fromFile(File(currentUrl.url)))
             }
 
-            val mediaItem = _mediaItem.build()
+            val mediaItem = mediaItemBuilder.build()
             val trackSelector = DefaultTrackSelector(requireContext())
             // Disable subtitles
             trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(requireContext())
@@ -1470,14 +1469,13 @@ class PlayerFragment : Fragment() {
                         if (height == null || width == null) currentUrl.name else "${currentUrl.name} - ${width}x${height}"
 
                     if (!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
-                        println("FIRST RENDER")
                         changeSkip()
                         exoPlayer
                             .createMessage { _, _ ->
                                 changeSkip()
                             }
                             .setLooper(Looper.getMainLooper())
-                            .setPosition( /* positionMs= */exoPlayer.contentDuration * OPENING_PROCENTAGE / 100)
+                            .setPosition( /* positionMs= */exoPlayer.contentDuration * OPENING_PRECENTAGE / 100)
                             //   .setPayload(customPayloadData)
                             .setDeleteAfterDelivery(false)
                             .send()
@@ -1486,7 +1484,7 @@ class PlayerFragment : Fragment() {
                                 changeSkip()
                             }
                             .setLooper(Looper.getMainLooper())
-                            .setPosition( /* positionMs= */exoPlayer.contentDuration * AUTOLOAD_NEXT_EPISODE_PROCENTAGE / 100)
+                            .setPosition( /* positionMs= */exoPlayer.contentDuration * AUTOLOAD_NEXT_EPISODE_PRECENTAGE / 100)
                             //   .setPayload(customPayloadData)
                             .setDeleteAfterDelivery(false)
 

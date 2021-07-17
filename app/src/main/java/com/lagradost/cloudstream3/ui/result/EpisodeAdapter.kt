@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
 
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
-const val ACTION_PLAY_EPISODE_IN_EXTERNAL_PLAYER = 2
+const val ACTION_PLAY_EPISODE_IN_VLC_PLAYER = 2
 const val ACTION_PLAY_EPISODE_IN_BROWSER = 3
 
 const val ACTION_CHROME_CAST_EPISODE = 4

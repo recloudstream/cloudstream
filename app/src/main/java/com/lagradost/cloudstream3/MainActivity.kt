@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3
 
+import android.R.attr
 import android.app.PictureInPictureParams
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -10,24 +12,33 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.anggrayudi.storage.SimpleStorage
-import com.anggrayudi.storage.file.StorageId
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.hasPIPPermission
+import com.lagradost.cloudstream3.UIHelper.isUsingMobileData
 import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
-import com.lagradost.cloudstream3.services.RESTART_ALL_DOWNLOADS_AND_QUEUE
-import com.lagradost.cloudstream3.services.START_VALUE_KEY
-import com.lagradost.cloudstream3.services.VideoDownloadKeepAliveService
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
+import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKeys
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_result.*
 
+const val VLC_PACKAGE = "org.videolan.vlc"
+const val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
+val VLC_COMPONENT: ComponentName =
+    ComponentName(VLC_PACKAGE, "org.videolan.vlc.gui.video.VideoPlayerActivity")
+const val VLC_REQUEST_CODE = 42
+
+const val VLC_FROM_START = -1
+const val VLC_FROM_PROGRESS = -2
+const val VLC_EXTRA_POSITION_OUT = "extra_position"
+const val VLC_EXTRA_DURATION_OUT = "extra_duration"
+const val VLC_LAST_ID_KEY = "vlc_last_open_id"
 
 class MainActivity : AppCompatActivity() {
     /*, ViewModelStoreOwner {
@@ -50,8 +61,6 @@ class MainActivity : AppCompatActivity() {
         const val REQUEST_CODE_PICK_FILE = 3
         const val REQUEST_CODE_ASK_PERMISSIONS = 4
     }
-
-    private lateinit var storage: SimpleStorage
 
     private fun enterPIPMode() {
         if (!shouldShowPIPMode(isInPlayer) || !canShowPipMode) return
@@ -96,25 +105,21 @@ class MainActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
-
-    private fun setupSimpleStorage() {
-        storage = SimpleStorage(this)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (VLC_REQUEST_CODE == requestCode) {
+            if (resultCode == RESULT_OK && data != null) {
+                val pos: Long =
+                    data.getLongExtra(VLC_EXTRA_POSITION_OUT, -1) //Last position in media when player exited
+                val dur: Long =
+                    data.getLongExtra(VLC_EXTRA_DURATION_OUT, -1) //Last position in media when player exited
+                val id = getKey<Int>(VLC_LAST_ID_KEY)
+                if (dur > 0 && pos > 0) {
+                    setViewPos(id, pos, dur)
+                }
+                removeKey(VLC_LAST_ID_KEY)
+            }
+        }
         super.onActivityResult(requestCode, resultCode, data)
-        // Mandatory for Activity, but not for Fragment
-        storage.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        storage.onSaveInstanceState(outState)
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        storage.onRestoreInstanceState(savedInstanceState)
     }
 
     override fun onDestroy() {
@@ -128,11 +133,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainContext = this
-        setupSimpleStorage()
-
-        if (!storage.isStorageAccessGranted(StorageId.PRIMARY)) {
-            storage.requestStorageAccess(REQUEST_CODE_STORAGE_ACCESS)
-        }
 
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
         //    this.startService(mServiceIntent)
         //}
 //settingsManager.getBoolean("disable_automatic_data_downloads", true) &&
-        if ( isUsingMobileData()) {
+        if (isUsingMobileData()) {
             Toast.makeText(this, "Downloads not resumed on mobile data", Toast.LENGTH_LONG).show()
         } else {
             val keys = getKeys(VideoDownloadManager.KEY_RESUME_PACKAGES)

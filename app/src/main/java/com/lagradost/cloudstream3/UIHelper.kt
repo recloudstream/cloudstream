@@ -11,6 +11,8 @@ import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.view.Gravity
 import android.view.MenuItem
@@ -30,6 +32,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.wrappers.Wrappers.packageManager
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.Event
 import kotlin.math.roundToInt
@@ -162,6 +165,25 @@ object UIHelper {
         return false
     }
 
+    fun Context.isUsingMobileData(): Boolean {
+        val conManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = conManager.allNetworks
+        return networkInfo.any {
+            conManager.getNetworkCapabilities(it)?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
+        }
+    }
+
+    fun Context.isAppInstalled(uri: String): Boolean {
+        val pm = packageManager(this)
+        var appInstalled = false
+        appInstalled = try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+        return appInstalled
+    }
 
     fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
         val alpha = (Color.alpha(color) * factor).roundToInt()

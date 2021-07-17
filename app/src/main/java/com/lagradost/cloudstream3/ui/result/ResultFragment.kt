@@ -17,7 +17,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
 import androidx.core.text.color
 import androidx.core.widget.NestedScrollView
@@ -38,6 +37,7 @@ import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
+import com.lagradost.cloudstream3.UIHelper.isAppInstalled
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.UIHelper.isConnectedToChromecast
 import com.lagradost.cloudstream3.UIHelper.popCurrentPage
@@ -449,6 +449,7 @@ class ResultFragment : Fragment() {
                         val add = when (opv) {
                             ACTION_CHROME_CAST_EPISODE -> isConnected
                             ACTION_CHROME_CAST_MIRROR -> isConnected
+                            ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> context?.isAppInstalled(VLC_PACKAGE) ?: false
                             else -> true
                         }
                         if (add) {
@@ -497,7 +498,7 @@ class ResultFragment : Fragment() {
                     startChromecast(0)
                 }
 
-                ACTION_PLAY_EPISODE_IN_EXTERNAL_PLAYER -> {
+                ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> {
                     if (activity?.checkWrite() != true) {
                         activity?.requestRW()
                         if (activity?.checkWrite() == true) return@main
@@ -517,14 +518,7 @@ class ResultFragment : Fragment() {
                         text += "\n#EXTINF:, ${link.name}\n${link.url}"
                     }
                     outputFile.writeText(text)
-                    val VLC_PACKAGE = "org.videolan.vlc"
-                    val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
-                    val VLC_COMPONENT: ComponentName =
-                        ComponentName(VLC_PACKAGE, "org.videolan.vlc.gui.video.VideoPlayerActivity")
-                    val REQUEST_CODE = 42
 
-                    val FROM_START = -1
-                    val FROM_PROGRESS = -2
 
                     val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
 
@@ -542,21 +536,20 @@ class ResultFragment : Fragment() {
                         ), "video/*"
                     )
 
-                    val startId = FROM_PROGRESS
+                    val startId = VLC_FROM_PROGRESS
 
                     var position = startId
-                    if (startId == FROM_START) {
+                    if (startId == VLC_FROM_START) {
                         position = 1
-                    } else if (startId == FROM_PROGRESS) {
+                    } else if (startId == VLC_FROM_PROGRESS) {
                         position = 0
                     }
 
                     vlcIntent.putExtra("position", position)
 
                     vlcIntent.component = VLC_COMPONENT
-
-                    activity?.startActivityForResult(vlcIntent, REQUEST_CODE)
-
+                    requireContext().setKey(VLC_LAST_ID_KEY, currentId)
+                    activity?.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
                 }
 
                 ACTION_PLAY_EPISODE_IN_PLAYER -> {

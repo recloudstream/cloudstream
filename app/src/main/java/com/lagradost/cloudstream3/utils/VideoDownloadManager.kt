@@ -558,6 +558,8 @@ object VideoDownloadManager {
                     }
                     DownloadActionType.Stop -> {
                         isStopped = true; updateNotification()
+                        context.removeKey(KEY_RESUME_PACKAGES, event.first.toString())
+                        saveQueue(context)
                     }
                     DownloadActionType.Resume -> {
                         isPaused = false; updateNotification()
