@@ -352,7 +352,7 @@ class ResultFragment : Fragment() {
                     episodeClick.data.index,
                     eps,
                     sortUrls(currentLinks ?: return),
-                    currentSubs ?: return,
+                    currentSubs ?: ArrayList(),
                     startTime = episodeClick.data.getRealPosition(),
                     startIndex = startIndex
                 )
@@ -548,7 +548,7 @@ class ResultFragment : Fragment() {
                     vlcIntent.putExtra("position", position)
 
                     vlcIntent.component = VLC_COMPONENT
-                    requireContext().setKey(VLC_LAST_ID_KEY, currentId)
+                    requireContext().setKey(VLC_LAST_ID_KEY, episodeClick.data.id)
                     activity?.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
                 }
 

@@ -38,4 +38,7 @@
     <color name="videoColorPrimary">@color/colorPrimary</color> <!--0e09df 617EFF 3d50fa-->
 
     <color name="iconColor">#9ba0a6</color>
+
+    <color name="usedStorageColor">#FFF</color>
+    <color name="freeStorageColor">#676767</color>
 </resources>

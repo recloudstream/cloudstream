@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity() {
                 val dur: Long =
                     data.getLongExtra(VLC_EXTRA_DURATION_OUT, -1) //Last position in media when player exited
                 val id = getKey<Int>(VLC_LAST_ID_KEY)
+                println("SET KEY $id at $pos / $dur")
                 if (dur > 0 && pos > 0) {
                     setViewPos(id, pos, dur)
                 }

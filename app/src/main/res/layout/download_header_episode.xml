@@ -53,11 +53,12 @@
                     android:layout_height="wrap_content">
             </TextView>
         </LinearLayout>
+        <!--
+                android:background="?selectableItemBackgroundBorderless"-->
         <ImageView
                 android:layout_marginStart="-40dp"
                 android:layout_height="match_parent"
                 android:layout_width="30dp"
-                android:background="?selectableItemBackgroundBorderless"
                 android:layout_gravity="center_vertical|end"
                 android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
                 android:contentDescription="@string/download_descript"/>
