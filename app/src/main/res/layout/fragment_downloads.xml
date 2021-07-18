@@ -99,8 +99,8 @@
             android:layout_margin="10dp"
             android:id="@+id/download_list"
             android:layout_width="match_parent"
+            tools:listitem="@layout/download_header_episode"
             android:layout_height="wrap_content">
-
     </androidx.recyclerview.widget.RecyclerView>
     <TextView
             android:id="@+id/text_no_downloads"

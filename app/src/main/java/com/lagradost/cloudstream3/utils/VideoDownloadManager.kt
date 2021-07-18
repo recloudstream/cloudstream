@@ -22,9 +22,6 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.services.RESTART_NONE
-import com.lagradost.cloudstream3.services.START_VALUE_KEY
-import com.lagradost.cloudstream3.services.VideoDownloadKeepAliveService
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey

@@ -23,7 +23,6 @@ data class VisualDownloadHeaderCached(
 )
 
 data class DownloadHeaderClickEvent(val action: Int, val data: VideoDownloadHelper.DownloadHeaderCached)
-data class DownloadClickEvent(val action: Int, val data: VideoDownloadHelper.DownloadEpisodeCached)
 
 class DownloadHeaderAdapter(
     var cardList: List<VisualDownloadHeaderCached>,

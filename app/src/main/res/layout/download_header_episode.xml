@@ -17,7 +17,6 @@
             android:layout_height="wrap_content">
         <!--app:cardCornerRadius="@dimen/roundedImageRadius"-->
         <androidx.cardview.widget.CardView
-
                 android:layout_width="70dp"
                 android:layout_height="104dp"
         >

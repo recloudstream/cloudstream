@@ -52,6 +52,7 @@ import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 
@@ -396,7 +397,7 @@ class ResultFragment : Fragment() {
 
                     val epData = episodeClick.data
                     ctx.setKey(
-                        DOWNLOAD_EPISODE_CACHE,
+                        getFolderName(DOWNLOAD_EPISODE_CACHE, (currentId ?: return@let).toString()), // 3 deep folder for faster acess
                         epData.id.toString(),
                         VideoDownloadHelper.DownloadEpisodeCached(
                             epData.name,

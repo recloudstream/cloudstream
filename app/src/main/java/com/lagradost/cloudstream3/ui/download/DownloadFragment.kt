@@ -12,7 +12,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
+import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import kotlinx.android.synthetic.main.fragment_downloads.*
 import kotlinx.android.synthetic.main.fragment_result.*
 
@@ -70,7 +74,16 @@ class DownloadFragment : Fragment() {
             DownloadHeaderAdapter(
                 ArrayList(),
             ) { click ->
-
+                if(click.data.type.isMovieType()) {
+                    //TODO MOVIE
+                }
+                else {
+                    val folder = getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
+                    activity?.supportFragmentManager?.beginTransaction()
+                        ?.setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
+                        ?.add(R.id.homeRoot, DownloadChildFragment.newInstance(click.data.name, folder))
+                        ?.commit()
+                }
             }
         download_list.adapter = adapter
         download_list.layoutManager = GridLayoutManager(context, 1)
