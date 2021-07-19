@@ -8,9 +8,7 @@
         android:id="@+id/searchRoot"
         tools:context=".ui.search.SearchFragment"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/navbarHeight"
-
-        android:background="@color/grayBackground">
+        android:layout_marginTop="@dimen/navbarHeight">
     <FrameLayout android:visibility="visible"
                  android:layout_margin="10dp"
                  android:background="@drawable/search_background"

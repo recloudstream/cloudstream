@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.isMovieType
@@ -64,6 +66,7 @@ class DownloadFragment : Fragment() {
         observe(downloadsViewModel.downloadBytes) {
             download_app_txt?.text = "App • ${getBytesAsText(it)}GB"
             download_app?.setLayoutWidth(it)
+            download_storage_appbar?.visibility = View.VISIBLE
         }
         return inflater.inflate(R.layout.fragment_downloads, container, false)
     }
@@ -79,10 +82,11 @@ class DownloadFragment : Fragment() {
                 }
                 else {
                     val folder = getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
-                    activity?.supportFragmentManager?.beginTransaction()
-                        ?.setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
-                        ?.add(R.id.homeRoot, DownloadChildFragment.newInstance(click.data.name, folder))
-                        ?.commit()
+                    val navController = activity?.findNavController(R.id.nav_host_fragment)
+                    navController?.navigate(R.id.navigation_download_child, Bundle().apply {
+                            putString("folder", folder)
+                            putString("name", click.data.name)
+                    })
                 }
             }
         download_list.adapter = adapter

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/download_root"
         android:orientation="vertical"
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -7,100 +7,114 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/darkBackground"
         tools:context=".ui.download.DownloadFragment">
-    <LinearLayout
-            android:layout_margin="10dp"
-            android:orientation="vertical"
+    <com.google.android.material.appbar.AppBarLayout
+            android:background="?attr/darkBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <TextView
-                android:layout_marginBottom="5dp"
-                android:text="@string/download_storage_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-        </TextView>
+        <!--
+        For Scroll add to LinearLayout
+        app:layout_scrollFlags="scroll|enterAlways"
+        -->
         <LinearLayout
-                android:layout_marginBottom="5dp"
-                android:layout_width="fill_parent"
-                android:layout_height="12dp"
-                android:orientation="horizontal">
-            <View
-                    android:layout_weight="0.5"
-                    android:id="@+id/download_used"
-                    android:background="@color/usedStorageColor"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"/>
-            <View
-                    android:id="@+id/download_app"
-                    android:layout_weight="0.10"
-                    android:background="?attr/colorPrimary"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"/>
-            <View
-                    android:id="@+id/download_free"
-                    android:layout_weight="0.10"
-                    android:background="@color/freeStorageColor"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"/>
-        </LinearLayout>
-        <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/download_storage_appbar"
+                android:visibility="gone"
+                android:layout_margin="10dp"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            <View
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginTop="5dp"
+            <TextView
                     android:layout_marginBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@color/usedStorageColor"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"/>
-            <TextView
-                    android:id="@+id/download_used_txt"
-                    android:layout_gravity="center_vertical"
-                    tools:text="Used • 30.58GB"
-                    android:textSize="12sp"
-                    android:textColor="?attr/textColor"
+                    android:text="@string/download_storage_text"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content">
+            </TextView>
+            <LinearLayout
+                    android:layout_marginBottom="5dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="12dp"
+                    android:orientation="horizontal">
+                <View
+                        android:layout_weight="0.5"
+                        android:id="@+id/download_used"
+                        android:background="@color/usedStorageColor"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"/>
+                <View
+                        android:id="@+id/download_app"
+                        android:layout_weight="0.10"
+                        android:background="?attr/colorPrimary"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"/>
+                <View
+                        android:id="@+id/download_free"
+                        android:layout_weight="0.10"
+                        android:background="@color/freeStorageColor"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <View
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/usedStorageColor"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"/>
+                <TextView
+                        android:id="@+id/download_used_txt"
+                        android:layout_gravity="center_vertical"
+                        tools:text="Used • 30.58GB"
+                        android:textSize="12sp"
+                        android:textColor="?attr/textColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
 
-            <View
-                    android:layout_margin="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="?attr/colorPrimary"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"/>
-            <TextView
-                    android:id="@+id/download_app_txt"
-                    android:layout_gravity="center_vertical"
-                    tools:text="App • 30.58GB"
-                    android:textSize="12sp"
-                    android:textColor="?attr/textColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            <View
-                    android:layout_margin="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@color/freeStorageColor"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"/>
-            <TextView
-                    android:id="@+id/download_free_txt"
-                    android:textSize="12sp"
-                    android:layout_gravity="center_vertical"
-                    tools:text="Free • 30.58GB"
-                    android:textColor="?attr/textColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                <View
+                        android:layout_margin="5dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="?attr/colorPrimary"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"/>
+                <TextView
+                        android:id="@+id/download_app_txt"
+                        android:layout_gravity="center_vertical"
+                        tools:text="App • 30.58GB"
+                        android:textSize="12sp"
+                        android:textColor="?attr/textColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                <View
+                        android:layout_margin="5dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/freeStorageColor"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"/>
+                <TextView
+                        android:id="@+id/download_free_txt"
+                        android:textSize="12sp"
+                        android:layout_gravity="center_vertical"
+                        tools:text="Free • 30.58GB"
+                        android:textColor="?attr/textColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-            android:layout_margin="10dp"
+            android:background="?attr/bitDarkerGrayBackground"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:padding="10dp"
             android:id="@+id/download_list"
             android:layout_width="match_parent"
             tools:listitem="@layout/download_header_episode"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
     </androidx.recyclerview.widget.RecyclerView>
     <TextView
             android:id="@+id/text_no_downloads"
@@ -115,4 +129,4 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

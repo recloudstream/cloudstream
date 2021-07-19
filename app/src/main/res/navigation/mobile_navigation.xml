@@ -18,7 +18,7 @@
             tools:layout="@layout/fragment_search"/>
 
     <fragment
-            android:id="@+id/navigation_notifications"
+            android:id="@+id/navigation_downloads"
             android:name="com.lagradost.cloudstream3.ui.download.DownloadFragment"
             android:label="@string/title_downloads"
             tools:layout="@layout/fragment_downloads"/>
@@ -26,6 +26,13 @@
             android:id="@+id/navigation_settings"
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.settings.SettingsFragment"
+            android:label="@string/title_settings"
+    />
+
+    <fragment
+            android:id="@+id/navigation_download_child"
+            android:layout_height="match_parent"
+            android:name="com.lagradost.cloudstream3.ui.download.DownloadChildFragment"
             android:label="@string/title_settings"
     />
 </navigation>

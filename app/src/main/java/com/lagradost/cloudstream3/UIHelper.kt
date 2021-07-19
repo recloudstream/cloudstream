@@ -19,6 +19,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
@@ -26,6 +27,10 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.alpha
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastContext
@@ -57,6 +62,20 @@ object UIHelper {
                 Manifest.permission.READ_EXTERNAL_STORAGE
             ),
             1337)
+    }
+
+    @ColorInt
+    fun Context.getResourceColor(@AttrRes resource: Int, alphaFactor: Float = 1f): Int {
+        val typedArray = obtainStyledAttributes(intArrayOf(resource))
+        val color = typedArray.getColor(0, 0)
+        typedArray.recycle()
+
+        if (alphaFactor < 1f) {
+            val alpha = (color.alpha * alphaFactor).roundToInt()
+            return Color.argb(alpha, color.red, color.green, color.blue)
+        }
+
+        return color
     }
 
     fun AppCompatActivity.loadResult(url: String, slug: String, apiName: String) {

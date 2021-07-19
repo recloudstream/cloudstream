@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        android:background="@color/bitDarkerGrayBackground"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:background="?attr/darkBackground"
         android:id="@+id/download_child_root"
         android:orientation="vertical"
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -9,11 +9,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.download.DownloadFragment">
+    <com.google.android.material.appbar.AppBarLayout
+            android:background="@android:color/transparent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/download_child_toolbar"
+                android:paddingTop="@dimen/navbarHeight"
+                tools:title="Overlord"
+                android:background="?attr/darkBackground"
+                app:navigationIconTint="?attr/iconColor"
+                app:titleTextColor="?attr/textColor"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:layout_width="match_parent" android:layout_height="wrap_content">
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.recyclerview.widget.RecyclerView
-            android:layout_margin="10dp"
+            android:background="?attr/bitDarkerGrayBackground"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:padding="10dp"
             tools:listitem="@layout/download_child_episode"
             android:id="@+id/download_child_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
     </androidx.recyclerview.widget.RecyclerView>
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

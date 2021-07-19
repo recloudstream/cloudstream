@@ -4,14 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.ui.player.PlayerData
+import com.lagradost.cloudstream3.ui.player.PlayerFragment
+import com.lagradost.cloudstream3.ui.player.UriData
+import com.lagradost.cloudstream3.ui.result.getRealPosition
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_child_downloads.*
@@ -68,6 +74,11 @@ class DownloadChildFragment : Fragment() {
         }
         context?.fixPaddingStatusbar(download_child_root)
 
+        download_child_toolbar.title = name
+        download_child_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        download_child_toolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
+        }
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             DownloadChildAdapter(
@@ -77,6 +88,28 @@ class DownloadChildFragment : Fragment() {
                     val info =
                         VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), click.data.id)
                             ?: return@DownloadChildAdapter
+
+                    (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
+                        .setCustomAnimations(
+                            R.anim.enter_anim,
+                            R.anim.exit_anim,
+                            R.anim.pop_enter,
+                            R.anim.pop_exit
+                        )
+                        .add(
+                            R.id.homeRoot,
+                            PlayerFragment.newInstance(
+                                UriData(
+                                    info.path.toString(),
+                                    click.data.id,
+                                    name ?: "null",
+                                    click.data.episode,
+                                    click.data.season
+                                ),
+                                context?.getViewPos(click.data.id)?.position ?: 0
+                            )
+                        )
+                        .commit()
                 }
             }
         download_child_list.adapter = adapter

@@ -1,25 +1,29 @@
 package com.lagradost.cloudstream3
 
-import android.R.attr
 import android.app.PictureInPictureParams
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lagradost.cloudstream3.UIHelper.checkWrite
+import com.lagradost.cloudstream3.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.UIHelper.isUsingMobileData
 import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
+import com.lagradost.cloudstream3.ui.download.DownloadChildFragment
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
@@ -54,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         var canShowPipMode: Boolean = false
         var isInPIPMode: Boolean = false
         lateinit var mainContext: MainActivity
+        lateinit var navOptions: NavOptions
 
         //https://github.com/anggrayudi/SimpleStorage/blob/4eb6306efb6cdfae4e34f170c8b9d4e135b04d51/sample/src/main/java/com/anggrayudi/storage/sample/activity/MainActivity.kt#L624
         const val REQUEST_CODE_STORAGE_ACCESS = 1
@@ -87,6 +92,17 @@ class MainActivity : AppCompatActivity() {
     private fun AppCompatActivity.backPressed(): Boolean {
         val currentFragment = supportFragmentManager.fragments.last {
             it.isVisible
+        }
+
+        if (currentFragment is NavHostFragment) {
+            val child = currentFragment.childFragmentManager.fragments.last {
+                it.isVisible
+            }
+            if (child is DownloadChildFragment) {
+                val navController = findNavController(R.id.nav_host_fragment)
+                navController.navigate(R.id.navigation_downloads, Bundle(), navOptions)
+                return true
+            }
         }
 
         if (currentFragment != null && supportFragmentManager.fragments.size > 2) {
@@ -146,15 +162,35 @@ class MainActivity : AppCompatActivity() {
                     hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
 
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_search, R.id.navigation_notifications
-            )
-        )
-        //setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+
+        navOptions = NavOptions.Builder()
+            .setLaunchSingleTop(true)
+            .setEnterAnim(R.anim.nav_enter_anim)
+            .setExitAnim(R.anim.nav_exit_anim)
+            .setPopEnterAnim(R.anim.nav_pop_enter)
+            .setPopExitAnim(R.anim.nav_pop_exit)
+            .setPopUpTo(navController.graph.startDestination, false)
+            .build()
+
+        navView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+               // R.id.navigation_home -> {
+                   // navController.navigate(R.id.navigation_home, null, navOptions)
+                //}
+                R.id.navigation_search -> {
+                    navController.navigate(R.id.navigation_search, null, navOptions)
+                }
+                R.id.navigation_downloads -> {
+                    navController.navigate(R.id.navigation_downloads, null, navOptions)
+                }
+                R.id.navigation_settings -> {
+                    navController.navigate(R.id.navigation_settings, null, navOptions)
+                }
+            }
+            true
+        }
+
+        navView.itemRippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
 
         if (!checkWrite()) {
             requestRW()

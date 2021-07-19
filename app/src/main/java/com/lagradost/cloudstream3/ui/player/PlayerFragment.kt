@@ -39,6 +39,7 @@ import androidx.transition.TransitionManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.TIME_UNSET
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
@@ -71,6 +72,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeDirectly
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultViewModel
+import com.lagradost.cloudstream3.utils.AppUtils.getVideoContentUri
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -81,7 +83,6 @@ import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.coroutines.*
-import java.io.File
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -131,6 +132,14 @@ data class PlayerData(
     val mirrorId: Int,
 )
 
+data class UriData(
+    val uri: String,
+    val id: Int?,
+    val name: String,
+    val episode: Int?,
+    val season: Int?,
+)
+
 // YE, I KNOW, THIS COULD BE HANDLED A LOT BETTER
 class PlayerFragment : Fragment() {
     private var isCurrentlyPlaying: Boolean = false
@@ -143,6 +152,9 @@ class PlayerFragment : Fragment() {
     private var isPlayerPlaying = true
     private lateinit var viewModel: ResultViewModel
     private lateinit var playerData: PlayerData
+    private lateinit var uriData: UriData
+    private var isDownloadedFile = false
+    private var downloadId = 0
     private var isLoading = true
     private var isShowing = true
     private lateinit var exoPlayer: SimpleExoPlayer
@@ -598,14 +610,31 @@ class PlayerFragment : Fragment() {
                     }
                 }
             }
+
+        fun newInstance(uriData: UriData, startPos: Long? = null) =
+            PlayerFragment().apply {
+                arguments = Bundle().apply {
+                    //println(data)
+                    putString("uriData", mapper.writeValueAsString(uriData))
+
+                    if (startPos != null) {
+                        putLong(STATE_RESUME_POSITION, startPos)
+                    }
+                }
+            }
     }
 
     private fun savePos() {
         if (this::exoPlayer.isInitialized) {
             if (exoPlayer.duration > 0 && exoPlayer.currentPosition > 0) {
                 context?.let { ctx ->
-                    ctx.setViewPos(getEpisode()?.id, exoPlayer.currentPosition, exoPlayer.duration)
-                    viewModel.reloadEpisodes(ctx)
+                    ctx.setViewPos(
+                        if (isDownloadedFile) uriData.id else getEpisode()?.id,
+                        exoPlayer.currentPosition,
+                        exoPlayer.duration
+                    )
+                    if (!isDownloadedFile)
+                        viewModel.reloadEpisodes(ctx)
                 }
             }
         }
@@ -774,7 +803,7 @@ class PlayerFragment : Fragment() {
         navigationBarHeight = requireContext().getNavigationBarHeight()
         statusBarHeight = requireContext().getStatusBarHeight()
 
-        if (activity?.isCastApiAvailable() == true) {
+        if (activity?.isCastApiAvailable() == true && !isDownloadedFile) {
             CastButtonFactory.setUpMediaRouteButton(activity, player_media_route_button)
             val castContext = CastContext.getSharedInstance(requireContext())
 
@@ -852,14 +881,24 @@ class PlayerFragment : Fragment() {
             }
         }
 
+        isDownloadedFile = false
+        arguments?.getString("uriData")?.let {
+            uriData = mapper.readValue(it)
+            isDownloadedFile = true
+        }
+
         arguments?.getString("data")?.let {
-            playerData = mapper.readValue(it, PlayerData::class.java)
+            playerData = mapper.readValue(it)
         }
 
         arguments?.getLong(STATE_RESUME_POSITION)?.let {
             playbackPosition = it
         }
 
+        sources_btt.visibility =
+            if (isDownloadedFile) View.GONE else View.VISIBLE
+        player_media_route_button.visibility =
+            if (isDownloadedFile) View.GONE else View.VISIBLE
         if (savedInstanceState != null) {
             currentWindow = savedInstanceState.getInt(STATE_RESUME_WINDOW)
             playbackPosition = savedInstanceState.getLong(STATE_RESUME_POSITION)
@@ -883,60 +922,61 @@ class PlayerFragment : Fragment() {
                 android.provider.Settings.System.CONTENT_URI, true, volumeObserver
             )
 
-        viewModel = ViewModelProvider(requireActivity()).get(ResultViewModel::class.java)
+        if (!isDownloadedFile) {
+            viewModel = ViewModelProvider(requireActivity()).get(ResultViewModel::class.java)
 
-        observeDirectly(viewModel.episodes) { _episodes ->
-            episodes = _episodes
-            if (isLoading) {
-                if (playerData.episodeIndex > 0 && playerData.episodeIndex < episodes.size) {
+            observeDirectly(viewModel.episodes) { _episodes ->
+                episodes = _episodes
+                if (isLoading) {
+                    if (playerData.episodeIndex > 0 && playerData.episodeIndex < episodes.size) {
 
-                } else {
-                    // WHAT THE FUCK DID YOU DO
+                    } else {
+                        // WHAT THE FUCK DID YOU DO
+                    }
                 }
             }
-        }
 
-        observe(viewModel.apiName) {
-            apiName = it
-        }
+            observe(viewModel.apiName) {
+                apiName = it
+            }
 
-        overlay_loading_skip_button?.alpha = 0.5f
-        observeDirectly(viewModel.allEpisodes) { _allEpisodes ->
-            allEpisodes = _allEpisodes
+            overlay_loading_skip_button?.alpha = 0.5f
+            observeDirectly(viewModel.allEpisodes) { _allEpisodes ->
+                allEpisodes = _allEpisodes
 
-            val current = getUrls()
-            if (current != null) {
-                if (current.isNotEmpty()) {
-                    overlay_loading_skip_button?.alpha = 1f
+                val current = getUrls()
+                if (current != null) {
+                    if (current.isNotEmpty()) {
+                        overlay_loading_skip_button?.alpha = 1f
+                    } else {
+                        overlay_loading_skip_button?.alpha = 0.5f
+                    }
                 } else {
                     overlay_loading_skip_button?.alpha = 0.5f
                 }
-            } else {
-                overlay_loading_skip_button?.alpha = 0.5f
             }
-        }
 
-        observeDirectly(viewModel.allEpisodesSubs) { _allEpisodesSubs ->
-            allEpisodesSubs = _allEpisodesSubs
-        }
+            observeDirectly(viewModel.allEpisodesSubs) { _allEpisodesSubs ->
+                allEpisodesSubs = _allEpisodesSubs
+            }
 
-        observeDirectly(viewModel.resultResponse) { data ->
-            when (data) {
-                is Resource.Success -> {
-                    val d = data.value
-                    if (d is LoadResponse) {
-                        localData = d
-                        currentPoster = d.posterUrl
-                        currentHeaderName = d.name
-                        currentIsMovie = !d.isEpisodeBased()
+            observeDirectly(viewModel.resultResponse) { data ->
+                when (data) {
+                    is Resource.Success -> {
+                        val d = data.value
+                        if (d is LoadResponse) {
+                            localData = d
+                            currentPoster = d.posterUrl
+                            currentHeaderName = d.name
+                            currentIsMovie = !d.isEpisodeBased()
+                        }
+                    }
+                    is Resource.Failure -> {
+                        //WTF, HOW DID YOU EVEN GET HERE
                     }
                 }
-                is Resource.Failure -> {
-                    //WTF, HOW DID YOU EVEN GET HERE
-                }
             }
         }
-
         val fastForwardTime = settingsManager.getInt("fast_forward_button_time", 10)
         exo_rew_text.text = fastForwardTime.toString()
         exo_ffwd_text.text = fastForwardTime.toString()
@@ -1193,7 +1233,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun hasNextEpisode(): Boolean {
-        return episodes.size > playerData.episodeIndex + 1
+        return !isDownloadedFile && episodes.size > playerData.episodeIndex + 1 // TODO FIX DOWNLOADS NEXT EPISODE
     }
 
     private var isCurrentlySkippingEp = false
@@ -1335,8 +1375,8 @@ class PlayerFragment : Fragment() {
     private val updateProgressAction = Runnable { updateProgressBar() }*/
 
     @SuppressLint("SetTextI18n")
-    fun initPlayer(currentUrl: ExtractorLink?) {
-        if (currentUrl == null) return
+    fun initPlayer(currentUrl: ExtractorLink?, uri: String? = null) {
+        if (currentUrl == null && uri == null) return
         isCurrentlyPlaying = true
         hasUsedFirstRender = false
 
@@ -1347,9 +1387,9 @@ class PlayerFragment : Fragment() {
                 exoPlayer.release()
             }
             val isOnline =
-                currentUrl.url.startsWith("https://") || currentUrl.url.startsWith("http://")
+                currentUrl != null && (currentUrl.url.startsWith("https://") || currentUrl.url.startsWith("http://"))
 
-            if (settingsManager.getBoolean("ignore_ssl", true)) {
+            if (settingsManager.getBoolean("ignore_ssl", true) && !isDownloadedFile) {
                 // Disables ssl check
                 val sslContext: SSLContext = SSLContext.getInstance("TLS")
                 sslContext.init(null, arrayOf(SSLTrustManager()), java.security.SecureRandom())
@@ -1367,7 +1407,8 @@ class PlayerFragment : Fragment() {
                         /*FastAniApi.currentHeaders?.forEach {
                             dataSource.setRequestProperty(it.key, it.value)
                         }*/
-                        dataSource.setRequestProperty("Referer", currentUrl.referer)
+                        if (currentUrl != null)
+                            dataSource.setRequestProperty("Referer", currentUrl.referer)
                         dataSource
                     } else {
                         DefaultDataSourceFactory(requireContext(), USER_AGENT).createDataSource()
@@ -1375,15 +1416,31 @@ class PlayerFragment : Fragment() {
                 }
             }
 
-            val mimeType = if (currentUrl.isM3u8) MimeTypes.APPLICATION_M3U8 else MimeTypes.APPLICATION_MP4
+            val mimeType =
+                if (currentUrl == null && uri != null)
+                    MimeTypes.APPLICATION_MP4 else
+                    if (currentUrl?.isM3u8 == true)
+                        MimeTypes.APPLICATION_M3U8
+                    else
+                        MimeTypes.APPLICATION_MP4
+
             val mediaItemBuilder = MediaItem.Builder()
                 //Replace needed for android 6.0.0  https://github.com/google/ExoPlayer/issues/5983
                 .setMimeType(mimeType)
 
-            if (isOnline) {
+            if (currentUrl != null) {
                 mediaItemBuilder.setUri(currentUrl.url)
-            } else {
-                mediaItemBuilder.setUri(Uri.fromFile(File(currentUrl.url)))
+            } else if (uri != null) {
+                val uriPrimary = Uri.parse(uri)
+                if (uriPrimary.scheme == "content") {
+                    mediaItemBuilder.setUri(uriPrimary)
+                    //      video_title?.text = uriPrimary.toString()
+                } else {
+                    //mediaItemBuilder.setUri(Uri.parse(currentUrl.url))
+                    val realUri = getVideoContentUri(requireContext(), uri)
+                    //    video_title?.text = uri.toString()
+                    mediaItemBuilder.setUri(realUri)
+                }
             }
 
             val mediaItem = mediaItemBuilder.build()
@@ -1401,7 +1458,7 @@ class PlayerFragment : Fragment() {
                     .setTrackSelector(trackSelector)
 
             _exoPlayer.setMediaSourceFactory(DefaultMediaSourceFactory(CustomFactory()))
-            println("START POS: " + playbackPosition)
+
             exoPlayer = _exoPlayer.build().apply {
                 playWhenReady = isPlayerPlaying
                 seekTo(currentWindow, playbackPosition)
@@ -1431,23 +1488,37 @@ class PlayerFragment : Fragment() {
             exoPlayer.playbackParameters = PlaybackParameters(playbackSpeed)
             player_speed_text?.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
 
-            if (localData != null) {
+            var hName: String? = null
+            var epEpisode: Int? = null
+            var epSeason: Int? = null
+            var isEpisodeBased = true
+
+            if (isDownloadedFile) {
+                hName = uriData.name
+                epEpisode = uriData.episode
+                epSeason = uriData.season
+                isEpisodeBased = epEpisode != null
+                video_title_rez?.text = ""
+            } else if (localData != null && currentUrl != null) {
                 val data = localData!!
                 val localEpisode = getEpisode()
                 if (localEpisode != null) {
-                    val episode = localEpisode.episode
-                    val season: Int? = localEpisode.season
-                    val isEpisodeBased = data.isEpisodeBased()
-                    video_title?.text = data.name +
-                            if (isEpisodeBased)
-                                if (season == null)
-                                    " - Episode $episode"
-                                else
-                                    " \"S${season}:E${episode}\""
-                            else ""
+                    epEpisode = localEpisode.episode
+                    epSeason = localEpisode.season
+                    hName = data.name
+                    isEpisodeBased = data.isEpisodeBased()
                     video_title_rez?.text = currentUrl.name
                 }
             }
+
+            //TODO FIX
+            video_title?.text = hName +
+                    if (isEpisodeBased)
+                        if (epSeason == null)
+                            " - Episode $epEpisode"
+                        else
+                            " \"S${epSeason}:E${epEpisode}\""
+                    else ""
 
 /*
             exo_remaining.text = Util.getStringForTime(formatBuilder,
@@ -1465,8 +1536,10 @@ class PlayerFragment : Fragment() {
 
                     val height = exoPlayer.videoFormat?.height
                     val width = exoPlayer.videoFormat?.width
+
                     video_title_rez?.text =
-                        if (height == null || width == null) currentUrl.name else "${currentUrl.name} - ${width}x${height}"
+                        if (height == null || width == null) currentUrl?.name
+                            ?: "" else if (isDownloadedFile) "${width}x${height}" else "${currentUrl?.name} - ${width}x${height}"
 
                     if (!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
                         changeSkip()
@@ -1521,11 +1594,11 @@ class PlayerFragment : Fragment() {
                 }
 
                 override fun onPlayerError(error: ExoPlaybackException) {
-                    println("CURRENT URL: " + currentUrl.url)
+                    println("CURRENT URL: " + currentUrl?.url ?: uri)
                     // Lets pray this doesn't spam Toasts :)
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE -> {
-                            if (currentUrl.url != "") {
+                            if (currentUrl?.url != "") {
                                 Toast.makeText(
                                     activity,
                                     "Source error\n" + error.sourceException.message,
@@ -1565,6 +1638,9 @@ class PlayerFragment : Fragment() {
     //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
     @SuppressLint("SetTextI18n")
     private fun initPlayer() {
+        if (isDownloadedFile) {
+            initPlayer(null, uriData.uri)
+        }
         println("INIT PLAYER")
         view?.setOnTouchListener { _, _ -> return@setOnTouchListener true } // VERY IMPORTANT https://stackoverflow.com/questions/28818926/prevent-clicking-on-a-button-in-an-activity-while-showing-a-fragment
         val tempCurrentUrls = getUrls()
