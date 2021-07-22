@@ -248,25 +248,20 @@ class TenshiProvider : MainAPI() {
     ): Boolean {
         val response = khttp.get(data)
         val src = Jsoup.parse(response.text).selectFirst(".embed-responsive > iframe").attr("src")
-        val mp4moe = Jsoup.parse(khttp.get(src).text).selectFirst("video#player")
+        val mp4moe = Jsoup.parse(khttp.get(src, headers=mapOf("Referer" to data)).text).selectFirst("video#player")
 
-        for (source in mp4moe.select("source")) {
-            try {
-                val quality = source.attr("title")
-                val link = source.attr("src")
+        val sources = mp4moe.select("source").map {
+            ExtractorLink(
+                this.name,
+                "${this.name} ${it.attr("title")}" + if (it.attr("title").endsWith('p')) "" else 'p',
+                fixUrl(it.attr("src")),
+                this.mainUrl,
+                getQualityFromName(it.attr("title"))
+            )
+        }
 
-                callback.invoke(
-                    ExtractorLink(
-                        this.name,
-                        "${this.name} $quality" + if (quality.endsWith('p')) "" else 'p',
-                        fixUrl(link),
-                        this.mainUrl,
-                        getQualityFromName(quality)
-                    )
-                )
-            } catch (e: Exception) {
-                //IDK
-            }
+        for (source in sources) {
+            callback.invoke(source)
         }
         return true
     }
