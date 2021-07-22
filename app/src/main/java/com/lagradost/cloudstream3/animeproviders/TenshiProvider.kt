@@ -253,7 +253,7 @@ class TenshiProvider : MainAPI() {
         val sources = mp4moe.select("source").map {
             ExtractorLink(
                 this.name,
-                "${this.name} ${it.attr("title")}" + if (it.attr("title").endsWith('p')) "" else 'p',
+                "${this.name} - ${it.attr("title")}" + if (it.attr("title").endsWith('p')) "" else 'p',
                 fixUrl(it.attr("src")),
                 this.mainUrl,
                 getQualityFromName(it.attr("title"))
