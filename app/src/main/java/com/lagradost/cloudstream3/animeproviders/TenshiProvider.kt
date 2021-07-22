@@ -1,15 +1,19 @@
 package com.lagradost.cloudstream3.animeproviders
 
+import android.annotation.SuppressLint
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.extractors.Vidstream
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.util.*
 import kotlin.collections.ArrayList
 import khttp.structures.cookie.CookieJar
+import java.text.SimpleDateFormat
+
 
 
 class TenshiProvider : MainAPI() {
@@ -79,16 +83,29 @@ class TenshiProvider : MainAPI() {
                     )
                 } else {
                     AnimeSearchResponse(
-                        title, href, getSlug(href),
-                        this.name, TvType.Anime,
-                        img, null, null,
+                        title,
+                        href,
+                        getSlug(href),
+                        this.name,
+                        TvType.Anime,
+                        img,
+                        null,
+                        null,
                         EnumSet.of(DubStatus.Subbed),
-                        null, null
+                        null,
+                        null
                     )
                 }
             )
         }
         return returnValue
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun dateParser(dateString: String): String? {
+        val format = SimpleDateFormat("dd 'of' MMM',' yyyy")
+        val newFormat = SimpleDateFormat("dd-MM-yyyy")
+        return newFormat.format(format.parse(dateString.replace("th ", " ").replace("st ", " ").replace("nd ", " ").replace("rd ", " ")))
     }
 
 //    data class TenshiSearchResponse(
@@ -165,7 +182,7 @@ class TenshiProvider : MainAPI() {
     override fun load(slug: String): LoadResponse? {
         val url = "$mainUrl/anime/${slug}"
 
-        val response = khttp.get(url, timeout = 120.0)
+        val response = khttp.get(url, timeout = 120.0, cookies=mapOf("loop-view" to "thumb"))
         val document = Jsoup.parse(response.text)
 
         val englishTitle = document.selectFirst("span.value > span[title=\"English\"]")?.parent()?.text()?.trim()
@@ -175,11 +192,19 @@ class TenshiProvider : MainAPI() {
         val isDubbed = false
         val episodeNodes = document.select("li[class*=\"episode\"] > a")
 
-        val episodes = ArrayList<AnimeEpisode>(episodeNodes?.map { AnimeEpisode(it.attr("href")) }
+        val episodes = ArrayList<AnimeEpisode>(episodeNodes?.map {
+            AnimeEpisode(
+            it.attr("href"),
+            it.selectFirst(".episode-title")?.text()?.trim(),
+            it.selectFirst("img")?.attr("src"),
+            dateParser(it.selectFirst(".episode-date").text().trim()).toString(),
+            null,
+            it.attr("data-content").trim(),
+        ) }
             ?: ArrayList<AnimeEpisode>())
-
-        val statusText = document.selectFirst("li.status > .value").text().trim()
-        val status = when (statusText) {
+        println("tenshimoe" + episodes[0].url)
+        println("tenshimoe" + episodes[0].posterUrl)
+        val status = when (document.selectFirst("li.status > .value")?.text()?.trim()) {
             "Ongoing" -> ShowStatus.Ongoing
             "Completed" -> ShowStatus.Completed
             else -> null
@@ -188,11 +213,11 @@ class TenshiProvider : MainAPI() {
         val pattern = "(\\d{4})".toRegex()
         val (year) = pattern.find(yearText)!!.destructured
 
-        val poster = document.selectFirst("img.cover-image").attr("src")
-        val type = document.selectFirst("a[href*=\"https://tenshi.moe/type/\"]").text().trim()
+        val poster = document.selectFirst("img.cover-image")?.attr("src")
+        val type = document.selectFirst("a[href*=\"https://tenshi.moe/type/\"]")?.text()?.trim()
 
-        val synopsis = document.selectFirst(".entry-description > .card-body").text().trim()
-        val genre = document.select("li.genre.meta-data > span.value").map { it.text().trim() }
+        val synopsis = document.selectFirst(".entry-description > .card-body")?.text()?.trim()
+        val genre = document.select("li.genre.meta-data > span.value").map { it?.text()?.trim().toString() }
 
         val synonyms = document.select("li.synonym.meta-data > div.info-box > span.value").map { it?.text()?.trim().toString() }
 
@@ -211,7 +236,8 @@ class TenshiProvider : MainAPI() {
             synopsis,
             ArrayList(genre) ?: ArrayList(),
             ArrayList(synonyms),
-            null, null,
+            null,
+            null,
         )
     }
 
