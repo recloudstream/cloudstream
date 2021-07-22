@@ -202,8 +202,6 @@ class TenshiProvider : MainAPI() {
             it.attr("data-content").trim(),
         ) }
             ?: ArrayList<AnimeEpisode>())
-        println("tenshimoe" + episodes[0].url)
-        println("tenshimoe" + episodes[0].posterUrl)
         val status = when (document.selectFirst("li.status > .value")?.text()?.trim()) {
             "Ongoing" -> ShowStatus.Ongoing
             "Completed" -> ShowStatus.Completed
