@@ -1,28 +1,17 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
-import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
-import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.cast.framework.CastState
-import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.UIHelper.hideSystemUI
-import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
-import com.lagradost.cloudstream3.UIHelper.isConnectedToChromecast
-import com.lagradost.cloudstream3.utils.getId
+import com.lagradost.cloudstream3.R
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
@@ -42,10 +31,13 @@ const val ACTION_COPY_LINK = 9
 
 const val ACTION_SHOW_OPTIONS = 10
 
+const val ACTION_CLICK_DEFAULT = 11
+
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
     var cardList: List<ResultEpisode>,
+    val hasDownloadSupport : Boolean,
     private val clickCallback: (EpisodeClickEvent) -> Unit,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -64,6 +56,7 @@ class EpisodeAdapter(
 
         return CardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
+            hasDownloadSupport,
             clickCallback
         )
     }
@@ -83,6 +76,7 @@ class EpisodeAdapter(
     class CardViewHolder
     constructor(
         itemView: View,
+        private val hasDownloadSupport : Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
         private val episodeText: TextView = itemView.episode_text
@@ -131,13 +125,7 @@ class EpisodeAdapter(
             }
 
             episodeHolder.setOnClickListener {
-                episodeHolder.context?.let { ctx ->
-                    if (ctx.isConnectedToChromecast()) {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
-                    } else {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
-                    }
-                }
+                clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
             }
 
             episodeHolder.setOnLongClickListener {
@@ -145,6 +133,8 @@ class EpisodeAdapter(
 
                 return@setOnLongClickListener true
             }
+
+            episodeDownload?.visibility = if(hasDownloadSupport) View.VISIBLE else View.GONE
 
             episodeDownload?.setOnClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))

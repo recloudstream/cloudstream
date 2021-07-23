@@ -10,13 +10,10 @@ import com.lagradost.cloudstream3.animeproviders.ShiroProvider
 import com.lagradost.cloudstream3.animeproviders.TenshiProvider
 import com.lagradost.cloudstream3.animeproviders.WcoProvider
 import com.lagradost.cloudstream3.movieproviders.HDMProvider
-import com.lagradost.cloudstream3.movieproviders.LookMovieProvider
 import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
 import com.lagradost.cloudstream3.movieproviders.TrailersToProvider
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
 val baseHeader = mapOf("User-Agent" to USER_AGENT)
@@ -38,7 +35,7 @@ object APIHolder {
         MeloMovieProvider(),
         DubbedAnimeProvider(),
         HDMProvider(),
-        LookMovieProvider(),
+        //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
         TrailersToProvider(),
     )
 
@@ -60,13 +57,23 @@ object APIHolder {
     }
 }
 
-
+/**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
 abstract class MainAPI {
     open val name = "NONE"
     open val mainUrl = "NONE"
-    open val instantLinkLoading = false // THIS IS IF THE LINK IS STORED IN THE "DATA"
+
+    /**If link is stored in the "data" string, so links can be instantly loaded*/
+    open val instantLinkLoading = false
+
     open val hasQuickSearch = false
-    open fun search(query: String): ArrayList<SearchResponse>? { // SearchResponse
+
+    /**Set false if links require referer or for some reason cant be played on a chromecast*/
+    open val hasChromecastSupport = true
+
+    /**If all links are m3u8 then set this to false*/
+    open val hasDownloadSupport = true
+
+    open fun search(query: String): ArrayList<SearchResponse>? {
         return null
     }
 
@@ -78,7 +85,7 @@ abstract class MainAPI {
         return null
     }
 
-    // callback is fired once a link is found, will return true if method is executed successfully
+    /**Callback is fired once a link is found, will return true if method is executed successfully*/
     open fun loadLinks(
         data: String,
         isCasting: Boolean,

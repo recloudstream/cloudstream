@@ -41,4 +41,5 @@
     <string name="download_descript">Download</string>
     <string name="error_loading_links">Error Loading Links</string>
     <string name="download_storage_text">Internal Storage</string>
+    <string name="options">Options</string>
 </resources>

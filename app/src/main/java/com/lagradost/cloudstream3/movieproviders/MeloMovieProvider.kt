@@ -17,6 +17,8 @@ class MeloMovieProvider : MainAPI() {
         get() = true
     override val hasQuickSearch: Boolean
         get() = true
+    override val hasChromecastSupport: Boolean
+        get() = false // MKV FILES CANT BE PLAYED ON A CHROMECAST
 
     data class MeloMovieSearchResult(
         @JsonProperty("id") val id: Int,

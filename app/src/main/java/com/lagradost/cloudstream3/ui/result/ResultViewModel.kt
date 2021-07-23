@@ -165,9 +165,10 @@ class ResultViewModel : ViewModel() {
                             updateEpisodes(
                                 context, mainId, arrayListOf(
                                     context.buildResultEpisode(
+                                        d.name,
                                         null,
+                                        0,
                                         null,
-                                        0, null,
                                         d.dataUrl,
                                         d.apiName,
                                         (mainId + 1),
@@ -211,7 +212,7 @@ class ResultViewModel : ViewModel() {
     suspend fun loadEpisode(
         episode: ResultEpisode,
         isCasting: Boolean,
-    ) : Resource<ResultViewModel.EpisodeData> {
+    ): Resource<EpisodeData> {
         return loadEpisode(episode.id, episode.data, isCasting)
     }
 
@@ -219,7 +220,7 @@ class ResultViewModel : ViewModel() {
         id: Int,
         data: String,
         isCasting: Boolean,
-    ): Resource<ResultViewModel.EpisodeData> {
+    ): Resource<EpisodeData> {
         if (_allEpisodes.value?.contains(id) == true) {
             _allEpisodes.value?.remove(id)
         }

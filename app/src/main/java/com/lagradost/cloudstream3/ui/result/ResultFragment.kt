@@ -227,25 +227,37 @@ class ResultFragment : Fragment() {
         )
         result_back.layoutParams = backParameter
 
-        if (activity?.isCastApiAvailable() == true) {
-            CastButtonFactory.setUpMediaRouteButton(activity, media_route_button)
-            val castContext = CastContext.getSharedInstance(requireActivity().applicationContext)
-
-            if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = VISIBLE
-            castContext.addCastStateListener { state ->
-                if (media_route_button != null) {
-                    if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = GONE else {
-                        if (media_route_button.visibility == GONE) media_route_button.visibility = VISIBLE
-                    }
-                }
-            }
-        }
         // activity?.fixPaddingStatusbar(result_toolbar)
 
         url = arguments?.getString("url")
         val slug = arguments?.getString("slug")
-        val apiName = arguments?.getString("apiName")
+        val apiName = arguments?.getString("apiName") ?: return
 
+        val api = getApiFromName(apiName)
+        if (media_route_button != null) {
+            val chromecastSupport = api.hasChromecastSupport
+
+            media_route_button?.alpha = if (chromecastSupport) 1f else 0.3f
+            if (!chromecastSupport) {
+                media_route_button.setOnClickListener {
+                    Toast.makeText(it.context, "This provider has no chromecast support", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            if (activity?.isCastApiAvailable() == true) {
+                CastButtonFactory.setUpMediaRouteButton(activity, media_route_button)
+                val castContext = CastContext.getSharedInstance(requireActivity().applicationContext)
+
+                if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = VISIBLE
+                castContext.addCastStateListener { state ->
+                    if (media_route_button != null) {
+                        if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = GONE else {
+                            if (media_route_button.visibility == GONE) media_route_button.visibility = VISIBLE
+                        }
+                    }
+                }
+            }
+        }
         result_scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
             if (result_poster_blur == null) return@OnScrollChangeListener
             result_poster_blur.alpha = maxOf(0f, (0.7f - scrollY / 1000f))
@@ -397,7 +409,10 @@ class ResultFragment : Fragment() {
 
                     val epData = episodeClick.data
                     ctx.setKey(
-                        getFolderName(DOWNLOAD_EPISODE_CACHE, (currentId ?: return@let).toString()), // 3 deep folder for faster acess
+                        getFolderName(
+                            DOWNLOAD_EPISODE_CACHE,
+                            (currentId ?: return@let).toString()
+                        ), // 3 deep folder for faster acess
                         epData.id.toString(),
                         VideoDownloadHelper.DownloadEpisodeCached(
                             epData.name,
@@ -431,6 +446,16 @@ class ResultFragment : Fragment() {
             if (!isLoaded) return@main // CANT LOAD
 
             when (episodeClick.action) {
+                ACTION_CLICK_DEFAULT -> {
+                    context?.let { ctx ->
+                        if (ctx.isConnectedToChromecast()) {
+                            handleAction(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, episodeClick.data))
+                        } else {
+                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, episodeClick.data))
+                        }
+                    }
+                }
+
                 ACTION_SHOW_OPTIONS -> {
                     val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
                     var dialog: AlertDialog? = null
@@ -442,6 +467,8 @@ class ResultFragment : Fragment() {
                     val verifiedOptions = ArrayList<String>()
                     val verifiedOptionsValues = ArrayList<Int>()
 
+                    val hasDownloadSupport = api.hasDownloadSupport
+
                     for (i in options.indices) {
                         val opv = optionsValues[i]
                         val op = options[i]
@@ -450,6 +477,8 @@ class ResultFragment : Fragment() {
                         val add = when (opv) {
                             ACTION_CHROME_CAST_EPISODE -> isConnected
                             ACTION_CHROME_CAST_MIRROR -> isConnected
+                            ACTION_DOWNLOAD_EPISODE -> hasDownloadSupport
+                            ACTION_DOWNLOAD_MIRROR -> hasDownloadSupport
                             ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> context?.isAppInstalled(VLC_PACKAGE) ?: false
                             else -> true
                         }
@@ -482,7 +511,7 @@ class ResultFragment : Fragment() {
 
                 ACTION_PLAY_EPISODE_IN_BROWSER -> {
                     aquireSingeExtractorLink("Play in Browser") { link ->
-                        val i = Intent(Intent.ACTION_VIEW)
+                        val i = Intent(ACTION_VIEW)
                         i.data = Uri.parse(link.url)
                         startActivity(i)
                     }
@@ -595,10 +624,10 @@ class ResultFragment : Fragment() {
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             EpisodeAdapter(
                 ArrayList(),
+                api.hasDownloadSupport,
             ) { episodeClick ->
                 handleAction(episodeClick)
             }
-
 
         result_episodes.adapter = adapter
         result_episodes.layoutManager = GridLayoutManager(context, 1)
@@ -678,17 +707,17 @@ class ResultFragment : Fragment() {
                         currentIsMovie = !d.isEpisodeBased()
 
                         result_openinbrower.setOnClickListener {
-                            val i = Intent(Intent.ACTION_VIEW)
+                            val i = Intent(ACTION_VIEW)
                             i.data = Uri.parse(d.url)
                             startActivity(i)
                         }
 
                         result_share.setOnClickListener {
-                            val i = Intent(Intent.ACTION_SEND)
+                            val i = Intent(ACTION_SEND)
                             i.type = "text/plain"
-                            i.putExtra(Intent.EXTRA_SUBJECT, d.name)
-                            i.putExtra(Intent.EXTRA_TEXT, d.url)
-                            startActivity(Intent.createChooser(i, d.name))
+                            i.putExtra(EXTRA_SUBJECT, d.name)
+                            i.putExtra(EXTRA_TEXT, d.url)
+                            startActivity(createChooser(i, d.name))
                         }
 
                         val metadataInfoArray = ArrayList<Pair<String, String>>()
@@ -712,6 +741,8 @@ class ResultFragment : Fragment() {
                         )
                         val duration = d.duration
                         if (duration != null) metadataInfoArray.add(Pair("Duration", duration))
+
+                        metadataInfoArray.add(Pair("Site", d.apiName))
 
                         if (metadataInfoArray.size > 0) {
                             result_metadata.visibility = VISIBLE
@@ -777,37 +808,23 @@ class ResultFragment : Fragment() {
                             }
                         }
 
-                        when (d.type) {
-                            TvType.Movie -> {
-                                result_play_movie.visibility = VISIBLE
-                                result_episodes_text.visibility = GONE
-                                result_episodes.visibility = GONE
+                        if (d.type == TvType.Movie && d is MovieLoadResponse) {
+                            result_movie_parent.visibility = VISIBLE
+                            result_episodes_text.visibility = GONE
+                            result_episodes.visibility = GONE
 
-                                result_play_movie.setOnClickListener {
-                                    val card = currentEpisodes?.first() ?: return@setOnClickListener
-                                    if (requireContext().isCastApiAvailable()) {
-                                        val castContext = CastContext.getSharedInstance(requireContext())
-
-                                        if (castContext.castState == CastState.CONNECTED) {
-                                            handleAction(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, card))
-                                        } else {
-                                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, card))
-                                        }
-                                    } else {
-                                        handleAction(
-                                            EpisodeClickEvent(
-                                                ACTION_PLAY_EPISODE_IN_PLAYER,
-                                                card
-                                            )
-                                        ) //TODO REDO TO MAIN
-                                    }
-                                }
+                            result_play_movie.setOnClickListener {
+                                val card = currentEpisodes?.first() ?: return@setOnClickListener
+                                handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                             }
-                            else -> {
-                                result_play_movie.visibility = GONE
-                                result_episodes_text.visibility = VISIBLE
-                                result_episodes.visibility = VISIBLE
+                            result_options.setOnClickListener {
+                                val card = currentEpisodes?.first() ?: return@setOnClickListener
+                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
                             }
+                        } else {
+                            result_movie_parent.visibility = GONE
+                            result_episodes_text.visibility = VISIBLE
+                            result_episodes.visibility = VISIBLE
                         }
 
                         when (d) {
@@ -842,7 +859,7 @@ class ResultFragment : Fragment() {
 
             if (url != null) {
                 result_reload_connection_open_in_browser.setOnClickListener {
-                    val i = Intent(Intent.ACTION_VIEW)
+                    val i = Intent(ACTION_VIEW)
                     i.data = Uri.parse(url)
                     startActivity(i)
                 }

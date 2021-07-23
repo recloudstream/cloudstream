@@ -10,6 +10,8 @@ class HDMProvider : MainAPI() {
         get() = "HD Movies"
     override val mainUrl: String
         get() = "https://hdm.to"
+    override val hasDownloadSupport: Boolean
+        get() = false
 
     override fun search(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/search/$query"

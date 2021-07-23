@@ -286,27 +286,56 @@
                                                               android:layout_height="wrap_content">
 
                 </com.lagradost.cloudstream3.widget.FlowLayout>
-                <com.google.android.material.button.MaterialButton
-                        android:visibility="visible"
-                        android:layout_gravity="center_vertical"
-                        app:cornerRadius="4dp"
-                        android:id="@+id/result_play_movie"
-                        android:text="@string/play_movie_button"
-
-                        app:rippleColor="?attr/colorPrimary"
-                        android:textColor="?attr/textColor"
-                        app:iconTint="?attr/textColor"
-                        android:textAllCaps="false"
-                        android:clickable="true"
-                        android:focusable="true"
-                        app:iconGravity="textStart"
-                        app:strokeColor="?attr/textColor"
-                        app:icon="@drawable/ic_baseline_play_arrow_24"
-                        android:backgroundTint="@color/transparent"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:id="@+id/result_movie_parent"
                         android:layout_width="match_parent"
-                        android:layout_height="45dp">
-                </com.google.android.material.button.MaterialButton>
+                        android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                            android:visibility="visible"
+                            android:layout_gravity="center_vertical"
+                            app:cornerRadius="4dp"
+                            android:id="@+id/result_play_movie"
+                            android:text="@string/play_movie_button"
+
+                            app:rippleColor="?attr/textColor"
+                            android:textColor="?attr/textColor"
+                            app:iconTint="?attr/textColor"
+                            android:textAllCaps="false"
+                            android:clickable="true"
+                            android:focusable="true"
+
+                            app:iconGravity="textStart"
+                            app:strokeColor="?attr/textColor"
+                            app:icon="@drawable/ic_baseline_play_arrow_24"
+                            android:backgroundTint="@color/transparent"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp">
+                    </com.google.android.material.button.MaterialButton>
+                    <com.google.android.material.button.MaterialButton
+                            android:visibility="visible"
+                            android:layout_gravity="center_vertical"
+                            app:cornerRadius="4dp"
+                            android:id="@+id/result_options"
+                            android:text="@string/options"
+
+                            app:rippleColor="?attr/textColor"
+                            android:textColor="?attr/textColor"
+                            app:iconTint="?attr/textColor"
+                            android:textAllCaps="false"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:iconGravity="textStart"
+                            app:strokeColor="?attr/textColor"
+                            app:icon="@drawable/ic_baseline_play_arrow_24"
+                            android:backgroundTint="@color/transparent"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp">
+                    </com.google.android.material.button.MaterialButton>
+
+                </LinearLayout>
 
                 <LinearLayout android:orientation="horizontal" android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
                     <com.google.android.material.button.MaterialButton
@@ -314,7 +343,7 @@
                             android:layout_gravity="center_vertical"
                             app:cornerRadius="4dp"
                             android:id="@+id/result_season_button"
-                            tools:text="Bookmark"
+                            tools:text="Subbed"
 
                             app:rippleColor="?attr/bitDarkerGrayBackground"
                             android:textColor="?attr/textColor"
