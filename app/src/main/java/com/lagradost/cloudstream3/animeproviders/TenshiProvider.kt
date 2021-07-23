@@ -165,7 +165,7 @@ class TenshiProvider : MainAPI() {
         var document = Jsoup.parse(response.text)
         val returnValue = parseSearchPage(document)
 
-        while (document.select("""a.page-link[rel="next"]""") != null && !document.select("""a.page-link[rel="next"]""").isEmpty()) {
+        while (!document.select("""a.page-link[rel="next"]""").isEmpty()) {
             val link = document.select("""a.page-link[rel="next"]""")
             if (link != null && !link.isEmpty()) {
                 response = khttp.get(link[0].attr("href"), cookies=mapOf("loop-view" to "thumb"))
