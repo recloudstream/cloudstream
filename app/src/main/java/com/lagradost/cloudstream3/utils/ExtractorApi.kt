@@ -1,11 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.cloudstream3.utils.extractors.MixDrop
-import com.lagradost.cloudstream3.utils.extractors.Mp4Upload
-import com.lagradost.cloudstream3.utils.extractors.Shiro
-import com.lagradost.cloudstream3.utils.extractors.WcoStream
-import com.lagradost.cloudstream3.utils.extractors.StreamTape
-import com.lagradost.cloudstream3.utils.extractors.XStreamCdn
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.utils.extractors.*
 
 data class ExtractorLink(
     val source: String,
@@ -59,7 +55,8 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     Mp4Upload(),
     StreamTape(),
     MixDrop(),
-    XStreamCdn()
+    XStreamCdn(),
+    StreamSB(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {
@@ -82,6 +79,13 @@ abstract class ExtractorApi {
     abstract val mainUrl: String
     abstract val requiresReferer: Boolean
 
+    fun getSafeUrl(url: String, referer: String? = null): List<ExtractorLink>? {
+        return normalSafeApiCall { getUrl(url, referer) }
+    }
+
+    /**
+     * Will throw errors, use getSafeUrl if you don't want to handle the exception yourself
+     */
     abstract fun getUrl(url: String, referer: String? = null): List<ExtractorLink>?
 
     open fun getExtractorUrl(id: String): String {

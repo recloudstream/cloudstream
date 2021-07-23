@@ -11,52 +11,48 @@ class WcoStream : ExtractorApi() {
     override val requiresReferer = false
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
-        try {
-            val baseUrl = url.split("/e/")[0]
+        val baseUrl = url.split("/e/")[0]
 
-            val html = khttp.get(url, headers=mapOf("Referer" to "https://wcostream.cc/")).text
-            val (Id) = "/e/(.*?)?domain".toRegex().find(url)!!.destructured
-            val (skey) = """skey\s=\s['\"](.*?)['\"];""".toRegex().find(html)!!.destructured
+        val html = khttp.get(url, headers = mapOf("Referer" to "https://wcostream.cc/")).text
+        val (Id) = "/e/(.*?)?domain".toRegex().find(url)!!.destructured
+        val (skey) = """skey\s=\s['\"](.*?)['\"];""".toRegex().find(html)!!.destructured
 
-            val apiLink = "$baseUrl/info/$Id?domain=wcostream.cc&skey=$skey"
-            val referrer = "$baseUrl/e/$Id?domain=wcostream.cc"
+        val apiLink = "$baseUrl/info/$Id?domain=wcostream.cc&skey=$skey"
+        val referrer = "$baseUrl/e/$Id?domain=wcostream.cc"
 
-            val response = khttp.get(apiLink, headers=mapOf("Referer" to referrer)).text
+        val response = khttp.get(apiLink, headers = mapOf("Referer" to referrer)).text
 
-            data class Sources (
-                @JsonProperty("file") val file : String,
-                @JsonProperty("label") val label : String
-            )
+        data class Sources(
+            @JsonProperty("file") val file: String,
+            @JsonProperty("label") val label: String?
+        )
 
-            data class Media (
-                @JsonProperty("sources") val sources : List<Sources>
-            )
+        data class Media(
+            @JsonProperty("sources") val sources: List<Sources>
+        )
 
-            data class WcoResponse (
-                @JsonProperty("success") val success : Boolean,
-                @JsonProperty("media") val media : Media
-            )
+        data class WcoResponse(
+            @JsonProperty("success") val success: Boolean,
+            @JsonProperty("media") val media: Media
+        )
 
-            val mapped = response.let { mapper.readValue<WcoResponse>(it) }
-            val sources = mutableListOf<ExtractorLink>()
+        val mapped = response.let { mapper.readValue<WcoResponse>(it) }
+        val sources = mutableListOf<ExtractorLink>()
 
-            if (mapped.success) {
-                mapped.media.sources.forEach {
-                    sources.add(
-                        ExtractorLink(
-                            "WcoStream",
-                            "WcoStream" + "- ${it.label}",
-                            it.file,
-                            "",
-                            Qualities.HD.value,
-                            it.file.contains(".m3u8")
-                        )
+        if (mapped.success) {
+            mapped.media.sources.forEach {
+                sources.add(
+                    ExtractorLink(
+                        name,
+                        name + if (it.label != null) "- ${it.label}" else "",
+                        it.file,
+                        "",
+                        Qualities.HD.value,
+                        it.file.contains(".m3u8")
                     )
-                }
+                )
             }
-            return sources
-        } catch (e: Exception) {
-            return listOf()
         }
+        return sources
     }
 }

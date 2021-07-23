@@ -27,44 +27,40 @@ class MultiQuality : ExtractorApi() {
     }
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        try {
-            val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
-            with(khttp.get(url)) {
-                sourceRegex.findAll(this.text).forEach { sourceMatch ->
-                    val extractedUrl = sourceMatch.groupValues[1]
-                    // Trusting this isn't mp4, may fuck up stuff
-                    if (extractedUrl.endsWith(".m3u8")) {
-                        with(khttp.get(extractedUrl)) {
-                            m3u8Regex.findAll(this.text).forEach { match ->
-                                extractedLinksList.add(
-                                    ExtractorLink(
-                                        name,
-                                        "$name ${match.groupValues[1]}p",
-                                        urlRegex.find(this.url)!!.groupValues[1] + match.groupValues[0],
-                                        url,
-                                        getQuality(match.groupValues[1]),
-                                        isM3u8 = true
-                                    )
+        val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
+        with(khttp.get(url)) {
+            sourceRegex.findAll(this.text).forEach { sourceMatch ->
+                val extractedUrl = sourceMatch.groupValues[1]
+                // Trusting this isn't mp4, may fuck up stuff
+                if (extractedUrl.endsWith(".m3u8")) {
+                    with(khttp.get(extractedUrl)) {
+                        m3u8Regex.findAll(this.text).forEach { match ->
+                            extractedLinksList.add(
+                                ExtractorLink(
+                                    name,
+                                    "$name ${match.groupValues[1]}p",
+                                    urlRegex.find(this.url)!!.groupValues[1] + match.groupValues[0],
+                                    url,
+                                    getQuality(match.groupValues[1]),
+                                    isM3u8 = true
                                 )
-                            }
-
-                        }
-                    } else if (extractedUrl.endsWith(".mp4")) {
-                        extractedLinksList.add(
-                            ExtractorLink(
-                                name,
-                                "$name ${sourceMatch.groupValues[2]}",
-                                extractedUrl,
-                                url.replace(" ", "%20"),
-                                Qualities.Unknown.value,
                             )
-                        )
-                    }
-                }
-                return extractedLinksList
-            }
-        } catch (e: Exception) {
+                        }
 
+                    }
+                } else if (extractedUrl.endsWith(".mp4")) {
+                    extractedLinksList.add(
+                        ExtractorLink(
+                            name,
+                            "$name ${sourceMatch.groupValues[2]}",
+                            extractedUrl,
+                            url.replace(" ", "%20"),
+                            Qualities.Unknown.value,
+                        )
+                    )
+                }
+            }
+            return extractedLinksList
         }
         return null
     }

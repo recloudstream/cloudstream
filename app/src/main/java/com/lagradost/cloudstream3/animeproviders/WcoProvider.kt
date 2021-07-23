@@ -10,7 +10,6 @@ import kotlin.collections.ArrayList
 
 
 class WcoProvider : MainAPI() {
-
     companion object {
         fun getType(t: String): TvType {
             return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
@@ -137,7 +136,7 @@ class WcoProvider : MainAPI() {
         return returnValue
     }
 
-    override fun load(slug: String): LoadResponse? {
+    override fun load(slug: String): LoadResponse {
         val url = "$mainUrl/anime/${slug}"
 
         val response = khttp.get(url, timeout = 120.0)
@@ -177,11 +176,11 @@ class WcoProvider : MainAPI() {
             canonicalTitle,
             "$mainUrl/anime/${slug}",
             this.name,
-            WcoProvider.getType(type ?: ""),
+            getType(type ?: ""),
             poster,
             year,
-            null,
-            episodes,
+            if(isDubbed) episodes else null,
+            if(!isDubbed) episodes else null,
             status,
             synopsis,
             ArrayList(genre),
@@ -204,7 +203,7 @@ class WcoProvider : MainAPI() {
         }
 
         for (server in servers) {
-            WcoStream().getUrl(server["link"].toString(), "").forEach {
+            WcoStream().getSafeUrl(server["link"].toString(), "")?.forEach {
                 callback.invoke(it)
             }
         }

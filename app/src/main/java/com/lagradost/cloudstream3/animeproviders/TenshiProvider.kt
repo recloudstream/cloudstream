@@ -1,31 +1,24 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import android.annotation.SuppressLint
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.extractors.Vidstream
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import khttp.structures.cookie.CookieJar
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import java.util.*
-import kotlin.collections.ArrayList
-import khttp.structures.cookie.CookieJar
 import java.text.SimpleDateFormat
-
-
+import java.util.*
 
 class TenshiProvider : MainAPI() {
-
     companion object {
         var token: String? = null
         var cookie: CookieJar? = null
 
         fun getType(t: String): TvType {
-            if (t.contains("OVA") || t.contains("Special"))  return TvType.ONA
-            else if (t.contains("Movie")) return TvType.Movie
-            else return TvType.Anime
+            return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
+            else if (t.contains("Movie")) TvType.Movie
+            else TvType.Anime
         }
     }
 
@@ -43,9 +36,7 @@ class TenshiProvider : MainAPI() {
 
     private fun loadToken(): Boolean {
         return try {
-            val response = khttp.get(
-                "https://tenshi.moe/",
-            )
+            val response = khttp.get(mainUrl)
             cookie = response.cookies
             val document = Jsoup.parse(response.text)
             token = document.selectFirst("""meta[name="csrf-token"]""").attr("content")
@@ -179,7 +170,7 @@ class TenshiProvider : MainAPI() {
         return returnValue
     }
 
-    override fun load(slug: String): LoadResponse? {
+    override fun load(slug: String): LoadResponse {
         val url = "$mainUrl/anime/${slug}"
 
         val response = khttp.get(url, timeout = 120.0, cookies=mapOf("loop-view" to "thumb"))
@@ -189,7 +180,6 @@ class TenshiProvider : MainAPI() {
         val japaneseTitle = document.selectFirst("span.value > span[title=\"Japanese\"]")?.parent()?.text()?.trim()
         val canonicalTitle = document.selectFirst("header.entry-header > h1.mb-3").text().trim()
 
-        val isDubbed = false
         val episodeNodes = document.select("li[class*=\"episode\"] > a")
 
         val episodes = ArrayList<AnimeEpisode>(episodeNodes?.map {
@@ -212,7 +202,7 @@ class TenshiProvider : MainAPI() {
         val (year) = pattern.find(yearText)!!.destructured
 
         val poster = document.selectFirst("img.cover-image")?.attr("src")
-        val type = document.selectFirst("a[href*=\"https://tenshi.moe/type/\"]")?.text()?.trim()
+        val type = document.selectFirst("a[href*=\"$mainUrl/type/\"]")?.text()?.trim()
 
         val synopsis = document.selectFirst(".entry-description > .card-body")?.text()?.trim()
         val genre = document.select("li.genre.meta-data > span.value").map { it?.text()?.trim().toString() }
@@ -232,7 +222,7 @@ class TenshiProvider : MainAPI() {
             episodes,
             status,
             synopsis,
-            ArrayList(genre) ?: ArrayList(),
+            ArrayList(genre),
             ArrayList(synonyms),
             null,
             null,

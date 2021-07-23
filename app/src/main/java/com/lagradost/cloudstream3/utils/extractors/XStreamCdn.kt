@@ -38,34 +38,29 @@ class XStreamCdn : ExtractorApi() {
     }
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        try {
-            val headers = mapOf(
-                "Referer" to url,
-                "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0",
-            )
-            val newUrl = url.replace("$mainUrl/v/", "$mainUrl/api/source/")
-            val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
-            with(khttp.post(newUrl, headers = headers)) {
-                mapper.readValue<ResponseJson?>(this.text)?.let {
-                    if (it.success && it.data != null) {
-                        it.data.forEach { data ->
-                            extractedLinksList.add(
-                                ExtractorLink(
-                                    name,
-                                    "$name ${data.label}",
-                                    data.file,
-                                    url,
-                                    getQuality(data.label),
-                                )
+        val headers = mapOf(
+            "Referer" to url,
+            "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0",
+        )
+        val newUrl = url.replace("$mainUrl/v/", "$mainUrl/api/source/")
+        val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
+        with(khttp.post(newUrl, headers = headers)) {
+            mapper.readValue<ResponseJson?>(this.text)?.let {
+                if (it.success && it.data != null) {
+                    it.data.forEach { data ->
+                        extractedLinksList.add(
+                            ExtractorLink(
+                                name,
+                                "$name ${data.label}",
+                                data.file,
+                                url,
+                                getQuality(data.label),
                             )
-                        }
+                        )
                     }
                 }
             }
-            return extractedLinksList
-        } catch (e: Exception) {
         }
-        return null
+        return extractedLinksList
     }
-
 }
