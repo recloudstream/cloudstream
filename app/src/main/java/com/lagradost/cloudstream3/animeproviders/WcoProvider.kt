@@ -82,7 +82,7 @@ class WcoProvider : MainAPI() {
 
         while (!document.select(".pagination").isEmpty()) {
             val link = document.select("a.page-link[rel=\"next\"]")
-            if (link != null && !link.isEmpty()) {
+            if (!link.isEmpty()) {
                 val extraResponse = khttp.get(fixUrl(link[0].attr("href")))
                 document = Jsoup.parse(extraResponse.text)
                 returnValue.addAll(parseSearchPage(document))
