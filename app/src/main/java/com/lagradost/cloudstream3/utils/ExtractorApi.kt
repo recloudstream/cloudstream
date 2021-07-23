@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.utils
 import com.lagradost.cloudstream3.utils.extractors.MixDrop
 import com.lagradost.cloudstream3.utils.extractors.Mp4Upload
 import com.lagradost.cloudstream3.utils.extractors.Shiro
+import com.lagradost.cloudstream3.utils.extractors.WcoStream
 import com.lagradost.cloudstream3.utils.extractors.StreamTape
 import com.lagradost.cloudstream3.utils.extractors.XStreamCdn
 
@@ -54,6 +55,7 @@ fun getAndUnpack(string: String): String? {
 val extractorApis: Array<ExtractorApi> = arrayOf(
     //AllProvider(),
     Shiro(),
+    WcoStream(),
     Mp4Upload(),
     StreamTape(),
     MixDrop(),
