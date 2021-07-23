@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.mapper
 
 class WcoStream : ExtractorApi() {
     override val name: String = "WcoStream"
-    override val mainUrl: String = "https://vidstreame.pro"
+    override val mainUrl: String = "https://vidstream.pro"
     override val requiresReferer = false
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
