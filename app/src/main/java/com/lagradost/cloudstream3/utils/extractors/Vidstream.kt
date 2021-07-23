@@ -20,7 +20,7 @@ class Vidstream {
         try {
             normalApis.pmap { api ->
                 val url = api.getExtractorUrl(id)
-                val source = api.getUrl(url)
+                val source = api.getSafeUrl(url)
                 source?.forEach { callback.invoke(it) }
             }
 
@@ -38,7 +38,7 @@ class Vidstream {
                     // Matches vidstream links with extractors
                     extractorApis.filter { !it.requiresReferer || !isCasting }.pmap { api ->
                         if (link.startsWith(api.mainUrl)) {
-                            val extractedLinks = api.getUrl(link, url)
+                            val extractedLinks = api.getSafeUrl(link, url)
                             if (extractedLinks?.isNotEmpty() == true) {
                                 extractedLinks.forEach {
                                     callback.invoke(it)

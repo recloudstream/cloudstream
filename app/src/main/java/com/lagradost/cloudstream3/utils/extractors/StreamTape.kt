@@ -14,22 +14,19 @@ class StreamTape : ExtractorApi() {
         Regex("""(i(|" \+ ')d(|" \+ ')=.*?&(|" \+ ')e(|" \+ ')x(|" \+ ')p(|" \+ ')i(|" \+ ')r(|" \+ ')e(|" \+ ')s(|" \+ ')=.*?&(|" \+ ')i(|" \+ ')p(|" \+ ')=.*?&(|" \+ ')t(|" \+ ')o(|" \+ ')k(|" \+ ')e(|" \+ ')n(|" \+ ')=.*)'""")
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        try {
-            with(khttp.get(url)) {
-                linkRegex.find(this.text)?.let {
-                    val extractedUrl = "https://streamtape.com/get_video?${it.groupValues[1]}".replace("""" + '""", "")
-                    return listOf(
-                        ExtractorLink(
-                            name,
-                            name,
-                            extractedUrl,
-                            url,
-                            Qualities.Unknown.value,
-                        )
+        with(khttp.get(url)) {
+            linkRegex.find(this.text)?.let {
+                val extractedUrl = "https://streamtape.com/get_video?${it.groupValues[1]}".replace("""" + '""", "")
+                return listOf(
+                    ExtractorLink(
+                        name,
+                        name,
+                        extractedUrl,
+                        url,
+                        Qualities.Unknown.value,
                     )
-                }
+                )
             }
-        } catch (e: Exception) {
         }
         return null
     }
