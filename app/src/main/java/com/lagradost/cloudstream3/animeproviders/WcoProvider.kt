@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.extractors.Vidstream
 import com.lagradost.cloudstream3.utils.extractors.WcoStream
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
