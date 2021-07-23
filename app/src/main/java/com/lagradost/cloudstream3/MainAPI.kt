@@ -8,6 +8,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.DubbedAnimeProvider
 import com.lagradost.cloudstream3.animeproviders.ShiroProvider
 import com.lagradost.cloudstream3.animeproviders.TenshiProvider
+import com.lagradost.cloudstream3.animeproviders.WcoProvider
 import com.lagradost.cloudstream3.movieproviders.HDMProvider
 import com.lagradost.cloudstream3.movieproviders.LookMovieProvider
 import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
@@ -33,6 +34,7 @@ object APIHolder {
     val apis = arrayListOf(
         ShiroProvider(),
         TenshiProvider(),
+        WcoProvider(),
         MeloMovieProvider(),
         DubbedAnimeProvider(),
         HDMProvider(),
