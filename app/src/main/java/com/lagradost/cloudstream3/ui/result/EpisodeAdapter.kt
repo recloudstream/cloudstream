@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
@@ -144,23 +145,25 @@ class EpisodeAdapter(
                 return@setOnLongClickListener true
             }
 
-            if(hasDownloadSupport) {
+            episodeDownloadImage.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
+            episodeDownloadBar.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
+
+            if (hasDownloadSupport) {
+                val downloadInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(itemView.context, card.id)
+
                 DownloadButtonSetup.setUpButton(
-                    null, null, episodeDownloadBar, episodeDownloadImage, null,
+                    downloadInfo?.fileLength, downloadInfo?.totalBytes, episodeDownloadBar, episodeDownloadImage, null,
                     VideoDownloadHelper.DownloadEpisodeCached(
                         card.name, card.poster, card.episode, card.season, card.id, 0, card.rating, card.descript
                     )
                 ) {
-                    if(it.action == DOWNLOAD_ACTION_DOWNLOAD) {
+                    if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {
                         clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
                     } else {
                         downloadClickCallback.invoke(it)
                     }
                 }
             }
-
-            episodeDownloadImage.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
-            episodeDownloadBar.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
         }
     }
 }

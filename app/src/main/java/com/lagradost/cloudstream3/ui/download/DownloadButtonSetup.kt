@@ -3,10 +3,12 @@ package com.lagradost.cloudstream3.ui.download
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.DialogInterface
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.FragmentActivity
 import com.lagradost.cloudstream3.R
@@ -24,7 +26,24 @@ object DownloadButtonSetup {
         when (click.action) {
             DOWNLOAD_ACTION_DELETE_FILE -> {
                 activity?.let { ctx ->
-                    VideoDownloadManager.deleteFileAndUpdateSettings(ctx, id)
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
+                    val dialogClickListener =
+                        DialogInterface.OnClickListener { _, which ->
+                            when (which) {
+                                DialogInterface.BUTTON_POSITIVE -> {
+                                    VideoDownloadManager.deleteFileAndUpdateSettings(ctx, id)
+                                }
+                                DialogInterface.BUTTON_NEGATIVE -> {
+                                }
+                            }
+                        }
+
+                    builder.setTitle("Delete File") //TODO FIX NAME
+                    builder.setMessage("This will permanently delete ${click.data.name ?: "Episode ${click.data.episode}"}\nAre you sure?")
+                        .setTitle("Delete")
+                        .setPositiveButton("Delete", dialogClickListener)
+                        .setNegativeButton("Cancel", dialogClickListener)
+                        .show()
                 }
             }
             DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
@@ -91,57 +110,53 @@ object DownloadButtonSetup {
         var needImageUpdate = false
 
         fun changeDownloadImage(state: VideoDownloadManager.DownloadType) {
-            Coroutines.runOnMainThread {
-                lastState = state
-                if (currentBytes <= 0) needImageUpdate = true
-                val img = if (currentBytes > 0) when (state) {
-                    VideoDownloadManager.DownloadType.IsPaused -> R.drawable.ic_baseline_play_arrow_24
-                    VideoDownloadManager.DownloadType.IsDownloading -> R.drawable.netflix_pause
-                    else -> R.drawable.ic_baseline_delete_outline_24
-                } else R.drawable.netflix_download
-                downloadImage?.setImageResource(img)
-            }
+            lastState = state
+            if (currentBytes <= 0) needImageUpdate = true
+            val img = if (currentBytes > 0) when (state) {
+                VideoDownloadManager.DownloadType.IsPaused -> R.drawable.ic_baseline_play_arrow_24
+                VideoDownloadManager.DownloadType.IsDownloading -> R.drawable.netflix_pause
+                else -> R.drawable.ic_baseline_delete_outline_24
+            } else R.drawable.netflix_download
+            downloadImage?.setImageResource(img)
         }
 
         @SuppressLint("SetTextI18n")
         fun fixDownloadedBytes(setCurrentBytes: Long, setTotalBytes: Long, animate: Boolean) {
-            Coroutines.runOnMainThread {
-                currentBytes = setCurrentBytes
-                totalBytes = setTotalBytes
+            currentBytes = setCurrentBytes
+            totalBytes = setTotalBytes
 
-                if (currentBytes == 0L) {
-                    changeDownloadImage(VideoDownloadManager.DownloadType.IsStopped)
-                    textView?.visibility = View.GONE
-                    progressBar?.visibility = View.GONE
-                } else {
-                    if (lastState == VideoDownloadManager.DownloadType.IsStopped) {
-                        changeDownloadImage(VideoDownloadManager.getDownloadState(data.id))
-                    }
-                    textView?.visibility = View.VISIBLE
-                    progressBar?.visibility = View.VISIBLE
-                    val currentMbString = "%.1f".format(setCurrentBytes / 1000000f)
-                    val totalMbString = "%.1f".format(setTotalBytes / 1000000f)
+            if (currentBytes == 0L) {
+                changeDownloadImage(VideoDownloadManager.DownloadType.IsStopped)
+                textView?.visibility = View.GONE
+                progressBar?.visibility = View.GONE
+            } else {
+                if (lastState == VideoDownloadManager.DownloadType.IsStopped) {
+                    changeDownloadImage(VideoDownloadManager.getDownloadState(data.id))
+                }
+                textView?.visibility = View.VISIBLE
+                progressBar?.visibility = View.VISIBLE
+                val currentMbString = "%.1f".format(setCurrentBytes / 1000000f)
+                val totalMbString = "%.1f".format(setTotalBytes / 1000000f)
 
-                    textView?.text =
-                        "${currentMbString}MB / ${totalMbString}MB"
+                textView?.text =
+                    "${currentMbString}MB / ${totalMbString}MB"
 
-                    progressBar?.let { bar ->
-                        bar.max = (setTotalBytes / 1000).toInt()
+                progressBar?.let { bar ->
+                    bar.max = (setTotalBytes / 1000).toInt()
 
-                        if (animate) {
-                            val animation: ObjectAnimator = ObjectAnimator.ofInt(
-                                bar,
-                                "progress",
-                                bar.progress,
-                                (setCurrentBytes / 1000).toInt()
-                            )
-                            animation.duration = 500
-                            animation.setAutoCancel(true)
-                            animation.interpolator = DecelerateInterpolator()
-                            animation.start()
-                        } else {
-                            bar.progress = (setCurrentBytes / 1000).toInt()
-                        }
+                    if (animate) {
+                        val animation: ObjectAnimator = ObjectAnimator.ofInt(
+                            bar,
+                            "progress",
+                            bar.progress,
+                            (setCurrentBytes / 1000).toInt()
+                        )
+                        animation.duration = 500
+                        animation.setAutoCancel(true)
+                        animation.interpolator = DecelerateInterpolator()
+                        animation.start()
+                    } else {
+                        bar.progress = (setCurrentBytes / 1000).toInt()
                     }
                 }
             }
@@ -153,7 +168,9 @@ object DownloadButtonSetup {
         VideoDownloadManager.downloadProgressEvent += { downloadData ->
             if (data.id == downloadData.first) {
                 if (downloadData.second != currentBytes || downloadData.third != totalBytes) { // TO PREVENT WASTING UI TIME
-                    fixDownloadedBytes(downloadData.second, downloadData.third, true)
+                    Coroutines.runOnMainThread {
+                        fixDownloadedBytes(downloadData.second, downloadData.third, true)
+                    }
                 }
             }
         }
@@ -161,7 +178,9 @@ object DownloadButtonSetup {
         VideoDownloadManager.downloadStatusEvent += { downloadData ->
             if (data.id == downloadData.first) {
                 if (lastState != downloadData.second || needImageUpdate) { // TO PREVENT WASTING UI TIME
-                    changeDownloadImage(downloadData.second)
+                    Coroutines.runOnMainThread {
+                        changeDownloadImage(downloadData.second)
+                    }
                 }
             }
         }
@@ -171,6 +190,7 @@ object DownloadButtonSetup {
                 clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
             } else {
                 val list = arrayListOf(
+                    Pair(DOWNLOAD_ACTION_PLAY_FILE, R.string.popup_play_file),
                     Pair(DOWNLOAD_ACTION_DELETE_FILE, R.string.popup_delete_file),
                 )
 

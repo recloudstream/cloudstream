@@ -688,9 +688,11 @@ class ResultFragment : Fragment() {
             if (result_episodes == null || result_episodes.adapter == null) return@observe
             result_episodes_text.text = "${episodes.size} Episode${if (episodes.size == 1) "" else "s"}"
             currentEpisodes = episodes
-            (result_episodes.adapter as EpisodeAdapter).cardList = episodes
-            (result_episodes.adapter as EpisodeAdapter).updateLayout()
-            (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
+            activity?.runOnUiThread {
+                (result_episodes.adapter as EpisodeAdapter).cardList = episodes
+                (result_episodes.adapter as EpisodeAdapter).updateLayout()
+                (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
+            }
         }
 
         observe(viewModel.id) {

@@ -45,6 +45,7 @@
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
     <string name="popup_delete_file">Delete File</string>
+    <string name="popup_play_file">Play File</string>
     <string name="popup_resume_download">Resume Download</string>
     <string name="popup_pause_download">Pause Download</string>
 </resources>
