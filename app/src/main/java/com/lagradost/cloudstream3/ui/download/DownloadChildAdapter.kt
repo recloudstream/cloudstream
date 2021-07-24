@@ -28,6 +28,7 @@ const val DOWNLOAD_ACTION_PLAY_FILE = 0
 const val DOWNLOAD_ACTION_DELETE_FILE = 1
 const val DOWNLOAD_ACTION_RESUME_DOWNLOAD = 2
 const val DOWNLOAD_ACTION_PAUSE_DOWNLOAD = 3
+const val DOWNLOAD_ACTION_DOWNLOAD = 4
 
 data class VisualDownloadChildCached(
     val currentBytes: Long,
@@ -89,6 +90,16 @@ class DownloadChildAdapter(
             }
 
             title.text = d.name ?: "Episode ${d.episode}" //TODO FIX
+            DownloadButtonSetup.setUpButton(
+                card.currentBytes,
+                card.totalBytes,
+                progressBarDownload,
+                downloadImage,
+                extraInfo,
+                card.data,
+                clickCallback
+            )
+            /*
             val totalMbString = "%.1f".format(card.totalBytes / 1000000f)
 
             var lastState: VideoDownloadManager.DownloadType? = null
@@ -175,7 +186,7 @@ class DownloadChildAdapter(
                 ) {
                     clickCallback.invoke(DownloadClickEvent(itemId, d))
                 }
-            }
+            }*/
         }
     }
 }

@@ -144,7 +144,7 @@ object VideoDownloadManager {
     val downloadStatus = HashMap<Int, DownloadType>()
     val downloadStatusEvent = Event<Pair<Int, DownloadType>>()
     val downloadEvent = Event<Pair<Int, DownloadActionType>>()
-    val downloadProgressEvent = Event<Pair<Int, Long>>()
+    val downloadProgressEvent = Event<Triple<Int, Long, Long>>()
     val downloadQueue = LinkedList<DownloadResumePackage>()
 
     private var hasCreatedNotChanel = false
@@ -542,7 +542,7 @@ object VideoDownloadManager {
             try {
                 downloadStatus[ep.id] = type
                 downloadStatusEvent.invoke(Pair(ep.id, type))
-                downloadProgressEvent.invoke(Pair(ep.id, bytesDownloaded))
+                downloadProgressEvent.invoke(Triple(ep.id, bytesDownloaded, bytesTotal))
             } catch (e: Exception) {
                 // IDK MIGHT ERROR
             }
@@ -626,13 +626,15 @@ object VideoDownloadManager {
         // RETURN MESSAGE
         return when {
             isFailed -> {
+                downloadProgressEvent.invoke(Triple(id, 0, 0))
                 ERROR_CONNECTION_ERROR
             }
             isStopped -> {
+                downloadProgressEvent.invoke(Triple(id, 0, 0))
                 deleteFile()
             }
             else -> {
-                downloadProgressEvent.invoke(Pair(id, bytesDownloaded))
+                downloadProgressEvent.invoke(Triple(id, bytesDownloaded, bytesTotal))
                 isDone = true
                 updateNotification()
                 SUCCESS_DOWNLOAD_DONE
@@ -715,6 +717,8 @@ object VideoDownloadManager {
 
     private fun deleteFile(context: Context, id: Int): Boolean {
         downloadEvent.invoke(Pair(id, DownloadActionType.Stop))
+        downloadProgressEvent.invoke(Triple(id, 0, 0))
+        downloadStatusEvent.invoke(Pair(id, DownloadType.IsStopped))
         val info = context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return false
 
         if (isScopedStorage()) {

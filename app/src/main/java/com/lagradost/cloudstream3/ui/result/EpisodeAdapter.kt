@@ -12,6 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
@@ -37,8 +42,9 @@ data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
     var cardList: List<ResultEpisode>,
-    val hasDownloadSupport : Boolean,
+    private val hasDownloadSupport: Boolean,
     private val clickCallback: (EpisodeClickEvent) -> Unit,
+    private val downloadClickCallback: (DownloadClickEvent) -> Unit,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     @LayoutRes
@@ -57,7 +63,8 @@ class EpisodeAdapter(
         return CardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
             hasDownloadSupport,
-            clickCallback
+            clickCallback,
+            downloadClickCallback
         )
     }
 
@@ -76,15 +83,18 @@ class EpisodeAdapter(
     class CardViewHolder
     constructor(
         itemView: View,
-        private val hasDownloadSupport : Boolean,
+        private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
+        private val downloadClickCallback: (DownloadClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
         private val episodeText: TextView = itemView.episode_text
         private val episodeRating: TextView? = itemView.episode_rating
         private val episodeDescript: TextView? = itemView.episode_descript
         private val episodeProgress: ContentLoadingProgressBar? = itemView.episode_progress
         private val episodePoster: ImageView? = itemView.episode_poster
-        private val episodeDownload: ImageView? = itemView.episode_download
+
+        private val episodeDownloadBar: ContentLoadingProgressBar = itemView.result_episode_progress_downloaded
+        private val episodeDownloadImage: ImageView = itemView.result_episode_download
 
         private val episodeHolder = itemView.episode_holder
 
@@ -134,11 +144,23 @@ class EpisodeAdapter(
                 return@setOnLongClickListener true
             }
 
-            episodeDownload?.visibility = if(hasDownloadSupport) View.VISIBLE else View.GONE
-
-            episodeDownload?.setOnClickListener {
-                clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+            if(hasDownloadSupport) {
+                DownloadButtonSetup.setUpButton(
+                    null, null, episodeDownloadBar, episodeDownloadImage, null,
+                    VideoDownloadHelper.DownloadEpisodeCached(
+                        card.name, card.poster, card.episode, card.season, card.id, 0, card.rating, card.descript
+                    )
+                ) {
+                    if(it.action == DOWNLOAD_ACTION_DOWNLOAD) {
+                        clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                    } else {
+                        downloadClickCallback.invoke(it)
+                    }
+                }
             }
+
+            episodeDownloadImage.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
+            episodeDownloadBar.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
         }
     }
 }

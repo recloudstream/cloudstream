@@ -61,16 +61,38 @@
                 android:textColor="@color/textColor" android:layout_width="wrap_content"
                 android:layout_height="match_parent">
         </TextView>
-        <ImageView
-                android:visibility="visible"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_height="match_parent"
-                android:layout_width="30dp"
-                android:id="@+id/episode_download"
-                android:background="?selectableItemBackgroundBorderless"
-                android:layout_gravity="center_vertical|end"
-                android:src="@drawable/netflix_download"
-                android:contentDescription="@string/download_descript"/>
+        
+        <FrameLayout
+                android:layout_gravity="end"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+            <androidx.core.widget.ContentLoadingProgressBar
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/result_episode_progress_downloaded"
+                    android:indeterminate="false"
+                    android:progressDrawable="@drawable/circular_progress_bar"
+                    android:background="@drawable/circle_shape"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:max="100"
+                    android:layout_margin="5dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:progress="0"
+                    android:visibility="visible"
+            />
+            <ImageView
+                    android:visibility="visible"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_height="match_parent"
+                    android:padding="2dp"
+                    android:layout_width="30dp"
+                    android:id="@+id/result_episode_download"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_baseline_play_arrow_24"
+                    android:contentDescription="@string/download_descript"/>
+        </FrameLayout>
     </GridLayout>
 </androidx.cardview.widget.CardView>

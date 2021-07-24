@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.ui.player.UriData
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -35,63 +36,6 @@ class DownloadChildFragment : Fragment() {
                     putString("name", headerName)
                 }
             }
-
-        fun handleDownloadClick(activity: Activity?, headerName: String?, click: DownloadClickEvent) {
-            val id = click.data.id
-            when (click.action) {
-                DOWNLOAD_ACTION_DELETE_FILE -> {
-                    activity?.let { ctx ->
-                        VideoDownloadManager.deleteFileAndUpdateSettings(ctx, id)
-                    }
-                }
-                DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
-                    VideoDownloadManager.downloadEvent.invoke(
-                        Pair(click.data.id, VideoDownloadManager.DownloadActionType.Pause)
-                    )
-                }
-                DOWNLOAD_ACTION_RESUME_DOWNLOAD -> {
-                    activity?.let { ctx ->
-                        val pkg = VideoDownloadManager.getDownloadResumePackage(ctx, id)
-                        if (pkg != null) {
-                            VideoDownloadManager.downloadFromResume(ctx, pkg)
-                        } else {
-                            VideoDownloadManager.downloadEvent.invoke(
-                                Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
-                            )
-                        }
-                    }
-                }
-                DOWNLOAD_ACTION_PLAY_FILE -> {
-                    activity?.let { act ->
-                        val info =
-                            VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(act, click.data.id)
-                                ?: return
-
-                        (act as FragmentActivity).supportFragmentManager.beginTransaction()
-                            .setCustomAnimations(
-                                R.anim.enter_anim,
-                                R.anim.exit_anim,
-                                R.anim.pop_enter,
-                                R.anim.pop_exit
-                            )
-                            .add(
-                                R.id.homeRoot,
-                                PlayerFragment.newInstance(
-                                    UriData(
-                                        info.path.toString(),
-                                        click.data.id,
-                                        headerName ?: "null",
-                                        click.data.episode,
-                                        click.data.season
-                                    ),
-                                    act.getViewPos(click.data.id)?.position ?: 0
-                                )
-                            )
-                            .commit()
-                    }
-                }
-            }
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

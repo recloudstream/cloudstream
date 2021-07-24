@@ -47,6 +47,8 @@ import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.*
@@ -625,9 +627,13 @@ class ResultFragment : Fragment() {
             EpisodeAdapter(
                 ArrayList(),
                 api.hasDownloadSupport,
-            ) { episodeClick ->
-                handleAction(episodeClick)
-            }
+                { episodeClick ->
+                    handleAction(episodeClick)
+                },
+                { downloadClickEvent ->
+                    handleDownloadClick(activity, currentHeaderName, downloadClickEvent)
+                }
+            )
 
         result_episodes.adapter = adapter
         result_episodes.layoutManager = GridLayoutManager(context, 1)
