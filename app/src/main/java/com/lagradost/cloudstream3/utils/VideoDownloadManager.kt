@@ -167,10 +167,10 @@ object VideoDownloadManager {
     }
 
     /** Will return IsDone if not found or error */
-    fun getDownloadState(id : Int) : DownloadType {
+    fun getDownloadState(id: Int): DownloadType {
         return try {
             downloadStatus[id] ?: DownloadType.IsDone
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             DownloadType.IsDone
         }
@@ -714,6 +714,7 @@ object VideoDownloadManager {
     }
 
     private fun deleteFile(context: Context, id: Int): Boolean {
+        downloadEvent.invoke(Pair(id, DownloadActionType.Stop))
         val info = context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return false
 
         if (isScopedStorage()) {

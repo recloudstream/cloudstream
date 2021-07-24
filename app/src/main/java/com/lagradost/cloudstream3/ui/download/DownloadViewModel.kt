@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
-
     private val _noDownloadsText = MutableLiveData<String>().apply {
         value = ""
     }
@@ -39,7 +38,7 @@ class DownloadViewModel : ViewModel() {
     fun updateList(context: Context) = viewModelScope.launch {
         val children = withContext(Dispatchers.IO) {
             val headers = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-            headers.mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+            headers.mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }.distinctBy { it.id } // Remove duplicates
         }
 
         // parentId : bytes
@@ -50,8 +49,10 @@ class DownloadViewModel : ViewModel() {
         // Gets all children downloads
         withContext(Dispatchers.IO) {
             for (c in children) {
-                val childFile = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, c.id)
-                val len = childFile?.totalBytes ?: continue
+                val childFile = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, c.id) ?: continue
+
+                if(childFile.fileLength <= 1) continue
+                val len = childFile.totalBytes
                 if (bytesUsedByChild.containsKey(c.parentId)) {
                     bytesUsedByChild[c.parentId] = bytesUsedByChild[c.parentId]?.plus(len) ?: len
                 } else {

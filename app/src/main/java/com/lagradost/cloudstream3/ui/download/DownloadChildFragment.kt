@@ -1,11 +1,15 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
@@ -31,6 +35,63 @@ class DownloadChildFragment : Fragment() {
                     putString("name", headerName)
                 }
             }
+
+        fun handleDownloadClick(activity: Activity?, headerName: String?, click: DownloadClickEvent) {
+            val id = click.data.id
+            when (click.action) {
+                DOWNLOAD_ACTION_DELETE_FILE -> {
+                    activity?.let { ctx ->
+                        VideoDownloadManager.deleteFileAndUpdateSettings(ctx, id)
+                    }
+                }
+                DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
+                    VideoDownloadManager.downloadEvent.invoke(
+                        Pair(click.data.id, VideoDownloadManager.DownloadActionType.Pause)
+                    )
+                }
+                DOWNLOAD_ACTION_RESUME_DOWNLOAD -> {
+                    activity?.let { ctx ->
+                        val pkg = VideoDownloadManager.getDownloadResumePackage(ctx, id)
+                        if (pkg != null) {
+                            VideoDownloadManager.downloadFromResume(ctx, pkg)
+                        } else {
+                            VideoDownloadManager.downloadEvent.invoke(
+                                Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
+                            )
+                        }
+                    }
+                }
+                DOWNLOAD_ACTION_PLAY_FILE -> {
+                    activity?.let { act ->
+                        val info =
+                            VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(act, click.data.id)
+                                ?: return
+
+                        (act as FragmentActivity).supportFragmentManager.beginTransaction()
+                            .setCustomAnimations(
+                                R.anim.enter_anim,
+                                R.anim.exit_anim,
+                                R.anim.pop_enter,
+                                R.anim.pop_exit
+                            )
+                            .add(
+                                R.id.homeRoot,
+                                PlayerFragment.newInstance(
+                                    UriData(
+                                        info.path.toString(),
+                                        click.data.id,
+                                        headerName ?: "null",
+                                        click.data.episode,
+                                        click.data.season
+                                    ),
+                                    act.getViewPos(click.data.id)?.position ?: 0
+                                )
+                            )
+                            .commit()
+                    }
+                }
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -82,58 +143,10 @@ class DownloadChildFragment : Fragment() {
             DownloadChildAdapter(
                 ArrayList(),
             ) { click ->
-                val id = click.data.id
+                handleDownloadClick(activity, name, click)
                 when (click.action) {
                     DOWNLOAD_ACTION_DELETE_FILE -> {
-                        context?.let { ctx ->
-                            VideoDownloadManager.deleteFileAndUpdateSettings(ctx, id)
-                        }
                         updateList(folder)
-                    }
-                    DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
-                        VideoDownloadManager.downloadEvent.invoke(
-                            Pair(click.data.id, VideoDownloadManager.DownloadActionType.Pause)
-                        )
-                        updateList(folder)
-                    }
-                    DOWNLOAD_ACTION_RESUME_DOWNLOAD -> {
-                        context?.let { ctx ->
-                            val pkg = VideoDownloadManager.getDownloadResumePackage(ctx, id)
-                            if(pkg != null) {
-                                VideoDownloadManager.downloadFromResume(ctx, pkg)
-                            } else {
-                                VideoDownloadManager.downloadEvent.invoke(
-                                    Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
-                                )
-                            }
-                        }
-                    }
-                    DOWNLOAD_ACTION_PLAY_FILE -> {
-                        val info =
-                            VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), click.data.id)
-                                ?: return@DownloadChildAdapter
-
-                        (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
-                            .setCustomAnimations(
-                                R.anim.enter_anim,
-                                R.anim.exit_anim,
-                                R.anim.pop_enter,
-                                R.anim.pop_exit
-                            )
-                            .add(
-                                R.id.homeRoot,
-                                PlayerFragment.newInstance(
-                                    UriData(
-                                        info.path.toString(),
-                                        click.data.id,
-                                        name ?: "null",
-                                        click.data.episode,
-                                        click.data.season
-                                    ),
-                                    context?.getViewPos(click.data.id)?.position ?: 0
-                                )
-                            )
-                            .commit()
                     }
                 }
             }
