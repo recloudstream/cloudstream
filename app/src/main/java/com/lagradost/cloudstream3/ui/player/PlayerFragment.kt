@@ -1639,7 +1639,7 @@ class PlayerFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun initPlayer() {
         if (isDownloadedFile) {
-            initPlayer(null, uriData.uri)
+            initPlayer(null, uriData.uri.removePrefix("file://").replace("%20", " ")) // FIX FILE PERMISSION
         }
         println("INIT PLAYER")
         view?.setOnTouchListener { _, _ -> return@setOnTouchListener true } // VERY IMPORTANT https://stackoverflow.com/questions/28818926/prevent-clicking-on-a-button-in-an-activity-while-showing-a-fragment
