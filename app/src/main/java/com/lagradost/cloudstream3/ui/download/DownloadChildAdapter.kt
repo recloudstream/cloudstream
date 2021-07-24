@@ -155,7 +155,7 @@ class DownloadChildAdapter(
                 clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
             }
 
-            progressBarDownload.setOnClickListener {
+            downloadImage.setOnClickListener {
                 val list = arrayListOf(
                     Pair(DOWNLOAD_ACTION_DELETE_FILE, R.string.popup_delete_file),
                 )
