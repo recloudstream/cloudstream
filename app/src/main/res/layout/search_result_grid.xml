@@ -101,7 +101,7 @@
 
             </ImageView>-->
             <TextView
-                    android:text="Dub"
+                    android:text="@string/app_dubbed_text"
                     android:id="@+id/text_is_dub"
                     android:textColor="@color/textColor"
                     android:paddingRight="10dp"
@@ -117,7 +117,7 @@
             </TextView>
             <TextView
                     android:id="@+id/text_is_sub"
-                    android:text="Sub"
+                    android:text="@string/app_subbed_text"
                     android:layout_gravity="end"
                     android:textColor="@color/textColor"
                     android:paddingRight="10dp"

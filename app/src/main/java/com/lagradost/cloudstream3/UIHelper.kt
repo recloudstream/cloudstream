@@ -50,18 +50,22 @@ object UIHelper {
     val Float.toDp: Float get() = (this / Resources.getSystem().displayMetrics.density)
 
     fun Activity.checkWrite(): Boolean {
-        return (ContextCompat.checkSelfPermission(this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return (ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
                 == PackageManager.PERMISSION_GRANTED)
     }
 
     fun Activity.requestRW() {
-        ActivityCompat.requestPermissions(this,
+        ActivityCompat.requestPermissions(
+            this,
             arrayOf(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             ),
-            1337)
+            1337
+        )
     }
 
     @ColorInt
@@ -141,6 +145,7 @@ object UIHelper {
             )
         }
     }
+
     private var currentAudioFocusRequest: AudioFocusRequest? = null
     private var currentAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
     var onAudioFocusEvent = Event<Boolean>()
@@ -246,18 +251,19 @@ object UIHelper {
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         window.decorView.systemUiVisibility = (
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                // Set the content to appear under the system bars so that the
-                // content doesn't resize when the system bars hide and show.
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                // Hide the nav bar and status bar
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Hide the nav bar and status bar
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
                 //  or View.SYSTEM_UI_FLAG_LOW_PROFILE
                 )
         // window.addFlags(View.KEEP_SCREEN_ON)
     }
+
     fun FragmentActivity.popCurrentPage() {
         val currentFragment = supportFragmentManager.fragments.lastOrNull {
             it.isVisible
@@ -363,10 +369,11 @@ object UIHelper {
     }
 
 
+    /**id, icon, stringRes */
     @SuppressLint("RestrictedApi")
-    inline fun View.popupMenu(
+    fun View.popupMenu(
         items: List<Triple<Int, Int, Int>>,
-        noinline onMenuItemClick: MenuItem.() -> Unit,
+        onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {
         val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
         val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, R.attr.actionOverflowMenuStyle, 0)
@@ -386,9 +393,11 @@ object UIHelper {
         return popup
     }
 
-    inline fun View.popupMenuNoIcons(
+    /**id, stringRes */
+    @SuppressLint("RestrictedApi")
+    fun View.popupMenuNoIcons(
         items: List<Pair<Int, Int>>,
-        noinline onMenuItemClick: MenuItem.() -> Unit,
+        onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {
         val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
         val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, R.attr.actionOverflowMenuStyle, 0)
@@ -408,15 +417,17 @@ object UIHelper {
         return popup
     }
 
-    inline fun View.popupMenuNoIconsAndNoStringres(
+    /**id, string */
+    @SuppressLint("RestrictedApi")
+    fun View.popupMenuNoIconsAndNoStringres(
         items: List<Pair<Int, String>>,
-        noinline onMenuItemClick: MenuItem.() -> Unit,
+        onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {
         val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
         val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, R.attr.actionOverflowMenuStyle, 0)
 
-        items.forEach { (id, stringRes) ->
-            popup.menu.add(0, id, 0, stringRes)
+        items.forEach { (id, string) ->
+            popup.menu.add(0, id, 0, string)
         }
 
         (popup.menu as? MenuBuilder)?.setOptionalIconsVisible(true)

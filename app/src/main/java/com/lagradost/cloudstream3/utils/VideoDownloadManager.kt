@@ -166,6 +166,16 @@ object VideoDownloadManager {
         }
     }
 
+    /** Will return IsDone if not found or error */
+    fun getDownloadState(id : Int) : DownloadType {
+        return try {
+            downloadStatus[id] ?: DownloadType.IsDone
+        } catch (e : Exception) {
+            e.printStackTrace()
+            DownloadType.IsDone
+        }
+    }
+
     private val cachedBitmaps = hashMapOf<String, Bitmap>()
     private fun Context.getImageBitmapFromUrl(url: String): Bitmap? {
         if (cachedBitmaps.containsKey(url)) {
@@ -532,6 +542,7 @@ object VideoDownloadManager {
             try {
                 downloadStatus[ep.id] = type
                 downloadStatusEvent.invoke(Pair(ep.id, type))
+                downloadProgressEvent.invoke(Pair(ep.id, bytesDownloaded))
             } catch (e: Exception) {
                 // IDK MIGHT ERROR
             }
@@ -584,7 +595,7 @@ object VideoDownloadManager {
                 count = connectionInputStream.read(buffer)
                 if (count < 0) break
                 bytesDownloaded += count
-                downloadProgressEvent.invoke(Pair(id, bytesDownloaded))
+                // downloadProgressEvent.invoke(Pair(id, bytesDownloaded)) // Updates too much for any UI to keep up with
                 while (isPaused) {
                     sleep(100)
                     if (isStopped) {
@@ -621,6 +632,7 @@ object VideoDownloadManager {
                 deleteFile()
             }
             else -> {
+                downloadProgressEvent.invoke(Pair(id, bytesDownloaded))
                 isDone = true
                 updateNotification()
                 SUCCESS_DOWNLOAD_DONE
@@ -741,6 +753,10 @@ object VideoDownloadManager {
             downloadQueue.addLast(pkg)
             downloadCheck(context)
             if (setKey) saveQueue(context)
+        } else {
+            downloadEvent.invoke(
+                Pair(pkg.item.ep.id, DownloadActionType.Resume)
+            )
         }
     }
 

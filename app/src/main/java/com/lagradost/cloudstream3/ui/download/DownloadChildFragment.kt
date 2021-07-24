@@ -10,10 +10,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.ui.player.UriData
-import com.lagradost.cloudstream3.ui.result.getRealPosition
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
@@ -84,32 +82,59 @@ class DownloadChildFragment : Fragment() {
             DownloadChildAdapter(
                 ArrayList(),
             ) { click ->
-                if (click.action == 0) { // TODO PLAY
-                    val info =
-                        VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), click.data.id)
-                            ?: return@DownloadChildAdapter
+                val id = click.data.id
+                when (click.action) {
+                    DOWNLOAD_ACTION_DELETE_FILE -> {
+                        context?.let { ctx ->
+                            VideoDownloadManager.deleteFileAndUpdateSettings(ctx, id)
+                        }
+                        updateList(folder)
+                    }
+                    DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
+                        VideoDownloadManager.downloadEvent.invoke(
+                            Pair(click.data.id, VideoDownloadManager.DownloadActionType.Pause)
+                        )
+                        updateList(folder)
+                    }
+                    DOWNLOAD_ACTION_RESUME_DOWNLOAD -> {
+                        context?.let { ctx ->
+                            val pkg = VideoDownloadManager.getDownloadResumePackage(ctx, id)
+                            if(pkg != null) {
+                                VideoDownloadManager.downloadFromResume(ctx, pkg)
+                            } else {
+                                VideoDownloadManager.downloadEvent.invoke(
+                                    Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
+                                )
+                            }
+                        }
+                    }
+                    DOWNLOAD_ACTION_PLAY_FILE -> {
+                        val info =
+                            VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), click.data.id)
+                                ?: return@DownloadChildAdapter
 
-                    (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
-                        .setCustomAnimations(
-                            R.anim.enter_anim,
-                            R.anim.exit_anim,
-                            R.anim.pop_enter,
-                            R.anim.pop_exit
-                        )
-                        .add(
-                            R.id.homeRoot,
-                            PlayerFragment.newInstance(
-                                UriData(
-                                    info.path.toString(),
-                                    click.data.id,
-                                    name ?: "null",
-                                    click.data.episode,
-                                    click.data.season
-                                ),
-                                context?.getViewPos(click.data.id)?.position ?: 0
+                        (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
+                            .setCustomAnimations(
+                                R.anim.enter_anim,
+                                R.anim.exit_anim,
+                                R.anim.pop_enter,
+                                R.anim.pop_exit
                             )
-                        )
-                        .commit()
+                            .add(
+                                R.id.homeRoot,
+                                PlayerFragment.newInstance(
+                                    UriData(
+                                        info.path.toString(),
+                                        click.data.id,
+                                        name ?: "null",
+                                        click.data.episode,
+                                        click.data.season
+                                    ),
+                                    context?.getViewPos(click.data.id)?.position ?: 0
+                                )
+                            )
+                            .commit()
+                    }
                 }
             }
         download_child_list.adapter = adapter
