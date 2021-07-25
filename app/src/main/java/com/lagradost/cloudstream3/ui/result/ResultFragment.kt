@@ -33,6 +33,7 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
+import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
@@ -49,6 +50,8 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.setUpButton
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.setUpMaterialButton
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.*
@@ -825,9 +828,62 @@ class ResultFragment : Fragment() {
                                 val card = currentEpisodes?.first() ?: return@setOnClickListener
                                 handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                             }
-                            result_options.setOnClickListener {
-                                val card = currentEpisodes?.first() ?: return@setOnClickListener
+
+                            result_play_movie.setOnLongClickListener {
+                                val card = currentEpisodes?.first() ?: return@setOnLongClickListener true
                                 handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
+                                return@setOnLongClickListener true
+                            }
+
+//                            result_options.setOnClickListener {
+//                                val card = currentEpisodes?.first() ?: return@setOnClickListener
+//                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
+//                            }
+
+                            val localId = d.getId()
+                            val file =
+                                VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), localId)
+
+                            setUpMaterialButton(
+                                file?.fileLength,
+                                file?.totalBytes,
+                                result_movie_progress_downloaded,
+                                result_download_movie,
+                                result_movie_text_progress,
+                                VideoDownloadHelper.DownloadEpisodeCached(
+                                    d.name,
+                                    d.posterUrl,
+                                    0,
+                                    null,
+                                    localId,
+                                    localId,
+                                    d.rating,
+                                    d.plot
+                                )
+                            ) { downloadClickEvent ->
+                                if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
+                                    handleAction(
+                                        EpisodeClickEvent(
+                                            ACTION_DOWNLOAD_EPISODE,
+                                            ResultEpisode(
+                                                d.name,
+                                                null,
+                                                0,
+                                                null,
+                                                d.dataUrl,
+                                                d.apiName,
+                                                localId,
+                                                0,
+                                                0L,
+                                                0L,
+                                                null,
+                                                null
+                                            )
+                                        )
+                                    )
+                                } else {
+                                    handleDownloadClick(activity, currentHeaderName, downloadClickEvent)
+                                }
                             }
                         } else {
                             result_movie_parent.visibility = GONE

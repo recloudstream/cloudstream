@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.FragmentActivity
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
@@ -95,13 +96,14 @@ object DownloadButtonSetup {
         }
     }
 
-    fun setUpButton(
+    fun setUpDownloadButton(
         setupCurrentBytes: Long?,
         setupTotalBytes: Long?,
         progressBar: ContentLoadingProgressBar,
-        downloadImage: ImageView,
         textView: TextView?,
         data: VideoDownloadHelper.DownloadEpisodeCached,
+        downloadView: View,
+        downloadImageChangeCallback: (Pair<Int, String>) -> Unit,
         clickCallback: (DownloadClickEvent) -> Unit,
     ) {
         var lastState: VideoDownloadManager.DownloadType? = null
@@ -112,12 +114,19 @@ object DownloadButtonSetup {
         fun changeDownloadImage(state: VideoDownloadManager.DownloadType) {
             lastState = state
             if (currentBytes <= 0) needImageUpdate = true
-            val img = if (currentBytes > 0) when (state) {
-                VideoDownloadManager.DownloadType.IsPaused -> R.drawable.ic_baseline_play_arrow_24
-                VideoDownloadManager.DownloadType.IsDownloading -> R.drawable.netflix_pause
-                else -> R.drawable.ic_baseline_delete_outline_24
-            } else R.drawable.netflix_download
-            downloadImage?.setImageResource(img)
+            val img = if (currentBytes > 0) {
+                when (state) {
+                    VideoDownloadManager.DownloadType.IsPaused -> Pair(
+                        R.drawable.ic_baseline_play_arrow_24,
+                        "Download Paused"
+                    )
+                    VideoDownloadManager.DownloadType.IsDownloading -> Pair(R.drawable.netflix_pause, "Downloading")
+                    else -> Pair(R.drawable.ic_baseline_delete_outline_24, "Downloaded")
+                }
+            } else {
+                Pair(R.drawable.netflix_download, "Download")
+            }
+            downloadImageChangeCallback.invoke(img)
         }
 
         @SuppressLint("SetTextI18n")
@@ -185,7 +194,7 @@ object DownloadButtonSetup {
             }
         }
 
-        downloadImage.setOnClickListener {
+        downloadView.setOnClickListener {
             if (currentBytes <= 0) {
                 clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
             } else {
@@ -211,5 +220,34 @@ object DownloadButtonSetup {
                 }
             }
         }
+    }
+
+    fun setUpMaterialButton(
+        setupCurrentBytes: Long?,
+        setupTotalBytes: Long?,
+        progressBar: ContentLoadingProgressBar,
+        downloadButton: MaterialButton,
+        textView: TextView?,
+        data: VideoDownloadHelper.DownloadEpisodeCached,
+        clickCallback: (DownloadClickEvent) -> Unit,
+    ) {
+        setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadButton, {
+            downloadButton?.setIconResource(it.first)
+            downloadButton?.text = it.second
+        }, clickCallback)
+    }
+
+    fun setUpButton(
+        setupCurrentBytes: Long?,
+        setupTotalBytes: Long?,
+        progressBar: ContentLoadingProgressBar,
+        downloadImage: ImageView,
+        textView: TextView?,
+        data: VideoDownloadHelper.DownloadEpisodeCached,
+        clickCallback: (DownloadClickEvent) -> Unit,
+    ) {
+        setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadImage, {
+            downloadImage?.setImageResource(it.first)
+        }, clickCallback)
     }
 }

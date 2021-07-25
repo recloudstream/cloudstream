@@ -287,6 +287,7 @@
 
                 </com.lagradost.cloudstream3.widget.FlowLayout>
                 <LinearLayout
+                        android:layout_marginTop="5dp"
                         android:orientation="vertical"
                         android:id="@+id/result_movie_parent"
                         android:layout_width="match_parent"
@@ -297,47 +298,106 @@
                             app:cornerRadius="4dp"
                             android:id="@+id/result_play_movie"
                             android:text="@string/play_movie_button"
+                            android:textStyle="bold"
 
-                            app:rippleColor="?attr/textColor"
-                            android:textColor="?attr/textColor"
-                            app:iconTint="?attr/textColor"
+                            app:rippleColor="?attr/grayBackground"
+                            android:textColor="?attr/grayBackground"
+                            app:iconTint="?attr/grayBackground"
                             android:textAllCaps="false"
                             android:clickable="true"
                             android:focusable="true"
-
                             app:iconGravity="textStart"
-                            app:strokeColor="?attr/textColor"
+                            app:strokeColor="?attr/grayBackground"
+                            app:backgroundTint="?attr/textColor"
                             app:icon="@drawable/ic_baseline_play_arrow_24"
-                            android:backgroundTint="@color/transparent"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="match_parent"
-                            android:layout_height="45dp">
+                            android:layout_height="50dp">
                     </com.google.android.material.button.MaterialButton>
                     <com.google.android.material.button.MaterialButton
                             android:visibility="visible"
                             android:layout_gravity="center_vertical"
                             app:cornerRadius="4dp"
-                            android:id="@+id/result_options"
-                            android:text="@string/options"
+                            tools:text="Downloading"
+                            tools:icon="@drawable/netflix_download"
+                            android:textStyle="bold"
 
+                            android:id="@+id/result_download_movie"
                             app:rippleColor="?attr/textColor"
                             android:textColor="?attr/textColor"
                             app:iconTint="?attr/textColor"
                             android:textAllCaps="false"
                             android:clickable="true"
                             android:focusable="true"
+                            android:backgroundTint="?attr/grayBackground"
                             app:iconGravity="textStart"
                             app:strokeColor="?attr/textColor"
-                            app:icon="@drawable/ic_baseline_play_arrow_24"
-                            android:backgroundTint="@color/transparent"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="match_parent"
-                            android:layout_height="45dp">
+                            android:layout_height="50dp">
                     </com.google.android.material.button.MaterialButton>
 
+                    <androidx.core.widget.ContentLoadingProgressBar
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"
+                            tools:progress="50"
+                            android:id="@+id/result_movie_progress_downloaded"
+                            android:indeterminate="false"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:max="100"
+                            android:layout_gravity="end|center_vertical"
+                            android:progress="0"
+                            android:visibility="visible"
+                            tools:visibility="visible"/>
+                    <!--
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+                        <androidx.core.widget.ContentLoadingProgressBar
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/result_movie_download"
+                                android:layout_width="match_parent"
+                                android:paddingEnd="40dp"
+                                android:layout_height="40dp"
+                                tools:progress="50"
+                                android:id="@+id/result_movie_progress_downloaded"
+                                android:indeterminate="false"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:max="100"
+                                android:layout_gravity="end|center_vertical"
+                                android:progress="0"
+                                android:visibility="visible"
+                                tools:visibility="gone"
+                                tools:ignore="RtlSymmetry"/>
+                        <ImageView
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:visibility="visible"
+                                android:layout_height="40dp"
+                                android:layout_width="40dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="end|center_vertical"
+                                android:padding="2dp"
+                                android:id="@+id/result_movie_download"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:src="@drawable/ic_baseline_play_arrow_24"
+                                android:contentDescription="@string/download_descript"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    -->
+                    <TextView
+                            android:id="@+id/result_movie_text_progress"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            tools:text="128MB / 237MB"
+                            android:textColor="@color/grayTextColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+                    </TextView>
                 </LinearLayout>
 
-                <LinearLayout android:orientation="horizontal" android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <LinearLayout android:orientation="horizontal" android:gravity="center_vertical"
+                              android:layout_width="match_parent" android:layout_height="wrap_content">
                     <com.google.android.material.button.MaterialButton
                             android:visibility="visible"
                             android:layout_gravity="center_vertical"

@@ -55,7 +55,8 @@ class DubbedAnimeProvider : MainAPI() {
         val url =
             mainUrl + (if (isMovie) "/movies/jsonMovie" else "/xz/v3/jsonEpi") + ".php?slug=$slug&_=$unixTime"
         val response = khttp.get(url)
-        val mapped = response.let { mapper.readValue<QueryEpisodeResultRoot>(it.text) }
+        println(response.text)
+        val mapped = mapper.readValue<QueryEpisodeResultRoot>(response.text)
 
         return mapped.result.anime.first()
     }

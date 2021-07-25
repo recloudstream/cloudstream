@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
+import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.WatchType
@@ -107,7 +108,7 @@ class ResultViewModel : ViewModel() {
                 val d = data.value
                 if (d is LoadResponse) {
                     page.postValue(d)
-                    val mainId = getId(d.url, api)
+                    val mainId = d.getId()
                     id.postValue(mainId)
                     loadWatchStatus(context, mainId)
 

@@ -47,6 +47,11 @@ object APIHolder {
         return apis[defProvider]
     }
 
+
+    fun LoadResponse.getId(): Int {
+        return url.replace(getApiFromName(apiName).mainUrl, "").hashCode()
+    }
+
     fun Activity.getApiSettings(): HashSet<String> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -150,7 +155,7 @@ enum class TvType {
 }
 
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH
-fun TvType.isMovieType() : Boolean {
+fun TvType.isMovieType(): Boolean {
     return this == TvType.Movie
 }
 
