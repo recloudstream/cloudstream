@@ -1,26 +1,18 @@
 package com.lagradost.cloudstream3.ui.download
 
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
-import com.lagradost.cloudstream3.ui.player.PlayerFragment
-import com.lagradost.cloudstream3.ui.player.UriData
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_child_downloads.*
@@ -88,12 +80,17 @@ class DownloadChildFragment : Fragment() {
                 ArrayList(),
             ) { click ->
                 handleDownloadClick(activity, name, click)
-                when (click.action) {
-                    DOWNLOAD_ACTION_DELETE_FILE -> {
-                        updateList(folder)
-                    }
+            }
+
+        VideoDownloadManager.downloadDeleteEvent += { id ->
+            val list = (download_child_list?.adapter as DownloadChildAdapter?)?.cardList
+            if (list != null) {
+                if (list.any { it.data.id == id }) {
+                    updateList(folder)
                 }
             }
+        }
+
         download_child_list.adapter = adapter
         download_child_list.layoutManager = GridLayoutManager(context, 1)
 

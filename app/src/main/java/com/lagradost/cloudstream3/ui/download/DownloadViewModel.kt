@@ -7,8 +7,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
@@ -38,11 +41,14 @@ class DownloadViewModel : ViewModel() {
     fun updateList(context: Context) = viewModelScope.launch {
         val children = withContext(Dispatchers.IO) {
             val headers = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-            headers.mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }.distinctBy { it.id } // Remove duplicates
+            headers.mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+                .distinctBy { it.id } // Remove duplicates
         }
 
         // parentId : bytes
-        val bytesUsedByChild = HashMap<Int, Long>()
+        val totalBytesUsedByChild = HashMap<Int, Long>()
+        // parentId : bytes
+        val currentBytesUsedByChild = HashMap<Int, Long>()
         // parentId : downloadsCount
         val totalDownloads = HashMap<Int, Int>()
 
@@ -51,19 +57,13 @@ class DownloadViewModel : ViewModel() {
             for (c in children) {
                 val childFile = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, c.id) ?: continue
 
-                if(childFile.fileLength <= 1) continue
+                if (childFile.fileLength <= 1) continue
                 val len = childFile.totalBytes
-                if (bytesUsedByChild.containsKey(c.parentId)) {
-                    bytesUsedByChild[c.parentId] = bytesUsedByChild[c.parentId]?.plus(len) ?: len
-                } else {
-                    bytesUsedByChild[c.parentId] = len
-                }
+                val flen = childFile.fileLength
 
-                if (totalDownloads.containsKey(c.parentId)) {
-                    totalDownloads[c.parentId] = totalDownloads[c.parentId]?.plus(1) ?: 1
-                } else {
-                    totalDownloads[c.parentId] = 1
-                }
+                totalBytesUsedByChild[c.parentId] = totalBytesUsedByChild[c.parentId]?.plus(len) ?: len
+                currentBytesUsedByChild[c.parentId] = currentBytesUsedByChild[c.parentId]?.plus(flen) ?: flen
+                totalDownloads[c.parentId] = totalDownloads[c.parentId]?.plus(1) ?: 1
             }
         }
 
@@ -75,9 +75,21 @@ class DownloadViewModel : ViewModel() {
         val visual = withContext(Dispatchers.IO) {
             cached.mapNotNull { // TODO FIX
                 val downloads = totalDownloads[it.id] ?: 0
-                val bytes = bytesUsedByChild[it.id] ?: 0
-                if(bytes <= 0 || downloads <= 0) return@mapNotNull null
-                VisualDownloadHeaderCached(0, downloads, bytes, it)
+                val bytes = totalBytesUsedByChild[it.id] ?: 0
+                val currentBytes = currentBytesUsedByChild[it.id] ?: 0
+                if (bytes <= 0 || downloads <= 0) return@mapNotNull null
+                val movieEpisode = if (!it.type.isMovieType()) null else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+                    DOWNLOAD_EPISODE_CACHE,
+                    getFolderName(it.id.toString(), it.id.toString())
+                )
+                VisualDownloadHeaderCached(
+                    0,
+                    downloads,
+                    bytes,
+                    currentBytes,
+                    it,
+                    movieEpisode
+                )
             }
         }
 

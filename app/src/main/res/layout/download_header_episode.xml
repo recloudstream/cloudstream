@@ -34,7 +34,7 @@
                 android:orientation="vertical"
                 android:layout_gravity="center"
                 android:layout_width="match_parent"
-                android:layout_marginEnd="50dp"
+                android:layout_marginEnd="70dp"
                 android:layout_height="wrap_content">
             <TextView
                     android:id="@+id/download_header_title"
@@ -52,14 +52,49 @@
                     android:layout_height="wrap_content">
             </TextView>
         </LinearLayout>
-        <!--
-                android:background="?selectableItemBackgroundBorderless"-->
+
         <ImageView
-                android:layout_marginStart="-40dp"
+                android:layout_marginStart="-50dp"
                 android:layout_height="match_parent"
                 android:layout_width="30dp"
+                android:id="@+id/download_header_goto_child"
                 android:layout_gravity="center_vertical|end"
                 android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
                 android:contentDescription="@string/download_descript"/>
+
+        <FrameLayout
+                android:layout_marginStart="-50dp"
+                android:layout_gravity="end"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+            <androidx.core.widget.ContentLoadingProgressBar
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/download_header_progress_downloaded"
+                    android:indeterminate="false"
+                    android:progressDrawable="@drawable/circular_progress_bar"
+                    android:background="@drawable/circle_shape"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:max="100"
+                    android:layout_margin="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:progress="0"
+                    android:visibility="visible"
+            />
+            <ImageView
+                    android:visibility="visible"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:layout_width="30dp"
+                    android:id="@+id/download_header_episode_download"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_baseline_play_arrow_24"
+                    android:contentDescription="@string/download_descript"/>
+        </FrameLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -83,7 +83,7 @@ object DownloadButtonSetup {
                                     info.path.toString(),
                                     click.data.id,
                                     headerName ?: "null",
-                                    click.data.episode,
+                                    if (click.data.episode <= 0) null else click.data.episode,
                                     click.data.season
                                 ),
                                 act.getViewPos(click.data.id)?.position ?: 0
@@ -194,8 +194,8 @@ object DownloadButtonSetup {
                     Pair(DOWNLOAD_ACTION_DELETE_FILE, R.string.popup_delete_file),
                 )
 
-                // DON'T RESUME A DOWNLOADED FILE
-                if (lastState != VideoDownloadManager.DownloadType.IsDone && ((currentBytes * 100 / totalBytes) < 98)) {
+                // DON'T RESUME A DOWNLOADED FILE lastState != VideoDownloadManager.DownloadType.IsDone &&
+                if ((currentBytes * 100 / totalBytes) < 98) {
                     list.add(
                         if (lastState == VideoDownloadManager.DownloadType.IsDownloading)
                             Pair(DOWNLOAD_ACTION_PAUSE_DOWNLOAD, R.string.popup_pause_download)

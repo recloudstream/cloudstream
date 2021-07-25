@@ -16,15 +16,16 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
+import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import kotlinx.android.synthetic.main.fragment_child_downloads.*
 import kotlinx.android.synthetic.main.fragment_downloads.*
 import kotlinx.android.synthetic.main.fragment_result.*
 
-
 class DownloadFragment : Fragment() {
-
     private lateinit var downloadsViewModel: DownloadViewModel
 
     private fun getBytesAsText(bytes: Long): String {
@@ -40,6 +41,11 @@ class DownloadFragment : Fragment() {
         this.layoutParams = param
     }
 
+    fun setList(list : List<VisualDownloadHeaderCached>) {
+        (download_list?.adapter as DownloadHeaderAdapter? ?: return).cardList = list
+        (download_list?.adapter as DownloadHeaderAdapter? ?: return).notifyDataSetChanged()
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,8 +58,7 @@ class DownloadFragment : Fragment() {
             text_no_downloads.text = it
         }
         observe(downloadsViewModel.headerCards) {
-            (download_list?.adapter as DownloadHeaderAdapter? ?: return@observe).cardList = it
-            (download_list?.adapter as DownloadHeaderAdapter? ?: return@observe).notifyDataSetChanged()
+            setList(it)
         }
         observe(downloadsViewModel.availableBytes) {
             download_free_txt?.text = "Free • ${getBytesAsText(it)}GB"
@@ -76,19 +81,36 @@ class DownloadFragment : Fragment() {
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             DownloadHeaderAdapter(
                 ArrayList(),
-            ) { click ->
-                if(click.data.type.isMovieType()) {
-                    //TODO MOVIE
-                }
-                else {
-                    val folder = getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
-                    val navController = activity?.findNavController(R.id.nav_host_fragment)
-                    navController?.navigate(R.id.navigation_download_child, Bundle().apply {
+                { click ->
+                    if (click.data.type.isMovieType()) {
+                        //wont be called
+                    } else {
+                        val folder = getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
+                        val navController = activity?.findNavController(R.id.nav_host_fragment)
+                        navController?.navigate(R.id.navigation_download_child, Bundle().apply {
                             putString("folder", folder)
                             putString("name", click.data.name)
-                    })
+                        })
+                    }
+                },
+                { downloadClickEvent ->
+                    handleDownloadClick(activity, downloadClickEvent.data.name, downloadClickEvent)
+                    if(downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                        downloadsViewModel.updateList(requireContext())
+                    }
+                }
+            )
+
+        VideoDownloadManager.downloadDeleteEvent += { id ->
+            val list = (download_list?.adapter as DownloadHeaderAdapter?)?.cardList
+            if (list != null) {
+                if (list.any { it.data.id == id }) {
+                    setList(ArrayList())
+                    downloadsViewModel.updateList(requireContext())
                 }
             }
+        }
+
         download_list.adapter = adapter
         download_list.layoutManager = GridLayoutManager(context, 1)
         downloadsViewModel.updateList(requireContext())

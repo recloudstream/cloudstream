@@ -205,6 +205,9 @@ class MainActivity : AppCompatActivity() {
         //    this.startService(mServiceIntent)
         //}
 //settingsManager.getBoolean("disable_automatic_data_downloads", true) &&
+
+        // TODO RETURN TO TRUE
+        /*
         if (isUsingMobileData()) {
             Toast.makeText(this, "Downloads not resumed on mobile data", Toast.LENGTH_LONG).show()
         } else {
@@ -226,7 +229,10 @@ class MainActivity : AppCompatActivity() {
             resumeQueue?.sortedBy { it.index }?.forEach {
                 VideoDownloadManager.downloadFromResume(this, it.pkg)
             }
-        }
+        }*/
+
+
+
         /*
         val castContext = CastContext.getSharedInstance(applicationContext)
          fun buildMediaQueueItem(video: String): MediaQueueItem {

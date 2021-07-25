@@ -380,7 +380,7 @@ class ResultFragment : Fragment() {
                 val meta = VideoDownloadManager.DownloadEpisodeMetadata(
                     episodeClick.data.id,
                     titleName,
-                    apiName ?: return,
+                    apiName,
                     episodeClick.data.poster ?: currentPoster,
                     episodeClick.data.name,
                     if (isMovie) null else episodeClick.data.season,

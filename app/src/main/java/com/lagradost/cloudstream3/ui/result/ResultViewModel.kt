@@ -171,7 +171,7 @@ class ResultViewModel : ViewModel() {
                                         null,
                                         d.dataUrl,
                                         d.apiName,
-                                        (mainId + 1),
+                                        (mainId), // HAS SAME ID
                                         0,
                                         null,
                                         null,

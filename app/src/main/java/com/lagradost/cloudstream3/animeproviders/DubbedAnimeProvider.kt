@@ -214,7 +214,7 @@ class DubbedAnimeProvider : MainAPI() {
 
             val img = fixUrl(document.select("div.fkimgs > img").attr("src"))
             return AnimeLoadResponse(
-                null, null, title, slug, this.name, TvType.Anime, img, year, ArrayList(episodes), null, null, descript,
+                null, null, title, "$mainUrl/$slug", this.name, TvType.Anime, img, year, ArrayList(episodes), null, null, descript,
             )
         }
     }

@@ -143,6 +143,7 @@ object VideoDownloadManager {
 
     val downloadStatus = HashMap<Int, DownloadType>()
     val downloadStatusEvent = Event<Pair<Int, DownloadType>>()
+    val downloadDeleteEvent = Event<Int>()
     val downloadEvent = Event<Pair<Int, DownloadActionType>>()
     val downloadProgressEvent = Event<Triple<Int, Long, Long>>()
     val downloadQueue = LinkedList<DownloadResumePackage>()
@@ -427,6 +428,7 @@ object VideoDownloadManager {
             } else {
                 if (!File(normalPath).delete()) return ERROR_DELETING_FILE
             }
+            downloadDeleteEvent.invoke(ep.id)
             return SUCCESS_STOPPED
         }
 
@@ -716,10 +718,11 @@ object VideoDownloadManager {
     }
 
     private fun deleteFile(context: Context, id: Int): Boolean {
+        val info = context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return false
         downloadEvent.invoke(Pair(id, DownloadActionType.Stop))
         downloadProgressEvent.invoke(Triple(id, 0, 0))
         downloadStatusEvent.invoke(Pair(id, DownloadType.IsStopped))
-        val info = context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return false
+        downloadDeleteEvent.invoke(id)
 
         if (isScopedStorage()) {
             val cr = context.contentResolver ?: return false
