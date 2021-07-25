@@ -448,7 +448,11 @@ object VideoDownloadManager {
                 }
             }
 
-            val newFileUri = if (resume && currentExistingFile != null) currentExistingFile else {
+            var appendFile = false
+            val newFileUri = if (resume && currentExistingFile != null) {
+                appendFile = true
+                currentExistingFile
+            } else {
                 val contentUri =
                     MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) // USE INSTEAD OF MediaStore.Downloads.EXTERNAL_CONTENT_URI
 
@@ -456,10 +460,7 @@ object VideoDownloadManager {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                     put(MediaStore.MediaColumns.TITLE, name)
                     put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
-                    put(
-                        MediaStore.MediaColumns.RELATIVE_PATH,
-                        relativePath
-                    )
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
                 }
 
                 cr.insert(
@@ -468,7 +469,7 @@ object VideoDownloadManager {
                 ) ?: return ERROR_MEDIA_STORE_URI_CANT_BE_CREATED
             }
 
-            fileStream = cr.openOutputStream(newFileUri, "w")
+            fileStream = cr.openOutputStream(newFileUri, "w" + (if (appendFile) "a" else ""))
                 ?: return ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM
         } else {
             // NORMAL NON SCOPED STORAGE FILE CREATION
