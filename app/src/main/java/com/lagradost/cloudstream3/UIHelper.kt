@@ -419,7 +419,7 @@ object UIHelper {
 
     /**id, string */
     @SuppressLint("RestrictedApi")
-    fun View.popupMenuNoIconsAndNoStringres(
+    fun View.popupMenuNoIconsAndNoStringRes(
         items: List<Pair<Int, String>>,
         onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {

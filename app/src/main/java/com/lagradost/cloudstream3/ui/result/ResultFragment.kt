@@ -43,14 +43,13 @@ import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.UIHelper.isConnectedToChromecast
 import com.lagradost.cloudstream3.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.UIHelper.popupMenuNoIcons
-import com.lagradost.cloudstream3.UIHelper.popupMenuNoIconsAndNoStringres
+import com.lagradost.cloudstream3.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
-import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.setUpButton
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.setUpMaterialButton
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
@@ -206,6 +205,7 @@ class ResultFragment : Fragment() {
     private var currentPoster: String? = null
     private var currentId: Int? = null
     private var currentIsMovie: Boolean? = null
+    private var episodeRanges: List<String>? = null
 
     var url: String? = null
 
@@ -666,8 +666,6 @@ class ResultFragment : Fragment() {
             allEpisodesSubs = it
         }
 
-
-
         observe(viewModel.selectedSeason) { season ->
             result_season_button?.text = fromIndexToSeasonText(season)
         }
@@ -675,7 +673,7 @@ class ResultFragment : Fragment() {
         observe(viewModel.seasonSelections) { seasonList ->
             result_season_button?.visibility = if (seasonList.size <= 1) GONE else VISIBLE
             result_season_button?.setOnClickListener {
-                result_season_button?.popupMenuNoIconsAndNoStringres(
+                result_season_button?.popupMenuNoIconsAndNoStringRes(
                     items = seasonList
                         .map { Pair(it ?: -2, fromIndexToSeasonText(it)) },
                 ) {
@@ -689,13 +687,34 @@ class ResultFragment : Fragment() {
 
         observe(viewModel.publicEpisodes) { episodes ->
             if (result_episodes == null || result_episodes.adapter == null) return@observe
-            result_episodes_text.text = "${episodes.size} Episode${if (episodes.size == 1) "" else "s"}"
             currentEpisodes = episodes
             activity?.runOnUiThread {
                 (result_episodes.adapter as EpisodeAdapter).cardList = episodes
                 (result_episodes.adapter as EpisodeAdapter).updateLayout()
                 (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
             }
+        }
+
+        observe(viewModel.selectedRange) { range ->
+            result_episode_select?.text = range
+        }
+
+        observe(viewModel.rangeOptions) { range ->
+            episodeRanges = range
+            result_episode_select?.visibility = if (range.size <= 1) GONE else VISIBLE
+        }
+
+        result_episode_select.setOnClickListener {
+            val ranges = episodeRanges
+            if (ranges != null) {
+                it.popupMenuNoIconsAndNoStringRes(ranges.mapIndexed { index, s -> Pair(index, s) }.toList()) {
+                    viewModel.changeRange(requireContext(), itemId)
+                }
+            }
+        }
+
+        observe(viewModel.publicEpisodesCount) { count ->
+            result_episodes_text.text = "$count Episode${if (count == 1) "" else "s"}"
         }
 
         observe(viewModel.id) {
@@ -820,6 +839,7 @@ class ResultFragment : Fragment() {
                         }
 
                         if (d.type == TvType.Movie && d is MovieLoadResponse) {
+                            val hasDownloadSupport = api.hasDownloadSupport
                             result_movie_parent.visibility = VISIBLE
                             result_episodes_text.visibility = GONE
                             result_episodes.visibility = GONE
@@ -835,54 +855,58 @@ class ResultFragment : Fragment() {
                                 return@setOnLongClickListener true
                             }
 
+
 //                            result_options.setOnClickListener {
 //                                val card = currentEpisodes?.first() ?: return@setOnClickListener
 //                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
 //                            }
 
-                            val localId = d.getId()
-                            val file =
-                                VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), localId)
+                            result_download_movie.visibility = if (hasDownloadSupport) VISIBLE else GONE
+                            if (hasDownloadSupport) {
+                                val localId = d.getId()
+                                val file =
+                                    VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), localId)
 
-                            setUpMaterialButton(
-                                file?.fileLength,
-                                file?.totalBytes,
-                                result_movie_progress_downloaded,
-                                result_download_movie,
-                                result_movie_text_progress,
-                                VideoDownloadHelper.DownloadEpisodeCached(
-                                    d.name,
-                                    d.posterUrl,
-                                    0,
-                                    null,
-                                    localId,
-                                    localId,
-                                    d.rating,
-                                    d.plot
-                                )
-                            ) { downloadClickEvent ->
-                                if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                                    handleAction(
-                                        EpisodeClickEvent(
-                                            ACTION_DOWNLOAD_EPISODE,
-                                            ResultEpisode(
-                                                d.name,
-                                                null,
-                                                0,
-                                                null,
-                                                d.dataUrl,
-                                                d.apiName,
-                                                localId,
-                                                0,
-                                                0L,
-                                                0L,
-                                                null,
-                                                null
+                                setUpMaterialButton(
+                                    file?.fileLength,
+                                    file?.totalBytes,
+                                    result_movie_progress_downloaded,
+                                    result_download_movie,
+                                    result_movie_text_progress,
+                                    VideoDownloadHelper.DownloadEpisodeCached(
+                                        d.name,
+                                        d.posterUrl,
+                                        0,
+                                        null,
+                                        localId,
+                                        localId,
+                                        d.rating,
+                                        d.plot
+                                    )
+                                ) { downloadClickEvent ->
+                                    if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
+                                        handleAction(
+                                            EpisodeClickEvent(
+                                                ACTION_DOWNLOAD_EPISODE,
+                                                ResultEpisode(
+                                                    d.name,
+                                                    null,
+                                                    0,
+                                                    null,
+                                                    d.dataUrl,
+                                                    d.apiName,
+                                                    localId,
+                                                    0,
+                                                    0L,
+                                                    0L,
+                                                    null,
+                                                    null
+                                                )
                                             )
                                         )
-                                    )
-                                } else {
-                                    handleDownloadClick(activity, currentHeaderName, downloadClickEvent)
+                                    } else {
+                                        handleDownloadClick(activity, currentHeaderName, downloadClickEvent)
+                                    }
                                 }
                             }
                         } else {

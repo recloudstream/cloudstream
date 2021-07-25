@@ -191,7 +191,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp">
                     <com.google.android.material.button.MaterialButton
-                            android:visibility="visible"
+                            android:visibility="gone"
                             android:layout_gravity="center_vertical"
                             app:cornerRadius="4dp"
                             android:id="@+id/result_bookmark_button"
@@ -202,7 +202,7 @@
                             app:iconTint="?attr/textColor"
                             android:textAllCaps="false"
                             app:icon="@drawable/ic_outline_remove_red_eye_24"
-                            android:backgroundTint="@color/itemBackground"
+                            android:backgroundTint="?attr/grayBackground"
                             style="@style/Widget.MaterialComponents.Button"
                             android:layout_width="wrap_content"
                             android:layout_height="50dp">
@@ -345,7 +345,7 @@
                             android:max="100"
                             android:layout_gravity="end|center_vertical"
                             android:progress="0"
-                            android:visibility="visible"
+                            android:visibility="gone"
                             tools:visibility="visible"/>
                     <!--
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -401,11 +401,27 @@
                     <com.google.android.material.button.MaterialButton
                             android:visibility="visible"
                             android:layout_gravity="center_vertical"
-                            app:cornerRadius="4dp"
                             android:id="@+id/result_season_button"
-                            tools:text="Subbed"
+                            tools:text="Season 1"
 
-                            app:rippleColor="?attr/bitDarkerGrayBackground"
+                            app:rippleColor="?attr/grayBackground"
+                            android:textColor="?attr/textColor"
+                            app:iconTint="?attr/textColor"
+                            android:textAllCaps="false"
+
+                            android:backgroundTint="@color/itemBackground"
+                            style="@style/Widget.MaterialComponents.Button"
+                            android:layout_width="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:layout_height="50dp">
+                    </com.google.android.material.button.MaterialButton>
+                    <com.google.android.material.button.MaterialButton
+                            android:visibility="visible"
+                            android:layout_gravity="center_vertical"
+                            android:id="@+id/result_episode_select"
+                            tools:text="50-100"
+
+                            app:rippleColor="?attr/grayBackground"
                             android:textColor="?attr/textColor"
                             app:iconTint="?attr/textColor"
                             android:textAllCaps="false"

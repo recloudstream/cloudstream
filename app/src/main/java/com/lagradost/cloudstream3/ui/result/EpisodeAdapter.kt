@@ -51,7 +51,7 @@ class EpisodeAdapter(
     @LayoutRes
     private var layout: Int = 0
     fun updateLayout() {
-        layout = if (cardList.filter { it.poster != null }.size >= cardList.size / 2)
+        layout = if (cardList.filter { it.poster != null }.size >= cardList.size / 2f) // If over half has posters then use the large layout
             R.layout.result_episode_large
         else R.layout.result_episode
     }

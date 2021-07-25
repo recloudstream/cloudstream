@@ -16,13 +16,23 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.launch
 
+const val EPISODE_RANGE_SIZE = 50
+const val EPISODE_RANGE_OVERLOAD = 60
+
 class ResultViewModel : ViewModel() {
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
     private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
     private val _publicEpisodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
+    private val _publicEpisodesCount: MutableLiveData<Int> = MutableLiveData() // before the sorting
+    private val _rangeOptions: MutableLiveData<List<String>> = MutableLiveData()
+    val selectedRange: MutableLiveData<String> = MutableLiveData()
+    private val selectedRangeInt: MutableLiveData<Int> = MutableLiveData()
+    val rangeOptions: LiveData<List<String>> = _rangeOptions
+
     val resultResponse: LiveData<Resource<Any?>> get() = _resultResponse
     val episodes: LiveData<List<ResultEpisode>> get() = _episodes
     val publicEpisodes: LiveData<List<ResultEpisode>> get() = _publicEpisodes
+    val publicEpisodesCount: LiveData<Int> get() = _publicEpisodesCount
 
     private val dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
 
@@ -46,7 +56,7 @@ class ResultViewModel : ViewModel() {
         _watchStatus.postValue(currentWatch)
     }
 
-    private fun filterEpisodes(context: Context, list: List<ResultEpisode>?, selection: Int?) {
+    private fun filterEpisodes(context: Context, list: List<ResultEpisode>?, selection: Int?, range: Int?) {
         if (list == null) return
         val seasonTypes = HashMap<Int?, Boolean>()
         for (i in list) {
@@ -62,11 +72,51 @@ class ResultViewModel : ViewModel() {
         if (internalId != null) context.setResultSeason(internalId, realSelection)
 
         selectedSeason.postValue(realSelection ?: -2)
-        _publicEpisodes.postValue(list.filter { it.season == realSelection })
+
+        var currentList = list.filter { it.season == realSelection }
+        _publicEpisodesCount.postValue(currentList.size)
+
+        val rangeList = ArrayList<String>()
+        for (i in currentList.indices step EPISODE_RANGE_SIZE) {
+            if (i + EPISODE_RANGE_SIZE < currentList.size) {
+                rangeList.add("${i + 1}-${i + EPISODE_RANGE_SIZE}")
+            } else {
+                rangeList.add("${i + 1}-${currentList.size}")
+            }
+        }
+        _rangeOptions.postValue(rangeList)
+
+        val cRange = range ?: if (selection != null) {
+            0
+        } else {
+            selectedRangeInt.value ?: 0
+        }
+
+        val realRange = if (cRange * EPISODE_RANGE_SIZE > currentList.size) {
+            currentList.size / EPISODE_RANGE_SIZE
+        } else {
+            cRange
+        }
+
+        selectedRangeInt.postValue(realRange)
+        selectedRange.postValue(rangeList[realRange])
+
+        if (currentList.size > EPISODE_RANGE_OVERLOAD) {
+            currentList = currentList.subList(
+                realRange * EPISODE_RANGE_SIZE,
+                minOf(currentList.size, (realRange + 1) * EPISODE_RANGE_SIZE)
+            )
+        }
+
+        _publicEpisodes.postValue(currentList)
     }
 
     fun changeSeason(context: Context, selection: Int?) {
-        filterEpisodes(context, _episodes.value, selection)
+        filterEpisodes(context, _episodes.value, selection, null)
+    }
+
+    fun changeRange(context: Context, range: Int?) {
+        filterEpisodes(context, _episodes.value, null, range)
     }
 
     private fun updateEpisodes(context: Context, localId: Int?, list: List<ResultEpisode>, selection: Int?) {
@@ -74,7 +124,7 @@ class ResultViewModel : ViewModel() {
         filterEpisodes(
             context,
             list,
-            if (selection == -1) context.getResultSeason(localId ?: id.value ?: return) else selection
+            if (selection == -1) context.getResultSeason(localId ?: id.value ?: return) else selection, null
         )
     }
 
