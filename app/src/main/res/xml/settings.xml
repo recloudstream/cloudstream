@@ -49,6 +49,13 @@
                 android:summary="Tap twice on the right or left side to seek forwards or backwards"
                 app:defaultValue="false"
         />
+        <SwitchPreference
+                android:key="acra.disable"
+                android:icon="@drawable/ic_baseline_bug_report_24"
+                android:title="@string/pref_disable_acra"
+                android:summaryOff="Only sends data on crashes"
+                android:summaryOn="Sends no data"
+                android:defaultValue="false"/>
         <Preference
                 android:title="Github"
                 android:icon="@drawable/ic_github_logo"

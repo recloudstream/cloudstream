@@ -30,6 +30,7 @@
     <string name="type_dropped">Dropped</string>
     <string name="type_plan_to_watch">Plan to Watch</string>
     <string name="type_none">None</string>
+
     <string name="play_movie_button">Play Movie</string>
     <string name="pick_source">Sources</string>
     <string name="pick_subtitle">Subtitles</string>
@@ -42,10 +43,15 @@
     <string name="error_loading_links">Error Loading Links</string>
     <string name="download_storage_text">Internal Storage</string>
     <string name="options">Options</string>
+
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
+
     <string name="popup_delete_file">Delete File</string>
     <string name="popup_play_file">Play File</string>
     <string name="popup_resume_download">Resume Download</string>
     <string name="popup_pause_download">Pause Download</string>
+
+    <string name="acra_report_toast">Sorry, the application crashed. An anonymous bug report will be sent to the developers</string>
+    <string name="pref_disable_acra">Disable automatic bug reporting</string>
 </resources>
