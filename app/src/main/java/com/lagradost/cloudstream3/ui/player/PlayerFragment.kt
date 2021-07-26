@@ -1345,7 +1345,9 @@ class PlayerFragment : Fragment() {
         outState.putBoolean(STATE_PLAYER_PLAYING, isPlayerPlaying)
         outState.putInt(RESIZE_MODE_KEY, resizeMode)
         outState.putFloat(PLAYBACK_SPEED, playbackSpeed)
-        outState.putString("data", mapper.writeValueAsString(playerData))
+        if(!isDownloadedFile) {
+            outState.putString("data", mapper.writeValueAsString(playerData))
+        }
         super.onSaveInstanceState(outState)
     }
 
