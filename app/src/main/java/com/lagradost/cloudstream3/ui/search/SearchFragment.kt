@@ -131,8 +131,10 @@ class SearchFragment : Fragment() {
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
-                        (cardSpace?.adapter as SearchAdapter?)?.cardList = data
-                        cardSpace?.adapter?.notifyDataSetChanged()
+                        if(data != null) {
+                            (cardSpace?.adapter as SearchAdapter?)?.cardList = ArrayList( data.filterNotNull())
+                            cardSpace?.adapter?.notifyDataSetChanged()
+                        }
                     }
                     searchExitIcon.alpha = 1f
                     search_loading_bar.alpha = 0f

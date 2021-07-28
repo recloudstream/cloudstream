@@ -50,8 +50,9 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
-import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.setUpMaterialButton
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.*
@@ -69,7 +70,6 @@ import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-
 
 const val MAX_SYNO_LENGH = 300
 
@@ -156,6 +156,7 @@ class ResultFragment : Fragment() {
     private var currentHeaderName: String? = null
     private var currentType: TvType? = null
     private var currentEpisodes: List<ResultEpisode>? = null
+    var downloadButton : EasyDownloadButton? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -167,8 +168,15 @@ class ResultFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
+    override fun onDestroyView() {
+        (result_episodes?.adapter as EpisodeAdapter?)?.killAdapter()
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         //requireActivity().viewModelStore.clear() // REMEMBER THE CLEAR
+        downloadButton?.dispose()
+
         super.onDestroy()
         activity?.let {
             it.window?.navigationBarColor =
@@ -873,8 +881,9 @@ class ResultFragment : Fragment() {
                                 val localId = d.getId()
                                 val file =
                                     VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), localId)
-
-                                setUpMaterialButton(
+                                downloadButton?.dispose()
+                                downloadButton = EasyDownloadButton()
+                                downloadButton?.setUpMaterialButton(
                                     file?.fileLength,
                                     file?.totalBytes,
                                     result_movie_progress_downloaded,

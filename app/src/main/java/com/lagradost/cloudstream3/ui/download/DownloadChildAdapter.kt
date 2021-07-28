@@ -1,28 +1,20 @@
 package com.lagradost.cloudstream3.ui.download
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.UIHelper.popupMenuNoIcons
-import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadState
 import kotlinx.android.synthetic.main.download_child_episode.view.*
+import java.util.*
 
 const val DOWNLOAD_ACTION_PLAY_FILE = 0
 const val DOWNLOAD_ACTION_DELETE_FILE = 1
@@ -41,8 +33,37 @@ data class DownloadClickEvent(val action: Int, val data: VideoDownloadHelper.Dow
 class DownloadChildAdapter(
     var cardList: List<VisualDownloadChildCached>,
     private val clickCallback: (DownloadClickEvent) -> Unit,
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val mBoundViewHolders: HashSet<DownloadButtonViewHolder> = HashSet()
+    private fun getAllBoundViewHolders(): Set<DownloadButtonViewHolder?>? {
+        return Collections.unmodifiableSet(mBoundViewHolders)
+    }
+
+    fun killAdapter() {
+        getAllBoundViewHolders()?.forEach { view ->
+            view?.downloadButton?.dispose()
+        }
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        if (holder is DownloadButtonViewHolder) {
+            holder.downloadButton.dispose()
+        }
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        if (holder is DownloadButtonViewHolder) {
+            holder.downloadButton.dispose()
+            mBoundViewHolders.remove(holder);
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        if (holder is DownloadButtonViewHolder) {
+            holder.reattachDownloadButton()
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return DownloadChildViewHolder(
@@ -55,6 +76,7 @@ class DownloadChildAdapter(
         when (holder) {
             is DownloadChildViewHolder -> {
                 holder.bind(cardList[position])
+                mBoundViewHolders.add(holder)
             }
         }
     }
@@ -67,7 +89,9 @@ class DownloadChildAdapter(
     constructor(
         itemView: View,
         private val clickCallback: (DownloadClickEvent) -> Unit,
-    ) : RecyclerView.ViewHolder(itemView) {
+    ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
+        override var downloadButton = EasyDownloadButton()
+
         private val title: TextView = itemView.download_child_episode_text
         private val extraInfo: TextView = itemView.download_child_episode_text_extra
         private val holder: CardView = itemView.download_child_episode_holder
@@ -75,8 +99,11 @@ class DownloadChildAdapter(
         private val progressBarDownload: ContentLoadingProgressBar = itemView.download_child_episode_progress_downloaded
         private val downloadImage: ImageView = itemView.download_child_episode_download
 
+        var localCard :  VisualDownloadChildCached? = null
+
         @SuppressLint("SetTextI18n")
         fun bind(card: VisualDownloadChildCached) {
+            localCard = card
             val d = card.data
 
             val posDur = itemView.context.getViewPos(d.id)
@@ -90,7 +117,7 @@ class DownloadChildAdapter(
             }
 
             title.text = d.name ?: "Episode ${d.episode}" //TODO FIX
-            DownloadButtonSetup.setUpButton(
+            downloadButton.setUpButton(
                 card.currentBytes,
                 card.totalBytes,
                 progressBarDownload,
@@ -102,6 +129,22 @@ class DownloadChildAdapter(
 
             holder.setOnClickListener {
                 clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
+            }
+        }
+
+        override fun reattachDownloadButton() {
+            downloadButton.dispose()
+            val card = localCard
+            if (card != null) {
+                downloadButton.setUpButton(
+                    card.currentBytes,
+                    card.totalBytes,
+                    progressBarDownload,
+                    downloadImage,
+                    extraInfo,
+                    card.data,
+                    clickCallback
+                )
             }
         }
     }

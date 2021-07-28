@@ -30,6 +30,16 @@ class DownloadChildFragment : Fragment() {
             }
     }
 
+    override fun onDestroyView() {
+        (download_child_list?.adapter as DownloadChildAdapter?)?.killAdapter()
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
+        super.onDestroy()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_child_downloads, container, false)
     }
@@ -58,6 +68,8 @@ class DownloadChildFragment : Fragment() {
         download_child_list?.adapter?.notifyDataSetChanged()
     }
 
+    var downloadDeleteEventListener: ((Int) -> Unit)? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -82,7 +94,7 @@ class DownloadChildFragment : Fragment() {
                 handleDownloadClick(activity, name, click)
             }
 
-        VideoDownloadManager.downloadDeleteEvent += { id ->
+        downloadDeleteEventListener = { id: Int ->
             val list = (download_child_list?.adapter as DownloadChildAdapter?)?.cardList
             if (list != null) {
                 if (list.any { it.data.id == id }) {
@@ -90,6 +102,8 @@ class DownloadChildFragment : Fragment() {
                 }
             }
         }
+
+        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
 
         download_child_list.adapter = adapter
         download_child_list.layoutManager = GridLayoutManager(context, 1)

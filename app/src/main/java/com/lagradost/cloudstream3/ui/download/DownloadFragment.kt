@@ -11,19 +11,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
-import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import kotlinx.android.synthetic.main.fragment_child_downloads.*
 import kotlinx.android.synthetic.main.fragment_downloads.*
-import kotlinx.android.synthetic.main.fragment_result.*
 
 class DownloadFragment : Fragment() {
     private lateinit var downloadsViewModel: DownloadViewModel
@@ -41,9 +37,19 @@ class DownloadFragment : Fragment() {
         this.layoutParams = param
     }
 
-    fun setList(list : List<VisualDownloadHeaderCached>) {
-        (download_list?.adapter as DownloadHeaderAdapter? ?: return).cardList = list
-        (download_list?.adapter as DownloadHeaderAdapter? ?: return).notifyDataSetChanged()
+    private fun setList(list: List<VisualDownloadHeaderCached>) {
+        (download_list?.adapter as DownloadHeaderAdapter?)?.cardList = list
+        download_list?.adapter?.notifyDataSetChanged()
+    }
+
+    override fun onDestroyView() {
+        (download_list?.adapter as DownloadHeaderAdapter?)?.killAdapter()
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
+        super.onDestroy()
     }
 
     @SuppressLint("SetTextI18n")
@@ -76,6 +82,8 @@ class DownloadFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_downloads, container, false)
     }
 
+    var downloadDeleteEventListener: ((Int) -> Unit)? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
@@ -95,13 +103,13 @@ class DownloadFragment : Fragment() {
                 },
                 { downloadClickEvent ->
                     handleDownloadClick(activity, downloadClickEvent.data.name, downloadClickEvent)
-                    if(downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
                         downloadsViewModel.updateList(requireContext())
                     }
                 }
             )
 
-        VideoDownloadManager.downloadDeleteEvent += { id ->
+        downloadDeleteEventListener = { id ->
             val list = (download_list?.adapter as DownloadHeaderAdapter?)?.cardList
             if (list != null) {
                 if (list.any { it.data.id == id }) {
@@ -110,6 +118,8 @@ class DownloadFragment : Fragment() {
                 }
             }
         }
+
+        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
 
         download_list.adapter = adapter
         download_list.layoutManager = GridLayoutManager(context, 1)

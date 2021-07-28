@@ -13,15 +13,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
-import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
-import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.download.DownloadButtonViewHolder
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
-import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
+import java.util.*
 
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
 const val ACTION_PLAY_EPISODE_IN_VLC_PLAYER = 2
@@ -49,12 +49,43 @@ class EpisodeAdapter(
     private val downloadClickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private val mBoundViewHolders: HashSet<DownloadButtonViewHolder> = HashSet()
+    private fun getAllBoundViewHolders(): Set<DownloadButtonViewHolder?>? {
+        return Collections.unmodifiableSet(mBoundViewHolders)
+    }
+
+    fun killAdapter() {
+        getAllBoundViewHolders()?.forEach { view ->
+            view?.downloadButton?.dispose()
+        }
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        if (holder is DownloadButtonViewHolder) {
+            holder.downloadButton.dispose()
+        }
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        if (holder is DownloadButtonViewHolder) {
+            holder.downloadButton.dispose()
+            mBoundViewHolders.remove(holder);
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        if (holder is DownloadButtonViewHolder) {
+            holder.reattachDownloadButton()
+        }
+    }
+
     @LayoutRes
     private var layout: Int = 0
     fun updateLayout() {
-        layout = if (cardList.filter { it.poster != null }.size >= cardList.size / 2f) // If over half has posters then use the large layout
-            R.layout.result_episode_large
-        else R.layout.result_episode
+        layout =
+            if (cardList.filter { it.poster != null }.size >= cardList.size / 2f) // If over half has posters then use the large layout
+                R.layout.result_episode_large
+            else R.layout.result_episode
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -62,7 +93,7 @@ class EpisodeAdapter(
             R.layout.result_episode_large
         else R.layout.result_episode*/
 
-        return CardViewHolder(
+        return EpisodeCardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
             hasDownloadSupport,
             clickCallback,
@@ -72,8 +103,9 @@ class EpisodeAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is CardViewHolder -> {
+            is EpisodeCardViewHolder -> {
                 holder.bind(cardList[position])
+                mBoundViewHolders.add(holder)
             }
         }
     }
@@ -82,26 +114,31 @@ class EpisodeAdapter(
         return cardList.size
     }
 
-    class CardViewHolder
+    class EpisodeCardViewHolder
     constructor(
         itemView: View,
-        private val hasDownloadSupport: Boolean,
+        val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
         private val downloadClickCallback: (DownloadClickEvent) -> Unit,
-    ) : RecyclerView.ViewHolder(itemView) {
+    ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
+        override var downloadButton = EasyDownloadButton()
+
         private val episodeText: TextView = itemView.episode_text
         private val episodeRating: TextView? = itemView.episode_rating
         private val episodeDescript: TextView? = itemView.episode_descript
         private val episodeProgress: ContentLoadingProgressBar? = itemView.episode_progress
         private val episodePoster: ImageView? = itemView.episode_poster
 
-        private val episodeDownloadBar: ContentLoadingProgressBar = itemView.result_episode_progress_downloaded
-        private val episodeDownloadImage: ImageView = itemView.result_episode_download
+        val episodeDownloadBar: ContentLoadingProgressBar = itemView.result_episode_progress_downloaded
+        val episodeDownloadImage: ImageView = itemView.result_episode_download
 
         private val episodeHolder = itemView.episode_holder
 
+        var localCard: ResultEpisode? = null
+
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
+            localCard = card
             val name = if (card.name == null) "Episode ${card.episode}" else "${card.episode}. ${card.name}"
             episodeText.text = name
 
@@ -148,11 +185,15 @@ class EpisodeAdapter(
 
             episodeDownloadImage.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
             episodeDownloadBar.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
+        }
 
-            if (hasDownloadSupport) {
+        override fun reattachDownloadButton() {
+            downloadButton.dispose()
+            val card = localCard
+            if (hasDownloadSupport && card != null) {
                 val downloadInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(itemView.context, card.id)
 
-                DownloadButtonSetup.setUpButton(
+                downloadButton.setUpButton(
                     downloadInfo?.fileLength, downloadInfo?.totalBytes, episodeDownloadBar, episodeDownloadImage, null,
                     VideoDownloadHelper.DownloadEpisodeCached(
                         card.name, card.poster, card.episode, card.season, card.id, 0, card.rating, card.descript
