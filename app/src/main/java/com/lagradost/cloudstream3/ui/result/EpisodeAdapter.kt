@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
+import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
@@ -46,8 +47,8 @@ class EpisodeAdapter(
     private val hasDownloadSupport: Boolean,
     private val clickCallback: (EpisodeClickEvent) -> Unit,
     private val downloadClickCallback: (DownloadClickEvent) -> Unit,
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
     @LayoutRes
     private var layout: Int = 0
     fun updateLayout() {

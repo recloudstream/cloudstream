@@ -7,29 +7,23 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.UIHelper.hasPIPPermission
-import com.lagradost.cloudstream3.UIHelper.isUsingMobileData
 import com.lagradost.cloudstream3.UIHelper.requestRW
 import com.lagradost.cloudstream3.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.download.DownloadChildFragment
 import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_result.*
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -57,14 +51,7 @@ class MainActivity : AppCompatActivity() {
         var isInPlayer: Boolean = false
         var canShowPipMode: Boolean = false
         var isInPIPMode: Boolean = false
-        lateinit var mainContext: MainActivity
         lateinit var navOptions: NavOptions
-
-        //https://github.com/anggrayudi/SimpleStorage/blob/4eb6306efb6cdfae4e34f170c8b9d4e135b04d51/sample/src/main/java/com/anggrayudi/storage/sample/activity/MainActivity.kt#L624
-        const val REQUEST_CODE_STORAGE_ACCESS = 1
-        const val REQUEST_CODE_PICK_FOLDER = 2
-        const val REQUEST_CODE_PICK_FILE = 3
-        const val REQUEST_CODE_ASK_PERMISSIONS = 4
     }
 
     private fun enterPIPMode() {
@@ -149,7 +136,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainContext = this
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -174,9 +161,9 @@ class MainActivity : AppCompatActivity() {
 
         navView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-               // R.id.navigation_home -> {
-                   // navController.navigate(R.id.navigation_home, null, navOptions)
-                //}
+                R.id.navigation_home -> {
+                    navController.navigate(R.id.navigation_home, null, navOptions)
+                }
                 R.id.navigation_search -> {
                     navController.navigate(R.id.navigation_search, null, navOptions)
                 }
@@ -230,7 +217,6 @@ class MainActivity : AppCompatActivity() {
                 VideoDownloadManager.downloadFromResume(this, it.pkg)
             }
         }*/
-
 
 
         /*

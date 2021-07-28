@@ -105,7 +105,7 @@ object DownloadButtonSetup {
         downloadView: View,
         downloadImageChangeCallback: (Pair<Int, String>) -> Unit,
         clickCallback: (DownloadClickEvent) -> Unit,
-    ) {
+    ): () -> Unit {
         var lastState: VideoDownloadManager.DownloadType? = null
         var currentBytes = setupCurrentBytes ?: 0
         var totalBytes = setupTotalBytes ?: 0
@@ -174,7 +174,7 @@ object DownloadButtonSetup {
         fixDownloadedBytes(currentBytes, totalBytes, false)
         changeDownloadImage(VideoDownloadManager.getDownloadState(data.id))
 
-        VideoDownloadManager.downloadProgressEvent += { downloadData ->
+        val downloadProgressEventListener = { downloadData: Triple<Int, Long, Long> ->
             if (data.id == downloadData.first) {
                 if (downloadData.second != currentBytes || downloadData.third != totalBytes) { // TO PREVENT WASTING UI TIME
                     Coroutines.runOnMainThread {
@@ -184,7 +184,7 @@ object DownloadButtonSetup {
             }
         }
 
-        VideoDownloadManager.downloadStatusEvent += { downloadData ->
+        val downloadStatusEventListener = { downloadData: Pair<Int, VideoDownloadManager.DownloadType> ->
             if (data.id == downloadData.first) {
                 if (lastState != downloadData.second || needImageUpdate) { // TO PREVENT WASTING UI TIME
                     Coroutines.runOnMainThread {
@@ -193,6 +193,9 @@ object DownloadButtonSetup {
                 }
             }
         }
+
+        VideoDownloadManager.downloadProgressEvent += downloadProgressEventListener
+        VideoDownloadManager.downloadStatusEvent += downloadStatusEventListener
 
         downloadView.setOnClickListener {
             if (currentBytes <= 0) {
@@ -220,6 +223,11 @@ object DownloadButtonSetup {
                 }
             }
         }
+
+        return {
+            VideoDownloadManager.downloadProgressEvent -= downloadProgressEventListener
+            VideoDownloadManager.downloadStatusEvent -= downloadStatusEventListener
+        }
     }
 
     fun setUpMaterialButton(
@@ -230,8 +238,8 @@ object DownloadButtonSetup {
         textView: TextView?,
         data: VideoDownloadHelper.DownloadEpisodeCached,
         clickCallback: (DownloadClickEvent) -> Unit,
-    ) {
-        setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadButton, {
+    ): () -> Unit {
+        return setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadButton, {
             downloadButton?.setIconResource(it.first)
             downloadButton?.text = it.second
         }, clickCallback)
@@ -245,8 +253,8 @@ object DownloadButtonSetup {
         textView: TextView?,
         data: VideoDownloadHelper.DownloadEpisodeCached,
         clickCallback: (DownloadClickEvent) -> Unit,
-    ) {
-        setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadImage, {
+    ): () -> Unit {
+        return setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadImage, {
             downloadImage?.setImageResource(it.first)
         }, clickCallback)
     }

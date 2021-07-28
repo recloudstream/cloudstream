@@ -14,8 +14,16 @@ class SearchViewModel : ViewModel() {
     val searchResponse: LiveData<Resource<ArrayList<Any>>> get() = _searchResponse
     var searchCounter = 0
 
+    private fun clearSearch() {
+        _searchResponse.postValue(Resource.Success(ArrayList()))
+    }
+
     fun search(query: String) = viewModelScope.launch {
         searchCounter++
+        if(query.length <= 1) {
+            clearSearch()
+            return@launch
+        }
         val localSearchCounter = searchCounter
         _searchResponse.postValue(Resource.Loading())
         val data = safeApiCall {
@@ -27,6 +35,10 @@ class SearchViewModel : ViewModel() {
 
     fun quickSearch(query: String) = viewModelScope.launch {
         searchCounter++
+        if(query.length <= 1) {
+            clearSearch()
+            return@launch
+        }
         val localSearchCounter = searchCounter
         _searchResponse.postValue(Resource.Loading())
         val data = safeApiCall {

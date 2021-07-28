@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
@@ -56,17 +57,17 @@ class SearchAdapter(
     constructor(itemView: View, _activity: Activity, resView: AutofitRecyclerView) : RecyclerView.ViewHolder(itemView) {
         val activity = _activity
         val cardView: ImageView = itemView.imageView
-        val cardText: TextView = itemView.imageText
-        val text_type: TextView? = itemView.text_type
+        private val cardText: TextView = itemView.imageText
+        private val textType: TextView? = itemView.text_type
         // val search_result_lang: ImageView? = itemView.search_result_lang
 
-        val text_is_dub: View? = itemView.text_is_dub
-        val text_is_sub: View? = itemView.text_is_sub
+        private val textIsDub: View? = itemView.text_is_dub
+        private val textIsSub: View? = itemView.text_is_sub
 
         //val cardTextExtra: TextView? = itemView.imageTextExtra
         //val imageTextProvider: TextView? = itemView.imageTextProvider
-        val bg = itemView.backgroundCard
-        val compactView = itemView.context.getGridIsCompact()
+        private val bg: CardView = itemView.backgroundCard
+        private val compactView = itemView.context.getGridIsCompact()
         private val coverHeight: Int = if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
 
         fun bind(card: Any) {
@@ -80,7 +81,7 @@ class SearchAdapter(
                     }
                 }
 
-                text_type?.text = when (card.type) {
+                textType?.text = when (card.type) {
                     TvType.Anime -> "Anime"
                     TvType.Movie -> "Movie"
                     TvType.ONA -> "ONA"
@@ -88,8 +89,8 @@ class SearchAdapter(
                 }
                 // search_result_lang?.visibility = View.GONE
 
-                text_is_dub?.visibility = View.GONE
-                text_is_sub?.visibility = View.GONE
+                textIsDub?.visibility = View.GONE
+                textIsSub?.visibility = View.GONE
 
                 cardText.text = card.name
 
@@ -114,11 +115,11 @@ class SearchAdapter(
                         if (card.dubStatus?.size == 1) {
                             //search_result_lang?.visibility = View.VISIBLE
                             if (card.dubStatus.contains(DubStatus.Dubbed)) {
-                                text_is_dub?.visibility = View.VISIBLE
+                                textIsDub?.visibility = View.VISIBLE
                                 //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.dubColor))
                             } else if (card.dubStatus.contains(DubStatus.Subbed)) {
                                 //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.subColor))
-                                text_is_sub?.visibility = View.VISIBLE
+                                textIsSub?.visibility = View.VISIBLE
                             }
                         }
                     }

@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.UIHelper.checkWrite
 import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
+import com.lagradost.cloudstream3.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.UIHelper.isAppInstalled
 import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
 import com.lagradost.cloudstream3.UIHelper.isConnectedToChromecast
@@ -65,6 +66,9 @@ import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.coroutines.Job
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 const val MAX_SYNO_LENGH = 300
@@ -220,6 +224,9 @@ class ResultFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.window?.decorView?.clearFocus()
+        hideKeyboard()
+
         activity?.fixPaddingStatusbar(result_scroll)
         activity?.fixPaddingStatusbar(result_barstatus)
 

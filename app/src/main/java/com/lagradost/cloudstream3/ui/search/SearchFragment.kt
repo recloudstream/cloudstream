@@ -1,10 +1,13 @@
 package com.lagradost.cloudstream3.ui.search
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -36,7 +39,9 @@ class SearchFragment : Fragment() {
     ): View? {
         searchViewModel =
             ViewModelProvider(this).get(SearchViewModel::class.java)
-
+        activity?.window?.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
+        )
         return inflater.inflate(R.layout.fragment_search, container, false)
     }
 
@@ -125,9 +130,9 @@ class SearchFragment : Fragment() {
         observe(searchViewModel.searchResponse) {
             when (it) {
                 is Resource.Success -> {
-                    it?.value?.let { data ->
-                        (cardSpace.adapter as SearchAdapter).cardList = data
-                        (cardSpace.adapter as SearchAdapter).notifyDataSetChanged()
+                    it.value.let { data ->
+                        (cardSpace?.adapter as SearchAdapter?)?.cardList = data
+                        cardSpace?.adapter?.notifyDataSetChanged()
                     }
                     searchExitIcon.alpha = 1f
                     search_loading_bar.alpha = 0f
@@ -144,6 +149,18 @@ class SearchFragment : Fragment() {
             }
         }
         allApi.providersActive = requireActivity().getApiSettings()
+
+        main_search.setOnQueryTextFocusChangeListener { searchView, b ->
+            if (b) {
+                // https://stackoverflow.com/questions/12022715/unable-to-show-keyboard-automatically-in-the-searchview
+                searchView?.postDelayed({
+                    val imm: InputMethodManager? =
+                        requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?
+                    imm?.showSoftInput(view.findFocus(), 0)
+                }, 200)
+            }
+        }
+        main_search.onActionViewExpanded()
         //searchViewModel.search("iron man")
         //(activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*

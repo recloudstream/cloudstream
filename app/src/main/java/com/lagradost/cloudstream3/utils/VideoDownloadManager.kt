@@ -526,7 +526,6 @@ object VideoDownloadManager {
         var count: Int
         var bytesDownloaded = resumeLength
 
-
         var isPaused = false
         var isStopped = false
         var isDone = false
@@ -561,7 +560,8 @@ object VideoDownloadManager {
             )
         }
 
-        downloadEvent += { event ->
+
+        val downloadEventListener = { event: Pair<Int, DownloadActionType> ->
             if (event.first == ep.id) {
                 when (event.second) {
                     DownloadActionType.Pause -> {
@@ -578,6 +578,8 @@ object VideoDownloadManager {
                 }
             }
         }
+
+        downloadEvent += downloadEventListener
 
         // UPDATE DOWNLOAD NOTIFICATION
         val notificationCoroutine = main {
@@ -619,6 +621,12 @@ object VideoDownloadManager {
         fileStream.close()
         connectionInputStream.close()
         notificationCoroutine.cancel()
+
+        try {
+            downloadEvent -= downloadEventListener
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         try {
             downloadStatus.remove(ep.id)

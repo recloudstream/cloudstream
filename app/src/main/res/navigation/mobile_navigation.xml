@@ -3,14 +3,14 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/mobile_navigation"
-            app:startDestination="@+id/navigation_search">
+            app:startDestination="@+id/navigation_home">
 
-   <!-- <fragment
+    <fragment
             android:id="@+id/navigation_home"
             android:name="com.lagradost.cloudstream3.ui.home.HomeFragment"
             android:label="@string/title_home"
             tools:layout="@layout/fragment_home"/>
--->
+
     <fragment
             android:id="@+id/navigation_search"
             android:name="com.lagradost.cloudstream3.ui.search.SearchFragment"
@@ -26,13 +26,11 @@
             android:id="@+id/navigation_settings"
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.settings.SettingsFragment"
-            android:label="@string/title_settings"
-    />
+            android:label="@string/title_settings"/>
 
     <fragment
             android:id="@+id/navigation_download_child"
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.download.DownloadChildFragment"
-            android:label="@string/title_settings"
-    />
+            android:label="@string/title_settings"/>
 </navigation>

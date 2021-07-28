@@ -31,6 +31,7 @@ import androidx.core.graphics.alpha
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastContext
@@ -66,6 +67,14 @@ object UIHelper {
             ),
             1337
         )
+    }
+
+    fun Fragment.hideKeyboard() {
+        view.let {
+            if (it != null) {
+                activity?.hideKeyboard(it)
+            }
+        }
     }
 
     @ColorInt
