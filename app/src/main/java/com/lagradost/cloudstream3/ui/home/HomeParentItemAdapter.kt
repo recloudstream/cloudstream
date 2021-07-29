@@ -5,18 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.homepage_parent.view.*
 
 class ParentItemAdapter(
-    var itemList: List<HomePageList>,
+    var items: List<HomePageList>,
     private val clickCallback: (SearchResponse) -> Unit,
-    private val moreInfoClickCallback: (List<SearchResponse>) -> Unit,
+    private val moreInfoClickCallback: (HomePageList) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): ParentViewHolder {
         val layout = R.layout.homepage_parent
@@ -28,20 +26,20 @@ class ParentItemAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ParentViewHolder -> {
-                holder.bind(itemList[position])
+                holder.bind(items[position])
             }
         }
     }
 
     override fun getItemCount(): Int {
-        return itemList.size
+        return items.size
     }
 
     class ParentViewHolder
     constructor(
         itemView: View,
         private val clickCallback: (SearchResponse) -> Unit,
-        private val moreInfoClickCallback: (List<SearchResponse>) -> Unit
+        private val moreInfoClickCallback: (HomePageList) -> Unit
     ) :
         RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.home_parent_item_title
@@ -53,7 +51,7 @@ class ParentItemAdapter(
             (recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
 
             moreInfo.setOnClickListener {
-                moreInfoClickCallback.invoke(info.list)
+                moreInfoClickCallback.invoke(info)
             }
         }
     }

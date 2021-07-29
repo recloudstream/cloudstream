@@ -71,6 +71,7 @@
             app:spanCount="3"
             android:paddingEnd="8dp"
             android:id="@+id/cardSpace"
+            tools:listitem="@layout/search_result_grid"
             android:orientation="vertical"
     >
     </com.lagradost.cloudstream3.ui.AutofitRecyclerView>

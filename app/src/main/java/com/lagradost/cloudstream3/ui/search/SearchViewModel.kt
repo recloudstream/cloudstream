@@ -5,14 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.allApi
+import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.APIRepository
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
-    private val _searchResponse: MutableLiveData<Resource<ArrayList<Any>>> = MutableLiveData()
-    val searchResponse: LiveData<Resource<ArrayList<Any>>> get() = _searchResponse
+    private val _searchResponse: MutableLiveData<Resource<ArrayList<SearchResponse>>> = MutableLiveData()
+    val searchResponse: LiveData<Resource<ArrayList<SearchResponse>>> get() = _searchResponse
     var searchCounter = 0
     private val repo = APIRepository(allApi)
 
@@ -31,7 +32,7 @@ class SearchViewModel : ViewModel() {
         val data = repo.search(query)
 
         if(localSearchCounter != searchCounter) return@launch
-        _searchResponse.postValue(data as Resource<ArrayList<Any>>?)
+        _searchResponse.postValue(data)
     }
 
     fun quickSearch(query: String) = viewModelScope.launch {
@@ -45,6 +46,6 @@ class SearchViewModel : ViewModel() {
         val data = repo.quickSearch(query)
 
         if(localSearchCounter != searchCounter) return@launch
-        _searchResponse.postValue(data as Resource<ArrayList<Any>>?)
+        _searchResponse.postValue(data)
     }
 }

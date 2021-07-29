@@ -135,7 +135,7 @@ class SearchFragment : Fragment() {
                 is Resource.Success -> {
                     it.value.let { data ->
                         if (data != null) {
-                            (cardSpace?.adapter as SearchAdapter?)?.cardList = ArrayList(data.filterNotNull())
+                            (cardSpace?.adapter as SearchAdapter?)?.cardList = data.filterNotNull()
                             cardSpace?.adapter?.notifyDataSetChanged()
                         }
                     }
