@@ -18,6 +18,9 @@ class TrailersToProvider : MainAPI() {
     override val hasMainPage: Boolean
         get() = true
 
+    override val hasChromecastSupport: Boolean
+        get() = false
+
     override fun getMainPage(): HomePageResponse? {
         val response = khttp.get(mainUrl)
         val document = Jsoup.parse(response.text)
