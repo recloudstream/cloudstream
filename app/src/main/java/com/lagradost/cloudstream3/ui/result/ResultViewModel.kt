@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
@@ -20,6 +21,8 @@ const val EPISODE_RANGE_SIZE = 50
 const val EPISODE_RANGE_OVERLOAD = 60
 
 class ResultViewModel : ViewModel() {
+    var repo : APIRepository? = null
+
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
     private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
     private val _publicEpisodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
@@ -137,19 +140,14 @@ class ResultViewModel : ViewModel() {
         updateEpisodes(context, null, copy, selectedSeason.value)
     }
 
-    // THIS SHOULD AT LEAST CLEAN IT UP, SO APIS CAN SWITCH DOMAIN
-    private fun getId(url: String, api: MainAPI): Int {
-        return url.replace(api.mainUrl, "").hashCode()
-    }
-
     fun load(context: Context, url: String, apiName: String) = viewModelScope.launch {
         _resultResponse.postValue(Resource.Loading(url))
 
         _apiName.postValue(apiName)
         val api = getApiFromName(apiName)
-        val data = safeApiCall {
-            api.load(url)
-        }
+        repo = APIRepository(api)
+
+        val data = repo?.load(url)
 
         _resultResponse.postValue(data)
 
@@ -278,7 +276,7 @@ class ResultViewModel : ViewModel() {
         val links = ArrayList<ExtractorLink>()
         val subs = ArrayList<SubtitleFile>()
         return safeApiCall {
-            getApiFromName(_apiName.value).loadLinks(data, isCasting, { subtitleFile ->
+            repo?.loadLinks(data, isCasting, { subtitleFile ->
                 if (!subs.any { it.url == subtitleFile.url }) {
                     subs.add(subtitleFile)
                     _allEpisodesSubs.value?.set(id, subs)

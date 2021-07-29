@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.bumptech.glide.load.HttpException
+import com.lagradost.cloudstream3.ui.ErrorLoadingException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
@@ -66,6 +67,9 @@ suspend fun <T> safeApiCall(
                 }
                 is UnknownHostException -> {
                     Resource.Failure(true, null, null, "Cannot connect to server, try again later.")
+                }
+                is ErrorLoadingException -> {
+                    Resource.Failure(true, null, null, "Error loading, try again later.")
                 }
                 else -> {
                     val stackTraceMsg = throwable.localizedMessage + "\n\n" + throwable.stackTrace.joinToString(

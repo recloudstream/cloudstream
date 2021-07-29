@@ -47,6 +47,13 @@ object APIHolder {
         return apis[defProvider]
     }
 
+    fun getApiFromNameNull(apiName: String?): MainAPI? {
+        for (api in apis) {
+            if (apiName == api.name)
+                return api
+        }
+        return null
+    }
 
     fun LoadResponse.getId(): Int {
         return url.replace(getApiFromName(apiName).mainUrl, "").hashCode()
@@ -70,13 +77,18 @@ abstract class MainAPI {
     /**If link is stored in the "data" string, so links can be instantly loaded*/
     open val instantLinkLoading = false
 
-    open val hasQuickSearch = false
-
     /**Set false if links require referer or for some reason cant be played on a chromecast*/
     open val hasChromecastSupport = true
 
     /**If all links are m3u8 then set this to false*/
     open val hasDownloadSupport = true
+
+    open val hasMainPage = false
+    open val hasQuickSearch = false
+
+    open fun getMainPage() : HomePageResponse? {
+        return null
+    }
 
     open fun search(query: String): ArrayList<SearchResponse>? {
         return null
@@ -160,6 +172,15 @@ fun TvType.isMovieType(): Boolean {
 }
 
 data class SubtitleFile(val lang: String, val url: String)
+
+class HomePageResponse(
+    val items: List<HomePageList>
+)
+
+class HomePageList(
+    val name: String,
+    val list: List<SearchResponse>
+)
 
 interface SearchResponse {
     val name: String

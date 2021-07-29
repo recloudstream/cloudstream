@@ -9,10 +9,8 @@
         android:focusable="true"
         android:clickable="true"
         android:id="@+id/search_result_root"
-
 >
     <androidx.cardview.widget.CardView
-
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:layout_margin="2dp"
             android:layout_width="match_parent"

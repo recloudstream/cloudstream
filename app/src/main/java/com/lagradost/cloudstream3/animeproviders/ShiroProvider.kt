@@ -9,6 +9,7 @@ import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList
 
+const val SHIRO_TIMEOUT_TIME = 60.0
 
 class ShiroProvider : MainAPI() {
     companion object {
@@ -53,6 +54,9 @@ class ShiroProvider : MainAPI() {
         get() = "Shiro"
 
     override val hasQuickSearch: Boolean
+        get() = true
+
+    override val hasMainPage: Boolean
         get() = true
 
     data class ShiroSearchResponseShow(
@@ -134,6 +138,46 @@ class ShiroProvider : MainAPI() {
         @JsonProperty("status") val status: String,
     )
 
+    data class ShiroHomePageData(
+        @JsonProperty("trending_animes") val trending_animes: List<AnimePageData>,
+        @JsonProperty("ongoing_animes") val ongoing_animes: List<AnimePageData>,
+        @JsonProperty("latest_animes") val latest_animes: List<AnimePageData>,
+        @JsonProperty("latest_episodes") val latest_episodes: List<ShiroEpisodes>,
+    )
+
+    data class ShiroHomePage(
+        @JsonProperty("status") val status: String,
+        @JsonProperty("data") val data: ShiroHomePageData,
+        @JsonProperty("random") var random: AnimePage?,
+    )
+
+    private fun toHomePageList(list: List<AnimePageData>, name: String): HomePageList {
+        return HomePageList(name, list.map { data ->
+            val type = getType(data.type)
+            val isDubbed =
+                data.language == "dubbed"
+
+            val set: EnumSet<DubStatus> =
+                EnumSet.of(if (isDubbed) DubStatus.Dubbed else DubStatus.Subbed)
+
+            val episodeCount = data.episodeCount?.toIntOrNull()
+
+            return@map AnimeSearchResponse(
+                data.name.replace("Dubbed", ""), // i.english ?: i.canonicalTitle,
+                "$mainUrl/anime/${data.slug}",
+                data.slug,
+                this.name,
+                type,
+                "https://cdn.shiro.is/${data.image}",
+                data.year?.toIntOrNull(),
+                data.canonicalTitle,
+                set,
+                if (isDubbed) episodeCount else null,
+                if (!isDubbed) episodeCount else null,
+            )
+        }.toList())
+    }
+
     private fun turnSearchIntoResponse(data: ShiroSearchResponseShow): AnimeSearchResponse {
         val type = getType(data.type)
         val isDubbed =
@@ -141,12 +185,9 @@ class ShiroProvider : MainAPI() {
                 data.language == "dubbed"
             else
                 data.slug.contains("dubbed")
-        val set: EnumSet<DubStatus> = EnumSet.noneOf(DubStatus::class.java)
+        val set: EnumSet<DubStatus> =
+            EnumSet.of(if (isDubbed) DubStatus.Dubbed else DubStatus.Subbed)
 
-        if (isDubbed)
-            set.add(DubStatus.Dubbed)
-        else
-            set.add(DubStatus.Subbed)
         val episodeCount = data.episodeCount?.toIntOrNull()
 
         return AnimeSearchResponse(
@@ -164,7 +205,26 @@ class ShiroProvider : MainAPI() {
         )
     }
 
-    override fun quickSearch(query: String): ArrayList<SearchResponse> {
+    override fun getMainPage(): HomePageResponse? {
+        if (!autoLoadToken()) return null
+
+        val url = "https://tapi.shiro.is/latest?token=$token"
+        val response = khttp.get(url, timeout = SHIRO_TIMEOUT_TIME)
+        val res = response.text.let { mapper.readValue<ShiroHomePage>(it) }
+
+        val d = res.data
+        return HomePageResponse(
+            listOf(
+                toHomePageList(d.trending_animes, "Trending"),
+                toHomePageList(d.ongoing_animes, "Ongoing"),
+                toHomePageList(d.latest_animes, "Latest")
+            )
+        )
+    }
+
+    override fun quickSearch(query: String): ArrayList<SearchResponse>? {
+        if (!autoLoadToken()) return null
+
         val returnValue: ArrayList<SearchResponse> = ArrayList()
 
         val response = khttp.get(
@@ -214,8 +274,8 @@ class ShiroProvider : MainAPI() {
         val episodes =
             ArrayList<AnimeEpisode>(
                 data.episodes?.distinctBy { it.episode_number }?.sortedBy { it.episode_number }
-                ?.map { AnimeEpisode(it.videos[0].video_id) }
-                ?: ArrayList<AnimeEpisode>())
+                    ?.map { AnimeEpisode(it.videos[0].video_id) }
+                    ?: ArrayList<AnimeEpisode>())
         val status = when (data.status) {
             "current" -> ShowStatus.Ongoing
             "finished" -> ShowStatus.Completed
