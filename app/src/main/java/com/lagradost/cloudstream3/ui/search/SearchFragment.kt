@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.UIHelper.loadResult
+import com.lagradost.cloudstream3.UIHelper.loadSearchResult
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -74,7 +75,7 @@ class SearchFragment : Fragment() {
                 ArrayList(),
                 cardSpace,
             ) { card ->
-                (activity as AppCompatActivity).loadResult(card.url, card.slug, card.apiName)
+                activity.loadSearchResult(card)
             }
         }
 

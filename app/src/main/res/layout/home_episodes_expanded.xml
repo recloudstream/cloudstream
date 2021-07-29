@@ -8,6 +8,8 @@
         android:layout_height="wrap_content">
 
     <FrameLayout
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:id="@+id/home_expanded_drag_down"
             android:padding="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

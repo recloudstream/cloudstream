@@ -56,4 +56,8 @@
     <string name="pref_disable_acra">Disable automatic bug reporting</string>
     <string name="home_more_info">More info</string>
     <string name="home_expanded_hide">Hide</string>
+    <string name="home_main_poster">Main Poster</string>
+    <string name="home_play">Play</string>
+    <string name="home_info">Info</string>
+    <string name="home_next_random">Next Random</string>
 </resources>

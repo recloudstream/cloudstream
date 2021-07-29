@@ -101,6 +101,10 @@ object UIHelper {
         }
     }
 
+    fun Activity?.loadSearchResult(card : SearchResponse) {
+        (this as AppCompatActivity?)?.loadResult(card.url, card.slug, card.apiName)
+    }
+
     fun Context.getStatusBarHeight(): Int {
         var result = 0
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
