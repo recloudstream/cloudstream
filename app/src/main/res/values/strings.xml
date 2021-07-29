@@ -60,4 +60,5 @@
     <string name="home_play">Play</string>
     <string name="home_info">Info</string>
     <string name="home_next_random">Next Random</string>
+    <string name="home_change_provider">Change Provider</string>
 </resources>

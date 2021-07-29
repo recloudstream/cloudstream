@@ -142,10 +142,11 @@ class EpisodeAdapter(
             val name = if (card.name == null) "Episode ${card.episode}" else "${card.episode}. ${card.name}"
             episodeText.text = name
 
-            val watchProgress = card.getWatchProgress()
+            val displayPos = card.getDisplayPosition()
+            episodeProgress?.max = (card.duration / 1000).toInt()
+            episodeProgress?.progress = (displayPos / 1000).toInt()
 
-            episodeProgress?.progress = (watchProgress * 50).toInt()
-            episodeProgress?.visibility = if (watchProgress > 0.0f) View.VISIBLE else View.GONE
+            episodeProgress?.visibility = if (displayPos > 0L) View.VISIBLE else View.GONE
 
             if (card.poster != null) {
                 episodePoster?.visibility = View.VISIBLE

@@ -1,7 +1,9 @@
 package com.lagradost.cloudstream3.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.AnimeSearchResponse
 import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.R
@@ -22,9 +25,11 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.UIHelper.loadSearchResult
+import com.lagradost.cloudstream3.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
+import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -78,7 +83,7 @@ class HomeFragment : Fragment() {
                     activity.loadSearchResult(random)
                 }
                 home_main_play.setOnClickListener {
-                    activity.loadSearchResult(random)
+                    activity.loadSearchResult(random, START_ACTION_RESUME_LATEST)
                 }
                 home_main_info.setOnClickListener {
                     activity.loadSearchResult(random)
@@ -124,6 +129,14 @@ class HomeFragment : Fragment() {
         configEvent.invoke(currentSpan)
     }
 
+    private val apiChangeClickListener = View.OnClickListener { view ->
+        val validAPIs = apis.filter { api -> api.hasMainPage }
+
+        view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api -> Pair(index, api.name) }) {
+            homeViewModel.load(validAPIs[itemId])
+        }
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         fixGrid()
@@ -157,14 +170,16 @@ class HomeFragment : Fragment() {
             chooseRandomMainPage(currentMainList[currentMainIndex])
         }
 
+        home_change_api.setOnClickListener(apiChangeClickListener)
+
         observe(homeViewModel.apiName) {
             context?.setKey(HOMEPAGE_API, it)
         }
 
-        observe(homeViewModel.page) {
-            when (it) {
+        observe(homeViewModel.page) { data ->
+            when (data) {
                 is Resource.Success -> {
-                    val d = it.value
+                    val d = data.value
                     currentHomePage = d
                     (home_master_recycler?.adapter as ParentItemAdapter?)?.items = d.items
                     home_master_recycler?.adapter?.notifyDataSetChanged()
@@ -173,12 +188,39 @@ class HomeFragment : Fragment() {
                         currentMainList.add(response)
                     }
                     currentMainIndex = 0
+
+                    home_loading.visibility = View.GONE
+                    home_loading_error.visibility = View.GONE
+                    home_loaded.visibility = View.VISIBLE
                 }
                 is Resource.Failure -> {
+                    result_error_text.text = data.errorString
 
+                    home_reload_connectionerror.setOnClickListener(apiChangeClickListener)
+
+                    home_reload_connection_open_in_browser.setOnClickListener { view ->
+                        val validAPIs = apis//.filter { api -> api.hasMainPage }
+
+                        view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api ->
+                            Pair(
+                                index,
+                                api.name
+                            )
+                        }) {
+                            val i = Intent(Intent.ACTION_VIEW)
+                            i.data = Uri.parse(validAPIs[itemId].mainUrl)
+                            startActivity(i)
+                        }
+                    }
+
+                    home_loading.visibility = View.GONE
+                    home_loading_error.visibility = View.VISIBLE
+                    home_loaded.visibility = View.GONE
                 }
                 is Resource.Loading -> {
-
+                    home_loading.visibility = View.VISIBLE
+                    home_loading_error.visibility = View.GONE
+                    home_loaded.visibility = View.GONE
                 }
             }
         }
@@ -226,6 +268,6 @@ class HomeFragment : Fragment() {
         home_master_recycler.adapter = adapter
         home_master_recycler.layoutManager = GridLayoutManager(context, 1)
 
-        homeViewModel.load(context?.getKey(HOMEPAGE_API))
+        homeViewModel.load(context?.getKey<String>(HOMEPAGE_API))
     }
 }

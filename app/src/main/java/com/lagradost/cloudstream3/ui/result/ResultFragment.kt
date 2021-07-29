@@ -73,6 +73,9 @@ import kotlin.collections.HashMap
 
 const val MAX_SYNO_LENGH = 300
 
+const val START_ACTION_NORMAL = 0
+const val START_ACTION_RESUME_LATEST = 1
+
 data class ResultEpisode(
     val name: String?,
     val poster: String?,
@@ -133,18 +136,20 @@ fun Context.buildResultEpisode(
     )
 }
 
+/** 0f-1f */
 fun ResultEpisode.getWatchProgress(): Float {
-    return getDisplayPosition().toFloat() / duration
+    return (getDisplayPosition() / 1000).toFloat() / (duration / 1000).toFloat()
 }
 
 class ResultFragment : Fragment() {
     companion object {
-        fun newInstance(url: String, slug: String, apiName: String) =
+        fun newInstance(url: String, slug: String, apiName: String, startAction: Int = 0) =
             ResultFragment().apply {
                 arguments = Bundle().apply {
                     putString("url", url)
                     putString("slug", slug)
                     putString("apiName", apiName)
+                    putInt("startAction", startAction)
                 }
             }
     }
@@ -156,7 +161,7 @@ class ResultFragment : Fragment() {
     private var currentHeaderName: String? = null
     private var currentType: TvType? = null
     private var currentEpisodes: List<ResultEpisode>? = null
-    var downloadButton : EasyDownloadButton? = null
+    var downloadButton: EasyDownloadButton? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -229,6 +234,8 @@ class ResultFragment : Fragment() {
         }
     }
 
+    var startAction: Int? = null
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -252,6 +259,7 @@ class ResultFragment : Fragment() {
         url = arguments?.getString("url")
         val slug = arguments?.getString("slug")
         val apiName = arguments?.getString("apiName") ?: return
+        startAction = arguments?.getInt("startAction") ?: START_ACTION_NORMAL
 
         val api = getApiFromName(apiName)
         if (media_route_button != null) {
@@ -459,6 +467,7 @@ class ResultFragment : Fragment() {
 
             val isLoaded = when (episodeClick.action) {
                 ACTION_PLAY_EPISODE_IN_PLAYER -> true
+                ACTION_CLICK_DEFAULT -> true
                 ACTION_CHROME_CAST_EPISODE -> requireLinks(true)
                 ACTION_CHROME_CAST_MIRROR -> requireLinks(true)
                 else -> requireLinks(false)
@@ -671,6 +680,23 @@ class ResultFragment : Fragment() {
         observe(viewModel.watchStatus) {
             //result_bookmark_button.setIconResource(it.iconRes)
             result_bookmark_button.text = getString(it.stringRes)
+        }
+
+        observe(viewModel.episodes) { episodeList ->
+            when (startAction) {
+                START_ACTION_RESUME_LATEST -> {
+                    for (ep in episodeList) {
+                        if (ep.getWatchProgress() > 0.90f) { // watched too much
+                            continue
+                        }
+                        handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
+                        startAction = null
+                        break
+                    }
+                }
+                else -> {
+                }
+            }
         }
 
         observe(viewModel.allEpisodes) {

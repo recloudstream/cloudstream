@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.HomePageResponse
+import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.ui.APIRepository
 import kotlinx.coroutines.launch
@@ -24,8 +25,7 @@ class HomeViewModel : ViewModel() {
         return APIRepository(apis.first { it.hasMainPage })
     }
 
-    fun load(preferredApiName: String?) = viewModelScope.launch {
-        val api = getApiFromNameNull(preferredApiName)
+    fun load(api : MainAPI?)  = viewModelScope.launch {
         repo = if (api?.hasMainPage == true) {
             APIRepository(api)
         } else {
@@ -33,5 +33,10 @@ class HomeViewModel : ViewModel() {
         }
         _page.postValue(Resource.Loading())
         _page.postValue(repo?.getMainPage())
+    }
+
+    fun load(preferredApiName: String?) = viewModelScope.launch {
+        val api = getApiFromNameNull(preferredApiName)
+        load(api)
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -8,117 +8,207 @@
 
         android:id="@+id/home_root"
         tools:context=".ui.home.HomeFragment">
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-        <LinearLayout
-                android:id="@+id/home_main_holder"
-                android:orientation="vertical"
+    <ProgressBar
+            android:visibility="visible"
+            tools:visibility="gone"
+            android:id="@+id/home_loading"
+            android:layout_gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="50dp">
+    </ProgressBar>
+    <LinearLayout
+            tools:visibility="gone"
+            android:id="@+id/home_loading_error"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <com.google.android.material.button.MaterialButton
+                android:layout_gravity="center"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+
+                android:visibility="visible"
+                android:textStyle="bold"
+                app:rippleColor="?attr/grayBackground"
+                android:textColor="?attr/grayBackground"
+                app:iconTint="?attr/grayBackground"
+                android:textAllCaps="false"
+                app:iconGravity="textStart"
+                app:strokeColor="?attr/grayBackground"
+                app:backgroundTint="?attr/textColor"
+
+                app:icon="@drawable/ic_baseline_autorenew_24"
+                app:iconSize="20dp"
+                android:text="@string/reload_error"
+                android:id="@+id/home_reload_connectionerror"
+                android:textSize="15sp"
+                app:cornerRadius="5dp"
+                android:layout_width="wrap_content"
+                android:minWidth="200dp"
+        >
+        </com.google.android.material.button.MaterialButton>
+        <com.google.android.material.button.MaterialButton
+                android:layout_gravity="center"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+
+                app:iconGravity="textStart"
+                app:strokeColor="?attr/textColor"
+                android:backgroundTint="?attr/grayBackground"
+                app:rippleColor="?attr/textColor"
+                android:textColor="?attr/textColor"
+                app:iconTint="?attr/textColor"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+
+                app:icon="@drawable/ic_baseline_public_24"
+                app:iconSize="20dp"
+                android:text="@string/result_open_in_browser"
+                android:id="@+id/home_reload_connection_open_in_browser"
+                android:textSize="15sp"
+                app:cornerRadius="5dp"
+                android:layout_width="wrap_content"
+                android:minWidth="200dp"
+        >
+        </com.google.android.material.button.MaterialButton>
+        <TextView
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:id="@+id/result_error_text"
+                android:textColor="?attr/textColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+        </TextView>
+    </LinearLayout>
+    <androidx.core.widget.NestedScrollView
+            android:id="@+id/home_loaded"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
             <ImageView
-                    android:layout_marginTop="10dp"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:id="@+id/home_main_poster"
-                    tools:src="@drawable/example_poster"
-                    android:layout_gravity="center"
-                    android:layout_width="150dp"
-                    android:layout_height="212dp"
-                    android:contentDescription="@string/home_main_poster">
+                    android:id="@+id/home_change_api"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="end"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+
+                    android:src="@drawable/ic_outline_settings_24"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:contentDescription="@string/home_change_provider">
             </ImageView>
-            <TextView
-                    android:id="@+id/home_main_text"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    tools:text="Perfect Run"
-                    android:textStyle="bold"
-                    android:layout_margin="5dp"
-                    android:textSize="15sp"
-                    android:textColor="@color/textColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
             <LinearLayout
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="horizontal"
+                    android:layout_marginTop="-20dp"
+                    android:id="@+id/home_main_holder"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <ImageView
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:id="@+id/home_main_poster"
+                        tools:src="@drawable/example_poster"
                         android:layout_gravity="center"
-                        android:layout_marginEnd="2dp"
-                        android:id="@+id/home_reroll_prev"
-                        android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_baseline_arrow_back_24"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:padding="10dp"
-                        android:contentDescription="@string/home_next_random">
+                        android:layout_width="150dp"
+                        android:layout_height="212dp"
+                        android:contentDescription="@string/home_main_poster">
                 </ImageView>
-                <com.google.android.material.button.MaterialButton
-                        android:layout_margin="5dp"
-                        android:visibility="visible"
+                <TextView
+                        android:id="@+id/home_main_text"
                         android:layout_gravity="center"
-                        app:cornerRadius="4dp"
-                        android:id="@+id/home_main_play"
-                        android:text="@string/home_play"
+                        android:gravity="center"
+                        tools:text="Perfect Run"
                         android:textStyle="bold"
-
-                        app:rippleColor="?attr/grayBackground"
-                        android:textColor="?attr/grayBackground"
-                        app:iconTint="?attr/grayBackground"
-                        android:textAllCaps="false"
-                        android:clickable="true"
-                        android:focusable="true"
-                        app:iconGravity="textStart"
-                        app:strokeColor="?attr/grayBackground"
-                        app:backgroundTint="?attr/textColor"
-                        app:icon="@drawable/ic_baseline_play_arrow_24"
-                        android:layout_width="120dp"
-                        android:layout_height="50dp">
-                </com.google.android.material.button.MaterialButton>
-                <com.google.android.material.button.MaterialButton
                         android:layout_margin="5dp"
-                        android:visibility="visible"
+                        android:textSize="15sp"
+                        android:textColor="@color/textColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                <LinearLayout
                         android:layout_gravity="center"
-                        app:cornerRadius="4dp"
-                        android:text="@string/home_info"
-                        app:icon="@drawable/ic_outline_info_24"
-                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    <ImageView
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="2dp"
+                            android:id="@+id/home_reroll_prev"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_baseline_arrow_back_24"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:padding="10dp"
+                            android:contentDescription="@string/home_next_random">
+                    </ImageView>
+                    <com.google.android.material.button.MaterialButton
+                            android:layout_margin="5dp"
+                            android:visibility="visible"
+                            android:layout_gravity="center"
+                            app:cornerRadius="4dp"
+                            android:id="@+id/home_main_play"
+                            android:text="@string/home_play"
+                            android:textStyle="bold"
 
-                        android:id="@+id/home_main_info"
-                        app:rippleColor="?attr/textColor"
-                        android:textColor="?attr/textColor"
-                        app:iconTint="?attr/textColor"
-                        android:textAllCaps="false"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:backgroundTint="?attr/grayBackground"
-                        app:iconGravity="textStart"
-                        app:strokeColor="?attr/textColor"
-                        android:layout_width="120dp"
-                        android:layout_height="50dp">
-                </com.google.android.material.button.MaterialButton>
-                <ImageView
-                        android:layout_gravity="center"
-                        android:layout_marginStart="2dp"
-                        android:id="@+id/home_reroll_next"
-                        android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_baseline_arrow_forward_24"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:padding="10dp"
-                        android:contentDescription="@string/home_next_random">
-                </ImageView>
+                            app:rippleColor="?attr/grayBackground"
+                            android:textColor="?attr/grayBackground"
+                            app:iconTint="?attr/grayBackground"
+                            android:textAllCaps="false"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:iconGravity="textStart"
+                            app:strokeColor="?attr/grayBackground"
+                            app:backgroundTint="?attr/textColor"
+                            app:icon="@drawable/ic_baseline_play_arrow_24"
+                            android:layout_width="120dp"
+                            android:layout_height="50dp">
+                    </com.google.android.material.button.MaterialButton>
+                    <com.google.android.material.button.MaterialButton
+                            android:layout_margin="5dp"
+                            android:visibility="visible"
+                            android:layout_gravity="center"
+                            app:cornerRadius="4dp"
+                            android:text="@string/home_info"
+                            app:icon="@drawable/ic_outline_info_24"
+                            android:textStyle="bold"
+
+                            android:id="@+id/home_main_info"
+                            app:rippleColor="?attr/textColor"
+                            android:textColor="?attr/textColor"
+                            app:iconTint="?attr/textColor"
+                            android:textAllCaps="false"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:backgroundTint="?attr/grayBackground"
+                            app:iconGravity="textStart"
+                            app:strokeColor="?attr/textColor"
+                            android:layout_width="120dp"
+                            android:layout_height="50dp">
+                    </com.google.android.material.button.MaterialButton>
+                    <ImageView
+                            android:layout_gravity="center"
+                            android:layout_marginStart="2dp"
+                            android:id="@+id/home_reroll_next"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_baseline_arrow_forward_24"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:padding="10dp"
+                            android:contentDescription="@string/home_next_random">
+                    </ImageView>
+                </LinearLayout>
             </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/home_master_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/homepage_parent"
+            />
         </LinearLayout>
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/home_master_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:listitem="@layout/homepage_parent"
-        />
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-</androidx.core.widget.NestedScrollView>
+</FrameLayout>
