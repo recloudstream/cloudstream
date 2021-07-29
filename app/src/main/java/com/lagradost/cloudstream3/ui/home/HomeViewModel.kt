@@ -31,6 +31,7 @@ class HomeViewModel : ViewModel() {
         } else {
             autoloadRepo()
         }
+        _apiName.postValue(repo?.name)
         _page.postValue(Resource.Loading())
         _page.postValue(repo?.getMainPage())
     }

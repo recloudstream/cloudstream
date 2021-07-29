@@ -15,8 +15,55 @@ class TrailersToProvider : MainAPI() {
     override val hasQuickSearch: Boolean
         get() = true
 
+    override val hasMainPage: Boolean
+        get() = true
+
+    override fun getMainPage(): HomePageResponse? {
+        val response = khttp.get(mainUrl)
+        val document = Jsoup.parse(response.text)
+        val returnList = ArrayList<HomePageList>()
+        val docs = document.select("section.section > div.container")
+        for (doc in docs) {
+            val epList = doc.selectFirst("> div.owl-carousel") ?: continue
+            val title = doc.selectFirst("> div.text-center > h2").text()
+            val list = epList.select("> div.item > div.box-nina")
+            val isMovieType = title.contains("Movie")
+            val currentList = list.mapNotNull { head ->
+                val hrefItem = head.selectFirst("> div.box-nina-media > a")
+                val href = fixUrl(hrefItem.attr("href"))
+                val img = hrefItem.selectFirst("> img")
+                val posterUrl = img.attr("src")
+                val name = img.attr("alt")
+                return@mapNotNull if (isMovieType) MovieSearchResponse(
+                    name,
+                    href,
+                    href,
+                    this.name,
+                    TvType.Movie,
+                    posterUrl,
+                    null
+                ) else TvSeriesSearchResponse(
+                    name,
+                    href,
+                    href,
+                    this.name,
+                    TvType.TvSeries,
+                    posterUrl,
+                    null, null
+                )
+            }
+            if (currentList.isNotEmpty()) {
+                returnList.add(HomePageList(title, currentList))
+            }
+        }
+        if(returnList.size <= 0) return null
+
+        return HomePageResponse(returnList)
+        //section.section > div.container > div.owl-carousel
+    }
+
     override fun quickSearch(query: String): ArrayList<SearchResponse> {
-        val url = "https://trailers.to/en/quick-search?q=$query"
+        val url = "$mainUrl/en/quick-search?q=$query"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
         val items = document.select("div.group-post-minimal > a.post-minimal")
@@ -44,7 +91,7 @@ class TrailersToProvider : MainAPI() {
     }
 
     override fun search(query: String): ArrayList<SearchResponse> {
-        val url = "https://trailers.to/en/popular/movies-tvshows-collections?q=$query"
+        val url = "$mainUrl/en/popular/movies-tvshows-collections?q=$query"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
         val items = document.select("div.col-lg-8 > article.list-item")

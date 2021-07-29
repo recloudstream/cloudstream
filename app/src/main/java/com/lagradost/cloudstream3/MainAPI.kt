@@ -29,6 +29,7 @@ object APIHolder {
     private const val defProvider = 0
 
     val apis = arrayListOf(
+        TrailersToProvider(),
         ShiroProvider(),
         TenshiProvider(),
         WcoProvider(),
@@ -36,7 +37,6 @@ object APIHolder {
         DubbedAnimeProvider(),
         HDMProvider(),
         //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
-        TrailersToProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
