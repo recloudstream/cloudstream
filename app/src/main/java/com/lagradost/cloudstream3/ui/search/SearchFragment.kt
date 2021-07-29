@@ -66,15 +66,16 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity?.fixPaddingStatusbar(searchRoot)
+        context?.fixPaddingStatusbar(searchRoot)
         fixGrid()
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let {
             SearchAdapter(
-                it,
                 ArrayList(),
                 cardSpace,
-            )
+            ) { card ->
+                (activity as AppCompatActivity).loadResult(card.url, card.slug, card.apiName)
+            }
         }
 
         cardSpace.adapter = adapter
@@ -90,7 +91,8 @@ class SearchFragment : Fragment() {
                 val apiNames = apis.map { it.name }
                 val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
 
-                builder.setMultiChoiceItems(apiNames.toTypedArray(),
+                builder.setMultiChoiceItems(
+                    apiNames.toTypedArray(),
                     apiNames.map { a -> apiNamesSetting.contains(a) }.toBooleanArray()
                 ) { _, position: Int, checked: Boolean ->
                     val apiNamesSettingLocal = activity?.getApiSettings()
@@ -104,7 +106,8 @@ class SearchFragment : Fragment() {
 
                         val edit = settingsManagerLocal.edit()
                         edit.putStringSet(getString(R.string.search_providers_list_key),
-                            apiNames.filter { a -> apiNamesSettingLocal.contains(a) }.toSet())
+                            apiNames.filter { a -> apiNamesSettingLocal.contains(a) }.toSet()
+                        )
                         edit.apply()
                         allApi.providersActive = apiNamesSettingLocal
                     }
@@ -131,8 +134,8 @@ class SearchFragment : Fragment() {
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
-                        if(data != null) {
-                            (cardSpace?.adapter as SearchAdapter?)?.cardList = ArrayList( data.filterNotNull())
+                        if (data != null) {
+                            (cardSpace?.adapter as SearchAdapter?)?.cardList = ArrayList(data.filterNotNull())
                             cardSpace?.adapter?.notifyDataSetChanged()
                         }
                     }

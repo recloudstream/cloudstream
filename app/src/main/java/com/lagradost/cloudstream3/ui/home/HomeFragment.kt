@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.UIHelper.loadResult
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -54,9 +57,13 @@ class HomeFragment : Fragment() {
             }
         }
 
-        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = ParentItemAdapter(listOf()) {
+        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = ParentItemAdapter(listOf(), { card ->
+            (activity as AppCompatActivity).loadResult(card.url, card.slug, card.apiName)
+        }, {
 
-        }
+        })
+
+        context?.fixPaddingStatusbar(home_root)
 
         home_master_recycler.adapter = adapter
         home_master_recycler.layoutManager = GridLayoutManager(context, 1)

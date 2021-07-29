@@ -1,21 +1,21 @@
 package com.lagradost.cloudstream3.ui.search
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.AnimeSearchResponse
+import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.UIHelper.getGridFormatId
 import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
-import com.lagradost.cloudstream3.UIHelper.loadResult
 import com.lagradost.cloudstream3.UIHelper.toPx
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import kotlinx.android.synthetic.main.search_result_compact.view.backgroundCard
@@ -25,17 +25,17 @@ import kotlinx.android.synthetic.main.search_result_grid.view.*
 import kotlin.math.roundToInt
 
 class SearchAdapter(
-    private var activity: Activity,
     var cardList: ArrayList<Any>,
     private val resView: AutofitRecyclerView,
-) :
+    private val clickCallback: (SearchResponse) -> Unit,
+    ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layout = parent.context.getGridFormatId()
         return CardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
-            activity,
+            clickCallback,
             resView
         )
     }
@@ -54,8 +54,8 @@ class SearchAdapter(
     }
 
     class CardViewHolder
-    constructor(itemView: View, _activity: Activity, resView: AutofitRecyclerView) : RecyclerView.ViewHolder(itemView) {
-        val activity = _activity
+    constructor(itemView: View, private val clickCallback: (SearchResponse) -> Unit, resView: AutofitRecyclerView) :
+        RecyclerView.ViewHolder(itemView) {
         val cardView: ImageView = itemView.imageView
         private val cardText: TextView = itemView.imageText
         private val textType: TextView? = itemView.text_type
@@ -100,14 +100,13 @@ class SearchAdapter(
                     val glideUrl =
                         GlideUrl(card.posterUrl)
 
-                        Glide.with(cardView.context)
-                            .load(glideUrl)
-                            .into(cardView)
-
+                    Glide.with(cardView.context)
+                        .load(glideUrl)
+                        .into(cardView)
                 }
 
                 bg.setOnClickListener {
-                    (activity as AppCompatActivity).loadResult(card.url, card.slug, card.apiName)
+                    clickCallback.invoke(card)
                 }
 
                 when (card) {

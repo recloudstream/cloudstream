@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,12 +15,13 @@ import kotlinx.android.synthetic.main.homepage_parent.view.*
 
 class ParentItemAdapter(
     var itemList: List<HomePageList>,
-    private val clickCallback: (SearchResponse) -> Unit
+    private val clickCallback: (SearchResponse) -> Unit,
+    private val moreInfoClickCallback: (List<SearchResponse>) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): ParentViewHolder {
         val layout = R.layout.homepage_parent
         return ParentViewHolder(
-            LayoutInflater.from(parent.context).inflate(layout, parent, false), clickCallback
+            LayoutInflater.from(parent.context).inflate(layout, parent, false), clickCallback, moreInfoClickCallback
         )
     }
 
@@ -36,16 +38,23 @@ class ParentItemAdapter(
     }
 
     class ParentViewHolder
-    constructor(itemView: View, private val clickCallback: (SearchResponse) -> Unit) :
+    constructor(
+        itemView: View,
+        private val clickCallback: (SearchResponse) -> Unit,
+        private val moreInfoClickCallback: (List<SearchResponse>) -> Unit
+    ) :
         RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.home_parent_item_title
         val recyclerView: RecyclerView = itemView.home_child_recyclerview
+        private val moreInfo: FrameLayout = itemView.home_child_more_info
         fun bind(info: HomePageList) {
             title.text = info.name
             recyclerView.adapter = HomeChildItemAdapter(info.list, clickCallback)
-            recyclerView.layoutManager = GridLayoutManager(itemView.context, 1)
             (recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
+
+            moreInfo.setOnClickListener {
+                moreInfoClickCallback.invoke(info.list)
+            }
         }
     }
-
 }

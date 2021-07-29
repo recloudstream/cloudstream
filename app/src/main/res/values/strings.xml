@@ -54,4 +54,5 @@
 
     <string name="acra_report_toast">Sorry, the application crashed. An anonymous bug report will be sent to the developers</string>
     <string name="pref_disable_acra">Disable automatic bug reporting</string>
+    <string name="home_more_info">More info</string>
 </resources>

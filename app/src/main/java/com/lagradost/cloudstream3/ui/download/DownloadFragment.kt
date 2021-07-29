@@ -125,6 +125,6 @@ class DownloadFragment : Fragment() {
         download_list.layoutManager = GridLayoutManager(context, 1)
         downloadsViewModel.updateList(requireContext())
 
-        activity?.fixPaddingStatusbar(download_root)
+        context?.fixPaddingStatusbar(download_root)
     }
 }
