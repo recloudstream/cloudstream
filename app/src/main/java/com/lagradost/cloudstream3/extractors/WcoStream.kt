@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.utils.extractors
+package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue

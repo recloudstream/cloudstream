@@ -117,6 +117,8 @@ class DownloadChildAdapter(
             }
 
             title.text = d.name ?: "Episode ${d.episode}" //TODO FIX
+            title.isSelected = true // is needed for text repeating
+
             downloadButton.setUpButton(
                 card.currentBytes,
                 card.totalBytes,

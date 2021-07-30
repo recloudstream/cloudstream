@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.utils.extractors
+package com.lagradost.cloudstream3.extractors
 
 //{"auto":"/manifests/movies/15559/1624728920/qDwu5BOsfAwfTmnnjmkmXA/master.m3u8","1080p":"https://vdoc3.sallenes.space/qDwu5BOsfAwfTmnnjmkmXA/1624728920/storage6/movies/the-man-with-the-iron-heart-2017/1080p/index.m3u8","720p":"https://vdoc3.sallenes.space/qDwu5BOsfAwfTmnnjmkmXA/1624728920/storage6/movies/the-man-with-the-iron-heart-2017/720p/index.m3u8","360p":"https://vdoc3.sallenes.space/qDwu5BOsfAwfTmnnjmkmXA/1624728920/storage6/movies/the-man-with-the-iron-heart-2017/360p/index.m3u8","480p":"https://vdoc3.sallenes.space/qDwu5BOsfAwfTmnnjmkmXA/1624728920/storage6/movies/the-man-with-the-iron-heart-2017/480p/index.m3u8"}
 object M3u8Manifest {

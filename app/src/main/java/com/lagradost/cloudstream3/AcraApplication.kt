@@ -2,7 +2,10 @@ package com.lagradost.cloudstream3
 
 import android.app.Application
 import android.content.Context
+import android.widget.Toast
 import com.google.auto.service.AutoService
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import org.acra.ReportField
 import org.acra.config.CoreConfiguration
 import org.acra.config.toast
@@ -16,19 +19,24 @@ import kotlin.concurrent.thread
 class CustomReportSender : ReportSender {
     // Sends all your crashes to google forms
     override fun send(context: Context, errorContent: CrashReportData) {
-        try {
-            println("Report sent")
-            val url =
-                "https://docs.google.com/forms/u/0/d/e/1FAIpQLSeFmyBChi6HF3IkhTVWPiDXJtxt8W0Hf4Agljm_0-0_QuEYFg/formResponse"
-            val data = mapOf(
-                "entry.134906550" to errorContent.toJSON()
-            )
-            thread {
+        println("Sending report")
+        val url =
+            "https://docs.google.com/forms/u/0/d/e/1FAIpQLSeFmyBChi6HF3IkhTVWPiDXJtxt8W0Hf4Agljm_0-0_QuEYFg/formResponse"
+        val data = mapOf(
+            "entry.134906550" to errorContent.toJSON()
+        )
+
+        thread { // to not run it on main thread
+            normalSafeApiCall {
                 val post = khttp.post(url, data = data)
                 println("Report response: $post")
             }
-        } catch (e: Exception) {
-            println("ERROR SENDING BUG")
+        }
+
+        runOnMainThread { // to run it on main looper
+            normalSafeApiCall {
+                Toast.makeText(context, R.string.acra_report_toast, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
@@ -59,12 +67,12 @@ class AcraApplication : Application() {
                 ReportField.STACK_TRACE
             )
 
+            // removed this due to bug when starting the app, moved it to when it actually crashes
             //each plugin you chose above can be configured in a block like this:
-            toast {
+            /*toast {
                 text = getString(R.string.acra_report_toast)
                 //opening this block automatically enables the plugin.
-            }
-
+            }*/
         }
     }
 }

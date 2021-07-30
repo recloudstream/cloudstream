@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.extractors.Vidstream
+import com.lagradost.cloudstream3.extractors.Vidstream
 import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList

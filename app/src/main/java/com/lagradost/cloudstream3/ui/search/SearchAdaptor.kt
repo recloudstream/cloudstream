@@ -14,9 +14,9 @@ import com.lagradost.cloudstream3.AnimeSearchResponse
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.UIHelper.getGridFormatId
-import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
-import com.lagradost.cloudstream3.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.UIHelper.getGridFormatId
+import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import kotlinx.android.synthetic.main.search_result_compact.view.backgroundCard
 import kotlinx.android.synthetic.main.search_result_compact.view.imageText

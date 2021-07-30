@@ -14,16 +14,24 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.lagradost.cloudstream3.UIHelper.checkWrite
-import com.lagradost.cloudstream3.UIHelper.getResourceColor
-import com.lagradost.cloudstream3.UIHelper.hasPIPPermission
-import com.lagradost.cloudstream3.UIHelper.requestRW
-import com.lagradost.cloudstream3.UIHelper.shouldShowPIPMode
+import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
+import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
+import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
+import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.DownloadChildFragment
+import com.lagradost.cloudstream3.ui.download.DownloadFragment
+import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.ui.search.SearchFragment
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -90,6 +98,10 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(R.id.navigation_downloads, Bundle(), navOptions)
                 return true
             }
+            if(child is SearchFragment || child is HomeFragment || child is DownloadFragment || child is SettingsFragment) {
+                this.finish()
+                return true
+            }
         }
 
         if (currentFragment != null && supportFragmentManager.fragments.size > 2) {
@@ -134,12 +146,35 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        handleAppIntent(intent)
+        super.onNewIntent(intent)
+    }
+
+    private fun handleAppIntent(intent: Intent?) {
+        if (intent == null) return
+        val str = intent.dataString
+        if (str != null) {
+            if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.navigation_downloads, null, navOptions)
+            } else {
+                for (api in apis) {
+                    if (str.startsWith(api.mainUrl)) {
+                        loadResult(str, str, api.name)
+                        break
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
         setContentView(R.layout.activity_main)
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
         //https://developer.android.com/guide/topics/ui/picture-in-picture
@@ -159,7 +194,7 @@ class MainActivity : AppCompatActivity() {
             .setPopUpTo(navController.graph.startDestination, false)
             .build()
 
-        navView.setOnNavigationItemSelectedListener { item ->
+        nav_view.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
                     navController.navigate(R.id.navigation_home, null, navOptions)
@@ -177,7 +212,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        navView.itemRippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
+        nav_view.itemRippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
 
         if (!checkWrite()) {
             requestRW()
@@ -244,5 +279,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }*/
+
+        handleAppIntent(intent)
     }
 }

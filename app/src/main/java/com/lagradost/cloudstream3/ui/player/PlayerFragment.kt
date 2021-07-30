@@ -57,27 +57,29 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.MainActivity.Companion.isInPIPMode
 import com.lagradost.cloudstream3.MainActivity.Companion.isInPlayer
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.UIHelper.getFocusRequest
-import com.lagradost.cloudstream3.UIHelper.getNavigationBarHeight
-import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
-import com.lagradost.cloudstream3.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.UIHelper.hideSystemUI
-import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
-import com.lagradost.cloudstream3.UIHelper.popCurrentPage
-import com.lagradost.cloudstream3.UIHelper.requestLocalAudioFocus
-import com.lagradost.cloudstream3.UIHelper.showSystemUI
-import com.lagradost.cloudstream3.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
+import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
+import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
+import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeDirectly
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultViewModel
+import com.lagradost.cloudstream3.utils.AppUtils.getFocusRequest
 import com.lagradost.cloudstream3.utils.AppUtils.getVideoContentUri
+import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
+import com.lagradost.cloudstream3.utils.AppUtils.onAudioFocusEvent
+import com.lagradost.cloudstream3.utils.AppUtils.requestLocalAudioFocus
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.VIDEO_PLAYER_BRIGHTNESS
 import com.lagradost.cloudstream3.utils.getId
 import kotlinx.android.synthetic.main.fragment_player.*
@@ -1283,7 +1285,7 @@ class PlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        UIHelper.onAudioFocusEvent += ::handlePauseEvent
+        onAudioFocusEvent += ::handlePauseEvent
 
         activity?.hideSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
@@ -1310,7 +1312,7 @@ class PlayerFragment : Fragment() {
         savePositionInPlayer()
         safeReleasePlayer()
 
-        UIHelper.onAudioFocusEvent -= ::handlePauseEvent
+        onAudioFocusEvent -= ::handlePauseEvent
 
         activity?.showSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER

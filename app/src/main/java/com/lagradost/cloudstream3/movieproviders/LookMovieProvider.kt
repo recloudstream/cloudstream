@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.extractors.M3u8Manifest
+import com.lagradost.cloudstream3.extractors.M3u8Manifest
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 

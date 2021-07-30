@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3
+package com.lagradost.cloudstream3.utils
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -11,8 +11,6 @@ import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Build
 import android.view.Gravity
 import android.view.MenuItem
@@ -21,7 +19,6 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
@@ -34,13 +31,7 @@ import androidx.core.graphics.red
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
-import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.cast.framework.CastState
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.wrappers.Wrappers.packageManager
-import com.lagradost.cloudstream3.ui.result.ResultFragment
-import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.R
 import kotlin.math.roundToInt
 
 
@@ -91,137 +82,6 @@ object UIHelper {
         return color
     }
 
-    fun AppCompatActivity.loadResult(url: String, slug: String, apiName: String, startAction: Int = 0) {
-        this.runOnUiThread {
-            viewModelStore.clear()
-            this.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
-                .add(R.id.homeRoot, ResultFragment.newInstance(url, slug, apiName, startAction))
-                .commit()
-        }
-    }
-
-    fun Activity?.loadSearchResult(card: SearchResponse, startAction: Int = 0) {
-        (this as AppCompatActivity?)?.loadResult(card.url, card.slug, card.apiName, startAction)
-    }
-
-    fun Context.getStatusBarHeight(): Int {
-        var result = 0
-        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        if (resourceId > 0) {
-            result = resources.getDimensionPixelSize(resourceId)
-        }
-        return result
-    }
-
-    fun Context.getNavigationBarHeight(): Int {
-        var result = 0
-        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
-        if (resourceId > 0) {
-            result = resources.getDimensionPixelSize(resourceId)
-        }
-        return result
-    }
-
-    fun Context.fixPaddingStatusbar(v: View) {
-        v.setPadding(v.paddingLeft, v.paddingTop + getStatusBarHeight(), v.paddingRight, v.paddingBottom)
-    }
-
-    private fun Context.getGridFormat(): String {
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        return settingsManager.getString(getString(R.string.grid_format_key), "grid")!!
-    }
-
-    fun Context.getGridFormatId(): Int {
-        return when (getGridFormat()) {
-            "list" -> R.layout.search_result_compact
-            "compact_list" -> R.layout.search_result_super_compact
-            else -> R.layout.search_result_grid
-        }
-    }
-
-    fun Context.getGridIsCompact(): Boolean {
-        return getGridFormat() != "grid"
-    }
-
-    fun Activity.requestLocalAudioFocus(focusRequest: AudioFocusRequest?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && focusRequest != null) {
-            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.requestAudioFocus(focusRequest)
-        } else {
-            val audioManager: AudioManager =
-                getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.requestAudioFocus(
-                null,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
-            )
-        }
-    }
-
-    private var currentAudioFocusRequest: AudioFocusRequest? = null
-    private var currentAudioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
-    var onAudioFocusEvent = Event<Boolean>()
-
-    private fun getAudioListener(): AudioManager.OnAudioFocusChangeListener? {
-        if (currentAudioFocusChangeListener != null) return currentAudioFocusChangeListener
-        currentAudioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
-            onAudioFocusEvent.invoke(
-                when (it) {
-                    AudioManager.AUDIOFOCUS_GAIN -> false
-                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE -> false
-                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT -> false
-                    else -> true
-                }
-            )
-        }
-        return currentAudioFocusChangeListener
-    }
-
-    fun Context.isCastApiAvailable(): Boolean {
-        val isCastApiAvailable =
-            GoogleApiAvailability.getInstance()
-                .isGooglePlayServicesAvailable(applicationContext) == ConnectionResult.SUCCESS
-        try {
-            applicationContext?.let { CastContext.getSharedInstance(it) }
-        } catch (e: Exception) {
-            println(e)
-            // track non-fatal
-            return false
-        }
-        return isCastApiAvailable
-    }
-
-    fun Context.isConnectedToChromecast(): Boolean {
-        if (isCastApiAvailable()) {
-            val castContext = CastContext.getSharedInstance(this)
-            if (castContext.castState == CastState.CONNECTED) {
-                return true
-            }
-        }
-        return false
-    }
-
-    fun Context.isUsingMobileData(): Boolean {
-        val conManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = conManager.allNetworks
-        return networkInfo.any {
-            conManager.getNetworkCapabilities(it)?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
-        }
-    }
-
-    fun Context.isAppInstalled(uri: String): Boolean {
-        val pm = packageManager(this)
-        var appInstalled = false
-        appInstalled = try {
-            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES)
-            true
-        } catch (e: PackageManager.NameNotFoundException) {
-            false
-        }
-        return appInstalled
-    }
-
     fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
         val alpha = (Color.alpha(color) * factor).roundToInt()
         val red = Color.red(color)
@@ -235,27 +95,6 @@ object UIHelper {
         val color = attributes.getColor(0, 0)
         attributes.recycle()
         return color
-    }
-
-    fun getFocusRequest(): AudioFocusRequest? {
-        if (currentAudioFocusRequest != null) return currentAudioFocusRequest
-        currentAudioFocusRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
-                setAudioAttributes(AudioAttributes.Builder().run {
-                    setUsage(AudioAttributes.USAGE_MEDIA)
-                    setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
-                    build()
-                })
-                setAcceptsDelayedFocusGain(true)
-                getAudioListener()?.let {
-                    setOnAudioFocusChangeListener(it)
-                }
-                build()
-            }
-        } else {
-            null
-        }
-        return currentAudioFocusRequest
     }
 
     fun Activity.hideSystemUI() {
@@ -337,6 +176,43 @@ object UIHelper {
         }
     }*/
 
+    fun Context.getStatusBarHeight(): Int {
+        var result = 0
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
+    fun Context.fixPaddingStatusbar(v: View) {
+        v.setPadding(v.paddingLeft, v.paddingTop + getStatusBarHeight(), v.paddingRight, v.paddingBottom)
+    }
+    fun Context.getNavigationBarHeight(): Int {
+        var result = 0
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
+    private fun Context.getGridFormat(): String {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        return settingsManager.getString(getString(R.string.grid_format_key), "grid")!!
+    }
+
+    fun Context.getGridFormatId(): Int {
+        return when (getGridFormat()) {
+            "list" -> R.layout.search_result_compact
+            "compact_list" -> R.layout.search_result_super_compact
+            else -> R.layout.search_result_grid
+        }
+    }
+
+    fun Context.getGridIsCompact(): Boolean {
+        return getGridFormat() != "grid"
+    }
 
     fun Activity.changeStatusBarState(hide: Boolean): Int {
         return if (hide) {

@@ -11,7 +11,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -21,12 +20,11 @@ import com.lagradost.cloudstream3.APIHolder.allApi
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.UIHelper.getGridIsCompact
-import com.lagradost.cloudstream3.UIHelper.loadResult
-import com.lagradost.cloudstream3.UIHelper.loadSearchResult
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment() {
@@ -167,6 +165,7 @@ class SearchFragment : Fragment() {
             }
         }
         main_search.onActionViewExpanded()
+        val q = 0 / 0
         //searchViewModel.search("iron man")
         //(activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*

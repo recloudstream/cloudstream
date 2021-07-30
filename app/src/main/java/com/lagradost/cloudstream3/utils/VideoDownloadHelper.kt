@@ -16,7 +16,8 @@ object VideoDownloadHelper {
 
     data class DownloadHeaderCached(
         val apiName: String,
-        val source: String,
+        val url: String,
+        val slug : String,
         val type : TvType,
         val name: String,
         val poster: String?,

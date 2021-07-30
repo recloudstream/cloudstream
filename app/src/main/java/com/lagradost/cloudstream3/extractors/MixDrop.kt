@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.utils.extractors
+package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.utils.*
 

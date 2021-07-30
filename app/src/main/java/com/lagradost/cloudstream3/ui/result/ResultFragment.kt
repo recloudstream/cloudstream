@@ -34,28 +34,28 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
-import com.lagradost.cloudstream3.UIHelper.checkWrite
-import com.lagradost.cloudstream3.UIHelper.colorFromAttribute
-import com.lagradost.cloudstream3.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.UIHelper.getStatusBarHeight
-import com.lagradost.cloudstream3.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.UIHelper.isAppInstalled
-import com.lagradost.cloudstream3.UIHelper.isCastApiAvailable
-import com.lagradost.cloudstream3.UIHelper.isConnectedToChromecast
-import com.lagradost.cloudstream3.UIHelper.popCurrentPage
-import com.lagradost.cloudstream3.UIHelper.popupMenuNoIcons
-import com.lagradost.cloudstream3.UIHelper.popupMenuNoIconsAndNoStringRes
-import com.lagradost.cloudstream3.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
+import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
-import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
+import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
+import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
@@ -422,12 +422,16 @@ class ResultFragment : Fragment() {
                 }
 
                 context?.let { ctx ->
+                    val parentId = currentId ?: return@let
+                    val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
+
                     // SET VISUAL KEYS
                     ctx.setKey(
-                        DOWNLOAD_HEADER_CACHE, (currentId ?: return@let).toString(),
+                        DOWNLOAD_HEADER_CACHE, parentId.toString(),
                         VideoDownloadHelper.DownloadHeaderCached(
                             apiName,
                             url ?: return@let,
+                            slug ?: return@let,
                             currentType ?: return@let,
                             currentHeaderName ?: return@let,
                             currentPoster ?: return@let,
@@ -439,7 +443,7 @@ class ResultFragment : Fragment() {
                     ctx.setKey(
                         getFolderName(
                             DOWNLOAD_EPISODE_CACHE,
-                            (currentId ?: return@let).toString()
+                            parentId.toString()
                         ), // 3 deep folder for faster acess
                         epData.id.toString(),
                         VideoDownloadHelper.DownloadEpisodeCached(
@@ -448,7 +452,7 @@ class ResultFragment : Fragment() {
                             epData.episode,
                             epData.season,
                             epData.id,
-                            currentId ?: return@let,
+                            parentId,
                             epData.rating,
                             epData.descript
                         )
@@ -457,7 +461,7 @@ class ResultFragment : Fragment() {
                     // DOWNLOAD VIDEO
                     VideoDownloadManager.downloadEpisode(
                         ctx,
-                        url ?: return,
+                        src,//url ?: return,
                         folder,
                         meta,
                         links
