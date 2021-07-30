@@ -13,7 +13,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.cast.framework.CastButtonFactory
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
@@ -31,6 +30,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
+import com.lagradost.cloudstream3.utils.Event
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
 
@@ -59,6 +59,8 @@ class MainActivity : AppCompatActivity() {
         var isInPlayer: Boolean = false
         var canShowPipMode: Boolean = false
         var isInPIPMode: Boolean = false
+
+        val backEvent = Event<Boolean>()
         lateinit var navOptions: NavOptions
     }
 
@@ -110,8 +112,10 @@ class MainActivity : AppCompatActivity() {
                 .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
                 .remove(currentFragment)
                 .commitAllowingStateLoss()
+            backEvent.invoke(true)
             return true
         }
+        backEvent.invoke(false)
         return false
     }
 

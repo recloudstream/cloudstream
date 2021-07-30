@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.search
 
+import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,12 +25,16 @@ import kotlinx.android.synthetic.main.search_result_compact.view.imageView
 import kotlinx.android.synthetic.main.search_result_grid.view.*
 import kotlin.math.roundToInt
 
+const val SEARCH_ACTION_LOAD = 0
+const val SEARCH_ACTION_SHOW_METADATA = 1
+
+class SearchClickCallback(val action: Int, val view: View, val card: SearchResponse)
+
 class SearchAdapter(
     var cardList: List<SearchResponse>,
     private val resView: AutofitRecyclerView,
-    private val clickCallback: (SearchResponse) -> Unit,
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val clickCallback: (SearchClickCallback) -> Unit,
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layout = parent.context.getGridFormatId()
@@ -54,7 +59,11 @@ class SearchAdapter(
     }
 
     class CardViewHolder
-    constructor(itemView: View, private val clickCallback: (SearchResponse) -> Unit, resView: AutofitRecyclerView) :
+    constructor(
+        itemView: View,
+        private val clickCallback: (SearchClickCallback) -> Unit,
+        resView: AutofitRecyclerView
+    ) :
         RecyclerView.ViewHolder(itemView) {
         val cardView: ImageView = itemView.imageView
         private val cardText: TextView = itemView.imageText
@@ -105,7 +114,12 @@ class SearchAdapter(
             }
 
             bg.setOnClickListener {
-                clickCallback.invoke(card)
+                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_LOAD, it, card))
+            }
+
+            bg.setOnLongClickListener {
+                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_SHOW_METADATA, it, card))
+                return@setOnLongClickListener true
             }
 
             when (card) {
@@ -121,7 +135,6 @@ class SearchAdapter(
                         }
                     }
                 }
-
             }
         }
     }

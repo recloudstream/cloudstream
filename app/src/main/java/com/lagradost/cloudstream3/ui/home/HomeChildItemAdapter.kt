@@ -10,11 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
+import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import kotlinx.android.synthetic.main.home_result_grid.view.*
 
 class HomeChildItemAdapter(
-    var cardList: List<Any>,
-    private val clickCallback: (SearchResponse) -> Unit
+    var cardList: List<SearchResponse>,
+    private val clickCallback: (SearchClickCallback) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -38,7 +41,7 @@ class HomeChildItemAdapter(
     }
 
     class CardViewHolder
-    constructor(itemView: View, private val clickCallback: (SearchResponse) -> Unit) :
+    constructor(itemView: View, private val clickCallback: (SearchClickCallback) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
         val cardView: ImageView = itemView.imageView
         private val cardText: TextView = itemView.imageText
@@ -52,50 +55,51 @@ class HomeChildItemAdapter(
         //val imageTextProvider: TextView? = itemView.imageTextProvider
         private val bg: CardView = itemView.backgroundCard
 
-        fun bind(card: Any) {
-            if (card is SearchResponse) { // GENERIC
+        fun bind(card: SearchResponse) {
+            textType?.text = when (card.type) {
+                TvType.Anime -> "Anime"
+                TvType.Movie -> "Movie"
+                TvType.ONA -> "ONA"
+                TvType.TvSeries -> "TV"
+            }
+            // search_result_lang?.visibility = View.GONE
 
-                textType?.text = when (card.type) {
-                    TvType.Anime -> "Anime"
-                    TvType.Movie -> "Movie"
-                    TvType.ONA -> "ONA"
-                    TvType.TvSeries -> "TV"
-                }
-                // search_result_lang?.visibility = View.GONE
+            textIsDub?.visibility = View.GONE
+            textIsSub?.visibility = View.GONE
 
-                textIsDub?.visibility = View.GONE
-                textIsSub?.visibility = View.GONE
+            cardText.text = card.name
 
-                cardText.text = card.name
+            //imageTextProvider.text = card.apiName
+            if (!card.posterUrl.isNullOrEmpty()) {
 
-                //imageTextProvider.text = card.apiName
-                if (!card.posterUrl.isNullOrEmpty()) {
+                val glideUrl =
+                    GlideUrl(card.posterUrl)
 
-                    val glideUrl =
-                        GlideUrl(card.posterUrl)
+                Glide.with(cardView.context)
+                    .load(glideUrl)
+                    .into(cardView)
 
-                    Glide.with(cardView.context)
-                        .load(glideUrl)
-                        .into(cardView)
+            }
 
-                }
+            bg.setOnClickListener {
+                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_LOAD, it, card))
+            }
 
-                bg.setOnClickListener {
-                    clickCallback.invoke(card)
-                   // (activity as AppCompatActivity).loadResult(card.url, card.slug, card.apiName)
-                }
+            bg.setOnLongClickListener {
+                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_SHOW_METADATA, it, card))
+                return@setOnLongClickListener true
+            }
 
-                when (card) {
-                    is AnimeSearchResponse -> {
-                        if (card.dubStatus?.size == 1) {
-                            //search_result_lang?.visibility = View.VISIBLE
-                            if (card.dubStatus.contains(DubStatus.Dubbed)) {
-                                textIsDub?.visibility = View.VISIBLE
-                                //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.dubColor))
-                            } else if (card.dubStatus.contains(DubStatus.Subbed)) {
-                                //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.subColor))
-                                textIsSub?.visibility = View.VISIBLE
-                            }
+            when (card) {
+                is AnimeSearchResponse -> {
+                    if (card.dubStatus?.size == 1) {
+                        //search_result_lang?.visibility = View.VISIBLE
+                        if (card.dubStatus.contains(DubStatus.Dubbed)) {
+                            textIsDub?.visibility = View.VISIBLE
+                            //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.dubColor))
+                        } else if (card.dubStatus.contains(DubStatus.Subbed)) {
+                            //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.subColor))
+                            textIsSub?.visibility = View.VISIBLE
                         }
                     }
                 }

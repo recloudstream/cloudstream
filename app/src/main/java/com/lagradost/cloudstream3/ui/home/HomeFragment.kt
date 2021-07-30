@@ -17,25 +17,32 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.AnimeSearchResponse
-import com.lagradost.cloudstream3.HomePageResponse
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.MainActivity.Companion.backEvent
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
+import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
+import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import kotlinx.android.synthetic.main.fragment_home.*
+
+const val HOME_BOOKMARK_VALUE = "home_bookmarked_last"
 
 class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
@@ -142,6 +149,28 @@ class HomeFragment : Fragment() {
         fixGrid()
     }
 
+    override fun onResume() {
+        backEvent += ::handleBack
+        super.onResume()
+    }
+
+    override fun onStop() {
+        backEvent -= ::handleBack
+        super.onStop()
+    }
+
+    private fun reloadStored() {
+        context?.let { ctx ->
+            homeViewModel.loadStoredData(ctx, WatchType.fromInternalId(ctx.getKey(HOME_BOOKMARK_VALUE)))
+        }
+    }
+
+    private fun handleBack(poppedFragment: Boolean) {
+        if (poppedFragment) {
+            reloadStored()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fixGrid()
@@ -225,9 +254,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = ParentItemAdapter(listOf(), { card ->
-            activity.loadSearchResult(card)
-        }, { item ->
+        fun loadHomepageList(item: HomePageList) {
             val bottomSheetDialogBuilder = BottomSheetDialog(view.context)
             bottomSheetDialogBuilder.setContentView(R.layout.home_episodes_expanded)
             val title = bottomSheetDialogBuilder.findViewById<TextView>(R.id.home_expanded_text)!!
@@ -242,9 +269,11 @@ class HomeFragment : Fragment() {
             // Span settings
             recycle.spanCount = currentSpan
 
-            recycle.adapter = SearchAdapter(item.list, recycle) { card ->
-                bottomSheetDialogBuilder.dismiss()
-                activity.loadSearchResult(card)
+            recycle.adapter = SearchAdapter(item.list, recycle) { callback ->
+                handleSearchClickCallback(activity, callback)
+                if (callback.action == SEARCH_ACTION_LOAD) {
+                    bottomSheetDialogBuilder.dismiss()
+                }
             }
 
             val spanListener = { span: Int ->
@@ -261,13 +290,66 @@ class HomeFragment : Fragment() {
             (recycle.adapter as SearchAdapter).notifyDataSetChanged()
 
             bottomSheetDialogBuilder.show()
+        }
+
+        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = ParentItemAdapter(listOf(), { callback ->
+            handleSearchClickCallback(activity, callback)
+        }, { item ->
+            loadHomepageList(item)
         })
+
+        observe(homeViewModel.availableWatchStatusTypes) { availableWatchStatusTypes ->
+            context?.setKey(HOME_BOOKMARK_VALUE, availableWatchStatusTypes.first.internalId)
+            home_bookmark_select?.setOnClickListener {
+                it.popupMenuNoIcons(availableWatchStatusTypes.second.map { type ->
+                    Pair(
+                        type.internalId,
+                        type.stringRes
+                    )
+                }) {
+                    homeViewModel.loadStoredData(it.context, WatchType.fromInternalId(this.itemId))
+                }
+            }
+            home_bookmarked_parent_item_title?.text = getString(availableWatchStatusTypes.first.stringRes)
+        }
+
+        observe(homeViewModel.bookmarks) { bookmarks ->
+            home_bookmarked_holder.visibility = if (bookmarks.isNotEmpty()) View.VISIBLE else View.GONE
+            (home_bookmarked_child_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList = bookmarks
+            home_bookmarked_child_recyclerview?.adapter?.notifyDataSetChanged()
+
+            home_bookmarked_child_more_info.setOnClickListener {
+                loadHomepageList(
+                    HomePageList(
+                        home_bookmarked_parent_item_title?.text?.toString() ?: getString(R.string.error_bookmarks_text),
+                        bookmarks
+                    )
+                )
+            }
+        }
+
+        home_bookmarked_child_recyclerview.adapter = HomeChildItemAdapter(ArrayList()) { callback ->
+            if (callback.action == SEARCH_ACTION_SHOW_METADATA) {
+                val id = callback.card.id
+                if (id != null) {
+                    callback.view.popupMenuNoIcons(listOf(Pair(0, R.string.action_remove_from_bookmarks))) {
+                        if (itemId == 0) {
+                            activity?.setResultWatchState(id, WatchType.NONE.internalId)
+                            reloadStored()
+                        }
+                    }
+                }
+            } else {
+                handleSearchClickCallback(activity, callback)
+            }
+        }
 
         context?.fixPaddingStatusbar(home_root)
 
         home_master_recycler.adapter = adapter
         home_master_recycler.layoutManager = GridLayoutManager(context, 1)
 
+        reloadStored()
         homeViewModel.load(context?.getKey<String>(HOMEPAGE_API))
     }
 }

@@ -33,15 +33,17 @@ class HomeViewModel : ViewModel() {
         return APIRepository(apis.first { it.hasMainPage })
     }
 
-    private val availableWatchStatusTypes = MutableLiveData<Pair<WatchType, List<WatchType>>>()
-    private val bookmarks = MutableLiveData<List<SearchResponse>>()
+    private val _availableWatchStatusTypes = MutableLiveData<Pair<WatchType, List<WatchType>>>()
+    val availableWatchStatusTypes: LiveData<Pair<WatchType, List<WatchType>>> = _availableWatchStatusTypes
+    private val _bookmarks = MutableLiveData<List<SearchResponse>>()
+    val bookmarks: LiveData<List<SearchResponse>> = _bookmarks
 
     fun loadStoredData(context: Context, preferredWatchStatus: WatchType?) = viewModelScope.launch {
         val watchStatusIds = withContext(Dispatchers.IO) {
             context.getAllWatchStateIds().map { id ->
                 Pair(id, context.getResultWatchState(id))
             }
-        }
+        }.distinctBy { it.first }
         val length = WatchType.values().size
         val currentWatchTypes = HashSet<WatchType>()
 
@@ -52,21 +54,28 @@ class HomeViewModel : ViewModel() {
             }
         }
 
+        currentWatchTypes.remove(WatchType.NONE)
+
         if (currentWatchTypes.size <= 0) {
-            bookmarks.postValue(ArrayList())
+            _bookmarks.postValue(ArrayList())
             return@launch
         }
 
-        val watchStatus = preferredWatchStatus ?: currentWatchTypes.first()
-        availableWatchStatusTypes.postValue(
+        val watchPrefNotNull = preferredWatchStatus ?: currentWatchTypes.first()
+        val watchStatus =
+            if (currentWatchTypes.contains(watchPrefNotNull)) watchPrefNotNull else currentWatchTypes.first()
+        _availableWatchStatusTypes.postValue(
             Pair(
                 watchStatus,
                 currentWatchTypes.sortedBy { it.internalId }.toList()
             )
         )
         val list = withContext(Dispatchers.IO) {
-            watchStatusIds.map { context.getBookmarkedData(it.first) }
+            watchStatusIds.filter { it.second == watchStatus }
+                .mapNotNull { context.getBookmarkedData(it.first) }
+                .sortedBy { -it.latestUpdatedTime }
         }
+        _bookmarks.postValue(list)
     }
 
     fun load(api: MainAPI?) = viewModelScope.launch {

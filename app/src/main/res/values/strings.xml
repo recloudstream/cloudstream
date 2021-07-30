@@ -64,4 +64,6 @@
     <string name="background_blur">Background blur</string>
     <string name="background_shadow">Background Shadow</string>
     <string name="filter_bookmarks">Filter Bookmarks</string>
+    <string name="error_bookmarks_text">Bookmarks</string>
+    <string name="action_remove_from_bookmarks">Remove</string>
 </resources>

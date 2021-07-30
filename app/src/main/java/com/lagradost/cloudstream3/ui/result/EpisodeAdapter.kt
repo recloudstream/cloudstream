@@ -117,7 +117,7 @@ class EpisodeAdapter(
     class EpisodeCardViewHolder
     constructor(
         itemView: View,
-        val hasDownloadSupport: Boolean,
+        private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
         private val downloadClickCallback: (DownloadClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
@@ -129,8 +129,8 @@ class EpisodeAdapter(
         private val episodeProgress: ContentLoadingProgressBar? = itemView.episode_progress
         private val episodePoster: ImageView? = itemView.episode_poster
 
-        val episodeDownloadBar: ContentLoadingProgressBar = itemView.result_episode_progress_downloaded
-        val episodeDownloadImage: ImageView = itemView.result_episode_download
+        private val episodeDownloadBar: ContentLoadingProgressBar = itemView.result_episode_progress_downloaded
+        private val episodeDownloadImage: ImageView = itemView.result_episode_download
 
         private val episodeHolder = itemView.episode_holder
 

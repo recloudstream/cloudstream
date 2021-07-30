@@ -56,7 +56,7 @@ object APIHolder {
     }
 
     fun LoadResponse.getId(): Int {
-        return url.replace(getApiFromName(apiName).mainUrl, "").hashCode()
+        return url.replace(getApiFromName(apiName).mainUrl, "").replace("/", "").hashCode()
     }
 
     fun Activity.getApiSettings(): HashSet<String> {
@@ -86,7 +86,7 @@ abstract class MainAPI {
     open val hasMainPage = false
     open val hasQuickSearch = false
 
-    open fun getMainPage() : HomePageResponse? {
+    open fun getMainPage(): HomePageResponse? {
         return null
     }
 
@@ -189,6 +189,7 @@ interface SearchResponse {
     val type: TvType
     val posterUrl: String?
     val year: Int?
+    val id: Int?
 }
 
 data class AnimeSearchResponse(
@@ -204,6 +205,7 @@ data class AnimeSearchResponse(
     val dubStatus: EnumSet<DubStatus>?,
     val dubEpisodes: Int?,
     val subEpisodes: Int?,
+    override val id: Int? = null,
 ) : SearchResponse
 
 data class MovieSearchResponse(
@@ -214,6 +216,7 @@ data class MovieSearchResponse(
 
     override val posterUrl: String?,
     override val year: Int?,
+    override val id: Int? = null,
 ) : SearchResponse
 
 data class TvSeriesSearchResponse(
@@ -225,6 +228,7 @@ data class TvSeriesSearchResponse(
     override val posterUrl: String?,
     override val year: Int?,
     val episodes: Int?,
+    override val id: Int? = null,
 ) : SearchResponse
 
 interface LoadResponse {

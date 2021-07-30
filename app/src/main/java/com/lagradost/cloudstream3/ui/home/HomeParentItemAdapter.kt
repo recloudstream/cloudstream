@@ -9,11 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import kotlinx.android.synthetic.main.homepage_parent.view.*
 
 class ParentItemAdapter(
     var items: List<HomePageList>,
-    private val clickCallback: (SearchResponse) -> Unit,
+    private val clickCallback: (SearchClickCallback) -> Unit,
     private val moreInfoClickCallback: (HomePageList) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): ParentViewHolder {
@@ -38,7 +39,7 @@ class ParentItemAdapter(
     class ParentViewHolder
     constructor(
         itemView: View,
-        private val clickCallback: (SearchResponse) -> Unit,
+        private val clickCallback: (SearchClickCallback) -> Unit,
         private val moreInfoClickCallback: (HomePageList) -> Unit
     ) :
         RecyclerView.ViewHolder(itemView) {

@@ -13,8 +13,8 @@ android {
         applicationId "com.lagradost.cloudstream3"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 8
-        versionName "1.1.6"
+        versionCode 9
+        versionName "1.1.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
