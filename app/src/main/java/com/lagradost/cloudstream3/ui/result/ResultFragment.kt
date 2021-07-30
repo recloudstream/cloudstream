@@ -65,7 +65,9 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -168,7 +170,7 @@ class ResultFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         viewModel =
-            ViewModelProvider(requireActivity()).get(ResultViewModel::class.java)
+            ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
         return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
@@ -270,15 +272,17 @@ class ResultFragment : Fragment() {
                 }
             }
 
-            if (activity?.isCastApiAvailable() == true) {
-                CastButtonFactory.setUpMediaRouteButton(activity, media_route_button)
-                val castContext = CastContext.getSharedInstance(requireActivity().applicationContext)
+            activity?.let {
+                if (it.isCastApiAvailable()) {
+                    CastButtonFactory.setUpMediaRouteButton(it, media_route_button)
+                    val castContext = CastContext.getSharedInstance(it.applicationContext)
 
-                if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = VISIBLE
-                castContext.addCastStateListener { state ->
-                    if (media_route_button != null) {
-                        if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = GONE else {
-                            if (media_route_button.visibility == GONE) media_route_button.visibility = VISIBLE
+                    if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = VISIBLE
+                    castContext.addCastStateListener { state ->
+                        if (media_route_button != null) {
+                            if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = GONE else {
+                                if (media_route_button.visibility == GONE) media_route_button.visibility = VISIBLE
+                            }
                         }
                     }
                 }
@@ -302,7 +306,7 @@ class ResultFragment : Fragment() {
         }
 
         result_back.setOnClickListener {
-            requireActivity().popCurrentPage()
+            activity?.popCurrentPage()
         }
 
         fun handleAction(episodeClick: EpisodeClickEvent): Job = main {
@@ -432,7 +436,8 @@ class ResultFragment : Fragment() {
                             currentType ?: return@let,
                             currentHeaderName ?: return@let,
                             currentPoster ?: return@let,
-                            currentId ?: return@let
+                            currentId ?: return@let,
+                            System.currentTimeMillis(),
                         )
                     )
 
@@ -451,7 +456,8 @@ class ResultFragment : Fragment() {
                             epData.id,
                             parentId,
                             epData.rating,
-                            epData.descript
+                            epData.descript,
+                            System.currentTimeMillis(),
                         )
                     )
 
@@ -559,76 +565,78 @@ class ResultFragment : Fragment() {
                 }
 
                 ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> {
-                    if (activity?.checkWrite() != true) {
-                        activity?.requestRW()
-                        if (activity?.checkWrite() == true) return@main
-                    }
-                    val data = currentLinks ?: return@main
-                    val subs = currentSubs
-
-                    val outputDir = requireContext().cacheDir
-                    val outputFile = File.createTempFile("mirrorlist", ".m3u8", outputDir)
-                    var text = "#EXTM3U"
-                    if (subs != null) {
-                        for (sub in subs) {
-                            text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.lang}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.lang}\",URI=\"${sub.url}\""
+                    activity?.let { act ->
+                        if (!act.checkWrite()) {
+                            act.requestRW()
+                            if (act.checkWrite()) return@main
                         }
+                        val data = currentLinks ?: return@main
+                        val subs = currentSubs
+
+                        val outputDir = requireContext().cacheDir
+                        val outputFile = withContext(Dispatchers.IO)  {
+                            File.createTempFile("mirrorlist", ".m3u8", outputDir)
+                        }
+                        var text = "#EXTM3U"
+                        if (subs != null) {
+                            for (sub in subs) {
+                                text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.lang}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.lang}\",URI=\"${sub.url}\""
+                            }
+                        }
+                        for (link in data.sortedBy { -it.quality }) {
+                            text += "\n#EXTINF:, ${link.name}\n${link.url}"
+                        }
+                        outputFile.writeText(text)
+
+
+                        val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
+
+                        vlcIntent.setPackage(VLC_PACKAGE)
+                        vlcIntent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                        vlcIntent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION)
+                        vlcIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+                        vlcIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
+
+                        vlcIntent.setDataAndType(
+                            FileProvider.getUriForFile(
+                                act,
+                                act.applicationContext.packageName + ".provider",
+                                outputFile
+                            ), "video/*"
+                        )
+
+                        val startId = VLC_FROM_PROGRESS
+
+                        var position = startId
+                        if (startId == VLC_FROM_START) {
+                            position = 1
+                        } else if (startId == VLC_FROM_PROGRESS) {
+                            position = 0
+                        }
+
+                        vlcIntent.putExtra("position", position)
+
+                        vlcIntent.component = VLC_COMPONENT
+                        requireContext().setKey(VLC_LAST_ID_KEY, episodeClick.data.id)
+                        act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
                     }
-                    for (link in data.sortedBy { -it.quality }) {
-                        text += "\n#EXTINF:, ${link.name}\n${link.url}"
-                    }
-                    outputFile.writeText(text)
-
-
-                    val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
-
-                    vlcIntent.setPackage(VLC_PACKAGE)
-                    vlcIntent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-                    vlcIntent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION)
-                    vlcIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
-                    vlcIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
-
-                    vlcIntent.setDataAndType(
-                        FileProvider.getUriForFile(
-                            requireActivity(),
-                            requireActivity().applicationContext.packageName + ".provider",
-                            outputFile
-                        ), "video/*"
-                    )
-
-                    val startId = VLC_FROM_PROGRESS
-
-                    var position = startId
-                    if (startId == VLC_FROM_START) {
-                        position = 1
-                    } else if (startId == VLC_FROM_PROGRESS) {
-                        position = 0
-                    }
-
-                    vlcIntent.putExtra("position", position)
-
-                    vlcIntent.component = VLC_COMPONENT
-                    requireContext().setKey(VLC_LAST_ID_KEY, episodeClick.data.id)
-                    activity?.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
                 }
 
                 ACTION_PLAY_EPISODE_IN_PLAYER -> {
                     if (buildInPlayer) {
-                        (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
-                            .setCustomAnimations(
+                        (activity as AppCompatActivity?)?.supportFragmentManager?.beginTransaction()
+                            ?.setCustomAnimations(
                                 R.anim.enter_anim,
                                 R.anim.exit_anim,
                                 R.anim.pop_enter,
                                 R.anim.pop_exit
-                            )
-                            .add(
+                            )?.add(
                                 R.id.homeRoot,
                                 PlayerFragment.newInstance(
                                     PlayerData(index, null, 0),
                                     episodeClick.data.getRealPosition()
                                 )
-                            )
-                            .commit()
+                            )?.commit()
                     }
                 }
 
@@ -924,7 +932,8 @@ class ResultFragment : Fragment() {
                                         localId,
                                         localId,
                                         d.rating,
-                                        d.plot
+                                        d.plot,
+                                        System.currentTimeMillis(),
                                     )
                                 ) { downloadClickEvent ->
                                     if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {

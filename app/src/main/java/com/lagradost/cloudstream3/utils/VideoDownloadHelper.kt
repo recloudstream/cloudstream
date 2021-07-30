@@ -12,14 +12,16 @@ object VideoDownloadHelper {
         val parentId: Int,
         val rating: Int?,
         val descript: String?,
+        val cacheTime: Long,
     )
 
     data class DownloadHeaderCached(
         val apiName: String,
         val url: String,
-        val type : TvType,
+        val type: TvType,
         val name: String,
         val poster: String?,
         val id: Int,
+        val cacheTime: Long,
     )
 }

@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
@@ -55,10 +56,14 @@ class ResultViewModel : ViewModel() {
         context.setResultWatchState(currentId, status.internalId)
         val resultPage = page.value
         if (resultPage != null) {
+            val current = context.getBookmarkedData(currentId)
+            val currentTime = System.currentTimeMillis()
             context.setBookmarkedData(
                 currentId,
                 DataStoreHelper.BookmarkedData(
                     currentId,
+                    current?.bookmarkedTime ?: currentTime,
+                    currentTime,
                     resultPage.name,
                     resultPage.url,
                     resultPage.apiName,

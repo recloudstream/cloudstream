@@ -197,7 +197,7 @@ class EpisodeAdapter(
                 downloadButton.setUpButton(
                     downloadInfo?.fileLength, downloadInfo?.totalBytes, episodeDownloadBar, episodeDownloadImage, null,
                     VideoDownloadHelper.DownloadEpisodeCached(
-                        card.name, card.poster, card.episode, card.season, card.id, 0, card.rating, card.descript
+                        card.name, card.poster, card.episode, card.season, card.id, 0, card.rating, card.descript, System.currentTimeMillis(),
                     )
                 ) {
                     if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {

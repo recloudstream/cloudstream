@@ -598,7 +598,7 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private lateinit var volumeObserver: SettingsContentObserver
+    private var volumeObserver: SettingsContentObserver? = null
 
     companion object {
         fun newInstance(data: PlayerData, startPos: Long? = null) =
@@ -913,19 +913,18 @@ class PlayerFragment : Fragment() {
         resizeMode = requireContext().getKey(RESIZE_MODE_KEY, 0)!!
         playbackSpeed = requireContext().getKey(PLAYBACK_SPEED_KEY, 1f)!!
 
-        volumeObserver = SettingsContentObserver(
-            Handler(
-                Looper.getMainLooper()
-            ), requireActivity()
-        )
-
-        activity?.contentResolver
-            ?.registerContentObserver(
-                android.provider.Settings.System.CONTENT_URI, true, volumeObserver
+        activity?.let {
+            it.contentResolver?.registerContentObserver(
+                android.provider.Settings.System.CONTENT_URI, true, SettingsContentObserver(
+                    Handler(
+                        Looper.getMainLooper()
+                    ), it
+                )
             )
+        }
 
         if (!isDownloadedFile) {
-            viewModel = ViewModelProvider(requireActivity()).get(ResultViewModel::class.java)
+            viewModel = ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
 
             observeDirectly(viewModel.episodes) { _episodes ->
                 episodes = _episodes
@@ -1347,7 +1346,7 @@ class PlayerFragment : Fragment() {
         outState.putBoolean(STATE_PLAYER_PLAYING, isPlayerPlaying)
         outState.putInt(RESIZE_MODE_KEY, resizeMode)
         outState.putFloat(PLAYBACK_SPEED, playbackSpeed)
-        if(!isDownloadedFile) {
+        if (!isDownloadedFile) {
             outState.putString("data", mapper.writeValueAsString(playerData))
         }
         super.onSaveInstanceState(outState)

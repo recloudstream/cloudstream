@@ -62,6 +62,11 @@ class SearchFragment : Fragment() {
         fixGrid()
     }
 
+    override fun onDestroyView() {
+        main_search?.clearFocus()
+        super.onDestroyView()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -104,7 +109,8 @@ class SearchFragment : Fragment() {
                         }
 
                         val edit = settingsManagerLocal.edit()
-                        edit.putStringSet(getString(R.string.search_providers_list_key),
+                        edit.putStringSet(
+                            getString(R.string.search_providers_list_key),
                             apiNames.filter { a -> apiNamesSettingLocal.contains(a) }.toSet()
                         )
                         edit.apply()
@@ -142,7 +148,7 @@ class SearchFragment : Fragment() {
                     search_loading_bar.alpha = 0f
                 }
                 is Resource.Failure -> {
-                   // Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
+                    // Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
                     searchExitIcon.alpha = 1f
                     search_loading_bar.alpha = 0f
                 }
@@ -152,15 +158,18 @@ class SearchFragment : Fragment() {
                 }
             }
         }
-        allApi.providersActive = requireActivity().getApiSettings()
+        activity?.let {
+            allApi.providersActive = it.getApiSettings()
+        }
 
         main_search.setOnQueryTextFocusChangeListener { searchView, b ->
             if (b) {
                 // https://stackoverflow.com/questions/12022715/unable-to-show-keyboard-automatically-in-the-searchview
                 searchView?.postDelayed({
-                    val imm: InputMethodManager? =
-                        requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?
-                    imm?.showSoftInput(view.findFocus(), 0)
+                    (activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?)?.showSoftInput(
+                        view.findFocus(),
+                        0
+                    )
                 }, 200)
             }
         }
@@ -169,7 +178,7 @@ class SearchFragment : Fragment() {
         //searchViewModel.search("iron man")
         //(activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*
-        (requireActivity() as AppCompatActivity).supportFragmentManager.beginTransaction()
+        (activity as AppCompatActivity?)?.supportFragmentManager.beginTransaction()
             .setCustomAnimations(R.anim.enter_anim,
                 R.anim.exit_anim,
                 R.anim.pop_enter,

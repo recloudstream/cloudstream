@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 
 const val VIDEO_POS_DUR = "video_pos_dur"
@@ -27,6 +28,8 @@ object DataStoreHelper {
 
     data class BookmarkedData(
         val parentId: Int,
+        val bookmarkedTime : Long,
+        val latestUpdatedTime : Long,
         override val name: String,
         override val url: String,
         override val apiName: String,
@@ -36,6 +39,11 @@ object DataStoreHelper {
     ) : SearchResponse
 
     var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
+
+    fun Context.getAllWatchStateIds(): List<Int> {
+        val folder = "$currentAccount/$RESULT_WATCH_STATE"
+        return getKeys(folder).mapNotNull { it.removePrefix(folder).toIntOrNull() }
+    }
 
     fun Context.setBookmarkedData(id: Int?, data: BookmarkedData) {
         if (id == null) return
