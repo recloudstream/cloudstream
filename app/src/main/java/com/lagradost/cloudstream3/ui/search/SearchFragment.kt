@@ -165,7 +165,7 @@ class SearchFragment : Fragment() {
             }
         }
         main_search.onActionViewExpanded()
-        val q = 0 / 0
+
         //searchViewModel.search("iron man")
         //(activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*
