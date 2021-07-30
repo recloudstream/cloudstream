@@ -54,10 +54,6 @@ class TenshiProvider : MainAPI() {
         return movies.contains(aniId)
     }
 
-    private fun getSlug(href: String): String {
-        return href.replace("$mainUrl/anime/", "")
-    }
-
     private fun parseSearchPage(soup: Document): ArrayList<SearchResponse> {
         val items = soup.select("ul.thumb > li > a")
         if (items.isEmpty()) return ArrayList()
@@ -70,13 +66,12 @@ class TenshiProvider : MainAPI() {
             returnValue.add(
                 if (getIsMovie(href, true)) {
                     MovieSearchResponse(
-                        title, href, getSlug(href), this.name, TvType.Movie, img, null
+                        title, href, this.name, TvType.Movie, img, null
                     )
                 } else {
                     AnimeSearchResponse(
                         title,
                         href,
-                        getSlug(href),
                         this.name,
                         TvType.Anime,
                         img,
@@ -170,9 +165,7 @@ class TenshiProvider : MainAPI() {
         return returnValue
     }
 
-    override fun load(slug: String): LoadResponse {
-        val url = "$mainUrl/anime/${slug}"
-
+    override fun load(url: String): LoadResponse {
         val response = khttp.get(url, timeout = 120.0, cookies=mapOf("loop-view" to "thumb"))
         val document = Jsoup.parse(response.text)
 
@@ -213,7 +206,7 @@ class TenshiProvider : MainAPI() {
             englishTitle,
             japaneseTitle,
             canonicalTitle,
-            "$mainUrl/anime/${slug}",
+            url,
             this.name,
             TenshiProvider.getType(type ?: ""),
             poster,

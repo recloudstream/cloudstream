@@ -9,9 +9,11 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -21,7 +23,7 @@ const val EPISODE_RANGE_SIZE = 50
 const val EPISODE_RANGE_OVERLOAD = 60
 
 class ResultViewModel : ViewModel() {
-    var repo : APIRepository? = null
+    var repo: APIRepository? = null
 
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
     private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
@@ -51,6 +53,21 @@ class ResultViewModel : ViewModel() {
         val currentId = id.value ?: return
         _watchStatus.postValue(status)
         context.setResultWatchState(currentId, status.internalId)
+        val resultPage = page.value
+        if (resultPage != null) {
+            context.setBookmarkedData(
+                currentId,
+                DataStoreHelper.BookmarkedData(
+                    currentId,
+                    resultPage.name,
+                    resultPage.url,
+                    resultPage.apiName,
+                    resultPage.type,
+                    resultPage.posterUrl,
+                    resultPage.year
+                )
+            )
+        }
     }
 
     private fun loadWatchStatus(context: Context, localId: Int? = null) {
@@ -154,80 +171,78 @@ class ResultViewModel : ViewModel() {
         when (data) {
             is Resource.Success -> {
                 val d = data.value
-                if (d is LoadResponse) {
-                    page.postValue(d)
-                    val mainId = d.getId()
-                    id.postValue(mainId)
-                    loadWatchStatus(context, mainId)
+                page.postValue(d)
+                val mainId = d.getId()
+                id.postValue(mainId)
+                loadWatchStatus(context, mainId)
 
-                    when (d) {
-                        is AnimeLoadResponse -> {
-                            val isDub = d.dubEpisodes != null && d.dubEpisodes.size > 0
-                            dubStatus.postValue(if (isDub) DubStatus.Dubbed else DubStatus.Subbed)
+                when (d) {
+                    is AnimeLoadResponse -> {
+                        val isDub = d.dubEpisodes != null && d.dubEpisodes.size > 0
+                        dubStatus.postValue(if (isDub) DubStatus.Dubbed else DubStatus.Subbed)
 
-                            val dataList = (if (isDub) d.dubEpisodes else d.subEpisodes)
+                        val dataList = (if (isDub) d.dubEpisodes else d.subEpisodes)
 
-                            if (dataList != null) {
-                                val episodes = ArrayList<ResultEpisode>()
-                                for ((index, i) in dataList.withIndex()) {
-                                    episodes.add(
-                                        context.buildResultEpisode(
-                                            i.name,
-                                            i.posterUrl,
-                                            index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
-                                            null, // TODO FIX SEASON
-                                            i.url,
-                                            apiName,
-                                            (mainId + index + 1),
-                                            index,
-                                            i.rating,
-                                            i.descript,
-                                        )
-                                    )
-                                }
-                                updateEpisodes(context, mainId, episodes, -1)
-                            }
-                        }
-
-                        is TvSeriesLoadResponse -> {
+                        if (dataList != null) {
                             val episodes = ArrayList<ResultEpisode>()
-                            for ((index, i) in d.episodes.withIndex()) {
+                            for ((index, i) in dataList.withIndex()) {
                                 episodes.add(
                                     context.buildResultEpisode(
                                         i.name,
-                                        //?: (if (i.season != null && i.episode != null) "S${i.season}:E${i.episode}" else null)), // TODO ADD NAMES
                                         i.posterUrl,
-                                        i.episode ?: (index + 1),
-                                        i.season,
-                                        i.data,
+                                        index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
+                                        null, // TODO FIX SEASON
+                                        i.url,
                                         apiName,
-                                        (mainId + index + 1).hashCode(),
+                                        (mainId + index + 1),
                                         index,
                                         i.rating,
-                                        i.descript
+                                        i.descript,
                                     )
                                 )
                             }
                             updateEpisodes(context, mainId, episodes, -1)
                         }
-                        is MovieLoadResponse -> {
-                            updateEpisodes(
-                                context, mainId, arrayListOf(
-                                    context.buildResultEpisode(
-                                        d.name,
-                                        null,
-                                        0,
-                                        null,
-                                        d.dataUrl,
-                                        d.apiName,
-                                        (mainId), // HAS SAME ID
-                                        0,
-                                        null,
-                                        null,
-                                    )
-                                ), -1
+                    }
+
+                    is TvSeriesLoadResponse -> {
+                        val episodes = ArrayList<ResultEpisode>()
+                        for ((index, i) in d.episodes.withIndex()) {
+                            episodes.add(
+                                context.buildResultEpisode(
+                                    i.name,
+                                    //?: (if (i.season != null && i.episode != null) "S${i.season}:E${i.episode}" else null)), // TODO ADD NAMES
+                                    i.posterUrl,
+                                    i.episode ?: (index + 1),
+                                    i.season,
+                                    i.data,
+                                    apiName,
+                                    (mainId + index + 1).hashCode(),
+                                    index,
+                                    i.rating,
+                                    i.descript
+                                )
                             )
                         }
+                        updateEpisodes(context, mainId, episodes, -1)
+                    }
+                    is MovieLoadResponse -> {
+                        updateEpisodes(
+                            context, mainId, arrayListOf(
+                                context.buildResultEpisode(
+                                    d.name,
+                                    null,
+                                    0,
+                                    null,
+                                    d.dataUrl,
+                                    d.apiName,
+                                    (mainId), // HAS SAME ID
+                                    0,
+                                    null,
+                                    null,
+                                )
+                            ), -1
+                        )
                     }
                 }
             }
@@ -303,8 +318,4 @@ class ResultViewModel : ViewModel() {
             val localData = loadEpisode(id, data, isCasting)
             callback.invoke(localData)
         }
-
-    fun loadIndex(index: Int): ResultEpisode? {
-        return episodes.value?.get(index)
-    }
 }

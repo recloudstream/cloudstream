@@ -143,11 +143,10 @@ fun ResultEpisode.getWatchProgress(): Float {
 
 class ResultFragment : Fragment() {
     companion object {
-        fun newInstance(url: String, slug: String, apiName: String, startAction: Int = 0) =
+        fun newInstance(url: String, apiName: String, startAction: Int = 0) =
             ResultFragment().apply {
                 arguments = Bundle().apply {
                     putString("url", url)
-                    putString("slug", slug)
                     putString("apiName", apiName)
                     putInt("startAction", startAction)
                 }
@@ -257,7 +256,6 @@ class ResultFragment : Fragment() {
         // activity?.fixPaddingStatusbar(result_toolbar)
 
         url = arguments?.getString("url")
-        val slug = arguments?.getString("slug")
         val apiName = arguments?.getString("apiName") ?: return
         startAction = arguments?.getInt("startAction") ?: START_ACTION_NORMAL
 
@@ -431,7 +429,6 @@ class ResultFragment : Fragment() {
                         VideoDownloadHelper.DownloadHeaderCached(
                             apiName,
                             url ?: return@let,
-                            slug ?: return@let,
                             currentType ?: return@let,
                             currentHeaderName ?: return@let,
                             currentPoster ?: return@let,
@@ -986,21 +983,20 @@ class ResultFragment : Fragment() {
             }
         }
 
-        if (apiName != null && slug != null) {
+        val tempUrl = url
+        if (tempUrl != null) {
             result_reload_connectionerror.setOnClickListener {
-                viewModel.load(requireContext(), slug, apiName)
+                viewModel.load(requireContext(), tempUrl, apiName)
             }
 
-            if (url != null) {
-                result_reload_connection_open_in_browser.setOnClickListener {
-                    val i = Intent(ACTION_VIEW)
-                    i.data = Uri.parse(url)
-                    startActivity(i)
-                }
+            result_reload_connection_open_in_browser.setOnClickListener {
+                val i = Intent(ACTION_VIEW)
+                i.data = Uri.parse(tempUrl)
+                startActivity(i)
             }
 
             if (viewModel.resultResponse.value == null)
-                viewModel.load(requireContext(), slug, apiName)
+                viewModel.load(requireContext(), tempUrl, apiName)
         }
     }
 }

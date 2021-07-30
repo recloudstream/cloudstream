@@ -87,6 +87,7 @@
             android:id="@+id/home_loaded"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -202,6 +203,57 @@
                     </ImageView>
                 </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/home_bookmarked_holder"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <FrameLayout
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:id="@+id/home_bookmarked_child_more_info"
+                        android:padding="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    <ImageView
+                            android:src="@drawable/ic_baseline_filter_list_24"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@string/filter_bookmarks">
+                    </ImageView>
+                    <TextView
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="40dp"
+                            android:id="@+id/home_bookmarked_parent_item_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="?attr/textColor"
+                            android:gravity="center_vertical"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:text="Bookmarked"
+                    />
+                    <ImageView
+                            android:layout_marginEnd="5dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:src="@drawable/ic_baseline_arrow_forward_24"
+                            android:layout_width="30dp"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/home_more_info">
+                    </ImageView>
+                </FrameLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:id="@+id/home_bookmarked_child_recyclerview"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/home_result_grid"
+                />
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/home_master_recycler"
                     android:layout_width="match_parent"
@@ -210,5 +262,4 @@
             />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
 </FrameLayout>

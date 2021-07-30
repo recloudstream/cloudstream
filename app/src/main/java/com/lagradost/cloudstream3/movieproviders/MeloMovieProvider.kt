@@ -50,7 +50,6 @@ class MeloMovieProvider : MainAPI() {
                     TvSeriesSearchResponse(
                         i.title,
                         currentUrl,
-                        currentUrl,
                         this.name,
                         TvType.TvSeries,
                         currentPoster,
@@ -62,7 +61,6 @@ class MeloMovieProvider : MainAPI() {
                 returnValue.add(
                     MovieSearchResponse(
                         i.title,
-                        currentUrl,
                         currentUrl,
                         this.name,
                         TvType.Movie,
@@ -116,8 +114,8 @@ class MeloMovieProvider : MainAPI() {
         return true
     }
 
-    override fun load(slug: String): LoadResponse? {
-        val response = khttp.get(slug).text
+    override fun load(url: String): LoadResponse? {
+        val response = khttp.get(url).text
 
         //backdrop = imgurl
         fun findUsingRegex(src: String): String? {
@@ -137,7 +135,7 @@ class MeloMovieProvider : MainAPI() {
             val serialize = document.selectFirst("table.accordion__list")
             return MovieLoadResponse(
                 title,
-                slug,
+                url,
                 this.name,
                 TvType.Movie,
                 serializeData(serialize),
@@ -164,7 +162,7 @@ class MeloMovieProvider : MainAPI() {
             episodes.reverse()
             return TvSeriesLoadResponse(
                 title,
-                slug,
+                url,
                 this.name,
                 TvType.TvSeries,
                 episodes,

@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 for (api in apis) {
                     if (str.startsWith(api.mainUrl)) {
-                        loadResult(str, str, api.name)
+                        loadResult(str, api.name)
                         break
                     }
                 }

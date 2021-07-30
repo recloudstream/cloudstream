@@ -84,13 +84,12 @@ class DubbedAnimeProvider : MainAPI() {
             returnValue.add(
                 if (getIsMovie(href)) {
                     MovieSearchResponse(
-                        title, href, getSlug(href), this.name, TvType.Movie, img, null
+                        title, href, this.name, TvType.Movie, img, null
                     )
                 } else {
                     AnimeSearchResponse(
                         title,
                         href,
-                        getSlug(href),
                         this.name,
                         TvType.Anime,
                         img,
@@ -122,13 +121,12 @@ class DubbedAnimeProvider : MainAPI() {
             returnValue.add(
                 if (getIsMovie(href)) {
                     MovieSearchResponse(
-                        title, href, getSlug(href), this.name, TvType.Movie, img, null
+                        title, href, this.name, TvType.Movie, img, null
                     )
                 } else {
                     AnimeSearchResponse(
                         title,
                         href,
-                        getSlug(href),
                         this.name,
                         TvType.Anime,
                         img,
@@ -183,7 +181,8 @@ class DubbedAnimeProvider : MainAPI() {
         return true
     }
 
-    override fun load(slug: String): LoadResponse {
+    override fun load(url: String): LoadResponse {
+        val slug = url.replace("$mainUrl/","")
         if (getIsMovie(slug)) {
             val realSlug = slug.replace("movies/", "")
             val episode = getAnimeEpisode(realSlug, true)

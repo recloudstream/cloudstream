@@ -98,7 +98,7 @@ abstract class MainAPI {
         return null
     }
 
-    open fun load(slug: String): LoadResponse? {
+    open fun load(url: String): LoadResponse? {
         return null
     }
 
@@ -185,7 +185,6 @@ class HomePageList(
 interface SearchResponse {
     val name: String
     val url: String // PUBLIC URL FOR OPEN IN APP
-    val slug: String // USED FOR INTERNAL DATA
     val apiName: String
     val type: TvType
     val posterUrl: String?
@@ -195,7 +194,6 @@ interface SearchResponse {
 data class AnimeSearchResponse(
     override val name: String,
     override val url: String,
-    override val slug: String,
     override val apiName: String,
     override val type: TvType,
 
@@ -211,7 +209,6 @@ data class AnimeSearchResponse(
 data class MovieSearchResponse(
     override val name: String,
     override val url: String,
-    override val slug: String,
     override val apiName: String,
     override val type: TvType,
 
@@ -222,7 +219,6 @@ data class MovieSearchResponse(
 data class TvSeriesSearchResponse(
     override val name: String,
     override val url: String,
-    override val slug: String,
     override val apiName: String,
     override val type: TvType,
 

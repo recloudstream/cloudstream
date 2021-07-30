@@ -4,7 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
     <FrameLayout
@@ -36,7 +36,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:id="@+id/home_child_recyclerview"
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/home_result_grid"
     />

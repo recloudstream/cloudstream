@@ -40,14 +40,12 @@ class TrailersToProvider : MainAPI() {
                 return@mapNotNull if (isMovieType) MovieSearchResponse(
                     name,
                     href,
-                    href,
                     this.name,
                     TvType.Movie,
                     posterUrl,
                     null
                 ) else TvSeriesSearchResponse(
                     name,
-                    href,
                     href,
                     this.name,
                     TvType.TvSeries,
@@ -84,9 +82,9 @@ class TrailersToProvider : MainAPI() {
 
             returnValue.add(
                 if (isTvShow) {
-                    TvSeriesSearchResponse(name, href, href, this.name, TvType.TvSeries, poster, year, null)
+                    TvSeriesSearchResponse(name, href, this.name, TvType.TvSeries, poster, year, null)
                 } else {
-                    MovieSearchResponse(name, href, href, this.name, TvType.Movie, poster, year)
+                    MovieSearchResponse(name, href, this.name, TvType.Movie, poster, year)
                 }
             )
         }
@@ -111,9 +109,9 @@ class TrailersToProvider : MainAPI() {
 
             returnValue.add(
                 if (isTvShow) {
-                    TvSeriesSearchResponse(name, href, href, this.name, TvType.TvSeries, poster, year, null)
+                    TvSeriesSearchResponse(name, href, this.name, TvType.TvSeries, poster, year, null)
                 } else {
-                    MovieSearchResponse(name, href, href, this.name, TvType.Movie, poster, year)
+                    MovieSearchResponse(name, href, this.name, TvType.Movie, poster, year)
                 }
             )
         }

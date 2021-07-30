@@ -108,6 +108,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
+                android:visibility="gone"
                 android:alpha="0"
                 android:layout_width="match_parent"
                 android:id="@+id/result_poster_blur_holder"
@@ -120,10 +121,13 @@
                     tools:src="@drawable/example_poster"
                     android:background="@color/darkBackground"
                     android:id="@+id/result_poster_blur"
-                    android:contentDescription=""/>
-            <ImageView android:src="@drawable/background_shadow" android:layout_gravity="bottom"
-                       android:layout_width="match_parent" android:layout_height="30dp">
-
+                    android:contentDescription="@string/background_blur"/>
+            <ImageView
+                    android:src="@drawable/background_shadow"
+                    android:layout_gravity="bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/background_shadow">
             </ImageView>
         </FrameLayout>
         <androidx.core.widget.NestedScrollView
@@ -163,13 +167,13 @@
 
 
                     <LinearLayout
-                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
                             android:gravity="center_vertical"
                             android:orientation="vertical"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
                         <TextView
-                                android:layout_marginRight="50dp"
+                                android:layout_marginEnd="50dp"
                                 tools:text="The Perfect Run The Perfect Run The Perfect Run"
                                 android:id="@+id/result_title"
                                 android:textSize="20sp"
@@ -201,7 +205,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp">
                     <com.google.android.material.button.MaterialButton
-                            android:visibility="gone"
                             android:layout_gravity="center_vertical"
                             app:cornerRadius="4dp"
                             android:id="@+id/result_bookmark_button"

@@ -25,7 +25,7 @@ class HDMProvider : MainAPI() {
             val data = i.selectFirst("> div.item")
             val img = data.selectFirst("> img").attr("src")
             val name = data.selectFirst("> div.movie-details").text()
-            returnValue.add(MovieSearchResponse(name, href, href, this.name, TvType.Movie, img, null))
+            returnValue.add(MovieSearchResponse(name, href, this.name, TvType.Movie, img, null))
         }
 
         return returnValue
@@ -54,8 +54,8 @@ class HDMProvider : MainAPI() {
         return true
     }
 
-    override fun load(slug: String): LoadResponse? {
-        val response = khttp.get(slug)
+    override fun load(url: String): LoadResponse? {
+        val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
         val title = document.selectFirst("h2.movieTitle").text()
         val poster = document.selectFirst("div.post-thumbnail > img").attr("src")
@@ -65,7 +65,7 @@ class HDMProvider : MainAPI() {
         val data = "src/player/\\?v=(.*?)\"".toRegex().find(response.text)?.groupValues?.get(1) ?: return null
 
         return MovieLoadResponse(
-            title, slug, this.name, TvType.Movie,
+            title, url, this.name, TvType.Movie,
                 "$mainUrl/src/player/?v=$data", poster, year, descript, null
         )
     }

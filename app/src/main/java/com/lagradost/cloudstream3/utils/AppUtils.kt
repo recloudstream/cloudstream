@@ -43,18 +43,18 @@ object AppUtils {
         }
     }
 
-    fun AppCompatActivity.loadResult(url: String, slug: String, apiName: String, startAction: Int = 0) {
+    fun AppCompatActivity.loadResult(url: String, apiName: String, startAction: Int = 0) {
         this.runOnUiThread {
             viewModelStore.clear()
             this.supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
-                .add(R.id.homeRoot, ResultFragment.newInstance(url, slug, apiName, startAction))
+                .add(R.id.homeRoot, ResultFragment.newInstance(url, apiName, startAction))
                 .commit()
         }
     }
 
     fun Activity?.loadSearchResult(card: SearchResponse, startAction: Int = 0) {
-        (this as AppCompatActivity?)?.loadResult(card.url, card.slug, card.apiName, startAction)
+        (this as AppCompatActivity?)?.loadResult(card.url, card.apiName, startAction)
     }
 
     fun Activity.requestLocalAudioFocus(focusRequest: AudioFocusRequest?) {

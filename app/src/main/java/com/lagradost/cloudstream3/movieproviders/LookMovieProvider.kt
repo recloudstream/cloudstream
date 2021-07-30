@@ -80,7 +80,6 @@ class LookMovieProvider : MainAPI() {
                     MovieSearchResponse(
                         m.title,
                         url,
-                        url,//m.slug,
                         this.name,
                         TvType.Movie,
                         m.poster ?: m.backdrop,
@@ -97,7 +96,6 @@ class LookMovieProvider : MainAPI() {
                     MovieSearchResponse(
                         s.title,
                         url,
-                        url,//s.slug,
                         this.name,
                         TvType.TvSeries,
                         s.poster ?: s.backdrop,
@@ -129,11 +127,11 @@ class LookMovieProvider : MainAPI() {
                 returnValue.add(
                     if (isMovie) {
                         MovieSearchResponse(
-                            name, href, href, this.name, TvType.Movie, poster, year
+                            name, href, this.name, TvType.Movie, poster, year
                         )
                     } else
                         TvSeriesSearchResponse(
-                            name, href, href, this.name, TvType.TvSeries, poster, year, null
+                            name, href, this.name, TvType.TvSeries, poster, year, null
                         )
                 )
             }
@@ -196,10 +194,10 @@ class LookMovieProvider : MainAPI() {
         return true
     }
 
-    override fun load(slug: String): LoadResponse? {
-        val response = khttp.get(slug)
+    override fun load(url: String): LoadResponse? {
+        val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
-        val isMovie = slug.contains("/movies/")
+        val isMovie = url.contains("/movies/")
 
         val watchHeader = document.selectFirst("div.watch-heading")
         val nameHeader = watchHeader.selectFirst("> h1.bd-hd")
@@ -214,7 +212,7 @@ class LookMovieProvider : MainAPI() {
         val id = "${if (isMovie) "id_movie" else "id_show"}:(.*?),".toRegex().find(response.text)?.groupValues?.get(1)
             ?.replace(" ", "")
             ?: return null
-        val realSlug = slug.replace("$mainUrl/${if (isMovie) "movies" else "shows"}/view/", "")
+        val realSlug = url.replace("$mainUrl/${if (isMovie) "movies" else "shows"}/view/", "")
         val realUrl =
             "$mainUrl/api/v1/security/${if (isMovie) "movie" else "show"}-access?${if (isMovie) "id_movie=$id" else "slug=$realSlug"}&token=1&sk=&step=1"
 
@@ -228,7 +226,7 @@ class LookMovieProvider : MainAPI() {
             )
             return MovieLoadResponse(
                 title,
-                slug,
+                url,
                 this.name,
                 TvType.Movie,
                 localData,
@@ -280,7 +278,7 @@ class LookMovieProvider : MainAPI() {
 
             return TvSeriesLoadResponse(
                 title,
-                slug,
+                url,
                 this.name,
                 TvType.TvSeries,
                 ArrayList(episodes),

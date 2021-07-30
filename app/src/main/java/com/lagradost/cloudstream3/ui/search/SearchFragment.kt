@@ -142,7 +142,7 @@ class SearchFragment : Fragment() {
                     search_loading_bar.alpha = 0f
                 }
                 is Resource.Failure -> {
-                    Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
+                   // Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
                     searchExitIcon.alpha = 1f
                     search_loading_bar.alpha = 0f
                 }

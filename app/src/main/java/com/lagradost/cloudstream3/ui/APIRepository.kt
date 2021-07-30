@@ -9,12 +9,13 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 class ErrorLoadingException(message: String) : Exception(message)
 
 class APIRepository(val api: MainAPI) {
-    val name : String get() = api.name
-    val mainUrl : String get() = api.mainUrl
+    val name: String get() = api.name
+    val mainUrl: String get() = api.mainUrl
 
     suspend fun load(url: String): Resource<LoadResponse> {
         return safeApiCall {
-            api.load(url) ?: throw ErrorLoadingException("Error Loading")
+            // remove suffix for some slugs to handle correctly
+            api.load(url.removeSuffix("/")) ?: throw ErrorLoadingException("Error Loading")
         }
     }
 

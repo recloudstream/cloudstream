@@ -25,11 +25,6 @@ class WcoProvider : MainAPI() {
     override val hasQuickSearch: Boolean
         get() = true
 
-
-    private fun getSlug(href: String): String {
-        return href.replace("$mainUrl/anime/", "").replace("/", "")
-    }
-
     private fun fixAnimeLink(url: String): String {
         val regex = "watch/([a-zA-Z\\-0-9]*)-episode".toRegex()
         val (aniId) = regex.find(url)!!.destructured
@@ -51,13 +46,12 @@ class WcoProvider : MainAPI() {
             returnValue.add(
                 if (getType(type) == TvType.Movie) {
                     MovieSearchResponse(
-                        title, href, getSlug(href), this.name, TvType.Movie, img, year
+                        title, href, this.name, TvType.Movie, img, year
                     )
                 } else {
                     AnimeSearchResponse(
                         title,
                         href,
-                        getSlug(href),
                         this.name,
                         TvType.Anime,
                         img,
@@ -113,13 +107,12 @@ class WcoProvider : MainAPI() {
                 returnValue.add(
                     if (getType(type) == TvType.Movie) {
                         MovieSearchResponse(
-                            title, href, getSlug(href), this.name, TvType.Movie, img, year
+                            title, href, this.name, TvType.Movie, img, year
                         )
                     } else {
                         AnimeSearchResponse(
                             title,
                             href,
-                            getSlug(href),
                             this.name,
                             TvType.Anime,
                             img,
@@ -136,9 +129,7 @@ class WcoProvider : MainAPI() {
         return returnValue
     }
 
-    override fun load(slug: String): LoadResponse {
-        val url = "$mainUrl/anime/${slug}"
-
+    override fun load(url: String): LoadResponse {
         val response = khttp.get(url, timeout = 120.0)
         val document = Jsoup.parse(response.text)
 
@@ -174,7 +165,7 @@ class WcoProvider : MainAPI() {
             canonicalTitle,
             japaneseTitle,
             canonicalTitle,
-            "$mainUrl/anime/${slug}",
+            url,
             this.name,
             getType(type ?: ""),
             poster,
