@@ -1,8 +1,11 @@
 package com.lagradost.cloudstream3.movieproviders
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.AppUtils.imdbUrlToId
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import org.jsoup.Jsoup
 
 // referer = https://trailers.to, USERAGENT ALSO REQUIRED
@@ -57,7 +60,7 @@ class TrailersToProvider : MainAPI() {
                 returnList.add(HomePageList(title, currentList))
             }
         }
-        if(returnList.size <= 0) return null
+        if (returnList.size <= 0) return null
 
         return HomePageResponse(returnList)
         //section.section > div.container > div.owl-carousel
@@ -118,14 +121,38 @@ class TrailersToProvider : MainAPI() {
         return returnValue
     }
 
-    private fun loadLink(data: String, callback: (ExtractorLink) -> Unit): Boolean {
+    private fun loadLink(
+        data: String,
+        callback: (ExtractorLink) -> Unit,
+    ): Boolean {
         val response = khttp.get(data)
         val url = "<source src='(.*?)'".toRegex().find(response.text)?.groupValues?.get(1)
         if (url != null) {
             callback.invoke(ExtractorLink(this.name, this.name, url, mainUrl, Qualities.Unknown.value, false))
-            return true
         }
-        return false
+        return url != null
+    }
+
+    private fun loadSubs(url: String, subtitleCallback: (SubtitleFile) -> Unit) {
+        if (url.isEmpty()) return
+
+        val response = khttp.get(fixUrl(url))
+        val document = Jsoup.parse(response.text)
+
+        val items = document.select("div.list-group > a.list-group-item")
+        for (item in items) {
+            val hash = item.attr("hash") ?: continue
+            val languageCode = item.attr("languagecode") ?: continue
+            if (hash.isEmpty()) continue
+            if (languageCode.isEmpty()) continue
+
+            subtitleCallback.invoke(
+                SubtitleFile(
+                    SubtitleHelper.fromTwoLettersToLanguage(languageCode) ?: languageCode,
+                    "$mainUrl/subtitles/$hash"
+                )
+            )
+        }
     }
 
     override fun loadLinks(
@@ -135,22 +162,35 @@ class TrailersToProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         if (isCasting) return false
-        val isMovie = data.contains("/web-sources/")
+        val pairData = mapper.readValue<Pair<String, String>>(data)
+        val url = pairData.second
+
+        val isMovie = url.contains("/web-sources/")
         if (isMovie) {
-            return loadLink(data, callback)
-        } else if (data.contains("/episode/")) {
-            val response = khttp.get(data)
+            val isSucc = loadLink(url, callback)
+            val subUrl = pairData.first
+            loadSubs(subUrl, subtitleCallback)
+
+            return isSucc
+        } else if (url.contains("/episode/")) {
+            val response = khttp.get(url)
             val document = Jsoup.parse(response.text)
+            val qSub = document.select("subtitle-content")
+            val subUrl = document.select("subtitle-content")?.attr("data-url") ?: ""
+
             val subData = fixUrl(document.selectFirst("content").attr("data-url") ?: return false)
-            if (subData.contains("/web-sources/")) {
-                return loadLink(subData, callback)
-            }
+            val isSucc = if (subData.contains("/web-sources/")) {
+                loadLink(subData, callback)
+            } else false
+
+            loadSubs(subUrl, subtitleCallback)
+            return isSucc
         }
         return false
     }
 
-    override fun load(slug: String): LoadResponse? {
-        val response = khttp.get(slug)
+    override fun load(url: String): LoadResponse? {
+        val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
         val metaInfo = document.select("div.post-info-meta > ul.post-info-meta-list > li")
         val year = metaInfo?.get(0)?.selectFirst("> span.small-text")?.text()?.takeLast(4)?.toIntOrNull()
@@ -175,7 +215,7 @@ class TrailersToProvider : MainAPI() {
         }
         val tags = if (generes == null) null else ArrayList(generes)
 
-        val isTvShow = slug.contains("/tvshow/")
+        val isTvShow = url.contains("/tvshow/")
         if (isTvShow) {
             val episodes = document.select("article.tour-modern") ?: return null
             val parsedEpisodes = episodes.map { item ->
@@ -193,11 +233,21 @@ class TrailersToProvider : MainAPI() {
                 val ratingText = infoHeaders?.get(1)?.text()?.replace("/ 10", "")
                 val epRating = if (ratingText == null) null else parseRating(ratingText)
                 val epDescript = main.selectFirst("> p")?.text()
-                TvSeriesEpisode(epName, season, episode, href, epPoster, date, epRating, epDescript)
+
+                TvSeriesEpisode(
+                    epName,
+                    season,
+                    episode,
+                    mapper.writeValueAsString(Pair("", href)),
+                    epPoster,
+                    date,
+                    epRating,
+                    epDescript
+                )
             }
             return TvSeriesLoadResponse(
                 title,
-                slug,
+                url,
                 this.name,
                 TvType.TvSeries,
                 ArrayList(parsedEpisodes),
@@ -212,10 +262,21 @@ class TrailersToProvider : MainAPI() {
                 trailer
             )
         } else {
-            val data = fixUrl(document.selectFirst("content").attr("data-url") ?: return null)
+
+            //https://trailers.to/en/subtitle-details/2086212/jungle-cruise-2021?imdbId=tt0870154&season=0&episode=0
+            //https://trailers.to/en/movie/2086212/jungle-cruise-2021
+
+            val subUrl = if (imdbUrl != null) {
+                val imdbId = imdbUrlToId(imdbUrl)
+                url.replace("/movie/", "/subtitle-details/") + "?imdbId=$imdbId&season=0&episode=0"
+            } else ""
+
+            val data = mapper.writeValueAsString(
+                Pair(subUrl, fixUrl(document.selectFirst("content").attr("data-url") ?: return null))
+            )
             return MovieLoadResponse(
                 title,
-                slug,
+                url,
                 this.name,
                 TvType.Movie,
                 data,
