@@ -18,7 +18,9 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val EPISODE_RANGE_SIZE = 50
 const val EPISODE_RANGE_OVERLOAD = 60
@@ -50,28 +52,31 @@ class ResultViewModel : ViewModel() {
     private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData()
     val watchStatus: LiveData<WatchType> get() = _watchStatus
 
-    fun updateWatchStatus(context: Context, status: WatchType) {
-        val currentId = id.value ?: return
+    fun updateWatchStatus(context: Context, status: WatchType) = viewModelScope.launch {
+        val currentId = id.value ?: return@launch
         _watchStatus.postValue(status)
-        context.setResultWatchState(currentId, status.internalId)
         val resultPage = page.value
-        if (resultPage != null) {
-            val current = context.getBookmarkedData(currentId)
-            val currentTime = System.currentTimeMillis()
-            context.setBookmarkedData(
-                currentId,
-                DataStoreHelper.BookmarkedData(
+
+        withContext(Dispatchers.IO) {
+            context.setResultWatchState(currentId, status.internalId)
+            if (resultPage != null) {
+                val current = context.getBookmarkedData(currentId)
+                val currentTime = System.currentTimeMillis()
+                context.setBookmarkedData(
                     currentId,
-                    current?.bookmarkedTime ?: currentTime,
-                    currentTime,
-                    resultPage.name,
-                    resultPage.url,
-                    resultPage.apiName,
-                    resultPage.type,
-                    resultPage.posterUrl,
-                    resultPage.year
+                    DataStoreHelper.BookmarkedData(
+                        currentId,
+                        current?.bookmarkedTime ?: currentTime,
+                        currentTime,
+                        resultPage.name,
+                        resultPage.url,
+                        resultPage.apiName,
+                        resultPage.type,
+                        resultPage.posterUrl,
+                        resultPage.year
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -91,7 +96,12 @@ class ResultViewModel : ViewModel() {
         }
         val seasons = seasonTypes.toList().map { it.first }
         seasonSelections.postValue(seasons)
-        val realSelection = if (!seasonTypes.containsKey(selection)) seasons[0] else selection
+        if(seasons.isEmpty()) { // WHAT THE FUCK DID YOU DO????? HOW DID YOU DO THIS
+            _publicEpisodes.postValue(ArrayList())
+            return
+        }
+
+        val realSelection = if (!seasonTypes.containsKey(selection)) seasons.first() else selection
         val internalId = id.value
 
         if (internalId != null) context.setResultSeason(internalId, realSelection)

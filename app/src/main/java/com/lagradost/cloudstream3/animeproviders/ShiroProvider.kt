@@ -273,7 +273,8 @@ class ShiroProvider : MainAPI() {
         val episodes =
             ArrayList<AnimeEpisode>(
                 data.episodes?.distinctBy { it.episode_number }?.sortedBy { it.episode_number }
-                    ?.map { AnimeEpisode(it.videos[0].video_id) }
+                    ?.filter { it.videos.isNotEmpty() }
+                    ?.map { AnimeEpisode(it.videos.first().video_id) }
                     ?: ArrayList<AnimeEpisode>())
         val status = when (data.status) {
             "current" -> ShowStatus.Ongoing

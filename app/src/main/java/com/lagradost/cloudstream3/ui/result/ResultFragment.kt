@@ -574,7 +574,7 @@ class ResultFragment : Fragment() {
                         val subs = currentSubs
 
                         val outputDir = requireContext().cacheDir
-                        val outputFile = withContext(Dispatchers.IO)  {
+                        val outputFile = withContext(Dispatchers.IO) {
                             File.createTempFile("mirrorlist", ".m3u8", outputDir)
                         }
                         var text = "#EXTM3U"
@@ -738,11 +738,9 @@ class ResultFragment : Fragment() {
         observe(viewModel.publicEpisodes) { episodes ->
             if (result_episodes == null || result_episodes.adapter == null) return@observe
             currentEpisodes = episodes
-            activity?.runOnUiThread {
-                (result_episodes.adapter as EpisodeAdapter).cardList = episodes
-                (result_episodes.adapter as EpisodeAdapter).updateLayout()
-                (result_episodes.adapter as EpisodeAdapter).notifyDataSetChanged()
-            }
+            (result_episodes?.adapter as EpisodeAdapter?)?.cardList = episodes
+            (result_episodes?.adapter as EpisodeAdapter?)?.updateLayout()
+            (result_episodes?.adapter as EpisodeAdapter?)?.notifyDataSetChanged()
         }
 
         observe(viewModel.selectedRange) { range ->
