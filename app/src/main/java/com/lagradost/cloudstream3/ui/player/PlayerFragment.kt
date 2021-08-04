@@ -799,6 +799,7 @@ class PlayerFragment : Fragment() {
                 Typeface.SANS_SERIF
             )
         )
+        subs.translationY = -10.toPx.toFloat()
 
         settingsManager = PreferenceManager.getDefaultSharedPreferences(activity)
         swipeEnabled = settingsManager.getBoolean("swipe_enabled", true)
@@ -1116,9 +1117,41 @@ class PlayerFragment : Fragment() {
         playback_speed_btt.setOnClickListener {
             lateinit var dialog: AlertDialog
             // Lmao kind bad
-            val speedsText = arrayOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x")
-            val speedsNumbers = arrayOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
-            val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
+            val speedsText = listOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x")
+            val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
+            val builder =
+                AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom).setView(R.layout.player_select_speed)
+
+            val speedDialog = builder.create()
+            speedDialog.show()
+
+            val speedList = speedDialog.findViewById<ListView>(R.id.sort_speed)!!
+            // val applyButton = speedDialog.findViewById<MaterialButton>(R.id.pick_source_apply)!!
+            // val cancelButton = speedDialog.findViewById<MaterialButton>(R.id.pick_source_cancel)!!
+
+            val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
+            arrayAdapter.addAll(speedsText)
+
+            speedList.adapter = arrayAdapter
+            speedList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+
+            val speedIndex = speedsNumbers.indexOf(playbackSpeed)
+
+            speedList.setSelection(speedIndex)
+            speedList.setItemChecked(speedIndex, true)
+
+            speedList.setOnItemClickListener { _, _, which, _ ->
+                playbackSpeed = speedsNumbers[which]
+                requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
+                val param = PlaybackParameters(playbackSpeed)
+                exoPlayer.playbackParameters = param
+                player_speed_text.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
+
+                speedDialog.dismiss()
+                activity?.hideSystemUI()
+            }
+
+            /*
             builder.setTitle("Pick playback speed")
             builder.setOnDismissListener {
                 activity?.hideSystemUI()
@@ -1137,8 +1170,9 @@ class PlayerFragment : Fragment() {
                 dialog.dismiss()
                 activity?.hideSystemUI()
             }
+
             dialog = builder.create()
-            dialog.show()
+            dialog.show()*/
         }
 
         sources_btt.setOnClickListener {

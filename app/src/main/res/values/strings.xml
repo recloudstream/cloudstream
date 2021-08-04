@@ -69,4 +69,5 @@
     <string name="play_episode_toast">Play Episode</string>
     <string name="sort_apply">Apply</string>
     <string name="sort_cancel">Cancel</string>
+    <string name="player_speed">Player Speed</string>
 </resources>
