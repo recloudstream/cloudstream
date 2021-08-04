@@ -5,7 +5,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.bumptech.glide.load.HttpException
-import com.lagradost.cloudstream3.ui.ErrorLoadingException
+import com.lagradost.cloudstream3.ErrorLoadingException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
@@ -30,7 +30,8 @@ sealed class Resource<out T> {
         val errorResponse: Any?, //ResponseBody
         val errorString: String,
     ) : Resource<Nothing>()
-    data class Loading(val url : String? = null)  : Resource<Nothing>()
+
+    data class Loading(val url: String? = null) : Resource<Nothing>()
 }
 
 fun logError(throwable: Throwable) {
@@ -41,7 +42,7 @@ fun logError(throwable: Throwable) {
     Log.d("ApiError", "-------------------------------------------------------------------")
 }
 
-fun<T> normalSafeApiCall(apiCall : () -> T) : T? {
+fun <T> normalSafeApiCall(apiCall: () -> T): T? {
     return try {
         apiCall.invoke()
     } catch (throwable: Throwable) {
@@ -69,7 +70,7 @@ suspend fun <T> safeApiCall(
                     Resource.Failure(true, null, null, "Cannot connect to server, try again later.")
                 }
                 is ErrorLoadingException -> {
-                    Resource.Failure(true, null, null, "Error loading, try again later.")
+                    Resource.Failure(true, null, null, throwable.message ?: "Error loading, try again later.")
                 }
                 else -> {
                     val stackTraceMsg = throwable.localizedMessage + "\n\n" + throwable.stackTrace.joinToString(

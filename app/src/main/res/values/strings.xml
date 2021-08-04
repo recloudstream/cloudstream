@@ -66,4 +66,7 @@
     <string name="filter_bookmarks">Filter Bookmarks</string>
     <string name="error_bookmarks_text">Bookmarks</string>
     <string name="action_remove_from_bookmarks">Remove</string>
+    <string name="play_episode_toast">Play Episode</string>
+    <string name="sort_apply">Apply</string>
+    <string name="sort_cancel">Cancel</string>
 </resources>

@@ -132,7 +132,7 @@ class MeloMovieProvider : MainAPI() {
         val plot = document.selectFirst("div.col-lg-12 > p").text()
 
         if (type == 1) { // MOVIE
-            val serialize = document.selectFirst("table.accordion__list")
+            val serialize = document.selectFirst("table.accordion__list") ?: throw ErrorLoadingException("No links found")
             return MovieLoadResponse(
                 title,
                 url,
@@ -142,11 +142,11 @@ class MeloMovieProvider : MainAPI() {
                 poster,
                 year,
                 plot,
-                imdbUrl
+                imdbUrlToIdNullable(imdbUrl)
             )
         } else if (type == 2) {
             val episodes = ArrayList<TvSeriesEpisode>()
-            val seasons = document.select("div.accordion__card")
+            val seasons = document.select("div.accordion__card") ?: throw ErrorLoadingException("No episodes found")
             for (s in seasons) {
                 val season =
                     s.selectFirst("> div.card-header > button > span").text().replace("Season: ", "").toIntOrNull()
@@ -154,7 +154,7 @@ class MeloMovieProvider : MainAPI() {
                 for (e in localEpisodes) {
                     val episode =
                         e.selectFirst("> div.card-header > button > span").text().replace("Episode: ", "").toIntOrNull()
-                    val links = e.selectFirst("> div.collapse > div > table.accordion__list")
+                    val links = e.selectFirst("> div.collapse > div > table.accordion__list") ?: continue
                     val data = serializeData(links)
                     episodes.add(TvSeriesEpisode(null, season, episode, data))
                 }
@@ -170,7 +170,7 @@ class MeloMovieProvider : MainAPI() {
                 year,
                 plot,
                 null,
-                imdbUrl
+                imdbUrlToIdNullable(imdbUrl)
             )
         }
         return null

@@ -6,8 +6,6 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
 
-class ErrorLoadingException(message: String) : Exception(message)
-
 class APIRepository(val api: MainAPI) {
     val name: String get() = api.name
     val mainUrl: String get() = api.mainUrl
@@ -15,25 +13,25 @@ class APIRepository(val api: MainAPI) {
     suspend fun load(url: String): Resource<LoadResponse> {
         return safeApiCall {
             // remove suffix for some slugs to handle correctly
-            api.load(url.removeSuffix("/")) ?: throw ErrorLoadingException("Error Loading")
+            api.load(url.removeSuffix("/")) ?: throw ErrorLoadingException()
         }
     }
 
     suspend fun search(query: String): Resource<ArrayList<SearchResponse>> {
         return safeApiCall {
-            api.search(query) ?: throw ErrorLoadingException("Error Loading")
+            api.search(query) ?: throw ErrorLoadingException()
         }
     }
 
     suspend fun quickSearch(query: String): Resource<ArrayList<SearchResponse>> {
         return safeApiCall {
-            api.quickSearch(query) ?: throw ErrorLoadingException("Error Loading")
+            api.quickSearch(query) ?: throw ErrorLoadingException()
         }
     }
 
     suspend fun getMainPage(): Resource<HomePageResponse> {
         return safeApiCall {
-            api.getMainPage() ?: throw ErrorLoadingException("Error Loading")
+            api.getMainPage() ?: throw ErrorLoadingException()
         }
     }
 

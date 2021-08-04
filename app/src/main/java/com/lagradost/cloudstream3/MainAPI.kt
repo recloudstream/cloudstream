@@ -113,6 +113,8 @@ abstract class MainAPI {
     }
 }
 
+class ErrorLoadingException(message: String? = null) : Exception(message)
+
 fun parseRating(ratingString: String?): Int? {
     if (ratingString == null) return null
     val floatRating = ratingString.toFloatOrNull() ?: return null
@@ -147,6 +149,19 @@ fun sortSubs(urls: List<SubtitleFile>): List<SubtitleFile> {
 
         SubtitleFile("${it.lang} ${if (times > 1) "($times)" else ""}", it.url)
     }
+}
+
+/** https://www.imdb.com/title/tt2861424/ -> tt2861424 */
+fun imdbUrlToId(url: String): String {
+    return url
+        .removePrefix("https://www.imdb.com/title/")
+        .removePrefix("https://imdb.com/title/tt2861424/")
+        .replace("/", "")
+}
+
+fun imdbUrlToIdNullable(url: String?): String? {
+    if(url == null) return null
+    return imdbUrlToId(url)
 }
 
 enum class ShowStatus {
@@ -301,7 +316,7 @@ data class MovieLoadResponse(
     override val year: Int?,
     override val plot: String?,
 
-    val imdbUrl: String?,
+    val imdbId: String?,
     override val rating: Int? = null,
     override val tags: ArrayList<String>? = null,
     override val duration: String? = null,
@@ -331,7 +346,7 @@ data class TvSeriesLoadResponse(
     override val plot: String?,
 
     val showStatus: ShowStatus?,
-    val imdbUrl: String?,
+    val imdbId: String?,
     override val rating: Int? = null,
     override val tags: ArrayList<String>? = null,
     override val duration: String? = null,

@@ -23,8 +23,6 @@ import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActi
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SubtitleFile
-import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.sortUrls
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.CastHelper.awaitLinks
@@ -96,7 +94,6 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
         view.setOnClickListener {
             //  lateinit var dialog: AlertDialog
             val holder = getCurrentMetaData()
-
 
             if (holder != null) {
                 val items = holder.currentLinks
@@ -251,7 +248,6 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
         ) VISIBLE else INVISIBLE
         try {
             if (meta != null && meta.episodes.size > meta.currentEpisodeIndex + 1) {
-
                 val currentIdIndex = remoteMediaClient?.getItemIndex() ?: return
                 val itemCount = remoteMediaClient?.mediaQueue?.itemCount
 
@@ -264,8 +260,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         val links = ArrayList<ExtractorLink>()
                         val subs = ArrayList<SubtitleFile>()
 
-                        val res = safeApiCall {
-                            getApiFromName(meta.apiName).loadLinks(epData.data, true, { subtitleFile ->
+                        val isSuccessful =
+                            APIRepository(getApiFromName(meta.apiName)).loadLinks(epData.data, true, { subtitleFile ->
                                 if (!subs.any { it.url == subtitleFile.url }) {
                                     subs.add(subtitleFile)
                                 }
@@ -274,9 +270,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                     links.add(link)
                                 }
                             }
-                        }
 
-                        if (res is Resource.Success) {
+                        if (isSuccessful) {
                             val sorted = sortUrls(links)
                             if (sorted.isNotEmpty()) {
                                 val jsonCopy = meta.copy(

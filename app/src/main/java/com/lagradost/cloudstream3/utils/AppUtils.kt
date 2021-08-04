@@ -155,12 +155,4 @@ object AppUtils {
         }
         return currentAudioFocusRequest
     }
-
-    /** https://www.imdb.com/title/tt2861424/ -> tt2861424 */
-    fun imdbUrlToId(url: String): String {
-        return url
-            .removePrefix("https://www.imdb.com/title/")
-            .removePrefix("https://imdb.com/title/tt2861424/")
-            .replace("/", "")
-    }
 }

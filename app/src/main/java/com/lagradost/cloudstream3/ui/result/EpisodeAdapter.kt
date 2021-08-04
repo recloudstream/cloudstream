@@ -1,11 +1,13 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
@@ -174,6 +176,15 @@ class EpisodeAdapter(
                 episodeDescript?.visibility = View.GONE
             }
 
+            episodePoster?.setOnClickListener {
+                clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
+            }
+
+            episodePoster?.setOnLongClickListener {
+                Toast.makeText(it.context, R.string.play_episode_toast, Toast.LENGTH_SHORT).show()
+                return@setOnLongClickListener true
+            }
+
             episodeHolder.setOnClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
             }
@@ -197,7 +208,15 @@ class EpisodeAdapter(
                 downloadButton.setUpButton(
                     downloadInfo?.fileLength, downloadInfo?.totalBytes, episodeDownloadBar, episodeDownloadImage, null,
                     VideoDownloadHelper.DownloadEpisodeCached(
-                        card.name, card.poster, card.episode, card.season, card.id, 0, card.rating, card.descript, System.currentTimeMillis(),
+                        card.name,
+                        card.poster,
+                        card.episode,
+                        card.season,
+                        card.id,
+                        0,
+                        card.rating,
+                        card.descript,
+                        System.currentTimeMillis(),
                     )
                 ) {
                     if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {

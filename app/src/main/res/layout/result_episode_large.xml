@@ -22,11 +22,11 @@
                 android:layout_height="wrap_content">
             <!--app:cardCornerRadius="@dimen/roundedImageRadius"-->
             <androidx.cardview.widget.CardView
-
                     android:layout_width="126dp"
                     android:layout_height="72dp"
             >
                 <ImageView
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:id="@+id/episode_poster"
                         tools:src="@drawable/example_poster"
                         android:scaleType="centerCrop"

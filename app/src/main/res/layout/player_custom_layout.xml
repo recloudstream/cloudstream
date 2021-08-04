@@ -1,17 +1,19 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:orientation="vertical"
-             android:id="@+id/player_holder"
-             android:screenOrientation="landscape"
-             tools:orientation="vertical"
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/player_holder"
+        android:screenOrientation="landscape"
+        tools:orientation="vertical"
 >
-    <View android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:id="@+id/shadow_overlay"
-          android:background="@color/black_overlay"
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/shadow_overlay"
+            android:background="@color/black_overlay"
     />
     <!--
         <LinearLayout android:layout_width="match_parent"
@@ -383,7 +385,7 @@
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
                         android:textStyle="normal"/>
-<!--app:buffered_color="@color/videoCache"-->
+                <!--app:buffered_color="@color/videoCache"-->
                 <com.google.android.exoplayer2.ui.DefaultTimeBar
                         android:id="@id/exo_progress"
                         android:layout_width="0dp"
@@ -471,7 +473,8 @@
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
-                <LinearLayout android:id="@+id/lock_holder" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="match_parent">
+                <LinearLayout android:id="@+id/lock_holder" android:orientation="horizontal"
+                              android:layout_width="wrap_content" android:layout_height="match_parent">
                     <androidx.cardview.widget.CardView
                             xmlns:card_view="http://schemas.android.com/apk/res-auto"
                             android:layout_width="wrap_content"

@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.AppUtils.imdbUrlToId
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -255,7 +254,7 @@ class TrailersToProvider : MainAPI() {
                 year,
                 descript,
                 null,
-                imdbUrl,
+                imdbUrlToIdNullable(imdbUrl),
                 rating,
                 tags,
                 duration,
@@ -283,7 +282,7 @@ class TrailersToProvider : MainAPI() {
                 poster,
                 year,
                 descript,
-                imdbUrl,
+                imdbUrlToIdNullable(imdbUrl),
                 rating,
                 tags,
                 duration,

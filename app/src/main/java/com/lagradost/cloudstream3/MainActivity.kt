@@ -31,10 +31,8 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.SubtitleHelper.createISO
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
-import kotlin.concurrent.thread
 
 const val VLC_PACKAGE = "org.videolan.vlc"
 const val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
@@ -58,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             return appViewModelStore
         }*/
     companion object {
-        var isInPlayer: Boolean = false
+        var canEnterPipMode: Boolean = false
         var canShowPipMode: Boolean = false
         var isInPIPMode: Boolean = false
 
@@ -67,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun enterPIPMode() {
-        if (!shouldShowPIPMode(isInPlayer) || !canShowPipMode) return
+        if (!shouldShowPIPMode(canEnterPipMode) || !canShowPipMode) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
                 enterPictureInPictureMode(PictureInPictureParams.Builder().build())
@@ -83,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        if (isInPlayer && canShowPipMode) {
+        if (canEnterPipMode && canShowPipMode) {
             enterPIPMode()
         }
     }
