@@ -61,6 +61,7 @@ object UIHelper {
     }
 
     fun Fragment.hideKeyboard() {
+        activity?.window?.decorView?.clearFocus()
         view.let {
             if (it != null) {
                 activity?.hideKeyboard(it)

@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment() {
@@ -60,7 +61,7 @@ class SearchFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        main_search?.clearFocus()
+        hideKeyboard()
         super.onDestroyView()
     }
 
