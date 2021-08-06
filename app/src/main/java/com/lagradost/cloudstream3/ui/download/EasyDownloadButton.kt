@@ -57,7 +57,7 @@ class EasyDownloadButton : IDisposable {
         }, clickCallback)
     }
 
-    fun setUpDownloadButton(
+    private fun setUpDownloadButton(
         setupCurrentBytes: Long?,
         setupTotalBytes: Long?,
         progressBar: ContentLoadingProgressBar,

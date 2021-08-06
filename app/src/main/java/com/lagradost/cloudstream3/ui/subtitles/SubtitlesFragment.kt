@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import kotlinx.android.synthetic.main.subtitle_settings.*
 
@@ -106,6 +107,11 @@ class SubtitlesFragment : Fragment() {
 
     private fun onColorSelected(stuff: Pair<Int, Int>) {
         setColor(stuff.first, stuff.second)
+        activity?.hideSystemUI()
+    }
+
+    private fun onDialogDismissed(id: Int) {
+        activity?.hideSystemUI()
     }
 
     private fun setColor(id: Int, color: Int?) {
@@ -122,7 +128,7 @@ class SubtitlesFragment : Fragment() {
         updateState()
     }
 
-    fun updateState() {
+    private fun updateState() {
         subtitle_text?.setStyle(fromSaveToStyle(state))
     }
 
@@ -157,6 +163,7 @@ class SubtitlesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MainActivity.onColorSelectedEvent += ::onColorSelected
+        MainActivity.onDialogDismissedEvent += ::onDialogDismissed
 
         context?.fixPaddingStatusbar(subs_root)
 
@@ -202,6 +209,7 @@ class SubtitlesFragment : Fragment() {
             ) { index ->
                 state.elevation = elevationTypes.map { it.first }[index]
                 updateState()
+                activity?.hideSystemUI()
             }
         }
 
@@ -229,6 +237,7 @@ class SubtitlesFragment : Fragment() {
             ) { index ->
                 state.edgeType = edgeTypes.map { it.first }[index]
                 updateState()
+                activity?.hideSystemUI()
             }
         }
 
@@ -244,6 +253,7 @@ class SubtitlesFragment : Fragment() {
         }
 
         apply_btt.setOnClickListener {
+            it.context.saveStyle(state)
             applyStyleEvent.invoke(state)
             fromSaveToStyle(state)
             activity?.popCurrentPage()

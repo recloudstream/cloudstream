@@ -797,8 +797,9 @@ class PlayerFragment : Fragment() {
 //endregion
 
     private fun onSubStyleChanged(style : SaveCaptionStyle) {
-        subView?.setStyle(fromSaveToStyle(subStyle))
-        subView?.translationY = -subStyle.elevation.toPx.toFloat()
+        subStyle = style
+        subView?.setStyle(fromSaveToStyle(style))
+        subView?.translationY = -style.elevation.toPx.toFloat()
     }
 
     @SuppressLint("SetTextI18n")
@@ -1161,6 +1162,7 @@ class PlayerFragment : Fragment() {
 
                     subsSettings.setOnClickListener {
                         SubtitlesFragment.push(activity)
+                        sourceDialog.dismiss()
                     }
 
                     val startSource = sources.indexOf(getCurrentUrl())
