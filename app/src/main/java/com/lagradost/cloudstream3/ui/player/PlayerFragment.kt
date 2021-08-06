@@ -65,6 +65,10 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeDirectly
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultViewModel
+import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.fromSaveToStyle
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getCurrentSavedStyle
 import com.lagradost.cloudstream3.utils.AppUtils.getFocusRequest
 import com.lagradost.cloudstream3.utils.AppUtils.getVideoContentUri
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
@@ -75,6 +79,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -145,6 +150,9 @@ data class UriData(
 
 // YE, I KNOW, THIS COULD BE HANDLED A LOT BETTER
 class PlayerFragment : Fragment() {
+    private lateinit var subStyle: SaveCaptionStyle
+    private var subView: SubtitleView? = null
+
     private var isCurrentlyPlaying: Boolean = false
     private val mapper = JsonMapper.builder().addModule(KotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
@@ -788,18 +796,19 @@ class PlayerFragment : Fragment() {
     }
 //endregion
 
+    private fun onSubStyleChanged(style : SaveCaptionStyle) {
+        subView?.setStyle(fromSaveToStyle(subStyle))
+        subView?.translationY = -subStyle.elevation.toPx.toFloat()
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val subs = player_view.findViewById<SubtitleView>(R.id.exo_subtitles)
-        subs.setStyle(
-            CaptionStyleCompat(
-                Color.WHITE, Color.TRANSPARENT, Color.TRANSPARENT, CaptionStyleCompat.EDGE_TYPE_OUTLINE, Color.BLACK,
-                Typeface.SANS_SERIF
-            )
-        )
-        subs.translationY = -10.toPx.toFloat()
+        subView = player_view.findViewById(R.id.exo_subtitles)
+        subStyle = context?.getCurrentSavedStyle()!!
+        onSubStyleChanged(subStyle)
+        SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 
         settingsManager = PreferenceManager.getDefaultSharedPreferences(activity)
         swipeEnabled = settingsManager.getBoolean("swipe_enabled", true)
@@ -1115,64 +1124,19 @@ class PlayerFragment : Fragment() {
 
         playback_speed_btt.visibility = if (playBackSpeedEnabled) VISIBLE else GONE
         playback_speed_btt.setOnClickListener {
-            lateinit var dialog: AlertDialog
-            // Lmao kind bad
             val speedsText = listOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x")
             val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
-            val builder =
-                AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom).setView(R.layout.player_select_speed)
-
-            val speedDialog = builder.create()
-            speedDialog.show()
-
-            val speedList = speedDialog.findViewById<ListView>(R.id.sort_speed)!!
-            // val applyButton = speedDialog.findViewById<MaterialButton>(R.id.pick_source_apply)!!
-            // val cancelButton = speedDialog.findViewById<MaterialButton>(R.id.pick_source_cancel)!!
-
-            val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
-            arrayAdapter.addAll(speedsText)
-
-            speedList.adapter = arrayAdapter
-            speedList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-
             val speedIndex = speedsNumbers.indexOf(playbackSpeed)
 
-            speedList.setSelection(speedIndex)
-            speedList.setItemChecked(speedIndex, true)
-
-            speedList.setOnItemClickListener { _, _, which, _ ->
-                playbackSpeed = speedsNumbers[which]
+            context?.showDialog(speedsText,speedIndex,"Player Speed", false) { index ->
+                playbackSpeed = speedsNumbers[index]
                 requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
                 val param = PlaybackParameters(playbackSpeed)
                 exoPlayer.playbackParameters = param
                 player_speed_text.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
 
-                speedDialog.dismiss()
                 activity?.hideSystemUI()
             }
-
-            /*
-            builder.setTitle("Pick playback speed")
-            builder.setOnDismissListener {
-                activity?.hideSystemUI()
-            }
-            builder.setSingleChoiceItems(speedsText, speedsNumbers.indexOf(playbackSpeed)) { _, which ->
-
-                //val speed = speedsText[which]
-                //Toast.makeText(requireContext(), "$speed selected.", Toast.LENGTH_SHORT).show()
-
-                playbackSpeed = speedsNumbers[which]
-                requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
-                val param = PlaybackParameters(playbackSpeed)
-                exoPlayer.playbackParameters = param
-                player_speed_text.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
-
-                dialog.dismiss()
-                activity?.hideSystemUI()
-            }
-
-            dialog = builder.create()
-            dialog.show()*/
         }
 
         sources_btt.setOnClickListener {
@@ -1191,8 +1155,13 @@ class PlayerFragment : Fragment() {
                     //  bottomSheetDialog.setContentView(R.layout.sort_bottom_sheet)
                     val providerList = sourceDialog.findViewById<ListView>(R.id.sort_providers)!!
                     val subtitleList = sourceDialog.findViewById<ListView>(R.id.sort_subtitles)!!
-                    val applyButton = sourceDialog.findViewById<MaterialButton>(R.id.pick_source_apply)!!
-                    val cancelButton = sourceDialog.findViewById<MaterialButton>(R.id.pick_source_cancel)!!
+                    val applyButton = sourceDialog.findViewById<MaterialButton>(R.id.apply_btt)!!
+                    val cancelButton = sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
+                    val subsSettings = sourceDialog.findViewById<ImageView>(R.id.subs_settings)!!
+
+                    subsSettings.setOnClickListener {
+                        SubtitlesFragment.push(activity)
+                    }
 
                     val startSource = sources.indexOf(getCurrentUrl())
                     var sourceIndex = startSource
@@ -1450,6 +1419,7 @@ class PlayerFragment : Fragment() {
 
     override fun onDestroy() {
         savePos()
+        SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
         super.onDestroy()
         canEnterPipMode = false

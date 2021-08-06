@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/subs_root"
+        android:background="?attr/bitDarkerGrayBackground"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:text="@string/subtitles_settings"
+                android:textSize="20sp"
+                android:textColor="?attr/textColor"
+                android:layout_width="match_parent"
+                android:layout_rowWeight="1"
+                android:layout_height="wrap_content">
+        </TextView>
+
+        <com.google.android.exoplayer2.ui.SubtitleView
+                android:id="@+id/subtitle_text"
+                android:background="@drawable/subtitles_background_gradient"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:foregroundGravity="center"
+                android:layout_height="75sp">
+        </com.google.android.exoplayer2.ui.SubtitleView>
+
+        <TextView
+                android:id="@+id/subs_text_color"
+                android:text="@string/subs_text_color"
+                style="@style/SettingsItem"
+        />
+        <TextView
+                android:id="@+id/subs_outline_color"
+                android:text="@string/subs_outline_color"
+                style="@style/SettingsItem"
+        />
+        <TextView
+                android:id="@+id/subs_background_color"
+                android:text="@string/subs_background_color"
+                style="@style/SettingsItem"
+        />
+        <TextView
+                android:id="@+id/subs_window_color"
+                android:text="@string/subs_window_color"
+                style="@style/SettingsItem"
+        />
+        <TextView
+                android:id="@+id/subs_edge_type"
+                android:text="@string/subs_edge_type"
+                style="@style/SettingsItem"
+        />
+        <TextView
+                android:id="@+id/subs_subtitle_elevation"
+                android:text="@string/subs_subtitle_elevation"
+                style="@style/SettingsItem"
+        />
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_gravity="bottom"
+                android:gravity="bottom|end"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+            <com.google.android.material.button.MaterialButton
+                    style="@style/WhiteButton"
+                    android:layout_gravity="center_vertical|end"
+                    android:visibility="visible"
+                    android:text="@string/sort_apply"
+                    android:id="@+id/apply_btt"
+                    android:layout_width="wrap_content"
+            />
+            <com.google.android.material.button.MaterialButton
+                    style="@style/BlackButton"
+                    android:layout_gravity="center_vertical|end"
+                    android:text="@string/sort_cancel"
+                    android:id="@+id/cancel_btt"
+                    android:layout_width="wrap_content"
+            />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -70,4 +70,12 @@
     <string name="sort_apply">Apply</string>
     <string name="sort_cancel">Cancel</string>
     <string name="player_speed">Player Speed</string>
+    <string name="subtitles_settings">Subtitle Settings</string>
+    <string name="subs_text_color">Text Color</string>
+    <string name="subs_outline_color">Outline Color</string>
+    <string name="subs_background_color">Background Color</string>
+    <string name="subs_window_color">Window Color</string>
+    <string name="subs_edge_type">Edge Type</string>
+    <string name="subs_subtitle_elevation">Subtitle Elevation</string>
+    <string name="subs_default_reset_toast">Reset to default value</string>
 </resources>

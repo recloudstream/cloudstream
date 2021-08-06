@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-       <!-- <item name="android:windowBackground">@drawable/splash_background</item>-->
+        <!-- <item name="android:windowBackground">@drawable/splash_background</item>-->
 
         <item name="android:navigationBarColor">@color/darkBackground</item>
         <item name="android:statusBarColor">@color/grayBackground</item>
@@ -132,6 +132,48 @@
         <item name="android:backgroundTint">?attr/bitDarkerGrayBackground</item>
     </style>
 
+    <style name="SettingsItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:selectAllOnFocus">true</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:textColor">?attr/textColor</item>
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
+        <item name="drawableEndCompat">@drawable/ic_baseline_keyboard_arrow_right_24</item>
+    </style>
+
+    <style name="NiceButton">
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconSize">20dp</item>
+        <item name="cornerRadius">4dp</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="WhiteButton" parent="NiceButton">
+        <item name="strokeColor">?attr/grayBackground</item>
+        <item name="backgroundTint">?attr/textColor</item>
+        <item name="iconTint">?attr/grayBackground</item>
+        <item name="android:textColor">?attr/grayBackground</item>
+        <item name="rippleColor">?attr/grayBackground</item>
+    </style>
+
+    <style name="BlackButton" parent="NiceButton">
+        <item name="strokeColor">?attr/textColor</item>
+        <item name="backgroundTint">?attr/grayBackground</item>
+        <item name="iconTint">?attr/textColor</item>
+        <item name="android:textColor">?attr/textColor</item>
+        <item name="rippleColor">?attr/textColor</item>
+    </style>
+
     <!-- CHROMECAST -->
     <style name="CustomCastExpandedController" parent="CastExpandedController">
         <item name="castControlButtons">
@@ -139,7 +181,8 @@
         </item>
         <item name="castButtonColor">@null</item>
         <item name="castSeekBarProgressAndThumbColor">@color/white</item> <!--@color/white ?attr/colorPrimary-->
-        <item name="castSeekBarSecondaryProgressColor">?attr/darkBackground</item> <!--CHECK ?attr/darkBackground ?attr/colorPrimary-->
+        <item name="castSeekBarSecondaryProgressColor">?attr/darkBackground
+        </item> <!--CHECK ?attr/darkBackground ?attr/colorPrimary-->
         <item name="castBackground">?attr/colorPrimary</item>
         <item name="castProgressBarColor">?attr/colorPrimary</item>
         <item name="castPlayButtonDrawable">@drawable/ic_baseline_play_arrow_24</item>

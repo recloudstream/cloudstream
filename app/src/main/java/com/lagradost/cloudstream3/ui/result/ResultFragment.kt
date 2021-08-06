@@ -330,9 +330,7 @@ class ResultFragment : Fragment() {
                     return true
                 }
 
-                val skipLoading = if (apiName != null) {
-                    getApiFromName(apiName).instantLinkLoading
-                } else false
+                val skipLoading = getApiFromName(apiName).instantLinkLoading
 
                 var loadingDialog: AlertDialog? = null
                 val currentLoad = currentLoadingCount

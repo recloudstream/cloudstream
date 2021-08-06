@@ -48,19 +48,38 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_weight="50">
-            <TextView
-                    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-                    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:textStyle="bold"
-                    android:text="@string/pick_subtitle"
-                    android:textSize="20sp"
-                    android:textColor="?attr/textColor"
-                    android:layout_rowWeight="1"
+            <FrameLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-            </TextView>
+                <TextView
+                        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:textStyle="bold"
+                        android:text="@string/pick_subtitle"
+                        android:textSize="20sp"
+                        android:textColor="?attr/textColor"
+                        android:layout_rowWeight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                </TextView>
+
+                <ImageView
+                        android:id="@+id/subs_settings"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_gravity="end"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+
+                        android:src="@drawable/ic_outline_settings_24"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:contentDescription="@string/home_change_provider">
+                </ImageView>
+            </FrameLayout>
+
             <ListView
                     android:layout_marginTop="-10dp"
                     android:paddingTop="10dp"
@@ -83,49 +102,18 @@
             android:layout_height="60dp">
 
         <com.google.android.material.button.MaterialButton
+                style="@style/WhiteButton"
                 android:layout_gravity="center_vertical|end"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-
-                android:visibility="visible"
-                android:textStyle="bold"
-                app:rippleColor="?attr/grayBackground"
-                android:textColor="?attr/grayBackground"
-                app:iconTint="?attr/grayBackground"
-                android:textAllCaps="false"
-                app:iconGravity="textStart"
-                app:strokeColor="?attr/grayBackground"
-                app:backgroundTint="?attr/textColor"
-
-                app:iconSize="20dp"
                 android:text="@string/sort_apply"
-                android:id="@+id/pick_source_apply"
-                android:textSize="15sp"
-                app:cornerRadius="5dp"
+                android:id="@+id/apply_btt"
                 android:layout_width="wrap_content"
-        >
-        </com.google.android.material.button.MaterialButton>
+        />
         <com.google.android.material.button.MaterialButton
+                style="@style/BlackButton"
                 android:layout_gravity="center_vertical|end"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-
-                app:iconGravity="textStart"
-                app:strokeColor="?attr/textColor"
-                android:backgroundTint="?attr/grayBackground"
-                app:rippleColor="?attr/textColor"
-                android:textColor="?attr/textColor"
-                app:iconTint="?attr/textColor"
-                android:textAllCaps="false"
-                android:textStyle="bold"
-
-                app:iconSize="20dp"
                 android:text="@string/sort_cancel"
-                android:id="@+id/pick_source_cancel"
-                android:textSize="15sp"
-                app:cornerRadius="5dp"
+                android:id="@+id/cancel_btt"
                 android:layout_width="wrap_content"
-        >
-        </com.google.android.material.button.MaterialButton>
+        />
     </LinearLayout>
 </LinearLayout>

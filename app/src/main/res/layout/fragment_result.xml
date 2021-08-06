@@ -306,46 +306,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                     <com.google.android.material.button.MaterialButton
+                            style="@style/WhiteButton"
                             android:visibility="visible"
                             android:layout_gravity="center_vertical"
-                            app:cornerRadius="4dp"
                             android:id="@+id/result_play_movie"
                             android:text="@string/play_movie_button"
-                            android:textStyle="bold"
 
-                            app:rippleColor="?attr/grayBackground"
-                            android:textColor="?attr/grayBackground"
-                            app:iconTint="?attr/grayBackground"
-                            android:textAllCaps="false"
-                            android:clickable="true"
-                            android:focusable="true"
-                            app:iconGravity="textStart"
-                            app:strokeColor="?attr/grayBackground"
-                            app:backgroundTint="?attr/textColor"
                             app:icon="@drawable/ic_baseline_play_arrow_24"
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp">
+                            android:layout_width="match_parent">
                     </com.google.android.material.button.MaterialButton>
                     <com.google.android.material.button.MaterialButton
+                            style="@style/BlackButton"
                             android:visibility="visible"
                             android:layout_gravity="center_vertical"
-                            app:cornerRadius="4dp"
                             tools:text="Downloading"
                             tools:icon="@drawable/netflix_download"
-                            android:textStyle="bold"
 
                             android:id="@+id/result_download_movie"
-                            app:rippleColor="?attr/textColor"
-                            android:textColor="?attr/textColor"
-                            app:iconTint="?attr/textColor"
-                            android:textAllCaps="false"
                             android:clickable="true"
                             android:focusable="true"
-                            android:backgroundTint="?attr/grayBackground"
-                            app:iconGravity="textStart"
-                            app:strokeColor="?attr/textColor"
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp">
+                            android:layout_width="match_parent">
                     </com.google.android.material.button.MaterialButton>
 
                     <androidx.core.widget.ContentLoadingProgressBar

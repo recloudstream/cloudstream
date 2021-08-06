@@ -26,49 +26,22 @@
             android:layout_height="wrap_content">
         <com.google.android.material.button.MaterialButton
                 android:layout_gravity="center"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-
-                android:visibility="visible"
-                android:textStyle="bold"
-                app:rippleColor="?attr/grayBackground"
-                android:textColor="?attr/grayBackground"
-                app:iconTint="?attr/grayBackground"
-                android:textAllCaps="false"
-                app:iconGravity="textStart"
-                app:strokeColor="?attr/grayBackground"
-                app:backgroundTint="?attr/textColor"
+                style="@style/WhiteButton"
 
                 app:icon="@drawable/ic_baseline_autorenew_24"
-                app:iconSize="20dp"
                 android:text="@string/reload_error"
                 android:id="@+id/home_reload_connectionerror"
-                android:textSize="15sp"
-                app:cornerRadius="5dp"
                 android:layout_width="wrap_content"
                 android:minWidth="200dp"
         >
         </com.google.android.material.button.MaterialButton>
         <com.google.android.material.button.MaterialButton
                 android:layout_gravity="center"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-
-                app:iconGravity="textStart"
-                app:strokeColor="?attr/textColor"
-                android:backgroundTint="?attr/grayBackground"
-                app:rippleColor="?attr/textColor"
-                android:textColor="?attr/textColor"
-                app:iconTint="?attr/textColor"
-                android:textAllCaps="false"
-                android:textStyle="bold"
+                style="@style/BlackButton"
 
                 app:icon="@drawable/ic_baseline_public_24"
-                app:iconSize="20dp"
                 android:text="@string/result_open_in_browser"
                 android:id="@+id/home_reload_connection_open_in_browser"
-                android:textSize="15sp"
-                app:cornerRadius="5dp"
                 android:layout_width="wrap_content"
                 android:minWidth="200dp"
         >
@@ -147,48 +120,26 @@
                             android:contentDescription="@string/home_next_random">
                     </ImageView>
                     <com.google.android.material.button.MaterialButton
-                            android:layout_margin="5dp"
+                            style="@style/WhiteButton"
                             android:visibility="visible"
                             android:layout_gravity="center"
-                            app:cornerRadius="4dp"
                             android:id="@+id/home_main_play"
                             android:text="@string/home_play"
-                            android:textStyle="bold"
 
-                            app:rippleColor="?attr/grayBackground"
-                            android:textColor="?attr/grayBackground"
-                            app:iconTint="?attr/grayBackground"
-                            android:textAllCaps="false"
-                            android:clickable="true"
-                            android:focusable="true"
-                            app:iconGravity="textStart"
-                            app:strokeColor="?attr/grayBackground"
-                            app:backgroundTint="?attr/textColor"
                             app:icon="@drawable/ic_baseline_play_arrow_24"
-                            android:layout_width="120dp"
-                            android:layout_height="50dp">
+                            android:layout_width="120dp">
                     </com.google.android.material.button.MaterialButton>
                     <com.google.android.material.button.MaterialButton
-                            android:layout_margin="5dp"
+                            style="@style/BlackButton"
                             android:visibility="visible"
                             android:layout_gravity="center"
-                            app:cornerRadius="4dp"
                             android:text="@string/home_info"
                             app:icon="@drawable/ic_outline_info_24"
-                            android:textStyle="bold"
 
                             android:id="@+id/home_main_info"
-                            app:rippleColor="?attr/textColor"
-                            android:textColor="?attr/textColor"
-                            app:iconTint="?attr/textColor"
-                            android:textAllCaps="false"
                             android:clickable="true"
                             android:focusable="true"
-                            android:backgroundTint="?attr/grayBackground"
-                            app:iconGravity="textStart"
-                            app:strokeColor="?attr/textColor"
-                            android:layout_width="120dp"
-                            android:layout_height="50dp">
+                            android:layout_width="120dp">
                     </com.google.android.material.button.MaterialButton>
                     <ImageView
                             android:layout_gravity="center"

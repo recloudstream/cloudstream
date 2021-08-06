@@ -15,7 +15,7 @@
                 android:id="@+id/nav_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/darkBackground"
+                android:background="?attr/darkBackground"
                 app:itemRippleColor="@color/colorRipple"
                 app:labelVisibilityMode="labeled"
 

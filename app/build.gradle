@@ -91,4 +91,7 @@ dependencies {
     annotationProcessor "com.google.auto.service:auto-service:1.0"
     //or for kotlin sources (requires kapt gradle plugin):
     kapt "com.google.auto.service:auto-service:1.0"
+
+    // subtitle color picker
+    implementation 'com.jaredrummler:colorpicker:1.1.0'
 }

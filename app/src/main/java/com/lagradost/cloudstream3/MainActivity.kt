@@ -13,6 +13,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.cast.framework.CastButtonFactory
+import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
@@ -46,21 +47,23 @@ const val VLC_EXTRA_POSITION_OUT = "extra_position"
 const val VLC_EXTRA_DURATION_OUT = "extra_duration"
 const val VLC_LAST_ID_KEY = "vlc_last_open_id"
 
-class MainActivity : AppCompatActivity() {
-    /*, ViewModelStoreOwner {
-        private val appViewModelStore: ViewModelStore by lazy {
-            ViewModelStore()
-        }
+class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
+    override fun onColorSelected(dialogId: Int, color: Int) {
+        onColorSelectedEvent.invoke(Pair(dialogId, color))
+    }
 
-        override fun getViewModelStore(): ViewModelStore {
-            return appViewModelStore
-        }*/
+    override fun onDialogDismissed(dialogId: Int) {
+        onDialogDismissedEvent.invoke(dialogId)
+    }
+
     companion object {
         var canEnterPipMode: Boolean = false
         var canShowPipMode: Boolean = false
         var isInPIPMode: Boolean = false
 
         val backEvent = Event<Boolean>()
+        val onColorSelectedEvent = Event<Pair<Int, Int>>()
+        val onDialogDismissedEvent = Event<Int>()
         lateinit var navOptions: NavOptions
     }
 
@@ -288,4 +291,5 @@ class MainActivity : AppCompatActivity() {
         }*/
         handleAppIntent(intent)
     }
+
 }

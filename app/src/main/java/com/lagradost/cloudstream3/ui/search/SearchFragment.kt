@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
 
@@ -171,8 +172,8 @@ class SearchFragment : Fragment() {
                 }, 200)
             }
         }
-        main_search.onActionViewExpanded()
-
+       // main_search.onActionViewExpanded()
+        SubtitlesFragment.push(activity)
         //searchViewModel.search("iron man")
         //(activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*
@@ -184,4 +185,5 @@ class SearchFragment : Fragment() {
             .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(0, null,0)))
             .commit()*/
     }
+
 }
