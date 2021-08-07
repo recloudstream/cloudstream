@@ -25,15 +25,29 @@
                 android:layout_height="wrap_content">
         </TextView>
 
-        <com.google.android.exoplayer2.ui.SubtitleView
-                android:id="@+id/subtitle_text"
-                android:background="@drawable/subtitles_background_gradient"
-                android:layout_width="match_parent"
-                android:layout_gravity="center"
-                android:foregroundGravity="center"
-                android:layout_height="75sp">
-        </com.google.android.exoplayer2.ui.SubtitleView>
+        <FrameLayout android:layout_width="match_parent" android:layout_height="75sp">
+            <ImageView
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/subtitles_preview_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/preview_background">
+            </ImageView>
+            <com.google.android.exoplayer2.ui.SubtitleView
+                    android:id="@+id/subtitle_text"
 
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:foregroundGravity="center"
+                    android:layout_height="match_parent">
+            </com.google.android.exoplayer2.ui.SubtitleView>
+        </FrameLayout>
+
+        <TextView
+                android:id="@+id/subs_font"
+                android:text="@string/subs_font"
+                style="@style/SettingsItem"
+        />
         <TextView
                 android:id="@+id/subs_text_color"
                 android:text="@string/subs_text_color"

@@ -19,10 +19,11 @@
                 android:orientation="vertical"
                 android:layout_weight="50">
             <TextView
+                    android:layout_marginTop="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
                     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
                     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="10dp"
                     android:textStyle="bold"
                     android:text="@string/pick_source"
                     android:textSize="20sp"
@@ -32,8 +33,6 @@
                     android:layout_height="wrap_content">
             </TextView>
             <ListView
-                    android:layout_marginTop="-10dp"
-                    android:paddingTop="10dp"
                     android:id="@+id/sort_providers"
                     android:background="?attr/bitDarkerGrayBackground"
                     tools:listitem="@layout/sort_bottom_single_choice"
@@ -49,14 +48,18 @@
                 android:orientation="vertical"
                 android:layout_weight="50">
             <FrameLayout
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/subs_settings"
                     android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <TextView
                         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
                         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="10dp"
+
                         android:textStyle="bold"
                         android:text="@string/pick_subtitle"
                         android:textSize="20sp"
@@ -67,22 +70,19 @@
                 </TextView>
 
                 <ImageView
-                        android:id="@+id/subs_settings"
-                        android:layout_marginTop="20dp"
+                        android:visibility="gone"
+                        android:layout_marginTop="0dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_gravity="end"
-                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:layout_gravity="end|center_vertical"
 
                         android:src="@drawable/ic_outline_settings_24"
                         android:layout_width="25dp"
-                        android:layout_height="25dp"
+                        android:layout_height="wrap_content"
                         android:contentDescription="@string/home_change_provider">
                 </ImageView>
             </FrameLayout>
 
             <ListView
-                    android:layout_marginTop="-10dp"
-                    android:paddingTop="10dp"
                     android:id="@+id/sort_subtitles"
                     android:background="?attr/bitDarkerGrayBackground"
                     tools:listitem="@layout/sort_bottom_single_choice"

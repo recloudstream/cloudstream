@@ -797,9 +797,11 @@ class PlayerFragment : Fragment() {
 //endregion
 
     private fun onSubStyleChanged(style : SaveCaptionStyle) {
-        subStyle = style
-        subView?.setStyle(fromSaveToStyle(style))
-        subView?.translationY = -style.elevation.toPx.toFloat()
+        context?.let { ctx ->
+            subStyle = style
+            subView?.setStyle(ctx.fromSaveToStyle(style))
+            subView?.translationY = -style.elevation.toPx.toFloat()
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -1129,14 +1131,14 @@ class PlayerFragment : Fragment() {
             val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
             val speedIndex = speedsNumbers.indexOf(playbackSpeed)
 
-            context?.showDialog(speedsText,speedIndex,"Player Speed", false) { index ->
+            context?.showDialog(speedsText,speedIndex,"Player Speed", false, {
+                activity?.hideSystemUI()
+            }) { index ->
                 playbackSpeed = speedsNumbers[index]
                 requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
                 val param = PlaybackParameters(playbackSpeed)
                 exoPlayer.playbackParameters = param
                 player_speed_text.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
-
-                activity?.hideSystemUI()
             }
         }
 
@@ -1158,7 +1160,7 @@ class PlayerFragment : Fragment() {
                     val subtitleList = sourceDialog.findViewById<ListView>(R.id.sort_subtitles)!!
                     val applyButton = sourceDialog.findViewById<MaterialButton>(R.id.apply_btt)!!
                     val cancelButton = sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
-                    val subsSettings = sourceDialog.findViewById<ImageView>(R.id.subs_settings)!!
+                    val subsSettings = sourceDialog.findViewById<View>(R.id.subs_settings)!!
 
                     subsSettings.setOnClickListener {
                         SubtitlesFragment.push(activity)

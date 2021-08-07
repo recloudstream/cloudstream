@@ -78,4 +78,6 @@
     <string name="subs_edge_type">Edge Type</string>
     <string name="subs_subtitle_elevation">Subtitle Elevation</string>
     <string name="subs_default_reset_toast">Reset to default value</string>
+    <string name="preview_background">Preview Background</string>
+    <string name="subs_font">Font</string>
 </resources>

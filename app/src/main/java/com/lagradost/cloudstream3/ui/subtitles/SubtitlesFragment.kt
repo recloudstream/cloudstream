@@ -13,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.FontRes
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.exoplayer2.text.Cue
@@ -38,7 +40,8 @@ data class SaveCaptionStyle(
     @CaptionStyleCompat.EdgeType
     var edgeType: Int,
     var edgeColor: Int,
-    var typeface: String?,
+    @FontRes
+    var typeface: Int?,
     /**in dp**/
     var elevation: Int,
 )
@@ -47,14 +50,15 @@ class SubtitlesFragment : Fragment() {
     companion object {
         val applyStyleEvent = Event<SaveCaptionStyle>()
 
-        fun fromSaveToStyle(data: SaveCaptionStyle): CaptionStyleCompat {
+        fun Context.fromSaveToStyle(data: SaveCaptionStyle): CaptionStyleCompat {
+            val typeface = data.typeface
             return CaptionStyleCompat(
                 data.foregroundColor, data.backgroundColor, data.windowColor, data.edgeType, data.edgeColor,
-                Typeface.SANS_SERIF
+                if (typeface == null) Typeface.SANS_SERIF else ResourcesCompat.getFont(this, typeface)
             )
         }
 
-        fun push(activity: Activity?) {
+        fun push(activity: Activity?, hide: Boolean = true) {
             (activity as FragmentActivity?)?.supportFragmentManager?.beginTransaction()
                 ?.setCustomAnimations(
                     R.anim.enter_anim,
@@ -64,7 +68,11 @@ class SubtitlesFragment : Fragment() {
                 )
                 ?.add(
                     R.id.homeRoot,
-                    SubtitlesFragment()
+                    SubtitlesFragment().apply {
+                        arguments = Bundle().apply {
+                            putBoolean("hide", hide)
+                        }
+                    }
                 )
                 ?.commit()
         }
@@ -106,15 +114,17 @@ class SubtitlesFragment : Fragment() {
     }
 
     private fun onColorSelected(stuff: Pair<Int, Int>) {
-        setColor(stuff.first, stuff.second)
-        activity?.hideSystemUI()
+        context?.setColor(stuff.first, stuff.second)
+        if (hide)
+            activity?.hideSystemUI()
     }
 
     private fun onDialogDismissed(id: Int) {
-        activity?.hideSystemUI()
+        if (hide)
+            activity?.hideSystemUI()
     }
 
-    private fun setColor(id: Int, color: Int?) {
+    private fun Context.setColor(id: Int, color: Int?) {
         val realColor = color ?: getDefColor(id)
         when (id) {
             0 -> state.foregroundColor = realColor
@@ -128,7 +138,7 @@ class SubtitlesFragment : Fragment() {
         updateState()
     }
 
-    private fun updateState() {
+    private fun Context.updateState() {
         subtitle_text?.setStyle(fromSaveToStyle(state))
     }
 
@@ -153,7 +163,8 @@ class SubtitlesFragment : Fragment() {
         return inflater.inflate(R.layout.subtitle_settings, container, false)
     }
 
-    lateinit var state: SaveCaptionStyle
+    private lateinit var state: SaveCaptionStyle
+    private var hide: Boolean = true
 
     override fun onDestroy() {
         super.onDestroy()
@@ -162,13 +173,14 @@ class SubtitlesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hide = arguments?.getBoolean("hide") ?: true
         MainActivity.onColorSelectedEvent += ::onColorSelected
         MainActivity.onDialogDismissedEvent += ::onDialogDismissed
 
         context?.fixPaddingStatusbar(subs_root)
 
         state = requireContext().getCurrentSavedStyle()
-        updateState()
+        context?.updateState()
 
         fun View.setup(id: Int) {
             this.setOnClickListener {
@@ -181,7 +193,7 @@ class SubtitlesFragment : Fragment() {
             }
 
             this.setOnLongClickListener {
-                setColor(id, null)
+                it.context.setColor(id, null)
                 Toast.makeText(it.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
                 return@setOnLongClickListener true
             }
@@ -191,6 +203,11 @@ class SubtitlesFragment : Fragment() {
         subs_outline_color.setup(1)
         subs_background_color.setup(2)
         subs_window_color.setup(3)
+
+        val dismissCallback = {
+            if (hide)
+                activity?.hideSystemUI()
+        }
 
         subs_subtitle_elevation.setOnClickListener { textView ->
             val elevationTypes = listOf(
@@ -205,17 +222,19 @@ class SubtitlesFragment : Fragment() {
                 elevationTypes.map { it.second },
                 elevationTypes.map { it.first }.indexOf(state.elevation),
                 (textView as TextView).text.toString(),
-                false
+                false,
+                dismissCallback
             ) { index ->
                 state.elevation = elevationTypes.map { it.first }[index]
-                updateState()
-                activity?.hideSystemUI()
+                textView.context.updateState()
+                if (hide)
+                    activity?.hideSystemUI()
             }
         }
 
         subs_subtitle_elevation.setOnLongClickListener {
             state.elevation = 0
-            updateState()
+            it.context.updateState()
             Toast.makeText(it.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
             return@setOnLongClickListener true
         }
@@ -233,17 +252,53 @@ class SubtitlesFragment : Fragment() {
                 edgeTypes.map { it.second },
                 edgeTypes.map { it.first }.indexOf(state.edgeType),
                 (textView as TextView).text.toString(),
-                false
+                false,
+                dismissCallback
             ) { index ->
                 state.edgeType = edgeTypes.map { it.first }[index]
-                updateState()
-                activity?.hideSystemUI()
+                textView.context.updateState()
             }
         }
 
         subs_edge_type.setOnLongClickListener {
             state.edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE
-            updateState()
+            it.context.updateState()
+            Toast.makeText(it.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+            return@setOnLongClickListener true
+        }
+
+        subs_font.setOnClickListener { textView ->
+            val fontTypes = listOf(
+                Pair(null, "Normal"),
+                Pair(R.font.trebuchet_ms, "Trebuchet MS"),
+                Pair(R.font.google_sans, "Google Sans"),
+                Pair(R.font.open_sans, "Open Sans"),
+                Pair(R.font.futura, "Futura"),
+                Pair(R.font.consola, "Consola"),
+                Pair(R.font.gotham, "Gotham"),
+                Pair(R.font.lucida_grande, "Lucida Grande"),
+                Pair(R.font.stix_general, "STIX General"),
+                Pair(R.font.times_new_roman, "Times New Roman"),
+                Pair(R.font.verdana, "Verdana"),
+                Pair(R.font.ubuntu_regular, "Ubuntu"),
+                Pair(R.font.poppins_regular, "Poppins"),
+            )
+
+            textView.context.showBottomDialog(
+                fontTypes.map { it.second },
+                fontTypes.map { it.first }.indexOf(state.typeface),
+                (textView as TextView).text.toString(),
+                false,
+                dismissCallback
+            ) { index ->
+                state.typeface = fontTypes.map { it.first }[index]
+                textView.context.updateState()
+            }
+        }
+
+        subs_font.setOnLongClickListener {
+            state.typeface = null
+            it.context.updateState()
             Toast.makeText(it.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
             return@setOnLongClickListener true
         }
@@ -255,7 +310,7 @@ class SubtitlesFragment : Fragment() {
         apply_btt.setOnClickListener {
             it.context.saveStyle(state)
             applyStyleEvent.invoke(state)
-            fromSaveToStyle(state)
+            it.context.fromSaveToStyle(state)
             activity?.popCurrentPage()
         }
 

@@ -18,7 +18,8 @@ object SingleSelectionHelper {
         selectedIndex: Int,
         name: String,
         showApply: Boolean,
-        callback: (Int) -> Unit
+        callback: (Int) -> Unit,
+        dismissCallback: () -> Unit
     ) {
         val listView = dialog.findViewById<ListView>(R.id.listview1)!!
         val textView = dialog.findViewById<TextView>(R.id.text1)!!
@@ -46,6 +47,10 @@ object SingleSelectionHelper {
 
         var currentIndex = selectedIndex
 
+        dialog.setOnDismissListener {
+            dismissCallback.invoke()
+        }
+
         listView.setOnItemClickListener { _, _, which, _ ->
             if (showApply) {
                 currentIndex = which
@@ -71,14 +76,15 @@ object SingleSelectionHelper {
         selectedIndex: Int,
         name: String,
         showApply: Boolean,
-        callback: (Int) -> Unit
+        dismissCallback: () -> Unit,
+        callback: (Int) -> Unit,
     ) {
         val builder =
             AlertDialog.Builder(this, R.style.AlertDialogCustom).setView(R.layout.bottom_selection_dialog)
 
         val dialog = builder.create()
         dialog.show()
-        showDialog(dialog, items, selectedIndex, name, showApply, callback)
+        showDialog(dialog, items, selectedIndex, name, showApply, callback, dismissCallback)
     }
 
     fun Context.showBottomDialog(
@@ -86,13 +92,14 @@ object SingleSelectionHelper {
         selectedIndex: Int,
         name: String,
         showApply: Boolean,
-        callback: (Int) -> Unit
+        dismissCallback: () -> Unit,
+        callback: (Int) -> Unit,
     ) {
         val builder =
             BottomSheetDialog(this)
         builder.setContentView(R.layout.bottom_selection_dialog)
 
         builder.show()
-        showDialog(builder, items, selectedIndex, name, showApply, callback)
+        showDialog(builder, items, selectedIndex, name, showApply, callback, dismissCallback)
     }
 }

@@ -7,6 +7,13 @@
             android:title="Player"
             app:isPreferenceVisible="true"
     >
+
+        <Preference
+                android:key="subtitle_settings_key"
+                android:title="Subtitles"
+                android:icon="@drawable/ic_outline_subtitles_24"
+                app:summary="Player subtitles settings">
+        </Preference>
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_picture_in_picture_alt_24"
                 app:key="pip_enabled"
@@ -49,6 +56,14 @@
                 android:summary="Tap twice on the right or left side to seek forwards or backwards"
                 app:defaultValue="false"
         />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:key="info"
+            android:title="Info"
+            app:isPreferenceVisible="true"
+    >
         <SwitchPreference
                 android:key="acra.disable"
                 android:icon="@drawable/ic_baseline_bug_report_24"
@@ -62,6 +77,21 @@
                 app:summary="https://github.com/LagradOst/CloudStream-3">
             <intent android:action="android.intent.action.VIEW"
                     android:data="https://github.com/LagradOst/CloudStream-3"/>
+        </Preference>
+
+        <Preference
+                android:title="Light novel app by the same devs"
+                android:icon="@drawable/quick_novel_icon"
+                app:summary="https://github.com/LagradOst/QuickNovel">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="https://github.com/LagradOst/QuickNovel"/>
+        </Preference>
+        <Preference
+                android:title="Anime app by the same devs"
+                android:icon="@drawable/shiro_icon"
+                app:summary="https://github.com/Blatzar/shiro-app">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="https://github.com/Blatzar/shiro-app"/>
         </Preference>
         <Preference
                 android:title="Join Discord"
