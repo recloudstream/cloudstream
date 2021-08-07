@@ -172,8 +172,8 @@ class SearchFragment : Fragment() {
                 }, 200)
             }
         }
-       // main_search.onActionViewExpanded()
-        SubtitlesFragment.push(activity)
+        main_search.onActionViewExpanded()
+        // SubtitlesFragment.push(activity)
         //searchViewModel.search("iron man")
         //(activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
 /*
