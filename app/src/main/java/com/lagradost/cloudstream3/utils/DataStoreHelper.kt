@@ -14,7 +14,6 @@ const val RESULT_WATCH_STATE = "result_watch_state"
 const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
 const val RESULT_SEASON = "result_season"
 
-
 object DataStoreHelper {
     data class PosDur(val position: Long, val duration: Long)
 

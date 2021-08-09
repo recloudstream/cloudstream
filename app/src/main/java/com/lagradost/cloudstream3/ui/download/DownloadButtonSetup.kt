@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.ui.player.UriData
+import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
@@ -28,8 +29,8 @@ object DownloadButtonSetup {
                             }
                         }
 
-                    builder.setTitle("Delete File") //TODO FIX NAME
-                    builder.setMessage("This will permanently delete ${click.data.name ?: "Episode ${click.data.episode}"}\nAre you sure?")
+                    builder.setTitle("Delete File")
+                    builder.setMessage("This will permanently delete ${getNameFull(click.data.name,click.data.episode,click.data.season)}\nAre you sure?")
                         .setTitle("Delete")
                         .setPositiveButton("Delete", dialogClickListener)
                         .setNegativeButton("Cancel", dialogClickListener)

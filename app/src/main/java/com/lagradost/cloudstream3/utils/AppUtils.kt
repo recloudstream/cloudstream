@@ -43,6 +43,31 @@ object AppUtils {
         }
     }
 
+    /**| S1:E2 Hello World
+     * | Episode 2. Hello world
+     * | Hello World
+     * | Season 1 - Episode 2
+     * | Episode 2
+     * **/
+    fun getNameFull(name: String?, episode: Int?, season: Int?): String {
+        if (name != null) {
+            return if(episode != null && season != null) {
+                "S${season}:E${episode} $name"
+            } else if(episode != null) {
+                "Episode $episode. $name"
+            } else {
+                name
+            }
+        } else {
+            if(episode != null && season != null) {
+                return "Season $season - Episode $episode"
+            } else if(season == null) {
+                return "Episode $episode"
+            }
+        }
+        return ""
+    }
+
     fun AppCompatActivity.loadResult(url: String, apiName: String, startAction: Int = 0) {
         this.runOnUiThread {
             viewModelStore.clear()

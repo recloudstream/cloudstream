@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.utils.Qualities
 
 class XStreamCdn : ExtractorApi() {
     override val name: String = "XStreamCdn"
-    override val mainUrl: String = "https://fcdn.stream"
+    override val mainUrl: String = "https://embedsito.com"
     override val requiresReferer = false
 
     private data class ResponseData(

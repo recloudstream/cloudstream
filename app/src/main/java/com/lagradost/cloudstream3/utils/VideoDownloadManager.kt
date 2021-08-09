@@ -46,7 +46,7 @@ object VideoDownloadManager {
     private var currentDownloads = mutableListOf<Int>()
 
     private const val USER_AGENT =
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
 
     @DrawableRes
     const val imgDone = R.drawable.rddone
@@ -207,6 +207,7 @@ object VideoDownloadManager {
                 .setAutoCancel(true)
                 .setColorized(true)
                 .setOnlyAlertOnce(true)
+                .setShowWhen(false)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setColor(context.colorFromAttribute(R.attr.colorPrimary))
                 .setContentTitle(ep.mainName)
@@ -359,41 +360,49 @@ object VideoDownloadManager {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun ContentResolver.getExistingDownloadUriOrNullQ(relativePath: String, displayName: String): Uri? {
-        val projection = arrayOf(
-            MediaStore.MediaColumns._ID,
-            //MediaStore.MediaColumns.DISPLAY_NAME,   // unused (for verification use only)
-            //MediaStore.MediaColumns.RELATIVE_PATH,  // unused (for verification use only)
-        )
+        try {
+            val projection = arrayOf(
+                MediaStore.MediaColumns._ID,
+                //MediaStore.MediaColumns.DISPLAY_NAME,   // unused (for verification use only)
+                //MediaStore.MediaColumns.RELATIVE_PATH,  // unused (for verification use only)
+            )
 
-        val selection =
-            "${MediaStore.MediaColumns.RELATIVE_PATH}='$relativePath' AND " + "${MediaStore.MediaColumns.DISPLAY_NAME}='$displayName'"
+            val selection =
+                "${MediaStore.MediaColumns.RELATIVE_PATH}='$relativePath' AND " + "${MediaStore.MediaColumns.DISPLAY_NAME}='$displayName'"
 
-        val result = this.query(
-            MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
-            projection, selection, null, null
-        )
+            val result = this.query(
+                MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                projection, selection, null, null
+            )
 
-        result.use { c ->
-            if (c != null && c.count >= 1) {
-                c.moveToFirst().let {
-                    val id = c.getLong(c.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
-                    /*
-                    val cDisplayName = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
-                    val cRelativePath = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.RELATIVE_PATH))*/
+            result.use { c ->
+                if (c != null && c.count >= 1) {
+                    c.moveToFirst().let {
+                        val id = c.getLong(c.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
+                        /*
+                        val cDisplayName = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
+                        val cRelativePath = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.RELATIVE_PATH))*/
 
-                    return ContentUris.withAppendedId(
-                        MediaStore.Downloads.EXTERNAL_CONTENT_URI, id
-                    )
+                        return ContentUris.withAppendedId(
+                            MediaStore.Downloads.EXTERNAL_CONTENT_URI, id
+                        )
+                    }
                 }
             }
+            return null
+        } catch (e: Exception) {
+            return null
         }
-        return null
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun ContentResolver.getFileLength(fileUri: Uri): Long {
-        return this.openFileDescriptor(fileUri, "r")
-            .use { it?.statSize ?: 0 }
+    fun ContentResolver.getFileLength(fileUri: Uri): Long? {
+        return try {
+            this.openFileDescriptor(fileUri, "r")
+                .use { it?.statSize ?: 0 }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun isScopedStorage(): Boolean {
@@ -439,7 +448,8 @@ object VideoDownloadManager {
                 cr.getExistingDownloadUriOrNullQ(relativePath, displayName) // CURRENT FILE WITH THE SAME PATH
 
             fileLength =
-                if (currentExistingFile == null || !resume) 0 else cr.getFileLength(currentExistingFile) // IF NOT RESUME THEN 0, OTHERWISE THE CURRENT FILE SIZE
+                if (currentExistingFile == null || !resume) 0 else (cr.getFileLength(currentExistingFile)
+                    ?: 0)// IF NOT RESUME THEN 0, OTHERWISE THE CURRENT FILE SIZE
 
             if (!resume && currentExistingFile != null) { // DELETE FILE IF FILE EXITS AND NOT RESUME
                 val rowsDeleted = context.contentResolver.delete(currentExistingFile, null, null)
@@ -500,7 +510,7 @@ object VideoDownloadManager {
         connection.setRequestProperty("Accept-Encoding", "identity")
         connection.setRequestProperty("User-Agent", USER_AGENT)
         if (link.referer.isNotEmpty()) connection.setRequestProperty("Referer", link.referer)
-        if (resume) connection.setRequestProperty("Range", "bytes=${fileLength}-")
+        connection.setRequestProperty("Range", "bytes=${(if (resume) fileLength else 0)}-")
         val resumeLength = (if (resume) fileLength else 0)
 
         // ON CONNECTION
@@ -705,7 +715,7 @@ object VideoDownloadManager {
             val cr = context.contentResolver ?: return null
             val fileUri =
                 cr.getExistingDownloadUriOrNullQ(info.relativePath, info.displayName) ?: return null
-            val fileLength = cr.getFileLength(fileUri)
+            val fileLength = cr.getFileLength(fileUri) ?: return null
             if (fileLength == 0L) return null
             return DownloadedFileInfoResult(fileLength, info.totalBytes, fileUri)
         } else {

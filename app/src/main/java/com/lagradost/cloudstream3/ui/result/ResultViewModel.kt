@@ -226,7 +226,6 @@ class ResultViewModel : ViewModel() {
                             episodes.add(
                                 context.buildResultEpisode(
                                     i.name,
-                                    //?: (if (i.season != null && i.episode != null) "S${i.season}:E${i.episode}" else null)), // TODO ADD NAMES
                                     i.posterUrl,
                                     i.episode ?: (index + 1),
                                     i.season,

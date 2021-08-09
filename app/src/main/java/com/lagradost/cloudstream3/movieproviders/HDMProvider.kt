@@ -57,7 +57,7 @@ class HDMProvider : MainAPI() {
     override fun load(url: String): LoadResponse? {
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
-        val title = document.selectFirst("h2.movieTitle").text()
+        val title = document.selectFirst("h2.movieTitle")?.text() ?: throw ErrorLoadingException("No Data Found")
         val poster = document.selectFirst("div.post-thumbnail > img").attr("src")
         val descript = document.selectFirst("div.synopsis > p").text()
         val year = document.select("div.movieInfoAll > div.row > div.col-md-6")?.get(1)?.selectFirst("> p > a")?.text()

@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
@@ -99,7 +100,7 @@ class DownloadChildAdapter(
         private val progressBarDownload: ContentLoadingProgressBar = itemView.download_child_episode_progress_downloaded
         private val downloadImage: ImageView = itemView.download_child_episode_download
 
-        var localCard :  VisualDownloadChildCached? = null
+        var localCard: VisualDownloadChildCached? = null
 
         @SuppressLint("SetTextI18n")
         fun bind(card: VisualDownloadChildCached) {
@@ -116,7 +117,7 @@ class DownloadChildAdapter(
                 progressBar.visibility = View.GONE
             }
 
-            title.text = d.name ?: "Episode ${d.episode}" //TODO FIX
+            title.text = getNameFull(d.name, d.episode, d.season)
             title.isSelected = true // is needed for text repeating
 
             downloadButton.setUpButton(
