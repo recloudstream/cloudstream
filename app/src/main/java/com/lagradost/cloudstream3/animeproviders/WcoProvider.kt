@@ -24,6 +24,46 @@ class WcoProvider : MainAPI() {
         get() = "WCO Stream"
     override val hasQuickSearch: Boolean
         get() = true
+    override val hasMainPage: Boolean
+        get() = true
+
+    override fun getMainPage(): HomePageResponse? {
+        val urls = listOf(
+            Pair("$mainUrl/ajax/list/recently_updated?type=tv", "Recently Updated Anime"),
+            Pair("$mainUrl/ajax/list/recently_updated?type=movie", "Recently Updated Movies"),
+            Pair("$mainUrl/ajax/list/recently_added?type=tv", "Recently Added Anime"),
+            Pair("$mainUrl/ajax/list/recently_added?type=movie", "Recently Added Movies"),
+        )
+
+        val items = ArrayList<HomePageList>()
+        for (i in urls) {
+            try {
+                val response = khttp.get(
+                    i.first,
+                ).jsonObject.getString("html") // I won't make a dataclass for this shit
+                val document = Jsoup.parse(response)
+                val results = document.select("div.flw-item").map {
+                    val filmPoster = it.selectFirst("> div.film-poster")
+                    val filmDetail = it.selectFirst("> div.film-detail")
+                    val nameHeader = filmDetail.selectFirst("> h3.film-name > a")
+                    val title = nameHeader.text().replace(" (Dub)", "")
+                    val href =
+                        nameHeader.attr("href").replace("/watch/", "/anime/").replace("-episode-.*".toRegex(), "/")
+                    val isDub = filmPoster.selectFirst("> div.film-poster-quality")?.text()?.contains("DUB") ?: false
+                    val poster = filmPoster.selectFirst("> img").attr("data-src")
+                    val set: EnumSet<DubStatus> =
+                        EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed)
+                    AnimeSearchResponse(title, href, this.name, TvType.Anime, poster, null, null, set, null, null)
+                }
+                items.add(HomePageList(i.second, results))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        if(items.size <= 0) throw ErrorLoadingException()
+        return HomePageResponse(items)
+    }
+
 
     private fun fixAnimeLink(url: String): String {
         val regex = "watch/([a-zA-Z\\-0-9]*)-episode".toRegex()
@@ -69,7 +109,7 @@ class WcoProvider : MainAPI() {
 
     override fun search(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/search"
-        val response = khttp.get(url, params=mapOf("keyword" to query))
+        val response = khttp.get(url, params = mapOf("keyword" to query))
         var document = Jsoup.parse(response.text)
         val returnValue = parseSearchPage(document)
 
@@ -91,7 +131,7 @@ class WcoProvider : MainAPI() {
 
         val response = khttp.post(
             "https://wcostream.cc/ajax/search",
-            data=mapOf("keyword" to query)
+            data = mapOf("keyword" to query)
         ).jsonObject.getString("html") // I won't make a dataclass for this shit
         val document = Jsoup.parse(response)
 
@@ -152,14 +192,16 @@ class WcoProvider : MainAPI() {
             "Completed" -> ShowStatus.Completed
             else -> null
         }
-        val yearText = document.selectFirst("div.elements div.row > div:nth-child(2) > div.row-line:nth-child(4)")?.text()
+        val yearText =
+            document.selectFirst("div.elements div.row > div:nth-child(2) > div.row-line:nth-child(4)")?.text()
         val year = yearText?.replace("Date release:", "")?.trim()?.split("-")?.get(0)?.toIntOrNull()
 
         val poster = document.selectFirst(".film-poster-img")?.attr("src")
         val type = document.selectFirst("span.item.mr-1 > a")?.text()?.trim()
 
         val synopsis = document.selectFirst(".description > p")?.text()?.trim()
-        val genre = document.select("div.elements div.row > div:nth-child(1) > div.row-line:nth-child(5) > a").map { it?.text()?.trim().toString() }
+        val genre = document.select("div.elements div.row > div:nth-child(1) > div.row-line:nth-child(5) > a")
+            .map { it?.text()?.trim().toString() }
 
         return AnimeLoadResponse(
             canonicalTitle,
@@ -170,8 +212,8 @@ class WcoProvider : MainAPI() {
             getType(type ?: ""),
             poster,
             year,
-            if(isDubbed) episodes else null,
-            if(!isDubbed) episodes else null,
+            if (isDubbed) episodes else null,
+            if (!isDubbed) episodes else null,
             status,
             synopsis,
             ArrayList(genre),
