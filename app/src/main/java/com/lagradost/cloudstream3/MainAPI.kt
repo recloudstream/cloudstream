@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.animeproviders.WcoProvider
 import com.lagradost.cloudstream3.movieproviders.HDMProvider
 import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
 import com.lagradost.cloudstream3.movieproviders.TrailersToProvider
+import com.lagradost.cloudstream3.movieproviders.VMoveeProvider
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 
@@ -30,13 +31,14 @@ object APIHolder {
 
     val apis = arrayListOf(
         TrailersToProvider(),
-        ShiroProvider(),
+        //ShiroProvider(), // v2 fucked me
         TenshiProvider(),
         WcoProvider(),
-        MeloMovieProvider(),
+        // MeloMovieProvider(), // Captcha for links
         DubbedAnimeProvider(),
         HDMProvider(),
         //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
+        VMoveeProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
@@ -160,7 +162,7 @@ fun imdbUrlToId(url: String): String {
 }
 
 fun imdbUrlToIdNullable(url: String?): String? {
-    if(url == null) return null
+    if (url == null) return null
     return imdbUrlToId(url)
 }
 
