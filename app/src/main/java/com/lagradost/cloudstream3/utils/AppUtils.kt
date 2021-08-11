@@ -50,19 +50,22 @@ object AppUtils {
      * | Episode 2
      * **/
     fun getNameFull(name: String?, episode: Int?, season: Int?): String {
+        val rEpisode = if(episode == 0) null else episode
+        val rSeason = if(season == 0) null else season
+
         if (name != null) {
-            return if(episode != null && season != null) {
-                "S${season}:E${episode} $name"
-            } else if(episode != null) {
-                "Episode $episode. $name"
+            return if(rEpisode != null && rSeason != null) {
+                "S${rSeason}:E${rEpisode} $name"
+            } else if(rEpisode != null) {
+                "Episode $rEpisode. $name"
             } else {
                 name
             }
         } else {
-            if(episode != null && season != null) {
-                return "Season $season - Episode $episode"
-            } else if(season == null) {
-                return "Episode $episode"
+            if(rEpisode != null && rSeason != null) {
+                return "Season $rSeason - Episode $rEpisode"
+            } else if(rSeason == null) {
+                return "Episode $rEpisode"
             }
         }
         return ""

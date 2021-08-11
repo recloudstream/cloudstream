@@ -237,6 +237,18 @@ class ResultFragment : Fragment() {
 
     var startAction: Int? = null
 
+    private fun lateFixDownloadButton(show: Boolean) {
+        if (show) {
+            result_movie_parent.visibility = VISIBLE
+            result_episodes_text.visibility = GONE
+            result_episodes.visibility = GONE
+        } else {
+            result_movie_parent.visibility = GONE
+            result_episodes_text.visibility = VISIBLE
+            result_episodes.visibility = VISIBLE
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -690,6 +702,8 @@ class ResultFragment : Fragment() {
         }
 
         observe(viewModel.episodes) { episodeList ->
+            lateFixDownloadButton( episodeList.size <= 1) // movies can have multible parts but still be *movies* this will fix this
+
             when (startAction) {
                 START_ACTION_RESUME_LATEST -> {
                     for (ep in episodeList) {
@@ -884,11 +898,9 @@ class ResultFragment : Fragment() {
                             }
                         }
 
-                        if (d.type == TvType.Movie && d is MovieLoadResponse) {
+                        if (d.type == TvType.Movie) {
                             val hasDownloadSupport = api.hasDownloadSupport
-                            result_movie_parent.visibility = VISIBLE
-                            result_episodes_text.visibility = GONE
-                            result_episodes.visibility = GONE
+                            lateFixDownloadButton(true)
 
                             result_play_movie.setOnClickListener {
                                 val card = currentEpisodes?.first() ?: return@setOnClickListener
@@ -933,34 +945,34 @@ class ResultFragment : Fragment() {
                                     )
                                 ) { downloadClickEvent ->
                                     if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                                        handleAction(
-                                            EpisodeClickEvent(
-                                                ACTION_DOWNLOAD_EPISODE,
-                                                ResultEpisode(
-                                                    d.name,
-                                                    null,
-                                                    0,
-                                                    null,
-                                                    d.dataUrl,
-                                                    d.apiName,
-                                                    localId,
-                                                    0,
-                                                    0L,
-                                                    0L,
-                                                    null,
-                                                    null
+                                        currentEpisodes?.first()?.let { episode ->
+                                            handleAction(
+                                                EpisodeClickEvent(
+                                                    ACTION_DOWNLOAD_EPISODE,
+                                                    ResultEpisode(
+                                                        d.name,
+                                                        null,
+                                                        0,
+                                                        null,
+                                                        episode.data,
+                                                        d.apiName,
+                                                        localId,
+                                                        0,
+                                                        0L,
+                                                        0L,
+                                                        null,
+                                                        null
+                                                    )
                                                 )
                                             )
-                                        )
+                                        }
                                     } else {
                                         handleDownloadClick(activity, currentHeaderName, downloadClickEvent)
                                     }
                                 }
                             }
                         } else {
-                            result_movie_parent.visibility = GONE
-                            result_episodes_text.visibility = VISIBLE
-                            result_episodes.visibility = VISIBLE
+                            lateFixDownloadButton(false)
                         }
 
                         when (d) {
