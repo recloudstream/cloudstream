@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -510,13 +511,20 @@ object VideoDownloadManager {
         connection.setRequestProperty("Accept-Encoding", "identity")
         connection.setRequestProperty("User-Agent", USER_AGENT)
         if (link.referer.isNotEmpty()) connection.setRequestProperty("Referer", link.referer)
-        connection.setRequestProperty("Range", "bytes=${(if (resume) fileLength else 0)}-")
+        if (resume)
+            connection.setRequestProperty("Range", "bytes=${fileLength}-")
         val resumeLength = (if (resume) fileLength else 0)
 
         // ON CONNECTION
         connection.connect()
-        val contentLength = connection.contentLength
+
+        val contentLength = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // fuck android
+            connection.contentLengthLong
+        } else {
+            connection.getHeaderField("content-length").toLongOrNull() ?: connection.contentLength.toLong()
+        }
         val bytesTotal = contentLength + resumeLength
+
         if (bytesTotal < 5000000) return ERROR_TOO_SMALL_CONNECTION // DATA IS LESS THAN 5MB, SOMETHING IS WRONG
 
         context.setKey(KEY_DOWNLOAD_INFO, ep.id.toString(), DownloadedFileInfo(bytesTotal, relativePath, displayName))
