@@ -7,8 +7,13 @@ import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
 
 class APIRepository(val api: MainAPI) {
+    companion object {
+        var providersActive = HashSet<String>()
+    }
+
     val name: String get() = api.name
     val mainUrl: String get() = api.mainUrl
+    val hasQuickSearch: Boolean  get() = api.hasQuickSearch
 
     suspend fun load(url: String): Resource<LoadResponse> {
         return safeApiCall {

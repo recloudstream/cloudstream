@@ -25,8 +25,6 @@ object APIHolder {
     val unixTime: Long
         get() = System.currentTimeMillis() / 1000L
 
-    val allApi = AllProvider()
-
     private const val defProvider = 0
 
     val apis = arrayListOf(

@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.ui.home
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -45,6 +47,50 @@ import kotlinx.android.synthetic.main.fragment_home.*
 const val HOME_BOOKMARK_VALUE = "home_bookmarked_last"
 
 class HomeFragment : Fragment() {
+    companion object {
+        val configEvent = Event<Int>()
+        var currentSpan = 1
+
+        fun Activity.loadHomepageList(item: HomePageList) {
+            val context = this
+            val bottomSheetDialogBuilder = BottomSheetDialog(context)
+            bottomSheetDialogBuilder.setContentView(R.layout.home_episodes_expanded)
+            val title = bottomSheetDialogBuilder.findViewById<TextView>(R.id.home_expanded_text)!!
+            title.text = item.name
+            val recycle = bottomSheetDialogBuilder.findViewById<AutofitRecyclerView>(R.id.home_expanded_recycler)!!
+            val titleHolder = bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
+
+            titleHolder.setOnClickListener {
+                bottomSheetDialogBuilder.dismiss()
+            }
+
+            // Span settings
+            recycle.spanCount = currentSpan
+
+            recycle.adapter = SearchAdapter(item.list, recycle) { callback ->
+                handleSearchClickCallback(this, callback)
+                if (callback.action == SEARCH_ACTION_LOAD) {
+                    bottomSheetDialogBuilder.dismiss()
+                }
+            }
+
+            val spanListener = { span: Int ->
+                recycle.spanCount = span
+                (recycle.adapter as SearchAdapter).notifyDataSetChanged()
+            }
+
+            configEvent += spanListener
+
+            bottomSheetDialogBuilder.setOnDismissListener {
+                configEvent -= spanListener
+            }
+
+            (recycle.adapter as SearchAdapter).notifyDataSetChanged()
+
+            bottomSheetDialogBuilder.show()
+        }
+    }
+
     private lateinit var homeViewModel: HomeViewModel
 
     override fun onCreateView(
@@ -58,8 +104,6 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    private val configEvent = Event<Int>()
-    private var currentSpan = 1
     private var currentHomePage: HomePageResponse? = null
     var currentMainIndex = 0
     var currentMainList: ArrayList<SearchResponse> = ArrayList()
@@ -254,48 +298,11 @@ class HomeFragment : Fragment() {
             }
         }
 
-        fun loadHomepageList(item: HomePageList) {
-            val bottomSheetDialogBuilder = BottomSheetDialog(view.context)
-            bottomSheetDialogBuilder.setContentView(R.layout.home_episodes_expanded)
-            val title = bottomSheetDialogBuilder.findViewById<TextView>(R.id.home_expanded_text)!!
-            title.text = item.name
-            val recycle = bottomSheetDialogBuilder.findViewById<AutofitRecyclerView>(R.id.home_expanded_recycler)!!
-            val titleHolder = bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
-
-            titleHolder.setOnClickListener {
-                bottomSheetDialogBuilder.dismiss()
-            }
-
-            // Span settings
-            recycle.spanCount = currentSpan
-
-            recycle.adapter = SearchAdapter(item.list, recycle) { callback ->
-                handleSearchClickCallback(activity, callback)
-                if (callback.action == SEARCH_ACTION_LOAD) {
-                    bottomSheetDialogBuilder.dismiss()
-                }
-            }
-
-            val spanListener = { span: Int ->
-                recycle.spanCount = span
-                (recycle.adapter as SearchAdapter).notifyDataSetChanged()
-            }
-
-            configEvent += spanListener
-
-            bottomSheetDialogBuilder.setOnDismissListener {
-                configEvent -= spanListener
-            }
-
-            (recycle.adapter as SearchAdapter).notifyDataSetChanged()
-
-            bottomSheetDialogBuilder.show()
-        }
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = ParentItemAdapter(listOf(), { callback ->
             handleSearchClickCallback(activity, callback)
         }, { item ->
-            loadHomepageList(item)
+            activity?.loadHomepageList(item)
         })
 
         observe(homeViewModel.availableWatchStatusTypes) { availableWatchStatusTypes ->
@@ -319,7 +326,7 @@ class HomeFragment : Fragment() {
             home_bookmarked_child_recyclerview?.adapter?.notifyDataSetChanged()
 
             home_bookmarked_child_more_info.setOnClickListener {
-                loadHomepageList(
+                activity?.loadHomepageList(
                     HomePageList(
                         home_bookmarked_parent_item_title?.text?.toString() ?: getString(R.string.error_bookmarks_text),
                         bookmarks

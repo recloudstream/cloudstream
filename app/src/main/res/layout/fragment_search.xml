@@ -73,7 +73,11 @@
             android:id="@+id/cardSpace"
             tools:listitem="@layout/search_result_grid"
             android:orientation="vertical"
-    >
-    </com.lagradost.cloudstream3.ui.AutofitRecyclerView>
-
+    />
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_master_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/homepage_parent"
+    />
 </LinearLayout>

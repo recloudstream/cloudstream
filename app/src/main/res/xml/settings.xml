@@ -58,6 +58,19 @@
         />
 
     </PreferenceCategory>
+    <PreferenceCategory
+            android:key="search"
+            android:title="Search"
+            app:isPreferenceVisible="true"
+    >
+        <SwitchPreference
+                android:icon="@drawable/search_icon"
+                app:key="advanced_search"
+                android:title="Advanced Search"
+                android:summary="Gives you the search results separated by provider"
+                app:defaultValue="true"
+        />
+    </PreferenceCategory>
 
     <PreferenceCategory
             android:key="info"

@@ -14,16 +14,20 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.APIHolder.allApi
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
+import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
+import com.lagradost.cloudstream3.ui.APIRepository.Companion.providersActive
+import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
+import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
 
@@ -49,11 +53,14 @@ class SearchFragment : Fragment() {
         val spanCountPortrait = if (compactView) 1 else 3
         val orientation = resources.configuration.orientation
 
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            cardSpace.spanCount = spanCountLandscape
+        val currentSpan = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            spanCountLandscape
         } else {
-            cardSpace.spanCount = spanCountPortrait
+            spanCountPortrait
         }
+        cardSpace.spanCount = currentSpan
+        HomeFragment.currentSpan = currentSpan
+        HomeFragment.configEvent.invoke(currentSpan)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -113,7 +120,7 @@ class SearchFragment : Fragment() {
                             apiNames.filter { a -> apiNamesSettingLocal.contains(a) }.toSet()
                         )
                         edit.apply()
-                        allApi.providersActive = apiNamesSettingLocal
+                        providersActive = apiNamesSettingLocal
                     }
                 }
                 builder.setTitle("Search Providers")
@@ -138,9 +145,11 @@ class SearchFragment : Fragment() {
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
-                        if (data != null) {
-                            (cardSpace?.adapter as SearchAdapter?)?.cardList = data.filterNotNull()
-                            cardSpace?.adapter?.notifyDataSetChanged()
+                        if (data.isNotEmpty()) {
+                            (cardSpace?.adapter as SearchAdapter?)?.apply {
+                                cardList = data.toList()
+                                notifyDataSetChanged()
+                            }
                         }
                     }
                     searchExitIcon.alpha = 1f
@@ -157,8 +166,18 @@ class SearchFragment : Fragment() {
                 }
             }
         }
+
+        observe(searchViewModel.currentSearch) { list ->
+            (search_master_recycler?.adapter as ParentItemAdapter?)?.apply {
+                items = list.map {
+                    HomePageList(it.apiName, if (it.data is Resource.Success) it.data.value else ArrayList())
+                }
+                notifyDataSetChanged()
+            }
+        }
+
         activity?.let {
-            allApi.providersActive = it.getApiSettings()
+            providersActive = it.getApiSettings()
         }
 
         main_search.setOnQueryTextFocusChangeListener { searchView, b ->
@@ -173,6 +192,22 @@ class SearchFragment : Fragment() {
             }
         }
         main_search.onActionViewExpanded()
+
+        val masterAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = ParentItemAdapter(listOf(), { callback ->
+            SearchHelper.handleSearchClickCallback(activity, callback)
+        }, { item ->
+            activity?.loadHomepageList(item)
+        })
+
+        search_master_recycler.adapter = masterAdapter
+        search_master_recycler.layoutManager = GridLayoutManager(context, 1)
+
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+        val isAdvancedSearch = settingsManager.getBoolean("advanced_search", true)
+
+        search_master_recycler.visibility = if(isAdvancedSearch) View.VISIBLE else View.GONE
+        cardSpace.visibility = if(!isAdvancedSearch) View.VISIBLE else View.GONE
+
         // SubtitlesFragment.push(activity)
         //searchViewModel.search("iron man")
         //(activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
