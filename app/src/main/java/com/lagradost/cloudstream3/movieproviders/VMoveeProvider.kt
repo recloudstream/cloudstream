@@ -14,6 +14,11 @@ class VMoveeProvider : MainAPI() {
     override val mainUrl: String
         get() = "https://www.vmovee.watch"
 
+    override val supportedTypes: Set<TvType>
+        get() = setOf(
+            TvType.Movie,
+        )
+
     override fun search(query: String): ArrayList<SearchResponse>? {
         val url = "$mainUrl/?s=$query"
         val response = khttp.get(url)

@@ -1,0 +1,224 @@
+package com.lagradost.cloudstream3.animeproviders
+
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
+import org.jsoup.Jsoup
+import org.mozilla.javascript.Context
+import org.mozilla.javascript.Scriptable
+import java.util.*
+
+
+class WatchCartoonOnlineProvider : MainAPI() {
+    override val name: String
+        get() = "WatchCartoonOnline"
+    override val mainUrl: String
+        get() = "https://www.wcostream.com"
+
+    override val supportedTypes: Set<TvType>
+        get() = setOf(
+            TvType.Cartoon,
+            TvType.Anime,
+        )
+
+    override fun search(query: String): ArrayList<SearchResponse>? {
+        val url = "https://www.wcostream.com/search"
+
+        val response =
+            khttp.post(
+                url,
+                headers = mapOf("Referer" to url),
+                data = mapOf("catara" to query, "konuara" to "series")
+            )
+        val document = Jsoup.parse(response.text)
+        val items = document.select("div#blog > div.cerceve")
+        if (items.isNullOrEmpty()) return ArrayList()
+        val returnValue = ArrayList<SearchResponse>()
+
+        for (item in items) {
+            val header = item.selectFirst("> div.iccerceve")
+            val titleHeader = header.selectFirst("> div.aramadabaslik > a")
+            val title = titleHeader.text()
+            val href = fixUrl(titleHeader.attr("href"))
+            val poster = fixUrl(header.selectFirst("> a > img").attr("src"))
+            val genreText = item.selectFirst("div.cerceve-tur-ve-genre").ownText()
+            if (genreText.contains("cartoon")) {
+                returnValue.add(TvSeriesSearchResponse(title, href, this.name, TvType.Cartoon, poster, null, null))
+            } else {
+                val isDubbed = genreText.contains("dubbed")
+                val set: EnumSet<DubStatus> =
+                    EnumSet.of(if (isDubbed) DubStatus.Dubbed else DubStatus.Subbed)
+                returnValue.add(
+                    AnimeSearchResponse(
+                        title,
+                        href,
+                        this.name,
+                        TvType.Anime,
+                        poster,
+                        null,
+                        null,
+                        set,
+                        null,
+                        null
+                    )
+                )
+            }
+        }
+        return returnValue
+    }
+
+    override fun load(url: String): LoadResponse? {
+        val response = khttp.get(url)
+        val document = Jsoup.parse(response.text)
+
+        val title = document.selectFirst("td.vsbaslik > h2").text()
+        val poster = fixUrl(document.selectFirst("div#cat-img-desc > div > img").attr("src"))
+        val plot = document.selectFirst("div.iltext").text()
+        val genres = document.select("div#cat-genre > div.wcobtn > a").map { it.text() }
+        val episodes = document.select("div#catlist-listview > ul > li > a").reversed().map {
+            val text = it.text()
+            val match = Regex("Season ([0-9]*) Episode ([0-9]*).*? (.*)").find(text)
+            val href = it.attr("href")
+            if (match != null) {
+                val last = match.groupValues[3]
+                return@map TvSeriesEpisode(
+                    if (last.startsWith("English")) null else last,
+                    match.groupValues[1].toIntOrNull(),
+                    match.groupValues[2].toIntOrNull(),
+                    href
+                )
+            }
+            val match2 = Regex("Episode ([0-9]*).*? (.*)").find(text)
+            if (match2 != null) {
+                val last = match2.groupValues[2]
+                return@map TvSeriesEpisode(
+                    if (last.startsWith("English")) null else last,
+                    null,
+                    match2.groupValues[1].toIntOrNull(),
+                    href
+                )
+            }
+            return@map TvSeriesEpisode(
+                text,
+                null,
+                null,
+                href
+            )
+        }
+
+        return TvSeriesLoadResponse(
+            title,
+            url,
+            this.name,
+            TvType.TvSeries,
+            episodes,
+            poster,
+            null,
+            plot,
+            null,
+            null,
+            tags = genres
+        )
+    }
+
+    data class LinkResponse(
+        //  @JsonProperty("cdn")
+        //  val cdn: String,
+        @JsonProperty("enc")
+        val enc: String,
+        @JsonProperty("hd")
+        val hd: String,
+        @JsonProperty("server")
+        val server: String,
+    )
+
+    override fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
+        val response = khttp.get(data)
+        /*val embedUrl = fixUrl(
+            Regex("itemprop=\"embedURL\" content=\"(.*?)\"").find(response.text)?.groupValues?.get(1) ?: return false
+        )*/
+        val text = response.text
+        val start = text.indexOf("itemprop=\"embedURL")
+        val foundJS = Regex("<script>(.*?)</script>").find(text, start)?.groupValues?.get(1)
+            ?.replace("document.write", "var returnValue = ")
+        println("JS: $foundJS")
+        val rhino = Context.enter()
+        rhino.initStandardObjects()
+        rhino.optimizationLevel = -1
+        val scope: Scriptable = rhino.initStandardObjects()
+
+        val decodeBase64 = "atob = function(s) {\n" +
+                "    var e={},i,b=0,c,x,l=0,a,r='',w=String.fromCharCode,L=s.length;\n" +
+                "    var A=\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/\";\n" +
+                "    for(i=0;i<64;i++){e[A.charAt(i)]=i;}\n" +
+                "    for(x=0;x<L;x++){\n" +
+                "        c=e[s.charAt(x)];b=(b<<6)+c;l+=6;\n" +
+                "        while(l>=8){((a=(b>>>(l-=8))&0xff)||(x<(L-2)))&&(r+=w(a));}\n" +
+                "    }\n" +
+                "    return r;\n" +
+                "};"
+
+        rhino.evaluateString(scope, decodeBase64 + foundJS, "JavaScript", 1, null)
+        val jsEval = scope.get("returnValue", scope) ?: return false
+        val src = fixUrl(Regex("src=\"(.*?)\"").find(jsEval as String)?.groupValues?.get(1) ?: return false)
+
+        val embedResponse = khttp.get(
+            (src),
+            headers = mapOf("Referer" to data)
+        )
+
+        val getVidLink = fixUrl(
+            Regex("get\\(\"(.*?)\"").find(embedResponse.text)?.groupValues?.get(1) ?: return false
+        )
+        val linkResponse = khttp.get(
+            getVidLink, headers = mapOf(
+                "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
+                "sec-ch-ua-mobile" to "?0",
+                "sec-fetch-dest" to "empty",
+                "sec-fetch-mode" to "cors",
+                "sec-fetch-site" to "same-origin",
+                "accept" to "*/*",
+                "x-requested-with" to "XMLHttpRequest",
+                "referer" to src.replace(" ", "%20"),
+                "user-agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                "cookie" to "countrytabs=0"
+            )
+        )
+        println("LINK:" + linkResponse.text)
+        val link = mapper.readValue<LinkResponse>(linkResponse.text)
+
+        val hdLink = "${link.server}/getvid?evid=${link.hd}"
+        val sdLink = "${link.server}/getvid?evid=${link.enc}"
+
+        if (link.hd.isNotBlank())
+            callback.invoke(
+                ExtractorLink(
+                    this.name,
+                    this.name + " HD",
+                    hdLink,
+                    "",
+                    Qualities.HD.value
+                )
+            )
+
+        if (link.enc.isNotBlank())
+            callback.invoke(
+                ExtractorLink(
+                    this.name,
+                    this.name + " SD",
+                    sdLink,
+                    "",
+                    Qualities.SD.value
+                )
+            )
+
+        return true
+    }
+}

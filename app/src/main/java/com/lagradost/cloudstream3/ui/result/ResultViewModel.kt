@@ -119,7 +119,6 @@ class ResultViewModel : ViewModel() {
                 rangeList.add("${i + 1}-${currentList.size}")
             }
         }
-        _rangeOptions.postValue(rangeList)
 
         val cRange = range ?: if (selection != null) {
             0
@@ -133,14 +132,19 @@ class ResultViewModel : ViewModel() {
             cRange
         }
 
-        selectedRangeInt.postValue(realRange)
-        selectedRange.postValue(rangeList[realRange])
-
         if (currentList.size > EPISODE_RANGE_OVERLOAD) {
             currentList = currentList.subList(
                 realRange * EPISODE_RANGE_SIZE,
                 minOf(currentList.size, (realRange + 1) * EPISODE_RANGE_SIZE)
             )
+            _rangeOptions.postValue(rangeList)
+            selectedRangeInt.postValue(realRange)
+            selectedRange.postValue(rangeList[realRange])
+        } else {
+            val allRange ="1-${currentList.size}"
+            _rangeOptions.postValue(listOf(allRange))
+            selectedRangeInt.postValue(0)
+            selectedRange.postValue(allRange)
         }
 
         _publicEpisodes.postValue(currentList)

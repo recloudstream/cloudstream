@@ -796,7 +796,7 @@ class PlayerFragment : Fragment() {
     }
 //endregion
 
-    private fun onSubStyleChanged(style : SaveCaptionStyle) {
+    private fun onSubStyleChanged(style: SaveCaptionStyle) {
         context?.let { ctx ->
             subStyle = style
             subView?.setStyle(ctx.fromSaveToStyle(style))
@@ -1131,7 +1131,7 @@ class PlayerFragment : Fragment() {
             val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
             val speedIndex = speedsNumbers.indexOf(playbackSpeed)
 
-            context?.showDialog(speedsText,speedIndex,"Player Speed", false, {
+            context?.showDialog(speedsText, speedIndex, "Player Speed", false, {
                 activity?.hideSystemUI()
             }) { index ->
                 playbackSpeed = speedsNumbers[index]
@@ -1541,8 +1541,19 @@ class PlayerFragment : Fragment() {
                         /*FastAniApi.currentHeaders?.forEach {
                             dataSource.setRequestProperty(it.key, it.value)
                         }*/
-                        if (currentUrl != null)
+                        if (currentUrl != null) {
                             dataSource.setRequestProperty("Referer", currentUrl.referer)
+                            // extra stuff
+                            dataSource.setRequestProperty(
+                                "sec-ch-ua",
+                                "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\""
+                            )
+                            dataSource.setRequestProperty("sec-ch-ua-mobile", "?0")
+                         //   dataSource.setRequestProperty("Sec-Fetch-Site", "none") //same-site
+                            dataSource.setRequestProperty("Sec-Fetch-User", "?1")
+                            dataSource.setRequestProperty("Sec-Fetch-Mode", "navigate")
+                            dataSource.setRequestProperty("Sec-Fetch-Dest", "document")
+                        }
                         dataSource
                     } else {
                         DefaultDataSourceFactory(requireContext(), USER_AGENT).createDataSource()

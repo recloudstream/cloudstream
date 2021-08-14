@@ -27,6 +27,13 @@ class WcoProvider : MainAPI() {
     override val hasMainPage: Boolean
         get() = true
 
+    override val supportedTypes: Set<TvType>
+        get() = setOf(
+            TvType.Movie,
+            TvType.Anime,
+            TvType.ONA
+        )
+
     override fun getMainPage(): HomePageResponse? {
         val urls = listOf(
             Pair("$mainUrl/ajax/list/recently_updated?type=tv", "Recently Updated Anime"),

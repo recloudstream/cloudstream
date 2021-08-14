@@ -160,7 +160,7 @@ class ShiroProvider : MainAPI() {
             val set: EnumSet<DubStatus> =
                 EnumSet.of(if (isDubbed) DubStatus.Dubbed else DubStatus.Subbed)
 
-            val episodeCount = data.episodeCount?.toIntOrNull()
+            val episodeCount = data.episodeCount.toIntOrNull()
 
             return@map AnimeSearchResponse(
                 data.name.replace("Dubbed", ""), // i.english ?: i.canonicalTitle,

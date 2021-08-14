@@ -13,6 +13,11 @@ class HDMProvider : MainAPI() {
     override val hasDownloadSupport: Boolean
         get() = false
 
+    override val supportedTypes: Set<TvType>
+        get() = setOf(
+            TvType.Movie,
+        )
+
     override fun search(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/search/$query"
         val response = khttp.get(url)

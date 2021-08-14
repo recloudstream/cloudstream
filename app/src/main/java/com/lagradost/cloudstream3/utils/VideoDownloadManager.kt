@@ -47,7 +47,7 @@ object VideoDownloadManager {
     private var currentDownloads = mutableListOf<Int>()
 
     private const val USER_AGENT =
-        "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 
     @DrawableRes
     const val imgDone = R.drawable.rddone
@@ -511,6 +511,18 @@ object VideoDownloadManager {
         connection.setRequestProperty("Accept-Encoding", "identity")
         connection.setRequestProperty("User-Agent", USER_AGENT)
         if (link.referer.isNotEmpty()) connection.setRequestProperty("Referer", link.referer)
+
+        // extra stuff
+        connection.setRequestProperty(
+            "sec-ch-ua",
+            "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\""
+        )
+        connection.setRequestProperty("sec-ch-ua-mobile", "?0")
+        //   dataSource.setRequestProperty("Sec-Fetch-Site", "none") //same-site
+        connection.setRequestProperty("Sec-Fetch-User", "?1")
+        connection.setRequestProperty("Sec-Fetch-Mode", "navigate")
+        connection.setRequestProperty("Sec-Fetch-Dest", "document")
+
         if (resume)
             connection.setRequestProperty("Range", "bytes=${fileLength}-")
         val resumeLength = (if (resume) fileLength else 0)

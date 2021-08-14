@@ -23,6 +23,12 @@ class TrailersToProvider : MainAPI() {
     override val hasChromecastSupport: Boolean
         get() = false
 
+    override val supportedTypes: Set<TvType>
+        get() = setOf(
+            TvType.Movie,
+            TvType.TvSeries,
+        )
+
     override fun getMainPage(): HomePageResponse? {
         val response = khttp.get(mainUrl)
         val document = Jsoup.parse(response.text)

@@ -94,4 +94,7 @@ dependencies {
 
     // subtitle color picker
     implementation 'com.jaredrummler:colorpicker:1.1.0'
+
+    //run JS
+    implementation 'org.mozilla:rhino:1.7R4'
 }

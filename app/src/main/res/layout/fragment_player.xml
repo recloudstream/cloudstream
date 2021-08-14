@@ -11,6 +11,9 @@
         android:screenOrientation="userLandscape"
         app:surface_type="texture_view"
 >
+    <!--
+          app:fastforward_increment="10000"
+            app:rewind_increment="10000"-->
     <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/player_view"
             app:show_timeout="0"
@@ -18,8 +21,7 @@
             app:auto_show="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:fastforward_increment="10000"
-            app:rewind_increment="10000"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

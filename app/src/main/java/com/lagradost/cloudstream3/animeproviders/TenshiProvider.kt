@@ -29,6 +29,9 @@ class TenshiProvider : MainAPI() {
     override val hasQuickSearch: Boolean
         get() = false
 
+    override val supportedTypes: Set<TvType>
+        get() = setOf(TvType.Anime, TvType.Movie, TvType.ONA)
+
     private fun autoLoadToken(): Boolean {
         if (token != null) return true
         return loadToken()
@@ -91,7 +94,11 @@ class TenshiProvider : MainAPI() {
     private fun dateParser(dateString: String): String? {
         val format = SimpleDateFormat("dd 'of' MMM',' yyyy")
         val newFormat = SimpleDateFormat("dd-MM-yyyy")
-        return newFormat.format(format.parse(dateString.replace("th ", " ").replace("st ", " ").replace("nd ", " ").replace("rd ", " ")))
+        return newFormat.format(
+            format.parse(
+                dateString.replace("th ", " ").replace("st ", " ").replace("nd ", " ").replace("rd ", " ")
+            )
+        )
     }
 
 //    data class TenshiSearchResponse(
@@ -147,14 +154,14 @@ class TenshiProvider : MainAPI() {
 
     override fun search(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/anime"
-        var response = khttp.get(url, params=mapOf("q" to query), cookies=mapOf("loop-view" to "thumb"))
+        var response = khttp.get(url, params = mapOf("q" to query), cookies = mapOf("loop-view" to "thumb"))
         var document = Jsoup.parse(response.text)
         val returnValue = parseSearchPage(document)
 
         while (!document.select("""a.page-link[rel="next"]""").isEmpty()) {
             val link = document.select("""a.page-link[rel="next"]""")
             if (link != null && !link.isEmpty()) {
-                response = khttp.get(link[0].attr("href"), cookies=mapOf("loop-view" to "thumb"))
+                response = khttp.get(link[0].attr("href"), cookies = mapOf("loop-view" to "thumb"))
                 document = Jsoup.parse(response.text)
                 returnValue.addAll(parseSearchPage(document))
             } else {
@@ -166,7 +173,7 @@ class TenshiProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val response = khttp.get(url, timeout = 120.0, cookies=mapOf("loop-view" to "thumb"))
+        val response = khttp.get(url, timeout = 120.0, cookies = mapOf("loop-view" to "thumb"))
         val document = Jsoup.parse(response.text)
 
         val englishTitle = document.selectFirst("span.value > span[title=\"English\"]")?.parent()?.text()?.trim()
@@ -177,13 +184,14 @@ class TenshiProvider : MainAPI() {
 
         val episodes = ArrayList<AnimeEpisode>(episodeNodes?.map {
             AnimeEpisode(
-            it.attr("href"),
-            it.selectFirst(".episode-title")?.text()?.trim(),
-            it.selectFirst("img")?.attr("src"),
-            dateParser(it.selectFirst(".episode-date").text().trim()).toString(),
-            null,
-            it.attr("data-content").trim(),
-        ) }
+                it.attr("href"),
+                it.selectFirst(".episode-title")?.text()?.trim(),
+                it.selectFirst("img")?.attr("src"),
+                dateParser(it.selectFirst(".episode-date").text().trim()).toString(),
+                null,
+                it.attr("data-content").trim(),
+            )
+        }
             ?: ArrayList<AnimeEpisode>())
         val status = when (document.selectFirst("li.status > .value")?.text()?.trim()) {
             "Ongoing" -> ShowStatus.Ongoing
@@ -200,7 +208,8 @@ class TenshiProvider : MainAPI() {
         val synopsis = document.selectFirst(".entry-description > .card-body")?.text()?.trim()
         val genre = document.select("li.genre.meta-data > span.value").map { it?.text()?.trim().toString() }
 
-        val synonyms = document.select("li.synonym.meta-data > div.info-box > span.value").map { it?.text()?.trim().toString() }
+        val synonyms =
+            document.select("li.synonym.meta-data > div.info-box > span.value").map { it?.text()?.trim().toString() }
 
         return AnimeLoadResponse(
             englishTitle,
@@ -231,7 +240,7 @@ class TenshiProvider : MainAPI() {
     ): Boolean {
         val response = khttp.get(data)
         val src = Jsoup.parse(response.text).selectFirst(".embed-responsive > iframe").attr("src")
-        val mp4moe = Jsoup.parse(khttp.get(src, headers=mapOf("Referer" to data)).text).selectFirst("video#player")
+        val mp4moe = Jsoup.parse(khttp.get(src, headers = mapOf("Referer" to data)).text).selectFirst("video#player")
 
         val sources = mp4moe.select("source").map {
             ExtractorLink(

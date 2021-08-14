@@ -18,6 +18,12 @@ class DubbedAnimeProvider : MainAPI() {
     override val hasQuickSearch: Boolean
         get() = true
 
+    override val supportedTypes: Set<TvType>
+        get() = setOf(
+            TvType.Movie,
+            TvType.Anime,
+        )
+
     data class QueryEpisodeResultRoot(
         @JsonProperty("result")
         val result: QueryEpisodeResult,

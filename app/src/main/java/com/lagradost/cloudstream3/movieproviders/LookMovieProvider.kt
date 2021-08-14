@@ -20,6 +20,12 @@ class LookMovieProvider : MainAPI() {
     override val mainUrl: String
         get() = "https://lookmovie.io"
 
+    override val supportedTypes: Set<TvType>
+        get() = setOf(
+            TvType.Movie,
+            TvType.TvSeries,
+        )
+
     data class LookMovieSearchResult(
         @JsonProperty("backdrop") val backdrop: String?,
         @JsonProperty("imdb_rating") val imdb_rating: String,

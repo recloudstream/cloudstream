@@ -50,7 +50,6 @@ class SearchAdapter(
             is CardViewHolder -> {
                 holder.bind(cardList[position])
             }
-
         }
     }
 
@@ -94,6 +93,7 @@ class SearchAdapter(
                 TvType.Movie -> "Movie"
                 TvType.ONA -> "ONA"
                 TvType.TvSeries -> "TV"
+                TvType.Cartoon -> "Cartoon"
             }
             // search_result_lang?.visibility = View.GONE
 

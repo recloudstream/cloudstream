@@ -6,17 +6,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.DubbedAnimeProvider
-import com.lagradost.cloudstream3.animeproviders.ShiroProvider
 import com.lagradost.cloudstream3.animeproviders.TenshiProvider
+import com.lagradost.cloudstream3.animeproviders.WatchCartoonOnlineProvider
 import com.lagradost.cloudstream3.animeproviders.WcoProvider
 import com.lagradost.cloudstream3.movieproviders.HDMProvider
-import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
 import com.lagradost.cloudstream3.movieproviders.TrailersToProvider
 import com.lagradost.cloudstream3.movieproviders.VMoveeProvider
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 
-const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
+
+const val USER_AGENT =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 val baseHeader = mapOf("User-Agent" to USER_AGENT)
 val mapper = JsonMapper.builder().addModule(KotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
@@ -37,6 +38,7 @@ object APIHolder {
         HDMProvider(),
         //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
         VMoveeProvider(),
+        WatchCartoonOnlineProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
@@ -85,6 +87,14 @@ abstract class MainAPI {
 
     open val hasMainPage = false
     open val hasQuickSearch = false
+
+    open val supportedTypes = setOf(
+        TvType.Movie,
+        TvType.TvSeries,
+        TvType.Cartoon,
+        TvType.Anime,
+        TvType.ONA
+    )
 
     open fun getMainPage(): HomePageResponse? {
         return null
@@ -177,6 +187,7 @@ enum class DubStatus {
 enum class TvType {
     Movie,
     TvSeries,
+    Cartoon,
     Anime,
     ONA,
 }
@@ -255,7 +266,7 @@ interface LoadResponse {
     val year: Int?
     val plot: String?
     val rating: Int? // 0-100
-    val tags: ArrayList<String>?
+    val tags: List<String>?
     val duration: String?
     val trailerUrl: String?
 }
@@ -290,13 +301,13 @@ data class AnimeLoadResponse(
     override val posterUrl: String?,
     override val year: Int?,
 
-    val dubEpisodes: ArrayList<AnimeEpisode>?,
-    val subEpisodes: ArrayList<AnimeEpisode>?,
+    val dubEpisodes: List<AnimeEpisode>?,
+    val subEpisodes: List<AnimeEpisode>?,
     val showStatus: ShowStatus?,
 
     override val plot: String?,
-    override val tags: ArrayList<String>? = null,
-    val synonyms: ArrayList<String>? = null,
+    override val tags: List<String>? = null,
+    val synonyms: List<String>? = null,
 
     val malId: Int? = null,
     val anilistId: Int? = null,
@@ -318,7 +329,7 @@ data class MovieLoadResponse(
 
     val imdbId: String?,
     override val rating: Int? = null,
-    override val tags: ArrayList<String>? = null,
+    override val tags: List<String>? = null,
     override val duration: String? = null,
     override val trailerUrl: String? = null,
 ) : LoadResponse
@@ -339,7 +350,7 @@ data class TvSeriesLoadResponse(
     override val url: String,
     override val apiName: String,
     override val type: TvType,
-    val episodes: ArrayList<TvSeriesEpisode>,
+    val episodes: List<TvSeriesEpisode>,
 
     override val posterUrl: String?,
     override val year: Int?,
@@ -348,7 +359,7 @@ data class TvSeriesLoadResponse(
     val showStatus: ShowStatus?,
     val imdbId: String?,
     override val rating: Int? = null,
-    override val tags: ArrayList<String>? = null,
+    override val tags: List<String>? = null,
     override val duration: String? = null,
     override val trailerUrl: String? = null,
 ) : LoadResponse
