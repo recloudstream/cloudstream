@@ -81,5 +81,6 @@
     <string name="subs_default_reset_toast">Reset to default value</string>
     <string name="preview_background">Preview Background</string>
     <string name="subs_font">Font</string>
-    <string name="search_provider_text">Search Providers</string>
+    <string name="search_provider_text_providers">Search using providers</string>
+    <string name="search_provider_text_types">Search using types</string>
 </resources>

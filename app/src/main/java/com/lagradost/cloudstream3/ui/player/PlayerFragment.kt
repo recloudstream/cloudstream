@@ -12,7 +12,6 @@ import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.database.ContentObserver
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.Icon
 import android.media.AudioManager
 import android.net.Uri
@@ -45,7 +44,6 @@ import com.google.android.exoplayer2.C.TIME_UNSET
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.CaptionStyleCompat
 import com.google.android.exoplayer2.ui.SubtitleView
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -57,8 +55,8 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.MainActivity.Companion.isInPIPMode
 import com.lagradost.cloudstream3.MainActivity.Companion.canEnterPipMode
+import com.lagradost.cloudstream3.MainActivity.Companion.isInPIPMode
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
@@ -280,6 +278,14 @@ class PlayerFragment : Fragment() {
 
         fadeAnimation.duration = 100
         fadeAnimation.fillAfter = true
+
+        subView?.let { sView ->
+            val move = if (isShowing) -((bottom_player_bar?.height?.toFloat() ?: 0f) + 10.toPx) else -subStyle.elevation.toPx.toFloat()
+            ObjectAnimator.ofFloat(sView, "translationY", move).apply {
+                duration = 200
+                start()
+            }
+        }
 
         if (!isLocked) {
             shadow_overlay?.startAnimation(fadeAnimation)
@@ -809,6 +815,11 @@ class PlayerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         subView = player_view.findViewById(R.id.exo_subtitles)
+        subView?.let { sView ->
+            (sView.parent as ViewGroup?) ?.removeView(sView)
+            subtitle_holder.addView(sView)
+        }
+
         subStyle = context?.getCurrentSavedStyle()!!
         onSubStyleChanged(subStyle)
         SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
@@ -1549,7 +1560,7 @@ class PlayerFragment : Fragment() {
                                 "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\""
                             )
                             dataSource.setRequestProperty("sec-ch-ua-mobile", "?0")
-                         //   dataSource.setRequestProperty("Sec-Fetch-Site", "none") //same-site
+                            //   dataSource.setRequestProperty("Sec-Fetch-Site", "none") //same-site
                             dataSource.setRequestProperty("Sec-Fetch-User", "?1")
                             dataSource.setRequestProperty("Sec-Fetch-Mode", "navigate")
                             dataSource.setRequestProperty("Sec-Fetch-Dest", "document")

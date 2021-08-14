@@ -120,8 +120,6 @@ class SearchFragment : Fragment() {
                 val cancelButton = dialog.findViewById<TextView>(R.id.cancel_btt)!!
                 // val applyHolder = dialog.findViewById<LinearLayout>(R.id.apply_btt_holder)!!
 
-                toggle.text = getString(R.string.search_provider_text)
-
                 val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
                 arrayAdapter.addAll(apiNames)
 
@@ -169,6 +167,9 @@ class SearchFragment : Fragment() {
                 }
 
                 fun toggleSearch(isOn: Boolean) {
+                    toggle.text =
+                        getString(if (isOn) R.string.search_provider_text_types else R.string.search_provider_text_providers)
+
                     if (isOn) {
                         listView2?.visibility = View.VISIBLE
                         listView?.visibility = View.GONE
