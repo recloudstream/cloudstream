@@ -238,7 +238,7 @@ class ResultFragment : Fragment() {
     var startAction: Int? = null
 
     private fun lateFixDownloadButton(show: Boolean) {
-        if(!show || currentType?.isMovieType() == true) {
+        if(!show || currentType?.isMovieType() == false) {
             result_movie_parent.visibility = GONE
             result_episodes_text.visibility = VISIBLE
             result_episodes.visibility = VISIBLE
