@@ -5,9 +5,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!-- <item name="android:windowBackground">@drawable/splash_background</item>-->
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:navigationBarColor">?attr/bitDarkerGrayBackground</item>
 
-        <item name="android:navigationBarColor">@color/darkBackground</item>
+        <!--<item name="android:navigationBarColor">@color/darkBackground</item>-->
         <item name="android:statusBarColor">@color/grayBackground</item>
 
         <item name="android:textColorHint">@color/searchColor</item>
@@ -45,7 +46,10 @@
         <item name="iconColor">@color/iconColor</item>
         <item name="white">#FFF</item>
     </style>
-
+    <style name="LoadedStyle">
+        <item name="android:navigationBarColor">?attr/darkBackground</item>
+        <item name="android:windowBackground">?attr/bitDarkerGrayBackground</item>
+    </style>
     <style name="AppSearchViewStyle"
            parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:searchIcon">@drawable/search_icon</item>

@@ -148,7 +148,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
         val start = text.indexOf("itemprop=\"embedURL")
         val foundJS = Regex("<script>(.*?)</script>").find(text, start)?.groupValues?.get(1)
             ?.replace("document.write", "var returnValue = ")
-        println("JS: $foundJS")
+
         val rhino = Context.enter()
         rhino.initStandardObjects()
         rhino.optimizationLevel = -1
@@ -191,7 +191,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
                 "cookie" to "countrytabs=0"
             )
         )
-        println("LINK:" + linkResponse.text)
+
         val link = mapper.readValue<LinkResponse>(linkResponse.text)
 
         val hdLink = "${link.server}/getvid?evid=${link.hd}"
