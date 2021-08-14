@@ -17,7 +17,7 @@ class TenshiProvider : MainAPI() {
 
         fun getType(t: String): TvType {
             return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
-            else if (t.contains("Movie")) TvType.Movie
+            else if (t.contains("Movie")) TvType.AnimeMovie
             else TvType.Anime
         }
     }
@@ -30,7 +30,7 @@ class TenshiProvider : MainAPI() {
         get() = false
 
     override val supportedTypes: Set<TvType>
-        get() = setOf(TvType.Anime, TvType.Movie, TvType.ONA)
+        get() = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
 
     private fun autoLoadToken(): Boolean {
         if (token != null) return true

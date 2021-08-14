@@ -20,7 +20,7 @@ class DubbedAnimeProvider : MainAPI() {
 
     override val supportedTypes: Set<TvType>
         get() = setOf(
-            TvType.Movie,
+            TvType.AnimeMovie,
             TvType.Anime,
         )
 
@@ -90,7 +90,7 @@ class DubbedAnimeProvider : MainAPI() {
             returnValue.add(
                 if (getIsMovie(href)) {
                     MovieSearchResponse(
-                        title, href, this.name, TvType.Movie, img, null
+                        title, href, this.name, TvType.AnimeMovie, img, null
                     )
                 } else {
                     AnimeSearchResponse(
@@ -127,7 +127,7 @@ class DubbedAnimeProvider : MainAPI() {
             returnValue.add(
                 if (getIsMovie(href)) {
                     MovieSearchResponse(
-                        title, href, this.name, TvType.Movie, img, null
+                        title, href, this.name, TvType.AnimeMovie, img, null
                     )
                 } else {
                     AnimeSearchResponse(
@@ -197,7 +197,7 @@ class DubbedAnimeProvider : MainAPI() {
                 episode.title,
                 realSlug,
                 this.name,
-                TvType.Movie,
+                TvType.AnimeMovie,
                 episode.serversHTML,
                 if (poster == null) null else fixUrl(poster),
                 episode.year?.toIntOrNull(),

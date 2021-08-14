@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 data class OnGoingSearch(
     val apiName: String,
-    val data: Resource<ArrayList<SearchResponse>>
+    val data: Resource<List<SearchResponse>>
 )
 
 class SearchViewModel : ViewModel() {
@@ -56,7 +56,7 @@ class SearchViewModel : ViewModel() {
         if (localSearchCounter != searchCounter) return@launch
 
         val list = ArrayList<SearchResponse>()
-        val nestedList = currentList.map { it.data }.filterIsInstance<Resource.Success<ArrayList<SearchResponse>>>().map { it.value }
+        val nestedList = currentList.map { it.data }.filterIsInstance<Resource.Success<List<SearchResponse>>>().map { it.value }
 
         // I do it this way to move the relevant search results to the top
         var index = 0

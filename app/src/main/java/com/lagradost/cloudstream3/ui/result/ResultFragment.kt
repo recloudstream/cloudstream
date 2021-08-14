@@ -899,7 +899,7 @@ class ResultFragment : Fragment() {
                             }
                         }
 
-                        if (d.type == TvType.Movie) {
+                        if (d.type.isMovieType()) {
                             val hasDownloadSupport = api.hasDownloadSupport
                             lateFixDownloadButton(true)
 

@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -16,20 +16,28 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
+import com.lagradost.cloudstream3.APIHolder.getApiTypeSettings
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.providersActive
+import com.lagradost.cloudstream3.ui.APIRepository.Companion.typesActive
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
+import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.SEARCH_PROVIDER_TOGGLE
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
+import java.util.HashSet
 
 class SearchFragment : Fragment() {
     private lateinit var searchViewModel: SearchViewModel
@@ -95,10 +103,175 @@ class SearchFragment : Fragment() {
         val searchMagIcon = main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
         searchMagIcon.scaleX = 0.65f
         searchMagIcon.scaleY = 0.65f
-        search_filter.setOnClickListener {
+        search_filter.setOnClickListener { view ->
             val apiNamesSetting = activity?.getApiSettings()
             if (apiNamesSetting != null) {
                 val apiNames = apis.map { it.name }
+                val builder =
+                    AlertDialog.Builder(view.context, R.style.AlertDialogCustom).setView(R.layout.provider_list)
+
+                val dialog = builder.create()
+                dialog.show()
+
+                val listView = dialog.findViewById<ListView>(R.id.listview1)!!
+                val listView2 = dialog.findViewById<ListView>(R.id.listview2)!!
+                val toggle = dialog.findViewById<SwitchMaterial>(R.id.toggle1)!!
+                val applyButton = dialog.findViewById<TextView>(R.id.apply_btt)!!
+                val cancelButton = dialog.findViewById<TextView>(R.id.cancel_btt)!!
+                // val applyHolder = dialog.findViewById<LinearLayout>(R.id.apply_btt_holder)!!
+
+                toggle.text = getString(R.string.search_provider_text)
+
+                val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
+                arrayAdapter.addAll(apiNames)
+
+                listView.adapter = arrayAdapter
+                listView.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
+
+                val typeChoices = listOf(
+                    Pair("Movies", listOf(TvType.Movie)),
+                    Pair("TvSeries", listOf(TvType.TvSeries)),
+                    Pair("Cartoons", listOf(TvType.Cartoon)),
+                    Pair("Anime", listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie))
+                )
+
+                val arrayAdapter2 = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
+                arrayAdapter2.addAll(typeChoices.map { it.first })
+
+                listView2.adapter = arrayAdapter2
+                listView2.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
+
+
+                /*fun updateMulti() {
+                    val set = HashSet<TvType>()
+
+                    for ((index, api) in apis.withIndex()) {
+                        if (listView?.checkedItemPositions[index]) {
+                            set.addAll(api.supportedTypes)
+                        }
+                    }
+
+                    if (set.size == 0) {
+                        set.addAll(TvType.values())
+                    }
+
+                    for ((index, choice) in typeChoices.withIndex()) {
+                        listView2?.setItemChecked(index, choice.second.any { set.contains(it) })
+                    }
+                }*/
+
+                for ((index, item) in apiNames.withIndex()) {
+                    listView.setItemChecked(index, apiNamesSetting.contains(item))
+                }
+
+                for ((index, item) in typeChoices.withIndex()) {
+                    listView2.setItemChecked(index, item.second.any { typesActive.contains(it) })
+                }
+
+                fun toggleSearch(isOn: Boolean) {
+                    if (isOn) {
+                        listView2?.visibility = View.VISIBLE
+                        listView?.visibility = View.GONE
+                    } else {
+                        listView?.visibility = View.VISIBLE
+                        listView2?.visibility = View.GONE
+                    }
+                }
+
+                val defVal = context?.getKey(SEARCH_PROVIDER_TOGGLE, true) ?: true
+                toggleSearch(defVal)
+
+                toggle.isChecked = defVal
+                toggle.setOnCheckedChangeListener { _, isOn ->
+                    toggleSearch(isOn)
+                }
+
+                listView.setOnItemClickListener { _, _, i, _ ->
+                    val types = HashSet<TvType>()
+                    for ((index, api) in apis.withIndex()) {
+                        if (listView?.checkedItemPositions[index]) {
+                            types.addAll(api.supportedTypes)
+                        }
+                    }
+                    for ((typeIndex, type) in typeChoices.withIndex()) {
+                        listView2.setItemChecked(typeIndex, type.second.any { types.contains(it) })
+                    }
+                }
+
+                listView2.setOnItemClickListener { _, _, i, _ ->
+                    for ((index, api) in apis.withIndex()) {
+                        var isSupported = false
+
+                        for ((typeIndex, type) in typeChoices.withIndex()) {
+                            if (listView2?.checkedItemPositions[typeIndex]) {
+                                if (api.supportedTypes.any { type.second.contains(it) }) {
+                                    isSupported = true
+                                }
+                            }
+                        }
+
+                        listView?.setItemChecked(
+                            index,
+                            isSupported
+                        )
+                    }
+
+                    //updateMulti()
+                }
+
+                dialog.setOnDismissListener {
+                    context?.setKey(SEARCH_PROVIDER_TOGGLE, toggle.isChecked ?: true)
+                }
+
+                applyButton.setOnClickListener {
+                    val settingsManagerLocal = PreferenceManager.getDefaultSharedPreferences(activity)
+
+                    val activeTypes = HashSet<TvType>()
+                    for ((index, name) in typeChoices.withIndex()) {
+                        if (listView2?.checkedItemPositions[index]) {
+                            activeTypes.addAll(typeChoices[index].second)
+                        }
+                    }
+
+                    if (activeTypes.size == 0) {
+                        activeTypes.addAll(TvType.values())
+                    }
+
+
+                    val activeApis = HashSet<String>()
+                    for ((index, name) in apiNames.withIndex()) {
+                        if (listView?.checkedItemPositions[index]) {
+                            activeApis.add(name)
+                        }
+                    }
+
+                    if (activeApis.size == 0) {
+                        activeApis.addAll(apiNames)
+                    }
+
+                    val edit = settingsManagerLocal.edit()
+                    edit.putStringSet(
+                        getString(R.string.search_providers_list_key),
+                        activeApis
+                    )
+                    edit.putStringSet(
+                        getString(R.string.search_types_list_key),
+                        activeTypes.map { it.name }.toSet()
+                    )
+                    edit.apply()
+                    providersActive = activeApis
+                    typesActive = activeTypes
+
+                    dialog.dismiss()
+                }
+
+                cancelButton.setOnClickListener {
+                    dialog.dismiss()
+                }
+
+                //listView.setSelection(selectedIndex)
+                // listView.setItemChecked(selectedIndex, true)
+                /*
                 val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
 
                 builder.setMultiChoiceItems(
@@ -125,7 +298,7 @@ class SearchFragment : Fragment() {
                 }
                 builder.setTitle("Search Providers")
                 builder.setNegativeButton("Ok") { _, _ -> }
-                builder.show()
+                builder.show()*/
             }
         }
 
@@ -178,6 +351,7 @@ class SearchFragment : Fragment() {
 
         activity?.let {
             providersActive = it.getApiSettings()
+            typesActive = it.getApiTypeSettings()
         }
 
         main_search.setOnQueryTextFocusChangeListener { searchView, b ->
@@ -205,8 +379,8 @@ class SearchFragment : Fragment() {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
         val isAdvancedSearch = settingsManager.getBoolean("advanced_search", true)
 
-        search_master_recycler.visibility = if(isAdvancedSearch) View.VISIBLE else View.GONE
-        cardSpace.visibility = if(!isAdvancedSearch) View.VISIBLE else View.GONE
+        search_master_recycler.visibility = if (isAdvancedSearch) View.VISIBLE else View.GONE
+        cardSpace.visibility = if (!isAdvancedSearch) View.VISIBLE else View.GONE
 
         // SubtitlesFragment.push(activity)
         //searchViewModel.search("iron man")

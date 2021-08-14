@@ -13,7 +13,7 @@ class WcoProvider : MainAPI() {
     companion object {
         fun getType(t: String): TvType {
             return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
-            else if (t.contains("Movie")) TvType.Movie
+            else if (t.contains("Movie")) TvType.AnimeMovie
             else TvType.Anime
         }
     }
@@ -29,7 +29,7 @@ class WcoProvider : MainAPI() {
 
     override val supportedTypes: Set<TvType>
         get() = setOf(
-            TvType.Movie,
+            TvType.AnimeMovie,
             TvType.Anime,
             TvType.ONA
         )
@@ -91,9 +91,9 @@ class WcoProvider : MainAPI() {
             val type = i.selectFirst(".film-detail.film-detail-fix > div > span:nth-child(3)").text()
 
             returnValue.add(
-                if (getType(type) == TvType.Movie) {
+                if (getType(type) == TvType.AnimeMovie) {
                     MovieSearchResponse(
-                        title, href, this.name, TvType.Movie, img, year
+                        title, href, this.name, TvType.AnimeMovie, img, year
                     )
                 } else {
                     AnimeSearchResponse(
@@ -152,9 +152,9 @@ class WcoProvider : MainAPI() {
             val type = filmInfo?.select("span")?.get(1)?.text().toString()
             if (title != "null") {
                 returnValue.add(
-                    if (getType(type) == TvType.Movie) {
+                    if (getType(type) == TvType.AnimeMovie) {
                         MovieSearchResponse(
-                            title, href, this.name, TvType.Movie, img, year
+                            title, href, this.name, TvType.AnimeMovie, img, year
                         )
                     } else {
                         AnimeSearchResponse(

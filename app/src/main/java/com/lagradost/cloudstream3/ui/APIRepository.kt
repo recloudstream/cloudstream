@@ -9,11 +9,12 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 class APIRepository(val api: MainAPI) {
     companion object {
         var providersActive = HashSet<String>()
+        var typesActive = HashSet<TvType>()
     }
 
     val name: String get() = api.name
     val mainUrl: String get() = api.mainUrl
-    val hasQuickSearch: Boolean  get() = api.hasQuickSearch
+    val hasQuickSearch: Boolean get() = api.hasQuickSearch
 
     suspend fun load(url: String): Resource<LoadResponse> {
         return safeApiCall {
@@ -22,9 +23,10 @@ class APIRepository(val api: MainAPI) {
         }
     }
 
-    suspend fun search(query: String): Resource<ArrayList<SearchResponse>> {
+    suspend fun search(query: String): Resource<List<SearchResponse>> {
         return safeApiCall {
-            api.search(query) ?: throw ErrorLoadingException()
+            return@safeApiCall (api.search(query)
+                ?: throw ErrorLoadingException()).filter { typesActive.contains(it.type) }.toList()
         }
     }
 

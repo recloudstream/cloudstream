@@ -4,9 +4,10 @@
     <string name="title_search">Search</string>
     <string name="title_downloads">Downloads</string>
     <string name="title_settings">Settings</string>
-    <string name="search_hint">Search...</string>
+    <string name="search_hint">Search…</string>
     <string name="change_providers_descript">Change Providers</string>
     <string name="search_providers_list_key">search_providers_list</string>
+    <string name="search_types_list_key">search_type_list</string>
     <string name="grid_format_key">grid_format</string>
     <string name="search_poster_descript">Poster</string>
     <string name="no_data">No Data</string>
@@ -80,4 +81,5 @@
     <string name="subs_default_reset_toast">Reset to default value</string>
     <string name="preview_background">Preview Background</string>
     <string name="subs_font">Font</string>
+    <string name="search_provider_text">Search Providers</string>
 </resources>

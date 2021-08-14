@@ -91,6 +91,7 @@ class SearchAdapter(
             textType?.text = when (card.type) {
                 TvType.Anime -> "Anime"
                 TvType.Movie -> "Movie"
+                TvType.AnimeMovie -> "Movie"
                 TvType.ONA -> "ONA"
                 TvType.TvSeries -> "TV"
                 TvType.Cartoon -> "Cartoon"

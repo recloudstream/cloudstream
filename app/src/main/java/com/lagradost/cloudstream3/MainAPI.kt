@@ -69,6 +69,23 @@ object APIHolder {
             setOf(apis[defProvider].name)
         )?.toHashSet() ?: hashSetOf(apis[defProvider].name)
     }
+
+    fun Activity.getApiTypeSettings(): HashSet<TvType> {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val list = settingsManager.getStringSet(
+            this.getString(R.string.search_types_list_key),
+            setOf(apis[defProvider].name)
+        )
+        val hashSet = HashSet<TvType>()
+        hashSet.addAll(TvType.values())
+        if(list.isNullOrEmpty()) return hashSet
+
+        val names = TvType.values().map { it.name }.toHashSet()
+        val realSet = list.filter { names.contains(it) }.map { TvType.valueOf(it) }.toHashSet()
+        if(realSet.isEmpty()) return hashSet
+
+        return realSet
+    }
 }
 
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
@@ -186,6 +203,7 @@ enum class DubStatus {
 
 enum class TvType {
     Movie,
+    AnimeMovie,
     TvSeries,
     Cartoon,
     Anime,
@@ -194,7 +212,7 @@ enum class TvType {
 
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH
 fun TvType.isMovieType(): Boolean {
-    return this == TvType.Movie
+    return this == TvType.Movie || this == TvType.AnimeMovie
 }
 
 data class SubtitleFile(val lang: String, val url: String)
