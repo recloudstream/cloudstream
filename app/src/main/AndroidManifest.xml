@@ -30,11 +30,24 @@
                 android:supportsPictureInPicture="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
 
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:scheme="https" android:host="bestdubbedanime.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="tenshi.moe" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.wcostream.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="wcostream.cc" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="hdm.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="lookmovie.io" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="trailers.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.vmovee.watch" android:pathPrefix="/"/>
+            </intent-filter>
+        </activity>
 
         <receiver
                 android:name=".receivers.VideoDownloadRestartReceiver"

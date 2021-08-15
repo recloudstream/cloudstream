@@ -87,6 +87,7 @@
                         android:id="@+id/home_main_poster"
                         tools:src="@drawable/example_poster"
                         android:layout_gravity="center"
+                        android:scaleType="centerCrop"
                         android:layout_width="150dp"
                         android:layout_height="212dp"
                         android:contentDescription="@string/home_main_poster">

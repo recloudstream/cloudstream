@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -16,6 +17,8 @@ class DubbedAnimeProvider : MainAPI() {
     override val name: String
         get() = "DubbedAnime"
     override val hasQuickSearch: Boolean
+        get() = true
+    override val hasMainPage: Boolean
         get() = true
 
     override val supportedTypes: Set<TvType>
@@ -57,6 +60,67 @@ class DubbedAnimeProvider : MainAPI() {
         @JsonProperty("tags") val tags: String,*/
     )
 
+    private fun parseDocumentTrending(url: String): List<SearchResponse> {
+        val response = khttp.get(url)
+        val document = Jsoup.parse(response.text)
+        return document.select("li > a").map {
+            val href = fixUrl(it.attr("href"))
+            val title = it.selectFirst("> div > div.cittx").text()
+            val poster = fixUrl(it.selectFirst("> div > div.imghddde > img").attr("src"))
+            AnimeSearchResponse(
+                title,
+                href,
+                this.name,
+                TvType.Anime,
+                poster,
+                null,
+                null,
+                EnumSet.of(DubStatus.Dubbed),
+                null,
+                null
+            )
+        }
+    }
+
+    private fun parseDocument(url: String, trimEpisode: Boolean = false): List<SearchResponse> {
+        val response = khttp.get(url)
+        val document = Jsoup.parse(response.text)
+        return document.select("a.grid__link").map {
+            val href = fixUrl(it.attr("href"))
+            val title = it.selectFirst("> div.gridtitlek").text()
+            val poster = fixUrl(it.selectFirst("> img.grid__img").attr("src"))
+            AnimeSearchResponse(
+                title,
+                if (trimEpisode) href.removeRange(href.lastIndexOf('/'), href.length) else href,
+                this.name,
+                TvType.Anime,
+                poster,
+                null,
+                null,
+                EnumSet.of(DubStatus.Dubbed),
+                null,
+                null
+            )
+        }
+    }
+
+    override fun getMainPage(): HomePageResponse {
+        val trendingUrl = "$mainUrl/xz/trending.php?_=$unixTimeMS"
+        val lastEpisodeUrl = "$mainUrl/xz/epgrid.php?p=1&_=$unixTimeMS"
+        val recentlyAddedUrl = "$mainUrl/xz/gridgrabrecent.php?p=1&_=$unixTimeMS"
+        //val allUrl = "$mainUrl/xz/gridgrab.php?p=1&limit=12&_=$unixTimeMS"
+
+        val listItems = listOf(
+            HomePageList("Trending", parseDocumentTrending(trendingUrl)),
+            HomePageList("Recently Added", parseDocument(recentlyAddedUrl)),
+            HomePageList("Recent Releases", parseDocument(lastEpisodeUrl, true)),
+           // HomePageList("All", parseDocument(allUrl))
+        )
+
+        return HomePageResponse(listItems)
+    }
+
+
     private fun getAnimeEpisode(slug: String, isMovie: Boolean): EpisodeInfo {
         val url =
             mainUrl + (if (isMovie) "/movies/jsonMovie" else "/xz/v3/jsonEpi") + ".php?slug=$slug&_=$unixTime"
@@ -76,8 +140,8 @@ class DubbedAnimeProvider : MainAPI() {
         return href.replace("$mainUrl/", "")
     }
 
-    override fun quickSearch(query: String): ArrayList<SearchResponse> {
-        val url = "$mainUrl/xz/searchgrid.php?p=1&limit=12&s=$query&_=${unixTime}"
+    override fun quickSearch(query: String): List<SearchResponse> {
+        val url = "$mainUrl/xz/searchgrid.php?p=1&limit=12&s=$query&_=$unixTime"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
         val items = document.select("div.grid__item > a")
@@ -111,7 +175,7 @@ class DubbedAnimeProvider : MainAPI() {
         return returnValue
     }
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/$query"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
@@ -188,9 +252,8 @@ class DubbedAnimeProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val slug = url.replace("$mainUrl/","")
-        if (getIsMovie(slug)) {
-            val realSlug = slug.replace("movies/", "")
+        if (getIsMovie(url)) {
+            val realSlug = url.replace("movies/", "")
             val episode = getAnimeEpisode(realSlug, true)
             val poster = episode.previewImg ?: episode.wideImg
             return MovieLoadResponse(
@@ -205,7 +268,7 @@ class DubbedAnimeProvider : MainAPI() {
                 null
             )
         } else {
-            val response = khttp.get("$mainUrl/$slug")
+            val response = khttp.get(url)
             val document = Jsoup.parse(response.text)
             val title = document.selectFirst("h4").text()
             val descriptHeader = document.selectFirst("div.animeDescript")
@@ -220,7 +283,18 @@ class DubbedAnimeProvider : MainAPI() {
 
             val img = fixUrl(document.select("div.fkimgs > img").attr("src"))
             return AnimeLoadResponse(
-                null, null, title, "$mainUrl/$slug", this.name, TvType.Anime, img, year, ArrayList(episodes), null, null, descript,
+                null,
+                null,
+                title,
+                url,
+                this.name,
+                TvType.Anime,
+                img,
+                year,
+                ArrayList(episodes),
+                null,
+                null,
+                descript,
             )
         }
     }

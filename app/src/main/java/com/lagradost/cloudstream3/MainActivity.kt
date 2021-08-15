@@ -32,8 +32,10 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
+import kotlin.concurrent.thread
 
 const val VLC_PACKAGE = "org.videolan.vlc"
 const val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
@@ -295,6 +297,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             createISO()
         }*/
         handleAppIntent(intent)
+
+        thread {
+            runAutoUpdate()
+        }
     }
 
 }

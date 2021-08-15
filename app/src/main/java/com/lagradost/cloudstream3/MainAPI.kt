@@ -5,10 +5,7 @@ import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.lagradost.cloudstream3.animeproviders.DubbedAnimeProvider
-import com.lagradost.cloudstream3.animeproviders.TenshiProvider
-import com.lagradost.cloudstream3.animeproviders.WatchCartoonOnlineProvider
-import com.lagradost.cloudstream3.animeproviders.WcoProvider
+import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.movieproviders.HDMProvider
 import com.lagradost.cloudstream3.movieproviders.TrailersToProvider
 import com.lagradost.cloudstream3.movieproviders.VMoveeProvider
@@ -25,6 +22,8 @@ val mapper = JsonMapper.builder().addModule(KotlinModule())
 object APIHolder {
     val unixTime: Long
         get() = System.currentTimeMillis() / 1000L
+    val unixTimeMS: Long
+        get() = System.currentTimeMillis()
 
     private const val defProvider = 0
 
@@ -117,11 +116,11 @@ abstract class MainAPI {
         return null
     }
 
-    open fun search(query: String): ArrayList<SearchResponse>? {
+    open fun search(query: String): List<SearchResponse>? {
         return null
     }
 
-    open fun quickSearch(query: String): ArrayList<SearchResponse>? {
+    open fun quickSearch(query: String): List<SearchResponse>? {
         return null
     }
 

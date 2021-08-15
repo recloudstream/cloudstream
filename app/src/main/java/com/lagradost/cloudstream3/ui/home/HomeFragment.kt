@@ -122,7 +122,12 @@ class HomeFragment : Fragment() {
             val MAX_BREAK_COUNT = 10
 
             while (random?.posterUrl == null) {
-                random = home.items.random().list.random()
+                try {
+                    random = home.items.random().list.random()
+                } catch (e : Exception) {
+                    // probs Collection is empty.
+                }
+
                 breakCount++
                 if (breakCount > MAX_BREAK_COUNT) {
                     break

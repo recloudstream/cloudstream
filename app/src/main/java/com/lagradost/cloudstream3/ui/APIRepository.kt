@@ -18,8 +18,7 @@ class APIRepository(val api: MainAPI) {
 
     suspend fun load(url: String): Resource<LoadResponse> {
         return safeApiCall {
-            // remove suffix for some slugs to handle correctly
-            api.load(url.removeSuffix("/")) ?: throw ErrorLoadingException()
+            api.load(api.fixUrl(url)) ?: throw ErrorLoadingException()
         }
     }
 
@@ -30,7 +29,7 @@ class APIRepository(val api: MainAPI) {
         }
     }
 
-    suspend fun quickSearch(query: String): Resource<ArrayList<SearchResponse>> {
+    suspend fun quickSearch(query: String): Resource<List<SearchResponse>> {
         return safeApiCall {
             api.quickSearch(query) ?: throw ErrorLoadingException()
         }
