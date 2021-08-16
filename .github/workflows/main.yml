@@ -7,19 +7,21 @@ on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Run Gradle command
       uses: Raul6469/android-gradle-action@2.0.0
       with:
-        # The gradle command you wish to run (required)
-        # Here, `./gradlew test` will be run
         script: assembleDebug
+        # In some cases, you may need to provide
+        # Android licence agreement id
+        # You can find it on your own machine under `$ANDROID_HOME/license`,
+        # and add the file content as a GitHub secret named `$ANDROID_LICENCE`.
+        # android-licence: ${{ secrets.ANDROID_LICENCE }}
+        
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: pull-request-build
-        path: "build/outputs/apk/*.apk"
+        path: "app/build/outputs/apk/debug/*.apk"
