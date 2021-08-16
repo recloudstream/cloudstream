@@ -38,6 +38,7 @@ class InAppUpdater {
             @JsonProperty("body") val body: String, // Desc
             @JsonProperty("assets") val assets: List<GithubAsset>,
             @JsonProperty("target_commitish") val target_commitish: String, // branch
+            @JsonProperty("prerelease") var prerelease: Boolean,
         )
 
         data class Update(
@@ -67,7 +68,9 @@ class InAppUpdater {
                         versionRegex.find(it.name)?.groupValues?.get(2)
                     }).toList().lastOrNull()*/
                 val found =
-                    response.sortedWith(compareBy { release ->
+                    response.filter({ rel -> 
+                        !rel.prerelease
+                    }).sortedWith(compareBy { release ->
                         release.assets.filter { it.content_type == "application/vnd.android.package-archive" }
                             .getOrNull(0)?.name?.let { it1 ->
                                 versionRegex.find(
