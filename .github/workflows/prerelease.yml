@@ -1,0 +1,28 @@
+name: Pre-release
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Gradle command
+      uses: Raul6469/android-gradle-action@2.0.0
+      with:
+        script: assembleDebug
+        # In some cases, you may need to provide
+        # Android licence agreement id
+        # You can find it on your own machine under `$ANDROID_HOME/license`,
+        # and add the file content as a GitHub secret named `$ANDROID_LICENCE`.
+        # android-licence: ${{ secrets.ANDROID_LICENCE }}
+        
+    - name: Create pre-release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "pre-release"
+        prerelease: true
+        title: "Pre-release Build"
+        files: |
+          app/build/outputs/apk/debug/*.apk
