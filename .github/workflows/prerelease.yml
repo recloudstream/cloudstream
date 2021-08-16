@@ -2,6 +2,10 @@ name: Pre-release
 
 on: [push]
 
+concurrency: 
+  group: "pre-release"
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
