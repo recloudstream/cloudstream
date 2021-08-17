@@ -30,6 +30,7 @@ object APIHolder {
     val apis = arrayListOf(
         TrailersToProvider(),
         //ShiroProvider(), // v2 fucked me
+        AnimePahe(),
         TenshiProvider(),
         WcoProvider(),
         // MeloMovieProvider(), // Captcha for links
