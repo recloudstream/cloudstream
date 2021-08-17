@@ -38,7 +38,7 @@ class InAppUpdater {
             @JsonProperty("body") val body: String, // Desc
             @JsonProperty("assets") val assets: List<GithubAsset>,
             @JsonProperty("target_commitish") val target_commitish: String, // branch
-            @JsonProperty("prerelease") var prerelease: Boolean,
+            @JsonProperty("prerelease") val prerelease: Boolean,
         )
 
         data class Update(
