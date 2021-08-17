@@ -10,7 +10,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class AnimePahe : MainAPI() {
+class AnimePaheProvider : MainAPI() {
     companion object {
         var cookies = CookieJar()
         private fun getType(t: String): TvType {
