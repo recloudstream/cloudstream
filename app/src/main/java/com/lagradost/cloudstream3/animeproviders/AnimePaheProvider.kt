@@ -5,6 +5,8 @@ import khttp.structures.cookie.CookieJar
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 import java.util.*
 import kotlin.collections.ArrayList
@@ -30,10 +32,10 @@ class AnimePaheProvider : MainAPI() {
         }
         val YTSM = "ysmm = '([^']+)".toRegex()
 
-        val KWIK_PARAMS_RE = """\(\"(\w+)\",\d+,\"(\w+)\",(\d+),(\d+),\d+\)""".toRegex()
-        val KWIK_D_URL = "action=\"([^\"]+)\"".toRegex()
-        val KWIK_D_TOKEN = "value=\"([^\"]+)\"".toRegex()
-        val YOUTUBE_VIDEO_LINK = """(^(?:https?:)?(?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube(?:\-nocookie)?\.(?:[A-Za-z]{2,4}|[A-Za-z]{2,3}\.[A-Za-z]{2})\/)(?:watch|embed\/|vi?\/)*(?:\?[\w=&]*vi?=)?[^#&\?\/]{11}.*${'$'})""".toRegex()
+        val KWIK_PARAMS_RE = Regex("""\(\"(\w+)\",\d+,\"(\w+)\",(\d+),(\d+),\d+\)""")
+        val KWIK_D_URL = Regex("action=\"([^\"]+)\"")
+        val KWIK_D_TOKEN = Regex("value=\"([^\"]+)\"")
+        val YOUTUBE_VIDEO_LINK = Regex("""(^(?:https?:)?(?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube(?:\-nocookie)?\.(?:[A-Za-z]{2,4}|[A-Za-z]{2,3}\.[A-Za-z]{2})\/)(?:watch|embed\/|vi?\/)*(?:\?[\w=&]*vi?=)?[^#&\?\/]{11}.*${'$'})""")
     }
 
     override val mainUrl: String
@@ -224,8 +226,8 @@ class AnimePaheProvider : MainAPI() {
         }
     }
 
-    override fun load(url: String): LoadResponse {
-        try {
+    override fun load(url: String): LoadResponse? {
+        return normalSafeApiCall {
             val html = khttp.get(url).text
             val doc = Jsoup.parse(html)
 
@@ -240,6 +242,7 @@ class AnimePaheProvider : MainAPI() {
             } else {
                 null
             }
+
             val episodes = generateListOfEpisodes(url) ?: ArrayList<AnimeEpisode>()
             val year = """<strong>Aired:<\/strong>[^,]*, (\d+)""".toRegex().find(html)!!.destructured?.component1()?.toIntOrNull()
             val status = when ("""<strong>Status:<\/strong>[^a]*a href=[\"']\/anime\/(.*?)[\"']""".toRegex().find(html)!!.destructured?.component1().toString()) {
@@ -262,7 +265,7 @@ class AnimePaheProvider : MainAPI() {
                 }
             }
 
-            return AnimeLoadResponse(
+            AnimeLoadResponse(
                 title,
                 japTitle,
                 title.toString(),
@@ -284,10 +287,6 @@ class AnimePaheProvider : MainAPI() {
                 null,
                 trailer
             )
-        } catch (e: Exception) {
-            println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-            e.printStackTrace()
-            throw e
         }
     }
 
@@ -330,7 +329,7 @@ class AnimePaheProvider : MainAPI() {
             acc += (when(isNumber("$i")) {
                 true -> "$i".toLong()
                 false -> "0".toLong()
-            }) * pow(s1, n)
+            }) * Math.pow(s1.toDouble(), n.toDouble()).toInt()
         }
 
         var k = ""
@@ -432,11 +431,16 @@ class AnimePaheProvider : MainAPI() {
 
         var responseCode = 302
         var adflyContent: khttp.responses.Response? = null
+        var tries = 0
 
-        while (responseCode != 200) {
+        while (responseCode != 200 && tries < 20) {
             adflyContent = khttp.get(khttp.get(adflyUri, cookies=cookies, allowRedirects = false).headers.getValue("location"), cookies=cookies, allowRedirects = false)
             cookies.putAll(adflyContent.cookies.toMap())
             responseCode = adflyContent.statusCode
+            ++tries
+        }
+        if (tries > 19) {
+            throw Exception("Failed to bypass adfly.")
         }
         return decodeAdfly(YTSM.find(adflyContent?.text.toString())!!.destructured.component1())
     }
@@ -452,8 +456,9 @@ class AnimePaheProvider : MainAPI() {
         var content: khttp.responses.Response? = null
 
         var code = 419
+        var tries = 0
 
-        while (code != 302) {
+        while (code != 302 && tries < 20) {
             content = khttp.post(
                 uri,
                 allowRedirects = false,
@@ -462,6 +467,10 @@ class AnimePaheProvider : MainAPI() {
                 cookies=cookieStrToMap(fContent.headers.getValue("set-cookie").replace("path=/,", ""))
             )
             code = content.statusCode
+            ++tries
+        }
+        if (tries > 19) {
+            throw Exception("Failed to extract the stream uri from kwik.")
         }
         return content?.headers?.getValue("location").toString()
     }
@@ -502,7 +511,7 @@ class AnimePaheProvider : MainAPI() {
                         "KWIK - ${quality.key} [${quality.value.audio ?: "jpn"}]",
                         getStreamUrlFromKwik(quality.value.kwikAdfly),
                         "",
-                        quality.key.toInt(),
+                        getQualityFromName(quality.key),
                         false
                     )
                 )
