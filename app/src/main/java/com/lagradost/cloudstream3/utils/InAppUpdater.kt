@@ -16,6 +16,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import java.io.*
 import java.net.URL
 import java.net.URLConnection
@@ -48,7 +49,7 @@ class InAppUpdater {
         )
 		
 		data class GithubTag(
-			@JsonProperty("object") val object: GithubObject,
+			@JsonProperty("object") val github_object: GithubObject,
 		)
 
         data class Update(
@@ -63,50 +64,84 @@ class InAppUpdater {
 
         private fun Activity.getAppUpdate(): Update {
             try {
-                val url = "https://api.github.com/repos/LagradOst/CloudStream-3/releases"
-                val headers = mapOf("Accept" to "application/vnd.github.v3+json")
-                val response =
-                    mapper.readValue<List<GithubRelease>>(khttp.get(url, headers = headers).text)
-
-                val versionRegex = Regex("""(.*?((\d)\.(\d)\.(\d)).*\.apk)""")
-
-                /*
-                val releases = response.map { it.assets }.flatten()
-                    .filter { it.content_type == "application/vnd.android.package-archive" }
-                val found =
-                    releases.sortedWith(compareBy {
-                        versionRegex.find(it.name)?.groupValues?.get(2)
-                    }).toList().lastOrNull()*/
-                val found =
-                    response.filter({ rel -> 
-                        !rel.prerelease
-                    }).sortedWith(compareBy { release ->
-                        release.assets.filter { it.content_type == "application/vnd.android.package-archive" }
-                            .getOrNull(0)?.name?.let { it1 ->
-                                versionRegex.find(
-                                    it1
-                                )?.groupValues?.get(2)
-                            }
-                    }).toList().lastOrNull()
-                val foundAsset = found?.assets?.getOrNull(0)
-                val currentVersion = packageName?.let {
-                    packageManager.getPackageInfo(it,
-                        0)
-                }
-
-                val foundVersion = foundAsset?.name?.let { versionRegex.find(it) }
-                val shouldUpdate = if (found != null && foundAsset?.browser_download_url != "" && foundVersion != null) currentVersion?.versionName?.compareTo(
-                    foundVersion.groupValues[2]
-                )!! < 0 else false
-                return if (foundVersion != null) {
-                    Update(shouldUpdate, foundAsset.browser_download_url, foundVersion.groupValues[2], found.body)
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+                return if (settingsManager.getBoolean(getString(R.string.prerelease_update_key), false)) {
+                    getPreReleaseUpdate()
                 } else {
-                    Update(false, null, null, null)
+                    getReleaseUpdate()
                 }
-
             } catch (e: Exception) {
                 println(e)
                 return Update(false, null, null, null)
+            }
+        }
+
+        private fun Activity.getReleaseUpdate(): Update {
+            val url = "https://api.github.com/repos/LagradOst/CloudStream-3/releases"
+            val headers = mapOf("Accept" to "application/vnd.github.v3+json")
+            val response =
+                    mapper.readValue<List<GithubRelease>>(khttp.get(url, headers = headers).text)
+
+            val versionRegex = Regex("""(.*?((\d)\.(\d)\.(\d)).*\.apk)""")
+
+            /*
+            val releases = response.map { it.assets }.flatten()
+                .filter { it.content_type == "application/vnd.android.package-archive" }
+            val found =
+                releases.sortedWith(compareBy {
+                    versionRegex.find(it.name)?.groupValues?.get(2)
+                }).toList().lastOrNull()*/
+            val found =
+                    response.filter { rel ->
+                        !rel.prerelease
+                    }.sortedWith(compareBy { release ->
+                        release.assets.filter { it.content_type == "application/vnd.android.package-archive" }
+                                .getOrNull(0)?.name?.let { it1 ->
+                                    versionRegex.find(
+                                            it1
+                                    )?.groupValues?.get(2)
+                                }
+                    }).toList().lastOrNull()
+            val foundAsset = found?.assets?.getOrNull(0)
+            val currentVersion = packageName?.let {
+                packageManager.getPackageInfo(it,
+                        0)
+            }
+
+            val foundVersion = foundAsset?.name?.let { versionRegex.find(it) }
+            val shouldUpdate = if (found != null && foundAsset?.browser_download_url != "" && foundVersion != null) currentVersion?.versionName?.compareTo(
+                    foundVersion.groupValues[2]
+            )!! < 0 else false
+            return if (foundVersion != null) {
+                Update(shouldUpdate, foundAsset.browser_download_url, foundVersion.groupValues[2], found.body)
+            } else {
+                Update(false, null, null, null)
+            }
+        }
+
+        private fun Activity.getPreReleaseUpdate(): Update {
+            // TODO: change url
+            val tagUrl = "https://api.github.com/repos/C10udburst/CloudStream-3/git/ref/tags/pre-release"
+            val releaseUrl = "https://api.github.com/repos/C10udburst/CloudStream-3/releases"
+            val headers = mapOf("Accept" to "application/vnd.github.v3+json")
+            val response =
+                mapper.readValue<List<GithubRelease>>(khttp.get(releaseUrl, headers = headers).text)
+
+            val found =
+                response.lastOrNull { rel ->
+                    rel.prerelease
+                }
+            val foundAsset = found?.assets?.getOrNull(0)
+
+            val tagResponse =
+                mapper.readValue<GithubTag>(khttp.get(tagUrl, headers = headers).text)
+
+            val shouldUpdate = (getString(R.string.prerelease_commit_hash) != tagResponse.github_object.sha)
+
+            return if (foundAsset != null) {
+                Update(shouldUpdate, foundAsset.browser_download_url, tagResponse.github_object.sha, found.body)
+            } else {
+                Update(false, null, null, null)
             }
         }
 
