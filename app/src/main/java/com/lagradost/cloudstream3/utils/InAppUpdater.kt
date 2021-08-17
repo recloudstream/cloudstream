@@ -41,6 +41,16 @@ class InAppUpdater {
             @JsonProperty("prerelease") var prerelease: Boolean,
         )
 
+        data class GithubObject(
+            @JsonProperty("sha") val sha: String, // sha 256 hash
+			@JsonProperty("type") val type: String, // object type
+			@JsonProperty("url") val url: String,
+        )
+		
+		data class GithubTag(
+			@JsonProperty("object") val object: GithubObject,
+		)
+
         data class Update(
             @JsonProperty("shouldUpdate") val shouldUpdate: Boolean,
             @JsonProperty("updateURL") val updateURL: String?,
