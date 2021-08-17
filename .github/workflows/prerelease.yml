@@ -1,0 +1,37 @@
+name: Pre-release
+
+on:
+  push:
+    branches: [ master ]
+
+concurrency: 
+  group: "pre-release"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Update prerelease_commit_hash
+      run: |
+        COMMIT_HASH="$(git log -1 --format='%H')"
+        sed -i "s/<string name=\"prerelease_commit_hash\">unknown_prerelease<\/string>/<string name=\"prerelease_commit_hash\">$COMMIT_HASH<\/string>/g" app/src/main/res/values/strings.xml
+    - name: Run Gradle
+      run: ./gradlew assembleDebug
+    - name: Create pre-release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "pre-release"
+        prerelease: true
+        title: "Pre-release Build"
+        files: |
+          app/build/outputs/apk/debug/*.apk

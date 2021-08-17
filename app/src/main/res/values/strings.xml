@@ -84,5 +84,8 @@
     <string name="search_provider_text_providers">Search using providers</string>
     <string name="search_provider_text_types">Search using types</string>
     <string name="auto_update_key">auto_update</string>
+    <string name="prerelease_update_key">prerelease_update</string>
     <string name="manual_check_update_key">manual_check_update</string>
+
+    <string name="prerelease_commit_hash">unknown_prerelease</string>
 </resources>

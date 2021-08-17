@@ -1,0 +1,23 @@
+name: Artifact Build
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Run Gradle
+      run: ./gradlew assembleDebug
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: pull-request-build
+        path: "app/build/outputs/apk/debug/*.apk"

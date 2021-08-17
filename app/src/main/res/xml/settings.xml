@@ -91,6 +91,13 @@
                 app:defaultValue="true"
                 android:icon="@drawable/ic_baseline_notifications_active_24"
         />
+        <SwitchPreference
+                app:key="@string/prerelease_update_key"
+                android:title="Update to prereleases"
+                android:summary="Search for prerelease updates instead of full releases only"
+                app:defaultValue="false"
+                android:icon="@drawable/ic_baseline_developer_mode_24"
+        />
         <Preference
                 android:title="Check for Update"
                 app:key="@string/manual_check_update_key"
