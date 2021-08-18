@@ -3,6 +3,8 @@ name: Pre-release
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - '*.md'
 
 concurrency: 
   group: "pre-release"
