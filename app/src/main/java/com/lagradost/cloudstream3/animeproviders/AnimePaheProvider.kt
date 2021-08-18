@@ -295,17 +295,6 @@ class AnimePaheProvider : MainAPI() {
         return s?.toIntOrNull() != null
     }
 
-    private fun pow(base: Int, expo: Int): Long{
-        // does not handle infinity
-        var exponent = expo
-        var result: Long = 1
-
-        while (exponent != 0) {
-            result *= base.toLong()
-            --exponent
-        }
-        return result
-    }
 
     private fun cookieStrToMap(cookie: String): Map<String, String> {
         val cookies = mutableMapOf<String, String>()
