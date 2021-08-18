@@ -5,7 +5,27 @@ plugins {
     id 'kotlin-android-extensions'
 }
 
+def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+def allFilesFromDir = new File(tmpFilePath).listFiles()
+def prerelaseStoreFile = null
+if (allFilesFromDir != null) {
+    prerelaseStoreFile = allFilesFromDir.first()
+}
+
+
 android {
+    signingConfigs {
+        prerelease {
+
+            if (prerelaseStoreFile != null) {
+                storeFile = file(prerelaseStoreFile)
+                storePassword System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+            }
+
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -25,6 +45,14 @@ android {
 
     buildTypes {
         release {
+            minifyEnabled false
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        prerelease {
+            buildConfigField("boolean", "BETA", "true")
+            signingConfig signingConfigs.prerelease
+            versionNameSuffix '-PRE'
             minifyEnabled false
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
