@@ -207,8 +207,8 @@ class AnimePaheProvider : MainAPI() {
                     )
                 }
             } else {
-                for (page in 0..lastPage) {
-                    for (i in 0..perPage) {
+                for (page in 0 until lastPage) {
+                    for (i in 0 until perPage) {
                         if (ep <= total) {
                             episodes.add(
                                 AnimeEpisode(
@@ -293,6 +293,18 @@ class AnimePaheProvider : MainAPI() {
 
     private fun isNumber(s: String?): Boolean {
         return s?.toIntOrNull() != null
+    }
+
+    private fun pow(base: Int, expo: Int): Long{
+        // does not handle infinity
+        var exponent = expo
+        var result: Long = 1
+
+        while (exponent != 0) {
+            result *= base.toLong()
+            --exponent
+        }
+        return result
     }
 
     private fun cookieStrToMap(cookie: String): Map<String, String> {
@@ -484,10 +496,11 @@ class AnimePaheProvider : MainAPI() {
                     null
                 }
             }).filterNotNull())[0]
-            link = "https://animepahe.com/api?m=links&id=${ep?.animeId}&session=${ep?.session}&p=kwik"
+            link = "https://animepahe.com/api?m=links&id=${ep.animeId}&session=${ep.session}&p=kwik"
         }
         val req = khttp.get(link, headers = headers)
         val data = mapper.readValue<AnimePaheEpisodeLoadLinks>(req.text)
+        println("gggkk: $data")
 
         val qualities = ArrayList<ExtractorLink>()
 
