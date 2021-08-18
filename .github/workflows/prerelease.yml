@@ -45,4 +45,4 @@ jobs:
         prerelease: true
         title: "Pre-release Build"
         files: |
-          app/build/outputs/apk/debug/*.apk
+          app/build/outputs/apk/prerelease/*.apk
