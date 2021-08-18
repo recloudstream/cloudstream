@@ -500,7 +500,6 @@ class AnimePaheProvider : MainAPI() {
         }
         val req = khttp.get(link, headers = headers)
         val data = mapper.readValue<AnimePaheEpisodeLoadLinks>(req.text)
-        println("gggkk: $data")
 
         val qualities = ArrayList<ExtractorLink>()
 
