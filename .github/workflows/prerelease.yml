@@ -7,7 +7,7 @@ on:
       - '*.md'
 
 concurrency: 
-  group: "Beta"
+  group: "pre-release"
   cancel-in-progress: true
 
 jobs:
@@ -46,8 +46,8 @@ jobs:
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "Beta"
+        automatic_release_tag: "pre-release"
         prerelease: true
-        title: "Beta Build"
+        title: "Pre-release Build"
         files: |
           app/build/outputs/apk/prerelease/*.apk
