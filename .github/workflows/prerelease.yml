@@ -3,6 +3,8 @@ name: Pre-release
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - '*.md'
 
 concurrency: 
   group: "pre-release"
@@ -24,8 +26,19 @@ jobs:
       run: |
         COMMIT_HASH="$(git log -1 --format='%H')"
         sed -i "s/<string name=\"prerelease_commit_hash\">unknown_prerelease<\/string>/<string name=\"prerelease_commit_hash\">$COMMIT_HASH<\/string>/g" app/src/main/res/values/strings.xml
+    - name: Decode Keystore
+      env:
+        ENCODED_STRING: ${{ secrets.KEYSTORE }}
+      run: |
+        TMP_KEYSTORE_FILE_PATH="${RUNNER_TEMP}"/keystore
+        mkdir -p "${TMP_KEYSTORE_FILE_PATH}"
+        echo $ENCODED_STRING | base64 -di > "${TMP_KEYSTORE_FILE_PATH}"/prerelease_keystore.jks
     - name: Run Gradle
-      run: ./gradlew assembleDebug
+      run: ./gradlew app:assemblePrerelease
+      env:
+        SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+        SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
     - name: Create pre-release
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
@@ -34,4 +47,4 @@ jobs:
         prerelease: true
         title: "Pre-release Build"
         files: |
-          app/build/outputs/apk/debug/*.apk
+          app/build/outputs/apk/prerelease/*.apk
