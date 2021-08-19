@@ -34,3 +34,5 @@ https://discord.gg/5Hus6fM
 + https://www.wcostream.com
 
 + https://animepahe.com
+
++ https://gogoanime.vc
