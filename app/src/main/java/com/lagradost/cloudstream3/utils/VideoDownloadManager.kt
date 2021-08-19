@@ -19,15 +19,14 @@ import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -36,7 +35,6 @@ import java.lang.Thread.sleep
 import java.net.URL
 import java.net.URLConnection
 import java.util.*
-
 
 const val DOWNLOAD_CHANNEL_ID = "cloudstream3.general"
 const val DOWNLOAD_CHANNEL_NAME = "Downloads"
@@ -180,18 +178,22 @@ object VideoDownloadManager {
 
     private val cachedBitmaps = hashMapOf<String, Bitmap>()
     private fun Context.getImageBitmapFromUrl(url: String): Bitmap? {
-        if (cachedBitmaps.containsKey(url)) {
-            return cachedBitmaps[url]
-        }
+        try {
+            if (cachedBitmaps.containsKey(url)) {
+                return cachedBitmaps[url]
+            }
 
-        val bitmap = Glide.with(this)
-            .asBitmap()
-            .load(url).into(720, 720)
-            .get()
-        if (bitmap != null) {
-            cachedBitmaps[url] = bitmap
+            val bitmap = Glide.with(this)
+                .asBitmap()
+                .load(url).into(720, 720)
+                .get()
+            if (bitmap != null) {
+                cachedBitmaps[url] = bitmap
+            }
+            return null
+        } catch (e : Exception) {
+            return null
         }
-        return null
     }
 
     private fun createNotification(

@@ -19,7 +19,7 @@ class VMoveeProvider : MainAPI() {
             TvType.Movie,
         )
 
-    override fun search(query: String): ArrayList<SearchResponse>? {
+    override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
@@ -110,7 +110,7 @@ class VMoveeProvider : MainAPI() {
         return super.loadLinks(data, isCasting, subtitleCallback, callback)
     }
 
-    override fun load(url: String): LoadResponse? {
+    override fun load(url: String): LoadResponse {
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
 

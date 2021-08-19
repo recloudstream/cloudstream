@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +10,12 @@ import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonViewHolder
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
@@ -71,7 +69,7 @@ class EpisodeAdapter(
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is DownloadButtonViewHolder) {
             holder.downloadButton.dispose()
-            mBoundViewHolders.remove(holder);
+            mBoundViewHolders.remove(holder)
         }
     }
 
@@ -152,13 +150,7 @@ class EpisodeAdapter(
 
             if (card.poster != null) {
                 episodePoster?.visibility = View.VISIBLE
-                if (episodePoster != null) {
-                    val glideUrl =
-                        GlideUrl(card.poster)
-                    Glide.with(episodePoster.context)
-                        .load(glideUrl)
-                        .into(episodePoster)
-                }
+                episodePoster?.setImage(card.poster)
             } else {
                 episodePoster?.visibility = View.GONE
             }

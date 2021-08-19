@@ -8,11 +8,10 @@ import com.lagradost.cloudstream3.R
 import kotlin.math.max
 
 class FlowLayout : ViewGroup {
-    constructor(context: Context?) : super(context) {}
+    constructor(context: Context?) : super(context)
 
     @JvmOverloads
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int = 0) : super(context, attrs, defStyleAttr) {
-    }
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int = 0) : super(context, attrs, defStyleAttr)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val realWidth = MeasureSpec.getSize(widthMeasureSpec)
@@ -92,7 +91,7 @@ class FlowLayout : ViewGroup {
             spacing = 0
         }
 
-        constructor(source: MarginLayoutParams?) : super(source) {}
-        internal constructor(source: ViewGroup.LayoutParams?) : super(source) {}
+        constructor(source: MarginLayoutParams?) : super(source)
+        internal constructor(source: ViewGroup.LayoutParams?) : super(source)
     }
 }

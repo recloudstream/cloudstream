@@ -71,7 +71,7 @@ class TrailersToProvider : MainAPI() {
         //section.section > div.container > div.owl-carousel
     }
 
-    override fun quickSearch(query: String): ArrayList<SearchResponse> {
+    override fun quickSearch(query: String): List<SearchResponse> {
         val url = "$mainUrl/en/quick-search?q=$query"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
@@ -99,7 +99,7 @@ class TrailersToProvider : MainAPI() {
         return returnValue
     }
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/en/popular/movies-tvshows-collections?q=$query"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
@@ -180,7 +180,7 @@ class TrailersToProvider : MainAPI() {
         } else if (url.contains("/episode/")) {
             val response = khttp.get(url)
             val document = Jsoup.parse(response.text)
-            val qSub = document.select("subtitle-content")
+            //val qSub = document.select("subtitle-content")
             val subUrl = document.select("subtitle-content")?.attr("data-url") ?: ""
 
             val subData = fixUrl(document.selectFirst("content").attr("data-url") ?: return false)

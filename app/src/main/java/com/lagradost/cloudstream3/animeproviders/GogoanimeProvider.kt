@@ -48,11 +48,11 @@ class GogoanimeProvider : MainAPI() {
             "dnt" to "1",
             "sec-ch-ua-mobile" to "?0",
             "user-agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36",
-            "origin" to "https://gogoanime.vc",
+            "origin" to mainUrl,
             "sec-fetch-site" to "cross-site",
             "sec-fetch-mode" to "cors",
             "sec-fetch-dest" to "empty",
-            "referer" to "https://gogoanime.vc/"
+            "referer" to "$mainUrl/"
         )
         val parseRegex = Regex("""<li>\s*\n.*\n.*<a\s*href=["'](.*?-episode-(\d+))["']\s*title=["'](.*?)["']>\n.*?img src="(.*?)"""")
 
@@ -179,7 +179,7 @@ class GogoanimeProvider : MainAPI() {
             title,
             link,
             this.name,
-            GogoanimeProvider.getType(type.toString()),
+            getType(type.toString()),
             poster,
             year,
             null,

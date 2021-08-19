@@ -61,6 +61,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import jp.wasabeef.glide.transformations.BlurTransformation
@@ -398,7 +399,7 @@ class ResultFragment : Fragment() {
             fun startChromecast(startIndex: Int) {
                 val eps = currentEpisodes ?: return
                 context?.startCast(
-                    apiName ?: return,
+                    apiName,
                     currentIsMovie ?: return,
                     currentHeaderName,
                     currentPoster,
@@ -850,19 +851,7 @@ class ResultFragment : Fragment() {
                         }
 
                         if (d.posterUrl != null) {
-                            val glideUrl =
-                                GlideUrl(d.posterUrl)
-                            requireContext().let {
-
-                                Glide.with(it)
-                                    .load(glideUrl)
-                                    .into(result_poster)
-
-                                Glide.with(it)
-                                    .load(glideUrl)
-                                    .apply(bitmapTransform(BlurTransformation(80, 3)))
-                                    .into(result_poster_blur)
-                            }
+                            result_poster?.setImage(d.posterUrl)
                         }
 
                         if (d.plot != null) {

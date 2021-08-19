@@ -9,10 +9,8 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.utils.IDisposable
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.android.synthetic.main.download_header_episode.view.*
 import java.util.*
@@ -54,7 +52,7 @@ class DownloadHeaderAdapter(
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is DownloadButtonViewHolder) {
             holder.downloadButton.dispose()
-            mBoundViewHolders.remove(holder);
+            mBoundViewHolders.remove(holder)
         }
     }
 
@@ -93,7 +91,7 @@ class DownloadHeaderAdapter(
     ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
         override var downloadButton = EasyDownloadButton()
 
-        private val poster: ImageView = itemView.download_header_poster
+        private val poster: ImageView? = itemView.download_header_poster
         private val title: TextView = itemView.download_header_title
         private val extraInfo: TextView = itemView.download_header_info
         private val holder: CardView = itemView.episode_holder
@@ -107,17 +105,8 @@ class DownloadHeaderAdapter(
         fun bind(card: VisualDownloadHeaderCached) {
             localCard = card
             val d = card.data
-            if (d.poster != null) {
 
-                val glideUrl =
-                    GlideUrl(d.poster)
-
-                poster.context.let {
-                    Glide.with(it)
-                        .load(glideUrl)
-                        .into(poster)
-                }
-            }
+            poster?.setImage(d.poster)
 
             title.text = d.name
             val mbString = "%.1f".format(card.totalBytes / 1000000f)

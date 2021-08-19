@@ -18,7 +18,7 @@ class HDMProvider : MainAPI() {
             TvType.Movie,
         )
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/$query"
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)

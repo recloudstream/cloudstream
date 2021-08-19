@@ -545,17 +545,17 @@ class PlayerFragment : Fragment() {
             val isAnime =
                 data.isAnimeBased()//(data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
 
-            skip_op.setVis(isAnime && !nextEp)
+            skip_op?.setVis(isAnime && !nextEp)
             skip_episode.setVis((!isAnime || nextEp) && hasNext)
         } else {
             val isAnime = data.isAnimeBased()
 
             if (isAnime) {
-                skip_op.setVis(true)
+                skip_op?.setVis(true)
                 skip_episode.setVis(false)
             } else {
                 skip_episode.setVis(data.isEpisodeBased())
-                skip_op.setVis(false)
+                skip_op?.setVis(false)
             }
         }
     }
@@ -684,7 +684,7 @@ class PlayerFragment : Fragment() {
         exo_progress.isClickable = isClick
         //next_episode_btt.isClickable = isClick
         playback_speed_btt.isClickable = isClick
-        skip_op.isClickable = isClick
+        skip_op?.isClickable = isClick
         skip_episode.isClickable = isClick
         resize_player.isClickable = isClick
         exo_progress.isEnabled = isClick
@@ -1301,7 +1301,7 @@ class PlayerFragment : Fragment() {
             resize_player.visibility = GONE
         }
 
-        skip_op.setOnClickListener {
+        skip_op?.setOnClickListener {
             skipOP()
         }
 
@@ -1787,7 +1787,7 @@ class PlayerFragment : Fragment() {
                 }
 
                 override fun onPlayerError(error: ExoPlaybackException) {
-                    println("CURRENT URL: " + currentUrl?.url ?: uri)
+                    println("CURRENT URL: " + currentUrl?.url)
                     // Lets pray this doesn't spam Toasts :)
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE -> {
@@ -1854,7 +1854,9 @@ class PlayerFragment : Fragment() {
                             initPlayer(getCurrentUrl())
                         }
                     } else {
-                        Toast.makeText(context, "No Links Found", Toast.LENGTH_SHORT).show()
+                        context?.let { ctx ->
+                            Toast.makeText(ctx, "No Links Found", LENGTH_SHORT).show()
+                        }
                     }
                 }
             }

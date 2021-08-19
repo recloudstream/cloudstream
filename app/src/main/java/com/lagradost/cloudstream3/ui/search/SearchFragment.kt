@@ -171,11 +171,11 @@ class SearchFragment : Fragment() {
                         getString(if (isOn) R.string.search_provider_text_types else R.string.search_provider_text_providers)
 
                     if (isOn) {
-                        listView2?.visibility = View.VISIBLE
-                        listView?.visibility = View.GONE
+                        listView2.visibility = View.VISIBLE
+                        listView.visibility = View.GONE
                     } else {
-                        listView?.visibility = View.VISIBLE
-                        listView2?.visibility = View.GONE
+                        listView.visibility = View.VISIBLE
+                        listView2.visibility = View.GONE
                     }
                 }
 
@@ -190,7 +190,7 @@ class SearchFragment : Fragment() {
                 listView.setOnItemClickListener { _, _, i, _ ->
                     val types = HashSet<TvType>()
                     for ((index, api) in apis.withIndex()) {
-                        if (listView?.checkedItemPositions[index]) {
+                        if (listView.checkedItemPositions[index]) {
                             types.addAll(api.supportedTypes)
                         }
                     }
@@ -204,14 +204,14 @@ class SearchFragment : Fragment() {
                         var isSupported = false
 
                         for ((typeIndex, type) in typeChoices.withIndex()) {
-                            if (listView2?.checkedItemPositions[typeIndex]) {
+                            if (listView2.checkedItemPositions[typeIndex]) {
                                 if (api.supportedTypes.any { type.second.contains(it) }) {
                                     isSupported = true
                                 }
                             }
                         }
 
-                        listView?.setItemChecked(
+                        listView.setItemChecked(
                             index,
                             isSupported
                         )
@@ -221,7 +221,7 @@ class SearchFragment : Fragment() {
                 }
 
                 dialog.setOnDismissListener {
-                    context?.setKey(SEARCH_PROVIDER_TOGGLE, toggle.isChecked ?: true)
+                    context?.setKey(SEARCH_PROVIDER_TOGGLE, toggle.isChecked)
                 }
 
                 applyButton.setOnClickListener {
@@ -229,7 +229,7 @@ class SearchFragment : Fragment() {
 
                     val activeTypes = HashSet<TvType>()
                     for ((index, name) in typeChoices.withIndex()) {
-                        if (listView2?.checkedItemPositions[index]) {
+                        if (listView2.checkedItemPositions[index]) {
                             activeTypes.addAll(typeChoices[index].second)
                         }
                     }
@@ -241,7 +241,7 @@ class SearchFragment : Fragment() {
 
                     val activeApis = HashSet<String>()
                     for ((index, name) in apiNames.withIndex()) {
-                        if (listView?.checkedItemPositions[index]) {
+                        if (listView.checkedItemPositions[index]) {
                             activeApis.add(name)
                         }
                     }

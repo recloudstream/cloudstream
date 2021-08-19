@@ -23,7 +23,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
             TvType.Anime,
         )
 
-    override fun search(query: String): ArrayList<SearchResponse>? {
+    override fun search(query: String): List<SearchResponse> {
         val url = "https://www.wcostream.com/search"
 
         val response =
@@ -69,7 +69,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
         return returnValue
     }
 
-    override fun load(url: String): LoadResponse? {
+    override fun load(url: String): LoadResponse {
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
 

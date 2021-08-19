@@ -217,7 +217,7 @@ class TenshiProvider : MainAPI() {
             canonicalTitle,
             url,
             this.name,
-            TenshiProvider.getType(type ?: ""),
+            getType(type ?: ""),
             poster,
             year.toIntOrNull(),
             null,

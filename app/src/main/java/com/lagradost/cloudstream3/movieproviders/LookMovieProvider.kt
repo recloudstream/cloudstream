@@ -69,7 +69,7 @@ class LookMovieProvider : MainAPI() {
         @JsonProperty("season") var season: String,
     )
 
-    override fun quickSearch(query: String): ArrayList<SearchResponse> {
+    override fun quickSearch(query: String): List<SearchResponse> {
         val movieUrl = "$mainUrl/api/v1/movies/search/?q=$query"
         val movieResponse = khttp.get(movieUrl)
         val movies = mapper.readValue<LookMovieSearchResultRoot>(movieResponse.text).result
@@ -114,7 +114,7 @@ class LookMovieProvider : MainAPI() {
         return returnValue
     }
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override fun search(query: String): List<SearchResponse> {
         fun search(query: String, isMovie: Boolean): ArrayList<SearchResponse> {
             val url = "$mainUrl/${if (isMovie) "movies" else "shows"}/search/?q=$query"
             val response = khttp.get(url)
@@ -248,7 +248,7 @@ class LookMovieProvider : MainAPI() {
             val accessToken = root.data?.accessToken ?: return null
 
             val window =
-                "window\\[\\'show_storage\\'\\] =((.|\\n)*?\\<)".toRegex().find(response.text)?.groupValues?.get(1)
+                "window\\['show_storage'] =((.|\\n)*?<)".toRegex().find(response.text)?.groupValues?.get(1)
                     ?: return null
             // val id = "id_show:(.*?),".toRegex().find(response.text)?.groupValues?.get(1) ?: return null
             val season = "seasons:.*\\[((.|\\n)*?)]".toRegex().find(window)?.groupValues?.get(1) ?: return null

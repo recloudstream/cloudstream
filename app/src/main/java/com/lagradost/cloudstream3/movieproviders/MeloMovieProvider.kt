@@ -31,11 +31,11 @@ class MeloMovieProvider : MainAPI() {
 
     data class MeloMovieLink(val name: String, val link: String)
 
-    override fun quickSearch(query: String): ArrayList<SearchResponse> {
+    override fun quickSearch(query: String): List<SearchResponse> {
         return search(query)
     }
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/movie/search/?name=$query"
         val returnValue: ArrayList<SearchResponse> = ArrayList()
         val response = khttp.get(url)

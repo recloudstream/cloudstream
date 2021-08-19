@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.home_result_grid.view.*
 
 class HomeChildItemAdapter(
@@ -72,16 +73,7 @@ class HomeChildItemAdapter(
             cardText.text = card.name
 
             //imageTextProvider.text = card.apiName
-            if (!card.posterUrl.isNullOrEmpty()) {
-
-                val glideUrl =
-                    GlideUrl(card.posterUrl)
-
-                Glide.with(cardView.context)
-                    .load(glideUrl)
-                    .into(cardView)
-
-            }
+            cardView.setImage(card.posterUrl)
 
             bg.setOnClickListener {
                 clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_LOAD, it, card))

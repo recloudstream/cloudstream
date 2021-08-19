@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -16,15 +15,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.MainActivity.Companion.backEvent
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
-import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -36,12 +30,15 @@ import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.fragment_home.*
 
 const val HOME_BOOKMARK_VALUE = "home_bookmarked_last"
@@ -148,18 +145,7 @@ class HomeFragment : Fragment() {
                 home_main_text.text = random.name + if (random is AnimeSearchResponse) {
                     random.dubStatus?.joinToString(prefix = " • ", separator = " | ") { it.name }
                 } else ""
-                val glideUrl =
-                    GlideUrl(random.posterUrl)
-                requireContext().let {
-                    Glide.with(it)
-                        .load(glideUrl)
-                        .into(home_main_poster)
-/*
-                    Glide.with(it)
-                        .load(glideUrl)
-                        .apply(RequestOptions.bitmapTransform(BlurTransformation(80, 3)))
-                        .into(result_poster_blur)*/
-                }
+                home_main_poster?.setImage(random.posterUrl)
 
                 toggleMainVisibility(true)
                 return random

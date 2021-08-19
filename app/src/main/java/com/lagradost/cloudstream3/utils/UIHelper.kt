@@ -8,17 +8,16 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
-import android.media.AudioAttributes
-import android.media.AudioFocusRequest
-import android.media.AudioManager
 import android.os.Build
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.annotation.RequiresApi
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
@@ -31,6 +30,8 @@ import androidx.core.graphics.red
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.R
 import kotlin.math.roundToInt
 
@@ -81,6 +82,17 @@ object UIHelper {
         }
 
         return color
+    }
+
+    fun ImageView?.setImage(url : String?) {
+        if(this == null || url.isNullOrBlank()) return
+        try {
+            Glide.with(this.context)
+                .load(GlideUrl(url))
+                .into(this)
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
@@ -243,6 +255,7 @@ object UIHelper {
         return settingsManager?.getBoolean("pip_enabled", true) ?: true && isInPlayer
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun Context.hasPIPPermission(): Boolean {
         val appOps =
             getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager

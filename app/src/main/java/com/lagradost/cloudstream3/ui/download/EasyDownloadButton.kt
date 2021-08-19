@@ -38,8 +38,8 @@ class EasyDownloadButton : IDisposable {
         clickCallback: (DownloadClickEvent) -> Unit,
     ) {
         setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadButton, {
-            downloadButton?.setIconResource(it.first)
-            downloadButton?.text = it.second
+            downloadButton.setIconResource(it.first)
+            downloadButton.text = it.second
         }, clickCallback)
     }
 
@@ -53,7 +53,7 @@ class EasyDownloadButton : IDisposable {
         clickCallback: (DownloadClickEvent) -> Unit,
     ) {
         setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadImage, {
-            downloadImage?.setImageResource(it.first)
+            downloadImage.setImageResource(it.first)
         }, clickCallback)
     }
 
@@ -98,20 +98,20 @@ class EasyDownloadButton : IDisposable {
             if (currentBytes == 0L) {
                 changeDownloadImage(VideoDownloadManager.DownloadType.IsStopped)
                 textView?.visibility = View.GONE
-                progressBar?.visibility = View.GONE
+                progressBar.visibility = View.GONE
             } else {
                 if (lastState == VideoDownloadManager.DownloadType.IsStopped) {
                     changeDownloadImage(VideoDownloadManager.getDownloadState(data.id))
                 }
                 textView?.visibility = View.VISIBLE
-                progressBar?.visibility = View.VISIBLE
+                progressBar.visibility = View.VISIBLE
                 val currentMbString = "%.1f".format(setCurrentBytes / 1000000f)
                 val totalMbString = "%.1f".format(setTotalBytes / 1000000f)
 
                 textView?.text =
                     "${currentMbString}MB / ${totalMbString}MB"
 
-                progressBar?.let { bar ->
+                progressBar.let { bar ->
                     bar.max = (setTotalBytes / 1000).toInt()
 
                     if (animate) {

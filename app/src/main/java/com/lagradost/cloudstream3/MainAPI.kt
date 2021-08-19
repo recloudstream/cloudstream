@@ -65,20 +65,24 @@ object APIHolder {
     fun Activity.getApiSettings(): HashSet<String> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
+        val hashSet = HashSet<String>()
+        hashSet.addAll(apis.map { it.name })
+
         return settingsManager.getStringSet(
             this.getString(R.string.search_providers_list_key),
-            setOf(apis[defProvider].name)
-        )?.toHashSet() ?: hashSetOf(apis[defProvider].name)
+            hashSet
+        )?.toHashSet() ?: hashSet
     }
 
     fun Activity.getApiTypeSettings(): HashSet<TvType> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val list = settingsManager.getStringSet(
-            this.getString(R.string.search_types_list_key),
-            setOf(apis[defProvider].name)
-        )
         val hashSet = HashSet<TvType>()
         hashSet.addAll(TvType.values())
+        val list = settingsManager.getStringSet(
+            this.getString(R.string.search_types_list_key),
+            hashSet.map { it.name }.toMutableSet()
+        )
+
         if(list.isNullOrEmpty()) return hashSet
 
         val names = TvType.values().map { it.name }.toHashSet()

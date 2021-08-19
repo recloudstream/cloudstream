@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.getGridFormatId
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.search_result_compact.view.backgroundCard
 import kotlinx.android.synthetic.main.search_result_compact.view.imageText
 import kotlinx.android.synthetic.main.search_result_compact.view.imageView
@@ -104,15 +105,7 @@ class SearchAdapter(
             cardText.text = card.name
 
             //imageTextProvider.text = card.apiName
-            if (!card.posterUrl.isNullOrEmpty()) {
-
-                val glideUrl =
-                    GlideUrl(card.posterUrl)
-
-                Glide.with(cardView.context)
-                    .load(glideUrl)
-                    .into(cardView)
-            }
+            cardView.setImage(card.posterUrl)
 
             bg.setOnClickListener {
                 clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_LOAD, it, card))

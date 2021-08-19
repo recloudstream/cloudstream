@@ -56,7 +56,7 @@ class DownloadChildAdapter(
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is DownloadButtonViewHolder) {
             holder.downloadButton.dispose()
-            mBoundViewHolders.remove(holder);
+            mBoundViewHolders.remove(holder)
         }
     }
 

@@ -296,6 +296,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         /*thread {
             createISO()
         }*/
+
+        var providersString = "Current providers are:\n"
+        for (api in apis) {
+            providersString += "+ ${api.mainUrl}\n"
+        }
+        println(providersString)
+
         handleAppIntent(intent)
 
         thread {
