@@ -180,7 +180,7 @@ class TrailersToProvider : MainAPI() {
         } else if (url.contains("/episode/")) {
             val response = khttp.get(url)
             val document = Jsoup.parse(response.text)
-            //val qSub = document.select("subtitle-content")
+            // val qSub = document.select("subtitle-content")
             val subUrl = document.select("subtitle-content")?.attr("data-url") ?: ""
 
             val subData = fixUrl(document.selectFirst("content").attr("data-url") ?: return false)
@@ -222,22 +222,22 @@ class TrailersToProvider : MainAPI() {
 
         val isTvShow = url.contains("/tvshow/")
         if (isTvShow) {
-            val episodes = document.select("article.tour-modern") ?: return null
+            val episodes = document.select("#seasons-accordion .card-body > .tour-modern") ?: return null
             val parsedEpisodes = episodes.map { item ->
-                val epPoster = item.selectFirst("> div.tour-modern-media > a.tour-modern-figure > img").attr("src")
-                val main = item.selectFirst("> div.tour-modern-main")
-                val titleHeader = main.selectFirst("> h5.tour-modern-title > a")
+                val epPoster = item.selectFirst("img").attr("src")
+                val main = item.selectFirst(".tour-modern-main")
+                val titleHeader = main.selectFirst("a")
                 val titleName = titleHeader.text()
                 val href = fixUrl(titleHeader.attr("href"))
-                val gValues = ".*?Season ([0-9]*).*Episode ([0-9]*): (.*)".toRegex().find(titleName)?.groupValues
+                val gValues = """.*?Season ([0-9]+)\s-\s(?:Episode )?([0-9]+)(?:: )?(.*)""".toRegex().find(titleName)?.groupValues
                 val season = gValues?.get(1)?.toIntOrNull()
                 val episode = gValues?.get(2)?.toIntOrNull()
-                val epName = gValues?.get(3)
-                val infoHeaders = main.select("> div > span.small-text")
+                val epName = if (!gValues?.get(3).isNullOrEmpty()) gValues?.get(3) else "Episode ${gValues?.get(2)}"
+                val infoHeaders = main.select("span.small-text")
                 val date = infoHeaders?.get(0)?.text()
                 val ratingText = infoHeaders?.get(1)?.text()?.replace("/ 10", "")
                 val epRating = if (ratingText == null) null else parseRating(ratingText)
-                val epDescript = main.selectFirst("> p")?.text()
+                val epDescript = main.selectFirst("p")?.text()
 
                 TvSeriesEpisode(
                     epName,
