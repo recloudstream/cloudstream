@@ -180,7 +180,7 @@ class TrailersToProvider : MainAPI() {
         } else if (url.contains("/episode/")) {
             val response = khttp.get(url)
             val document = Jsoup.parse(response.text)
-            val qSub = document.select("subtitle-content")
+            // val qSub = document.select("subtitle-content")
             val subUrl = document.select("subtitle-content")?.attr("data-url") ?: ""
 
             val subData = fixUrl(document.selectFirst("content").attr("data-url") ?: return false)
