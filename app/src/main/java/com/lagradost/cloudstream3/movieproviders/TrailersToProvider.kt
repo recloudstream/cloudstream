@@ -229,7 +229,7 @@ class TrailersToProvider : MainAPI() {
                 val titleHeader = main.selectFirst("a")
                 val titleName = titleHeader.text()
                 val href = fixUrl(titleHeader.attr("href"))
-                val gValues = Regex(""".*?Season ([0-9]+)\s-\s(?:Episode )?([0-9]+)?(?:: )?(.*)""").find(titleName)?.destructured
+                val gValues = Regex(""".*?(?:(?:Season)|(?:Series) ([0-9]+)\s-\s(?:Episode )?([0-9]+)?(?:: )?(.*)""").find(titleName)?.destructured
                 val season = gValues?.component1()?.toIntOrNull()
                 var episode = gValues?.component2()?.toIntOrNull()
                 if (episode == null) {
