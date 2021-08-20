@@ -235,7 +235,7 @@ class TrailersToProvider : MainAPI() {
                 if (episode == null) {
                     episode = index + 1
                 }
-                val epName = if (gValues?.component3()?.isNotEmpty() == true) gValues.component3() else "Episode ${gValues?.component2()}"
+                val epName = if (gValues?.component3()?.isNotEmpty() == true) gValues.component3() else "Episode $episode"
                 val infoHeaders = main.select("span.small-text")
                 val date = infoHeaders?.get(0)?.text()
                 val ratingText = infoHeaders?.get(1)?.text()?.replace("/ 10", "")
