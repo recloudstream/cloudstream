@@ -223,16 +223,19 @@ class TrailersToProvider : MainAPI() {
         val isTvShow = url.contains("/tvshow/")
         if (isTvShow) {
             val episodes = document.select("#seasons-accordion .card-body > .tour-modern") ?: return null
-            val parsedEpisodes = episodes.map { item ->
+            val parsedEpisodes = episodes.withIndex().map { (index, item) ->
                 val epPoster = item.selectFirst("img").attr("src")
                 val main = item.selectFirst(".tour-modern-main")
                 val titleHeader = main.selectFirst("a")
                 val titleName = titleHeader.text()
                 val href = fixUrl(titleHeader.attr("href"))
-                val gValues = """.*?Season ([0-9]+)\s-\s(?:Episode )?([0-9]+)(?:: )?(.*)""".toRegex().find(titleName)?.groupValues
-                val season = gValues?.get(1)?.toIntOrNull()
-                val episode = gValues?.get(2)?.toIntOrNull()
-                val epName = if (!gValues?.get(3).isNullOrEmpty()) gValues?.get(3) else "Episode ${gValues?.get(2)}"
+                val gValues = Regex(""".*?Season ([0-9]+)\s-\s(?:Episode )?([0-9]+)?(?:: )?(.*)""").find(titleName)!!.destructured
+                val season = gValues.component1().toIntOrNull()
+                var episode = gValues.component2().toIntOrNull()
+                if (episode == null) {
+                    episode = index + 1
+                }
+                val epName = if (!gValues.component3().isEmpty()) gValues.component3() else "Episode ${gValues.component2()}"
                 val infoHeaders = main.select("span.small-text")
                 val date = infoHeaders?.get(0)?.text()
                 val ratingText = infoHeaders?.get(1)?.text()?.replace("/ 10", "")
