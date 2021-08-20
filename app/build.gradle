@@ -16,14 +16,12 @@ if (allFilesFromDir != null) {
 android {
     signingConfigs {
         prerelease {
-
             if (prerelaseStoreFile != null) {
                 storeFile = file(prerelaseStoreFile)
                 storePassword System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias System.getenv("SIGNING_KEY_ALIAS")
                 keyPassword System.getenv("SIGNING_KEY_PASSWORD")
             }
-
         }
     }
     compileSdkVersion 30
