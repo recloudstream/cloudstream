@@ -28,7 +28,8 @@
                 android:layout_gravity="end|center_vertical"
                 android:src="@drawable/ic_baseline_arrow_forward_24"
                 android:layout_width="30dp"
-                android:layout_height="match_parent" android:contentDescription="@string/home_more_info">
+                android:layout_height="match_parent"
+                android:contentDescription="@string/home_more_info">
         </ImageView>
     </FrameLayout>
 

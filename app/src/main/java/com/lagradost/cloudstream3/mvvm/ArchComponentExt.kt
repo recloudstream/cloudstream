@@ -72,6 +72,9 @@ suspend fun <T> safeApiCall(
                 is ErrorLoadingException -> {
                     Resource.Failure(true, null, null, throwable.message ?: "Error loading, try again later.")
                 }
+                is NotImplementedError -> {
+                    Resource.Failure(false, null, null, "This operation is not implemented.")
+                }
                 else -> {
                     val stackTraceMsg = throwable.localizedMessage + "\n\n" + throwable.stackTrace.joinToString(
                         separator = "\n"

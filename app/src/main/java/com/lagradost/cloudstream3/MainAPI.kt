@@ -119,19 +119,19 @@ abstract class MainAPI {
     )
 
     open fun getMainPage(): HomePageResponse? {
-        return null
+        throw NotImplementedError()
     }
 
     open fun search(query: String): List<SearchResponse>? {
-        return null
+        throw NotImplementedError()
     }
 
     open fun quickSearch(query: String): List<SearchResponse>? {
-        return null
+        throw NotImplementedError()
     }
 
     open fun load(url: String): LoadResponse? {
-        return null
+        throw NotImplementedError()
     }
 
     /**Callback is fired once a link is found, will return true if method is executed successfully*/
@@ -141,7 +141,7 @@ abstract class MainAPI {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        return false
+        throw NotImplementedError()
     }
 }
 

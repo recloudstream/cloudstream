@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownload
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_downloads.*
 
@@ -107,6 +108,7 @@ class DownloadFragment : Fragment() {
                     }
                 },
                 { downloadClickEvent ->
+                    if (downloadClickEvent.data !is VideoDownloadHelper.DownloadEpisodeCached) return@DownloadHeaderAdapter
                     handleDownloadClick(activity, downloadClickEvent.data.name, downloadClickEvent)
                     if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
                         downloadsViewModel.updateList(requireContext())

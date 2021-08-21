@@ -16,6 +16,10 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 class EasyDownloadButton : IDisposable {
+    interface IMinimumData {
+        val id : Int
+    }
+
     override fun dispose() {
         try {
             downloadProgressEventListener?.let { VideoDownloadManager.downloadProgressEvent -= it }
@@ -34,7 +38,7 @@ class EasyDownloadButton : IDisposable {
         progressBar: ContentLoadingProgressBar,
         downloadButton: MaterialButton,
         textView: TextView?,
-        data: VideoDownloadHelper.DownloadEpisodeCached,
+        data: IMinimumData,
         clickCallback: (DownloadClickEvent) -> Unit,
     ) {
         setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadButton, {
@@ -49,7 +53,7 @@ class EasyDownloadButton : IDisposable {
         progressBar: ContentLoadingProgressBar,
         downloadImage: ImageView,
         textView: TextView?,
-        data: VideoDownloadHelper.DownloadEpisodeCached,
+        data: IMinimumData,
         clickCallback: (DownloadClickEvent) -> Unit,
     ) {
         setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadImage, {
@@ -62,7 +66,7 @@ class EasyDownloadButton : IDisposable {
         setupTotalBytes: Long?,
         progressBar: ContentLoadingProgressBar,
         textView: TextView?,
-        data: VideoDownloadHelper.DownloadEpisodeCached,
+        data: IMinimumData,
         downloadView: View,
         downloadImageChangeCallback: (Pair<Int, String>) -> Unit,
         clickCallback: (DownloadClickEvent) -> Unit,

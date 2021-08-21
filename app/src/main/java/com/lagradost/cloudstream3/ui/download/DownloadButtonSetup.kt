@@ -9,11 +9,13 @@ import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.ui.player.UriData
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 object DownloadButtonSetup {
     fun handleDownloadClick(activity: Activity?, headerName: String?, click: DownloadClickEvent) {
         val id = click.data.id
+        if (click.data !is VideoDownloadHelper.DownloadEpisodeCached) return
         when (click.action) {
             DOWNLOAD_ACTION_DELETE_FILE -> {
                 activity?.let { ctx ->
@@ -30,7 +32,15 @@ object DownloadButtonSetup {
                         }
 
                     builder.setTitle("Delete File")
-                    builder.setMessage("This will permanently delete ${getNameFull(click.data.name,click.data.episode,click.data.season)}\nAre you sure?")
+                    builder.setMessage(
+                        "This will permanently delete ${
+                            getNameFull(
+                                click.data.name,
+                                click.data.episode,
+                                click.data.season
+                            )
+                        }\nAre you sure?"
+                    )
                         .setTitle("Delete")
                         .setPositiveButton("Delete", dialogClickListener)
                         .setNegativeButton("Cancel", dialogClickListener)

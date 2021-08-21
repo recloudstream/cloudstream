@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 
 object VideoDownloadHelper {
     data class DownloadEpisodeCached(
@@ -8,12 +9,12 @@ object VideoDownloadHelper {
         val poster: String?,
         val episode: Int,
         val season: Int?,
-        val id: Int,
+        override val id: Int,
         val parentId: Int,
         val rating: Int?,
         val descript: String?,
         val cacheTime: Long,
-    )
+    ) : EasyDownloadButton.IMinimumData
 
     data class DownloadHeaderCached(
         val apiName: String,
