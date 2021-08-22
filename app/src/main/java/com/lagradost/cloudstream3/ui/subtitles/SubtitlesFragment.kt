@@ -26,12 +26,17 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import kotlinx.android.synthetic.main.subtitle_settings.*
 
 const val SUBTITLE_KEY = "subtitle_settings"
+const val SUBTITLE_AUTO_SELECT_KEY = "subs_auto_select"
+const val SUBTITLE_DOWNLOAD_KEY = "subs_auto_download"
 
 data class SaveCaptionStyle(
     var foregroundColor: Int,
@@ -110,6 +115,14 @@ class SubtitlesFragment : Fragment() {
         private fun getPixels(unit: Int, size: Float): Int {
             val metrics: DisplayMetrics = Resources.getSystem().displayMetrics
             return TypedValue.applyDimension(unit, size, metrics).toInt()
+        }
+
+        fun Context.getDownloadSubsLanguageISO639_1(): List<String> {
+            return getKey(SUBTITLE_DOWNLOAD_KEY) ?: listOf("en")
+        }
+
+        fun Context.getAutoSelectLanguageISO639_1(): String {
+            return getKey(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
         }
     }
 
@@ -296,10 +309,57 @@ class SubtitlesFragment : Fragment() {
             }
         }
 
-        subs_font.setOnLongClickListener {
+        subs_font.setOnLongClickListener { textView ->
             state.typeface = null
-            it.context.updateState()
-            Toast.makeText(it.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+            textView.context.updateState()
+            Toast.makeText(textView.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+            return@setOnLongClickListener true
+        }
+
+        subs_auto_select_language.setOnClickListener { textView ->
+            val langMap = arrayListOf(
+                SubtitleHelper.Language639("None", "None", "", "", "", "", ""),
+            )
+            langMap.addAll(SubtitleHelper.languages)
+
+            val lang639_1 = langMap.map { it.ISO_639_1 }
+            textView.context.showDialog(
+                langMap.map { it.languageName },
+                lang639_1.indexOf(textView.context.getAutoSelectLanguageISO639_1()),
+                (textView as TextView).text.toString(),
+                true,
+                dismissCallback
+            ) { index ->
+                textView.context.setKey(SUBTITLE_AUTO_SELECT_KEY, lang639_1[index])
+            }
+        }
+
+        subs_auto_select_language.setOnLongClickListener { textView ->
+            textView.context.setKey(SUBTITLE_AUTO_SELECT_KEY, "en")
+            Toast.makeText(textView.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+            return@setOnLongClickListener true
+        }
+
+        subs_download_languages.setOnClickListener { textView ->
+            val langMap = SubtitleHelper.languages
+            val lang639_1 = langMap.map { it.ISO_639_1 }
+            val keys = textView.context.getDownloadSubsLanguageISO639_1()
+            val keyMap = keys.map { lang639_1.indexOf(it) }.filter { it >= 0 }
+
+            textView.context.showMultiDialog(
+                langMap.map { it.languageName },
+                keyMap,
+                (textView as TextView).text.toString(),
+                dismissCallback
+            ) { indexList ->
+                textView.context.setKey(SUBTITLE_DOWNLOAD_KEY, indexList.map { lang639_1[it] }.toList())
+            }
+        }
+
+        subs_download_languages.setOnLongClickListener { textView ->
+            textView.context.setKey(SUBTITLE_DOWNLOAD_KEY, listOf("en"))
+
+            Toast.makeText(textView.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
             return@setOnLongClickListener true
         }
 

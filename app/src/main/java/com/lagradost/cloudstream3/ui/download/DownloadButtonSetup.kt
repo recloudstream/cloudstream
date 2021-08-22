@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.ui.player.UriData
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
+import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
@@ -69,7 +70,10 @@ object DownloadButtonSetup {
                     val info =
                         VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(act, click.data.id)
                             ?: return
-
+                    val keyInfo = act.getKey<VideoDownloadManager.DownloadedFileInfo>(
+                        VideoDownloadManager.KEY_DOWNLOAD_INFO,
+                        click.data.id.toString()
+                    ) ?: return
                     (act as FragmentActivity).supportFragmentManager.beginTransaction()
                         .setCustomAnimations(
                             R.anim.enter_anim,
@@ -82,6 +86,8 @@ object DownloadButtonSetup {
                             PlayerFragment.newInstance(
                                 UriData(
                                     info.path.toString(),
+                                    keyInfo.relativePath,
+                                    keyInfo.displayName,
                                     click.data.id,
                                     headerName ?: "null",
                                     if (click.data.episode <= 0) null else click.data.episode,

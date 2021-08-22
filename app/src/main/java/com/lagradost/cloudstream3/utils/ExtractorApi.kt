@@ -6,15 +6,17 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 data class ExtractorLink(
     val source: String,
     val name: String,
-    val url: String,
-    val referer: String,
+    override val url: String,
+    override val referer: String,
     val quality: Int,
     val isM3u8: Boolean = false,
-)
+) : VideoDownloadManager.IDownloadableMinimum
 
-fun ExtractorLink.getId(): Int {
-    return url.hashCode()
-}
+data class ExtractorSubtitleLink(
+    val name: String,
+    override val url: String,
+    override val referer: String,
+) : VideoDownloadManager.IDownloadableMinimum
 
 enum class Qualities(var value: Int) {
     Unknown(0),

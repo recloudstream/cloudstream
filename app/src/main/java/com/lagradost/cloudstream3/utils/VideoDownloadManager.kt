@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
@@ -27,6 +28,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getExistingDownloadUriOrNullQ
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -35,6 +37,7 @@ import java.lang.Thread.sleep
 import java.net.URL
 import java.net.URLConnection
 import java.util.*
+import kotlin.collections.ArrayList
 
 const val DOWNLOAD_CHANNEL_ID = "cloudstream3.general"
 const val DOWNLOAD_CHANNEL_NAME = "Downloads"
@@ -85,6 +88,15 @@ object VideoDownloadManager {
         Stop,
     }
 
+    interface IDownloadableMinimum {
+        val url: String
+        val referer: String
+    }
+
+    fun VideoDownloadManager.IDownloadableMinimum.getId(): Int {
+        return url.hashCode()
+    }
+
     data class DownloadEpisodeMetadata(
         val id: Int,
         val mainName: String,
@@ -126,7 +138,7 @@ object VideoDownloadManager {
 
     private const val SUCCESS_DOWNLOAD_DONE = 1
     private const val SUCCESS_STOPPED = 2
-    private const val ERROR_DELETING_FILE = -1
+    private const val ERROR_DELETING_FILE = 3 // will not download the next one, but is still classified as an error
     private const val ERROR_CREATE_FILE = -2
     private const val ERROR_OPEN_FILE = -3
     private const val ERROR_TOO_SMALL_CONNECTION = -4
@@ -191,7 +203,7 @@ object VideoDownloadManager {
                 cachedBitmaps[url] = bitmap
             }
             return null
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             return null
         }
     }
@@ -362,6 +374,69 @@ object VideoDownloadManager {
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
+    private fun ContentResolver.getExistingFolderStartName(relativePath: String): List<Pair<String, Uri>>? {
+        try {
+            val projection = arrayOf(
+                MediaStore.MediaColumns._ID,
+                MediaStore.MediaColumns.DISPLAY_NAME,   // unused (for verification use only)
+                //MediaStore.MediaColumns.RELATIVE_PATH,  // unused (for verification use only)
+            )
+
+            val selection =
+                "${MediaStore.MediaColumns.RELATIVE_PATH}='$relativePath'"
+
+            val result = this.query(
+                MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                projection, selection, null, null
+            )
+            val list = ArrayList<Pair<String, Uri>>()
+
+            result.use { c ->
+                if (c != null && c.count >= 1) {
+                    c.moveToFirst()
+                    while (true) {
+                        val id = c.getLong(c.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
+                        val name = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
+                        val uri = ContentUris.withAppendedId(
+                            MediaStore.Downloads.EXTERNAL_CONTENT_URI, id
+                        )
+                        list.add(Pair(name, uri))
+                        if (c.isLast) {
+                            break
+                        }
+                        c.moveToNext()
+                    }
+
+                    /*
+                    val cDisplayName = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
+                    val cRelativePath = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.RELATIVE_PATH))*/
+
+                }
+            }
+            return list
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
+    fun getFolder(context: Context, relativePath: String): List<Pair<String, Uri>>? {
+        if (isScopedStorage()) {
+            return context.contentResolver?.getExistingFolderStartName(relativePath)
+        } else {
+            val normalPath =
+                "${Environment.getExternalStorageDirectory()}${File.separatorChar}${relativePath}".replace(
+                    '/',
+                    File.separatorChar
+                )
+            val folder = File(normalPath)
+            if (folder.isDirectory) {
+                return folder.listFiles().map { Pair(it.name, it.toUri()) }
+            }
+            return null
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun ContentResolver.getExistingDownloadUriOrNullQ(relativePath: String, displayName: String): Uri? {
         try {
             val projection = arrayOf(
@@ -412,18 +487,24 @@ object VideoDownloadManager {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     }
 
-    private fun downloadSingleEpisode(
-        context: Context,
-        source: String?,
-        folder: String?,
-        ep: DownloadEpisodeMetadata,
-        link: ExtractorLink,
-        tryResume: Boolean = false,
-    ): Int {
-        val name = sanitizeFilename(ep.name ?: "Episode ${ep.episode}")
+    data class CreateNotificationMetadata(
+        val type: DownloadType,
+        val bytesDownloaded: Long,
+        val bytesTotal: Long,
+    )
 
+    fun downloadThing(
+        context: Context,
+        link: IDownloadableMinimum,
+        name: String,
+        folder: String?,
+        extension: String,
+        tryResume: Boolean,
+        parentId: Int?,
+        createNotificationCallback: (CreateNotificationMetadata) -> Unit
+    ): Int {
         val relativePath = (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace('/', File.separatorChar)
-        val displayName = "$name.mp4"
+        val displayName = "$name.$extension"
 
         val normalPath = "${Environment.getExternalStorageDirectory()}${File.separatorChar}$relativePath$displayName"
         var resume = tryResume
@@ -440,7 +521,9 @@ object VideoDownloadManager {
             } else {
                 if (!File(normalPath).delete()) return ERROR_DELETING_FILE
             }
-            downloadDeleteEvent.invoke(ep.id)
+            parentId?.let {
+                downloadDeleteEvent.invoke(parentId)
+            }
             return SUCCESS_STOPPED
         }
 
@@ -468,11 +551,18 @@ object VideoDownloadManager {
             } else {
                 val contentUri =
                     MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) // USE INSTEAD OF MediaStore.Downloads.EXTERNAL_CONTENT_URI
-
+                //val currentMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                val currentMimeType = when (extension) {
+                    "vtt" -> "text/vtt"
+                    "mp4" -> "video/mp4"
+                    "srt" -> "text/plain"
+                    else -> null
+                }
                 val newFile = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                     put(MediaStore.MediaColumns.TITLE, name)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+                    if (currentMimeType != null)
+                        put(MediaStore.MediaColumns.MIME_TYPE, currentMimeType)
                     put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
                 }
 
@@ -539,9 +629,11 @@ object VideoDownloadManager {
         }
         val bytesTotal = contentLength + resumeLength
 
-        if (bytesTotal < 5000000) return ERROR_TOO_SMALL_CONNECTION // DATA IS LESS THAN 5MB, SOMETHING IS WRONG
+        if (extension == "mp4" && bytesTotal < 5000000) return ERROR_TOO_SMALL_CONNECTION // DATA IS LESS THAN 5MB, SOMETHING IS WRONG
 
-        context.setKey(KEY_DOWNLOAD_INFO, ep.id.toString(), DownloadedFileInfo(bytesTotal, relativePath, displayName))
+        parentId?.let {
+            context.setKey(KEY_DOWNLOAD_INFO, it.toString(), DownloadedFileInfo(bytesTotal, relativePath, displayName))
+        }
 
         // Could use connection.contentType for mime types when creating the file,
         // however file is already created and players don't go of file type
@@ -573,15 +665,18 @@ object VideoDownloadManager {
                 else -> DownloadType.IsDownloading
             }
 
-            try {
-                downloadStatus[ep.id] = type
-                downloadStatusEvent.invoke(Pair(ep.id, type))
-                downloadProgressEvent.invoke(Triple(ep.id, bytesDownloaded, bytesTotal))
-            } catch (e: Exception) {
-                // IDK MIGHT ERROR
+            parentId?.let { id ->
+                try {
+                    downloadStatus[id] = type
+                    downloadStatusEvent.invoke(Pair(id, type))
+                    downloadProgressEvent.invoke(Triple(id, bytesDownloaded, bytesTotal))
+                } catch (e: Exception) {
+                    // IDK MIGHT ERROR
+                }
             }
 
-            createNotification(
+            createNotificationCallback.invoke(CreateNotificationMetadata(type, bytesDownloaded, bytesTotal))
+            /*createNotification(
                 context,
                 source,
                 link.name,
@@ -589,12 +684,11 @@ object VideoDownloadManager {
                 type,
                 bytesDownloaded,
                 bytesTotal
-            )
+            )*/
         }
 
-
         val downloadEventListener = { event: Pair<Int, DownloadActionType> ->
-            if (event.first == ep.id) {
+            if (event.first == parentId) {
                 when (event.second) {
                     DownloadActionType.Pause -> {
                         isPaused = true; updateNotification()
@@ -611,7 +705,8 @@ object VideoDownloadManager {
             }
         }
 
-        downloadEvent += downloadEventListener
+        if (parentId != null)
+            downloadEvent += downloadEventListener
 
         // UPDATE DOWNLOAD NOTIFICATION
         val notificationCoroutine = main {
@@ -625,7 +720,6 @@ object VideoDownloadManager {
             }
         }
 
-        val id = ep.id
         // THE REAL READ
         try {
             while (true) {
@@ -655,13 +749,16 @@ object VideoDownloadManager {
         notificationCoroutine.cancel()
 
         try {
-            downloadEvent -= downloadEventListener
+            if (parentId != null)
+                downloadEvent -= downloadEventListener
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
         try {
-            downloadStatus.remove(ep.id)
+            parentId?.let {
+                downloadStatus.remove(it)
+            }
         } catch (e: Exception) {
             // IDK MIGHT ERROR
         }
@@ -669,19 +766,42 @@ object VideoDownloadManager {
         // RETURN MESSAGE
         return when {
             isFailed -> {
-                downloadProgressEvent.invoke(Triple(id, 0, 0))
+                parentId?.let { id -> downloadProgressEvent.invoke(Triple(id, 0, 0)) }
                 ERROR_CONNECTION_ERROR
             }
             isStopped -> {
-                downloadProgressEvent.invoke(Triple(id, 0, 0))
+                parentId?.let { id -> downloadProgressEvent.invoke(Triple(id, 0, 0)) }
                 deleteFile()
             }
             else -> {
-                downloadProgressEvent.invoke(Triple(id, bytesDownloaded, bytesTotal))
+                parentId?.let { id -> downloadProgressEvent.invoke(Triple(id, bytesDownloaded, bytesTotal)) }
                 isDone = true
                 updateNotification()
                 SUCCESS_DOWNLOAD_DONE
             }
+        }
+    }
+
+    private fun downloadSingleEpisode(
+        context: Context,
+        source: String?,
+        folder: String?,
+        ep: DownloadEpisodeMetadata,
+        link: ExtractorLink,
+        tryResume: Boolean = false,
+    ): Int {
+        val name = sanitizeFilename(ep.name ?: "Episode ${ep.episode}")
+
+        return downloadThing(context, link, name, folder, "mp4", tryResume, ep.id) { meta ->
+            createNotification(
+                context,
+                source,
+                link.name,
+                ep,
+                meta.type,
+                meta.bytesDownloaded,
+                meta.bytesTotal
+            )
         }
     }
 

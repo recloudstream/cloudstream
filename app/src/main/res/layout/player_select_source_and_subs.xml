@@ -14,6 +14,7 @@
             android:baselineAligned="false">
 
         <LinearLayout
+                android:id="@+id/sort_sources_holder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"

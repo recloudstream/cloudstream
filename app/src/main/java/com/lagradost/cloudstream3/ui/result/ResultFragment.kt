@@ -24,9 +24,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
@@ -52,6 +49,8 @@ import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getDownloadSubsLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
@@ -64,13 +63,11 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
-import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -239,7 +236,7 @@ class ResultFragment : Fragment() {
     var startAction: Int? = null
 
     private fun lateFixDownloadButton(show: Boolean) {
-        if(!show || currentType?.isMovieType() == false) {
+        if (!show || currentType?.isMovieType() == false) {
             result_movie_parent.visibility = GONE
             result_episodes_text.visibility = VISIBLE
             result_episodes.visibility = VISIBLE
@@ -381,7 +378,11 @@ class ResultFragment : Fragment() {
                 return false
             }
 
-            fun aquireSingeExtractorLink(links: List<ExtractorLink>, title: String, callback: (ExtractorLink) -> Unit) {
+            fun acquireSingeExtractorLink(
+                links: List<ExtractorLink>,
+                title: String,
+                callback: (ExtractorLink) -> Unit
+            ) {
                 val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
 
                 builder.setTitle(title)
@@ -392,8 +393,8 @@ class ResultFragment : Fragment() {
                 builder.create().show()
             }
 
-            fun aquireSingeExtractorLink(title: String, callback: (ExtractorLink) -> Unit) {
-                aquireSingeExtractorLink(currentLinks ?: return, title, callback)
+            fun acquireSingeExtractorLink(title: String, callback: (ExtractorLink) -> Unit) {
+                acquireSingeExtractorLink(currentLinks ?: return, title, callback)
             }
 
             fun startChromecast(startIndex: Int) {
@@ -412,7 +413,7 @@ class ResultFragment : Fragment() {
                 )
             }
 
-            fun startDownload(links: List<ExtractorLink>) {
+            fun startDownload(links: List<ExtractorLink>, subs: List<SubtitleFile>?) {
                 val isMovie = currentIsMovie ?: return
                 val titleName = sanitizeFilename(currentHeaderName ?: return)
 
@@ -481,6 +482,36 @@ class ResultFragment : Fragment() {
                         meta,
                         links
                     )
+                    // 1. Checks if the lang should be downloaded
+                    // 2. Makes it into the download format
+                    // 3. Downloads it as a .vtt file
+                    val downloadList = ctx.getDownloadSubsLanguageISO639_1()
+                    main {
+                        subs?.let { subsList ->
+                            subsList.filter { downloadList.contains(SubtitleHelper.fromLanguageToTwoLetters(it.lang)) }
+                                .map { ExtractorSubtitleLink(it.lang, it.url, "") }
+                                .forEach { link ->
+                                    val epName = meta.name ?: "Episode ${meta.episode}"
+                                    val fileName =
+                                        sanitizeFilename(epName + if (downloadList.size > 1) " ${link.name}" else "")
+                                    val topFolder = "$folder"
+
+                                    withContext(Dispatchers.IO) {
+                                        VideoDownloadManager.downloadThing(
+                                            ctx,
+                                            link,
+                                            fileName,
+                                            topFolder,
+                                            "vtt",
+                                            false,
+                                            null
+                                        ) {
+                                            // no notification
+                                        }
+                                    }
+                                }
+                        }
+                    }
                 }
             }
 
@@ -547,10 +578,10 @@ class ResultFragment : Fragment() {
                     dialog.show()
                 }
                 ACTION_COPY_LINK -> {
-                    aquireSingeExtractorLink("Copy Link") { link ->
+                    acquireSingeExtractorLink("Copy Link") { link ->
                         val serviceClipboard =
                             (requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?)
-                                ?: return@aquireSingeExtractorLink
+                                ?: return@acquireSingeExtractorLink
                         val clip = ClipData.newPlainText(link.name, link.url)
                         serviceClipboard.setPrimaryClip(clip)
                         Toast.makeText(requireContext(), "Text Copied", Toast.LENGTH_SHORT).show()
@@ -558,7 +589,7 @@ class ResultFragment : Fragment() {
                 }
 
                 ACTION_PLAY_EPISODE_IN_BROWSER -> {
-                    aquireSingeExtractorLink("Play in Browser") { link ->
+                    acquireSingeExtractorLink("Play in Browser") { link ->
                         val i = Intent(ACTION_VIEW)
                         i.data = Uri.parse(link.url)
                         startActivity(i)
@@ -566,7 +597,7 @@ class ResultFragment : Fragment() {
                 }
 
                 ACTION_CHROME_CAST_MIRROR -> {
-                    aquireSingeExtractorLink("Cast Mirror") { link ->
+                    acquireSingeExtractorLink("Cast Mirror") { link ->
                         val mirrorIndex = currentLinks?.indexOf(link) ?: -1
                         startChromecast(if (mirrorIndex == -1) 0 else mirrorIndex)
                     }
@@ -657,15 +688,15 @@ class ResultFragment : Fragment() {
                 }
 
                 ACTION_DOWNLOAD_EPISODE -> {
-                    startDownload(currentLinks ?: return@main)
+                    startDownload(currentLinks ?: return@main, currentSubs)
                 }
 
                 ACTION_DOWNLOAD_MIRROR -> {
-                    aquireSingeExtractorLink(
+                    acquireSingeExtractorLink(
                         (currentLinks ?: return@main).filter { !it.isM3u8 },
                         "Download Mirror"
                     ) { link ->
-                        startDownload(listOf(link))
+                        startDownload(listOf(link), currentSubs)
                     }
                 }
             }
@@ -704,7 +735,7 @@ class ResultFragment : Fragment() {
         }
 
         observe(viewModel.episodes) { episodeList ->
-            lateFixDownloadButton( episodeList.size <= 1) // movies can have multible parts but still be *movies* this will fix this
+            lateFixDownloadButton(episodeList.size <= 1) // movies can have multible parts but still be *movies* this will fix this
 
             when (startAction) {
                 START_ACTION_RESUME_LATEST -> {
