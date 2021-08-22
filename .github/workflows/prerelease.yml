@@ -22,6 +22,10 @@ jobs:
         distribution: 'adopt'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    - name: Set checks for prerelease updates to true by default
+      run: |
+        COMMIT_HASH="$(git log -1 --format='%H')"
+        sed -i "s/R\.string\.prerelease_update_key), false))/R\.string\.prerelease_update_key), true))/" app/src/main/java/com/lagradost/cloudstream3/utils/InAppUpdater.kt
     - name: Update prerelease_commit_hash
       run: |
         COMMIT_HASH="$(git log -1 --format='%H')"
