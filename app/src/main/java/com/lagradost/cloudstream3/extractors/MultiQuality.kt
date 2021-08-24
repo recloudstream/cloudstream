@@ -18,10 +18,10 @@ class MultiQuality : ExtractorApi() {
 
     private fun getQuality(string: String): Int {
         return when (string) {
-            "360" -> Qualities.SD.value
-            "480" -> Qualities.SD.value
-            "720" -> Qualities.HD.value
-            "1080" -> Qualities.FullHd.value
+            "360" -> Qualities.P480.value
+            "480" -> Qualities.P480.value
+            "720" -> Qualities.P720.value
+            "1080" -> Qualities.P1080.value
             else -> Qualities.Unknown.value
         }
     }

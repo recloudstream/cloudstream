@@ -204,7 +204,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
                     this.name + " HD",
                     hdLink,
                     "",
-                    Qualities.HD.value
+                    Qualities.P720.value
                 )
             )
 
@@ -215,7 +215,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
                     this.name + " SD",
                     sdLink,
                     "",
-                    Qualities.SD.value
+                    Qualities.P480.value
                 )
             )
 

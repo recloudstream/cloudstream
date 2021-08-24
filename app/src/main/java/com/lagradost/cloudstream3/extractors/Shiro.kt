@@ -25,7 +25,7 @@ class Shiro : ExtractorApi() {
                     it.replace(" ", "%20"),
                     "https://cherry.subsplea.se/",
                     // UHD to give top priority
-                    Qualities.UHD.value
+                    Qualities.P2160.value
                 )
             )
         }

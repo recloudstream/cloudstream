@@ -64,7 +64,8 @@ class AnimeFlickProvider : MainAPI() {
         val poster = mainUrl + doc.selectFirst("img.rounded").attr("src")
         val title = doc.selectFirst("h2.title").text()
 
-        val year = Regex("""(\d{4})""").find(doc.selectFirst(".trending-year").text())!!.destructured.component1().toIntOrNull()
+        val yearText = doc.selectFirst(".trending-year")?.text()
+        val year = if(yearText != null) Regex("""(\d{4})""").find(yearText)?.destructured?.component1()?.toIntOrNull() else null
         val description = doc.selectFirst("p").text()
 
         val genres = doc.select("a[href*=\"genre-\"]").map { it.text() }

@@ -88,7 +88,7 @@ class AnimePaheProvider : MainAPI() {
                         "https://pahe.win/a/${it.animeId}",
                         this.name,
                         TvType.Anime,
-                        null,
+                        it.snapshot,
                         null,
                         null,
                         EnumSet.of(DubStatus.Subbed),

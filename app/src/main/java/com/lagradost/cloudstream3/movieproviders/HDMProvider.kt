@@ -52,7 +52,7 @@ class HDMProvider : MainAPI() {
                 this.name,
                 "https://hls.1o.to/vod/$slug/playlist.m3u8$key",
                 "",
-                Qualities.HD.value,
+                Qualities.P720.value,
                 true
             )
         )

@@ -47,7 +47,7 @@ class WcoStream : ExtractorApi() {
                         name + if (it.label != null) "- ${it.label}" else "",
                         it.file,
                         "",
-                        Qualities.HD.value,
+                        Qualities.P720.value,
                         it.file.contains(".m3u8")
                     )
                 )

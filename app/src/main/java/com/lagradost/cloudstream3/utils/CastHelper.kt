@@ -107,7 +107,8 @@ object CastHelper {
         val holder =
             MetadataHolder(apiName, isMovie, title, poster, currentEpisodeIndex, episodes, currentLinks, subtitles)
 
-        val index = startIndex ?: 0
+        val index = if(startIndex == null || startIndex < 0) 0 else startIndex
+
         val mediaItem =
             getMediaInfo(epData, holder, index, JSONObject(mapper.writeValueAsString(holder)), subtitles)
 

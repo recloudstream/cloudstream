@@ -20,22 +20,24 @@ data class ExtractorSubtitleLink(
 
 enum class Qualities(var value: Int) {
     Unknown(0),
-    SD(-1), // 360p - 480p
-    HD(1), // 720p
-    FullHd(2), // 1080p
-    UHD(3) // 4k
+    P360(-2), // 360p
+    P480(-1), // 480p
+    P720(1), // 720p
+    P1080(2), // 1080p
+    P1440(3), // 1440p
+    P2160(4) // 4k or 2160p
 }
 
 fun getQualityFromName(qualityName: String): Int {
     return when (qualityName.replace("p", "").replace("P", "")) {
-        "360" -> Qualities.SD
-        "480" -> Qualities.SD
-        "720" -> Qualities.HD
-        "1080" -> Qualities.FullHd
-        "1440" -> Qualities.UHD // I KNOW KINDA MISLEADING
-        "2160" -> Qualities.UHD
-        "4k" -> Qualities.UHD
-        "4K" -> Qualities.UHD
+        "360" -> Qualities.P360
+        "480" -> Qualities.P480
+        "720" -> Qualities.P720
+        "1080" -> Qualities.P1080
+        "1440" -> Qualities.P1440
+        "2160" -> Qualities.P2160
+        "4k" -> Qualities.P2160
+        "4K" -> Qualities.P2160
         else -> Qualities.Unknown
     }.value
 }

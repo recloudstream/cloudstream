@@ -29,10 +29,10 @@ class XStreamCdn : ExtractorApi() {
 
     private fun getQuality(string: String): Int {
         return when (string) {
-            "360p" -> Qualities.SD.value
-            "480p" -> Qualities.SD.value
-            "720p" -> Qualities.HD.value
-            "1080p" -> Qualities.FullHd.value
+            "360p" -> Qualities.P480.value
+            "480p" -> Qualities.P480.value
+            "720p" -> Qualities.P720.value
+            "1080p" -> Qualities.P1080.value
             else -> Qualities.Unknown.value
         }
     }
