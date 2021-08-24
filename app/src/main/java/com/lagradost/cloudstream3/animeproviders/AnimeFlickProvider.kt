@@ -86,7 +86,7 @@ class AnimeFlickProvider : MainAPI() {
             year,
             null,
             episodes,
-            ShowStatus.Ongoing,
+            null,
             description,
             genres
         )
