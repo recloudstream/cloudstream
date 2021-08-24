@@ -31,6 +31,7 @@ object APIHolder {
         TrailersToProvider(),
         //ShiroProvider(), // v2 fucked me
         AnimePaheProvider(),
+        AnimeFlickProvider(),
         GogoanimeProvider(),
         TenshiProvider(),
         WcoProvider(),
