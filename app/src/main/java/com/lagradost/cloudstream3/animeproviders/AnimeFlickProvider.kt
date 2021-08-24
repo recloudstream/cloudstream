@@ -2,7 +2,8 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.extractorApis
 import org.jsoup.Jsoup
 import java.util.*
 
@@ -65,14 +66,15 @@ class AnimeFlickProvider : MainAPI() {
         val title = doc.selectFirst("h2.title").text()
 
         val yearText = doc.selectFirst(".trending-year")?.text()
-        val year = if(yearText != null) Regex("""(\d{4})""").find(yearText)?.destructured?.component1()?.toIntOrNull() else null
+        val year = if (yearText != null) Regex("""(\d{4})""").find(yearText)?.destructured?.component1()
+            ?.toIntOrNull() else null
         val description = doc.selectFirst("p").text()
 
         val genres = doc.select("a[href*=\"genre-\"]").map { it.text() }
 
         val episodes = doc.select("#collapseOne .block-space > .row > div:nth-child(2)").map {
             val name = it.selectFirst("a").text()
-            val link = mainUrl +  it.selectFirst("a").attr("href")
+            val link = mainUrl + it.selectFirst("a").attr("href")
             AnimeEpisode(link, name)
         }.reversed()
 
@@ -102,19 +104,33 @@ class AnimeFlickProvider : MainAPI() {
         val html = khttp.get(data).text
 
         val episodeRegex = Regex("""(https://.*?\.mp4)""")
-        episodeRegex.findAll(html).map {
+        val links = episodeRegex.findAll(html).map {
             it.value
-        }.toList().forEach {
-            callback(
-                ExtractorLink(
-                    "Animeflick",
-                    "Animeflick - Auto",
-                    it,
-                    "",
-                    getQualityFromName("1080")
+        }.toList()
+        for (link in links) {
+            var alreadyAdded = false
+            for (extractor in extractorApis) {
+                if (link.startsWith(extractor.mainUrl)) {
+                    extractor.getSafeUrl(link, data)?.forEach {
+                        callback(it)
+                    }
+                    alreadyAdded = true
+                    break
+                }
+            }
+            if (!alreadyAdded) {
+                callback(
+                    ExtractorLink(
+                        this.name,
+                        "${this.name} - Auto",
+                        link,
+                        "",
+                        Qualities.P1080.value
+                    )
                 )
-            )
+            }
         }
+
         return true
     }
 }

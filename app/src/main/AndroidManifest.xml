@@ -51,16 +51,12 @@
 
         <receiver
                 android:name=".receivers.VideoDownloadRestartReceiver"
-                android:enabled="true"
+                android:enabled="false"
                 android:exported="true">
             <intent-filter>
                 <action android:name="restart_service" />
             </intent-filter>
         </receiver>
-        <service
-                android:name=".services.VideoDownloadKeepAliveService"
-                android:enabled="false" >
-        </service>
         <service
                 android:name=".services.VideoDownloadService"
                 android:enabled="true"

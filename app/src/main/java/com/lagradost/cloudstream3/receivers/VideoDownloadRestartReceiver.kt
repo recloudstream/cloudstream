@@ -5,9 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import com.lagradost.cloudstream3.services.RESTART_ALL_DOWNLOADS_AND_QUEUE
-import com.lagradost.cloudstream3.services.START_VALUE_KEY
-import com.lagradost.cloudstream3.services.VideoDownloadKeepAliveService
 
 
 class VideoDownloadRestartReceiver : BroadcastReceiver() {

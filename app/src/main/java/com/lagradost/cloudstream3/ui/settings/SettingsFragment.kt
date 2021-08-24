@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
@@ -19,7 +20,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             thread {
                 if (!requireActivity().runAutoUpdate(false)) {
                     activity?.runOnUiThread {
-                        Toast.makeText(this.context, "No Update Found", Toast.LENGTH_SHORT).show()
+                        showToast(activity, "No Update Found", Toast.LENGTH_SHORT)
                     }
                 }
             }

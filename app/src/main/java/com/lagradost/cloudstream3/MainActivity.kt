@@ -1,13 +1,18 @@
 package com.lagradost.cloudstream3
 
+import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
-import android.view.WindowManager
+import android.view.*
+import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -15,11 +20,6 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
-import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
-import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
-import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.DownloadChildFragment
@@ -33,9 +33,16 @@ import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
+import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
+import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
+import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlin.concurrent.thread
+
 
 const val VLC_PACKAGE = "org.videolan.vlc"
 const val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
@@ -67,6 +74,41 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val onColorSelectedEvent = Event<Pair<Int, Int>>()
         val onDialogDismissedEvent = Event<Int>()
         lateinit var navOptions: NavOptions
+
+        var currentToast: Toast? = null
+        fun showToast(act: Activity?, @StringRes message: Int, duration: Int) {
+            if (act == null) return
+            showToast(act, act.getString(message), duration)
+        }
+
+        fun showToast(act: Activity?, message: String, duration: Int) {
+            if (act == null) return
+            try {
+                currentToast?.cancel()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            try {
+                val inflater = act.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+                val layout: View = inflater.inflate(
+                    R.layout.toast,
+                    act.findViewById<View>(R.id.toast_layout_root) as ViewGroup?
+                )
+
+                val text = layout.findViewById(R.id.text) as TextView
+                text.text = message.trim()
+
+                val toast = Toast(act)
+                toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
+                toast.duration = duration
+                toast.view = layout
+                toast.show()
+                currentToast = toast
+            } catch (e: Exception) {
+
+            }
+        }
     }
 
     private fun enterPIPMode() {

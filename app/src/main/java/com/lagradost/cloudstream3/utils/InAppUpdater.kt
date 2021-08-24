@@ -15,8 +15,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import java.io.*
 import java.net.URL
 import java.net.URLConnection
@@ -178,7 +178,7 @@ class InAppUpdater {
                 } catch (e: Exception) {
                     println(e)
                     runOnUiThread {
-                        Toast.makeText(this, "Permission error", Toast.LENGTH_SHORT).show()
+                        showToast(this, "Permission error", Toast.LENGTH_SHORT)
                     }
                     return false
                 }
@@ -291,14 +291,14 @@ class InAppUpdater {
                         val context = this
                         builder.apply {
                             setPositiveButton("Update") { _, _ ->
-                                Toast.makeText(context, "Download started", Toast.LENGTH_LONG).show()
+                                showToast(context, "Download started", Toast.LENGTH_LONG)
                                 thread {
                                     val downloadStatus = context.downloadUpdate(update.updateURL)
                                     if (!downloadStatus) {
                                         runOnUiThread {
-                                            Toast.makeText(context,
+                                            showToast(context,
                                                 "Download Failed",
-                                                Toast.LENGTH_LONG).show()
+                                                Toast.LENGTH_LONG)
                                         }
                                     } /*else {
                                         activity.runOnUiThread {

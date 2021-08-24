@@ -21,6 +21,7 @@ import com.google.android.exoplayer2.text.Cue
 import com.google.android.exoplayer2.ui.CaptionStyleCompat
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -207,7 +208,7 @@ class SubtitlesFragment : Fragment() {
 
             this.setOnLongClickListener {
                 it.context.setColor(id, null)
-                Toast.makeText(it.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+                showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
             }
         }
@@ -248,7 +249,7 @@ class SubtitlesFragment : Fragment() {
         subs_subtitle_elevation.setOnLongClickListener {
             state.elevation = 0
             it.context.updateState()
-            Toast.makeText(it.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+            showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 
@@ -276,7 +277,7 @@ class SubtitlesFragment : Fragment() {
         subs_edge_type.setOnLongClickListener {
             state.edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE
             it.context.updateState()
-            Toast.makeText(it.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+            showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 
@@ -312,7 +313,7 @@ class SubtitlesFragment : Fragment() {
         subs_font.setOnLongClickListener { textView ->
             state.typeface = null
             textView.context.updateState()
-            Toast.makeText(textView.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+            showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 
@@ -336,7 +337,7 @@ class SubtitlesFragment : Fragment() {
 
         subs_auto_select_language.setOnLongClickListener { textView ->
             textView.context.setKey(SUBTITLE_AUTO_SELECT_KEY, "en")
-            Toast.makeText(textView.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+            showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 
@@ -359,7 +360,7 @@ class SubtitlesFragment : Fragment() {
         subs_download_languages.setOnLongClickListener { textView ->
             textView.context.setKey(SUBTITLE_DOWNLOAD_KEY, listOf("en"))
 
-            Toast.makeText(textView.context, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT).show()
+            showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 

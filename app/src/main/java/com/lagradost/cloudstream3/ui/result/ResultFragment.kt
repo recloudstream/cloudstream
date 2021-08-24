@@ -31,25 +31,16 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
-import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
-import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
-import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
-import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
-import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
-import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getDownloadSubsLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
@@ -60,16 +51,22 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
+import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.io.File
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 const val MAX_SYNO_LENGH = 300
 
@@ -278,7 +275,7 @@ class ResultFragment : Fragment() {
             media_route_button?.alpha = if (chromecastSupport) 1f else 0.3f
             if (!chromecastSupport) {
                 media_route_button.setOnClickListener {
-                    Toast.makeText(it.context, "This provider has no chromecast support", Toast.LENGTH_LONG).show()
+                    showToast(activity, "This provider has no chromecast support", Toast.LENGTH_LONG)
                 }
             }
 
@@ -369,7 +366,11 @@ class ResultFragment : Fragment() {
                         return true
                     }
                     is Resource.Failure -> {
-                        Toast.makeText(requireContext(), R.string.error_loading_links, Toast.LENGTH_SHORT).show()
+                        showToast(
+                            activity,
+                            R.string.error_loading_links,
+                            Toast.LENGTH_SHORT
+                        )
                     }
                     else -> {
 
@@ -476,7 +477,7 @@ class ResultFragment : Fragment() {
 
                     // DOWNLOAD VIDEO
                     VideoDownloadManager.downloadEpisode(
-                        ctx,
+                        activity,
                         src,//url ?: return,
                         folder,
                         meta,
@@ -525,6 +526,10 @@ class ResultFragment : Fragment() {
             if (!isLoaded) return@main // CANT LOAD
 
             when (episodeClick.action) {
+                ACTION_SHOW_TOAST -> {
+                    showToast(activity, R.string.play_episode_toast, Toast.LENGTH_SHORT)
+                }
+
                 ACTION_CLICK_DEFAULT -> {
                     context?.let { ctx ->
                         if (ctx.isConnectedToChromecast()) {
@@ -584,7 +589,7 @@ class ResultFragment : Fragment() {
                                 ?: return@acquireSingeExtractorLink
                         val clip = ClipData.newPlainText(link.name, link.url)
                         serviceClipboard.setPrimaryClip(clip)
-                        Toast.makeText(requireContext(), "Text Copied", Toast.LENGTH_SHORT).show()
+                        showToast(activity, "Link copied to clipboard", Toast.LENGTH_SHORT)
                     }
                 }
 
@@ -1012,7 +1017,7 @@ class ResultFragment : Fragment() {
                     }
                 }
                 is Resource.Failure -> {
-                    result_error_text.text = data.errorString
+                    result_error_text.text = url?.plus("\n") + data.errorString
                     updateVisStatus(1)
                 }
                 is Resource.Loading -> {

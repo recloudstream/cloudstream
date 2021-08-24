@@ -49,7 +49,6 @@
                 android:id="@+id/overlay_loading_skip_button"
                 android:text="@string/skip_loading"
 
-
                 app:rippleColor="?attr/colorPrimary"
                 android:textColor="?attr/textColor"
                 app:iconTint="?attr/textColor"

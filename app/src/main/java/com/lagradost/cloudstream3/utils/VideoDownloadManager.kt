@@ -1,9 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
-import android.app.ActivityManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
@@ -19,6 +16,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
@@ -908,15 +906,15 @@ object VideoDownloadManager {
         return context.getKey(KEY_RESUME_PACKAGES, id.toString())
     }
 
-    fun downloadFromResume(context: Context, pkg: DownloadResumePackage, setKey: Boolean = true) {
+    fun downloadFromResume(context: Activity, pkg: DownloadResumePackage, setKey: Boolean = true) {
         if (!currentDownloads.any { it == pkg.item.ep.id }) {
             if (currentDownloads.size == maxConcurrentDownloads) {
                 main {
-                    Toast.makeText(
+                    showToast( // can be replaced with regular Toast
                         context,
                         "${pkg.item.ep.mainName}${pkg.item.ep.episode?.let { " Episode $it " } ?: " "}queued",
                         Toast.LENGTH_SHORT
-                    ).show()
+                    )
                 }
             }
             downloadQueue.addLast(pkg)
@@ -947,12 +945,13 @@ object VideoDownloadManager {
     }
 
     fun downloadEpisode(
-        context: Context,
+        context: Activity?,
         source: String?,
         folder: String?,
         ep: DownloadEpisodeMetadata,
         links: List<ExtractorLink>
     ) {
+        if(context == null) return
         val validLinks = links.filter { !it.isM3u8 }
         if (validLinks.isNotEmpty()) {
             downloadFromResume(context, DownloadResumePackage(DownloadItem(source, folder, ep, validLinks), null))

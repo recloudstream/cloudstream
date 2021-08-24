@@ -57,6 +57,7 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.MainActivity.Companion.canEnterPipMode
 import com.lagradost.cloudstream3.MainActivity.Companion.isInPIPMode
+import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
@@ -1242,7 +1243,8 @@ class PlayerFragment : Fragment() {
                 }
             }
 
-            val startIndexFromMap = currentSubtitles.map { it.removeSuffix(" ") }.indexOf(preferredSubtitles.removeSuffix(" ")) + 1
+            val startIndexFromMap =
+                currentSubtitles.map { it.removeSuffix(" ") }.indexOf(preferredSubtitles.removeSuffix(" ")) + 1
             var subtitleIndex = startIndexFromMap
 
             if (currentSubtitles.isEmpty()) {
@@ -1805,33 +1807,30 @@ class PlayerFragment : Fragment() {
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE -> {
                             if (currentUrl?.url != "") {
-                                Toast.makeText(
+                                showToast(
                                     activity,
                                     "Source error\n" + error.sourceException.message,
                                     LENGTH_SHORT
                                 )
-                                    .show()
                                 tryNextMirror()
                             }
                         }
                         ExoPlaybackException.TYPE_REMOTE -> {
-                            Toast.makeText(activity, "Remote error", LENGTH_SHORT)
-                                .show()
+                            showToast(activity, "Remote error", LENGTH_SHORT)
                         }
                         ExoPlaybackException.TYPE_RENDERER -> {
-                            Toast.makeText(
+                            showToast(
                                 activity,
                                 "Renderer error\n" + error.rendererException.message,
                                 LENGTH_SHORT
                             )
-                                .show()
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED -> {
-                            Toast.makeText(
+                            showToast(
                                 activity,
                                 "Unexpected player error\n" + error.unexpectedException.message,
                                 LENGTH_SHORT
-                            ).show()
+                            )
                         }
                     }
                 }
@@ -1840,8 +1839,8 @@ class PlayerFragment : Fragment() {
             println("Warning: Illegal state exception in PlayerFragment")
         } finally {
             setPreferredSubLanguage(
-                if(isDownloadedFile) {
-                    if(activeSubtitles.isNotEmpty()) {
+                if (isDownloadedFile) {
+                    if (activeSubtitles.isNotEmpty()) {
                         activeSubtitles.first()
                     } else null
                 } else {
@@ -1877,9 +1876,7 @@ class PlayerFragment : Fragment() {
                             initPlayer(getCurrentUrl())
                         }
                     } else {
-                        context?.let { ctx ->
-                            Toast.makeText(ctx, "No Links Found", LENGTH_SHORT).show()
-                        }
+                        showToast(activity, "No Links Found", LENGTH_SHORT)
                     }
                 }
             }

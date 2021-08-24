@@ -39,6 +39,7 @@ const val ACTION_COPY_LINK = 9
 const val ACTION_SHOW_OPTIONS = 10
 
 const val ACTION_CLICK_DEFAULT = 11
+const val ACTION_SHOW_TOAST = 12
 
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
@@ -173,7 +174,7 @@ class EpisodeAdapter(
             }
 
             episodePoster?.setOnLongClickListener {
-                Toast.makeText(it.context, R.string.play_episode_toast, Toast.LENGTH_SHORT).show()
+                clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_TOAST, card))
                 return@setOnLongClickListener true
             }
 

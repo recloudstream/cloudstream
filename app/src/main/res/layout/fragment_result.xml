@@ -389,10 +389,13 @@
                     </TextView>
                 </LinearLayout>
 
-                <LinearLayout android:orientation="horizontal" android:gravity="center_vertical"
-                              android:layout_width="match_parent" android:layout_height="wrap_content">
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
                     <com.google.android.material.button.MaterialButton
-                            android:visibility="visible"
+                            android:visibility="gone"
                             android:layout_gravity="center_vertical"
                             android:id="@+id/result_season_button"
                             tools:text="Season 1"
@@ -409,7 +412,7 @@
                             android:layout_height="50dp">
                     </com.google.android.material.button.MaterialButton>
                     <com.google.android.material.button.MaterialButton
-                            android:visibility="visible"
+                            android:visibility="gone"
                             android:layout_gravity="center_vertical"
                             android:id="@+id/result_episode_select"
                             tools:text="50-100"
