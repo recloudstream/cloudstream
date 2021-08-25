@@ -63,6 +63,7 @@ class AnimePaheProvider : MainAPI() {
             @JsonProperty("id") val id: Int,
             @JsonProperty("anime_id") val animeId: Int,
             @JsonProperty("anime_title") val animeTitle: String,
+            @JsonProperty("anime_slug") val animeSlug: String,
             @JsonProperty("episode") val episode: Int,
             @JsonProperty("snapshot") val snapshot: String,
             @JsonProperty("created_at") val createdAt: String,
@@ -86,7 +87,7 @@ class AnimePaheProvider : MainAPI() {
 
                     AnimeSearchResponse(
                         it.animeTitle,
-                        "https://animepahe.com/anime/${it.animeSession}",
+                        "https://pahe.win/a/${it.animeId}?slug=${it.animeTitle}",
                         this.name,
                         TvType.Anime,
                         it.snapshot,
@@ -107,28 +108,42 @@ class AnimePaheProvider : MainAPI() {
         return HomePageResponse(items)
     }
 
+    data class AnimePaheSearchData(
+        @JsonProperty("id") val id: Int,
+        @JsonProperty("slug") val slug: String,
+        @JsonProperty("title") val title: String,
+        @JsonProperty("type") val type: String,
+        @JsonProperty("episodes") val episodes: Int,
+        @JsonProperty("status") val status: String,
+        @JsonProperty("season") val season: String,
+        @JsonProperty("year") val year: Int,
+        @JsonProperty("score") val score: Double,
+        @JsonProperty("poster") val poster: String,
+        @JsonProperty("session") val session: String,
+        @JsonProperty("relevance") val relevance: String
+    )
+
+    data class AnimePaheSearch(
+        @JsonProperty("total") val total: Int,
+        @JsonProperty("data") val data: List<AnimePaheSearchData>
+    )
+
+    private fun getAnimeByIdAndTitle(title: String, animeId: Int): String? {
+        val url = "$mainUrl/api?m=search&l=8&q=$title"
+        val headers = mapOf("referer" to "$mainUrl/")
+
+        val req = khttp.get(url, headers = headers)
+        val data = req.let { mapper.readValue<AnimePaheSearch>(it.text) }
+        for (anime in data.data) {
+            if (anime.id == animeId) {
+                return "https://animepahe.com/anime/${anime.session}"
+            }
+        }
+        return null
+    }
+
+
     override fun search(query: String): ArrayList<SearchResponse> {
-
-        data class AnimePaheSearchData(
-            @JsonProperty("id") val id: Int,
-            @JsonProperty("slug") val slug: String,
-            @JsonProperty("title") val title: String,
-            @JsonProperty("type") val type: String,
-            @JsonProperty("episodes") val episodes: Int,
-            @JsonProperty("status") val status: String,
-            @JsonProperty("season") val season: String,
-            @JsonProperty("year") val year: Int,
-            @JsonProperty("score") val score: Double,
-            @JsonProperty("poster") val poster: String,
-            @JsonProperty("session") val session: String,
-            @JsonProperty("relevance") val relevance: String
-        )
-
-        data class AnimePaheSearch(
-            @JsonProperty("total") val total: Int,
-            @JsonProperty("data") val data: List<AnimePaheSearchData>
-        )
-
         val url = "$mainUrl/api?m=search&l=8&q=$query"
         val headers = mapOf("referer" to "$mainUrl/")
 
@@ -138,7 +153,7 @@ class AnimePaheProvider : MainAPI() {
         return ArrayList(data.data.map {
             AnimeSearchResponse(
                 it.title,
-                "https://animepahe.com/anime/${it.session}",
+                "https://pahe.win/a/${it.id}?slug=${it.title}",
                 this.name,
                 TvType.Anime,
                 it.poster,
@@ -178,7 +193,7 @@ class AnimePaheProvider : MainAPI() {
     private fun generateListOfEpisodes(link: String): ArrayList<AnimeEpisode> {
         try {
             val attrs = link.split('/')
-            val id = attrs[attrs.size - 1]
+            val id = attrs[attrs.size - 1].split("?")[0]
 
             val uri = "$mainUrl/api?m=release&id=$id&sort=episode_asc&page=1"
             val headers = mapOf("referer" to "$mainUrl/")
@@ -237,10 +252,14 @@ class AnimePaheProvider : MainAPI() {
 
     override fun load(url: String): LoadResponse? {
         return normalSafeApiCall {
-            val html = khttp.get(url).text
+
+            val regex = Regex("""a/(\d+)\?slug=(.+)""")
+            val (animeId, animeTitle) = regex.find(url)!!.destructured
+            val link = getAnimeByIdAndTitle(animeTitle, animeId.toInt())!!
+
+            val html = khttp.get(link).text
             val doc = Jsoup.parse(html)
 
-            val title = doc.selectFirst(".anime-poster img")?.attr("alt")?.replace("Poster of ", "")
             val japTitle = doc.selectFirst("h2.japanese")?.text()
             val poster = doc.selectFirst(".anime-poster a").attr("href")
 
@@ -277,9 +296,9 @@ class AnimePaheProvider : MainAPI() {
             }
 
             AnimeLoadResponse(
-                title,
+                animeTitle,
                 japTitle,
-                title.toString(),
+                animeTitle,
                 url,
                 this.name,
                 getType(tvType.toString()),
