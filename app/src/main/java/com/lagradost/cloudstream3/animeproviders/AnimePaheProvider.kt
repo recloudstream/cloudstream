@@ -66,6 +66,7 @@ class AnimePaheProvider : MainAPI() {
             @JsonProperty("episode") val episode: Int,
             @JsonProperty("snapshot") val snapshot: String,
             @JsonProperty("created_at") val createdAt: String,
+            @JsonProperty("anime_session") val animeSession: String,
         )
 
         data class AnimePaheLatestReleases(
@@ -85,7 +86,7 @@ class AnimePaheProvider : MainAPI() {
 
                     AnimeSearchResponse(
                         it.animeTitle,
-                        "https://pahe.win/a/${it.animeId}",
+                        "https://animepahe.com/anime/${it.animeSession}",
                         this.name,
                         TvType.Anime,
                         it.snapshot,
@@ -137,7 +138,7 @@ class AnimePaheProvider : MainAPI() {
         return ArrayList(data.data.map {
             AnimeSearchResponse(
                 it.title,
-                "https://pahe.win/a/${it.id}",
+                "https://animepahe.com/anime/${it.session}",
                 this.name,
                 TvType.Anime,
                 it.poster,
