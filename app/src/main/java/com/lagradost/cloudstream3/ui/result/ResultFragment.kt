@@ -72,6 +72,9 @@ const val MAX_SYNO_LENGH = 300
 
 const val START_ACTION_NORMAL = 0
 const val START_ACTION_RESUME_LATEST = 1
+const val START_ACTION_LOAD_EP = 2
+
+const val START_VALUE_NORMAL = 0
 
 data class ResultEpisode(
     val name: String?,
@@ -140,12 +143,13 @@ fun ResultEpisode.getWatchProgress(): Float {
 
 class ResultFragment : Fragment() {
     companion object {
-        fun newInstance(url: String, apiName: String, startAction: Int = 0) =
+        fun newInstance(url: String, apiName: String, startAction: Int = 0, startValue : Int = 0) =
             ResultFragment().apply {
                 arguments = Bundle().apply {
                     putString("url", url)
                     putString("apiName", apiName)
                     putInt("startAction", startAction)
+                    putInt("startValue", startValue)
                 }
             }
     }
@@ -231,6 +235,7 @@ class ResultFragment : Fragment() {
     }
 
     var startAction: Int? = null
+    var startValue: Int? = null
 
     private fun lateFixDownloadButton(show: Boolean) {
         if (!show || currentType?.isMovieType() == false) {
@@ -267,6 +272,7 @@ class ResultFragment : Fragment() {
         url = arguments?.getString("url")
         val apiName = arguments?.getString("apiName") ?: return
         startAction = arguments?.getInt("startAction") ?: START_ACTION_NORMAL
+        startValue = arguments?.getInt("startValue") ?: START_VALUE_NORMAL
 
         val api = getApiFromName(apiName)
         if (media_route_button != null) {
@@ -443,7 +449,8 @@ class ResultFragment : Fragment() {
 
                     // SET VISUAL KEYS
                     ctx.setKey(
-                        DOWNLOAD_HEADER_CACHE, parentId.toString(),
+                        DOWNLOAD_HEADER_CACHE,
+                        parentId.toString(),
                         VideoDownloadHelper.DownloadHeaderCached(
                             apiName,
                             url ?: return@let,
@@ -749,13 +756,21 @@ class ResultFragment : Fragment() {
                             continue
                         }
                         handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
-                        startAction = null
                         break
+                    }
+                }
+                START_ACTION_LOAD_EP -> {
+                    for (ep in episodeList) {
+                        if (ep.id == startValue) { // watched too much
+                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
+                            break
+                        }
                     }
                 }
                 else -> {
                 }
             }
+            startAction = null
         }
 
         observe(viewModel.allEpisodes) {

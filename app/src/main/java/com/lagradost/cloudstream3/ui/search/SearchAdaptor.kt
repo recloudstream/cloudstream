@@ -28,6 +28,7 @@ import kotlin.math.roundToInt
 
 const val SEARCH_ACTION_LOAD = 0
 const val SEARCH_ACTION_SHOW_METADATA = 1
+const val SEARCH_ACTION_PLAY_FILE = 2
 
 class SearchClickCallback(val action: Int, val view: View, val card: SearchResponse)
 
@@ -66,16 +67,7 @@ class SearchAdapter(
     ) :
         RecyclerView.ViewHolder(itemView) {
         val cardView: ImageView = itemView.imageView
-        private val cardText: TextView = itemView.imageText
-        private val textType: TextView? = itemView.text_type
-        // val search_result_lang: ImageView? = itemView.search_result_lang
 
-        private val textIsDub: View? = itemView.text_is_dub
-        private val textIsSub: View? = itemView.text_is_sub
-
-        //val cardTextExtra: TextView? = itemView.imageTextExtra
-        //val imageTextProvider: TextView? = itemView.imageTextProvider
-        private val bg: CardView = itemView.backgroundCard
         private val compactView = itemView.context.getGridIsCompact()
         private val coverHeight: Int = if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
 
@@ -89,47 +81,7 @@ class SearchAdapter(
                 }
             }
 
-            textType?.text = when (card.type) {
-                TvType.Anime -> "Anime"
-                TvType.Movie -> "Movie"
-                TvType.AnimeMovie -> "Movie"
-                TvType.ONA -> "ONA"
-                TvType.TvSeries -> "TV"
-                TvType.Cartoon -> "Cartoon"
-            }
-            // search_result_lang?.visibility = View.GONE
-
-            textIsDub?.visibility = View.GONE
-            textIsSub?.visibility = View.GONE
-
-            cardText.text = card.name
-
-            //imageTextProvider.text = card.apiName
-            cardView.setImage(card.posterUrl)
-
-            bg.setOnClickListener {
-                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_LOAD, it, card))
-            }
-
-            bg.setOnLongClickListener {
-                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_SHOW_METADATA, it, card))
-                return@setOnLongClickListener true
-            }
-
-            when (card) {
-                is AnimeSearchResponse -> {
-                    if (card.dubStatus?.size == 1) {
-                        //search_result_lang?.visibility = View.VISIBLE
-                        if (card.dubStatus.contains(DubStatus.Dubbed)) {
-                            textIsDub?.visibility = View.VISIBLE
-                            //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.dubColor))
-                        } else if (card.dubStatus.contains(DubStatus.Subbed)) {
-                            //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.subColor))
-                            textIsSub?.visibility = View.VISIBLE
-                        }
-                    }
-                }
-            }
+            SearchResultBuilder.bind(clickCallback, card,  itemView)
         }
     }
 }

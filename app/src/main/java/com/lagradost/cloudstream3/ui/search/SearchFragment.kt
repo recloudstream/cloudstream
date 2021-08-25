@@ -305,7 +305,7 @@ class SearchFragment : Fragment() {
 
         main_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                searchViewModel.search(query)
+                searchViewModel.searchAndCancel(query)
                 return true
             }
 

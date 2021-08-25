@@ -13,10 +13,18 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -37,6 +45,44 @@ class HomeViewModel : ViewModel() {
     val availableWatchStatusTypes: LiveData<Pair<WatchType, List<WatchType>>> = _availableWatchStatusTypes
     private val _bookmarks = MutableLiveData<List<SearchResponse>>()
     val bookmarks: LiveData<List<SearchResponse>> = _bookmarks
+
+    private val _resumeWatching = MutableLiveData<List<SearchResponse>>()
+    val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
+
+    fun loadResumeWatching(context: Context) = viewModelScope.launch {
+        val resumeWatching = withContext(Dispatchers.IO) {
+            context.getAllResumeStateIds().mapNotNull { id ->
+                context.getLastWatched(id)
+            }.sortedBy { -it.updateTime }
+        }
+
+        // val resumeWatchingResult = ArrayList<DataStoreHelper.ResumeWatchingResult>()
+
+        val resumeWatchingResult = withContext(Dispatchers.IO) {
+            resumeWatching.map { resume ->
+                val data = context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                    DOWNLOAD_HEADER_CACHE,
+                    resume.parentId.toString()
+                ) ?: return@map null
+                val watchPos = context.getViewPos(resume.episodeId)
+                DataStoreHelper.ResumeWatchingResult(
+                    data.name,
+                    data.url,
+                    data.apiName,
+                    data.type,
+                    data.poster,
+                    watchPos,
+                    resume.episodeId,
+                    resume.parentId,
+                    resume.episode,
+                    resume.season,
+                    resume.isFromDownload
+                )
+            }.filterNotNull()
+        }
+
+        _resumeWatching.postValue(resumeWatchingResult)
+    }
 
     fun loadStoredData(context: Context, preferredWatchStatus: WatchType?) = viewModelScope.launch {
         val watchStatusIds = withContext(Dispatchers.IO) {
@@ -78,19 +124,26 @@ class HomeViewModel : ViewModel() {
         _bookmarks.postValue(list)
     }
 
-    fun load(api: MainAPI?) = viewModelScope.launch {
+    var onGoingLoad: Job? = null
+    fun loadAndCancel(api: MainAPI?) {
+        onGoingLoad?.cancel()
+        onGoingLoad = load(api)
+    }
+
+    private fun load(api: MainAPI?) = viewModelScope.launch {
         repo = if (api?.hasMainPage == true) {
             APIRepository(api)
         } else {
             autoloadRepo()
         }
+
         _apiName.postValue(repo?.name)
         _page.postValue(Resource.Loading())
         _page.postValue(repo?.getMainPage())
     }
 
-    fun load(preferredApiName: String?) = viewModelScope.launch {
+    fun loadAndCancel(preferredApiName: String?) = viewModelScope.launch {
         val api = getApiFromNameNull(preferredApiName)
-        load(api)
+        loadAndCancel(api)
     }
 }

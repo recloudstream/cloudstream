@@ -50,39 +50,39 @@ object AppUtils {
      * | Episode 2
      * **/
     fun getNameFull(name: String?, episode: Int?, season: Int?): String {
-        val rEpisode = if(episode == 0) null else episode
-        val rSeason = if(season == 0) null else season
+        val rEpisode = if (episode == 0) null else episode
+        val rSeason = if (season == 0) null else season
 
         if (name != null) {
-            return if(rEpisode != null && rSeason != null) {
+            return if (rEpisode != null && rSeason != null) {
                 "S${rSeason}:E${rEpisode} $name"
-            } else if(rEpisode != null) {
+            } else if (rEpisode != null) {
                 "Episode $rEpisode. $name"
             } else {
                 name
             }
         } else {
-            if(rEpisode != null && rSeason != null) {
+            if (rEpisode != null && rSeason != null) {
                 return "Season $rSeason - Episode $rEpisode"
-            } else if(rSeason == null) {
+            } else if (rSeason == null) {
                 return "Episode $rEpisode"
             }
         }
         return ""
     }
 
-    fun AppCompatActivity.loadResult(url: String, apiName: String, startAction: Int = 0) {
+    fun AppCompatActivity.loadResult(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0) {
         this.runOnUiThread {
             viewModelStore.clear()
             this.supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
-                .add(R.id.homeRoot, ResultFragment.newInstance(url, apiName, startAction))
+                .add(R.id.homeRoot, ResultFragment.newInstance(url, apiName, startAction, startValue))
                 .commit()
         }
     }
 
-    fun Activity?.loadSearchResult(card: SearchResponse, startAction: Int = 0) {
-        (this as AppCompatActivity?)?.loadResult(card.url, card.apiName, startAction)
+    fun Activity?.loadSearchResult(card: SearchResponse, startAction: Int = 0, startValue: Int = 0) {
+        (this as AppCompatActivity?)?.loadResult(card.url, card.apiName, startAction, startValue)
     }
 
     fun Activity.requestLocalAudioFocus(focusRequest: AudioFocusRequest?) {

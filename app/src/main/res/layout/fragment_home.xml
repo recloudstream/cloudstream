@@ -9,14 +9,30 @@
         android:id="@+id/home_root"
         tools:context=".ui.home.HomeFragment">
 
-    <ProgressBar
-            android:visibility="visible"
-            tools:visibility="gone"
+    <FrameLayout
             android:id="@+id/home_loading"
-            android:layout_gravity="center"
-            android:layout_width="50dp"
-            android:layout_height="50dp">
-    </ProgressBar>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <ProgressBar
+                android:layout_gravity="center"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:layout_width="50dp"
+                android:layout_height="50dp">
+        </ProgressBar>
+        <ImageView
+                android:id="@+id/home_change_api_loading"
+                android:layout_margin="10dp"
+                android:layout_gravity="end"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+
+                android:src="@drawable/ic_outline_settings_24"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:contentDescription="@string/home_change_provider">
+        </ImageView>
+    </FrameLayout>
+
     <LinearLayout
             tools:visibility="gone"
             android:id="@+id/home_loading_error"
@@ -33,8 +49,7 @@
                 android:id="@+id/home_reload_connectionerror"
                 android:layout_width="wrap_content"
                 android:minWidth="200dp"
-        >
-        </com.google.android.material.button.MaterialButton>
+        />
         <com.google.android.material.button.MaterialButton
                 android:layout_gravity="center"
                 style="@style/BlackButton"
@@ -44,8 +59,7 @@
                 android:id="@+id/home_reload_connection_open_in_browser"
                 android:layout_width="wrap_content"
                 android:minWidth="200dp"
-        >
-        </com.google.android.material.button.MaterialButton>
+        />
         <TextView
                 android:layout_margin="5dp"
                 android:gravity="center"
@@ -53,8 +67,8 @@
                 android:id="@+id/result_error_text"
                 android:textColor="?attr/textColor"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-        </TextView>
+                android:layout_height="wrap_content"
+        />
     </LinearLayout>
     <androidx.core.widget.NestedScrollView
             android:id="@+id/home_loaded"
@@ -154,6 +168,51 @@
                             android:contentDescription="@string/home_next_random">
                     </ImageView>
                 </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/home_watch_holder"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <FrameLayout
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:id="@+id/home_watch_child_more_info"
+                        android:padding="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    <TextView
+                            android:layout_gravity="center_vertical"
+                            android:id="@+id/home_watch_parent_item_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="?attr/textColor"
+                            android:gravity="center_vertical"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:text="@string/continue_watching"
+                    />
+                    <ImageView
+                            android:layout_marginEnd="5dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:src="@drawable/ic_baseline_arrow_forward_24"
+                            android:layout_width="30dp"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/home_more_info">
+                    </ImageView>
+                </FrameLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:id="@+id/home_watch_child_recyclerview"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/home_result_grid"
+                />
             </LinearLayout>
 
             <LinearLayout

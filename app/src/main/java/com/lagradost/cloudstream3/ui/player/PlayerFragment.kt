@@ -77,6 +77,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.requestLocalAudioFocus
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -146,6 +147,7 @@ data class UriData(
     val uri: String,
     val relativePath: String,
     val displayName: String,
+    val parentId: Int?,
     val id: Int?,
     val name: String,
     val episode: Int?,
@@ -652,12 +654,24 @@ class PlayerFragment : Fragment() {
         if (this::exoPlayer.isInitialized) {
             if (exoPlayer.duration > 0 && exoPlayer.currentPosition > 0) {
                 context?.let { ctx ->
-                    ctx.setViewPos(
-                        if (isDownloadedFile) uriData.id else getEpisode()?.id,
-                        exoPlayer.currentPosition,
-                        exoPlayer.duration
-                    )
-                    if (!isDownloadedFile)
+                    if (this::viewModel.isInitialized) {
+                        viewModel.setViewPos(
+                            ctx,
+                            if (isDownloadedFile) uriData.id else getEpisode()?.id,
+                            exoPlayer.currentPosition,
+                            exoPlayer.duration
+                        )
+                    } else {
+                        ctx.setViewPos(
+                            if (isDownloadedFile) uriData.id else getEpisode()?.id,
+                            exoPlayer.currentPosition,
+                            exoPlayer.duration
+                        )
+                    }
+
+                    if (isDownloadedFile) {
+                        ctx.setLastWatched(uriData.parentId, uriData.id, uriData.episode, uriData.season, true)
+                    } else
                         viewModel.reloadEpisodes(ctx)
                 }
             }

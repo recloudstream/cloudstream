@@ -46,22 +46,26 @@
             android:paddingEnd="5dp"
             android:ellipsize="end"
     />
-    <TextView
-            android:text="Movie"
-            android:visibility="gone"
-            android:id="@+id/text_type"
-            android:textColor="@color/textColor"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="4dp"
-            android:layout_marginBottom="5dp"
-            android:layout_gravity="start"
-            android:paddingBottom="8dp"
-            android:minWidth="50dp"
-            android:gravity="center"
-            android:background="@drawable/type_bg_color"
-            android:layout_width="wrap_content" android:layout_height="wrap_content">
-    </TextView>
+    <ImageView
+            android:id="@+id/search_item_download_play"
+            android:layout_gravity="center"
+            android:src="@drawable/play_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp">
+    </ImageView>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+            android:layout_marginBottom="-1.5dp"
+            android:id="@+id/watchProgress"
+            android:progressTint="@color/colorPrimary"
+            android:progressBackgroundTint="@color/colorPrimary"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            tools:progress="50"
+            android:layout_gravity="bottom"
+            android:layout_height="5dp">
+    </androidx.core.widget.ContentLoadingProgressBar>
+
     <!--<View
             android:id="@+id/search_result_lang"
             android:layout_gravity="bottom"

@@ -9,18 +9,25 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 const val EPISODE_RANGE_SIZE = 50
 const val EPISODE_RANGE_OVERLOAD = 60
@@ -30,6 +37,8 @@ class ResultViewModel : ViewModel() {
 
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
     private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
+    private val episodeById: MutableLiveData<HashMap<Int, Int>> = MutableLiveData() // lookup by ID to get Index
+
     private val _publicEpisodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
     private val _publicEpisodesCount: MutableLiveData<Int> = MutableLiveData() // before the sorting
     private val _rangeOptions: MutableLiveData<List<String>> = MutableLiveData()
@@ -96,7 +105,7 @@ class ResultViewModel : ViewModel() {
         }
         val seasons = seasonTypes.toList().map { it.first }
         seasonSelections.postValue(seasons)
-        if(seasons.isEmpty()) { // WHAT THE FUCK DID YOU DO????? HOW DID YOU DO THIS
+        if (seasons.isEmpty()) { // WHAT THE FUCK DID YOU DO????? HOW DID YOU DO THIS
             _publicEpisodes.postValue(ArrayList())
             return
         }
@@ -141,7 +150,7 @@ class ResultViewModel : ViewModel() {
             selectedRangeInt.postValue(realRange)
             selectedRange.postValue(rangeList[realRange])
         } else {
-            val allRange ="1-${currentList.size}"
+            val allRange = "1-${currentList.size}"
             _rangeOptions.postValue(listOf(allRange))
             selectedRangeInt.postValue(0)
             selectedRange.postValue(allRange)
@@ -160,6 +169,11 @@ class ResultViewModel : ViewModel() {
 
     private fun updateEpisodes(context: Context, localId: Int?, list: List<ResultEpisode>, selection: Int?) {
         _episodes.postValue(list)
+        val set = HashMap<Int, Int>()
+
+        list.withIndex().forEach { set[it.value.id] = it.index }
+        episodeById.postValue(set)
+
         filterEpisodes(
             context,
             list,
@@ -174,6 +188,40 @@ class ResultViewModel : ViewModel() {
             it.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
         }
         updateEpisodes(context, null, copy, selectedSeason.value)
+    }
+
+    fun setViewPos(context: Context?, episodeId: Int?, pos: Long, dur: Long) {
+        try {
+            if (context == null || episodeId == null) return
+            context.setViewPos(episodeId, pos, dur)
+            var index = episodeById.value?.get(episodeId) ?: return
+
+            var startPos = pos
+            var startDur = dur
+            val episodeList = (episodes.value ?: return)
+            var episode = episodeList[index]
+            val parentId = id.value ?: return
+            while (true) {
+                if (startDur > 0L && (startPos * 100 / startDur) > 95) {
+                    index++
+                    if (episodeList.size <= index) { // last episode
+                        context.removeLastWatched(parentId)
+                        return
+                    }
+                    episode = episodeList[index]
+
+                    startPos = episode.position
+                    startDur = episode.duration
+
+                    continue
+                } else {
+                    context.setLastWatched(parentId, episode.id, episode.episode, episode.season)
+                    return
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun load(context: Context, url: String, apiName: String) = viewModelScope.launch {
@@ -195,14 +243,28 @@ class ResultViewModel : ViewModel() {
                 id.postValue(mainId)
                 loadWatchStatus(context, mainId)
 
+                context.setKey(
+                    DOWNLOAD_HEADER_CACHE,
+                    mainId.toString(),
+                    VideoDownloadHelper.DownloadHeaderCached(
+                        apiName,
+                        url,
+                        d.type,
+                        d.name,
+                        d.posterUrl,
+                        mainId,
+                        System.currentTimeMillis(),
+                    )
+                )
+
                 when (d) {
                     is AnimeLoadResponse -> {
-                        val isDub = d.dubEpisodes != null && d.dubEpisodes.size > 0
+                        val isDub = d.dubEpisodes != null && d.dubEpisodes.isNotEmpty()
                         dubStatus.postValue(if (isDub) DubStatus.Dubbed else DubStatus.Subbed)
 
                         val dataList = (if (isDub) d.dubEpisodes else d.subEpisodes)
 
-                        if (dataList != null) {
+                        if (dataList != null) { // TODO dub and sub at the same time
                             val episodes = ArrayList<ResultEpisode>()
                             for ((index, i) in dataList.withIndex()) {
                                 episodes.add(

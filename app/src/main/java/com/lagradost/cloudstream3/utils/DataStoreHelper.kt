@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 const val VIDEO_POS_DUR = "video_pos_dur"
 const val RESULT_WATCH_STATE = "result_watch_state"
 const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
+const val RESULT_RESUME_WATCHING = "result_resume_watching"
 const val RESULT_SEASON = "result_season"
 
 object DataStoreHelper {
@@ -35,7 +36,23 @@ object DataStoreHelper {
         override val apiName: String,
         override val type: TvType,
         override val posterUrl: String?,
-        override val year: Int?,
+        val year: Int?,
+    ) : SearchResponse
+
+    data class ResumeWatchingResult(
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override val type: TvType,
+        override val posterUrl: String?,
+
+        val watchPos: PosDur?,
+
+        override val id: Int?,
+        val parentId: Int?,
+        val episode: Int?,
+        val season: Int?,
+        val isFromDownload: Boolean,
     ) : SearchResponse
 
     var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
@@ -45,6 +62,48 @@ object DataStoreHelper {
         return getKeys(folder).mapNotNull {
             it.removePrefix("$folder/").toIntOrNull()
         }
+    }
+
+    fun Context.getAllResumeStateIds(): List<Int> {
+        val folder = "$currentAccount/$RESULT_RESUME_WATCHING"
+        return getKeys(folder).mapNotNull {
+            it.removePrefix("$folder/").toIntOrNull()
+        }
+    }
+
+    fun Context.setLastWatched(
+        parentId: Int?,
+        episodeId: Int?,
+        episode: Int?,
+        season: Int?,
+        isFromDownload: Boolean = false
+    ) {
+        if (parentId == null || episodeId == null) return
+        setKey(
+            "$currentAccount/$RESULT_RESUME_WATCHING",
+            parentId.toString(),
+            VideoDownloadHelper.ResumeWatching(
+                parentId,
+                episodeId,
+                episode,
+                season,
+                System.currentTimeMillis(),
+                isFromDownload
+            )
+        )
+    }
+
+    fun Context.removeLastWatched(parentId: Int?) {
+        if (parentId == null) return
+        removeKey("$currentAccount/$RESULT_RESUME_WATCHING", parentId.toString())
+    }
+
+    fun Context.getLastWatched(id: Int?): VideoDownloadHelper.ResumeWatching? {
+        if (id == null) return null
+        return getKey(
+            "$currentAccount/$RESULT_RESUME_WATCHING",
+            id.toString(),
+        )
     }
 
     fun Context.setBookmarkedData(id: Int?, data: BookmarkedData) {

@@ -88,6 +88,7 @@ object DownloadButtonSetup {
                                     info.path.toString(),
                                     keyInfo.relativePath,
                                     keyInfo.displayName,
+                                    click.data.parentId,
                                     click.data.id,
                                     headerName ?: "null",
                                     if (click.data.episode <= 0) null else click.data.episode,

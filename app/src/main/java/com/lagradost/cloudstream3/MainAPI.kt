@@ -234,11 +234,10 @@ class HomePageList(
 
 interface SearchResponse {
     val name: String
-    val url: String // PUBLIC URL FOR OPEN IN APP
+    val url: String
     val apiName: String
     val type: TvType
     val posterUrl: String?
-    val year: Int?
     val id: Int?
 }
 
@@ -249,7 +248,7 @@ data class AnimeSearchResponse(
     override val type: TvType,
 
     override val posterUrl: String?,
-    override val year: Int?,
+    val year: Int?,
 
     val otherName: String?,
     val dubStatus: EnumSet<DubStatus>?,
@@ -265,7 +264,7 @@ data class MovieSearchResponse(
     override val type: TvType,
 
     override val posterUrl: String?,
-    override val year: Int?,
+    val year: Int?,
     override val id: Int? = null,
 ) : SearchResponse
 
@@ -276,7 +275,7 @@ data class TvSeriesSearchResponse(
     override val type: TvType,
 
     override val posterUrl: String?,
-    override val year: Int?,
+    val year: Int?,
     val episodes: Int?,
     override val id: Int? = null,
 ) : SearchResponse
