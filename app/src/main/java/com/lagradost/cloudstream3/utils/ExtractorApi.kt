@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.extractors.*
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 
@@ -52,6 +53,15 @@ fun getAndUnpack(string: String): String? {
     return JsUnpacker(packedText).unpack()
 }
 
+fun loadExtractor(url: String, referer: String?, callback: (ExtractorLink) -> Unit) {
+    for (extractor in extractorApis) {
+        if (url.startsWith(extractor.mainUrl)) {
+            extractor.getSafeUrl(url, referer)?.forEach(callback)
+            return
+        }
+    }
+}
+
 val extractorApis: Array<ExtractorApi> = arrayOf(
     //AllProvider(),
     Shiro(),
@@ -61,6 +71,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     MixDrop(),
     XStreamCdn(),
     StreamSB(),
+    Streamhub(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {
