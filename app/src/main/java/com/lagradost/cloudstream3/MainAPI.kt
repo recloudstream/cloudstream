@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.*
-import com.lagradost.cloudstream3.movieproviders.AllMoviesForYouProvider
-import com.lagradost.cloudstream3.movieproviders.HDMProvider
-import com.lagradost.cloudstream3.movieproviders.TrailersToProvider
-import com.lagradost.cloudstream3.movieproviders.VMoveeProvider
+import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 
@@ -43,6 +40,7 @@ object APIHolder {
         VMoveeProvider(),
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
+        AsiaFlixProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
