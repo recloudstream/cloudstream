@@ -41,13 +41,17 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.TIME_UNSET
+import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.SubtitleView
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.cast.framework.CastButtonFactory
@@ -60,6 +64,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.isInPIPMode
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeDirectly
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
@@ -95,9 +100,11 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager.getId
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.coroutines.*
+import java.io.File
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
+import kotlin.concurrent.thread
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.properties.Delegates
@@ -182,13 +189,18 @@ class PlayerFragment : Fragment() {
     // val formatBuilder = StringBuilder()
     //  val formatter = Formatter(formatBuilder, Locale.getDefault())
 
+    /** Cache */
+    private val cacheSize = 100L * 1024L * 1024L // 100 mb
+    private var simpleCache: SimpleCache? = null
+
+    /** Layout */
     private var width = Resources.getSystem().displayMetrics.heightPixels
     private var height = Resources.getSystem().displayMetrics.widthPixels
     private var statusBarHeight by Delegates.notNull<Int>()
     private var navigationBarHeight by Delegates.notNull<Int>()
 
-    private var isLocked = false
 
+    private var isLocked = false
     private lateinit var settingsManager: SharedPreferences
 
     abstract class DoubleClickListener(private val ctx: PlayerFragment) : OnTouchListener {
@@ -591,6 +603,9 @@ class PlayerFragment : Fragment() {
     }
 
     private fun safeReleasePlayer() {
+        thread {
+            simpleCache?.release()
+        }
         if (this::exoPlayer.isInitialized) {
             exoPlayer.release()
         }
@@ -1576,33 +1591,6 @@ class PlayerFragment : Fragment() {
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
             }
 
-            class CustomFactory : DataSource.Factory {
-                override fun createDataSource(): DataSource {
-                    return if (isOnline) {
-                        val dataSource = DefaultHttpDataSourceFactory(USER_AGENT).createDataSource()
-                        /*FastAniApi.currentHeaders?.forEach {
-                            dataSource.setRequestProperty(it.key, it.value)
-                        }*/
-                        if (currentUrl != null) {
-                            dataSource.setRequestProperty("Referer", currentUrl.referer)
-                            // extra stuff
-                            dataSource.setRequestProperty(
-                                "sec-ch-ua",
-                                "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\""
-                            )
-                            dataSource.setRequestProperty("sec-ch-ua-mobile", "?0")
-                            //   dataSource.setRequestProperty("Sec-Fetch-Site", "none") //same-site
-                            dataSource.setRequestProperty("Sec-Fetch-User", "?1")
-                            dataSource.setRequestProperty("Sec-Fetch-Mode", "navigate")
-                            dataSource.setRequestProperty("Sec-Fetch-Dest", "document")
-                        }
-                        dataSource
-                    } else {
-                        DefaultDataSourceFactory(requireContext(), USER_AGENT).createDataSource()
-                    }
-                }
-            }
-
             val mimeType =
                 if (currentUrl == null && uri != null)
                     MimeTypes.APPLICATION_MP4 else
@@ -1662,16 +1650,53 @@ class PlayerFragment : Fragment() {
                 .clearSelectionOverrides()
                 .build()
 
-            val _exoPlayer =
-                SimpleExoPlayer.Builder(this.requireContext())
-                    .setTrackSelector(trackSelector)
+            fun getDataSourceFactory(): DataSource.Factory {
+                return if (isOnline) {
+                    DefaultHttpDataSource.Factory().apply {
+                        setUserAgent(USER_AGENT)
+                        if (currentUrl != null) {
+                            val headers = mapOf(
+                                "Referer" to currentUrl.referer,
+                                "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
+                                "sec-ch-ua-mobile" to "?0",
+                                "Sec-Fetch-User" to "?1",
+                                "Sec-Fetch-Mode" to "navigate",
+                                "Sec-Fetch-Dest" to "document"
+                            )
+                            setDefaultRequestProperties(headers)
+                        }
+                    }
+                } else {
+                    DefaultDataSourceFactory(requireContext(), USER_AGENT)
+                }
+            }
 
-            _exoPlayer.setMediaSourceFactory(DefaultMediaSourceFactory(CustomFactory()))
+            normalSafeApiCall {
+                val databaseProvider = ExoDatabaseProvider(requireContext())
+                simpleCache = SimpleCache(
+                    File(
+                        requireContext().filesDir, "exoplayer"
+                    ),
+                    LeastRecentlyUsedCacheEvictor(cacheSize),
+                    databaseProvider
+                )
+            }
+            val cacheFactory = CacheDataSource.Factory().apply {
+                simpleCache?.let { setCache(it) }
+                setUpstreamDataSourceFactory(getDataSourceFactory())
+            }
+
+            val _exoPlayer =
+                SimpleExoPlayer.Builder(requireContext())
+                    .setTrackSelector(trackSelector)
 
             exoPlayer = _exoPlayer.build().apply {
                 playWhenReady = isPlayerPlaying
                 seekTo(currentWindow, playbackPosition)
-                setMediaItem(mediaItem, false)
+                setMediaSource(
+                    DefaultMediaSourceFactory(cacheFactory).createMediaSource(mediaItem),
+                    playbackPosition
+                )
                 prepare()
             }
 
