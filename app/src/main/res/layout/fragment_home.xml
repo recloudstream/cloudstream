@@ -10,6 +10,8 @@
         tools:context=".ui.home.HomeFragment">
 
     <FrameLayout
+            android:visibility="visible"
+            tools:visibility="gone"
             android:id="@+id/home_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -34,6 +36,7 @@
     </FrameLayout>
 
     <LinearLayout
+            android:visibility="gone"
             tools:visibility="gone"
             android:id="@+id/home_loading_error"
             android:orientation="vertical"
@@ -71,6 +74,8 @@
         />
     </LinearLayout>
     <androidx.core.widget.NestedScrollView
+            tools:visibility="visible"
+            android:visibility="gone"
             android:id="@+id/home_loaded"
             android:layout_width="match_parent"
             android:layout_height="match_parent">

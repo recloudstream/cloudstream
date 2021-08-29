@@ -1,9 +1,12 @@
 package com.lagradost.cloudstream3.movieproviders
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 
 class AllMoviesForYouProvider : MainAPI() {
     companion object {
@@ -47,8 +50,21 @@ class AllMoviesForYouProvider : MainAPI() {
         return returnValue
     }
 
-    private fun getLink(document: String): String? {
-        return Regex("iframe src=\"(.*?)\"").find(document)?.groupValues?.get(1)
+    private fun getLink(document: Document): List<String>? {
+        val list = ArrayList<String>()
+        Regex("iframe src=\"(.*?)\"").find(document.html())?.groupValues?.get(1)?.let {
+            list.add(it)
+        }
+        document.select("div.OptionBx")?.forEach { element ->
+            val baseElement = element.selectFirst("> a.Button")
+            if (element.selectFirst("> p.AAIco-dns")?.text() == "Streamhub") {
+                baseElement?.attr("href")?.let { href ->
+                    list.add(href)
+                }
+            }
+        }
+
+        return if (list.isEmpty()) null else list
     }
 
     override fun load(url: String): LoadResponse {
@@ -118,7 +134,7 @@ class AllMoviesForYouProvider : MainAPI() {
                 rating
             )
         } else {
-            val data = getLink(response.text)
+            val data = getLink(document)
                 ?: throw ErrorLoadingException("No Links Found")
 
             return MovieLoadResponse(
@@ -126,7 +142,7 @@ class AllMoviesForYouProvider : MainAPI() {
                 url,
                 this.name,
                 type,
-                data,
+                mapper.writeValueAsString(data),
                 backgroundPoster,
                 year?.toIntOrNull(),
                 descipt,
@@ -145,19 +161,31 @@ class AllMoviesForYouProvider : MainAPI() {
     ): Boolean {
         if (data.startsWith("$mainUrl/episode/")) {
             val response = khttp.get(data)
-            val link = getLink(response.text)
-            if (link == null || link == data) return false
-            return loadLinks(link, isCasting, subtitleCallback, callback)
-        }
-
-        if (data.startsWith(mainUrl) && data != mainUrl) {
-            val response = khttp.get(data.replace("&#038;", "&"))
+            getLink(Jsoup.parse(response.text))?.let { links ->
+                for (link in links) {
+                    if (link == data) continue
+                    loadLinks(link, isCasting, subtitleCallback, callback)
+                }
+                return true
+            }
+            return false
+        } else if (data.startsWith(mainUrl) && data != mainUrl) {
+            val realDataUrl = data.replace("&#038;", "&").replace("&amp;", "&")
+            if (data.contains("trdownload")) {
+                callback(ExtractorLink(this.name, this.name, realDataUrl, mainUrl, Qualities.Unknown.value))
+                return true
+            }
+            val response = khttp.get(realDataUrl)
             Regex("<iframe.*?src=\"(.*?)\"").find(response.text)?.groupValues?.get(1)?.let { url ->
-                loadExtractor(url.trimStart(), data, callback)
+                loadExtractor(url.trimStart(), realDataUrl, callback)
+            }
+            return true
+        } else {
+            val links = mapper.readValue<List<String>>(data)
+            for (link in links) {
+                loadLinks(link, isCasting, subtitleCallback, callback)
             }
             return true
         }
-
-        return false
     }
 }

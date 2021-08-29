@@ -13,7 +13,7 @@ import java.util.*
 
 const val USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-val baseHeader = mapOf("User-Agent" to USER_AGENT)
+//val baseHeader = mapOf("User-Agent" to USER_AGENT)
 val mapper = JsonMapper.builder().addModule(KotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
@@ -119,6 +119,8 @@ abstract class MainAPI {
         TvType.ONA
     )
 
+    open val vpnStatus = VPNStatus.None
+
     open fun getMainPage(): HomePageResponse? {
         throw NotImplementedError()
     }
@@ -195,6 +197,12 @@ fun imdbUrlToId(url: String): String {
 fun imdbUrlToIdNullable(url: String?): String? {
     if (url == null) return null
     return imdbUrlToId(url)
+}
+
+enum class VPNStatus {
+    None,
+    MightBeNeeded,
+    Torrent,
 }
 
 enum class ShowStatus {

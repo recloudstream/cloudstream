@@ -143,7 +143,7 @@ fun ResultEpisode.getWatchProgress(): Float {
 
 class ResultFragment : Fragment() {
     companion object {
-        fun newInstance(url: String, apiName: String, startAction: Int = 0, startValue : Int = 0) =
+        fun newInstance(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0) =
             ResultFragment().apply {
                 arguments = Bundle().apply {
                     putString("url", url)
@@ -252,6 +252,7 @@ class ResultFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         activity?.window?.decorView?.clearFocus()
         hideKeyboard()
 
@@ -526,6 +527,7 @@ class ResultFragment : Fragment() {
             val isLoaded = when (episodeClick.action) {
                 ACTION_PLAY_EPISODE_IN_PLAYER -> true
                 ACTION_CLICK_DEFAULT -> true
+                ACTION_SHOW_TOAST -> true
                 ACTION_CHROME_CAST_EPISODE -> requireLinks(true)
                 ACTION_CHROME_CAST_MIRROR -> requireLinks(true)
                 else -> requireLinks(false)
@@ -840,6 +842,13 @@ class ResultFragment : Fragment() {
                     val d = data.value
                     if (d is LoadResponse) {
                         updateVisStatus(2)
+
+                        result_vpn.text = when (api.vpnStatus) {
+                            VPNStatus.MightBeNeeded -> getString(R.string.vpn_might_be_needed)
+                            VPNStatus.Torrent -> getString(R.string.vpn_torrent)
+                            else -> ""
+                        }
+                        result_vpn.visibility = if (api.vpnStatus == VPNStatus.None) GONE else VISIBLE
 
                         result_bookmark_button.text = "Watching"
 

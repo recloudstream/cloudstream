@@ -10,6 +10,11 @@ class DoodToExtractor : DoodLaExtractor() {
         get() = "https://dood.to"
 }
 
+class DoodSoExtractor : DoodLaExtractor() {
+    override val mainUrl: String
+        get() = "https://dood.so"
+}
+
 open class DoodLaExtractor : ExtractorApi() {
     override val name: String
         get() = "DoodStream"
@@ -33,7 +38,16 @@ open class DoodLaExtractor : ExtractorApi() {
             val downloadResponse = khttp.get(downloadLink)
             Regex("onclick=\"window\\.open\\((['\"])(.*?)(['\"])").find(downloadResponse.text)?.groupValues?.get(2)
                 ?.let { trueLink ->
-                    return listOf(ExtractorLink(trueLink, this.name, trueLink, mainUrl, Qualities.Unknown.value, false)) // links are valid in 8h
+                    return listOf(
+                        ExtractorLink(
+                            trueLink,
+                            this.name,
+                            trueLink,
+                            mainUrl,
+                            Qualities.Unknown.value,
+                            false
+                        )
+                    ) // links are valid in 8h
                 }
         }
 

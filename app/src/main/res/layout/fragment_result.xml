@@ -18,6 +18,7 @@
             android:layout_width="50dp" android:layout_height="50dp">
     </ProgressBar>
     <LinearLayout
+            android:visibility="gone"
             tools:visibility="gone"
             android:id="@+id/result_loading_error"
             android:orientation="vertical"
@@ -265,7 +266,12 @@
                         </ImageView>
                     </LinearLayout>
                 </GridLayout>
-
+                <TextView
+                        android:id="@+id/result_vpn"
+                        android:textSize="15sp"
+                        tools:text="@string/vpn_torrent"
+                        android:layout_width="match_parent" android:layout_height="wrap_content">
+                </TextView>
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

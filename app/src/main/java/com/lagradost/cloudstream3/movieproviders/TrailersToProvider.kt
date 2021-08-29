@@ -29,6 +29,9 @@ class TrailersToProvider : MainAPI() {
             TvType.TvSeries,
         )
 
+    override val vpnStatus: VPNStatus
+        get() = VPNStatus.MightBeNeeded
+
     override fun getMainPage(): HomePageResponse? {
         val response = khttp.get(mainUrl)
         val document = Jsoup.parse(response.text)
