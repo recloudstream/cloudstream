@@ -100,6 +100,7 @@
         />
         <Preference
                 android:title="Check for Update"
+                app:summary="@string/app_version"
                 app:key="@string/manual_check_update_key"
                 app:icon="@drawable/ic_baseline_system_update_24"
         />

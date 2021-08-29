@@ -104,7 +104,7 @@ class AsiaFlixProvider : MainAPI() {
     private fun DramaPage.toLoadResponse(): TvSeriesLoadResponse {
         return TvSeriesLoadResponse(
             name,
-            _id,
+            "$mainUrl$dramaUrl/$_id".replace("drama-detail", "show-details"),
             this@AsiaFlixProvider.name,
             TvType.TvSeries,
             episodes.mapNotNull { it.toTvSeriesEpisode() }.sortedBy { it.episode },

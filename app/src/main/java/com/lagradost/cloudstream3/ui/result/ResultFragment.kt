@@ -861,7 +861,11 @@ class ResultFragment : Fragment() {
                         result_openinbrower.setOnClickListener {
                             val i = Intent(ACTION_VIEW)
                             i.data = Uri.parse(d.url)
-                            startActivity(i)
+                            try {
+                                startActivity(i)
+                            } catch (e : Exception) {
+                                e.printStackTrace()
+                            }
                         }
 
                         result_share.setOnClickListener {
@@ -1059,7 +1063,11 @@ class ResultFragment : Fragment() {
             result_reload_connection_open_in_browser.setOnClickListener {
                 val i = Intent(ACTION_VIEW)
                 i.data = Uri.parse(tempUrl)
-                startActivity(i)
+                try {
+                    startActivity(i)
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                }
             }
 
             if (viewModel.resultResponse.value == null)
