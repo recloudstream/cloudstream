@@ -1,13 +1,17 @@
 package com.lagradost.cloudstream3.utils
 
 import android.app.Activity
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
-import android.os.Build
+import android.os.Environment
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
+import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -17,12 +21,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
-import java.io.*
-import java.net.URL
-import java.net.URLConnection
+import java.io.File
 import kotlin.concurrent.thread
-
-const val UPDATE_TIME = 1000
 
 class InAppUpdater {
     companion object {
@@ -145,129 +145,66 @@ class InAppUpdater {
         }
 
         private fun Activity.downloadUpdate(url: String): Boolean {
-            println("DOWNLOAD UPDATE $url")
-            var fullResume = false // IF FULL RESUME
-            try {
-                // =================== DOWNLOAD POSTERS AND SETUP PATH ===================
-                val path = filesDir.toString() +
-                        "/Download/apk/update.apk"
+            val downloadManager = getSystemService<DownloadManager>()!!
 
-                // =================== MAKE DIRS ===================
-                val rFile = File(path)
-                try {
-                    rFile.parentFile?.mkdirs()
-                } catch (_ex: Exception) {
-                    println("FAILED:::$_ex")
-                }
-                val url = url.replace(" ", "%20")
+            val request = DownloadManager.Request(Uri.parse(url))
+                .setMimeType("application/vnd.android.package-archive")
+                .setTitle("CloudStream update")
+                .setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    "CloudStream.apk"
+                )
+                .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                .setAllowedOverRoaming(true)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
-                val _url = URL(url)
+            val localContext = this
 
-                val connection: URLConnection = _url.openConnection()
+            val id = downloadManager.enqueue(request)
+            registerReceiver(
+                object : BroadcastReceiver() {
+                    override fun onReceive(context: Context?, intent: Intent?) {
+                        val downloadId = intent?.getLongExtra(
+                            DownloadManager.EXTRA_DOWNLOAD_ID, id
+                        ) ?: id
 
-                var bytesRead = 0L
+                        val query = DownloadManager.Query()
+                        query.setFilterById(downloadId)
+                        val c = downloadManager.query(query)
 
-                // =================== STORAGE ===================
-                try {
-                    if (!rFile.exists()) {
-                        rFile.createNewFile()
-                    } else {
-                        rFile.delete()
-                        rFile.createNewFile()
+                        if (c.moveToFirst()) {
+                            val columnIndex = c
+                                .getColumnIndex(DownloadManager.COLUMN_STATUS)
+                            if (DownloadManager.STATUS_SUCCESSFUL == c
+                                    .getInt(columnIndex)
+                            ) {
+                                c.getColumnIndex(DownloadManager.COLUMN_MEDIAPROVIDER_URI)
+                                val uri = Uri.parse(
+                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
+                                )
+                                openApk(localContext, uri)
+                            }
+                        }
                     }
-                } catch (e: Exception) {
-                    println(e)
-                    runOnUiThread {
-                        showToast(this, "Permission error", Toast.LENGTH_SHORT)
-                    }
-                    return false
+                }, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            )
+            return true
+        }
+
+        fun openApk(context: Context, uri: Uri) {
+            uri.path?.let {
+                val contentUri = FileProvider.getUriForFile(
+                    context,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    File(it)
+                )
+                val installIntent = Intent(Intent.ACTION_VIEW).apply {
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+                    data = contentUri
                 }
-
-                // =================== CONNECTION ===================
-                connection.setRequestProperty("Accept-Encoding", "identity")
-                connection.connectTimeout = 10000
-                var clen = 0
-                try {
-                    connection.connect()
-                    clen = connection.contentLength
-                    println("CONTENTN LENGTH: $clen")
-                } catch (_ex: Exception) {
-                    println("CONNECT:::$_ex")
-                    _ex.printStackTrace()
-                }
-
-                // =================== VALIDATE ===================
-                if (clen < 5000000) { // min of 5 MB
-                    clen = 0
-                }
-                if (clen <= 0) { // TO SMALL OR INVALID
-                    //showNot(0, 0, 0, DownloadType.IsFailed, info)
-                    return false
-                }
-
-                // =================== SETUP VARIABLES ===================
-                //val bytesTotal: Long = (clen + bytesRead.toInt()).toLong()
-                val input: InputStream = BufferedInputStream(connection.inputStream)
-                val output: OutputStream = FileOutputStream(rFile, false)
-                var bytesPerSec = 0L
-                val buffer = ByteArray(1024)
-                var count: Int
-                //var lastUpdate = System.currentTimeMillis()
-
-                while (true) {
-                    try {
-                        count = input.read(buffer)
-                        if (count < 0) break
-
-                        bytesRead += count
-                        bytesPerSec += count
-                        output.write(buffer, 0, count)
-                    } catch (_ex: Exception) {
-                        println("CONNECT TRUE:::$_ex")
-                        _ex.printStackTrace()
-                        fullResume = true
-                        break
-                    }
-                }
-
-                if (fullResume) { // IF FULL RESUME DELETE CURRENT AND DONT SHOW DONE
-                    with(NotificationManagerCompat.from(this)) {
-                        cancel(-1)
-                    }
-                }
-
-                output.flush()
-                output.close()
-                input.close()
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    val contentUri = FileProvider.getUriForFile(
-                        this,
-                        BuildConfig.APPLICATION_ID + ".provider",
-                        rFile
-                    )
-                    val install = Intent(Intent.ACTION_VIEW)
-                    install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    install.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
-                    install.data = contentUri
-                    startActivity(install)
-                    return true
-                } else {
-                    val apkUri = Uri.fromFile(rFile)
-                    val install = Intent(Intent.ACTION_VIEW)
-                    install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    install.setDataAndType(
-                        apkUri,
-                        "application/vnd.android.package-archive"
-                    )
-                    startActivity(install)
-                    return true
-                }
-
-            } catch (_ex: Exception) {
-                println("FATAL EX DOWNLOADING:::$_ex")
-                return false
+                context.startActivity(installIntent)
             }
         }
 
