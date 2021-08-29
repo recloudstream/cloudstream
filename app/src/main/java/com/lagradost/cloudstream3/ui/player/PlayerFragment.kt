@@ -1656,12 +1656,13 @@ class PlayerFragment : Fragment() {
                         setUserAgent(USER_AGENT)
                         if (currentUrl != null) {
                             val headers = mapOf(
-                                "Referer" to currentUrl.referer,
+                                "referer" to currentUrl.referer,
+                                "accept" to "*/*",
                                 "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
                                 "sec-ch-ua-mobile" to "?0",
-                                "Sec-Fetch-User" to "?1",
-                                "Sec-Fetch-Mode" to "navigate",
-                                "Sec-Fetch-Dest" to "document"
+                                "sec-fetch-user" to "?1",
+                                "sec-fetch-mode" to "navigate",
+                                "sec-fetch-dest" to "video"
                             )
                             setDefaultRequestProperties(headers)
                         }

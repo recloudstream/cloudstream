@@ -596,19 +596,21 @@ object VideoDownloadManager {
         // SET CONNECTION SETTINGS
         connection.connectTimeout = 10000
         connection.setRequestProperty("Accept-Encoding", "identity")
-        connection.setRequestProperty("User-Agent", USER_AGENT)
-        if (link.referer.isNotEmpty()) connection.setRequestProperty("Referer", link.referer)
+        connection.setRequestProperty("user-agent", USER_AGENT)
+        if (link.referer.isNotEmpty()) connection.setRequestProperty("referer", link.referer)
 
         // extra stuff
         connection.setRequestProperty(
             "sec-ch-ua",
             "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\""
         )
+
         connection.setRequestProperty("sec-ch-ua-mobile", "?0")
+        connection.setRequestProperty("accept", "*/*")
         //   dataSource.setRequestProperty("Sec-Fetch-Site", "none") //same-site
-        connection.setRequestProperty("Sec-Fetch-User", "?1")
-        connection.setRequestProperty("Sec-Fetch-Mode", "navigate")
-        connection.setRequestProperty("Sec-Fetch-Dest", "document")
+        connection.setRequestProperty("sec-fetch-user", "?1")
+        connection.setRequestProperty("sec-fetch-mode", "navigate")
+        connection.setRequestProperty("sec-fetch-dest", "video")
 
         if (resume)
             connection.setRequestProperty("Range", "bytes=${fileLength}-")
@@ -948,7 +950,7 @@ object VideoDownloadManager {
         ep: DownloadEpisodeMetadata,
         links: List<ExtractorLink>
     ) {
-        if(context == null) return
+        if (context == null) return
         val validLinks = links.filter { !it.isM3u8 }
         if (validLinks.isNotEmpty()) {
             downloadFromResume(context, DownloadResumePackage(DownloadItem(source, folder, ep, validLinks), null))
