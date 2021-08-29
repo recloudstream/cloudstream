@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
@@ -26,7 +25,6 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getExistingDownloadUriOrNullQ
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -35,7 +33,6 @@ import java.lang.Thread.sleep
 import java.net.URL
 import java.net.URLConnection
 import java.util.*
-import kotlin.collections.ArrayList
 
 const val DOWNLOAD_CHANNEL_ID = "cloudstream3.general"
 const val DOWNLOAD_CHANNEL_NAME = "Downloads"
@@ -91,7 +88,7 @@ object VideoDownloadManager {
         val referer: String
     }
 
-    fun VideoDownloadManager.IDownloadableMinimum.getId(): Int {
+    fun IDownloadableMinimum.getId(): Int {
         return url.hashCode()
     }
 
@@ -146,9 +143,9 @@ object VideoDownloadManager {
     private const val ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM = -8
     private const val ERROR_CONTENT_RESOLVER_NOT_FOUND = -9
 
-    const val KEY_RESUME_PACKAGES = "download_resume"
+    private const val KEY_RESUME_PACKAGES = "download_resume"
     const val KEY_DOWNLOAD_INFO = "download_info"
-    const val KEY_RESUME_QUEUE_PACKAGES = "download_q_resume"
+    private const val KEY_RESUME_QUEUE_PACKAGES = "download_q_resume"
 
     val downloadStatus = HashMap<Int, DownloadType>()
     val downloadStatusEvent = Event<Pair<Int, DownloadType>>()
@@ -428,7 +425,7 @@ object VideoDownloadManager {
                 )
             val folder = File(normalPath)
             if (folder.isDirectory) {
-                return folder.listFiles().map { Pair(it.name, it.toUri()) }
+                return folder.listFiles()?.map { Pair(it.name, it.toUri()) }
             }
             return null
         }
@@ -934,7 +931,7 @@ object VideoDownloadManager {
         context.setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
     }
 
-    fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+    /*fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
         for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
             if (serviceClass.name == service.service.className) {
@@ -942,7 +939,7 @@ object VideoDownloadManager {
             }
         }
         return false
-    }
+    }*/
 
     fun downloadEpisode(
         context: Activity?,

@@ -9,10 +9,9 @@ import android.widget.TextView
 import androidx.core.widget.ContentLoadingProgressBar
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.Coroutines
 import com.lagradost.cloudstream3.utils.IDisposable
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 class EasyDownloadButton : IDisposable {

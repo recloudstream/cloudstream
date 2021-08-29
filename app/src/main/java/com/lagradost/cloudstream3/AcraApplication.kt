@@ -8,7 +8,6 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import org.acra.ReportField
 import org.acra.config.CoreConfiguration
-import org.acra.config.toast
 import org.acra.data.CrashReportData
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra

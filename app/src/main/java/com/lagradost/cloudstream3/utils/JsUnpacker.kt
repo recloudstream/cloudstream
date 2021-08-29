@@ -31,7 +31,7 @@ class JsUnpacker(packedJS: String?) {
         val js = packedJS
         try {
             var p =
-                Pattern.compile("""\}\s*\('(.*)',\s*(.*?),\s*(\d+),\s*'(.*?)'\.split\('\|'\)""", Pattern.DOTALL)
+                Pattern.compile("""}\s*\('(.*)',\s*(.*?),\s*(\d+),\s*'(.*?)'\.split\('\|'\)""", Pattern.DOTALL)
             var m = p.matcher(js)
             if (m.find() && m.groupCount() == 4) {
                 val payload = m.group(1).replace("\\'", "'")

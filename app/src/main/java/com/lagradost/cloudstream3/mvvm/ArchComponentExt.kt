@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.mvvm
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import com.bumptech.glide.load.HttpException
 import com.lagradost.cloudstream3.ErrorLoadingException
 import kotlinx.coroutines.Dispatchers
@@ -12,11 +11,11 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
-    liveData.observe(this, Observer { it?.let { t -> action(t) } })
+    liveData.observe(this) { it?.let { t -> action(t) } }
 }
 
 fun <T> LifecycleOwner.observeDirectly(liveData: LiveData<T>, action: (t: T) -> Unit) {
-    liveData.observe(this, Observer { it?.let { t -> action(t) } })
+    liveData.observe(this) { it?.let { t -> action(t) } }
     val currentValue = liveData.value
     if (currentValue != null)
         action(currentValue)
@@ -64,7 +63,7 @@ suspend fun <T> safeApiCall(
                     Resource.Failure(true, null, null, "Please try again later.")
                 }
                 is HttpException -> {
-                    Resource.Failure(false, throwable.statusCode, null, throwable.localizedMessage)
+                    Resource.Failure(false, throwable.statusCode, null, throwable.localizedMessage ?: "")
                 }
                 is UnknownHostException -> {
                     Resource.Failure(true, null, null, "Cannot connect to server, try again later.")
@@ -76,7 +75,7 @@ suspend fun <T> safeApiCall(
                     Resource.Failure(false, null, null, "This operation is not implemented.")
                 }
                 else -> {
-                    val stackTraceMsg = throwable.localizedMessage + "\n\n" + throwable.stackTrace.joinToString(
+                    val stackTraceMsg = (throwable.localizedMessage ?: "") + "\n\n" + throwable.stackTrace.joinToString(
                         separator = "\n"
                     ) {
                         "${it.fileName} ${it.lineNumber}"

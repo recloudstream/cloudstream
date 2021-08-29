@@ -44,13 +44,13 @@ class InAppUpdater {
 
         data class GithubObject(
             @JsonProperty("sha") val sha: String, // sha 256 hash
-			@JsonProperty("type") val type: String, // object type
-			@JsonProperty("url") val url: String,
+            @JsonProperty("type") val type: String, // object type
+            @JsonProperty("url") val url: String,
         )
-		
-		data class GithubTag(
-			@JsonProperty("object") val github_object: GithubObject,
-		)
+
+        data class GithubTag(
+            @JsonProperty("object") val github_object: GithubObject,
+        )
 
         data class Update(
             @JsonProperty("shouldUpdate") val shouldUpdate: Boolean,
@@ -80,7 +80,7 @@ class InAppUpdater {
             val url = "https://api.github.com/repos/LagradOst/CloudStream-3/releases"
             val headers = mapOf("Accept" to "application/vnd.github.v3+json")
             val response =
-                    mapper.readValue<List<GithubRelease>>(khttp.get(url, headers = headers).text)
+                mapper.readValue<List<GithubRelease>>(khttp.get(url, headers = headers).text)
 
             val versionRegex = Regex("""(.*?((\d)\.(\d)\.(\d)).*\.apk)""")
 
@@ -92,26 +92,29 @@ class InAppUpdater {
                     versionRegex.find(it.name)?.groupValues?.get(2)
                 }).toList().lastOrNull()*/
             val found =
-                    response.filter { rel ->
-                        !rel.prerelease
-                    }.sortedWith(compareBy { release ->
-                        release.assets.filter { it.content_type == "application/vnd.android.package-archive" }
-                                .getOrNull(0)?.name?.let { it1 ->
-                                    versionRegex.find(
-                                            it1
-                                    )?.groupValues?.get(2)
-                                }
-                    }).toList().lastOrNull()
+                response.filter { rel ->
+                    !rel.prerelease
+                }.sortedWith(compareBy { release ->
+                    release.assets.filter { it.content_type == "application/vnd.android.package-archive" }
+                        .getOrNull(0)?.name?.let { it1 ->
+                            versionRegex.find(
+                                it1
+                            )?.groupValues?.get(2)
+                        }
+                }).toList().lastOrNull()
             val foundAsset = found?.assets?.getOrNull(0)
             val currentVersion = packageName?.let {
-                packageManager.getPackageInfo(it,
-                        0)
+                packageManager.getPackageInfo(
+                    it,
+                    0
+                )
             }
 
             val foundVersion = foundAsset?.name?.let { versionRegex.find(it) }
-            val shouldUpdate = if (found != null && foundAsset?.browser_download_url != "" && foundVersion != null) currentVersion?.versionName?.compareTo(
+            val shouldUpdate =
+                if (found != null && foundAsset?.browser_download_url != "" && foundVersion != null) currentVersion?.versionName?.compareTo(
                     foundVersion.groupValues[2]
-            )!! < 0 else false
+                )!! < 0 else false
             return if (foundVersion != null) {
                 Update(shouldUpdate, foundAsset.browser_download_url, foundVersion.groupValues[2], found.body)
             } else {
@@ -161,6 +164,7 @@ class InAppUpdater {
             val localContext = this
 
             val id = downloadManager.enqueue(request)
+
             registerReceiver(
                 object : BroadcastReceiver() {
                     override fun onReceive(context: Context?, intent: Intent?) {
@@ -173,8 +177,7 @@ class InAppUpdater {
                         val c = downloadManager.query(query)
 
                         if (c.moveToFirst()) {
-                            val columnIndex = c
-                                .getColumnIndex(DownloadManager.COLUMN_STATUS)
+                            val columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS)
                             if (DownloadManager.STATUS_SUCCESSFUL == c
                                     .getInt(columnIndex)
                             ) {
@@ -217,8 +220,10 @@ class InAppUpdater {
                 if (update.shouldUpdate && update.updateURL != null) {
                     runOnUiThread {
                         val currentVersion = packageName?.let {
-                            packageManager.getPackageInfo(it,
-                                0)
+                            packageManager.getPackageInfo(
+                                it,
+                                0
+                            )
                         }
 
                         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -233,23 +238,19 @@ class InAppUpdater {
                                     val downloadStatus = context.downloadUpdate(update.updateURL)
                                     if (!downloadStatus) {
                                         runOnUiThread {
-                                            showToast(context,
+                                            showToast(
+                                                context,
                                                 "Download Failed",
-                                                Toast.LENGTH_LONG)
+                                                Toast.LENGTH_LONG
+                                            )
                                         }
-                                    } /*else {
-                                        activity.runOnUiThread {
-                                            Toast.makeText(localContext,
-                                                "Downloaded APK",
-                                                Toast.LENGTH_LONG).show()
-                                        }
-                                    }*/
+                                    }
                                 }
                             }
 
                             setNegativeButton("Cancel") { _, _ -> }
 
-                            if(checkAutoUpdate) {
+                            if (checkAutoUpdate) {
                                 setNeutralButton("Don't show again") { _, _ ->
                                     settingsManager.edit().putBoolean("auto_update", false).apply()
                                 }

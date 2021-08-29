@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
@@ -76,6 +75,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         lateinit var navOptions: NavOptions
 
         var currentToast: Toast? = null
+
         fun showToast(act: Activity?, @StringRes message: Int, duration: Int) {
             if (act == null) return
             showToast(act, act.getString(message), duration)

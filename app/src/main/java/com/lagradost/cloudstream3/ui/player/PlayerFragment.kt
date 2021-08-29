@@ -853,7 +853,7 @@ class PlayerFragment : Fragment() {
             if (realLang.length == 2) SubtitleHelper.fromTwoLettersToLanguage(realLang) ?: realLang else realLang
 
         if (!this::exoPlayer.isInitialized) return
-        (exoPlayer?.trackSelector as DefaultTrackSelector?)?.let { trackSelector ->
+        (exoPlayer.trackSelector as DefaultTrackSelector?)?.let { trackSelector ->
             if (lang.isNullOrBlank()) {
                 trackSelector.setParameters(
                     trackSelector.buildUponParameters()
@@ -1028,11 +1028,11 @@ class PlayerFragment : Fragment() {
             observeDirectly(viewModel.episodes) { _episodes ->
                 episodes = _episodes
                 if (isLoading) {
-                    if (playerData.episodeIndex > 0 && playerData.episodeIndex < episodes.size) {
+                    /*if (playerData.episodeIndex > 0 && playerData.episodeIndex < episodes.size) {
 
                     } else {
                         // WHAT THE FUCK DID YOU DO
-                    }
+                    }*/
                 }
             }
 
@@ -1304,11 +1304,11 @@ class PlayerFragment : Fragment() {
                     playbackPosition = if (this::exoPlayer.isInitialized) exoPlayer.currentPosition else 0
                     setMirrorId(sources[sourceIndex].getId())
                     initPlayer(getCurrentUrl())
-                } else {
+                } /*else {
                     if (isPlaying) {
                         // exoPlayer.play()
                     }
-                }
+                }*/
 
                 if (subtitleIndex != startIndexFromMap) {
                     setPreferredSubLanguage(if (subtitleIndex <= 0) null else currentSubtitles[subtitleIndex - 1])

@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 

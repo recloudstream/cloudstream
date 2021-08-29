@@ -9,7 +9,6 @@
 >
     <androidx.cardview.widget.CardView
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/backgroundCard"
             android:layout_margin="2dp"
             android:layout_width="match_parent"

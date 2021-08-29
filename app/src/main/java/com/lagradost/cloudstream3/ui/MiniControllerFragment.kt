@@ -23,7 +23,7 @@ class MyMiniControllerFragment : MiniControllerFragment() {
         if (obtainStyledAttributes.hasValue(R.styleable.CustomCast_customCastBackgroundColor)) {
             currentColor = obtainStyledAttributes.getColor(R.styleable.CustomCast_customCastBackgroundColor, 0)
         }
-
+        obtainStyledAttributes.recycle()
         super.onInflate(context, attributeSet, bundle)
     }
 

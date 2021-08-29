@@ -37,7 +37,7 @@ class XStreamCdn : ExtractorApi() {
         }
     }
 
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
+    override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val headers = mapOf(
             "Referer" to url,
             "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0",
