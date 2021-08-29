@@ -90,6 +90,7 @@ class AsiaFlixProvider : MainAPI() {
     }
 
     private fun Episodes.toTvSeriesEpisode(): TvSeriesEpisode? {
+        if (videoUrl?.contains("watch/null")) return null
         return videoUrl?.let {
             TvSeriesEpisode(
                 null,
