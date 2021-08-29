@@ -72,6 +72,8 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     XStreamCdn(),
     StreamSB(),
     Streamhub(),
+    DoodLaExtractor(),
+    DoodToExtractor(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

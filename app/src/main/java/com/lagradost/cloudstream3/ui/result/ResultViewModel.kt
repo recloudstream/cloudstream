@@ -103,7 +103,7 @@ class ResultViewModel : ViewModel() {
                 seasonTypes[i.season] = true
             }
         }
-        val seasons = seasonTypes.toList().map { it.first }
+        val seasons = seasonTypes.toList().map { it.first }.sortedBy { it }
         seasonSelections.postValue(seasons)
         if (seasons.isEmpty()) { // WHAT THE FUCK DID YOU DO????? HOW DID YOU DO THIS
             _publicEpisodes.postValue(ArrayList())
