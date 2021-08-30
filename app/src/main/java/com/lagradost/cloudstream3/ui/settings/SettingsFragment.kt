@@ -35,18 +35,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun saveAndUpload() {
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-        val uuid = usernameUUID
-        if (uuid != null) {
-            settingsManager.edit()
-                .putString(getString(R.string.benene_count_uuid), uuid)
-                .putInt(getString(R.string.benene_count), count)
-                .apply()
-            thread {
-                normalSafeApiCall {
-                    ScoreManager.addScore(uuid, count)
+        if (ScoreManager.privateCode.isNullOrBlank()) return
+        try {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+            val uuid = usernameUUID
+            if (uuid != null) {
+                settingsManager.edit()
+                    .putString(getString(R.string.benene_count_uuid), uuid)
+                    .putInt(getString(R.string.benene_count), count)
+                    .apply()
+                thread {
+                    normalSafeApiCall {
+                        ScoreManager.addScore(uuid, count)
+                    }
                 }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -61,59 +66,54 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-
-
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings, rootKey)
         val updatePrefrence = findPreference<Preference>(getString(R.string.manual_check_update_key))!!
 
         val benenePref = findPreference<Preference>(getString(R.string.benene_count))!!
-        if (ScoreManager.privateCode.isNullOrBlank()) {
-            benenePref.isVisible = false
-        } else {
-            benenePref.isVisible = true
-            try {
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
-                count = settingsManager.getInt(getString(R.string.benene_count), 0)
-                usernameUUID =
-                    settingsManager.getString(getString(R.string.benene_count_uuid), UUID.randomUUID().toString())
-                if (count > 20) {
+        try {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            count = settingsManager.getInt(getString(R.string.benene_count), 0)
+            usernameUUID =
+                settingsManager.getString(getString(R.string.benene_count_uuid), UUID.randomUUID().toString())
+            if (count > 20) {
+                if (!ScoreManager.privateCode.isNullOrBlank()) {
                     thread {
                         scoreboard = normalSafeApiCall { ScoreManager.getScore() }
                     }
                 }
-                benenePref.summary =
-                    if (count <= 0) getString(R.string.benene_count_text_none) else getString(R.string.benene_count_text).format(
-                        count
-                    )
-                benenePref.setOnPreferenceClickListener {
-                    try {
-                        count++
-                        settingsManager.edit().putInt(getString(R.string.benene_count), count).apply()
-                        var add = ""
-                        val localScoreBoard = scoreboard
-                        if (localScoreBoard != null) {
-                            for ((index, score) in localScoreBoard.withIndex()) {
-                                if (count > (score.score.toIntOrNull() ?: 0)) {
-                                    add = " (${index + 1}/${localScoreBoard.size})"
-                                    break
-                                }
+            }
+            benenePref.summary =
+                if (count <= 0) getString(R.string.benene_count_text_none) else getString(R.string.benene_count_text).format(
+                    count
+                )
+            benenePref.setOnPreferenceClickListener {
+                try {
+                    count++
+                    settingsManager.edit().putInt(getString(R.string.benene_count), count).apply()
+                    var add = ""
+                    val localScoreBoard = scoreboard
+                    if (localScoreBoard != null) {
+                        for ((index, score) in localScoreBoard.withIndex()) {
+                            if (count > (score.score.toIntOrNull() ?: 0)) {
+                                add = " (${index + 1}/${localScoreBoard.size})"
+                                break
                             }
                         }
-                        it.summary = getString(R.string.benene_count_text).format(count) + add
-                        saveAfterTime()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
                     }
-
-                    return@setOnPreferenceClickListener true
+                    it.summary = getString(R.string.benene_count_text).format(count) + add
+                    saveAfterTime()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
 
+                return@setOnPreferenceClickListener true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         updatePrefrence.setOnPreferenceClickListener {
             thread {
