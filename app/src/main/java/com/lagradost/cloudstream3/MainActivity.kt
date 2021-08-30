@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
@@ -17,14 +16,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import com.github.se_bastiaan.torrentstream.StreamStatus
-import com.github.se_bastiaan.torrentstream.Torrent
-import com.github.se_bastiaan.torrentstream.TorrentOptions
-import com.github.se_bastiaan.torrentstream.TorrentStream
-import com.github.se_bastiaan.torrentstream.listeners.TorrentListener
+import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.DownloadChildFragment
@@ -356,5 +352,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         thread {
             runAutoUpdate()
         }
+
+        // must give benenes to get beta providers
+        try {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            val count = settingsManager.getInt(getString(R.string.benene_count), 0)
+            if (count > 30)
+                apis.addAll(restrictedApis)
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+
     }
 }

@@ -42,7 +42,10 @@ object APIHolder {
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
         AsiaFlixProvider(),
-        //NyaaProvider(),
+    )
+
+    val restrictedApis = arrayListOf(
+        NyaaProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {

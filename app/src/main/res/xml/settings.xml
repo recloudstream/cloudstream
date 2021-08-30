@@ -133,5 +133,11 @@
             <intent android:action="android.intent.action.VIEW"
                     android:data="https://discord.gg/5Hus6fM"/>
         </Preference>
+        <Preference
+                android:key="@string/benene_count"
+                android:title="Give a benene to the devs"
+                android:icon="@drawable/benene"
+                app:summary="Given benenes">
+        </Preference>
     </PreferenceCategory>
 </PreferenceScreen>
