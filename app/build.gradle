@@ -128,4 +128,7 @@ dependencies {
 
     //run JS
     implementation 'org.mozilla:rhino:1.7R4'
+
+    // TorrentStream
+    implementation 'com.github.TorrentStream:TorrentStream-Android:2.7.0'
 }

@@ -29,6 +29,7 @@ import android.widget.*
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -39,6 +40,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.se_bastiaan.torrentstream.StreamStatus
+import com.github.se_bastiaan.torrentstream.Torrent
+import com.github.se_bastiaan.torrentstream.TorrentOptions
+import com.github.se_bastiaan.torrentstream.TorrentStream
+import com.github.se_bastiaan.torrentstream.listeners.TorrentListener
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.TIME_UNSET
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
@@ -163,6 +169,73 @@ data class UriData(
 
 // YE, I KNOW, THIS COULD BE HANDLED A LOT BETTER
 class PlayerFragment : Fragment() {
+
+    // ============ TORRENT ============
+    private var torrentStream: TorrentStream? = null
+    private var lastTorrentUrl = ""
+    private val isTorrent: Boolean get() = torrentStream != null
+    private fun initTorrentStream(torrentUrl: String) {
+        if (lastTorrentUrl == torrentUrl) return
+        lastTorrentUrl = torrentUrl
+        torrentStream?.stopStream()
+        torrentStream = null
+
+        activity?.let { act ->
+            val normalPath =
+                act.cacheDir.absolutePath // "${Environment.getExternalStorageDirectory()}${File.separatorChar}$relativePath"
+            val torrentOptions: TorrentOptions = TorrentOptions.Builder()
+                .saveLocation(normalPath)
+                .removeFilesAfterStop(true)
+                .build()
+
+            torrentStream = TorrentStream.init(torrentOptions)
+            torrentStream?.startStream(torrentUrl)
+            torrentStream?.addListener(object : TorrentListener {
+                override fun onStreamPrepared(torrent: Torrent?) {
+                    showToast(activity, "Stream Prepared", LENGTH_SHORT)
+                }
+
+                override fun onStreamStarted(torrent: Torrent?) {
+                    showToast(activity, "Stream Started", LENGTH_SHORT)
+                }
+
+                override fun onStreamError(torrent: Torrent?, e: java.lang.Exception?) {
+                    e?.printStackTrace()
+                    showToast(activity, e?.localizedMessage ?: "Error loading", LENGTH_SHORT)
+                }
+
+                override fun onStreamReady(torrent: Torrent?) {
+                    initPlayer(null, null, torrent?.videoFile?.toUri())
+                }
+
+                @SuppressLint("SetTextI18n")
+                override fun onStreamProgress(torrent: Torrent?, status: StreamStatus?) {
+                    try {
+                        println("Seeders ${status?.seeds}")
+                        println("Download Speed ${status?.downloadSpeed}")
+                        println("Progress ${status?.progress}%")
+                        if (isShowing)
+                            player_torrent_info?.visibility = VISIBLE
+                        video_torrent_progress?.text =
+                            "${"%.1f".format(status?.progress ?: 0f)}% at ${status?.downloadSpeed?.div(1000) ?: 0} kb/s"
+                        video_torrent_seeders?.text = "${status?.seeds ?: 0} Seeders"
+                        //streamSeeds.formatText(R.string.streamSeeds, status?.seeds)
+                        //streamSpeed.formatText(R.string.streamDownloadSpeed, status?.downloadSpeed?.div(1024))
+                        //streamProgressTxt.formatText(R.string.streamProgress, status?.progress, "%")
+                    } catch (e: IllegalStateException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onStreamStopped() {
+                    println("stream stopped")
+                }
+            })
+        }
+    }
+
+    // =================================
+
     private lateinit var subStyle: SaveCaptionStyle
     private var subView: SubtitleView? = null
 
@@ -312,7 +385,8 @@ class PlayerFragment : Fragment() {
             shadow_overlay?.startAnimation(fadeAnimation)
         }
         video_holder?.startAnimation(fadeAnimation)
-
+        player_torrent_info?.visibility = if (isTorrent && isShowing) VISIBLE else GONE
+        //  player_torrent_info?.startAnimation(fadeAnimation)
         //video_lock_holder?.startAnimation(fadeAnimation)
     }
 
@@ -1199,7 +1273,7 @@ class PlayerFragment : Fragment() {
             activity?.popCurrentPage()
         }
         video_go_back_holder.setOnClickListener {
-            println("video_go_back_pressed")
+            //println("video_go_back_pressed")
             // activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
             activity?.popCurrentPage()
         }
@@ -1460,6 +1534,7 @@ class PlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        torrentStream?.currentTorrent?.resume()
         onAudioFocusEvent += ::handlePauseEvent
 
         activity?.hideSystemUI()
@@ -1482,6 +1557,9 @@ class PlayerFragment : Fragment() {
         savePos()
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
+        torrentStream?.stopStream()
+        torrentStream = null
+
         super.onDestroy()
         canEnterPipMode = false
 
@@ -1497,6 +1575,7 @@ class PlayerFragment : Fragment() {
     override fun onPause() {
         savePos()
         super.onPause()
+        torrentStream?.currentTorrent?.pause()
         if (Util.SDK_INT <= 23) {
             if (player_view != null) player_view.onPause()
             releasePlayer()
@@ -1567,8 +1646,18 @@ class PlayerFragment : Fragment() {
     var preferredSubtitles: String = ""
 
     @SuppressLint("SetTextI18n")
-    fun initPlayer(currentUrl: ExtractorLink?, uri: String? = null) {
-        if (currentUrl == null && uri == null) return
+    fun initPlayer(currentUrl: ExtractorLink?, uri: String? = null, trueUri: Uri? = null) {
+        if (currentUrl == null && uri == null && trueUri == null) return
+        if (currentUrl?.url?.endsWith(".torrent") == true || currentUrl?.url?.startsWith("magnet") == true) {
+            initTorrentStream(currentUrl.url)//)
+            return
+        }
+        // player_torrent_info?.visibility = if(isTorrent) VISIBLE else GONE
+        //
+        isShowing = false
+        player_torrent_info?.visibility = GONE
+        //player_torrent_info?.alpha = 0f
+        println("LOADED: ${uri} or ${currentUrl}")
         isCurrentlyPlaying = true
         hasUsedFirstRender = false
 
@@ -1605,14 +1694,14 @@ class PlayerFragment : Fragment() {
 
             if (currentUrl != null) {
                 mediaItemBuilder.setUri(currentUrl.url)
-            } else if (uri != null) {
-                val uriPrimary = Uri.parse(uri)
+            } else if (trueUri != null || uri != null) {
+                val uriPrimary = trueUri ?: Uri.parse(uri)
                 if (uriPrimary.scheme == "content") {
                     mediaItemBuilder.setUri(uriPrimary)
                     //      video_title?.text = uriPrimary.toString()
                 } else {
                     //mediaItemBuilder.setUri(Uri.parse(currentUrl.url))
-                    val realUri = getVideoContentUri(requireContext(), uri)
+                    val realUri = trueUri ?: getVideoContentUri(requireContext(), uri ?: uriPrimary.path ?: "")
                     //    video_title?.text = uri.toString()
                     mediaItemBuilder.setUri(realUri)
                 }
@@ -1728,7 +1817,10 @@ class PlayerFragment : Fragment() {
             var epSeason: Int? = null
             var isEpisodeBased = true
 
-            if (isDownloadedFile) {
+            if (isTorrent) {
+                hName = "Torrent Stream"
+                isEpisodeBased = false
+            } else if (isDownloadedFile) {
                 hName = uriData.name
                 epEpisode = uriData.episode
                 epSeason = uriData.season
@@ -1786,7 +1878,9 @@ class PlayerFragment : Fragment() {
 
                     video_title_rez?.text =
                         if (height == null || width == null) currentUrl?.name
-                            ?: "" else if (isDownloadedFile) "${width}x${height}" else "${currentUrl?.name} - ${width}x${height}"
+                            ?: "" else
+                            if (isTorrent) "${width}x${height}" else
+                                if (isDownloadedFile || currentUrl?.name == null) "${width}x${height}" else "${currentUrl.name} - ${width}x${height}"
 
                     if (!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
                         changeSkip()

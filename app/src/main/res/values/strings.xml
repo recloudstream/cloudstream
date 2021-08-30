@@ -34,6 +34,7 @@
     <string name="type_none">None</string>
 
     <string name="play_movie_button">Play Movie</string>
+    <string name="play_torrent_button">Stream Torrent</string>
     <string name="pick_source">Sources</string>
     <string name="pick_subtitle">Subtitles</string>
     <string name="reload_error">Retry connection…</string>
@@ -99,4 +100,7 @@
 
     <string name="vpn_might_be_needed">A VPN might be needed for this provider to work correctly</string>
     <string name="vpn_torrent">This providers is a torrent, a VPN is recommended</string>
+    <string name="torrent_plot">Description</string>
+    <string name="normal_no_plot">No Plot Found</string>
+    <string name="torrent_no_plot">No Description Found</string>
 </resources>

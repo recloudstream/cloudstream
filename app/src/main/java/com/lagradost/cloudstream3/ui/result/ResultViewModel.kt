@@ -324,6 +324,25 @@ class ResultViewModel : ViewModel() {
                             ), -1
                         )
                     }
+                    is TorrentLoadResponse -> {
+                        updateEpisodes(
+                            context, mainId, arrayListOf(
+                                context.buildResultEpisode(
+                                    d.name,
+                                    null,
+                                    0,
+                                    null,
+                                    d.torrent ?: d.magnet ?: "",
+                                    d.apiName,
+                                    (mainId), // HAS SAME ID
+                                    0,
+                                    null,
+                                    null,
+                                )
+                            ), -1
+                        )
+                    }
+
                 }
             }
             else -> {

@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.*
 import android.graphics.Bitmap
@@ -14,6 +15,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
+import com.github.se_bastiaan.torrentstream.StreamStatus
+import com.github.se_bastiaan.torrentstream.Torrent
+import com.github.se_bastiaan.torrentstream.TorrentOptions
+import com.github.se_bastiaan.torrentstream.TorrentStream
+import com.github.se_bastiaan.torrentstream.listeners.TorrentListener
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
@@ -488,6 +494,257 @@ object VideoDownloadManager {
         val bytesTotal: Long,
     )
 
+    fun getSizeAndProgressFromTorrent(torrent: Torrent?, progress: Float?): Pair<Long, Long>? {
+        try {
+            if (torrent == null || progress == null) return null
+            val length = torrent.videoFile?.length() ?: 0
+            if (length > 0) {
+                // val bytesTotal = (length * 100 / progress).toLong()
+                // if (bytesTotal > 0 && length > 0) {
+                return Pair((length * progress / 100).toLong(), length)
+                //}
+            }
+            return null
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
+    private fun downloadTorrent(
+        context: Context,
+        link: String,
+        name: String,
+        folder: String?,
+        extension: String,
+        //tryResume: Boolean = false,
+        parentId: Int?,
+        createNotificationCallback: (CreateNotificationMetadata) -> Unit
+    ): Int {
+        val relativePath = (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace('/', File.separatorChar)
+        val displayName = "$name.$extension"
+        val fileStream: OutputStream
+        val fileLength: Long
+        val resume = false
+        val normalPath = "${Environment.getExternalStorageDirectory()}${File.separatorChar}$relativePath$displayName"
+
+        if (isScopedStorage()) {
+            val cr = context.contentResolver ?: return ERROR_CONTENT_RESOLVER_NOT_FOUND
+
+            val currentExistingFile =
+                cr.getExistingDownloadUriOrNullQ(relativePath, displayName) // CURRENT FILE WITH THE SAME PATH
+
+            fileLength =
+                if (currentExistingFile == null || !resume) 0 else (cr.getFileLength(currentExistingFile)
+                    ?: 0)// IF NOT RESUME THEN 0, OTHERWISE THE CURRENT FILE SIZE
+
+            if (!resume && currentExistingFile != null) { // DELETE FILE IF FILE EXITS AND NOT RESUME
+                val rowsDeleted = context.contentResolver.delete(currentExistingFile, null, null)
+                if (rowsDeleted < 1) {
+                    println("ERROR DELETING FILE!!!")
+                }
+            }
+
+            var appendFile = false
+            val newFileUri = if (resume && currentExistingFile != null) {
+                appendFile = true
+                currentExistingFile
+            } else {
+                val contentUri =
+                    MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) // USE INSTEAD OF MediaStore.Downloads.EXTERNAL_CONTENT_URI
+                //val currentMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                val currentMimeType = when (extension) {
+                    "vtt" -> "text/vtt"
+                    "mp4" -> "video/mp4"
+                    "srt" -> "text/plain"
+                    else -> null
+                }
+                val newFile = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+                    put(MediaStore.MediaColumns.TITLE, name)
+                    if (currentMimeType != null)
+                        put(MediaStore.MediaColumns.MIME_TYPE, currentMimeType)
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                }
+
+                cr.insert(
+                    contentUri,
+                    newFile
+                ) ?: return ERROR_MEDIA_STORE_URI_CANT_BE_CREATED
+            }
+
+            fileStream = cr.openOutputStream(newFileUri, "w" + (if (appendFile) "a" else ""))
+                ?: return ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM
+        } else {
+            // NORMAL NON SCOPED STORAGE FILE CREATION
+            val rFile = File(normalPath)
+            if (!rFile.exists()) {
+                fileLength = 0
+                rFile.parentFile?.mkdirs()
+                if (!rFile.createNewFile()) return ERROR_CREATE_FILE
+            } else {
+                if (resume) {
+                    fileLength = rFile.length()
+                } else {
+                    fileLength = 0
+                    rFile.parentFile?.mkdirs()
+                    if (!rFile.delete()) return ERROR_DELETING_FILE
+                    if (!rFile.createNewFile()) return ERROR_CREATE_FILE
+                }
+            }
+            fileStream = FileOutputStream(rFile, false)
+        }
+
+        val torrentOptions: TorrentOptions = TorrentOptions.Builder()
+            .saveLocation(context.cacheDir.absolutePath)
+            .removeFilesAfterStop(true)
+            .build()
+
+        val torrentStream = TorrentStream.init(torrentOptions)
+        torrentStream.startStream(link)
+
+        var progress = 0f
+        var isDone = false
+        var isFailed = false
+
+        torrentStream.addListener(object : TorrentListener {
+            override fun onStreamPrepared(torrent: Torrent?) {
+
+                //showToast(context, "Stream Prepared", Toast.LENGTH_SHORT)
+            }
+
+            override fun onStreamStarted(torrent: Torrent?) {
+                // showToast(context, "Stream Started", Toast.LENGTH_SHORT)
+            }
+
+            override fun onStreamError(torrent: Torrent?, e: java.lang.Exception?) {
+                isFailed = true
+                e?.printStackTrace()
+                // showToast(context, e?.localizedMessage ?: "Error loading", Toast.LENGTH_SHORT)
+            }
+
+            override fun onStreamReady(torrent: Torrent?) {
+
+            }
+
+            @SuppressLint("SetTextI18n")
+            override fun onStreamProgress(torrent: Torrent?, status: StreamStatus?) {
+                try {
+                    println("Seeders ${status?.seeds}")
+                    println("Download Speed ${status?.downloadSpeed}")
+                    println("Progress ${status?.progress}%")
+
+                    val lengthSize = getSizeAndProgressFromTorrent(torrent, status?.progress)
+                    if (lengthSize != null) {
+                        progress = status?.progress!!
+                        val type = if (progress >= 100f) DownloadType.IsDone else DownloadType.IsDownloading
+                        parentId?.let { id ->
+                            try {
+                                downloadStatus[id] = type
+                                downloadStatusEvent.invoke(Pair(id, type))
+                                downloadProgressEvent.invoke(Triple(id, lengthSize.first, lengthSize.second))
+                            } catch (e: Exception) {
+                                // IDK MIGHT ERROR
+                            }
+                        }
+                        createNotificationCallback.invoke(
+                            CreateNotificationMetadata(
+                                type,
+                                lengthSize.first, lengthSize.second
+                            )
+                        )
+                    }
+                    val pro = status?.progress
+                    if (pro != null && pro >= 100) {
+                        isDone = true
+                    }
+
+                } catch (e: IllegalStateException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onStreamStopped() {
+                if (progress > 98) {
+                    isDone = true
+                } else {
+                    isFailed = true
+                }
+                println("stream stopped")
+            }
+        })
+
+        fun updateNot(type: DownloadType) {
+            val lengthSize = getSizeAndProgressFromTorrent(torrentStream.currentTorrent, progress) ?: return
+
+            createNotificationCallback.invoke(
+                CreateNotificationMetadata(
+                    type,
+                    lengthSize.first, lengthSize.second
+                )
+            )
+        }
+
+        val downloadEventListener = { event: Pair<Int, DownloadActionType> ->
+            if (event.first == parentId) {
+                when (event.second) {
+                    DownloadActionType.Pause -> {
+                        torrentStream?.currentTorrent?.pause()
+                        updateNot(DownloadType.IsPaused)
+                    }
+                    DownloadActionType.Stop -> {
+                        isFailed = true
+                        torrentStream.stopStream()
+                        torrentStream?.currentTorrent?.videoFile?.delete()
+                        updateNot(DownloadType.IsStopped)
+                        context.removeKey(KEY_RESUME_PACKAGES, event.first.toString())
+                        saveQueue(context)
+                    }
+                    DownloadActionType.Resume -> {
+                        torrentStream?.currentTorrent?.resume()
+                        updateNot(DownloadType.IsDownloading)
+                    }
+                }
+            }
+        }
+
+        if (parentId != null)
+            downloadEvent += downloadEventListener
+
+        var lastProgress = progress
+        var lastUpdateTime = System.currentTimeMillis()
+        while (!isDone && !isFailed) {
+            sleep(100)
+            if (lastProgress != progress) {
+                lastUpdateTime = System.currentTimeMillis()
+                lastProgress = progress
+            }
+            if (progress >= 98f && System.currentTimeMillis() - lastUpdateTime > 10000L) { // after 10 sec set as done
+                isDone = true
+            }
+        }
+
+        if (parentId != null)
+            downloadEvent -= downloadEventListener
+
+        // RETURN MESSAGE
+        return when {
+            isFailed -> {
+                parentId?.let { id -> downloadProgressEvent.invoke(Triple(id, 0, 0)) }
+                SUCCESS_STOPPED
+            }
+            isDone -> {
+                torrentStream?.currentTorrent?.videoStream?.copyTo(fileStream)
+                torrentStream?.currentTorrent?.videoFile?.delete()
+
+                SUCCESS_DOWNLOAD_DONE
+            }
+            else -> {
+                SUCCESS_DOWNLOAD_DONE
+                //idk
+            }
+        }
+    }
+
     fun downloadThing(
         context: Context,
         link: IDownloadableMinimum,
@@ -498,6 +755,10 @@ object VideoDownloadManager {
         parentId: Int?,
         createNotificationCallback: (CreateNotificationMetadata) -> Unit
     ): Int {
+        if (link.url.startsWith("magnet") || link.url.endsWith(".torrent")) {
+            return downloadTorrent(context, link.url, name, folder, extension, parentId, createNotificationCallback)
+        }
+
         val relativePath = (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace('/', File.separatorChar)
         val displayName = "$name.$extension"
 

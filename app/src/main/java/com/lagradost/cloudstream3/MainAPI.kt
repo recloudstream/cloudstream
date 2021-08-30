@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.movieproviders.*
+import com.lagradost.cloudstream3.torrentproviders.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 
@@ -41,6 +42,7 @@ object APIHolder {
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
         AsiaFlixProvider(),
+        //NyaaProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
@@ -116,7 +118,7 @@ abstract class MainAPI {
         TvType.TvSeries,
         TvType.Cartoon,
         TvType.Anime,
-        TvType.ONA
+        TvType.ONA,
     )
 
     open val vpnStatus = VPNStatus.None
@@ -222,11 +224,12 @@ enum class TvType {
     Cartoon,
     Anime,
     ONA,
+    Torrent,
 }
 
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH
 fun TvType.isMovieType(): Boolean {
-    return this == TvType.Movie || this == TvType.AnimeMovie
+    return this == TvType.Movie || this == TvType.AnimeMovie || this == TvType.Torrent
 }
 
 data class SubtitleFile(val lang: String, val url: String)
@@ -262,6 +265,16 @@ data class AnimeSearchResponse(
     val dubStatus: EnumSet<DubStatus>?,
     val dubEpisodes: Int?,
     val subEpisodes: Int?,
+    override val id: Int? = null,
+) : SearchResponse
+
+data class TorrentSearchResponse(
+    override val name: String,
+    override val url: String,
+    override val apiName: String,
+    override val type: TvType,
+
+    override val posterUrl: String?,
     override val id: Int? = null,
 ) : SearchResponse
 
@@ -320,6 +333,22 @@ data class AnimeEpisode(
     val rating: Int? = null,
     val descript: String? = null,
 )
+
+data class TorrentLoadResponse(
+    override val name: String,
+    override val url: String,
+    override val apiName: String,
+    val magnet: String?,
+    val torrent: String?,
+    override val plot: String?,
+    override val type: TvType = TvType.Torrent,
+    override val posterUrl: String? = null,
+    override val year: Int? = null,
+    override val rating: Int? = null,
+    override val tags: List<String>? = null,
+    override val duration: String? = null,
+    override val trailerUrl: String? = null
+) : LoadResponse
 
 data class AnimeLoadResponse(
     val engName: String?,

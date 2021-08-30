@@ -130,7 +130,8 @@ class SearchFragment : Fragment() {
                     Pair("Movies", listOf(TvType.Movie)),
                     Pair("TvSeries", listOf(TvType.TvSeries)),
                     Pair("Cartoons", listOf(TvType.Cartoon)),
-                    Pair("Anime", listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie))
+                    Pair("Anime", listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie)),
+                    Pair("Torrent", listOf(TvType.Torrent)),
                 )
 
                 val arrayAdapter2 = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)

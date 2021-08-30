@@ -441,6 +441,7 @@ class ResultFragment : Fragment() {
                     TvType.TvSeries -> "TVSeries/$titleName"
                     TvType.ONA -> "ONA"
                     TvType.Cartoon -> "Cartoons/$titleName"
+                    TvType.Torrent -> "Torrent"
                     else -> null
                 }
 
@@ -457,7 +458,7 @@ class ResultFragment : Fragment() {
                             url ?: return@let,
                             currentType ?: return@let,
                             currentHeaderName ?: return@let,
-                            currentPoster ?: return@let,
+                            currentPoster,
                             currentId ?: return@let,
                             System.currentTimeMillis(),
                         )
@@ -863,7 +864,7 @@ class ResultFragment : Fragment() {
                             i.data = Uri.parse(d.url)
                             try {
                                 startActivity(i)
-                            } catch (e : Exception) {
+                            } catch (e: Exception) {
                                 e.printStackTrace()
                             }
                         }
@@ -914,10 +915,13 @@ class ResultFragment : Fragment() {
                             result_metadata.visibility = GONE
                         }
 
-                        if (d.posterUrl != null) {
-                            result_poster?.setImage(d.posterUrl)
-                        }
+                        result_poster?.setImage(d.posterUrl)
+                        result_poster_holder?.visibility = if (d.posterUrl.isNullOrBlank()) GONE else VISIBLE
 
+                        result_play_movie?.text =
+                            if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(R.string.play_movie_button)
+                        result_plot_header?.text =
+                            if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
                         if (d.plot != null) {
                             var syno = d.plot!!
                             if (syno.length > MAX_SYNO_LENGH) {
@@ -930,7 +934,8 @@ class ResultFragment : Fragment() {
                             }
                             result_descript.text = syno
                         } else {
-                            result_descript.text = "No Plot found"
+                            result_descript.text =
+                                if (d.type == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(R.string.normal_no_plot)
                         }
 
                         result_tag.removeAllViews()
@@ -1065,7 +1070,7 @@ class ResultFragment : Fragment() {
                 i.data = Uri.parse(tempUrl)
                 try {
                     startActivity(i)
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }

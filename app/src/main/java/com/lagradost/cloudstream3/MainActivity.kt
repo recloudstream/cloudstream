@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
@@ -16,6 +17,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import com.github.se_bastiaan.torrentstream.StreamStatus
+import com.github.se_bastiaan.torrentstream.Torrent
+import com.github.se_bastiaan.torrentstream.TorrentOptions
+import com.github.se_bastiaan.torrentstream.TorrentStream
+import com.github.se_bastiaan.torrentstream.listeners.TorrentListener
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
@@ -351,5 +357,4 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             runAutoUpdate()
         }
     }
-
 }

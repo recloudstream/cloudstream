@@ -154,6 +154,7 @@
                         android:layout_height="wrap_content">
 
                     <androidx.cardview.widget.CardView
+                            android:id="@+id/result_poster_holder"
                             app:cardCornerRadius="@dimen/roundedImageRadius"
                             android:layout_width="100dp"
                             android:layout_height="140dp">
@@ -275,6 +276,7 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/result_plot_header"
                         android:text="@string/result_plot"
                         android:textSize="17sp"
                         android:layout_marginTop="10dp"
