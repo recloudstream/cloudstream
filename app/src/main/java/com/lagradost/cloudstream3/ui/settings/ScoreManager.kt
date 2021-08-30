@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.mapper
 object ScoreManager {
     private const val mainUrl = "http://dreamlo.com"
     private const val publicCode = "612d3dcf8f40bb6e98bece15"
-     var privateCode: String? = BuildConfig.PRIVATE_BENENE_KEY // plz keep it a bit fair
+    var privateCode: String? = BuildConfig.PRIVATE_BENENE_KEY // plz keep it a bit fair
 
     data class DreamloMain(
         @JsonProperty("dreamlo") var dreamlo: Dreamlo
@@ -37,7 +37,7 @@ object ScoreManager {
     }
 
     fun addScore(name: String, score: Int) { // plz dont cheat
-        if(score < 0 || score > 100000 || privateCode.isNullOrBlank()) return
+        if (score < 0 || score > 100000 || privateCode.isNullOrBlank()) return
         khttp.get("$mainUrl/lb/$privateCode/add/$name/$score")
     }
 }
