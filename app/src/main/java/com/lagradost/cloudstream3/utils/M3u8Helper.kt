@@ -19,7 +19,7 @@ class M3u8Helper {
         val split = url.split("/")
         val gg: String = split[split.size - 1].split("?")[0]
         return if (gg.contains(".")) {
-            gg.split(".")[1].ifEmpty { null }
+            gg.split(".").ifEmpty { null }?.last()
         } else null
     }
 
