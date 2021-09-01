@@ -118,7 +118,7 @@ class M3u8Helper {
     )
 
     public fun hlsYield(qualities: List<M3u8Stream>): Iterator<HlsDownloadData> {
-        if (qualities.isEmpty()) return listOf<HlsDownloadData>().iterator()
+        if (qualities.isEmpty()) return listOf<HlsDownloadData>(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
 
         var selected = selectBest(qualities)
         if (selected == null) {
@@ -156,7 +156,7 @@ class M3u8Helper {
             val allTs = TS_EXTENSION_REGEX.findAll(m3u8Data)
             val totalTs = allTs.toList().size
             if (totalTs == 0) {
-                return listOf<HlsDownloadData>().iterator()
+                return listOf<HlsDownloadData>(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
             }
             var lastYield = 0
 
@@ -196,6 +196,6 @@ class M3u8Helper {
             }
             return tsByteGen.iterator()
         }
-        return listOf<HlsDownloadData>().iterator()
+        return listOf<HlsDownloadData>(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
     }
 }
