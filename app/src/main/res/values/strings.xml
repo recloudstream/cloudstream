@@ -122,6 +122,7 @@
     <string name="double_tap_to_seek_setthings">Double tap to seek</string>
     <string name="double_tap_to_seek_setthings_des">Tap twice on the right or left side to seek forwards or backwards</string>
     <string name="search">Search</string>
+    <string name="info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
     <string name="bug_report_setthings_off">Only sends data on crashes</string>
