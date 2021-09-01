@@ -23,7 +23,7 @@ class M3u8Helper {
         } else null
     }
 
-    fun toBytes16Big(n: Int): ByteArray {
+    private fun toBytes16Big(n: Int): ByteArray {
         return ByteArray(16) {
             val fixed = n / 256.0.pow((15 - it))
             (maxOf(0, fixed.toInt()) % 256).toByte()
