@@ -124,7 +124,7 @@
     <string name="search">Search</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
-    <string name="bug_report_setthings_off">Only sends data on crashes"</string>
+    <string name="bug_report_setthings_off">Only sends data on crashes</string>
     <string name="bug_report_setthings_on">Sends no data</string>
     <string name="updates_setthings">Show app updates</string>
     <string name="updates_setthings_des">Automatically search for new updates on start</string>
