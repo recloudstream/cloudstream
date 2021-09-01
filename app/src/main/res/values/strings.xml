@@ -109,10 +109,10 @@
     
     <string name="picture_in_picture">Picture-in-picture</string>
     <string name="picture_in_picture_des">Continues playback in a miniature player on top of other apps</string>
-    <string name="size_settings">Player resize button</string>
-    <string name="size_setthings_des">Remove the black borders</string>
-    <string name="subtitles">Subtitles</string>
-    <string name="subtitles_des">Player subtitles settings</string>
+    <string name="player_size_settings">Player resize button</string>
+    <string name="player_size_setthings_des">Remove the black borders</string>
+    <string name="player_subtitles_settings">Subtitles</string>
+    <string name="player_subtitles_settings_des">Player subtitles settings</string>
     <string name="eigengraumode_setthings">Eigengrau Mode</string>
     <string name="eigengraumode_setthings_des">Adds the speed option in the player</string>
     <string name="wipe_to_seek_setthings">Swipe to seek</string>
