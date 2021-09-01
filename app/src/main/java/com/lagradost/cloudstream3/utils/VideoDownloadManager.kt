@@ -1062,6 +1062,7 @@ object VideoDownloadManager {
         }
 
         val m3u8Helper = M3u8Helper()
+        logcatPrint("initialised the HLS downloader.")
 
         val m3u8 = M3u8Helper.M3u8Stream(link.url, when (link.quality) {
             -2 -> 360
@@ -1071,7 +1072,6 @@ object VideoDownloadManager {
             else -> null
         }, mapOf("referer" to link.referer))
         val tsIterator = m3u8Helper.hlsYield(listOf(m3u8))
-        logcatPrint("initialised the HLS downloader.")
 
         val relativePath = (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace('/', File.separatorChar)
         val displayName = "$name.ts"
@@ -1186,12 +1186,23 @@ object VideoDownloadManager {
             createNotificationCallback.invoke(CreateNotificationMetadata(type, bytesDownloaded, (bytesDownloaded/tsProgress)*totalTs))
         }
 
-        if (firstTs.errored) {
-            isFailed = true
-            fileStream.close()
-            deleteFile()
-            updateNotification()
-            return ERROR_CONNECTION_ERROR
+        fun stopIfError(ts: M3u8Helper.HlsDownloadData): Int? {
+            if (ts.errored || ts.bytes.isEmpty()) {
+                val error: Int
+                error = if (!ts.errored) {
+                    logcatPrint("Error: No stream was found.")
+                    ERROR_UNKNOWN
+                } else {
+                    logcatPrint("Error: Failed to fetch data.")
+                    ERROR_CONNECTION_ERROR
+                }
+                isFailed = true
+                fileStream.close()
+                deleteFile()
+                updateNotification()
+                return error
+            }
+            return null
         }
 
         val notificationCoroutine = main {
@@ -1237,6 +1248,13 @@ object VideoDownloadManager {
             }
             notificationCoroutine.cancel()
         }
+        
+       stopIfError(firstTs).let {
+            if (it != null) {
+                closeAll()
+                return it
+            }
+        }
 
         if (parentId != null)
             downloadEvent += downloadEventListener
@@ -1251,19 +1269,17 @@ object VideoDownloadManager {
                 closeAll()
                 return SUCCESS_STOPPED
             }
-            if (ts.errored) {
-                isFailed = true
-                fileStream.close()
-                deleteFile()
-                updateNotification()
-
-                closeAll()
-                return ERROR_CONNECTION_ERROR
+            stopIfError(ts).let {
+                if (it != null) {
+                    closeAll()
+                    return it
+                }
             }
+
             fileStream.write(ts.bytes)
-            ++tsProgress
+            tsProgress = ts.currentIndex.toLong()
             bytesDownloaded += ts.bytes.size.toLong()
-            logcatPrint("Download progress $tsProgress/$totalTs")
+            logcatPrint("Download progress ${((tsProgress.toFloat()/totalTs.toFloat())*100).roundToInt()}%")
         }
         isDone = true
         fileStream.close()
