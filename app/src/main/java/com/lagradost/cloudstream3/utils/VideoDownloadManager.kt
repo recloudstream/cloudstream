@@ -124,6 +124,7 @@ object VideoDownloadManager {
         val totalBytes: Long,
         val relativePath: String,
         val displayName: String,
+        val extraData : String? = null,
     )
 
     data class DownloadedFileInfoResult(

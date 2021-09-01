@@ -903,6 +903,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun handlePlayerEvent(event: Int) {
+        if(!this::exoPlayer.isInitialized) return
         when (event) {
             PlayerEventType.Play.value -> exoPlayer.play()
             PlayerEventType.Pause.value -> exoPlayer.pause()

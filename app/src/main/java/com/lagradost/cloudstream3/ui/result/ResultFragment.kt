@@ -844,12 +844,12 @@ class ResultFragment : Fragment() {
                     if (d is LoadResponse) {
                         updateVisStatus(2)
 
-                        result_vpn.text = when (api.vpnStatus) {
+                        result_vpn?.text = when (api.vpnStatus) {
                             VPNStatus.MightBeNeeded -> getString(R.string.vpn_might_be_needed)
                             VPNStatus.Torrent -> getString(R.string.vpn_torrent)
                             else -> ""
                         }
-                        result_vpn.visibility = if (api.vpnStatus == VPNStatus.None) GONE else VISIBLE
+                        result_vpn?.visibility = if (api.vpnStatus == VPNStatus.None) GONE else VISIBLE
 
                         result_bookmark_button.text = "Watching"
 
@@ -859,7 +859,7 @@ class ResultFragment : Fragment() {
                         currentPoster = d.posterUrl
                         currentIsMovie = !d.isEpisodeBased()
 
-                        result_openinbrower.setOnClickListener {
+                        result_openinbrower?.setOnClickListener {
                             val i = Intent(ACTION_VIEW)
                             i.data = Uri.parse(d.url)
                             try {
@@ -869,7 +869,7 @@ class ResultFragment : Fragment() {
                             }
                         }
 
-                        result_share.setOnClickListener {
+                        result_share?.setOnClickListener {
                             val i = Intent(ACTION_SEND)
                             i.type = "text/plain"
                             i.putExtra(EXTRA_SUBJECT, d.name)

@@ -169,25 +169,29 @@ class InAppUpdater {
             registerReceiver(
                 object : BroadcastReceiver() {
                     override fun onReceive(context: Context?, intent: Intent?) {
-                        val downloadId = intent?.getLongExtra(
-                            DownloadManager.EXTRA_DOWNLOAD_ID, id
-                        ) ?: id
+                        try {
+                            val downloadId = intent?.getLongExtra(
+                                DownloadManager.EXTRA_DOWNLOAD_ID, id
+                            ) ?: id
 
-                        val query = DownloadManager.Query()
-                        query.setFilterById(downloadId)
-                        val c = downloadManager.query(query)
+                            val query = DownloadManager.Query()
+                            query.setFilterById(downloadId)
+                            val c = downloadManager.query(query)
 
-                        if (c.moveToFirst()) {
-                            val columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS)
-                            if (DownloadManager.STATUS_SUCCESSFUL == c
-                                    .getInt(columnIndex)
-                            ) {
-                                c.getColumnIndex(DownloadManager.COLUMN_MEDIAPROVIDER_URI)
-                                val uri = Uri.parse(
-                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
-                                )
-                                openApk(localContext, uri)
+                            if (c.moveToFirst()) {
+                                val columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                                if (DownloadManager.STATUS_SUCCESSFUL == c
+                                        .getInt(columnIndex)
+                                ) {
+                                    c.getColumnIndex(DownloadManager.COLUMN_MEDIAPROVIDER_URI)
+                                    val uri = Uri.parse(
+                                        c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
+                                    )
+                                    openApk(localContext, uri)
+                                }
                             }
+                        } catch (e : Exception) {
+                            e.printStackTrace()
                         }
                     }
                 }, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
@@ -220,45 +224,49 @@ class InAppUpdater {
                 val update = getAppUpdate()
                 if (update.shouldUpdate && update.updateURL != null) {
                     runOnUiThread {
-                        val currentVersion = packageName?.let {
-                            packageManager.getPackageInfo(
-                                it,
-                                0
-                            )
-                        }
+                        try {
+                            val currentVersion = packageName?.let {
+                                packageManager.getPackageInfo(
+                                    it,
+                                    0
+                                )
+                            }
 
-                        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                        builder.setTitle("New update found!\n${currentVersion?.versionName} -> ${update.updateVersion}")
-                        builder.setMessage("${update.changelog}")
+                            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                            builder.setTitle("New update found!\n${currentVersion?.versionName} -> ${update.updateVersion}")
+                            builder.setMessage("${update.changelog}")
 
-                        val context = this
-                        builder.apply {
-                            setPositiveButton("Update") { _, _ ->
-                                showToast(context, "Download started", Toast.LENGTH_LONG)
-                                thread {
-                                    val downloadStatus =
-                                        normalSafeApiCall { context.downloadUpdate(update.updateURL) } ?: false
-                                    if (!downloadStatus) {
-                                        runOnUiThread {
-                                            showToast(
-                                                context,
-                                                "Download Failed",
-                                                Toast.LENGTH_LONG
-                                            )
+                            val context = this
+                            builder.apply {
+                                setPositiveButton("Update") { _, _ ->
+                                    showToast(context, "Download started", Toast.LENGTH_LONG)
+                                    thread {
+                                        val downloadStatus =
+                                            normalSafeApiCall { context.downloadUpdate(update.updateURL) } ?: false
+                                        if (!downloadStatus) {
+                                            runOnUiThread {
+                                                showToast(
+                                                    context,
+                                                    "Download Failed",
+                                                    Toast.LENGTH_LONG
+                                                )
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            setNegativeButton("Cancel") { _, _ -> }
+                                setNegativeButton("Cancel") { _, _ -> }
 
-                            if (checkAutoUpdate) {
-                                setNeutralButton("Don't show again") { _, _ ->
-                                    settingsManager.edit().putBoolean("auto_update", false).apply()
+                                if (checkAutoUpdate) {
+                                    setNeutralButton("Don't show again") { _, _ ->
+                                        settingsManager.edit().putBoolean("auto_update", false).apply()
+                                    }
                                 }
                             }
+                            builder.show()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-                        builder.show()
                     }
                     return true
                 }
