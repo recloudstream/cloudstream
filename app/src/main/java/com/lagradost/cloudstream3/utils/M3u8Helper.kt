@@ -12,7 +12,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 class M3u8Helper {
     private val ENCRYPTION_DETECTION_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),")
     private val ENCRYPTION_URL_IV_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),URI=\"([^\"]+)\"(?:,IV=(.*))?")
-    private val QUALITY_REGEX = Regex("""#EXT-X-STREAM-INF:.*RESOLUTION=\d+x(\d+).*\n(.*)""")
+    private val QUALITY_REGEX = Regex("""#EXT-X-STREAM-INF:.*(?:RESOLUTION=\d+x(\d+))?.*\n(.*)""")
     private val TS_EXTENSION_REGEX = Regex("""(.*\.ts.*)""")
 
     private fun absoluteExtensionDetermination(url: String): String? {
@@ -103,7 +103,7 @@ class M3u8Helper {
                 yield(
                     M3u8Stream(
                         m3u8Link,
-                        quality.toInt(),
+                        quality.toIntOrNull(),
                         m3u8.headers
                     )
                 )
