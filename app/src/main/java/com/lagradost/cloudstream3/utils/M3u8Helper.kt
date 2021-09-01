@@ -5,6 +5,7 @@ import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import com.lagradost.cloudstream3.mvvm.logError
 
 
 class M3u8Helper {
@@ -153,7 +154,6 @@ class M3u8Helper {
                 }
 
                 encryptionIv = match.component3().toByteArray()
-                println("$encryptionUri, $headers")
                 val encryptionKeyResponse = khttp.get(encryptionUri, headers=headers)
                 encryptionData = encryptionKeyResponse.content
             }
@@ -188,7 +188,7 @@ class M3u8Helper {
                             yield(HlsDownloadData(tsData, c, totalTs))
                             lastYield = c
                         } catch (e: Exception) {
-                            e.printStackTrace()
+                            logError(e)
                             if (retries == 3) {
                                 yield(HlsDownloadData(byteArrayOf(), c, totalTs, true))
                                 break@loop
