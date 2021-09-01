@@ -118,7 +118,12 @@ class M3u8Helper {
     )
 
     public fun hlsYield(qualities: List<M3u8Stream>): Iterator<HlsDownloadData> {
-        val selected = selectBest(qualities)!!
+        if (qualities.isEmpty()) return listOf<HlsDownloadData>().iterator()
+
+        var selected = selectBest(qualities)
+        if (selected == null) {
+            selected = qualities[0]
+        }
         val headers = selected.headers
 
         val streams = qualities.map { m3u8Generation(it) }.flatten()
@@ -136,7 +141,7 @@ class M3u8Helper {
             val encryptionState = isEncrypted(m3u8Data)
 
             if (encryptionState) {
-                val match = ENCRYPTION_URL_IV_REGEX.find(m3u8Data)!!.destructured
+                val match = ENCRYPTION_URL_IV_REGEX.find(m3u8Data)!!.destructured  // its safe to assume that its not going to be null
                 encryptionUri = match.component2()
 
                 if (!isCompleteUrl(encryptionUri)) {
