@@ -283,7 +283,7 @@ class TrailersToProvider : MainAPI() {
             } else ""
 
             val data = mapper.writeValueAsString(
-                Pair(subUrl, fixUrl(document.selectFirst("content").attr("data-url") ?: return null))
+                Pair(subUrl, fixUrl(document.selectFirst("content")?.attr("data-url") ?: return null))
             )
             return MovieLoadResponse(
                 title,
