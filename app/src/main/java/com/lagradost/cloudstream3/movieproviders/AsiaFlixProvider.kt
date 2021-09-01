@@ -19,8 +19,6 @@ class AsiaFlixProvider : MainAPI() {
         get() = false
     override val hasMainPage: Boolean
         get() = true
-    override val hasDownloadSupport: Boolean
-        get() = false
     override val hasChromecastSupport: Boolean
         get() = false
 

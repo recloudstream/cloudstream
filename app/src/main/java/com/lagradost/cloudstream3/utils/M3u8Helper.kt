@@ -60,9 +60,11 @@ class M3u8Helper {
     )
 
     private fun selectBest(qualities: List<M3u8Stream>): M3u8Stream? {
-        val result = qualities.sortedBy { if (it.quality != null && it.quality <= 1080) it.quality else 0
+        val result = qualities.sortedBy {
+            if (it.quality != null && it.quality <= 1080) it.quality else 0
         }.reversed().filter {
-            listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
+            it.streamUrl.contains(".m3u8")
+           // listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
         }
         return result.getOrNull(0)
     }
@@ -80,7 +82,7 @@ class M3u8Helper {
     public fun m3u8Generation(m3u8: M3u8Stream): List<M3u8Stream> {
         val generate = sequence {
             val m3u8Parent = getParentLink(m3u8.streamUrl)
-            val response = khttp.get(m3u8.streamUrl, headers=m3u8.headers)
+            val response = khttp.get(m3u8.streamUrl, headers = m3u8.headers)
 
             for (match in QUALITY_REGEX.findAll(response.text)) {
                 var (quality, m3u8Link) = match.destructured
@@ -117,7 +119,7 @@ class M3u8Helper {
         val errored: Boolean = false
     )
 
-    public fun hlsYield(qualities: List<M3u8Stream>): Iterator<HlsDownloadData> {
+    fun hlsYield(qualities: List<M3u8Stream>, startIndex: Int = 0): Iterator<HlsDownloadData> {
         if (qualities.isEmpty()) return listOf<HlsDownloadData>(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
 
         var selected = selectBest(qualities)
@@ -127,21 +129,22 @@ class M3u8Helper {
         val headers = selected.headers
 
         val streams = qualities.map { m3u8Generation(it) }.flatten()
-        val sslVerification = if (headers.containsKey("ssl_verification")) headers["ssl_verification"].toBoolean() else true
+        //val sslVerification = if (headers.containsKey("ssl_verification")) headers["ssl_verification"].toBoolean() else true
 
         val secondSelection = selectBest(streams.ifEmpty { listOf(selected) })
         if (secondSelection != null) {
-            val m3u8Response = khttp.get(secondSelection.streamUrl, headers=headers)
+            val m3u8Response = khttp.get(secondSelection.streamUrl, headers = headers)
             val m3u8Data = m3u8Response.text
 
             var encryptionUri: String? = null
             var encryptionIv = byteArrayOf()
-            var encryptionData= byteArrayOf()
+            var encryptionData = byteArrayOf()
 
             val encryptionState = isEncrypted(m3u8Data)
 
             if (encryptionState) {
-                val match = ENCRYPTION_URL_IV_REGEX.find(m3u8Data)!!.destructured  // its safe to assume that its not going to be null
+                val match =
+                    ENCRYPTION_URL_IV_REGEX.find(m3u8Data)!!.destructured  // its safe to assume that its not going to be null
                 encryptionUri = match.component2()
 
                 if (!isCompleteUrl(encryptionUri)) {
@@ -149,29 +152,30 @@ class M3u8Helper {
                 }
 
                 encryptionIv = match.component3().toByteArray()
-                val encryptionKeyResponse = khttp.get(encryptionUri, headers=headers)
+                val encryptionKeyResponse = khttp.get(encryptionUri, headers = headers)
                 encryptionData = encryptionKeyResponse.content
             }
 
             val allTs = TS_EXTENSION_REGEX.findAll(m3u8Data)
-            val totalTs = allTs.toList().size
+            val allTsList = allTs.toList()
+            val totalTs =allTsList .size
             if (totalTs == 0) {
-                return listOf<HlsDownloadData>(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
+                return listOf(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
             }
             var lastYield = 0
 
             val relativeUrl = getParentLink(secondSelection.streamUrl)
             var retries = 0
-            val tsByteGen = sequence<HlsDownloadData> {
+            val tsByteGen = sequence {
                 loop@ for ((index, ts) in allTs.withIndex()) {
                     val url = if (
                         isCompleteUrl(ts.destructured.component1())
                     ) ts.destructured.component1() else "$relativeUrl/${ts.destructured.component1()}"
-                    val c = index+1
+                    val c = index + 1 + startIndex
 
                     while (lastYield != c) {
                         try {
-                            val tsResponse = khttp.get(url, headers=headers)
+                            val tsResponse = khttp.get(url, headers = headers)
                             var tsData = tsResponse.content
 
                             if (encryptionState) {
@@ -196,6 +200,6 @@ class M3u8Helper {
             }
             return tsByteGen.iterator()
         }
-        return listOf<HlsDownloadData>(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
+        return listOf(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
     }
 }

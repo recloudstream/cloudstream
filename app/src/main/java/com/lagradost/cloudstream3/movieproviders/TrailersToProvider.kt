@@ -197,7 +197,7 @@ class TrailersToProvider : MainAPI() {
         return false
     }
 
-    override fun load(url: String): LoadResponse? {
+    override fun load(url: String): LoadResponse {
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
         val metaInfo = document.select("div.post-info-meta > ul.post-info-meta-list > li")
@@ -225,7 +225,7 @@ class TrailersToProvider : MainAPI() {
 
         val isTvShow = url.contains("/tvshow/")
         if (isTvShow) {
-            val episodes = document.select("#seasons-accordion .card-body > .tour-modern") ?: return null
+            val episodes = document.select("#seasons-accordion .card-body > .tour-modern") ?: throw ErrorLoadingException("No Episodes found")
             val parsedEpisodes = episodes.withIndex().map { (index, item) ->
                 val epPoster = item.selectFirst("img").attr("src")
                 val main = item.selectFirst(".tour-modern-main")
@@ -283,7 +283,7 @@ class TrailersToProvider : MainAPI() {
             } else ""
 
             val data = mapper.writeValueAsString(
-                Pair(subUrl, fixUrl(document.selectFirst("content")?.attr("data-url") ?: return null))
+                Pair(subUrl, fixUrl(document?.selectFirst("content")?.attr("data-url") ?: throw ErrorLoadingException("Link not found")))
             )
             return MovieLoadResponse(
                 title,
