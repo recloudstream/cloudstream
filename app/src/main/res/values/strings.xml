@@ -109,10 +109,10 @@
     
     <string name="picture_in_picture">Picture-in-picture</string>
     <string name="picture_in_picture_des">Continues playback in a miniature player on top of other apps</string>
-    <string name="size_settings">Player resize button</string>
-    <string name="size_setthings_des">Remove the black borders</string>
-    <string name="subtitles_settings">Subtitles</string>
-    <string name="subtitles_settings_des">Player subtitles settings</string>
+    <string name="player_size_settings">Player resize button</string>
+    <string name="player_size_setthings_des">Remove the black borders</string>
+    <string name="player_subtitles_settings">Subtitles</string>
+    <string name="player_subtitles_settings_des">Player subtitles settings</string>
     <string name="eigengraumode_setthings">Eigengrau Mode</string>
     <string name="eigengraumode_setthings_des">Adds the speed option in the player</string>
     <string name="wipe_to_seek_setthings">Swipe to seek</string>
@@ -122,9 +122,10 @@
     <string name="double_tap_to_seek_setthings">Double tap to seek</string>
     <string name="double_tap_to_seek_setthings_des">Tap twice on the right or left side to seek forwards or backwards</string>
     <string name="search">Search</string>
+    <string name="info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
-    <string name="bug_report_setthings_off">Only sends data on crashes"</string>
+    <string name="bug_report_setthings_off">Only sends data on crashes</string>
     <string name="bug_report_setthings_on">Sends no data</string>
     <string name="updates_setthings">Show app updates</string>
     <string name="updates_setthings_des">Automatically search for new updates on start</string>
