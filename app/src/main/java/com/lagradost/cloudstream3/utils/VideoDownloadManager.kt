@@ -141,6 +141,7 @@ object VideoDownloadManager {
     private const val SUCCESS_STOPPED = 2
     private const val ERROR_DELETING_FILE = 3 // will not download the next one, but is still classified as an error
     private const val ERROR_CREATE_FILE = -2
+    private const val ERROR_UNKNOWN = -10
     private const val ERROR_OPEN_FILE = -3
     private const val ERROR_TOO_SMALL_CONNECTION = -4
     private const val ERROR_WRONG_CONTENT = -5
@@ -756,7 +757,7 @@ object VideoDownloadManager {
         createNotificationCallback: (CreateNotificationMetadata) -> Unit
     ): Int {
         if (link.url.startsWith("magnet") || link.url.endsWith(".torrent")) {
-            return downloadTorrent(context, link.url, name, folder, extension, parentId, createNotificationCallback)
+            return normalSafeApiCall { downloadTorrent(context, link.url, name, folder, extension, parentId, createNotificationCallback) } ?: ERROR_UNKNOWN
         }
 
         val relativePath = (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace('/', File.separatorChar)
@@ -880,10 +881,15 @@ object VideoDownloadManager {
         // ON CONNECTION
         connection.connect()
 
-        val contentLength = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // fuck android
-            connection.contentLengthLong
-        } else {
-            connection.getHeaderField("content-length").toLongOrNull() ?: connection.contentLength.toLong()
+        val contentLength = try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // fuck android
+                connection.contentLengthLong ?: 0L
+            } else {
+                connection.getHeaderField("content-length").toLongOrNull() ?: connection.contentLength?.toLong() ?: 0L
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0L
         }
         val bytesTotal = contentLength + resumeLength
 
@@ -1050,17 +1056,19 @@ object VideoDownloadManager {
     ): Int {
         val name = sanitizeFilename(ep.name ?: "Episode ${ep.episode}")
 
-        return downloadThing(context, link, name, folder, "mp4", tryResume, ep.id) { meta ->
-            createNotification(
-                context,
-                source,
-                link.name,
-                ep,
-                meta.type,
-                meta.bytesDownloaded,
-                meta.bytesTotal
-            )
-        }
+        return normalSafeApiCall {
+            downloadThing(context, link, name, folder, "mp4", tryResume, ep.id) { meta ->
+                createNotification(
+                    context,
+                    source,
+                    link.name,
+                    ep,
+                    meta.type,
+                    meta.bytesDownloaded,
+                    meta.bytesTotal
+                )
+            }
+        } ?: ERROR_UNKNOWN
     }
 
     private fun downloadCheck(context: Context) {

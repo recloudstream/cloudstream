@@ -21,7 +21,6 @@
                 android:layout_marginEnd="30dp"
                 android:layout_height="30dp">
             <androidx.appcompat.widget.SearchView
-                    android:animateLayoutChanges="true"
                     android:id="@+id/main_search"
                     app:queryBackground="@color/transparent"
                     app:searchIcon="@drawable/search_icon"

@@ -962,12 +962,12 @@ class ResultFragment : Fragment() {
                             lateFixDownloadButton(true)
 
                             result_play_movie.setOnClickListener {
-                                val card = currentEpisodes?.first() ?: return@setOnClickListener
+                                val card = currentEpisodes?.firstOrNull() ?: return@setOnClickListener
                                 handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                             }
 
                             result_play_movie.setOnLongClickListener {
-                                val card = currentEpisodes?.first() ?: return@setOnLongClickListener true
+                                val card = currentEpisodes?.firstOrNull() ?: return@setOnLongClickListener true
                                 handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
                                 return@setOnLongClickListener true
                             }
@@ -1004,7 +1004,7 @@ class ResultFragment : Fragment() {
                                     )
                                 ) { downloadClickEvent ->
                                     if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                                        currentEpisodes?.first()?.let { episode ->
+                                        currentEpisodes?.firstOrNull()?.let { episode ->
                                             handleAction(
                                                 EpisodeClickEvent(
                                                     ACTION_DOWNLOAD_EPISODE,

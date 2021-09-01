@@ -89,7 +89,6 @@
     <string name="prerelease_update_key">prerelease_update</string>
     <string name="manual_check_update_key">manual_check_update</string>
     <string name="benene_count">benene_count</string>
-    <string name="benene_count_uuid">benene_count_uuid</string>
     <string name="benene_count_text">%d Benenes given to devs</string>
     <string name="benene_count_text_none">No Benenes given</string>
 

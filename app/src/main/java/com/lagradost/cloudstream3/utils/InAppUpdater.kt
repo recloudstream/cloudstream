@@ -21,6 +21,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -235,7 +236,8 @@ class InAppUpdater {
                             setPositiveButton("Update") { _, _ ->
                                 showToast(context, "Download started", Toast.LENGTH_LONG)
                                 thread {
-                                    val downloadStatus = context.downloadUpdate(update.updateURL)
+                                    val downloadStatus =
+                                        normalSafeApiCall { context.downloadUpdate(update.updateURL) } ?: false
                                     if (!downloadStatus) {
                                         runOnUiThread {
                                             showToast(

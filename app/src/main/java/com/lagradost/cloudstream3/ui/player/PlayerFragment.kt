@@ -641,15 +641,15 @@ class PlayerFragment : Fragment() {
                 data.isAnimeBased()//(data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
 
             skip_op?.setVis(isAnime && !nextEp)
-            skip_episode.setVis((!isAnime || nextEp) && hasNext)
+            skip_episode?.setVis((!isAnime || nextEp) && hasNext)
         } else {
             val isAnime = data.isAnimeBased()
 
             if (isAnime) {
                 skip_op?.setVis(true)
-                skip_episode.setVis(false)
+                skip_episode?.setVis(false)
             } else {
-                skip_episode.setVis(data.isEpisodeBased())
+                skip_episode?.setVis(data.isEpisodeBased())
                 skip_op?.setVis(false)
             }
         }
@@ -795,7 +795,7 @@ class PlayerFragment : Fragment() {
         //next_episode_btt.isClickable = isClick
         playback_speed_btt.isClickable = isClick
         skip_op?.isClickable = isClick
-        skip_episode.isClickable = isClick
+        skip_episode?.isClickable = isClick
         resize_player.isClickable = isClick
         exo_progress.isEnabled = isClick
         player_media_route_button.isEnabled = isClick
@@ -1409,7 +1409,7 @@ class PlayerFragment : Fragment() {
             skipOP()
         }
 
-        skip_episode.setOnClickListener {
+        skip_episode?.setOnClickListener {
             if (hasNextEpisode()) {
                 skipToNextEpisode()
             }

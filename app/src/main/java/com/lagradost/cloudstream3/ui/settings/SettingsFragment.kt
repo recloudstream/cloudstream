@@ -20,50 +20,6 @@ import kotlin.concurrent.thread
 
 class SettingsFragment : PreferenceFragmentCompat() {
     var count = 0
-    private var scoreboard: List<ScoreManager.DreamloEntry>? = null
-
-    private var usernameUUID: String? = null
-
-    var ongoingJob: Job? = null
-
-    private fun saveAfterTime() {
-        ongoingJob?.cancel()
-        ongoingJob = main {
-            delay(10000) // dont ddos the scoreboard
-            saveAndUpload()
-        }
-    }
-
-    private fun saveAndUpload() {
-        if (ScoreManager.privateCode.isNullOrBlank()) return
-        try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-            val uuid = usernameUUID
-            if (uuid != null) {
-                settingsManager.edit()
-                    .putString(getString(R.string.benene_count_uuid), uuid)
-                    .putInt(getString(R.string.benene_count), count)
-                    .apply()
-                thread {
-                    normalSafeApiCall {
-                        ScoreManager.addScore(uuid, count)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    override fun onPause() {
-        saveAndUpload()
-        super.onPause()
-    }
-
-    override fun onDestroy() {
-        saveAndUpload()
-        super.onDestroy()
-    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
@@ -76,15 +32,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             count = settingsManager.getInt(getString(R.string.benene_count), 0)
-            usernameUUID =
-                settingsManager.getString(getString(R.string.benene_count_uuid), UUID.randomUUID().toString())
-            if (count > 20) {
-                if (!ScoreManager.privateCode.isNullOrBlank()) {
-                    thread {
-                        scoreboard = normalSafeApiCall { ScoreManager.getScore() }
-                    }
-                }
-            }
+
             benenePref.summary =
                 if (count <= 0) getString(R.string.benene_count_text_none) else getString(R.string.benene_count_text).format(
                     count
@@ -93,18 +41,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 try {
                     count++
                     settingsManager.edit().putInt(getString(R.string.benene_count), count).apply()
-                    var add = ""
-                    val localScoreBoard = scoreboard
-                    if (localScoreBoard != null) {
-                        for ((index, score) in localScoreBoard.withIndex()) {
-                            if (count > (score.score.toIntOrNull() ?: 0)) {
-                                add = " (${index + 1}/${localScoreBoard.size})"
-                                break
-                            }
-                        }
-                    }
-                    it.summary = getString(R.string.benene_count_text).format(count) + add
-                    saveAfterTime()
+                    it.summary = getString(R.string.benene_count_text).format(count)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
