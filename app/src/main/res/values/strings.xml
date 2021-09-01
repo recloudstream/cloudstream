@@ -112,8 +112,7 @@
     <string name="size_settings">Player resize button</string>
     <string name="size_setthings_des">Remove the black borders</string>
     <string name="subtitles">Subtitles</string>
-    <string name="
-                  _des">Player subtitles settings</string>
+    <string name="subtitles_des">Player subtitles settings</string>
     <string name="eigengraumode_setthings">Eigengrau Mode</string>
     <string name="eigengraumode_setthings_des">Adds the speed option in the player</string>
     <string name="wipe_to_seek_setthings">Swipe to seek</string>
