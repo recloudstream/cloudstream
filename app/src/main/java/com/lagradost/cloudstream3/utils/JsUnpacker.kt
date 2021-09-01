@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.cloudstream3.mvvm.logError
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.util.HashMap
@@ -71,7 +72,7 @@ class JsUnpacker(packedJS: String?) {
                 return decoded.toString()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            logError(e)
         }
         return null
     }

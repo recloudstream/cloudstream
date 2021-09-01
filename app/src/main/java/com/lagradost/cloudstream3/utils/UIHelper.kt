@@ -33,6 +33,7 @@ import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import kotlin.math.roundToInt
 
 
@@ -91,7 +92,7 @@ object UIHelper {
                 .load(GlideUrl(url))
                 .into(this)
         } catch (e : Exception) {
-            e.printStackTrace()
+            logError(e)
         }
     }
 

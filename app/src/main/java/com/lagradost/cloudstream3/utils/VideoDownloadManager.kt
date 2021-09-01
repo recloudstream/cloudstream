@@ -186,7 +186,7 @@ object VideoDownloadManager {
         return try {
             downloadStatus[id] ?: DownloadType.IsDone
         } catch (e: Exception) {
-            e.printStackTrace()
+            logError(e)
             DownloadType.IsDone
         }
     }
@@ -661,7 +661,7 @@ object VideoDownloadManager {
                     }
 
                 } catch (e: IllegalStateException) {
-                    e.printStackTrace()
+                    logError(e)
                 }
             }
 
@@ -889,7 +889,7 @@ object VideoDownloadManager {
                 connection.getHeaderField("content-length").toLongOrNull() ?: connection.contentLength?.toLong() ?: 0L
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            logError(e)
             0L
         }
         val bytesTotal = contentLength + resumeLength
@@ -1017,7 +1017,7 @@ object VideoDownloadManager {
             if (parentId != null)
                 downloadEvent -= downloadEventListener
         } catch (e: Exception) {
-            e.printStackTrace()
+            logError(e)
         }
 
         try {

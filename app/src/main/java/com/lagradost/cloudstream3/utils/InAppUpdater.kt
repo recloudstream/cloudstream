@@ -21,6 +21,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import java.io.File
 import kotlin.concurrent.thread
@@ -191,7 +192,7 @@ class InAppUpdater {
                                 }
                             }
                         } catch (e : Exception) {
-                            e.printStackTrace()
+                            logError(e)
                         }
                     }
                 }, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
@@ -265,7 +266,7 @@ class InAppUpdater {
                             }
                             builder.show()
                         } catch (e: Exception) {
-                            e.printStackTrace()
+                            logError(e)
                         }
                     }
                     return true
