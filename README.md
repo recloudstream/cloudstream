@@ -13,6 +13,10 @@ https://discord.gg/5Hus6fM
 + Download and stream movies, tv-shows and anime
 + Chromecast
 
+***The list of supported languages:***
+* 🇬🇧 English
+* 🇳🇱 Dutch
+
 **SCREENSHOTS:**
 
 <img src="./.github/home.jpg" height="400"/><img src="./.github/search.jpg" height="400"/><img src="./.github/downloads.jpg" height="400"/><img src="./.github/results.jpg" height="400"/>
