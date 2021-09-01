@@ -31,6 +31,8 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.M3u8Helper
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -1047,6 +1049,252 @@ object VideoDownloadManager {
         }
     }
 
+    private fun downloadHLS(
+        context: Context,
+        link: ExtractorLink,
+        name: String,
+        folder: String?,
+        parentId: Int?,
+        createNotificationCallback: (CreateNotificationMetadata) -> Unit
+    ): Int {
+        fun logcatPrint(vararg items: Any?) {
+            items.forEach {
+                println("[HLS]: $it")
+            }
+        }
+
+        val m3u8Helper = M3u8Helper()
+        logcatPrint("initialised the HLS downloader.")
+
+        val m3u8 = M3u8Helper.M3u8Stream(link.url, when (link.quality) {
+            -2 -> 360
+            -1 -> 480
+            1 -> 720
+            2 -> 1080
+            else -> null
+        }, mapOf("referer" to link.referer))
+        val tsIterator = m3u8Helper.hlsYield(listOf(m3u8))
+
+        val relativePath = (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace('/', File.separatorChar)
+        val displayName = "$name.ts"
+
+        val normalPath = "${Environment.getExternalStorageDirectory()}${File.separatorChar}$relativePath$displayName"
+
+        val fileStream: OutputStream
+        val fileLength: Long
+
+        fun deleteFile(): Int {
+            if (isScopedStorage()) {
+                val lastContent = context.contentResolver.getExistingDownloadUriOrNullQ(relativePath, displayName)
+                if (lastContent != null) {
+                    context.contentResolver.delete(lastContent, null, null)
+                }
+            } else {
+                if (!File(normalPath).delete()) return ERROR_DELETING_FILE
+            }
+            parentId?.let {
+                downloadDeleteEvent.invoke(parentId)
+            }
+            return SUCCESS_STOPPED
+        }
+
+        if (isScopedStorage()) {
+            val cr = context.contentResolver ?: return ERROR_CONTENT_RESOLVER_NOT_FOUND
+
+            val currentExistingFile =
+                cr.getExistingDownloadUriOrNullQ(relativePath, displayName) // CURRENT FILE WITH THE SAME PATH
+
+            if (currentExistingFile != null) { // DELETE FILE IF FILE EXITS
+                val rowsDeleted = context.contentResolver.delete(currentExistingFile, null, null)
+                if (rowsDeleted < 1) {
+                    println("ERROR DELETING FILE!!!")
+                }
+            }
+
+            val newFileUri = if (currentExistingFile != null) {
+                currentExistingFile
+            } else {
+                val contentUri =
+                    MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) // USE INSTEAD OF MediaStore.Downloads.EXTERNAL_CONTENT_URI
+                //val currentMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                val currentMimeType = "video/mp2t"
+                val newFile = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+                    put(MediaStore.MediaColumns.TITLE, name)
+                    put(MediaStore.MediaColumns.MIME_TYPE, currentMimeType)
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                }
+
+                cr.insert(
+                    contentUri,
+                    newFile
+                ) ?: return ERROR_MEDIA_STORE_URI_CANT_BE_CREATED
+            }
+
+            fileStream = cr.openOutputStream(newFileUri, "a")
+                ?: return ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM
+        } else {
+            // NORMAL NON SCOPED STORAGE FILE CREATION
+            val rFile = File(normalPath)
+            if (!rFile.exists()) {
+                rFile.parentFile?.mkdirs()
+                if (!rFile.createNewFile()) return ERROR_CREATE_FILE
+            } else {
+                rFile.parentFile?.mkdirs()
+                if (!rFile.delete()) return ERROR_DELETING_FILE
+                if (!rFile.createNewFile()) return ERROR_CREATE_FILE
+            }
+            fileStream = FileOutputStream(rFile, false)
+        }
+        val firstTs = tsIterator.next()
+
+        var isDone = false
+        var isFailed = false
+        var bytesDownloaded = firstTs.bytes.size.toLong()
+        var tsProgress = 1L
+        val totalTs = firstTs.totalTs.toLong()
+        /*
+            Most of the auto generated m3u8 out there have TS of the same size.
+            And only the last TS might have a different size.
+
+            But oh well, in cases of handmade m3u8 streams this will go all over the place ¯\_(ツ)_/¯
+            So ya, this calculates an estimate of how many bytes the file is going to be.
+
+            > (bytesDownloaded/tsProgress)*totalTs
+         */
+
+
+        parentId?.let {
+            context.setKey(KEY_DOWNLOAD_INFO, it.toString(), DownloadedFileInfo((bytesDownloaded/tsProgress)*totalTs, relativePath, displayName))
+        }
+
+        fun updateNotification() {
+            val type = when {
+                isDone -> DownloadType.IsDone
+                isFailed -> DownloadType.IsFailed
+                else -> DownloadType.IsDownloading
+            }
+
+            parentId?.let { id ->
+                try {
+                    downloadStatus[id] = type
+                    downloadStatusEvent.invoke(Pair(id, type))
+                    downloadProgressEvent.invoke(Triple(id, bytesDownloaded, (bytesDownloaded/tsProgress)*totalTs))
+                } catch (e: Exception) {
+                    // IDK MIGHT ERROR
+                }
+            }
+
+            createNotificationCallback.invoke(CreateNotificationMetadata(type, bytesDownloaded, (bytesDownloaded/tsProgress)*totalTs))
+        }
+
+        fun stopIfError(ts: M3u8Helper.HlsDownloadData): Int? {
+            if (ts.errored || ts.bytes.isEmpty()) {
+                val error: Int
+                error = if (!ts.errored) {
+                    logcatPrint("Error: No stream was found.")
+                    ERROR_UNKNOWN
+                } else {
+                    logcatPrint("Error: Failed to fetch data.")
+                    ERROR_CONNECTION_ERROR
+                }
+                isFailed = true
+                fileStream.close()
+                deleteFile()
+                updateNotification()
+                return error
+            }
+            return null
+        }
+
+        val notificationCoroutine = main {
+            while (true) {
+                if (!isDone) {
+                    updateNotification()
+                }
+                for (i in 1..10) {
+                    delay(100)
+                }
+            }
+        }
+
+        val downloadEventListener = { event: Pair<Int, DownloadActionType> ->
+            if (event.first == parentId) {
+                when (event.second) {
+                    DownloadActionType.Stop -> {
+                        isFailed = true
+                    }
+                    DownloadActionType.Pause -> {
+                        isFailed = true  // Pausing is not supported since well...I need to know the index of the ts it was paused at
+                        // it may be possible to store it in a variable, but when the app restarts it will be lost
+                    }
+                    else -> updateNotification()  // do nothing, since well...I don't support anything else
+                }
+            }
+        }
+
+        fun closeAll() {
+            try {
+                if (parentId != null)
+                    downloadEvent -= downloadEventListener
+            } catch (e: Exception) {
+                logError(e)
+            }
+            try {
+                parentId?.let {
+                    downloadStatus.remove(it)
+                }
+            } catch (e: Exception) {
+                logError(e)
+                // IDK MIGHT ERROR
+            }
+            notificationCoroutine.cancel()
+        }
+        
+       stopIfError(firstTs).let {
+            if (it != null) {
+                closeAll()
+                return it
+            }
+        }
+
+        if (parentId != null)
+            downloadEvent += downloadEventListener
+
+        fileStream.write(firstTs.bytes)
+
+        for (ts in tsIterator) {
+            if (isFailed) {
+                fileStream.close()
+                deleteFile()
+                updateNotification()
+                closeAll()
+                return SUCCESS_STOPPED
+            }
+            stopIfError(ts).let {
+                if (it != null) {
+                    closeAll()
+                    return it
+                }
+            }
+
+            fileStream.write(ts.bytes)
+            tsProgress = ts.currentIndex.toLong()
+            bytesDownloaded += ts.bytes.size.toLong()
+            logcatPrint("Download progress ${((tsProgress.toFloat()/totalTs.toFloat())*100).roundToInt()}%")
+        }
+        isDone = true
+        fileStream.close()
+        updateNotification()
+
+        closeAll()
+        parentId?.let {
+            context.setKey(KEY_DOWNLOAD_INFO, it.toString(), DownloadedFileInfo(bytesDownloaded, relativePath, displayName))
+        }
+
+        return SUCCESS_DOWNLOAD_DONE
+    }
+    
     private fun downloadSingleEpisode(
         context: Context,
         source: String?,
@@ -1056,6 +1304,20 @@ object VideoDownloadManager {
         tryResume: Boolean = false,
     ): Int {
         val name = sanitizeFilename(ep.name ?: "Episode ${ep.episode}")
+
+        if (link.isM3u8) {
+            return downloadHLS(context, link, name, folder, ep.id) { meta ->
+                createNotification(
+                    context,
+                    source,
+                    link.name,
+                    ep,
+                    meta.type,
+                    meta.bytesDownloaded,
+                    meta.bytesTotal
+                )
+            }
+        }
 
         return normalSafeApiCall {
             downloadThing(context, link, name, folder, "mp4", tryResume, ep.id) { meta ->
@@ -1221,9 +1483,8 @@ object VideoDownloadManager {
         links: List<ExtractorLink>
     ) {
         if (context == null) return
-        val validLinks = links.filter { !it.isM3u8 }
-        if (validLinks.isNotEmpty()) {
-            downloadFromResume(context, DownloadResumePackage(DownloadItem(source, folder, ep, validLinks), null))
+        if (links.isNotEmpty()) {
+            downloadFromResume(context, DownloadResumePackage(DownloadItem(source, folder, ep, links), null))
         }
     }
 }
