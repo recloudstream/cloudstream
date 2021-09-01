@@ -5,6 +5,7 @@ import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import kotlin.math.pow
 import com.lagradost.cloudstream3.mvvm.logError
 
 
@@ -22,29 +23,18 @@ class M3u8Helper {
         } else null
     }
 
-    private fun toBytes16BigBecauseArjixIsDumb(n: Int): ByteArray {
-        var num = n
-        val tail = ArrayList<Char>()
-        while (num > 0) {
-            val b = num % 256
-            num /= 256
-            if (b > 0) {
-                tail.add(b.toChar())
-            }
+    fun toBytes16Big(n: Int): ByteArray {
+        return ByteArray(16) {
+            val fixed = n / 256.0.pow((15 - it))
+            (maxOf(0, fixed.toInt()) % 256).toByte()
         }
-        val f = ArrayList<Char>()
-        for (i in 0 until 16 - tail.size) {
-            f.add(0x00.toChar())
-        }
-        tail.reversed().forEach { f.add(it) }
-        return f.map { it.toByte() }.toByteArray()
     }
 
     private val defaultIvGen = sequence {
         var initial = 1
 
         while (true) {
-            yield(toBytes16BigBecauseArjixIsDumb(initial))
+            yield(toBytes16Big(initial))
             ++initial
         }
     }.iterator()
