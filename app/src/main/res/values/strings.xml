@@ -212,4 +212,6 @@
     <string name="episode_action_auto_download">Auto Download</string>
     <string name="episode_action_download_mirror">Download Mirror</string>
     <string name="episode_action_reload_links">Reload Links</string>
+
+    <string name="no_update_found">"No Update Found"</string>
 </resources>

@@ -80,7 +80,7 @@
         <Preference
                 android:key="@string/locale_key"
                 android:title="@string/app_language"
-                android:icon="@drawable/ic_outline_subtitles_24">
+                android:icon="@drawable/ic_baseline_language_24">
         </Preference>
         <SwitchPreference
                 android:key="acra.disable"

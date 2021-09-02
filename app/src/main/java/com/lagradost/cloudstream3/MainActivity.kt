@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -42,6 +43,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
+import java.util.*
 import kotlin.concurrent.thread
 
 
@@ -110,6 +112,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             } catch (e: Exception) {
 
             }
+        }
+
+        fun setLocale(activity: Activity?, languageCode: String?) {
+            if (activity == null || languageCode == null) return
+            val locale = Locale(languageCode)
+            Locale.setDefault(locale)
+            val resources = activity.resources
+            val config: Configuration = resources.configuration
+            config.setLocale(locale)
+            resources.updateConfiguration(config, resources.displayMetrics)
         }
     }
 
@@ -226,6 +238,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.style.LoadedStyle,
             true
         ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
+
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val localeCode = settingsManager.getString(getString(R.string.locale_key), null)
+        setLocale(this, localeCode)
 
         super.onCreate(savedInstanceState)
 
@@ -359,7 +375,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             val count = settingsManager.getInt(getString(R.string.benene_count), 0)
             if (count > 30)
                 apis.addAll(restrictedApis)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
