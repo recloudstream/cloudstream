@@ -38,8 +38,8 @@
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_ondemand_video_24"
                 app:key="swipe_enabled"
-                android:title="@string/wipe_to_seek_setthings"
-                android:summary="@string/wipe_to_seek_setthings_des"
+                android:title="@string/swipe_to_seek_setthings"
+                android:summary="@string/swipe_to_seek_setthings_des"
                 app:defaultValue="true"
         />
         <SwitchPreference

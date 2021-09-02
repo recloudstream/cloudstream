@@ -16,6 +16,7 @@ https://discord.gg/5Hus6fM
 ***The list of supported languages:***
 * 🇬🇧 English
 * 🇳🇱 Dutch
+* 🇬🇷 Greek
 
 **SCREENSHOTS:**
 
