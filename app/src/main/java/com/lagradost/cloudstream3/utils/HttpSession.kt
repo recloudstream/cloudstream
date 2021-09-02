@@ -62,8 +62,8 @@ class HttpSession {
             stream, files
         )
         sessionCookies.putAll(res.cookies.toMap())
-        if (res.headers.containsKey("set-content")) {
-            sessionCookies.putAll(cookieStrToMap(res.headers["set-content"].toString().replace("path=/,", "")))
+        if (res.headers.containsKey("set-cookie")) {
+            sessionCookies.putAll(cookieStrToMap(res.headers["set-cookie"].toString().replace("path=/,", "")))
         }
         return res
     }
@@ -86,8 +86,8 @@ class HttpSession {
             stream, files
         )
         sessionCookies.putAll(res.cookies.toMap())
-        if (res.headers.containsKey("set-content")) {
-            sessionCookies.putAll(cookieStrToMap(res.headers["set-content"].toString().replace("path=/,", "")))
+        if (res.headers.containsKey("set-cookie")) {
+            sessionCookies.putAll(cookieStrToMap(res.headers["set-cookie"].toString().replace("path=/,", "")))
         }
         return res
     }
