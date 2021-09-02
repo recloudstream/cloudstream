@@ -18,7 +18,7 @@
     <string name="go_back">Gå tillbacka</string>
     <string name="next_episode">Nästa avsnitt</string>
     <string name="result_poster">Affisch</string>
-    <string name="result_plot">Beskrivning</string>
+    <string name="result_plot">Sammanfattning</string>
     <string name="result_tags">Genrer</string>
     <string name="result_share">Dela</string>
     <string name="result_open_in_browser">Öppna i webbläsaren</string>
@@ -91,7 +91,7 @@
     <string name="vpn_might_be_needed">En VPN kan behövas för att den här leverantören ska fungera korrekt</string>
     <string name="vpn_torrent">Denna leverantör är en torrent, en VPN rekommenderas</string>
     <string name="torrent_plot">Beskrivning</string>
-    <string name="normal_no_plot">Ingen beskrivning hittades</string>
+    <string name="normal_no_plot">Ingen sammanfattning hittades</string>
     <string name="torrent_no_plot">Ingen beskrivning hittades</string>
 
     <string name="picture_in_picture">Bild-i-bild</string>

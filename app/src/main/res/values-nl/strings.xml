@@ -17,7 +17,7 @@
     <string name="go_back">Ga terug</string>
     <string name="next_episode">Volgende aflevering</string>
     <string name="result_poster">Poster</string>
-    <string name="result_plot">Verhaal</string>
+    <string name="synopsis">Verhaal</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Deel</string>
     <string name="result_open_in_browser">Openen in Browser</string>

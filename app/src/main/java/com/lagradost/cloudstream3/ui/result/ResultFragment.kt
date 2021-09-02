@@ -939,7 +939,7 @@ class ResultFragment : Fragment() {
                             }
                             result_descript.setOnClickListener {
                                 val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-                                builder.setMessage(d.plot).setTitle(R.string.synopsis)
+                                builder.setMessage(d.plot).setTitle( if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
                                     .show()
                             }
                             result_descript.text = syno

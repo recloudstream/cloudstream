@@ -38,7 +38,7 @@
     <string name="go_back">Go back</string>
     <string name="next_episode">Next episode</string>
     <string name="result_poster">Poster</string>
-    <string name="result_plot">Plot</string>
+    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Share</string>
     <string name="result_open_in_browser">Open In Browser</string>

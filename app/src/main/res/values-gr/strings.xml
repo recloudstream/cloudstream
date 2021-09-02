@@ -17,7 +17,7 @@
     <string name="go_back">Πίσω</string>
     <string name="next_episode">Επόμενο Επισόδειο</string>
     <string name="result_poster">Πόστερ</string>
-    <string name="result_plot">Πλοκή</string>
+    <string name="synopsis">Πλοκή</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Μοίρασε</string>
     <string name="result_open_in_browser">Άνοιγμα στον περιηγητή</string>
