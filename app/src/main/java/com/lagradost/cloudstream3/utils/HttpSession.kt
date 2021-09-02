@@ -19,12 +19,12 @@ class HttpSession {
     companion object {
         const val DEFAULT_TIMEOUT = 30.0
 
-        fun mergeCookies(cookie1: Map<String, String>, cookie2: Map<String, String>?): Map<String, String> {
-            val a = cookie1.toMutableMap()
+        fun mergeCookies(cookie1: CookieJar, cookie2: Map<String, String>?): Map<String, String> {
+            val a = cookie1
             if (!cookie2.isNullOrEmpty()) {
-                a.putAll(cookie2.toMap())
+                a.putAll(cookie2)
             }
-            return a.toMap()
+            return a
         }
     }
 
@@ -43,8 +43,8 @@ class HttpSession {
         val res = khttp.get(
             url, headers, params,
             data, json, auth,
-            mergeCookies(sessionCookies, cookies),
-            timeout, allowRedirects,
+            mergeCookies(sessionCookies, cookies), timeout,
+            allowRedirects,
             stream, files
         )
         sessionCookies.putAll(res.cookies)
@@ -65,8 +65,8 @@ class HttpSession {
         val res = khttp.post(
             url, headers, params,
             data, json, auth,
-            mergeCookies(sessionCookies, cookies),
-            timeout, allowRedirects,
+            mergeCookies(sessionCookies, cookies), timeout,
+            allowRedirects,
             stream, files
         )
         sessionCookies.putAll(res.cookies)
