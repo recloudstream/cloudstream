@@ -157,7 +157,7 @@ class AsiaFlixProvider : MainAPI() {
                     name,
                     name,
                     it,
-                    "https://asianload.me/",
+                    "https://asianload1.com/", /** <------ This provider should be added instead */
                     getQualityFromName(it),
                     it.endsWith(".m3u8")
                 )

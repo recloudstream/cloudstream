@@ -115,8 +115,8 @@
     <string name="player_subtitles_settings_des">Afspeler ondertiteling instellingen</string>
     <string name="eigengraumode_setthings">Eigengrau modus</string>
     <string name="eigengraumode_setthings_des">Voegt de snelheid optie toe in de speler</string>
-    <string name="wipe_to_seek_setthings">Veeg om te zoeken</string>
-    <string name="wipe_to_seek_setthings_des">Veeg naar links of rechts om de tijd in de videoplayer te regelen</string>
+    <string name="swipe_to_seek_setthings">Veeg om te zoeken</string>
+    <string name="swipe_to_seek_setthings_des">Veeg naar links of rechts om de tijd in de videoplayer te regelen</string>
     <string name="swipe_to_change_settings">wissen om instellingen te wijzigen</string>
     <string name="swipe_to_change_settings_des">Veeg aan de linker- of rechterkant om de helderheid of het volume te wijzigen</string>
     <string name="double_tap_to_seek_setthings">Dubbeltik om te zoeken</string>
