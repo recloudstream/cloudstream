@@ -115,9 +115,9 @@
     <string name="player_subtitles_settings_des">Player subtitles settings</string>
     <string name="eigengraumode_setthings">Eigengrau Mode</string>
     <string name="eigengraumode_setthings_des">Adds the speed option in the player</string>
-    <string name="wipe_to_seek_setthings">Swipe to seek</string>
-    <string name="wipe_to_seek_setthings_des">Swipe left or right to control time in the videoplayer</string>
-    <string name="swipe_to_change_settings">wipe to change settings</string>
+    <string name="swipe_to_seek_setthings">Swipe to seek</string>
+    <string name="swipe_to_seek_setthings_des">Swipe left or right to control time in the videoplayer</string>
+    <string name="swipe_to_change_settings">Swipe to change settings</string>
     <string name="swipe_to_change_settings_des">Swipe on the left or right side to change brightness or volume</string>
     <string name="double_tap_to_seek_setthings">Double tap to seek</string>
     <string name="double_tap_to_seek_setthings_des">Tap twice on the right or left side to seek forwards or backwards</string>
