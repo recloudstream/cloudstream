@@ -96,7 +96,7 @@
     <string name="subs_auto_select_language">Αυτόματη επιλογή γλώσσας</string>
     <string name="subs_download_languages">Λήψη γλωσσών</string>
     <string name="subs_hold_to_reset_to_default">Κρατήστε πατημένο για επαναφορά στα προεπιλεγμένα</string>
-    <string name="continue_watching"Συνέχεια Παρακολούθησης</string>
+    <string name="continue_watching">Συνέχεια Παρακολούθησης</string>
 
     <string name="action_remove_watching">Αφαίρεση</string>
     <string name="action_open_watching">Παραπάνω Πληροφορίες</string>
