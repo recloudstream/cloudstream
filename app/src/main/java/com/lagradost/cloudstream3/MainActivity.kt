@@ -3,10 +3,11 @@ package com.lagradost.cloudstream3
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
-import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -22,6 +23,7 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
+import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.DownloadChildFragment
@@ -114,14 +116,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
         }
 
-        fun setLocale(activity: Activity?, languageCode: String?) {
-            if (activity == null || languageCode == null) return
+        fun setLocale(context: Context?, languageCode: String?) {
+            if (context == null || languageCode == null) return
             val locale = Locale(languageCode)
+            val resources: Resources = context.resources
+            val config = resources.configuration
             Locale.setDefault(locale)
-            val resources = activity.resources
-            val config: Configuration = resources.configuration
             config.setLocale(locale)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                context.createConfigurationContext(config)
             resources.updateConfiguration(config, resources.displayMetrics)
+        }
+
+        fun Context.updateLocale() {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            val localeCode = settingsManager.getString(getString(R.string.locale_key), null)
+            println("LOCALE: " + localeCode)
+            setLocale(this, localeCode)
         }
     }
 
@@ -174,13 +186,18 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 .remove(currentFragment)
                 .commitAllowingStateLoss()
             backEvent.invoke(true)
+            this.updateLocale()
             return true
         }
         backEvent.invoke(false)
+        this.updateLocale()
+
         return false
     }
 
     override fun onBackPressed() {
+        this.updateLocale()
+
         if (backPressed()) return
         super.onBackPressed()
     }
@@ -238,11 +255,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.style.LoadedStyle,
             true
         ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
-
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val localeCode = settingsManager.getString(getString(R.string.locale_key), null)
-        setLocale(this, localeCode)
-
+        updateLocale()
         super.onCreate(savedInstanceState)
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)

@@ -263,12 +263,13 @@ object VideoDownloadManager {
 
             val rowTwoExtra = if (ep.name != null) " - ${ep.name}\n" else ""
             val rowTwo = if (ep.season != null && ep.episode != null) {
-                "S${ep.season}:E${ep.episode}" + rowTwoExtra
+                "${context.getString(R.string.season_short)}${ep.season}:${context.getString(R.string.episode_short)}${ep.episode}" + rowTwoExtra
             } else if (ep.episode != null) {
-                "Episode ${ep.episode}" + rowTwoExtra
+                "${context.getString(R.string.episode)} ${ep.episode}" + rowTwoExtra
             } else {
                 (ep.name ?: "") + ""
             }
+            val downloadFormat = context.getString(R.string.download_format)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 if (ep.poster != null) {
@@ -282,16 +283,15 @@ object VideoDownloadManager {
                 val progressPercentage = progress * 100 / total
                 val progressMbString = "%.1f".format(progress / 1000000f)
                 val totalMbString = "%.1f".format(total / 1000000f)
-
                 val bigText =
                     if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
                         (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString MB/$totalMbString MB)"
                     } else if (state == DownloadType.IsFailed) {
-                        "Download Failed - $rowTwo"
+                        downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
                     } else if (state == DownloadType.IsDone) {
-                        "Download Done - $rowTwo"
+                        downloadFormat.format(context.getString(R.string.download_done), rowTwo)
                     } else {
-                        "Download Canceled - $rowTwo"
+                        downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
                     }
 
                 val bodyStyle = NotificationCompat.BigTextStyle()
@@ -301,11 +301,11 @@ object VideoDownloadManager {
                 val txt = if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
                     rowTwo
                 } else if (state == DownloadType.IsFailed) {
-                    "Download Failed - $rowTwo"
+                    downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
                 } else if (state == DownloadType.IsDone) {
-                    "Download Done - $rowTwo"
+                    downloadFormat.format(context.getString(R.string.download_done), rowTwo)
                 } else {
-                    "Download Canceled - $rowTwo"
+                    downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
                 }
 
                 builder.setContentText(txt)
@@ -352,9 +352,9 @@ object VideoDownloadManager {
                                 DownloadActionType.Pause -> pressToPauseIcon
                                 DownloadActionType.Stop -> pressToStopIcon
                             }, when (i) {
-                                DownloadActionType.Resume -> "Resume"
-                                DownloadActionType.Pause -> "Pause"
-                                DownloadActionType.Stop -> "Cancel"
+                                DownloadActionType.Resume -> context.getString(R.string.resume)
+                                DownloadActionType.Pause -> context.getString(R.string.pause)
+                                DownloadActionType.Stop -> context.getString(R.string.cancel)
                             }, pending
                         )
                     )
@@ -1278,7 +1278,7 @@ object VideoDownloadManager {
         link: ExtractorLink,
         tryResume: Boolean = false,
     ): Int {
-        val name = sanitizeFilename(ep.name ?: "Episode ${ep.episode}")
+        val name = sanitizeFilename(ep.name ?: "${context.getString(R.string.episode)} ${ep.episode}")
 
         if (link.isM3u8 || link.url.endsWith(".m3u8")) {
             val startIndex = if (tryResume) {
@@ -1413,7 +1413,11 @@ object VideoDownloadManager {
                 main {
                     showToast( // can be replaced with regular Toast
                         context,
-                        "${pkg.item.ep.mainName}${pkg.item.ep.episode?.let { " ${context.getString(R.string.episode)} $it " } ?: " "}${context.getString(R.string.queued)}",
+                        "${pkg.item.ep.mainName}${pkg.item.ep.episode?.let { " ${context.getString(R.string.episode)} $it " } ?: " "}${
+                            context.getString(
+                                R.string.queued
+                            )
+                        }",
                         Toast.LENGTH_SHORT
                     )
                 }

@@ -2,11 +2,12 @@
 <resources>
     <string name="rated_format">Betygsatt: %.1f</string>
     <string name="player_speed_text_format">Hastighet (%.2fx)</string>
+    <string name="new_update_format">Ny uppdatering hittad!\n%s -> %s</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hem</string>
     <string name="title_search">Sök</string>
-    <string name="title_downloads">Nerladdningar</string>
+    <string name="title_downloads">Nedladdningar</string>
     <string name="title_settings">Instälningar</string>
     <string name="search_hint">Sök…</string>
     <string name="change_providers_des">Ändra Providers</string>
@@ -33,23 +34,21 @@
 
     <string name="play_movie_button">Spela Upp</string>
     <string name="play_torrent_button">Strömma Torrent</string>
-    <string name="pick_source">Sources</string>
+    <string name="pick_source">Källor</string>
     <string name="pick_subtitle">Undertexter</string>
     <string name="reload_error">Försök ansluta igen…</string>
     <string name="result_go_back">Gå tillbaka</string>
     <string name="episode_poster">@string/result_poster</string>
     <string name="play_episode">Spela Avsnitt</string>
     <string name="need_storage">Allow to download episodes</string>
-    <string name="download_descript">Ladda ner</string>
+    <string name="download">Ladda ner</string>
     <string name="download_storage_text">Intern lagring</string>
 
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
 
-    <string name="popup_delete_file">Radera</string>
+    <string name="popup_delete_file">Ta bort</string>
     <string name="popup_play_file">Spela upp</string>
-    <string name="popup_resume_download">Resume Download</string>
-    <string name="popup_pause_download">Pause Download</string>
 
     <string name="pref_disable_acra">Inaktivera automatisk felrapportering</string>
     <string name="home_more_info">Mer information</string>
@@ -82,7 +81,7 @@
 
     <string name="prerelease_commit_hash">unknown_prerelease</string>
     <string name="subs_auto_select_language">Autoval av undertextspråk</string>
-    <string name="subs_download_languages">Automatisk nerladdaning av språk</string>
+    <string name="subs_download_languages">Automatisk nedladdaning av språk</string>
     <string name="subs_hold_to_reset_to_default">Håll inne för att återställa till standard</string>
     <string name="continue_watching">Fortsätt titta</string>
 
@@ -133,7 +132,7 @@
     <string name="no_links_found_toast">Inga länkar hittades</string>
     <string name="copy_link_toast">Länken kopierades till urklipp</string>
     <string name="play_episode_toast">Spela upp avsnitt</string>
-    <string name="subs_default_reset_toast">Återställ till standardvärdet</string>
+    <string name="subs_default_reset_toast">Återställd till standardvärdet</string>
     <string name="acra_report_toast">Programmet kraschade tyvärr. En anonym felrapport kommer att skickas till utvecklarna</string>
     <string name="error_loading_links_toast">Fel uppstod vid laddning av länkarna</string>
 
@@ -144,7 +143,7 @@
     <string name="season_short">S</string>
     <string name="episode_short">A</string>
 
-    <string name="delete_file">Ta bort nerladdad fil</string>
+    <string name="delete_file">Ta bort nedladdad fil</string>
     <string name="delete">Ta bort</string>
     <string name="delete_message">Denna fil kommer att raderas permanent %s\nÄr du helt säker?</string>
 
@@ -190,7 +189,18 @@
     <string name="skip_op">Hoppa över OP</string>
 
     <string name="dont_show_again">Visa inte igen</string>
-    <string name="download_started">Nerladdning startad</string>
-    <string name="download_failed">Nerladdning Misslyckades</string>
     <string name="update">Uppdatering</string>
+
+    <string name="download_started">Nedladdningar startad</string>
+    <string name="download_failed">Nedladdning Misslyckades</string>
+    <string name="downloaded">Nedladdad</string>
+    <string name="downloading">Laddar ner</string>
+    <string name="download_paused">Nedladdning Pausad</string>
+    <string name="download_canceled">Nedladdning Avbryten</string>
+    <string name="download_done">Nedladdning Färdig</string>
+    <string name="popup_resume_download">Återupta nedladdning</string>
+    <string name="popup_pause_download">Pausa nedladdning</string>
+
+    <string name="pause">Pausa</string>
+    <string name="resume">Återuppta</string>
 </resources>

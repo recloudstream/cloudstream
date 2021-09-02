@@ -60,7 +60,7 @@
                 android:id="@+id/download_header_goto_child"
                 android:layout_gravity="center_vertical|end"
                 android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
-                android:contentDescription="@string/download_descript"/>
+                android:contentDescription="@string/download"/>
 
         <FrameLayout
                 android:layout_marginStart="-50dp"
@@ -94,7 +94,7 @@
                     android:id="@+id/download_header_episode_download"
                     android:background="?selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_baseline_play_arrow_24"
-                    android:contentDescription="@string/download_descript"/>
+                    android:contentDescription="@string/download"/>
         </FrameLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -19,6 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.MainActivity.Companion.backEvent
+import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -95,6 +96,8 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        context?.updateLocale()
+
         homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 

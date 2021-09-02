@@ -81,15 +81,18 @@ class EasyDownloadButton : IDisposable {
                 when (state) {
                     VideoDownloadManager.DownloadType.IsPaused -> Pair(
                         R.drawable.ic_baseline_play_arrow_24,
-                        "Download Paused"
+                        R.string.download_paused
                     )
-                    VideoDownloadManager.DownloadType.IsDownloading -> Pair(R.drawable.netflix_pause, "Downloading")
-                    else -> Pair(R.drawable.ic_baseline_delete_outline_24, "Downloaded")
+                    VideoDownloadManager.DownloadType.IsDownloading -> Pair(
+                        R.drawable.netflix_pause,
+                        R.string.downloading
+                    )
+                    else -> Pair(R.drawable.ic_baseline_delete_outline_24, R.string.downloaded)
                 }
             } else {
-                Pair(R.drawable.netflix_download, "Download")
+                Pair(R.drawable.netflix_download, R.string.download)
             }
-            downloadImageChangeCallback.invoke(img)
+            downloadImageChangeCallback.invoke(Pair(img.first, downloadView.context.getString(img.second)))
         }
 
         fun fixDownloadedBytes(setCurrentBytes: Long, setTotalBytes: Long, animate: Boolean) {
@@ -184,6 +187,11 @@ class EasyDownloadButton : IDisposable {
                     clickCallback.invoke(DownloadClickEvent(itemId, data))
                 }
             }
+        }
+
+        downloadView.setOnLongClickListener {
+            clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_LONG_CLICK, data))
+            return@setOnLongClickListener true
         }
     }
 }

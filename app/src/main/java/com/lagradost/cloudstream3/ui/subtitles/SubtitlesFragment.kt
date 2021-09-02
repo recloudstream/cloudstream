@@ -22,6 +22,7 @@ import com.google.android.exoplayer2.ui.CaptionStyleCompat
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
+import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -174,6 +175,7 @@ class SubtitlesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+        context?.updateLocale()
         return inflater.inflate(R.layout.subtitle_settings, container, false)
     }
 

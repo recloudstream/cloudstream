@@ -2,8 +2,10 @@ package com.lagradost.cloudstream3.ui.download
 
 import android.app.Activity
 import android.content.DialogInterface
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.ui.player.UriData
@@ -59,6 +61,18 @@ object DownloadButtonSetup {
                         VideoDownloadManager.downloadEvent.invoke(
                             Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
                         )
+                    }
+                }
+            }
+            DOWNLOAD_ACTION_LONG_CLICK -> {
+                activity?.let { act ->
+                    val length =
+                        VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(act, click.data.id)?.fileLength
+                            ?: 0
+                    if(length > 0) {
+                        MainActivity.showToast(act, R.string.delete, Toast.LENGTH_LONG)
+                    } else {
+                        MainActivity.showToast(act, R.string.download, Toast.LENGTH_LONG)
                     }
                 }
             }

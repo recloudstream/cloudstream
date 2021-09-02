@@ -93,7 +93,7 @@
                     android:id="@+id/result_episode_download"
                     android:background="?selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_baseline_play_arrow_24"
-                    android:contentDescription="@string/download_descript"/>
+                    android:contentDescription="@string/download"/>
         </FrameLayout>
     </GridLayout>
 </androidx.cardview.widget.CardView>

@@ -7,6 +7,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.MainActivity.Companion.setLocale
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
+import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
@@ -20,6 +21,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     var count = 0
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        context?.updateLocale()
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings, rootKey)
         val updatePreference = findPreference<Preference>(getString(R.string.manual_check_update_key))!!

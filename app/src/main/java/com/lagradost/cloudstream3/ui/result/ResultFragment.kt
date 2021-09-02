@@ -32,6 +32,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
+import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
@@ -168,6 +169,8 @@ class ResultFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+        context?.updateLocale()
+
         viewModel =
             ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
         return inflater.inflate(R.layout.fragment_result, container, false)
