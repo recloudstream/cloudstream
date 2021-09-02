@@ -154,7 +154,7 @@ class InAppUpdater {
 
             val request = DownloadManager.Request(Uri.parse(url))
                 .setMimeType("application/vnd.android.package-archive")
-                .setTitle("CloudStream " + getString(R.string.update))
+                .setTitle("CloudStream Update")
                 .setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_DOWNLOADS,
                     "CloudStream.apk"

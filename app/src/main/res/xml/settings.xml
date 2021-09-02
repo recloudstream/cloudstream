@@ -7,7 +7,6 @@
             android:title="Player"
             app:isPreferenceVisible="true"
     >
-
         <Preference
                 android:key="subtitle_settings_key"
                 android:title="@string/player_subtitles_settings"
