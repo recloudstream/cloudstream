@@ -14,7 +14,7 @@ import khttp.responses.Response
  *
  * @property sessionCookies A cookie jar.
  */
-class Session {
+class HttpSession {
     companion object {
         const val DEFAULT_TIMEOUT = 30.0
 
@@ -32,11 +32,19 @@ class Session {
             }
             return cookies.toMap()
         }
+
+        fun mergeCookies(cookie1: Map<String, String>, cookie2: Map<String, String>?): Map<String, String> {
+            val a = cookie1.toMutableMap()
+            if (!cookie2.isNullOrEmpty()) {
+                a.putAll(cookie2.toMap())
+            }
+            return a.toMap()
+        }
     }
 
     public val sessionCookies = CookieJar()
 
-    public fun get(
+    fun get(
         url: String, headers: Map<String, String?> = mapOf(),
         params: Map<String, String> = mapOf(),
         data: Any? = null, json: Any? = null,
@@ -49,7 +57,7 @@ class Session {
         val res = khttp.get(
             url, headers, params,
             data, json, auth,
-            cookies, timeout,
+            mergeCookies(sessionCookies, cookies), timeout,
             allowRedirects,
             stream, files
         )
@@ -60,7 +68,7 @@ class Session {
         return res
     }
 
-    public fun post(
+    fun post(
         url: String, headers: Map<String, String?> = mapOf(),
         params: Map<String, String> = mapOf(),
         data: Any? = null, json: Any? = null,
@@ -73,7 +81,7 @@ class Session {
         val res = khttp.post(
             url, headers, params,
             data, json, auth,
-            cookies, timeout,
+            mergeCookies(sessionCookies, cookies), timeout,
             allowRedirects,
             stream, files
         )
@@ -83,5 +91,4 @@ class Session {
         }
         return res
     }
-
 }
