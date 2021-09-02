@@ -107,8 +107,7 @@
     <string name="swipe_to_change_settings">Svep för att ändra inställningar</string>
     <string name="swipe_to_change_settings_des">Svep på vänster eller höger sida för att ändra ljusstyrka eller volym</string>
     <string name="double_tap_to_seek_setthings">Dubbeltryck för att hoppa fram eller bak</string>
-    <string name="double_tap_to_seek_setthings_des">Tryck två gånger på höger eller vänster sida för att hoppa fram eller bak
-    </string>
+    <string name="double_tap_to_seek_setthings_des">Tryck två gånger på höger eller vänster sida för att hoppa fram eller bak</string>
     <string name="search">Sök</string>
     <string name="info">Information</string>
     <string name="advanced_search">Avancerade sökresultat</string>
