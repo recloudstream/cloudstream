@@ -165,8 +165,14 @@ class InAppUpdater {
 
             val localContext = this
 
-            val id = downloadManager.enqueue(request)
-
+            val id = try {
+                downloadManager.enqueue(request)
+            } catch (e: Exception) {
+                logError(e)
+                showToast(this, R.string.storage_error, Toast.LENGTH_SHORT)
+                -1
+            }
+            if (id == -1L) return true
             registerReceiver(
                 object : BroadcastReceiver() {
                     override fun onReceive(context: Context?, intent: Intent?) {
@@ -191,7 +197,7 @@ class InAppUpdater {
                                     openApk(localContext, uri)
                                 }
                             }
-                        } catch (e : Exception) {
+                        } catch (e: Exception) {
                             logError(e)
                         }
                     }
@@ -234,7 +240,12 @@ class InAppUpdater {
                             }
 
                             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                            builder.setTitle(getString(R.string.new_update_format).format(currentVersion?.versionName,update.updateVersion))
+                            builder.setTitle(
+                                getString(R.string.new_update_format).format(
+                                    currentVersion?.versionName,
+                                    update.updateVersion
+                                )
+                            )
                             builder.setMessage("${update.changelog}")
 
                             val context = this

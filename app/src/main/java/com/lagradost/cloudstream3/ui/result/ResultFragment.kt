@@ -932,7 +932,7 @@ class ResultFragment : Fragment() {
                             if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(R.string.play_movie_button)
                         result_plot_header?.text =
                             if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
-                        if (d.plot != null) {
+                        if (!d.plot.isNullOrEmpty()) {
                             var syno = d.plot!!
                             if (syno.length > MAX_SYNO_LENGH) {
                                 syno = syno.substring(0, MAX_SYNO_LENGH) + "..."
@@ -948,22 +948,22 @@ class ResultFragment : Fragment() {
                                 if (d.type == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(R.string.normal_no_plot)
                         }
 
-                        result_tag.removeAllViews()
-                        result_tag_holder.visibility = GONE
+                        result_tag?.removeAllViews()
+                        result_tag_holder?.visibility = GONE
                         // result_status.visibility = GONE
 
                         val tags = d.tags
-                        if (tags == null) {
-                            result_tag_holder.visibility = GONE
+                        if (tags.isNullOrEmpty()) {
+                            result_tag_holder?.visibility = GONE
                         } else {
-                            result_tag_holder.visibility = VISIBLE
+                            result_tag_holder?.visibility = VISIBLE
 
                             for ((index, tag) in tags.withIndex()) {
                                 val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
                                 val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
                                 btt.text = tag
 
-                                result_tag.addView(viewBtt, index)
+                                result_tag?.addView(viewBtt, index)
                             }
                         }
 
@@ -971,12 +971,12 @@ class ResultFragment : Fragment() {
                             val hasDownloadSupport = api.hasDownloadSupport
                             lateFixDownloadButton(true)
 
-                            result_play_movie.setOnClickListener {
+                            result_play_movie?.setOnClickListener {
                                 val card = currentEpisodes?.firstOrNull() ?: return@setOnClickListener
                                 handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                             }
 
-                            result_play_movie.setOnLongClickListener {
+                            result_play_movie?.setOnLongClickListener {
                                 val card = currentEpisodes?.firstOrNull() ?: return@setOnLongClickListener true
                                 handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
                                 return@setOnLongClickListener true
@@ -988,7 +988,7 @@ class ResultFragment : Fragment() {
 //                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
 //                            }
 
-                            result_download_movie.visibility = if (hasDownloadSupport) VISIBLE else GONE
+                            result_download_movie?.visibility = if (hasDownloadSupport) VISIBLE else GONE
                             if (hasDownloadSupport) {
                                 val localId = d.getId()
                                 val file =
