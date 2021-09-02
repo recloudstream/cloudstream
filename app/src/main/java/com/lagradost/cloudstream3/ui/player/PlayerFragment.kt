@@ -618,7 +618,6 @@ class PlayerFragment : Fragment() {
         this.visibility = if (visible) VISIBLE else GONE
     }
 
-    @SuppressLint("SetTextI18n")
     fun changeSkip(position: Long? = null) {
         val data = localData
 
@@ -903,7 +902,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun handlePlayerEvent(event: Int) {
-        if(!this::exoPlayer.isInitialized) return
+        if (!this::exoPlayer.isInitialized) return
         when (event) {
             PlayerEventType.Play.value -> exoPlayer.play()
             PlayerEventType.Pause.value -> exoPlayer.pause()
@@ -1152,10 +1151,10 @@ class PlayerFragment : Fragment() {
                 }
             }
         }
-        val fastForwardTime = settingsManager.getInt("fast_forward_button_time", 10)
-        exo_rew_text.text = fastForwardTime.toString()
-        exo_ffwd_text.text = fastForwardTime.toString()
-        fun rewnd() {
+        val fastForwardTime = settingsManager.getInt(getString(R.string.fast_forward_button_time_key), 10)
+        exo_rew_text.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
+        exo_ffwd_text.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
+        fun rewind() {
             val rotateLeft = AnimationUtils.loadAnimation(context, R.anim.rotate_left)
             exo_rew.startAnimation(rotateLeft)
 
@@ -1166,19 +1165,21 @@ class PlayerFragment : Fragment() {
                 override fun onAnimationRepeat(animation: Animation?) {}
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    exo_rew_text.post { exo_rew_text.text = "$fastForwardTime" }
+                    exo_rew_text.post {
+                        exo_rew_text.text = getString(R.string.rew_text_format).format(fastForwardTime)
+                    }
                 }
             })
             exo_rew_text.startAnimation(goLeft)
-            exo_rew_text.text = "-$fastForwardTime"
+            exo_rew_text.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
             seekTime(fastForwardTime * -1000L)
         }
 
         exo_rew.setOnClickListener {
-            rewnd()
+            rewind()
         }
 
-        fun ffwrd() {
+        fun fastForward() {
             val rotateRight = AnimationUtils.loadAnimation(context, R.anim.rotate_right)
             exo_ffwd.startAnimation(rotateRight)
 
@@ -1189,16 +1190,18 @@ class PlayerFragment : Fragment() {
                 override fun onAnimationRepeat(animation: Animation?) {}
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    exo_ffwd_text.post { exo_ffwd_text.text = "$fastForwardTime" }
+                    exo_ffwd_text.post {
+                        exo_ffwd_text.text = getString(R.string.ffw_text_format).format(fastForwardTime)
+                    }
                 }
             })
             exo_ffwd_text.startAnimation(goRight)
-            exo_ffwd_text.text = "+$fastForwardTime"
+            exo_ffwd_text.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
             seekTime(fastForwardTime * 1000L)
         }
 
         exo_ffwd.setOnClickListener {
-            ffwrd()
+            fastForward()
         }
 
         overlay_loading_skip_button.setOnClickListener {
@@ -1241,13 +1244,13 @@ class PlayerFragment : Fragment() {
 
             override fun onDoubleClickRight(clicks: Int) {
                 if (!isLocked) {
-                    ffwrd()
+                    fastForward()
                 }
             }
 
             override fun onDoubleClickLeft(clicks: Int) {
                 if (!isLocked) {
-                    rewnd()
+                    rewind()
                 }
             }
 
@@ -1285,19 +1288,21 @@ class PlayerFragment : Fragment() {
             val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
             val speedIndex = speedsNumbers.indexOf(playbackSpeed)
 
-            context?.showDialog(speedsText, speedIndex, "Player Speed", false, {
+            context?.showDialog(speedsText, speedIndex, getString(R.string.player_speed), false, {
                 activity?.hideSystemUI()
             }) { index ->
                 playbackSpeed = speedsNumbers[index]
                 requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
                 val param = PlaybackParameters(playbackSpeed)
                 exoPlayer.playbackParameters = param
-                player_speed_text.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
+                player_speed_text.text =
+                    getString(R.string.player_speed_text_format).format(playbackSpeed).replace(".0x", "x")
             }
         }
 
         sources_btt.setOnClickListener {
-            val isPlaying = exoPlayer.isPlaying
+            if (!this::exoPlayer.isInitialized) return@setOnClickListener
+            //val isPlaying = exoPlayer.isPlaying
             exoPlayer.pause()
             val currentSubtitles = activeSubtitles
 
@@ -1355,7 +1360,7 @@ class PlayerFragment : Fragment() {
                 sourceDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility = GONE
             } else {
                 val subsArrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
-                subsArrayAdapter.add("No Subtitles")
+                subsArrayAdapter.add(getString(R.string.no_subtitles))
                 subsArrayAdapter.addAll(currentSubtitles)
 
                 subtitleList.adapter = subsArrayAdapter
@@ -1464,7 +1469,12 @@ class PlayerFragment : Fragment() {
                             .removeSuffix(".vtt")
                             .removeSuffix(".srt")
                             .removeSuffix(".txt")
-                        list.add(SubtitleFile(realName.ifBlank { "Default" }, file.second.toString()))
+                        list.add(
+                            SubtitleFile(
+                                realName.ifBlank { getString(R.string.default_subtitles) },
+                                file.second.toString()
+                            )
+                        )
                     }
                 }
                 return list
@@ -1811,7 +1821,8 @@ class PlayerFragment : Fragment() {
             player_view.player = exoPlayer
             // Sets the speed
             exoPlayer.playbackParameters = PlaybackParameters(playbackSpeed)
-            player_speed_text?.text = "Speed (${playbackSpeed}x)".replace(".0x", "x")
+            player_speed_text?.text =
+                getString(R.string.player_speed_text_format).format(playbackSpeed).replace(".0x", "x")
 
             var hName: String? = null
             var epEpisode: Int? = null
@@ -1843,9 +1854,9 @@ class PlayerFragment : Fragment() {
             video_title?.text = hName +
                     if (isEpisodeBased)
                         if (epSeason == null)
-                            " - Episode $epEpisode"
+                            " - ${getString(R.string.episode)} $epEpisode"
                         else
-                            " \"S${epSeason}:E${epEpisode}\""
+                            " \"${getString(R.string.season_short)}${epSeason}:${getString(R.string.episode_short)}${epEpisode}\""
                     else ""
 
 /*
@@ -1944,26 +1955,26 @@ class PlayerFragment : Fragment() {
                             if (currentUrl?.url != "") {
                                 showToast(
                                     activity,
-                                    "Source error\n" + error.sourceException.message,
+                                    "${getString(R.string.source_error)}\n" + error.sourceException.message,
                                     LENGTH_SHORT
                                 )
                                 tryNextMirror()
                             }
                         }
                         ExoPlaybackException.TYPE_REMOTE -> {
-                            showToast(activity, "Remote error", LENGTH_SHORT)
+                            showToast(activity, getString(R.string.remote_error), LENGTH_SHORT)
                         }
                         ExoPlaybackException.TYPE_RENDERER -> {
                             showToast(
                                 activity,
-                                "Renderer error\n" + error.rendererException.message,
+                                "${getString(R.string.render_error)}\n" + error.rendererException.message,
                                 LENGTH_SHORT
                             )
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED -> {
                             showToast(
                                 activity,
-                                "Unexpected player error\n" + error.unexpectedException.message,
+                                "${getString(R.string.unexpected_error)}\n" + error.unexpectedException.message,
                                 LENGTH_SHORT
                             )
                         }
@@ -1986,7 +1997,7 @@ class PlayerFragment : Fragment() {
     }
 
     //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("ClickableViewAccessibility")
     private fun initPlayer() {
         if (isDownloadedFile) {
             initPlayer(null, uriData.uri.removePrefix("file://").replace("%20", " ")) // FIX FILE PERMISSION
@@ -2011,7 +2022,7 @@ class PlayerFragment : Fragment() {
                             initPlayer(getCurrentUrl())
                         }
                     } else {
-                        showToast(activity, "No Links Found", LENGTH_SHORT)
+                        showToast(activity, R.string.no_links_found_toast, LENGTH_SHORT)
                     }
                 }
             }

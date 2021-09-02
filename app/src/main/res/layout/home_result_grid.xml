@@ -22,14 +22,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/search_poster_descript"/>
+            android:contentDescription="@string/search_poster_des"/>
     <ImageView
             android:focusable="false"
             android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:src="@drawable/title_shadow"
-            android:layout_gravity="bottom" android:contentDescription="@string/shadow_descript">
+            android:layout_gravity="bottom" android:contentDescription="@string/shadow_des">
     </ImageView>
     <TextView
             android:layout_width="match_parent"

@@ -47,23 +47,28 @@ object AppUtils {
      * | Season 1 - Episode 2
      * | Episode 2
      * **/
-    fun getNameFull(name: String?, episode: Int?, season: Int?): String {
+    fun Context.getNameFull(name: String?, episode: Int?, season: Int?): String {
         val rEpisode = if (episode == 0) null else episode
         val rSeason = if (season == 0) null else season
 
+        val seasonName = getString(R.string.season)
+        val episodeName = getString(R.string.episode)
+        val seasonNameShort = getString(R.string.season_short)
+        val episodeNameShort = getString(R.string.episode_short)
+
         if (name != null) {
             return if (rEpisode != null && rSeason != null) {
-                "S${rSeason}:E${rEpisode} $name"
+                "$seasonNameShort${rSeason}:$episodeNameShort${rEpisode} $name"
             } else if (rEpisode != null) {
-                "Episode $rEpisode. $name"
+                "$episodeName $rEpisode. $name"
             } else {
                 name
             }
         } else {
             if (rEpisode != null && rSeason != null) {
-                return "Season $rSeason - Episode $rEpisode"
+                return "$seasonName $rSeason - $episodeName $rEpisode"
             } else if (rSeason == null) {
-                return "Episode $rEpisode"
+                return "$episodeName $rEpisode"
             }
         }
         return ""

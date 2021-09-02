@@ -32,19 +32,16 @@ object DownloadButtonSetup {
                             }
                         }
 
-                    builder.setTitle("Delete File")
-                    builder.setMessage(
-                        "This will permanently delete ${
-                            getNameFull(
+                    builder.setTitle(R.string.delete_file)
+                        .setMessage(
+                            ctx.getString(R.string.delete_message).format(ctx.getNameFull(
                                 click.data.name,
                                 click.data.episode,
                                 click.data.season
-                            )
-                        }\nAre you sure?"
-                    )
-                        .setTitle("Delete")
-                        .setPositiveButton("Delete", dialogClickListener)
-                        .setNegativeButton("Cancel", dialogClickListener)
+                            ))
+                        )
+                        .setPositiveButton(R.string.delete, dialogClickListener)
+                        .setNegativeButton(R.string.cancel, dialogClickListener)
                         .show()
                 }
             }

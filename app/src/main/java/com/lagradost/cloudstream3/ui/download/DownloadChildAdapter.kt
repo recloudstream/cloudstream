@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.download
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -102,7 +101,6 @@ class DownloadChildAdapter(
 
         var localCard: VisualDownloadChildCached? = null
 
-        @SuppressLint("SetTextI18n")
         fun bind(card: VisualDownloadChildCached) {
             localCard = card
             val d = card.data
@@ -117,7 +115,7 @@ class DownloadChildAdapter(
                 progressBar.visibility = View.GONE
             }
 
-            title.text = getNameFull(d.name, d.episode, d.season)
+            title.text = title.context.getNameFull(d.name, d.episode, d.season)
             title.isSelected = true // is needed for text repeating
 
             downloadButton.setUpButton(

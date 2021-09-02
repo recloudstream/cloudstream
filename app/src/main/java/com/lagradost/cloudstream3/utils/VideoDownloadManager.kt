@@ -1413,7 +1413,7 @@ object VideoDownloadManager {
                 main {
                     showToast( // can be replaced with regular Toast
                         context,
-                        "${pkg.item.ep.mainName}${pkg.item.ep.episode?.let { " Episode $it " } ?: " "}queued",
+                        "${pkg.item.ep.mainName}${pkg.item.ep.episode?.let { " ${context.getString(R.string.episode)} $it " } ?: " "}${context.getString(R.string.queued)}",
                         Toast.LENGTH_SHORT
                     )
                 }

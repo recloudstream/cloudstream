@@ -65,7 +65,7 @@ object SearchResultBuilder {
                 playImg?.visibility = View.VISIBLE
 
                 if (!card.type.isMovieType()) {
-                    cardText.text = getNameFull(card.name, card.episode, card.season)
+                    cardText.text = cardText.context.getNameFull(card.name, card.episode, card.season)
                 }
             }
             is AnimeSearchResponse -> {

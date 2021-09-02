@@ -101,7 +101,6 @@ class DownloadHeaderAdapter(
         private val normalImage: ImageView = itemView.download_header_goto_child
         var localCard: VisualDownloadHeaderCached? = null
 
-        @SuppressLint("SetTextI18n")
         fun bind(card: VisualDownloadHeaderCached) {
             localCard = card
             val d = card.data
@@ -135,7 +134,13 @@ class DownloadHeaderAdapter(
                 normalImage.visibility = View.VISIBLE
 
                 extraInfo.text =
-                    "${card.totalDownloads} Episode${if (card.totalDownloads == 1) "" else "s"} | ${mbString}MB"
+                    extraInfo.context.getString(R.string.extra_info_format).format(
+                        card.totalDownloads,
+                        if (card.totalDownloads == 1) extraInfo.context.getString(R.string.episode) else extraInfo.context.getString(
+                            R.string.episodes
+                        ),
+                        mbString
+                    )
 
                 holder.setOnClickListener {
                     clickCallback.invoke(DownloadHeaderClickEvent(0, d))

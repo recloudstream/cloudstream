@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
@@ -16,7 +15,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 class EasyDownloadButton : IDisposable {
     interface IMinimumData {
-        val id : Int
+        val id: Int
     }
 
     override fun dispose() {
@@ -93,7 +92,6 @@ class EasyDownloadButton : IDisposable {
             downloadImageChangeCallback.invoke(img)
         }
 
-        @SuppressLint("SetTextI18n")
         fun fixDownloadedBytes(setCurrentBytes: Long, setTotalBytes: Long, animate: Boolean) {
             currentBytes = setCurrentBytes
             totalBytes = setTotalBytes
@@ -112,7 +110,7 @@ class EasyDownloadButton : IDisposable {
                 val totalMbString = "%.1f".format(setTotalBytes / 1000000f)
 
                 textView?.text =
-                    "${currentMbString}MB / ${totalMbString}MB"
+                    textView?.context?.getString(R.string.download_size_format)?.format(currentMbString, totalMbString)
 
                 progressBar.let { bar ->
                     bar.max = (setTotalBytes / 1000).toInt()

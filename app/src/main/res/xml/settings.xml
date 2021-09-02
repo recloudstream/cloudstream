@@ -77,6 +77,11 @@
             android:title="@string/info"
             app:isPreferenceVisible="true"
     >
+        <Preference
+                android:key="@string/locale_key"
+                android:title="@string/app_language"
+                android:icon="@drawable/ic_outline_subtitles_24">
+        </Preference>
         <SwitchPreference
                 android:key="acra.disable"
                 android:icon="@drawable/ic_baseline_bug_report_24"

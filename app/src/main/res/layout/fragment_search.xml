@@ -57,7 +57,7 @@
                 android:layout_margin="10dp"
                 android:layout_gravity="end|center_vertical"
                 app:tint="?attr/textColor"
-                android:contentDescription="@string/change_providers_descript">
+                android:contentDescription="@string/change_providers_des">
         </ImageView>
     </FrameLayout>
 

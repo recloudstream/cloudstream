@@ -228,9 +228,9 @@ class ResultFragment : Fragment() {
 
     private fun fromIndexToSeasonText(selection: Int?): String {
         return when (selection) {
-            null -> "No Season"
-            -2 -> "No Season"
-            else -> "Season $selection"
+            null -> getString(R.string.no_season)
+            -2 -> getString(R.string.no_season)
+            else -> "${getString(R.string.season)} $selection"
         }
     }
 
@@ -282,7 +282,7 @@ class ResultFragment : Fragment() {
             media_route_button?.alpha = if (chromecastSupport) 1f else 0.3f
             if (!chromecastSupport) {
                 media_route_button.setOnClickListener {
-                    showToast(activity, "This provider has no chromecast support", Toast.LENGTH_LONG)
+                    showToast(activity, R.string.no_chomecast_support_toast, Toast.LENGTH_LONG)
                 }
             }
 
@@ -331,7 +331,11 @@ class ResultFragment : Fragment() {
             var currentLinks: ArrayList<ExtractorLink>? = null
             var currentSubs: ArrayList<SubtitleFile>? = null
 
-            val showTitle = episodeClick.data.name ?: "Episode ${episodeClick.data.episode}"
+            val showTitle =
+                episodeClick.data.name ?: getString(R.string.episode_name_format).format(
+                    getString(R.string.episode),
+                    episodeClick.data.episode
+                )
 
             suspend fun requireLinks(isCasting: Boolean): Boolean {
                 val currentLinksTemp =
@@ -501,7 +505,7 @@ class ResultFragment : Fragment() {
                             subsList.filter { downloadList.contains(SubtitleHelper.fromLanguageToTwoLetters(it.lang)) }
                                 .map { ExtractorSubtitleLink(it.lang, it.url, "") }
                                 .forEach { link ->
-                                    val epName = meta.name ?: "Episode ${meta.episode}"
+                                    val epName = meta.name ?: "${context?.getString(R.string.episode)} ${meta.episode}"
                                     val fileName =
                                         sanitizeFilename(epName + if (downloadList.size > 1) " ${link.name}" else "")
                                     val topFolder = "$folder"
@@ -593,18 +597,18 @@ class ResultFragment : Fragment() {
                     dialog.show()
                 }
                 ACTION_COPY_LINK -> {
-                    acquireSingeExtractorLink("Copy Link") { link ->
+                    acquireSingeExtractorLink(getString(R.string.episode_action_copy_link)) { link ->
                         val serviceClipboard =
                             (requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?)
                                 ?: return@acquireSingeExtractorLink
                         val clip = ClipData.newPlainText(link.name, link.url)
                         serviceClipboard.setPrimaryClip(clip)
-                        showToast(activity, "Link copied to clipboard", Toast.LENGTH_SHORT)
+                        showToast(activity, R.string.copy_link_toast, Toast.LENGTH_SHORT)
                     }
                 }
 
                 ACTION_PLAY_EPISODE_IN_BROWSER -> {
-                    acquireSingeExtractorLink("Play in Browser") { link ->
+                    acquireSingeExtractorLink(getString(R.string.episode_action_play_in_browser)) { link ->
                         val i = Intent(ACTION_VIEW)
                         i.data = Uri.parse(link.url)
                         startActivity(i)
@@ -612,7 +616,7 @@ class ResultFragment : Fragment() {
                 }
 
                 ACTION_CHROME_CAST_MIRROR -> {
-                    acquireSingeExtractorLink("Cast Mirror") { link ->
+                    acquireSingeExtractorLink(getString(R.string.episode_action_chomecast_mirror)) { link ->
                         val mirrorIndex = currentLinks?.indexOf(link) ?: -1
                         startChromecast(if (mirrorIndex == -1) 0 else mirrorIndex)
                     }
@@ -707,11 +711,13 @@ class ResultFragment : Fragment() {
                 }
 
                 ACTION_DOWNLOAD_MIRROR -> {
-                    acquireSingeExtractorLink(
-                        (currentLinks ?: return@main).filter { !it.isM3u8 },
-                        "Download Mirror"
-                    ) { link ->
-                        startDownload(listOf(link), currentSubs)
+                    currentLinks?.let { links ->
+                        acquireSingeExtractorLink(
+                            links,//(currentLinks ?: return@main).filter { !it.isM3u8 },
+                            getString(R.string.episode_action_download_mirror)
+                        ) { link ->
+                            startDownload(listOf(link), currentSubs)
+                        }
                     }
                 }
             }
@@ -830,7 +836,8 @@ class ResultFragment : Fragment() {
         }
 
         observe(viewModel.publicEpisodesCount) { count ->
-            result_episodes_text.text = "$count Episode${if (count == 1) "" else "s"}"
+            result_episodes_text.text =
+                "$count ${if (count == 1) getString(R.string.episode) else getString(R.string.episodes)}"
         }
 
         observe(viewModel.id) {
@@ -851,7 +858,7 @@ class ResultFragment : Fragment() {
                         }
                         result_vpn?.visibility = if (api.vpnStatus == VPNStatus.None) GONE else VISIBLE
 
-                        result_bookmark_button.text = "Watching"
+                        //result_bookmark_button.text = getString(R.string.type_watching)
 
                         currentHeaderName = d.name
                         currentType = d.type
@@ -877,29 +884,29 @@ class ResultFragment : Fragment() {
                             startActivity(createChooser(i, d.name))
                         }
 
-                        val metadataInfoArray = ArrayList<Pair<String, String>>()
+                        val metadataInfoArray = ArrayList<Pair<Int, String>>()
                         if (d is AnimeLoadResponse) {
                             val status = when (d.showStatus) {
                                 null -> null
-                                ShowStatus.Ongoing -> "Ongoing"
-                                ShowStatus.Completed -> "Completed"
+                                ShowStatus.Ongoing -> R.string.status_ongoing
+                                ShowStatus.Completed -> R.string.status_completed
                             }
                             if (status != null) {
-                                metadataInfoArray.add(Pair("Status", status))
+                                metadataInfoArray.add(Pair(R.string.status, getString(status)))
                             }
                         }
-                        if (d.year != null) metadataInfoArray.add(Pair("Year", d.year.toString()))
+                        if (d.year != null) metadataInfoArray.add(Pair(R.string.year, d.year.toString()))
                         val rating = d.rating
                         if (rating != null) metadataInfoArray.add(
                             Pair(
-                                "Rating",
+                                R.string.rating,
                                 "%.1f/10.0".format(rating.toFloat() / 10f).replace(",", ".")
                             )
                         )
                         val duration = d.duration
-                        if (duration != null) metadataInfoArray.add(Pair("Duration", duration))
+                        if (duration != null) metadataInfoArray.add(Pair(R.string.duration, duration))
 
-                        metadataInfoArray.add(Pair("Site", d.apiName))
+                        metadataInfoArray.add(Pair(R.string.site, d.apiName))
 
                         if (metadataInfoArray.size > 0) {
                             result_metadata.visibility = VISIBLE
@@ -929,7 +936,7 @@ class ResultFragment : Fragment() {
                             }
                             result_descript.setOnClickListener {
                                 val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-                                builder.setMessage(d.plot).setTitle("Synopsis")
+                                builder.setMessage(d.plot).setTitle(R.string.synopsis)
                                     .show()
                             }
                             result_descript.text = syno

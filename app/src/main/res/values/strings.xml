@@ -1,20 +1,38 @@
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
 <resources>
+    <!-- KEYS DON'T TRANSLATE -->
+    <string name="search_providers_list_key" translatable="false">search_providers_list</string>
+    <string name="locale_key" translatable="false">app_locale</string>
+    <string name="search_types_list_key" translatable="false">search_type_list</string>
+    <string name="grid_format_key" translatable="false">grid_format</string>
+    <string name="auto_update_key" translatable="false">auto_update</string>
+    <string name="prerelease_update_key" translatable="false">prerelease_update</string>
+    <string name="manual_check_update_key" translatable="false">manual_check_update</string>
+    <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
+
+    <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="extra_info_format" translatable="false">%d %s | %sMB</string>
+    <string name="storage_size_format" translatable="false">%s • %sGB</string>
+    <string name="download_size_format" translatable="false">%sMB / %sMB</string>
+    <string name="episode_name_format" translatable="false">%s %s</string>
+    <string name="ffw_text_format" translatable="false">+%d</string>
+    <string name="rew_text_format" translatable="false">-%d</string>
+    <string name="ffw_text_regular_format" translatable="false">%d</string>
+    <string name="rew_text_regular_format" translatable="false">%d</string>
+    <string name="player_speed_text_format" translatable="false">Speed (%fx)</string>
+
     <string name="app_name">CloudStream</string>
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
     <string name="title_downloads">Downloads</string>
     <string name="title_settings">Settings</string>
     <string name="search_hint">Search…</string>
-    <string name="change_providers_descript">Change Providers</string>
-    <string name="search_providers_list_key">search_providers_list</string>
-    <string name="search_types_list_key">search_type_list</string>
-    <string name="grid_format_key">grid_format</string>
-    <string name="search_poster_descript">Poster</string>
+    <string name="change_providers_des">Change Providers</string>
+    <string name="search_poster_des">Poster</string>
     <string name="no_data">No Data</string>
-    <string name="shadow_descript">Shadow</string>
-    <string name="episode_more_options_descript">More Options</string>
-    <string name="episode_play_descript">Play Episode</string>
+    <string name="shadow_des">Shadow</string>
+    <string name="episode_more_options_des">More Options</string>
+    <string name="episode_play_des">Play Episode</string>
     <string name="go_back">Go back</string>
     <string name="next_episode">Next episode</string>
     <string name="player_skip_button_text">10</string>
@@ -55,7 +73,6 @@
     <string name="popup_resume_download">Resume Download</string>
     <string name="popup_pause_download">Pause Download</string>
 
-    <string name="acra_report_toast">Sorry, the application crashed. An anonymous bug report will be sent to the developers</string>
     <string name="pref_disable_acra">Disable automatic bug reporting</string>
     <string name="home_more_info">More info</string>
     <string name="home_expanded_hide">Hide</string>
@@ -69,7 +86,6 @@
     <string name="filter_bookmarks">Filter Bookmarks</string>
     <string name="error_bookmarks_text">Bookmarks</string>
     <string name="action_remove_from_bookmarks">Remove</string>
-    <string name="play_episode_toast">Play Episode</string>
     <string name="sort_apply">Apply</string>
     <string name="sort_cancel">Cancel</string>
     <string name="player_speed">Player Speed</string>
@@ -80,14 +96,11 @@
     <string name="subs_window_color">Window Color</string>
     <string name="subs_edge_type">Edge Type</string>
     <string name="subs_subtitle_elevation">Subtitle Elevation</string>
-    <string name="subs_default_reset_toast">Reset to default value</string>
     <string name="preview_background">Preview Background</string>
     <string name="subs_font">Font</string>
     <string name="search_provider_text_providers">Search using providers</string>
     <string name="search_provider_text_types">Search using types</string>
-    <string name="auto_update_key">auto_update</string>
-    <string name="prerelease_update_key">prerelease_update</string>
-    <string name="manual_check_update_key">manual_check_update</string>
+
     <string name="benene_count">benene_count</string>
     <string name="benene_count_text">%d Benenes given to devs</string>
     <string name="benene_count_text_none">No Benenes given</string>
@@ -106,7 +119,7 @@
     <string name="torrent_plot">Description</string>
     <string name="normal_no_plot">No Plot Found</string>
     <string name="torrent_no_plot">No Description Found</string>
-    
+
     <string name="picture_in_picture">Picture-in-picture</string>
     <string name="picture_in_picture_des">Continues playback in a miniature player on top of other apps</string>
     <string name="player_size_settings">Player resize button</string>
@@ -120,7 +133,8 @@
     <string name="swipe_to_change_settings">Swipe to change settings</string>
     <string name="swipe_to_change_settings_des">Swipe on the left or right side to change brightness or volume</string>
     <string name="double_tap_to_seek_setthings">Double tap to seek</string>
-    <string name="double_tap_to_seek_setthings_des">Tap twice on the right or left side to seek forwards or backwards</string>
+    <string name="double_tap_to_seek_setthings_des">Tap twice on the right or left side to seek forwards or backwards
+    </string>
     <string name="search">Search</string>
     <string name="info">Info</string>
     <string name="advanced_search">Advanced Search</string>
@@ -137,4 +151,65 @@
     <string name="discord">Join Discord</string>
     <string name="benene">Give a benene to the devs</string>
     <string name="benene_des">Given benene</string>
+
+    <string name="app_language">App Language</string>
+
+    <string name="no_chomecast_support_toast">This provider has no chromecast support</string>
+    <string name="no_links_found_toast">"No Links Found"</string>
+    <string name="copy_link_toast">Link copied to clipboard</string>
+    <string name="play_episode_toast">Play Episode</string>
+    <string name="subs_default_reset_toast">Reset to default value</string>
+    <string name="acra_report_toast">Sorry, the application crashed. An anonymous bug report will be sent to the
+        developers
+    </string>
+
+    <string name="season">Season</string>
+    <string name="no_season">No Season</string>
+    <string name="episode">Episode</string>
+    <string name="episodes">Episodes</string>
+    <string name="season_short">S</string>
+    <string name="episode_short">E</string>
+
+    <string name="delete_file">Delete File</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_message">This will permanently delete %s\nAre you sure?</string>
+
+    <string name="status_ongoing">Ongoing</string>
+    <string name="status_completed">Completed</string>
+    <string name="status">Status</string>
+    <string name="year">Year</string>
+    <string name="rating">Rating</string>
+    <string name="duration">Duration</string>
+    <string name="site">Site</string>
+    <string name="synopsis">Synopsis</string>
+
+    <string name="queued">queued</string>
+    <string name="no_subtitles">No Subtitles</string>
+    <string name="default_subtitles">Default</string>
+
+    <string name="free_storage">Free</string>
+    <string name="used_storage">Used</string>
+    <string name="app_storage">App</string>
+
+    <string name="movies">Movies</string>
+    <string name="tv_series">TvSeries</string>
+    <string name="cartoons">Cartoons</string>
+    <string name="anime">Anime</string>
+    <string name="torrent">Torrent</string>
+
+    <string name="source_error">Source error</string>
+    <string name="remote_error">Remote error</string>
+    <string name="render_error">Renderer error</string>
+    <string name="unexpected_error">Unexpected player error</string>
+
+    <string name="episode_action_chomecast_episode">Chromecast Episode</string>
+    <string name="episode_action_chomecast_mirror">Chromecast Mirror</string>
+    <string name="episode_action_play_in_app">Play In App</string>
+    <string name="episode_action_play_in_vlc">Play In VLC</string>
+    <string name="episode_action_play_in_browser">Play in browser</string>
+    <string name="episode_action_copy_link">Copy Link</string>
+    <string name="episode_action_auto_download">Auto Download</string>
+    <string name="episode_action_download_mirror">Download Mirror</string>
+    <string name="episode_action_reload_links">Reload Links</string>
 </resources>
