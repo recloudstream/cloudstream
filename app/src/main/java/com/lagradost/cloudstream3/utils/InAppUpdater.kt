@@ -154,7 +154,7 @@ class InAppUpdater {
 
             val request = DownloadManager.Request(Uri.parse(url))
                 .setMimeType("application/vnd.android.package-archive")
-                .setTitle("CloudStream update")
+                .setTitle("CloudStream " + getString(R.string.update))
                 .setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_DOWNLOADS,
                     "CloudStream.apk"
@@ -234,13 +234,13 @@ class InAppUpdater {
                             }
 
                             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                            builder.setTitle("New update found!\n${currentVersion?.versionName} -> ${update.updateVersion}")
+                            builder.setTitle(getString(R.string.new_update_format).format(currentVersion?.versionName,update.updateVersion))
                             builder.setMessage("${update.changelog}")
 
                             val context = this
                             builder.apply {
-                                setPositiveButton("Update") { _, _ ->
-                                    showToast(context, "Download started", Toast.LENGTH_LONG)
+                                setPositiveButton(R.string.update) { _, _ ->
+                                    showToast(context, R.string.download_started, Toast.LENGTH_LONG)
                                     thread {
                                         val downloadStatus =
                                             normalSafeApiCall { context.downloadUpdate(update.updateURL) } ?: false
@@ -248,7 +248,7 @@ class InAppUpdater {
                                             runOnUiThread {
                                                 showToast(
                                                     context,
-                                                    "Download Failed",
+                                                    R.string.download_failed,
                                                     Toast.LENGTH_LONG
                                                 )
                                             }
@@ -256,10 +256,10 @@ class InAppUpdater {
                                     }
                                 }
 
-                                setNegativeButton("Cancel") { _, _ -> }
+                                setNegativeButton(R.string.cancel) { _, _ -> }
 
                                 if (checkAutoUpdate) {
-                                    setNeutralButton("Don't show again") { _, _ ->
+                                    setNeutralButton(R.string.dont_show_again) { _, _ ->
                                         settingsManager.edit().putBoolean("auto_update", false).apply()
                                     }
                                 }

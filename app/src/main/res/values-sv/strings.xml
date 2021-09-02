@@ -1,6 +1,7 @@
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
 <resources>
     <string name="rated_format">Betygsatt: %.1f</string>
+    <string name="player_speed_text_format">Hastighet (%.2fx)</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hem</string>
@@ -182,4 +183,14 @@
 
     <string name="no_update_found">Ingen uppdatering hittad</string>
     <string name="check_for_update">Sök efter uppdatering</string>
+
+    <string name="lock">Skärmlås</string>
+    <string name="resize">Bildförhållande</string>
+    <string name="source">Källa</string>
+    <string name="skip_op">Hoppa över OP</string>
+
+    <string name="dont_show_again">Visa inte igen</string>
+    <string name="download_started">Nerladdning startad</string>
+    <string name="download_failed">Nerladdning Misslyckades</string>
+    <string name="update">Uppdatering</string>
 </resources>

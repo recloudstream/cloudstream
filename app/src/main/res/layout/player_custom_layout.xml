@@ -465,7 +465,7 @@
                         <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:text="Lock"
+                                android:text="@string/lock"
                                 android:gravity="center"
                                 android:paddingStart="10dp"
                                 android:paddingEnd="10dp"
@@ -514,7 +514,7 @@
                             <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:text="Resize"
+                                    android:text="@string/resize"
                                     android:gravity="center"
                                     android:paddingStart="10dp"
                                     android:paddingEnd="10dp"
@@ -607,7 +607,7 @@
                             <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:text="Source"
+                                    android:text="@string/source"
                                     android:gravity="center"
                                     android:paddingStart="10dp"
 
@@ -653,7 +653,7 @@
                             <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:text="Skip OP"
+                                    android:text="@string/skip_op"
                                     android:gravity="start|center"
                                     android:paddingStart="10dp"
 
@@ -697,7 +697,7 @@
                             <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:text="Next Episode"
+                                    android:text="@string/next_episode"
 
                                     android:gravity="start|center"
                                     android:paddingStart="10dp"

@@ -1166,12 +1166,12 @@ class PlayerFragment : Fragment() {
 
                 override fun onAnimationEnd(animation: Animation?) {
                     exo_rew_text.post {
-                        exo_rew_text.text = getString(R.string.rew_text_format).format(fastForwardTime)
+                        exo_rew_text.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
                     }
                 }
             })
             exo_rew_text.startAnimation(goLeft)
-            exo_rew_text.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
+            exo_rew_text.text = getString(R.string.rew_text_format).format(fastForwardTime)
             seekTime(fastForwardTime * -1000L)
         }
 
@@ -1191,12 +1191,12 @@ class PlayerFragment : Fragment() {
 
                 override fun onAnimationEnd(animation: Animation?) {
                     exo_ffwd_text.post {
-                        exo_ffwd_text.text = getString(R.string.ffw_text_format).format(fastForwardTime)
+                        exo_ffwd_text.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
                     }
                 }
             })
             exo_ffwd_text.startAnimation(goRight)
-            exo_ffwd_text.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
+            exo_ffwd_text.text = getString(R.string.ffw_text_format).format(fastForwardTime)
             seekTime(fastForwardTime * 1000L)
         }
 

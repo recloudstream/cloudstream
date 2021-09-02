@@ -20,8 +20,9 @@
     <string name="rew_text_format" translatable="false">-%d</string>
     <string name="ffw_text_regular_format" translatable="false">%d</string>
     <string name="rew_text_regular_format" translatable="false">%d</string>
-    <string name="player_speed_text_format" translatable="false">Speed (%fx)</string>
+    <string name="player_speed_text_format">Speed (%.2fx)</string>
     <string name="rated_format">Rated: %.1f</string>
+    <string name="new_update_format">New update found!\n%s -> %s</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Home</string>
@@ -211,4 +212,14 @@
 
     <string name="no_update_found">No Update Found</string>
     <string name="check_for_update">Check for Update</string>
+
+    <string name="lock">Lock</string>
+    <string name="resize">Resize</string>
+    <string name="source">Source</string>
+    <string name="skip_op">Skip OP</string>
+
+    <string name="dont_show_again">Don\'t show again</string>
+    <string name="download_started">Download started</string>
+    <string name="download_failed">Download Failed</string>
+    <string name="update">Update</string>
 </resources>
