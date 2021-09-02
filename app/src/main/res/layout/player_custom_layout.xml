@@ -239,7 +239,7 @@
                 <TextView
                         android:id="@+id/exo_rew_text"
                         android:textColor="@color/white"
-                        android:text="@string/player_skip_button_text"
+                        tools:text="10"
                         android:textSize="19sp"
 
                         android:layout_gravity="center"
@@ -293,9 +293,9 @@
                          android:layout_gravity="center_vertical"
                          android:layout_height="wrap_content">
                 <TextView
+                        tools:text="10"
                         android:id="@+id/exo_ffwd_text"
                         android:textColor="@color/white"
-                        android:text="@string/player_skip_button_text"
                         android:textSize="19sp"
                         android:layout_gravity="center"
                         android:textStyle="bold"

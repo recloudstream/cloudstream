@@ -12,12 +12,10 @@
     <string name="grid_format_key">grid_format</string>
     <string name="search_poster_des">Πόστερ</string>
     <string name="no_data">Χωρίς δεδομένα</string>
-    <string name="shadow_des">Σκιά</string>
     <string name="episode_more_options_des">Περισσότερες Επιλογές</string>
     <string name="episode_play_des">Αναπαραγωγή Επισοδείου</string>
     <string name="go_back">Πίσω</string>
     <string name="next_episode">Επόμενο Επισόδειο</string>
-    <string name="player_skip_button_text">10</string>
     <string name="result_poster">Πόστερ</string>
     <string name="result_plot">Πλοκή</string>
     <string name="result_tags">Genres</string>
@@ -43,7 +41,7 @@
     <string name="play_episode">Αναπαραγωγή Επισοδείου</string>
     <string name="need_storage">Δώσε άδεια για την λήψη επισοδείου</string>
     <string name="download_descript">Λήξη</string>
-    <string name="error_loading_links">Σφάλμα φόρτωσεις συνδέσμων</string>
+    <string name="error_loading_links_toast">Σφάλμα φόρτωσεις συνδέσμων</string>
     <string name="download_storage_text">Εσωτερικός χώρος</string>
     <string name="options">Επιλογές</string>
 
@@ -64,8 +62,6 @@
     <string name="home_info">Πληροφορίες</string>
     <string name="home_next_random">Next Random</string>
     <string name="home_change_provider">Change Provider</string>
-    <string name="background_blur">Background blur</string>
-    <string name="background_shadow">Background Shadow</string>
     <string name="filter_bookmarks">Filter Bookmarks</string>
     <string name="error_bookmarks_text">Bookmarks</string>
     <string name="action_remove_from_bookmarks">Remove</string>

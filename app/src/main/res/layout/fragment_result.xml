@@ -122,14 +122,12 @@
                     tools:src="@drawable/example_poster"
                     android:background="@color/darkBackground"
                     android:id="@+id/result_poster_blur"
-                    android:contentDescription="@string/background_blur"/>
+                    tools:ignore="ContentDescription"/>
             <ImageView
                     android:src="@drawable/background_shadow"
                     android:layout_gravity="bottom"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:contentDescription="@string/background_shadow">
-            </ImageView>
+                    android:layout_height="30dp" tools:ignore="ContentDescription"/>
         </FrameLayout>
         <androidx.core.widget.NestedScrollView
                 android:id="@+id/result_scroll" android:layout_width="match_parent"

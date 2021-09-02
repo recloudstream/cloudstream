@@ -9,6 +9,7 @@
     <string name="prerelease_update_key" translatable="false">prerelease_update</string>
     <string name="manual_check_update_key" translatable="false">manual_check_update</string>
     <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
+    <string name="benene_count" translatable="false">benene_count</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false">%d %s | %sMB</string>
@@ -20,6 +21,7 @@
     <string name="ffw_text_regular_format" translatable="false">%d</string>
     <string name="rew_text_regular_format" translatable="false">%d</string>
     <string name="player_speed_text_format" translatable="false">Speed (%fx)</string>
+    <string name="rated_format">Rated: %.1f</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Home</string>
@@ -30,12 +32,10 @@
     <string name="change_providers_des">Change Providers</string>
     <string name="search_poster_des">Poster</string>
     <string name="no_data">No Data</string>
-    <string name="shadow_des">Shadow</string>
     <string name="episode_more_options_des">More Options</string>
     <string name="episode_play_des">Play Episode</string>
     <string name="go_back">Go back</string>
     <string name="next_episode">Next episode</string>
-    <string name="player_skip_button_text">10</string>
     <string name="result_poster">Poster</string>
     <string name="result_plot">Plot</string>
     <string name="result_tags">Genres</string>
@@ -61,9 +61,8 @@
     <string name="play_episode">Play Episode</string>
     <string name="need_storage">Allow to download episodes</string>
     <string name="download_descript">Download</string>
-    <string name="error_loading_links">Error Loading Links</string>
+    <string name="error_loading_links_toast">Error Loading Links</string>
     <string name="download_storage_text">Internal Storage</string>
-    <string name="options">Options</string>
 
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
@@ -81,8 +80,6 @@
     <string name="home_info">Info</string>
     <string name="home_next_random">Next Random</string>
     <string name="home_change_provider">Change Provider</string>
-    <string name="background_blur">Background blur</string>
-    <string name="background_shadow">Background Shadow</string>
     <string name="filter_bookmarks">Filter Bookmarks</string>
     <string name="error_bookmarks_text">Bookmarks</string>
     <string name="action_remove_from_bookmarks">Remove</string>
@@ -101,7 +98,6 @@
     <string name="search_provider_text_providers">Search using providers</string>
     <string name="search_provider_text_types">Search using types</string>
 
-    <string name="benene_count">benene_count</string>
     <string name="benene_count_text">%d Benenes given to devs</string>
     <string name="benene_count_text_none">No Benenes given</string>
 
@@ -155,7 +151,7 @@
     <string name="app_language">App Language</string>
 
     <string name="no_chomecast_support_toast">This provider has no chromecast support</string>
-    <string name="no_links_found_toast">"No Links Found"</string>
+    <string name="no_links_found_toast">No Links Found</string>
     <string name="copy_link_toast">Link copied to clipboard</string>
     <string name="play_episode_toast">Play Episode</string>
     <string name="subs_default_reset_toast">Reset to default value</string>
@@ -172,7 +168,7 @@
 
     <string name="delete_file">Delete File</string>
     <string name="delete">Delete</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="delete_message">This will permanently delete %s\nAre you sure?</string>
 
     <string name="status_ongoing">Ongoing</string>
@@ -213,5 +209,6 @@
     <string name="episode_action_download_mirror">Download Mirror</string>
     <string name="episode_action_reload_links">Reload Links</string>
 
-    <string name="no_update_found">"No Update Found"</string>
+    <string name="no_update_found">No Update Found</string>
+    <string name="check_for_update">Check for Update</string>
 </resources>

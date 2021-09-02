@@ -156,7 +156,7 @@ class EpisodeAdapter(
             }
 
             if (card.rating != null) {
-                episodeRating?.text = "Rated: %.1f".format(card.rating.toFloat() / 10f).replace(",", ".")
+                episodeRating?.text = episodeRating?.context?.getString(R.string.rated_format)?.format(card.rating.toFloat() / 10f)
             } else {
                 episodeRating?.text = ""
             }

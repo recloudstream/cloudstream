@@ -379,7 +379,7 @@ class ResultFragment : Fragment() {
                     is Resource.Failure -> {
                         showToast(
                             activity,
-                            R.string.error_loading_links,
+                            R.string.error_loading_links_toast,
                             Toast.LENGTH_SHORT
                         )
                     }
@@ -914,7 +914,7 @@ class ResultFragment : Fragment() {
                             val grayColor = ContextCompat.getColor(requireContext(), R.color.grayTextColor)
                             val textColor = ContextCompat.getColor(requireContext(), R.color.textColor)
                             for (meta in metadataInfoArray) {
-                                text.color(grayColor) { append("${meta.first}: ") }
+                                text.color(grayColor) { append(getString(meta.first) + ": ") }
                                     .color(textColor) { append("${meta.second}\n") }
                             }
                             result_metadata.text = text

@@ -66,6 +66,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 Triple("\uD83C\uDDEC\uD83C\uDDE7", "English", "en"),
                 Triple("\uD83C\uDDF3\uD83C\uDDF1", "Dutch", "nl"),
                 Triple("\uD83C\uDDEC\uD83C\uDDF7", "Greek", "gr"),
+                Triple("\uD83C\uDDF8\uD83C\uDDEA", "Swedish", "sv"),
             ) // idk, if you find a way of automating this it would be great
             val current = getCurrentLocale()
             val languageCodes = languages.map { it.third }

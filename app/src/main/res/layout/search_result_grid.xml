@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:src="@drawable/title_shadow"
-                android:layout_gravity="bottom" android:contentDescription="@string/shadow_des">
+                android:layout_gravity="bottom" tools:ignore="ContentDescription">
         </ImageView>
         <TextView
                 android:layout_width="match_parent"

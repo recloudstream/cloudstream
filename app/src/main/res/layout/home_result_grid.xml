@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:src="@drawable/title_shadow"
-            android:layout_gravity="bottom" android:contentDescription="@string/shadow_des">
+            android:layout_gravity="bottom" tools:ignore="ContentDescription">
     </ImageView>
     <TextView
             android:layout_width="match_parent"

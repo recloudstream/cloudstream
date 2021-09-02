@@ -12,12 +12,10 @@
     <string name="grid_format_key">grid_format</string>
     <string name="search_poster_des">Poster</string>
     <string name="no_data">Geen gegevens</string>
-    <string name="shadow_des">Schaduw</string>
     <string name="episode_more_options_des">Meer Opties</string>
     <string name="episode_play_des">Aflevering afspelen</string>
     <string name="go_back">Ga terug</string>
     <string name="next_episode">Volgende aflevering</string>
-    <string name="player_skip_button_text">10</string>
     <string name="result_poster">Poster</string>
     <string name="result_plot">Verhaal</string>
     <string name="result_tags">Genres</string>
@@ -43,7 +41,7 @@
     <string name="play_episode">Aflevering afspelen</string>
     <string name="need_storage">Toestaan om afleveringen te downloaden</string>
     <string name="download_descript">Download</string>
-    <string name="error_loading_links">Fout bij laden van links</string>
+    <string name="error_loading_links_toast">Fout bij laden van links</string>
     <string name="download_storage_text">Interne opslag</string>
     <string name="options">Opties</string>
 
@@ -64,8 +62,6 @@
     <string name="home_info">Info</string>
     <string name="home_next_random">Volgende willekeurig</string>
     <string name="home_change_provider">Aanbieder wijzigen</string>
-    <string name="background_blur">Achtergrond vervaging</string>
-    <string name="background_shadow">Achtergrond Schaduw</string>
     <string name="filter_bookmarks">Bladwijzers filteren</string>
     <string name="error_bookmarks_text">Bladwijzers</string>
     <string name="action_remove_from_bookmarks">Verwijderen</string>

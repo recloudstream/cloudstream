@@ -104,7 +104,7 @@
                 android:icon="@drawable/ic_baseline_developer_mode_24"
         />
         <Preference
-                android:title="Check for Update"
+                android:title="@string/check_for_update"
                 app:summary="@string/app_version"
                 app:key="@string/manual_check_update_key"
                 app:icon="@drawable/ic_baseline_system_update_24"
