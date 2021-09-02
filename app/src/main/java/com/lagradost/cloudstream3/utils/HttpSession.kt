@@ -4,6 +4,7 @@ package com.lagradost.cloudstream3.utils
 import khttp.structures.authorization.Authorization
 import khttp.structures.cookie.CookieJar
 import khttp.structures.files.FileLike
+import khttp.structures.cookie.Cookie
 import khttp.responses.Response
 
 
@@ -17,21 +18,6 @@ import khttp.responses.Response
 class HttpSession {
     companion object {
         const val DEFAULT_TIMEOUT = 30.0
-
-        fun cookieStrToMap(cookie: String): Map<String, String> {
-            val cookies = mutableMapOf<String, String>()
-            for (string in cookie.split("; ")) {
-                val split = string.split("=").toMutableList()
-                val name = split.removeFirst().trim()
-                val value = if (split.size == 0) {
-                    "true"
-                } else {
-                    split.joinToString("=")
-                }
-                cookies[name] = value
-            }
-            return cookies.toMap()
-        }
 
         fun mergeCookies(cookie1: Map<String, String>, cookie2: Map<String, String>?): Map<String, String> {
             val a = cookie1.toMutableMap()
@@ -57,14 +43,12 @@ class HttpSession {
         val res = khttp.get(
             url, headers, params,
             data, json, auth,
-            mergeCookies(sessionCookies, cookies), timeout,
-            allowRedirects,
+            mergeCookies(sessionCookies, cookies),
+            timeout, allowRedirects,
             stream, files
         )
-        sessionCookies.putAll(res.cookies.toMap())
-        if (res.headers.containsKey("set-cookie")) {
-            sessionCookies.putAll(cookieStrToMap(res.headers["set-cookie"].toString().replace("path=/,", "")))
-        }
+        sessionCookies.putAll(res.cookies)
+        sessionCookies.putAll(CookieJar(*res.headers.filter { it.key.toLowerCase() == "set-cookie" }.map { Cookie(it.value) }.toTypedArray()))
         return res
     }
 
@@ -81,14 +65,12 @@ class HttpSession {
         val res = khttp.post(
             url, headers, params,
             data, json, auth,
-            mergeCookies(sessionCookies, cookies), timeout,
-            allowRedirects,
+            mergeCookies(sessionCookies, cookies),
+            timeout, allowRedirects,
             stream, files
         )
-        sessionCookies.putAll(res.cookies.toMap())
-        if (res.headers.containsKey("set-cookie")) {
-            sessionCookies.putAll(cookieStrToMap(res.headers["set-cookie"].toString().replace("path=/,", "")))
-        }
+        sessionCookies.putAll(res.cookies)
+        sessionCookies.putAll(CookieJar(*res.headers.filter { it.key.toLowerCase() == "set-cookie" }.map { Cookie(it.value) }.toTypedArray()))
         return res
     }
 }
