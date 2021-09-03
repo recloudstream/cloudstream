@@ -1,12 +1,10 @@
 package com.lagradost.cloudstream3.utils
 
-import java.lang.Exception
-import java.util.*
+import com.lagradost.cloudstream3.mvvm.logError
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.math.pow
-import com.lagradost.cloudstream3.mvvm.logError
 
 
 class M3u8Helper {
@@ -53,7 +51,7 @@ class M3u8Helper {
         return st != null && (st.value.isNotEmpty() || st.destructured.component1() != "NONE")
     }
 
-    public data class M3u8Stream(
+    data class M3u8Stream(
         val streamUrl: String,
         val quality: Int? = null,
         val headers: Map<String, String> = mapOf()
@@ -79,7 +77,7 @@ class M3u8Helper {
         return url.contains("https://") && url.contains("http://")
     }
 
-    public fun m3u8Generation(m3u8: M3u8Stream): List<M3u8Stream> {
+    fun m3u8Generation(m3u8: M3u8Stream): List<M3u8Stream> {
         val generate = sequence {
             val m3u8Parent = getParentLink(m3u8.streamUrl)
             val response = khttp.get(m3u8.streamUrl, headers = m3u8.headers)

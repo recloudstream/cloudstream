@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
@@ -23,7 +24,6 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
-import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.DownloadChildFragment
@@ -68,6 +68,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onDialogDismissed(dialogId: Int) {
         onDialogDismissedEvent.invoke(dialogId)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        updateLocale() // android fucks me by chaining lang when rotating the phone
     }
 
     companion object {
@@ -186,20 +191,18 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 .remove(currentFragment)
                 .commitAllowingStateLoss()
             backEvent.invoke(true)
-            this.updateLocale()
             return true
         }
         backEvent.invoke(false)
-        this.updateLocale()
 
         return false
     }
 
     override fun onBackPressed() {
         this.updateLocale()
-
         if (backPressed()) return
         super.onBackPressed()
+        this.updateLocale()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

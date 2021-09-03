@@ -24,8 +24,6 @@ object SingleSelectionHelper {
         callback: (List<Int>) -> Unit,
         dismissCallback: () -> Unit
     ) {
-        this.updateLocale()
-
         val realShowApply = showApply || isMultiSelect
         val listView = dialog.findViewById<ListView>(R.id.listview1)!!
         val textView = dialog.findViewById<TextView>(R.id.text1)!!
@@ -100,8 +98,6 @@ object SingleSelectionHelper {
         dismissCallback: () -> Unit,
         callback: (List<Int>) -> Unit,
     ) {
-        this.updateLocale()
-
         val builder =
             AlertDialog.Builder(this, R.style.AlertDialogCustom).setView(R.layout.bottom_selection_dialog)
 
@@ -118,8 +114,6 @@ object SingleSelectionHelper {
         dismissCallback: () -> Unit,
         callback: (Int) -> Unit,
     ) {
-        this.updateLocale()
-
         val builder =
             AlertDialog.Builder(this, R.style.AlertDialogCustom).setView(R.layout.bottom_selection_dialog)
 
@@ -145,8 +139,6 @@ object SingleSelectionHelper {
         dismissCallback: () -> Unit,
         callback: (Int) -> Unit,
     ) {
-        this.updateLocale()
-
         val builder =
             BottomSheetDialog(this)
         builder.setContentView(R.layout.bottom_selection_dialog)

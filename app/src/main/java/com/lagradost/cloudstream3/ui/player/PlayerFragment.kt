@@ -68,7 +68,6 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.MainActivity.Companion.canEnterPipMode
 import com.lagradost.cloudstream3.MainActivity.Companion.isInPIPMode
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
-import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
@@ -949,8 +948,6 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         context?.let { ctx ->
-            ctx.updateLocale()
-
             setPreferredSubLanguage(ctx.getAutoSelectLanguageISO639_1())
         }
 
@@ -2048,8 +2045,6 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        context?.updateLocale()
-
         return inflater.inflate(R.layout.fragment_player, container, false)
     }
 }

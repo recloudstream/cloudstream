@@ -21,7 +21,6 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.APIHolder.getApiTypeSettings
 import com.lagradost.cloudstream3.HomePageList
-import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -38,7 +37,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
-import java.util.HashSet
 
 class SearchFragment : Fragment() {
     private lateinit var searchViewModel: SearchViewModel
@@ -48,8 +46,6 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        context?.updateLocale()
-
         searchViewModel =
             ViewModelProvider(this).get(SearchViewModel::class.java)
         activity?.window?.setSoftInputMode(

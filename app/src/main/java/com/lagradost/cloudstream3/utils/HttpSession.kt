@@ -28,7 +28,7 @@ class HttpSession {
         }
     }
 
-    public val sessionCookies = CookieJar()
+    val sessionCookies = CookieJar()
 
     fun get(
         url: String, headers: Map<String, String?> = mapOf(),

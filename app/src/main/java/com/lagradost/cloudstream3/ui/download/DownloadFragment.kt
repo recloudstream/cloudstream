@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.observe
@@ -61,8 +60,6 @@ class DownloadFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        context?.updateLocale()
-
         downloadsViewModel =
             ViewModelProvider(this).get(DownloadViewModel::class.java)
         observe(downloadsViewModel.noDownloadsText) {
