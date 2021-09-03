@@ -1,0 +1,235 @@
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
+    <!-- KEYS DON'T TRANSLATE -->
+    <string name="search_providers_list_key" translatable="false">search_providers_list</string>
+    <string name="locale_key" translatable="false">app_locale</string>
+    <string name="search_types_list_key" translatable="false">search_type_list</string>
+    <string name="grid_format_key" translatable="false">grid_format</string>
+    <string name="auto_update_key" translatable="false">auto_update</string>
+    <string name="prerelease_update_key" translatable="false">prerelease_update</string>
+    <string name="manual_check_update_key" translatable="false">manual_check_update</string>
+    <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
+    <string name="benene_count" translatable="false">benene_count</string>
+
+    <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="extra_info_format" translatable="false">%d %s | %sMB</string>
+    <string name="storage_size_format" translatable="false">%s • %sGB</string>
+    <string name="download_size_format" translatable="false">%sMB / %sMB</string>
+    <string name="episode_name_format" translatable="false">%s %s</string>
+    <string name="ffw_text_format" translatable="false">+%d</string>
+    <string name="rew_text_format" translatable="false">-%d</string>
+    <string name="ffw_text_regular_format" translatable="false">%d</string>
+    <string name="rew_text_regular_format" translatable="false">%d</string>
+    <string name="player_speed_text_format">Bilis (%.2fx)</string>
+    <string name="rated_format">Marka: %.1f</string>
+    <string name="new_update_format">May nahanap na bagong update!\n%s -> %s</string>
+
+    <string name="app_name">CloudStream</string>
+    <string name="title_home">Home</string>
+    <string name="title_search">Maghanap</string>
+    <string name="title_downloads">Mga Downloads</string>
+    <string name="title_settings">Mga Settings</string>
+    <string name="search_hint">Maghanap...</string>
+    <string name="change_providers_descript">Magpalit ng pinagkukunan ng palabas</string>
+    <string name="search_poster_des">Pabalat</string>
+    <string name="no_data">Walang Impormasyong Nakalap</string>
+    <string name="episode_more_options_des">Mga Opsyon</string>
+    <string name="episode_play_des">Panoorin</string>
+    <string name="go_back">Bumalik</string>
+    <string name="next_episode">Susunod na episode</string>
+    <string name="result_poster">Pabalat</string>
+    <string name="result_plot" translatable="false">@string/synopsis</string>
+    <string name="result_tags">Kategorya</string>
+    <string name="result_share">Ibahagi</string>
+    <string name="result_open_in_browser">Buksan sa Browser</string>
+    <string name="skip_loading">Laktawan ang paghihintay</string>
+    <string name="loading_chromecast">Maghintay…</string>
+
+    <string name="type_watching">Pinapanood</string>
+    <string name="type_on_hold">Nakasuspinde</string>
+    <string name="type_completed">Natapos</string>
+    <string name="type_dropped">Tinanggal</string>
+    <string name="type_plan_to_watch">Planong Panoorin</string>
+    <string name="type_none">Wala</string>
+
+    <string name="play_movie_button">Panoorin ang Pelikula</string>
+    <string name="play_torrent_button">I-Stream ang Torrent</string>
+    <string name="pick_source">pinagkukunan ng palabas</string>
+    <string name="pick_subtitle">Nakasaling diyalogo</string>
+    <string name="reload_error">Sinsubukang kumonekta…</string>
+    <string name="result_go_back">Bumalik</string>
+    <string name="episode_poster">Pabalat</string>
+    <string name="play_episode">Panoorin</string>
+    <string name="need_storage">Payagang i-download ang mga episode</string>
+
+    <string name="download">i-Download</string>
+    <string name="downloaded">na-download</string>
+    <string name="downloading">nag-d-download</string>
+    <string name="download_paused">Hinintong Download</string>
+    <string name="download_started">Sinimulan and Download</string>
+    <string name="download_failed">Nabogong Magdownload</string>
+    <string name="download_canceled">Itinigil ang Download</string>
+    <string name="download_done">Natapos Magdownload</string>
+    <string name="download_format" translatable="false">%s - %s</string>
+
+    <string name="error_loading_links_toast">Nabigong kuhain ang mga kawing</string>
+    <string name="download_storage_text">Panloob na Imbakan</string>
+
+    <string name="app_dubbed_text">Dub</string>
+    <string name="app_subbed_text">Sub</string>
+
+    <string name="popup_delete_file">Tanggalin ang File</string>
+    <string name="popup_play_file">Panooring ang File</string>
+    <string name="popup_resume_download">Ipagpatuloy ang Download</string>
+    <string name="popup_pause_download">Ihinto and Download</string>
+
+    <string name="pref_disable_acra">Ihinto ang paguulat ng mga bugs</string>
+    <string name="home_more_info">Higit pang mpormasyon</string>
+    <string name="home_expanded_hide">Itago</string>
+    <string name="home_main_poster">Main Poster</string>
+    <string name="home_play">Panoorin</string>
+    <string name="home_info">Impormasyon</string>
+    <string name="home_next_random">Pasumalang susunod</string>
+    <string name="home_change_provider">Palitan ang pinagkukunan ng palabas</string>
+    <string name="filter_bookmarks">Salain ang Bookmark</string>
+    <string name="error_bookmarks_text">Mga Bookmark</string>
+    <string name="action_remove_from_bookmarks">Tanggalin</string>
+    <string name="sort_apply">Kumpirmahin</string>
+    <string name="sort_cancel">Kanselahin</string>
+    <string name="player_speed">Bilis ng pinapanood</string>
+    <string name="subtitles_settings">Mga settings ng nakasaling diyalogo</string>
+    <string name="subs_text_color">Kulay ng nakasaling diyalogo</string>
+    <string name="subs_outline_color">Kulay ng balangkas</string>
+    <string name="subs_background_color">Kulay ng sanligan</string>
+    <string name="subs_window_color">Kulay ng window</string>
+    <string name="subs_edge_type">Uri ng gilid</string>
+    <string name="subs_subtitle_elevation">Taas ng nakasaling diyalogo</string>
+    <string name="preview_background">Preview ng Sanligan</string>
+    <string name="subs_font">Font</string>
+    <string name="search_provider_text_providers">Maghanap gamit ang pinagkukunan ng palabas</string>
+    <string name="search_provider_text_types">Maghanap gamit ang uri</string>
+
+    <string name="benene_count_text">%d Saging na ang naibigay sa mga tagalikha</string>
+    <string name="benene_count_text_none">Walang saging na binigay</string>
+
+    <string name="prerelease_commit_hash">Hindi kilala</string>
+    <string name="subs_auto_select_language">Pakusang piliin ang wika</string>
+    <string name="subs_download_languages">i-Download ang mga lenggwahe</string>
+    <string name="subs_hold_to_reset_to_default">Pindutin para maibalik sa dati ang mga settings</string>
+    <string name="continue_watching">Ipagpatuloy ang Panonood</string>
+
+    <string name="action_remove_watching">Tanggalin</string>
+    <string name="action_open_watching">Mga Opsyon</string>
+
+    <string name="vpn_might_be_needed">Maaaring nangangailangan ng VPN ang pinagkukunan ng palabas na ito upang gumana ng ayos</string>
+    <string name="vpn_torrent">Ang pinagkukunan ng palabas na ito ay torrent, ang paggamit ng VPN ay inererekomenda</string>
+    <string name="torrent_plot">Banghay</string>
+    <string name="normal_no_plot">Walang banghay na nahanap</string>
+    <string name="torrent_no_plot">Walang banghay na nahanap</string>
+
+    <string name="picture_in_picture">Picture-in-picture</string>
+    <string name="picture_in_picture_des">Ipagpatuloy ang panonood sa maliit na player sa ibabaw ng mga apps</string>
+    <string name="player_size_settings">Pindutan ng baguhan ng laki</string>
+    <string name="player_size_setthings_des">tanggalin ang itim na gilid</string>
+    <string name="player_subtitles_settings">nakasaling diyalogo</string>
+    <string name="player_subtitles_settings_des">Mga settings ng nakasaling diyalogo</string>
+    <string name="eigengraumode_setthings">Eigengrau Mode</string>
+    <string name="eigengraumode_setthings_des">Idagdag ang opsyon na pabilisin ang pinapanood sa player</string>
+    <string name="swipe_to_seek_setthings">i-Swipe upang maghanap</string>
+    <string name="swipe_to_seek_setthings_des">i-Swipe patungong kaliwa o kanan para ibahin ang oras ng pinapanood</string>
+    <string name="swipe_to_change_settings">i-Swipe upang ibahin ang mga settings</string>
+	<string name="swipe_to_change_settings_des">i-Swipe ang bandang kaliwa at kanan upang ibahin ang liwanag o lakas ng tunog</string>
+    <string name="double_tap_to_seek_setthings">Pumindot ng dalawang beses upong maghanap</string>
+    <string name="double_tap_to_seek_setthings_des">Pindutin ng dalawang beses ang bandang kanan at kaliwa upang sumulong at umurong
+    </string>
+    <string name="search">Maghanap</string>
+    <string name="info">Marami pang impormasyon</string>
+    <string name="advanced_search">Psulong na paghahanap</string>
+    <string name="advanced_search_des">Ibigay ang resulta ng nakahiwalay batay sa pinagkukunan ng pelikula</string>
+    <string name="bug_report_setthings_off">Ipadala lamang ang impormasyon sa pagkakataon ng kamalian</string>
+    <string name="bug_report_setthings_on">Huwag ipadala ang impormasyon</string>
+    <string name="updates_setthings">Ipakita ang mga update</string>
+    <string name="updates_setthings_des">Hanapin ang bagong update sa simula</string>
+    <string name="uprereleases_setthings">i-Update sa mga prerealese</string>
+    <string name="uprereleases_setthings_des">Hanapin ang prerelease sa halip ng buong release</string>
+    <string name="github">Github</string>
+    <string name="lightnovel">Light novel app ng parehong tagalikha</string>
+    <string name="anim">Anime app ng parehong tagalikha</string>
+    <string name="discord">Sumali sa Discord</string>
+    <string name="benene">Magbigay ng saging sa mga tagalikha</string>
+    <string name="benene_des">Naibigay ang Saging</string>
+
+    <string name="app_language">Wika ng App</string>
+
+    <string name="no_chomecast_support_toast">Ang pinagkukunan ng palabay ay hindi sinusuportahan ang pag-co-chromecast</string>
+    <string name="no_links_found_toast">Walang kawit na nakalap</string>
+    <string name="copy_link_toast">Ang kawit ay nakopya na sa Clipboard</string>
+    <string name="play_episode_toast">Panoorin ang Episode</string>
+    <string name="subs_default_reset_toast">Ibalik sa orihinal</string>
+    <string name="acra_report_toast">Pasensya na, iuulat ang kamaliang ito sa tagalikha nang hind nagpapapkilala.
+    </string>
+
+    <string name="season">Season</string>
+    <string name="no_season">Walang Season</string>
+    <string name="episode">Episode</string>
+    <string name="episodes">Episodes</string>
+    <string name="season_short">S</string>
+    <string name="episode_short">E</string>
+
+    <string name="delete_file">Tanggalin ang File</string>
+    <string name="delete">Tanggalin</string>
+    <string name="cancel" translatable="false">@string/sort_cancel</string>
+    <string name="pause">Hinto</string>
+    <string name="resume">Pagpatuloy</string>
+    <string name="delete_message">Ito ay tuluyang tatanggalin ang file %s\nSigurado ka ba?</string>
+
+    <string name="status_ongoing">Nagpapatuloy</string>
+    <string name="status_completed">Natapos</string>
+    <string name="status">Lagay</string>
+    <string name="year">Taon</string>
+    <string name="rating">Marka</string>
+    <string name="duration">Haba</string>
+    <string name="site">pook-sapot</string>
+    <string name="synopsis">buod</string>
+
+    <string name="queued">nakapila</string>
+    <string name="no_subtitles">Walang nakasaling diyalogo</string>
+    <string name="default_subtitles">Orihinal</string>
+
+    <string name="free_storage">Libreng espasyo</string>
+    <string name="used_storage">Ginamit na espasyo</string>
+    <string name="app_storage">App</string>
+
+    <string name="movies">Movies</string>
+    <string name="tv_series">TvSeries</string>
+    <string name="cartoons">Cartoons</string>
+    <string name="anime">Anime</string>
+    <string name="torrent">Torrent</string>
+
+    <string name="source_error">Source error</string>
+    <string name="remote_error">Remote error</string>
+    <string name="render_error">Renderer error</string>
+    <string name="unexpected_error">Hindi inaasahang kamalian</string>
+    <string name="storage_error">Nabigong mag-download, suriin ang pahintulot sa imbakan</string>
+
+    <string name="episode_action_chomecast_episode">i-Chromecast and pinapanood</string>
+    <string name="episode_action_chomecast_mirror">i-Chromecast mula sa mirror</string>
+    <string name="episode_action_play_in_app">Panoorin sa app</string>
+    <string name="episode_action_play_in_vlc">Panoorin sa VLC</string>
+    <string name="episode_action_play_in_browser">Panoorin sa browser</string>
+    <string name="episode_action_copy_link">Kopyahin ang kawit</string>
+    <string name="episode_action_auto_download">Pakusang i-Download</string>
+    <string name="episode_action_download_mirror">i-Download mula sa mirror</string>
+    <string name="episode_action_reload_links">Kunin mula ang mga kawit</string>
+
+    <string name="no_update_found">Walang update na nahanap</string>
+    <string name="check_for_update">Surrin kung mayroon nang update</string>
+
+    <string name="lock">Ikandado</string>
+    <string name="resize">Lakihan/Liitan</string>
+    <string name="source">Pinagmulan</string>
+    <string name="skip_op">Laktawan ang simula</string>
+
+    <string name="dont_show_again">Huwag ipakitang muli</string>
+    <string name="update">i-Update</string>
+</resources>
