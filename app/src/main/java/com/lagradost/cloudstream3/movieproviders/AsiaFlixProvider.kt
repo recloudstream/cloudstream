@@ -21,6 +21,8 @@ class AsiaFlixProvider : MainAPI() {
         get() = true
     override val hasChromecastSupport: Boolean
         get() = false
+    override val supportedTypes: Set<TvType>
+        get() = setOf(TvType.TvSeries)
 
     private val apiUrl = "https://api.asiaflix.app/api/v2"
 

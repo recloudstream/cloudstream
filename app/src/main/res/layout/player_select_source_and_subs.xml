@@ -79,7 +79,7 @@
                         android:src="@drawable/ic_outline_settings_24"
                         android:layout_width="25dp"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/home_change_provider">
+                        android:contentDescription="@string/home_change_provider_img_des">
                 </ImageView>
             </FrameLayout>
 

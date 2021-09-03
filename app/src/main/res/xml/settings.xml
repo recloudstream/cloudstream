@@ -73,7 +73,7 @@
 
     <PreferenceCategory
             android:key="info"
-            android:title="@string/info"
+            android:title="@string/settings_info"
             app:isPreferenceVisible="true"
     >
         <Preference

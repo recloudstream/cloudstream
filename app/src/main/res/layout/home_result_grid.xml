@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/search_poster_des"/>
+            android:contentDescription="@string/search_poster_img_des"/>
     <ImageView
             android:focusable="false"
             android:clickable="false"

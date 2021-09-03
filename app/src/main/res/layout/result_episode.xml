@@ -52,7 +52,7 @@
                 android:layout_gravity="center_vertical"
                 android:id="@+id/episode_play"
                 android:src="@drawable/ic_baseline_play_arrow_24"
-                android:contentDescription="@string/episode_play_des"/>
+                android:contentDescription="@string/episode_play_img_des"/>
         <TextView
                 android:id="@+id/episode_text"
                 android:layout_marginStart="10dp"

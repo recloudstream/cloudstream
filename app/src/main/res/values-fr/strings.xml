@@ -6,14 +6,14 @@
     <string name="title_downloads">Téléchargements</string>
     <string name="title_settings">Paramètres</string>
     <string name="search_hint">Rechercher…</string>
-    <string name="change_providers_des">Changer les fournisseurs</string>
-    <string name="search_poster_des">Miniature</string>
+    <string name="change_providers_img_des">Changer les fournisseurs</string>
+    <string name="search_poster_img_des">Miniature</string>
     <string name="no_data">Auccune Donnée</string>
     <string name="episode_more_options_des">Plus d\'options</string>
-    <string name="episode_play_des">Lire l\'épisode</string>
-    <string name="go_back">Retour</string>
+    <string name="episode_play_img_des">Lire l\'épisode</string>
+    <string name="go_back_img_des">Retour</string>
     <string name="next_episode">Episode suivant</string>
-    <string name="result_poster">Miniature</string>
+    <string name="result_poster_img_des">Miniature</string>
     <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Partager</string>
@@ -34,7 +34,7 @@
     <string name="pick_subtitle">Sous-titres</string>
     <string name="reload_error">Réessayer la connection…</string>
     <string name="result_go_back">Retour</string>
-    <string name="episode_poster">Miniature de l\'Episode</string>
+    <string name="episode_poster_img_des">Miniature de l\'Episode</string>
     <string name="play_episode">Lire l\'Episode</string>
     <string name="need_storage">Permet de télécharger les épisodes</string>
 
@@ -62,11 +62,11 @@
     <string name="pref_disable_acra">Désactiver le rapport de bug automatique</string>
     <string name="home_more_info">Plus d\'informations</string>
     <string name="home_expanded_hide">Cacher</string>
-    <string name="home_main_poster">Poster principal</string>
+    <string name="home_main_poster_img_des">Poster principal</string>
     <string name="home_play">Lecture</string>
     <string name="home_info">Info</string>
-    <string name="home_next_random">Suivant Aléatoire</string>
-    <string name="home_change_provider">Changer le fournisseur</string>
+    <string name="home_next_random_img_des">Suivant Aléatoire</string>
+    <string name="home_change_provider_img_des">Changer le fournisseur</string>
     <string name="filter_bookmarks">Filtrer les marques-pages</string>
     <string name="error_bookmarks_text">Marque-pages</string>
     <string name="action_remove_from_bookmarks">Supprimer</string>
@@ -80,7 +80,7 @@
     <string name="subs_window_color">Couleur de la fenètre</string>
     <string name="subs_edge_type">Type de bordure</string>
     <string name="subs_subtitle_elevation">Elevation des sous-titres</string>
-    <string name="preview_background">Aperçu de l\'arrière-plan</string>
+    <string name="preview_background_img_des">Aperçu de l\'arrière-plan</string>
     <string name="subs_font">Police</string>
     <string name="search_provider_text_providers">Rechercher en utilisant les fournisseurs</string>
     <string name="search_provider_text_types">Rechercher en utilisant les types</string>
@@ -118,7 +118,7 @@
     <string name="double_tap_to_seek_setthings">Tapper deux fois pour rechercher</string>
     <string name="double_tap_to_seek_setthings_des">Tapper deux fois sur le coté droit ou gauche pour avancer ou reculer</string>
     <string name="search">Rechercher</string>
-    <string name="info">Info</string>
+    <string name="settings_info">Info</string>
     <string name="advanced_search">Recherche Avancée</string>
     <string name="advanced_search_des">Donne les résultats séparé par les fournisseur</string>
     <string name="bug_report_setthings_off">N\'envoyer les données que lors d\'un crash</string>
@@ -199,10 +199,10 @@
     <string name="no_update_found">Pas de mise-à-jour trouvés</string>
     <string name="check_for_update">Vérifier les mise-à-jour</string>
 
-    <string name="lock">Verouiller</string>
-    <string name="resize">Redimensionner</string>
-    <string name="source">Source</string>
-    <string name="skip_op">Passer l\'OP</string>
+    <string name="video_lock">Verouiller</string>
+    <string name="video_aspect_ratio_resize">Redimensionner</string>
+    <string name="video_source">Source</string>
+    <string name="video_skip_op">Passer l\'OP</string>
 
     <string name="dont_show_again">Ne pas afficher à nouveau</string>
     <string name="update">Mettre à jour</string>

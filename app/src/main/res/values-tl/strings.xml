@@ -31,13 +31,13 @@
     <string name="title_settings">Mga Settings</string>
     <string name="search_hint">Maghanap...</string>
     <string name="change_providers_descript">Magpalit ng pinagkukunan ng palabas</string>
-    <string name="search_poster_des">Pabalat</string>
+    <string name="search_poster_img_des">Pabalat</string>
     <string name="no_data">Walang Impormasyong Nakalap</string>
     <string name="episode_more_options_des">Mga Opsyon</string>
-    <string name="episode_play_des">Panoorin</string>
-    <string name="go_back">Bumalik</string>
+    <string name="episode_play_img_des">Panoorin</string>
+    <string name="go_back_img_des">Bumalik</string>
     <string name="next_episode">Susunod na episode</string>
-    <string name="result_poster">Pabalat</string>
+    <string name="result_poster_img_des">Pabalat</string>
     <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Kategorya</string>
     <string name="result_share">Ibahagi</string>
@@ -58,7 +58,7 @@
     <string name="pick_subtitle">Nakasaling diyalogo</string>
     <string name="reload_error">Sinsubukang kumonekta…</string>
     <string name="result_go_back">Bumalik</string>
-    <string name="episode_poster">Pabalat</string>
+    <string name="episode_poster_img_des">Pabalat</string>
     <string name="play_episode">Panoorin</string>
     <string name="need_storage">Payagang i-download ang mga episode</string>
 
@@ -86,11 +86,11 @@
     <string name="pref_disable_acra">Ihinto ang paguulat ng mga bugs</string>
     <string name="home_more_info">Higit pang mpormasyon</string>
     <string name="home_expanded_hide">Itago</string>
-    <string name="home_main_poster">Main Poster</string>
+    <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_play">Panoorin</string>
     <string name="home_info">Impormasyon</string>
-    <string name="home_next_random">Pasumalang susunod</string>
-    <string name="home_change_provider">Palitan ang pinagkukunan ng palabas</string>
+    <string name="home_next_random_img_des">Pasumalang susunod</string>
+    <string name="home_change_provider_img_des">Palitan ang pinagkukunan ng palabas</string>
     <string name="filter_bookmarks">Salain ang Bookmark</string>
     <string name="error_bookmarks_text">Mga Bookmark</string>
     <string name="action_remove_from_bookmarks">Tanggalin</string>
@@ -104,7 +104,7 @@
     <string name="subs_window_color">Kulay ng window</string>
     <string name="subs_edge_type">Uri ng gilid</string>
     <string name="subs_subtitle_elevation">Taas ng nakasaling diyalogo</string>
-    <string name="preview_background">Preview ng Sanligan</string>
+    <string name="preview_background_img_des">Preview ng Sanligan</string>
     <string name="subs_font">Font</string>
     <string name="search_provider_text_providers">Maghanap gamit ang pinagkukunan ng palabas</string>
     <string name="search_provider_text_types">Maghanap gamit ang uri</string>
@@ -143,7 +143,7 @@
     <string name="double_tap_to_seek_setthings_des">Pindutin ng dalawang beses ang bandang kanan at kaliwa upang sumulong at umurong
     </string>
     <string name="search">Maghanap</string>
-    <string name="info">Marami pang impormasyon</string>
+    <string name="settings_info">Marami pang impormasyon</string>
     <string name="advanced_search">Psulong na paghahanap</string>
     <string name="advanced_search_des">Ibigay ang resulta ng nakahiwalay batay sa pinagkukunan ng pelikula</string>
     <string name="bug_report_setthings_off">Ipadala lamang ang impormasyon sa pagkakataon ng kamalian</string>
@@ -225,10 +225,10 @@
     <string name="no_update_found">Walang update na nahanap</string>
     <string name="check_for_update">Surrin kung mayroon nang update</string>
 
-    <string name="lock">Ikandado</string>
-    <string name="resize">Lakihan/Liitan</string>
-    <string name="source">Pinagmulan</string>
-    <string name="skip_op">Laktawan ang simula</string>
+    <string name="video_lock">Ikandado</string>
+    <string name="video_aspect_ratio_resize">Lakihan/Liitan</string>
+    <string name="video_source">Pinagmulan</string>
+    <string name="video_skip_op">Laktawan ang simula</string>
 
     <string name="dont_show_again">Huwag ipakitang muli</string>
     <string name="update">i-Update</string>

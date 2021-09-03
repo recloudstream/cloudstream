@@ -131,7 +131,7 @@ class SearchFragment : Fragment() {
                     Pair(R.string.cartoons, listOf(TvType.Cartoon)),
                     Pair(R.string.anime, listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie)),
                     Pair(R.string.torrent, listOf(TvType.Torrent)),
-                )
+                ).filter { item -> apis.any { api -> api.supportedTypes.any { type -> item.second.contains(type) } } }
 
                 val arrayAdapter2 = ArrayAdapter<String>(searchView.context, R.layout.sort_bottom_single_choice)
                 arrayAdapter2.addAll(typeChoices.map { getString(it.first) })

@@ -162,7 +162,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 tools:src="@drawable/example_poster"
-                                android:contentDescription="@string/result_poster"/>
+                                android:contentDescription="@string/result_poster_img_des"/>
                     </androidx.cardview.widget.CardView>
 
 

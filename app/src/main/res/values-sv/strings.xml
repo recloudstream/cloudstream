@@ -10,14 +10,13 @@
     <string name="title_downloads">Nerladdningar</string>
     <string name="title_settings">Instälningar</string>
     <string name="search_hint">Sök…</string>
-    <string name="change_providers_des">Ändra Providers</string>
-    <string name="search_poster_des">Poster</string>
+    <string name="change_providers_img_des">Ändra Providers</string>
+    <string name="search_poster_img_des">Poster</string>
     <string name="no_data">Ingen Data</string>
     <string name="episode_more_options_des">Mer Instälningar</string>
-    <string name="episode_play_des">Spela up avsnitt</string>
-    <string name="go_back">Gå tillbacka</string>
+    <string name="go_back_img_des">Gå tillbacka</string>
     <string name="next_episode">Nästa avsnitt</string>
-    <string name="result_poster">Affisch</string>
+    <string name="result_poster_img_des">Affisch</string>
     <string name="result_plot">Sammanfattning</string>
     <string name="result_tags">Genrer</string>
     <string name="result_share">Dela</string>
@@ -38,7 +37,7 @@
     <string name="pick_subtitle">Undertexter</string>
     <string name="reload_error">Försök ansluta igen…</string>
     <string name="result_go_back">Gå tillbaka</string>
-    <string name="episode_poster">@string/result_poster</string>
+    <string name="episode_poster_img_des">@string/result_poster_img_des</string>
     <string name="play_episode">Spela Avsnitt</string>
     <string name="need_storage">Allow to download episodes</string>
     <string name="download">Ladda ner</string>
@@ -53,11 +52,11 @@
     <string name="pref_disable_acra">Inaktivera automatisk felrapportering</string>
     <string name="home_more_info">Mer information</string>
     <string name="home_expanded_hide">Hide</string>
-    <string name="home_main_poster">@string/result_poster</string>
+    <string name="home_main_poster_img_des">@string/result_poster_img_des</string>
     <string name="home_play">Spela upp</string>
     <string name="home_info">Info</string>
-    <string name="home_next_random">Nästa</string>
-    <string name="home_change_provider">Byt leverantör</string>
+    <string name="home_next_random_img_des">Nästa</string>
+    <string name="home_change_provider_img_des">Byt leverantör</string>
     <string name="filter_bookmarks">Filtrera bokmärken</string>
     <string name="error_bookmarks_text">Bokmärken</string>
     <string name="action_remove_from_bookmarks">Ta bort</string>
@@ -71,7 +70,7 @@
     <string name="subs_window_color">Textfönsterfärg</string>
     <string name="subs_edge_type">Kanttyp</string>
     <string name="subs_subtitle_elevation">Undertextförflyttning</string>
-    <string name="preview_background">Förhandsgranska bakgrund</string>
+    <string name="preview_background_img_des">Förhandsgranska bakgrund</string>
     <string name="subs_font">Font</string>
     <string name="search_provider_text_providers">Sök med följande leverantörer</string>
     <string name="search_provider_text_types">Sök med följande filmtyper</string>
@@ -109,7 +108,7 @@
     <string name="double_tap_to_seek_setthings">Dubbeltryck för att hoppa fram eller bak</string>
     <string name="double_tap_to_seek_setthings_des">Tryck två gånger på höger eller vänster sida för att hoppa fram eller bak</string>
     <string name="search">Sök</string>
-    <string name="info">Information</string>
+    <string name="settings_info">Information</string>
     <string name="advanced_search">Avancerade sökresultat</string>
     <string name="advanced_search_des">Presenterar sökresultaten i flera olika rader baserat på leverantören</string>
     <string name="bug_report_setthings_off">Skickar endast data när appen kraschar</string>
@@ -182,10 +181,10 @@
     <string name="no_update_found">Ingen uppdatering hittad</string>
     <string name="check_for_update">Sök efter uppdatering</string>
 
-    <string name="lock">Skärmlås</string>
-    <string name="resize">Bildförhållande</string>
-    <string name="source">Källa</string>
-    <string name="skip_op">Hoppa över OP</string>
+    <string name="video_lock">Skärmlås</string>
+    <string name="video_aspect_ratio_resize">Bildförhållande</string>
+    <string name="video_source">Källa</string>
+    <string name="video_skip_op">Hoppa över OP</string>
 
     <string name="dont_show_again">Visa inte igen</string>
     <string name="update">Uppdatera</string>

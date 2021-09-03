@@ -12,32 +12,42 @@
     <string name="benene_count" translatable="false">benene_count</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" translatable="false">%d %s | %sMB</string>
-    <string name="storage_size_format" translatable="false">%s • %sGB</string>
-    <string name="download_size_format" translatable="false">%sMB / %sMB</string>
-    <string name="episode_name_format" translatable="false">%s %s</string>
-    <string name="ffw_text_format" translatable="false">+%d</string>
-    <string name="rew_text_format" translatable="false">-%d</string>
-    <string name="ffw_text_regular_format" translatable="false">%d</string>
-    <string name="rew_text_regular_format" translatable="false">%d</string>
-    <string name="player_speed_text_format">Speed (%.2fx)</string>
-    <string name="rated_format">Rated: %.1f</string>
-    <string name="new_update_format">New update found!\n%s -> %s</string>
+    <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
+    <string name="storage_size_format" translatable="false" formatted="true">%s • %sGB</string>
+    <string name="download_size_format" translatable="false" formatted="true">%sMB / %sMB</string>
+    <string name="episode_name_format" translatable="false" formatted="true">%s %s</string>
+    <string name="ffw_text_format" translatable="false" formatted="true">+%d</string>
+    <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
+    <string name="ffw_text_regular_format" translatable="false" formatted="true">%d</string>
+    <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
+
+    <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
+    <string name="result_poster_img_des">Poster</string>
+    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="episode_poster_img_des">Episode Poster</string>
+    <string name="home_main_poster_img_des">Main Poster</string>
+    <string name="home_next_random_img_des">Next Random</string>
+    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
+    <string name="go_back_img_des">Go back</string>
+    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
+    <string name="home_change_provider_img_des">Change Provider</string>
+    <string name="preview_background_img_des">Preview Background</string>
+
+    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
+    <string name="player_speed_text_format" formatted="true">Speed (%.2fx)</string>
+    <string name="rated_format" formatted="true">Rated: %.1f</string>
+    <string name="new_update_format" formatted="true">New update found!\n%s -> %s</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
     <string name="title_downloads">Downloads</string>
     <string name="title_settings">Settings</string>
+
     <string name="search_hint">Search…</string>
-    <string name="change_providers_des">Change Providers</string>
-    <string name="search_poster_des">Poster</string>
     <string name="no_data">No Data</string>
     <string name="episode_more_options_des">More Options</string>
-    <string name="episode_play_des">Play Episode</string>
-    <string name="go_back">Go back</string>
     <string name="next_episode">Next episode</string>
-    <string name="result_poster">Poster</string>
     <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Share</string>
@@ -58,9 +68,8 @@
     <string name="pick_subtitle">Subtitles</string>
     <string name="reload_error">Retry connection…</string>
     <string name="result_go_back">Go Back</string>
-    <string name="episode_poster">Episode Poster</string>
     <string name="play_episode">Play Episode</string>
-    <string name="need_storage">Allow to download episodes</string>
+    <!--<string name="need_storage">Allow to download episodes</string>-->
 
     <string name="download">Download</string>
     <string name="downloaded">Downloaded</string>
@@ -86,17 +95,15 @@
     <string name="pref_disable_acra">Disable automatic bug reporting</string>
     <string name="home_more_info">More info</string>
     <string name="home_expanded_hide">Hide</string>
-    <string name="home_main_poster">Main Poster</string>
     <string name="home_play">Play</string>
     <string name="home_info">Info</string>
-    <string name="home_next_random">Next Random</string>
-    <string name="home_change_provider">Change Provider</string>
     <string name="filter_bookmarks">Filter Bookmarks</string>
     <string name="error_bookmarks_text">Bookmarks</string>
     <string name="action_remove_from_bookmarks">Remove</string>
     <string name="sort_apply">Apply</string>
     <string name="sort_cancel">Cancel</string>
     <string name="player_speed">Player Speed</string>
+
     <string name="subtitles_settings">Subtitle Settings</string>
     <string name="subs_text_color">Text Color</string>
     <string name="subs_outline_color">Outline Color</string>
@@ -104,8 +111,8 @@
     <string name="subs_window_color">Window Color</string>
     <string name="subs_edge_type">Edge Type</string>
     <string name="subs_subtitle_elevation">Subtitle Elevation</string>
-    <string name="preview_background">Preview Background</string>
     <string name="subs_font">Font</string>
+
     <string name="search_provider_text_providers">Search using providers</string>
     <string name="search_provider_text_types">Search using types</string>
 
@@ -143,7 +150,7 @@
     <string name="double_tap_to_seek_setthings_des">Tap twice on the right or left side to seek forwards or backwards
     </string>
     <string name="search">Search</string>
-    <string name="info">Info</string>
+    <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
     <string name="bug_report_setthings_off">Only sends data on crashes</string>
@@ -226,10 +233,10 @@
     <string name="no_update_found">No Update Found</string>
     <string name="check_for_update">Check for Update</string>
 
-    <string name="lock">Lock</string>
-    <string name="resize">Resize</string>
-    <string name="source">Source</string>
-    <string name="skip_op">Skip OP</string>
+    <string name="video_lock">Lock</string>
+    <string name="video_aspect_ratio_resize">Resize</string>
+    <string name="video_source">Source</string>
+    <string name="video_skip_op">Skip OP</string>
 
     <string name="dont_show_again">Don\'t show again</string>
     <string name="update">Update</string>

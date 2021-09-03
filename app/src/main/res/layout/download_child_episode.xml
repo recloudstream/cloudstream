@@ -31,7 +31,7 @@
                 android:layout_gravity="center_vertical"
                 android:id="@+id/download_child_episode_play"
                 android:src="@drawable/ic_baseline_play_arrow_24"
-                android:contentDescription="@string/episode_play_des"/>
+                android:contentDescription="@string/episode_play_img_des"/>
         <LinearLayout
                 android:layout_gravity="center_vertical"
                 android:orientation="vertical"
