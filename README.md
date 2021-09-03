@@ -18,6 +18,7 @@ https://discord.gg/5Hus6fM
 * 🇳🇱 Dutch
 * 🇬🇷 Greek
 * 🇸🇪 Swedish
+* 🇫🇷 French
 
 **SCREENSHOTS:**
 
