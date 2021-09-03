@@ -21,6 +21,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -30,6 +31,7 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -304,11 +306,11 @@ class PlayerFragment : Fragment() {
                     if (event.rawX >= ctx.width / 2) {
                         clicksRight++
                         if (!ctx.isLocked && ctx.doubleTapEnabled) onDoubleClickRight(clicksRight)
-                        if (!ctx.isShowing) onSingleClick()
+                        //if (!ctx.isShowing) onSingleClick()
                     } else {
                         clicksLeft++
                         if (!ctx.isLocked && ctx.doubleTapEnabled) onDoubleClickLeft(clicksLeft)
-                        if (!ctx.isShowing) onSingleClick()
+                        //if (!ctx.isShowing) onSingleClick()
                     }
                 } else if (clicksLeft == 0 && clicksRight == 0 && fingerLeftScreen) {
                     // onSingleClick()
@@ -325,8 +327,8 @@ class PlayerFragment : Fragment() {
                             onSingleClick()
                         }
                     }
-
-                    if (ctx.isShowing && !ctx.isLocked && ctx.doubleTapEnabled) {
+//ctx.isShowing &&
+                    if (!ctx.isLocked && ctx.doubleTapEnabled) {
                         uiScope.launch {
                             delay(doubleClickQualificationSpanInMillis + 1)
                             check()
@@ -346,7 +348,7 @@ class PlayerFragment : Fragment() {
     private fun onClickChange() {
         isShowing = !isShowing
 
-        click_overlay?.visibility = if (isShowing) GONE else VISIBLE
+        click_overlay?.isVisible = !isShowing
 
         val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
         ObjectAnimator.ofFloat(video_title, "translationY", titleMove).apply {
@@ -382,10 +384,24 @@ class PlayerFragment : Fragment() {
         }
 
         if (!isLocked) {
+            player_ffwd_holder?.alpha = 1f
+            player_rew_holder?.alpha = 1f
+            player_pause_holder?.alpha = 1f
+
             shadow_overlay?.startAnimation(fadeAnimation)
+            player_ffwd_holder?.startAnimation(fadeAnimation)
+            player_rew_holder?.startAnimation(fadeAnimation)
+            player_pause_holder?.startAnimation(fadeAnimation)
+        } else {
+            //player_ffwd_holder?.alpha = 0f
+            //player_ffwd_holder?.alpha = 0f
+            //player_pause_holder?.alpha = 0f
         }
-        video_holder?.startAnimation(fadeAnimation)
-        player_torrent_info?.visibility = if (isTorrent && isShowing) VISIBLE else GONE
+
+        bottom_player_bar.startAnimation(fadeAnimation)
+        player_top_holder.startAnimation(fadeAnimation)
+        //  video_holder?.startAnimation(fadeAnimation)
+        player_torrent_info?.isVisible =  (isTorrent && isShowing)
         //  player_torrent_info?.startAnimation(fadeAnimation)
         //video_lock_holder?.startAnimation(fadeAnimation)
     }
@@ -614,10 +630,6 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun View.setVis(visible: Boolean) {
-        this.visibility = if (visible) VISIBLE else GONE
-    }
-
     fun changeSkip(position: Long? = null) {
         val data = localData
 
@@ -639,17 +651,17 @@ class PlayerFragment : Fragment() {
             val isAnime =
                 data.isAnimeBased()//(data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
 
-            skip_op?.setVis(isAnime && !nextEp)
-            skip_episode?.setVis((!isAnime || nextEp) && hasNext)
+            skip_op?.isVisible = (isAnime && !nextEp)
+            skip_episode?.isVisible = ((!isAnime || nextEp) && hasNext)
         } else {
             val isAnime = data.isAnimeBased()
 
             if (isAnime) {
-                skip_op?.setVis(true)
-                skip_episode?.setVis(false)
+                skip_op?.isVisible = true
+                skip_episode?.isVisible = false
             } else {
-                skip_episode?.setVis(data.isEpisodeBased())
-                skip_op?.setVis(false)
+                skip_episode?.isVisible = data.isEpisodeBased()
+                skip_op?.isVisible = false
             }
         }
     }
@@ -690,7 +702,7 @@ class PlayerFragment : Fragment() {
         val alphaAnimation = AlphaAnimation(0f, 1f)
         alphaAnimation.duration = 100
         alphaAnimation.fillAfter = true
-        video_go_back_holder?.visibility = VISIBLE
+        video_go_back_holder_holder?.visibility = VISIBLE
 
         overlay_loading_skip_button?.visibility = VISIBLE
         loading_overlay?.startAnimation(alphaAnimation)
@@ -798,6 +810,12 @@ class PlayerFragment : Fragment() {
         resize_player.isClickable = isClick
         exo_progress.isEnabled = isClick
         player_media_route_button.isEnabled = isClick
+        if (isClick) {
+            player_pause_holder.alpha = 1f
+            player_rew_holder.alpha = 1f
+            player_ffwd_holder.alpha = 1f
+        }
+
         //video_go_back_holder2.isEnabled = isClick
 
         // Clickable doesn't seem to work on com.google.android.exoplayer2.ui.DefaultTimeBar
@@ -973,6 +991,15 @@ class PlayerFragment : Fragment() {
         navigationBarHeight = requireContext().getNavigationBarHeight()
         statusBarHeight = requireContext().getStatusBarHeight()
 
+        /*player_pause_holder?.setOnClickListener {
+            if (this::exoPlayer.isInitialized) {
+                if (exoPlayer.isPlaying)
+                    exoPlayer.pause()
+                else
+                    exoPlayer.play()
+            }
+        }*/
+
         if (activity?.isCastApiAvailable() == true && !isDownloadedFile) {
             CastButtonFactory.setUpMediaRouteButton(activity, player_media_route_button)
             val castContext = CastContext.getSharedInstance(requireContext())
@@ -980,9 +1007,8 @@ class PlayerFragment : Fragment() {
             if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) player_media_route_button.visibility = VISIBLE
             castContext.addCastStateListener { state ->
                 if (player_media_route_button != null) {
-                    if (state == CastState.NO_DEVICES_AVAILABLE) player_media_route_button.visibility = GONE else {
-                        if (player_media_route_button.visibility == GONE) player_media_route_button.visibility = VISIBLE
-                    }
+                    player_media_route_button.isVisible = state != CastState.NO_DEVICES_AVAILABLE
+
                     if (state == CastState.CONNECTED) {
                         if (!this::exoPlayer.isInitialized) return@addCastStateListener
                         val links = sortUrls(getUrls() ?: return@addCastStateListener)
@@ -1071,9 +1097,7 @@ class PlayerFragment : Fragment() {
                     GONE else VISIBLE
             else VISIBLE
 
-
-        player_media_route_button.visibility =
-            if (isDownloadedFile) GONE else VISIBLE
+        player_media_route_button.isVisible = !isDownloadedFile
         if (savedInstanceState != null) {
             currentWindow = savedInstanceState.getInt(STATE_RESUME_WINDOW)
             playbackPosition = savedInstanceState.getLong(STATE_RESUME_POSITION)
@@ -1155,6 +1179,8 @@ class PlayerFragment : Fragment() {
         exo_rew_text.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
         exo_ffwd_text.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
         fun rewind() {
+            player_rew_holder.alpha = 1f
+
             val rotateLeft = AnimationUtils.loadAnimation(context, R.anim.rotate_left)
             exo_rew.startAnimation(rotateLeft)
 
@@ -1167,6 +1193,7 @@ class PlayerFragment : Fragment() {
                 override fun onAnimationEnd(animation: Animation?) {
                     exo_rew_text.post {
                         exo_rew_text.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
+                        player_rew_holder.alpha = if (isShowing) 1f else 0f
                     }
                 }
             })
@@ -1180,6 +1207,7 @@ class PlayerFragment : Fragment() {
         }
 
         fun fastForward() {
+            player_ffwd_holder.alpha = 1f
             val rotateRight = AnimationUtils.loadAnimation(context, R.anim.rotate_right)
             exo_ffwd.startAnimation(rotateRight)
 
@@ -1192,6 +1220,7 @@ class PlayerFragment : Fragment() {
                 override fun onAnimationEnd(animation: Animation?) {
                     exo_ffwd_text.post {
                         exo_ffwd_text.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
+                        player_ffwd_holder.alpha = if (isShowing) 1f else 0f
                     }
                 }
             })
@@ -1224,7 +1253,10 @@ class PlayerFragment : Fragment() {
             fadeAnimation.fillAfter = true
 
             // MENUS
-            centerMenu.startAnimation(fadeAnimation)
+            //centerMenu.startAnimation(fadeAnimation)
+            player_pause_holder.startAnimation(fadeAnimation)
+            player_ffwd_holder.startAnimation(fadeAnimation)
+            player_rew_holder.startAnimation(fadeAnimation)
             player_media_route_button.startAnimation(fadeAnimation)
             //video_bar.startAnimation(fadeAnimation)
 
@@ -1245,13 +1277,13 @@ class PlayerFragment : Fragment() {
             override fun onDoubleClickRight(clicks: Int) {
                 if (!isLocked) {
                     fastForward()
-                }
+                } else onSingleClick()
             }
 
             override fun onDoubleClickLeft(clicks: Int) {
                 if (!isLocked) {
                     rewind()
-                }
+                } else onSingleClick()
             }
 
             override fun onSingleClick() {
@@ -1282,7 +1314,7 @@ class PlayerFragment : Fragment() {
             activity?.popCurrentPage()
         }
 
-        playback_speed_btt.visibility = if (playBackSpeedEnabled) VISIBLE else GONE
+        playback_speed_btt.isVisible = playBackSpeedEnabled
         playback_speed_btt.setOnClickListener {
             val speedsText = listOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x")
             val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
@@ -1565,6 +1597,7 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        loading_overlay?.isVisible = false
         savePos()
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
@@ -1665,8 +1698,8 @@ class PlayerFragment : Fragment() {
         }
         // player_torrent_info?.visibility = if(isTorrent) VISIBLE else GONE
         //
-        isShowing = false
-        player_torrent_info?.visibility = GONE
+        isShowing = true
+        player_torrent_info?.isVisible = false
         //player_torrent_info?.alpha = 0f
         println("LOADED: ${uri} or ${currentUrl}")
         isCurrentlyPlaying = true
@@ -1810,7 +1843,7 @@ class PlayerFragment : Fragment() {
                 override fun onAnimationRepeat(animation: Animation?) {}
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    loading_overlay.post { video_go_back_holder.visibility = GONE; }
+                    loading_overlay.post { video_go_back_holder_holder.visibility = GONE; }
                 }
             })
             overlay_loading_skip_button.visibility = GONE
@@ -1849,6 +1882,8 @@ class PlayerFragment : Fragment() {
                     video_title_rez?.text = currentUrl.name
                 }
             }
+
+            player_view.performClick()
 
             //TODO FIX
             video_title?.text = hName +

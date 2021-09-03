@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -106,7 +107,7 @@ class HomeFragment : Fragment() {
     var currentMainList: ArrayList<SearchResponse> = ArrayList()
 
     private fun toggleMainVisibility(visible: Boolean) {
-        home_main_holder.visibility = if (visible) View.VISIBLE else View.GONE
+        home_main_holder.isVisible = visible
     }
 
     @SuppressLint("SetTextI18n")
@@ -314,7 +315,7 @@ class HomeFragment : Fragment() {
         }
 
         observe(homeViewModel.bookmarks) { bookmarks ->
-            home_bookmarked_holder.visibility = if (bookmarks.isNotEmpty()) View.VISIBLE else View.GONE
+            home_bookmarked_holder.isVisible = bookmarks.isNotEmpty()
             (home_bookmarked_child_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList = bookmarks
             home_bookmarked_child_recyclerview?.adapter?.notifyDataSetChanged()
 
@@ -329,11 +330,11 @@ class HomeFragment : Fragment() {
         }
 
         observe(homeViewModel.resumeWatching) { resumeWatching ->
-            home_watch_holder.visibility = if (resumeWatching.isNotEmpty()) View.VISIBLE else View.GONE
+            home_watch_holder?.isVisible = resumeWatching.isNotEmpty()
             (home_watch_child_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList = resumeWatching
             home_watch_child_recyclerview?.adapter?.notifyDataSetChanged()
 
-            home_watch_child_more_info.setOnClickListener {
+            home_watch_child_more_info?.setOnClickListener {
                 activity?.loadHomepageList(
                     HomePageList(
                         home_watch_parent_item_title?.text?.toString() ?: getString(R.string.continue_watching),

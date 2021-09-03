@@ -200,6 +200,8 @@ class TrailersToProvider : MainAPI() {
     override fun load(url: String): LoadResponse {
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
+        var title = document?.selectFirst("h2.breadcrumbs-custom-title > a")?.text() ?: throw ErrorLoadingException("Service might be unavailable")
+
         val metaInfo = document.select("div.post-info-meta > ul.post-info-meta-list > li")
         val year = metaInfo?.get(0)?.selectFirst("> span.small-text")?.text()?.takeLast(4)?.toIntOrNull()
         val rating = parseRating(metaInfo?.get(1)?.selectFirst("> span.small-text")?.text()?.replace("/ 10", ""))
@@ -208,7 +210,6 @@ class TrailersToProvider : MainAPI() {
         val trailer = metaInfo?.get(4)?.selectFirst("> a")?.attr("href")
         val poster = document.selectFirst("div.slider-image > a > img").attr("src")
         val descriptHeader = document.selectFirst("article.post-info")
-        var title = document.selectFirst("h2.breadcrumbs-custom-title > a").text()
         title = title.substring(0, title.length - 6) // REMOVE YEAR
 
         val descript = descriptHeader.select("> div > p").text()

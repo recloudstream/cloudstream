@@ -224,6 +224,15 @@ class ResultViewModel : ViewModel() {
         }
     }
 
+    private fun filterName(name : String?) : String? {
+        if(name == null) return null
+        Regex("[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
+            if(it.isEmpty())
+                return null
+        }
+        return name
+    }
+
     fun load(context: Context, url: String, apiName: String) = viewModelScope.launch {
         _resultResponse.postValue(Resource.Loading(url))
 
@@ -269,7 +278,7 @@ class ResultViewModel : ViewModel() {
                             for ((index, i) in dataList.withIndex()) {
                                 episodes.add(
                                     context.buildResultEpisode(
-                                        i.name,
+                                        filterName(i.name),
                                         i.posterUrl,
                                         index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
                                         null, // TODO FIX SEASON
@@ -291,7 +300,7 @@ class ResultViewModel : ViewModel() {
                         for ((index, i) in d.episodes.withIndex()) {
                             episodes.add(
                                 context.buildResultEpisode(
-                                    i.name,
+                                    filterName(i.name),
                                     i.posterUrl,
                                     i.episode ?: (index + 1),
                                     i.season,
