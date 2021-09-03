@@ -67,6 +67,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 Triple("\uD83C\uDDF3\uD83C\uDDF1", "Dutch", "nl"),
                 Triple("\uD83C\uDDEC\uD83C\uDDF7", "Greek", "gr"),
                 Triple("\uD83C\uDDF8\uD83C\uDDEA", "Swedish", "sv"),
+                Triple("\uD83C\uDDEB\uD83C\uDDF7", "French", "fr"),
             ) // idk, if you find a way of automating this it would be great
             if (count > 100) {
                 languages.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))
