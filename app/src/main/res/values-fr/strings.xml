@@ -1,1 +1,209 @@
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
+    <string name="app_name">CloudStream</string>
+    <string name="title_home">Accueil</string>
+    <string name="title_search">Rechercher</string>
+    <string name="title_downloads">Téléchargements</string>
+    <string name="title_settings">Paramètres</string>
+    <string name="search_hint">Rechercher…</string>
+    <string name="change_providers_des">Changer les fournisseurs</string>
+    <string name="search_poster_des">Miniature</string>
+    <string name="no_data">Auccune Donnée</string>
+    <string name="episode_more_options_des">Plus d\'options</string>
+    <string name="episode_play_des">Lire l\'épisode</string>
+    <string name="go_back">Retour</string>
+    <string name="next_episode">Episode suivant</string>
+    <string name="result_poster">Miniature</string>
+    <string name="result_plot" translatable="false">@string/synopsis</string>
+    <string name="result_tags">Genres</string>
+    <string name="result_share">Partager</string>
+    <string name="result_open_in_browser">Ouvrir dans le naviguateur</string>
+    <string name="skip_loading">Passer le chargement</string>
+    <string name="loading_chromecast">Chargement…</string>
 
+    <string name="type_watching">En visionnage</string>
+    <string name="type_on_hold">En pose</string>
+    <string name="type_completed">Terminé</string>
+    <string name="type_dropped">Abandonné</string>
+    <string name="type_plan_to_watch">A regarder</string>
+    <string name="type_none">None</string>
+
+    <string name="play_movie_button">Lire</string>
+    <string name="play_torrent_button">Streamer Torrent</string>
+    <string name="pick_source">Sources</string>
+    <string name="pick_subtitle">Sous-titres</string>
+    <string name="reload_error">Réessayer la connection…</string>
+    <string name="result_go_back">Retour</string>
+    <string name="episode_poster">Miniature de l\'Episode</string>
+    <string name="play_episode">Lire l\'Episode</string>
+    <string name="need_storage">Permet de télécharger les épisodes</string>
+
+    <string name="download">Télécharger</string>
+    <string name="downloaded">Téléchargé</string>
+    <string name="downloading">Téléchargement</string>
+    <string name="download_paused">Téléchargement en pause</string>
+    <string name="download_started">Téléchargement commencé</string>
+    <string name="download_failed">Echec du Téléchargement</string>
+    <string name="download_canceled">Téléchargement Annulé</string>
+    <string name="download_done">Téléchargement Terminé</string>
+    <string name="download_format" translatable="false">%s - %s</string>
+
+    <string name="error_loading_links_toast">Erreur lors du téléchargement des liens</string>
+    <string name="download_storage_text">Stockage Interne</string>
+
+    <string name="app_dubbed_text">Dub</string>
+    <string name="app_subbed_text">Sub</string>
+
+    <string name="popup_delete_file">Supprimer le fichier</string>
+    <string name="popup_play_file">Lire le fichier</string>
+    <string name="popup_resume_download">Reprendre le téléchargement</string>
+    <string name="popup_pause_download">Mettre en pause le téléchargement</string>
+
+    <string name="pref_disable_acra">Désactiver le rapport de bug automatique</string>
+    <string name="home_more_info">Plus d\'informations</string>
+    <string name="home_expanded_hide">Cacher</string>
+    <string name="home_main_poster">Poster principal</string>
+    <string name="home_play">Lecture</string>
+    <string name="home_info">Info</string>
+    <string name="home_next_random">Suivant Aléatoire</string>
+    <string name="home_change_provider">Changer le fournisseur</string>
+    <string name="filter_bookmarks">Filtrer les marques-pages</string>
+    <string name="error_bookmarks_text">Marque-pages</string>
+    <string name="action_remove_from_bookmarks">Supprimer</string>
+    <string name="sort_apply">Appliquer</string>
+    <string name="sort_cancel">Annulé</string>
+    <string name="player_speed">Vitesse de lecture</string>
+    <string name="subtitles_settings">Paramètres de sous-titres</string>
+    <string name="subs_text_color">Couleur du texte</string>
+    <string name="subs_outline_color">Couleur de la bordure exterieur</string>
+    <string name="subs_background_color">Couleur de fond</string>
+    <string name="subs_window_color">Couleur de la fenètre</string>
+    <string name="subs_edge_type">Type de bordure</string>
+    <string name="subs_subtitle_elevation">Elevation des sous-titres</string>
+    <string name="preview_background">Aperçu de l\'arrière-plan</string>
+    <string name="subs_font">Police</string>
+    <string name="search_provider_text_providers">Rechercher en utilisant les fournisseurs</string>
+    <string name="search_provider_text_types">Rechercher en utilisant les types</string>
+
+    <string name="benene_count_text">%d Benenes données au dev</string>
+    <string name="benene_count_text_none">Aucune Benenes donnée</string>
+
+    <string name="prerelease_commit_hash">unknown_prerelease</string>
+    <string name="subs_auto_select_language">Séléction automatique de la langue</string>
+    <string name="subs_download_languages">Télécharger les langues</string>
+    <string name="subs_hold_to_reset_to_default">Maintenir pour réinitialliser les valeurs par défault</string>
+    <string name="continue_watching">Continer à regarder</string>
+
+    <string name="action_remove_watching">Supprimer</string>
+    <string name="action_open_watching">Plus d\'info</string>
+
+    <string name="vpn_might_be_needed">Un VPN peut être requit pour que ce fournisseur fonctionne</string>
+    <string name="vpn_torrent">Ce fournisseur est un torrent, un VPN est recommendé</string>
+    <string name="torrent_plot">Description</string>
+    <string name="normal_no_plot">Aucune description trouvée</string>
+    <string name="torrent_no_plot">Aucune description trouvée</string>
+
+    <string name="picture_in_picture">Lecteur en mode Picture-in-Picture</string>
+    <string name="picture_in_picture_des">Continuer la lecture dans une fenêtre miniature en superposition sur d\'autres applis</string>
+    <string name="player_size_settings">Boutton de redimentionnement du lecteur</string>
+    <string name="player_size_setthings_des">Supprimer les bordures noires</string>
+    <string name="player_subtitles_settings">Sous-titres</string>
+    <string name="player_subtitles_settings_des">Paramètres des sous-titres du lecteur</string>
+    <string name="eigengraumode_setthings">Mode gris foncé</string>
+    <string name="eigengraumode_setthings_des">Ajouter l\'option de vitesse sur le lecteur</string>
+    <string name="swipe_to_seek_setthings">Swiper pour rechercher</string>
+    <string name="swipe_to_seek_setthings_des">Swiper vers la gauche ou la droite pour controler le temps du lecteur vidéo</string>
+    <string name="swipe_to_change_settings">Swiper pour changer les paramètres</string>
+    <string name="swipe_to_change_settings_des">Swiper sur le coté droit ou gauche pour changer le niveau de luminosité ou de volume</string>
+    <string name="double_tap_to_seek_setthings">Tapper deux fois pour rechercher</string>
+    <string name="double_tap_to_seek_setthings_des">Tapper deux fois sur le coté droit ou gauche pour avancer ou reculer</string>
+    <string name="search">Rechercher</string>
+    <string name="info">Info</string>
+    <string name="advanced_search">Recherche Avancée</string>
+    <string name="advanced_search_des">Donne les résultats séparé par les fournisseur</string>
+    <string name="bug_report_setthings_off">N\'envoyer les données que lors d\'un crash</string>
+    <string name="bug_report_setthings_on">N\'envoyer aucune données</string>
+    <string name="updates_setthings">Afficher les mises-à-jour de l\'app</string>
+    <string name="updates_setthings_des">Chercher des mises-à-jour automatiquement au démarage</string>
+    <string name="uprereleases_setthings">Mettre à jour vers une version béta</string>
+    <string name="uprereleases_setthings_des">Rechercher pour une mise à jour vers une version béta au lieu des version complètes seulement</string>
+    <string name="github">Github</string>
+    <string name="lightnovel">Appli Light novel par les mêmes devs</string>
+    <string name="anim">Appli Anim par les mêmes devs</string>
+    <string name="discord">Rejoindre le Discord</string>
+    <string name="benene">Donner une benene aux devs</string>
+    <string name="benene_des">benenes données</string>
+
+    <string name="app_language">Language de l\'app</string>
+
+    <string name="no_chomecast_support_toast">Ce fournisseur ne supporte pas le Chromecast</string>
+    <string name="no_links_found_toast">Aucun lien trouvé</string>
+    <string name="copy_link_toast">Lien copié dans le presse-papiers</string>
+    <string name="play_episode_toast">Lecture de l\'episode</string>
+    <string name="subs_default_reset_toast">Réinitialiser aux valeurs par défault</string>
+    <string name="acra_report_toast">Désolé, l\'application à crashé. Un rapport de bug anonyme va être envoyé aux devloppeurs</string>
+
+    <string name="season">Saison</string>
+    <string name="no_season">Pas de Saison</string>
+    <string name="episode">Episode</string>
+    <string name="episodes">Episodes</string>
+    <string name="season_short">S</string>
+    <string name="episode_short">E</string>
+
+    <string name="delete_file">Supprimer le Fichier</string>
+    <string name="delete">Supprimer</string>
+    <string name="cancel" translatable="false">@string/sort_cancel</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Reprendre</string>
+    <string name="delete_message">Cela va supprimer définitivement %s\nÊtes vous sûr ?</string>
+
+    <string name="status_ongoing">En cours</string>
+    <string name="status_completed">Terminé</string>
+    <string name="status">Status</string>
+    <string name="year">Année</string>
+    <string name="rating">Note</string>
+    <string name="duration">Durée</string>
+    <string name="site">Site</string>
+    <string name="synopsis">Synopsis</string>
+
+    <string name="queued">Liste d\'attente</string>
+    <string name="no_subtitles">Pas de sous-titres</string>
+    <string name="default_subtitles">Défault</string>
+
+    <string name="free_storage">Libre</string>
+    <string name="used_storage">Utilisé</string>
+    <string name="app_storage">App</string>
+
+    <string name="movies">Films</string>
+    <string name="tv_series">Séries TV</string>
+    <string name="cartoons">Dessin animés</string>
+    <string name="anime">Animé</string>
+    <string name="torrent">Torrent</string>
+
+    <string name="source_error">Erreur de la source</string>
+    <string name="remote_error">Erreur distante</string>
+    <string name="render_error">Erreur d\'affichage</string>
+    <string name="unexpected_error">Erreur innatendue du lecteur</string>
+    <string name="storage_error">Erreur du téléchargement, vérifier l\'autorisation du stockage</string>
+
+    <string name="episode_action_chomecast_episode">Episode Chromecast</string>
+    <string name="episode_action_chomecast_mirror">Miroir Chromecast</string>
+    <string name="episode_action_play_in_app">Lecture dans l\'app</string>
+    <string name="episode_action_play_in_vlc">Lecture dans VLC</string>
+    <string name="episode_action_play_in_browser">Lecture dans le navigateur</string>
+    <string name="episode_action_copy_link">Copier le lien</string>
+    <string name="episode_action_auto_download">Téléchargement Automatique</string>
+    <string name="episode_action_download_mirror">Télécharger le Miroir</string>
+    <string name="episode_action_reload_links">Recharger les liens</string>
+
+    <string name="no_update_found">Pas de mise-à-jour trouvés</string>
+    <string name="check_for_update">Vérifier les mise-à-jour</string>
+
+    <string name="lock">Verouiller</string>
+    <string name="resize">Redimensionner</string>
+    <string name="source">Source</string>
+    <string name="skip_op">Passer l\'OP</string>
+
+    <string name="dont_show_again">Ne pas afficher à nouveau</string>
+    <string name="update">Mettre à jour</string>
+</resources>
