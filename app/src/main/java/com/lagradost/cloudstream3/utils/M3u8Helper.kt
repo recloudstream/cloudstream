@@ -10,10 +10,10 @@ import kotlin.math.pow
 class M3u8Helper {
     private val ENCRYPTION_DETECTION_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),")
     private val ENCRYPTION_URL_IV_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),URI=\"([^\"]+)\"(?:,IV=(.*))?")
-    private val QUALITY_REGEX = Regex("""#EXT-X-STREAM-INF:.*(?:RESOLUTION=\d+x(\d+))?.*\n(.*)""")
+    private val QUALITY_REGEX = Regex("""#EXT-X-STREAM-INF:.*(?:RESOLUTION=\d+x(\d+))?.*\s(.*)""")
     private val TS_EXTENSION_REGEX = Regex("""(.*\.ts.*)""")
 
-    private fun absoluteExtensionDetermination(url: String): String? {
+    fun absoluteExtensionDetermination(url: String): String? {
         val split = url.split("/")
         val gg: String = split[split.size - 1].split("?")[0]
         return if (gg.contains(".")) {
@@ -60,9 +60,8 @@ class M3u8Helper {
     private fun selectBest(qualities: List<M3u8Stream>): M3u8Stream? {
         val result = qualities.sortedBy {
             if (it.quality != null && it.quality <= 1080) it.quality else 0
-        }.reversed().filter {
-            it.streamUrl.contains(".m3u8")
-            // listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
+        }.filter {
+            listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
         }
         return result.getOrNull(0)
     }
@@ -73,8 +72,8 @@ class M3u8Helper {
         return split.joinToString("/")
     }
 
-    private fun isCompleteUrl(url: String): Boolean {
-        return url.contains("https://") && url.contains("http://")
+    private fun isNotCompleteUrl(url: String): Boolean {
+        return !url.contains("https://") && !url.contains("http://")
     }
 
     fun m3u8Generation(m3u8: M3u8Stream): List<M3u8Stream> {
@@ -85,7 +84,7 @@ class M3u8Helper {
             for (match in QUALITY_REGEX.findAll(response.text)) {
                 var (quality, m3u8Link) = match.destructured
                 if (absoluteExtensionDetermination(m3u8Link) == "m3u8") {
-                    if (!isCompleteUrl(m3u8Link)) {
+                    if (isNotCompleteUrl(m3u8Link)) {
                         m3u8Link = "$m3u8Parent/$m3u8Link"
                     }
                     yieldAll(
@@ -118,7 +117,7 @@ class M3u8Helper {
     )
 
     fun hlsYield(qualities: List<M3u8Stream>, startIndex: Int = 0): Iterator<HlsDownloadData> {
-        if (qualities.isEmpty()) return listOf(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
+        if (qualities.isEmpty()) return listOf(HlsDownloadData(byteArrayOf(), 1, 1, true)).iterator()
 
         var selected = selectBest(qualities)
         if (selected == null) {
@@ -145,7 +144,7 @@ class M3u8Helper {
                     ENCRYPTION_URL_IV_REGEX.find(m3u8Data)!!.destructured  // its safe to assume that its not going to be null
                 encryptionUri = match.component2()
 
-                if (!isCompleteUrl(encryptionUri)) {
+                if (isNotCompleteUrl(encryptionUri)) {
                     encryptionUri = "${getParentLink(secondSelection.streamUrl)}/$encryptionUri"
                 }
 
@@ -158,7 +157,7 @@ class M3u8Helper {
             val allTsList = allTs.toList()
             val totalTs = allTsList.size
             if (totalTs == 0) {
-                return listOf(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
+                return listOf(HlsDownloadData(byteArrayOf(), 1, 1, true)).iterator()
             }
             var lastYield = 0
 
@@ -167,8 +166,8 @@ class M3u8Helper {
             val tsByteGen = sequence {
                 loop@ for ((index, ts) in allTs.withIndex()) {
                     val url = if (
-                        isCompleteUrl(ts.destructured.component1())
-                    ) ts.destructured.component1() else "$relativeUrl/${ts.destructured.component1()}"
+                        isNotCompleteUrl(ts.destructured.component1())
+                    ) "$relativeUrl/${ts.destructured.component1()}" else ts.destructured.component1()
                     val c = index + 1 + startIndex
 
                     while (lastYield != c) {
@@ -198,6 +197,6 @@ class M3u8Helper {
             }
             return tsByteGen.iterator()
         }
-        return listOf(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
+        return listOf(HlsDownloadData(byteArrayOf(), 1, 1, true)).iterator()
     }
 }
