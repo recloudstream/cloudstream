@@ -62,7 +62,7 @@ class M3u8Helper {
             if (it.quality != null && it.quality <= 1080) it.quality else 0
         }.filter {
             listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
-        }
+        }.reversed()
         return result.getOrNull(0)
     }
 
