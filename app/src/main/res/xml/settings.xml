@@ -8,10 +8,15 @@
             app:isPreferenceVisible="true"
     >
         <Preference
-                android:key="subtitle_settings_key"
+                android:key="@string/subtitle_settings_key"
                 android:title="@string/player_subtitles_settings"
                 android:icon="@drawable/ic_outline_subtitles_24"
                 app:summary="@string/player_subtitles_settings_des">
+        </Preference>
+        <Preference
+                android:key="@string/quality_pref_key"
+                android:title="@string/watch_quality_pref"
+                android:icon="@drawable/ic_baseline_hd_24">
         </Preference>
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_picture_in_picture_alt_24"

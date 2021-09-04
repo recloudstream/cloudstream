@@ -202,4 +202,6 @@
     <string name="pause">Pausa</string>
     <string name="resume">Återuppta</string>
     <string name="storage_error">Ett nerladdningsfel uppstod, kolla om appen har lagringsbehörigheter</string>
+    <string name="watch_quality_pref">Föredragen videokvalitet</string>
+
 </resources>

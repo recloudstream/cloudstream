@@ -82,6 +82,7 @@ import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.fromSaveToStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getCurrentSavedStyle
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.getFocusRequest
 import com.lagradost.cloudstream3.utils.AppUtils.getVideoContentUri
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
@@ -92,9 +93,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -102,8 +101,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.VIDEO_PLAYER_BRIGHTNESS
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getId
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
@@ -351,20 +348,24 @@ class PlayerFragment : Fragment() {
         click_overlay?.isVisible = !isShowing
 
         val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
-        ObjectAnimator.ofFloat(video_title, "translationY", titleMove).apply {
-            duration = 200
-            start()
+        video_title?.let {
+            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
+                duration = 200
+                start()
+            }
         }
-
-        ObjectAnimator.ofFloat(video_title_rez, "translationY", titleMove).apply {
-            duration = 200
-            start()
+        video_title_rez?.let {
+            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
+                duration = 200
+                start()
+            }
         }
-
         val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
-        ObjectAnimator.ofFloat(bottom_player_bar, "translationY", playerBarMove).apply {
-            duration = 200
-            start()
+        bottom_player_bar?.let {
+            ObjectAnimator.ofFloat(it, "translationY", playerBarMove).apply {
+                duration = 200
+                start()
+            }
         }
 
         changeSkip()
@@ -398,10 +399,10 @@ class PlayerFragment : Fragment() {
             //player_pause_holder?.alpha = 0f
         }
 
-        bottom_player_bar.startAnimation(fadeAnimation)
-        player_top_holder.startAnimation(fadeAnimation)
+        bottom_player_bar?.startAnimation(fadeAnimation)
+        player_top_holder?.startAnimation(fadeAnimation)
         //  video_holder?.startAnimation(fadeAnimation)
-        player_torrent_info?.isVisible =  (isTorrent && isShowing)
+        player_torrent_info?.isVisible = (isTorrent && isShowing)
         //  player_torrent_info?.startAnimation(fadeAnimation)
         //video_lock_holder?.startAnimation(fadeAnimation)
     }
@@ -1561,7 +1562,8 @@ class PlayerFragment : Fragment() {
         initPlayer()
     }
 
-    private fun setMirrorId(id: Int) {
+    private fun setMirrorId(id: Int?) {
+        if (id == null) return
         val copy = playerData.copy(mirrorId = id)
         playerData = copy
         //initPlayer()
@@ -1930,6 +1932,10 @@ class PlayerFragment : Fragment() {
                                 if (isDownloadedFile || currentUrl?.name == null) "${width}x${height}" else "${currentUrl.name} - ${width}x${height}"
 
                     if (!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
+                        if (!isDownloadedFile && !isTorrent && exoPlayer.duration in 5_000..10_000) {
+                            // if(getapi apiName )
+                            showToast(activity, R.string.vpn_might_be_needed, LENGTH_SHORT)
+                        }
                         changeSkip()
                         exoPlayer
                             .createMessage { _, _ ->
@@ -2031,6 +2037,20 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    fun preferedQuality(tempCurrentUrls: List<ExtractorLink>?): Int? {
+        if (tempCurrentUrls.isNullOrEmpty()) return null
+        val sortedUrls = sortUrls(tempCurrentUrls).reversed()
+        val currentQuality =
+            settingsManager.getInt(getString(R.string.watch_quality_pref), Qualities.values().last().value)
+
+        var currentId = sortedUrls.first().getId() // lowest quality
+        for (url in sortedUrls) {
+            if (url.quality > currentQuality) break
+            currentId = url.getId()
+        }
+        return currentId
+    }
+
     //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
     @SuppressLint("ClickableViewAccessibility")
     private fun initPlayer() {
@@ -2041,7 +2061,8 @@ class PlayerFragment : Fragment() {
         view?.setOnTouchListener { _, _ -> return@setOnTouchListener true } // VERY IMPORTANT https://stackoverflow.com/questions/28818926/prevent-clicking-on-a-button-in-an-activity-while-showing-a-fragment
         val tempCurrentUrls = getUrls()
         if (tempCurrentUrls != null) {
-            setMirrorId(sortUrls(tempCurrentUrls).first().getId()) // BECAUSE URLS CANT BE REORDERED
+            setMirrorId(preferedQuality(tempCurrentUrls))
+            //setMirrorId(sortedUrls.first().getId()) // BECAUSE URLS CANT BE REORDERED
         }
         val tempUrl = getCurrentUrl()
         println("TEMP:" + tempUrl?.name)
@@ -2053,7 +2074,7 @@ class PlayerFragment : Fragment() {
                     val currentUrls = getUrls()
                     if (currentUrls != null && currentUrls.isNotEmpty()) {
                         if (!isCurrentlyPlaying) {
-                            setMirrorId(sortUrls(currentUrls).first().getId()) // BECAUSE URLS CANT BE REORDERED
+                            setMirrorId(preferedQuality(currentUrls))
                             initPlayer(getCurrentUrl())
                         }
                     } else {

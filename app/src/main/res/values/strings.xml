@@ -10,6 +10,8 @@
     <string name="manual_check_update_key" translatable="false">manual_check_update</string>
     <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
     <string name="benene_count" translatable="false">benene_count</string>
+    <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
+    <string name="quality_pref_key" translatable="false">quality_pref_key</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
@@ -240,4 +242,5 @@
 
     <string name="dont_show_again">Don\'t show again</string>
     <string name="update">Update</string>
+    <string name="watch_quality_pref">Preferred watch quality</string>
 </resources>

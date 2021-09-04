@@ -313,6 +313,8 @@
                         android:layout_height="wrap_content">
                     <com.google.android.material.button.MaterialButton
                             style="@style/WhiteButton"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginEnd="0dp"
                             android:visibility="visible"
                             android:layout_gravity="center_vertical"
                             android:id="@+id/result_play_movie"
@@ -323,6 +325,8 @@
                     </com.google.android.material.button.MaterialButton>
                     <com.google.android.material.button.MaterialButton
                             style="@style/BlackButton"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginEnd="0dp"
                             android:visibility="visible"
                             android:layout_gravity="center_vertical"
                             tools:text="Downloading"
