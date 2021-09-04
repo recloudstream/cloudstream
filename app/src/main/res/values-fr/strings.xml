@@ -8,7 +8,7 @@
     <string name="search_hint">Rechercher…</string>
     <string name="change_providers_img_des">Changer les fournisseurs</string>
     <string name="search_poster_img_des">Miniature</string>
-    <string name="no_data">Auccune Donnée</string>
+    <string name="no_data">Aucune Donnée</string>
     <string name="episode_more_options_des">Plus d\'options</string>
     <string name="episode_play_img_des">Lire l\'épisode</string>
     <string name="go_back_img_des">Retour</string>
@@ -26,7 +26,7 @@
     <string name="type_completed">Terminé</string>
     <string name="type_dropped">Abandonné</string>
     <string name="type_plan_to_watch">A regarder</string>
-    <string name="type_none">None</string>
+    <string name="type_none">Aucun</string>
 
     <string name="play_movie_button">Lire</string>
     <string name="play_torrent_button">Streamer Torrent</string>
@@ -71,7 +71,7 @@
     <string name="error_bookmarks_text">Marque-pages</string>
     <string name="action_remove_from_bookmarks">Supprimer</string>
     <string name="sort_apply">Appliquer</string>
-    <string name="sort_cancel">Annulé</string>
+    <string name="sort_cancel">Annuler</string>
     <string name="player_speed">Vitesse de lecture</string>
     <string name="subtitles_settings">Paramètres de sous-titres</string>
     <string name="subs_text_color">Couleur du texte</string>
@@ -109,32 +109,32 @@
     <string name="player_size_setthings_des">Supprimer les bordures noires</string>
     <string name="player_subtitles_settings">Sous-titres</string>
     <string name="player_subtitles_settings_des">Paramètres des sous-titres du lecteur</string>
-    <string name="eigengraumode_setthings">Mode gris foncé</string>
+    <string name="eigengraumode_setthings">Vitesse de lecture</string>
     <string name="eigengraumode_setthings_des">Ajouter l\'option de vitesse sur le lecteur</string>
-    <string name="swipe_to_seek_setthings">Swiper pour rechercher</string>
-    <string name="swipe_to_seek_setthings_des">Swiper vers la gauche ou la droite pour controler le temps du lecteur vidéo</string>
-    <string name="swipe_to_change_settings">Swiper pour changer les paramètres</string>
-    <string name="swipe_to_change_settings_des">Swiper sur le coté droit ou gauche pour changer le niveau de luminosité ou de volume</string>
-    <string name="double_tap_to_seek_setthings">Tapper deux fois pour rechercher</string>
-    <string name="double_tap_to_seek_setthings_des">Tapper deux fois sur le coté droit ou gauche pour avancer ou reculer</string>
+    <string name="swipe_to_seek_setthings">Balayer pour avancer rapidement</string>
+    <string name="swipe_to_seek_setthings_des">Balayer vers la gauche ou la droite pour controler le temps du lecteur vidéo</string>
+    <string name="swipe_to_change_settings">Balayer pour changer les paramètres</string>
+    <string name="swipe_to_change_settings_des">Balayer sur le coté droit ou gauche pour changer le niveau de luminosité ou de volume</string>
+    <string name="double_tap_to_seek_setthings">Taper deux fois pour rechercher</string>
+    <string name="double_tap_to_seek_setthings_des">Taper deux fois sur le coté droit ou gauche pour avancer ou reculer</string>
     <string name="search">Rechercher</string>
-    <string name="settings_info">Info</string>
+    <string name="settings_info">Informations</string>
     <string name="advanced_search">Recherche Avancée</string>
     <string name="advanced_search_des">Donne les résultats séparé par les fournisseur</string>
     <string name="bug_report_setthings_off">N\'envoyer les données que lors d\'un crash</string>
     <string name="bug_report_setthings_on">N\'envoyer aucune données</string>
-    <string name="updates_setthings">Afficher les mises-à-jour de l\'app</string>
+    <string name="updates_setthings">Afficher les mises-à-jour de l\'application</string>
     <string name="updates_setthings_des">Chercher des mises-à-jour automatiquement au démarage</string>
     <string name="uprereleases_setthings">Mettre à jour vers une version béta</string>
     <string name="uprereleases_setthings_des">Rechercher pour une mise à jour vers une version béta au lieu des version complètes seulement</string>
     <string name="github">Github</string>
-    <string name="lightnovel">Appli Light novel par les mêmes devs</string>
-    <string name="anim">Appli Anim par les mêmes devs</string>
-    <string name="discord">Rejoindre le Discord</string>
+    <string name="lightnovel">L\'application Light Novel par les mêmes devs</string>
+    <string name="anim">Application d\'animés par les mêmes devs</string>
+    <string name="discord">Rejoindre le serveur Discord</string>
     <string name="benene">Donner une benene aux devs</string>
     <string name="benene_des">benenes données</string>
 
-    <string name="app_language">Language de l\'app</string>
+    <string name="app_language">Language de l\'application</string>
 
     <string name="no_chomecast_support_toast">Ce fournisseur ne supporte pas le Chromecast</string>
     <string name="no_links_found_toast">Aucun lien trouvé</string>
@@ -172,13 +172,13 @@
 
     <string name="free_storage">Libre</string>
     <string name="used_storage">Utilisé</string>
-    <string name="app_storage">App</string>
+    <string name="app_storage">Application</string>
 
     <string name="movies">Films</string>
     <string name="tv_series">Séries TV</string>
     <string name="cartoons">Dessin animés</string>
-    <string name="anime">Animé</string>
-    <string name="torrent">Torrent</string>
+    <string name="anime">Animés</string>
+    <string name="torrent">Torrents</string>
 
     <string name="source_error">Erreur de la source</string>
     <string name="remote_error">Erreur distante</string>
@@ -188,12 +188,12 @@
 
     <string name="episode_action_chomecast_episode">Episode Chromecast</string>
     <string name="episode_action_chomecast_mirror">Miroir Chromecast</string>
-    <string name="episode_action_play_in_app">Lecture dans l\'app</string>
+    <string name="episode_action_play_in_app">Lecture dans l\'application</string>
     <string name="episode_action_play_in_vlc">Lecture dans VLC</string>
     <string name="episode_action_play_in_browser">Lecture dans le navigateur</string>
     <string name="episode_action_copy_link">Copier le lien</string>
     <string name="episode_action_auto_download">Téléchargement Automatique</string>
-    <string name="episode_action_download_mirror">Télécharger le Miroir</string>
+    <string name="episode_action_download_mirror">Télécharger depuis le miroir</string>
     <string name="episode_action_reload_links">Recharger les liens</string>
 
     <string name="no_update_found">Pas de mise-à-jour trouvés</string>
