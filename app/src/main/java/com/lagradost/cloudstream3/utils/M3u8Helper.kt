@@ -62,7 +62,7 @@ class M3u8Helper {
             if (it.quality != null && it.quality <= 1080) it.quality else 0
         }.reversed().filter {
             it.streamUrl.contains(".m3u8")
-           // listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
+            // listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
         }
         return result.getOrNull(0)
     }
@@ -118,7 +118,7 @@ class M3u8Helper {
     )
 
     fun hlsYield(qualities: List<M3u8Stream>, startIndex: Int = 0): Iterator<HlsDownloadData> {
-        if (qualities.isEmpty()) return listOf<HlsDownloadData>(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
+        if (qualities.isEmpty()) return listOf(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
 
         var selected = selectBest(qualities)
         if (selected == null) {
@@ -156,7 +156,7 @@ class M3u8Helper {
 
             val allTs = TS_EXTENSION_REGEX.findAll(m3u8Data)
             val allTsList = allTs.toList()
-            val totalTs =allTsList .size
+            val totalTs = allTsList.size
             if (totalTs == 0) {
                 return listOf(HlsDownloadData(byteArrayOf(), 0, 0, true)).iterator()
             }

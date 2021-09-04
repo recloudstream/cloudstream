@@ -1076,6 +1076,7 @@ object VideoDownloadManager {
         if (stream.errorCode != SUCCESS_STREAM) return stream.errorCode
 
         if (!stream.resume!!) realIndex = 0
+        val fileLengthAdd = stream.fileLength!!
         val tsIterator = m3u8Helper.hlsYield(listOf(m3u8), realIndex)
 
         val relativePath = getRelativePath(folder)
@@ -1088,7 +1089,7 @@ object VideoDownloadManager {
         var isDone = false
         var isFailed = false
         var isPaused = false
-        var bytesDownloaded = firstTs.bytes.size.toLong()
+        var bytesDownloaded = firstTs.bytes.size.toLong() + fileLengthAdd
         var tsProgress = 1L + realIndex
         val totalTs = firstTs.totalTs.toLong()
 
