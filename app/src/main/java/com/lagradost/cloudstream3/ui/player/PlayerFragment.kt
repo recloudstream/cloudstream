@@ -21,7 +21,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -2037,11 +2036,14 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    fun preferedQuality(tempCurrentUrls: List<ExtractorLink>?): Int? {
+    private fun preferredQuality(tempCurrentUrls: List<ExtractorLink>?): Int? {
         if (tempCurrentUrls.isNullOrEmpty()) return null
         val sortedUrls = sortUrls(tempCurrentUrls).reversed()
-        val currentQuality =
-            settingsManager.getInt(getString(R.string.watch_quality_pref), Qualities.values().last().value)
+        var currentQuality = Qualities.values().last().value
+        context?.let { ctx ->
+            if (this::settingsManager.isInitialized)
+                currentQuality = settingsManager.getInt(ctx.getString(R.string.watch_quality_pref), currentQuality)
+        }
 
         var currentId = sortedUrls.first().getId() // lowest quality
         for (url in sortedUrls) {
@@ -2061,8 +2063,7 @@ class PlayerFragment : Fragment() {
         view?.setOnTouchListener { _, _ -> return@setOnTouchListener true } // VERY IMPORTANT https://stackoverflow.com/questions/28818926/prevent-clicking-on-a-button-in-an-activity-while-showing-a-fragment
         val tempCurrentUrls = getUrls()
         if (tempCurrentUrls != null) {
-            setMirrorId(preferedQuality(tempCurrentUrls))
-            //setMirrorId(sortedUrls.first().getId()) // BECAUSE URLS CANT BE REORDERED
+            setMirrorId(preferredQuality(tempCurrentUrls))
         }
         val tempUrl = getCurrentUrl()
         println("TEMP:" + tempUrl?.name)
@@ -2074,7 +2075,7 @@ class PlayerFragment : Fragment() {
                     val currentUrls = getUrls()
                     if (currentUrls != null && currentUrls.isNotEmpty()) {
                         if (!isCurrentlyPlaying) {
-                            setMirrorId(preferedQuality(currentUrls))
+                            setMirrorId(preferredQuality(currentUrls))
                             initPlayer(getCurrentUrl())
                         }
                     } else {
@@ -2085,19 +2086,6 @@ class PlayerFragment : Fragment() {
         } else {
             initPlayer(tempUrl)
         }
-
-        /*
-        val currentUrl = tempUrl
-        if (currentUrl == null) {
-            activity?.runOnUiThread {
-                Toast.makeText(activity, "Error getting link", LENGTH_LONG).show()
-                //MainActivity.popCurrentPage()
-            }
-        } else {
-
-        }*/
-
-        //isLoadingNextEpisode = false
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
