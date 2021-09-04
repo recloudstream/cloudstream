@@ -10,7 +10,7 @@ import kotlin.math.pow
 class M3u8Helper {
     private val ENCRYPTION_DETECTION_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),")
     private val ENCRYPTION_URL_IV_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),URI=\"([^\"]+)\"(?:,IV=(.*))?")
-    private val QUALITY_REGEX = Regex("""#EXT-X-STREAM-INF:.*(?:RESOLUTION=\d+x(\d+))?.*\s+(.*)""")
+    private val QUALITY_REGEX = Regex("""#EXT-X-STREAM-INF:(?:(?:.*?(?:RESOLUTION=\d+x(\d+)).*?\s+(.*))|(?:.*?\s+(.*)))""")
     private val TS_EXTENSION_REGEX = Regex("""(.*\.ts.*)""")
 
     fun absoluteExtensionDetermination(url: String): String? {
@@ -62,7 +62,7 @@ class M3u8Helper {
             if (it.quality != null && it.quality <= 1080) it.quality else 0
         }.filter {
             listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
-        }.reversed()
+        }
         return result.getOrNull(0)
     }
 
@@ -82,10 +82,14 @@ class M3u8Helper {
             val response = khttp.get(m3u8.streamUrl, headers = m3u8.headers)
 
             for (match in QUALITY_REGEX.findAll(response.text)) {
-                var (quality, m3u8Link) = match.destructured
+                var (quality, m3u8Link, m3u8Link2) = match.destructured
+                if (m3u8Link.isNullOrEmpty()) m3u8Link = m3u8Link2
                 if (absoluteExtensionDetermination(m3u8Link) == "m3u8") {
                     if (isNotCompleteUrl(m3u8Link)) {
                         m3u8Link = "$m3u8Parent/$m3u8Link"
+                    }
+                    if (quality.isEmpty()) {
+                        println(m3u8.streamUrl)
                     }
                     yieldAll(
                         m3u8Generation(
