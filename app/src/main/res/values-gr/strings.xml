@@ -88,7 +88,6 @@
     <string name="benene_count_text">%d Benenes given to devs</string>
     <string name="benene_count_text_none">No Benenes given</string>
 
-    <string name="prerelease_commit_hash">unknown_prerelease</string>
     <string name="subs_auto_select_language">Αυτόματη επιλογή γλώσσας</string>
     <string name="subs_download_languages">Λήψη γλωσσών</string>
     <string name="subs_hold_to_reset_to_default">Κρατήστε πατημένο για επαναφορά στα προεπιλεγμένα</string>
