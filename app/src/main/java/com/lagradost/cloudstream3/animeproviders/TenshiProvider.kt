@@ -28,7 +28,10 @@ class TenshiProvider : MainAPI() {
         get() = "Tenshi.moe"
     override val hasQuickSearch: Boolean
         get() = false
-
+    override val hasMainPage: Boolean
+        get() = true
+    
+    
     override val supportedTypes: Set<TvType>
         get() = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
 
@@ -47,6 +50,56 @@ class TenshiProvider : MainAPI() {
         } catch (e: Exception) {
             false
         }
+    }
+    
+    override fun getMainPage(): HomePageResponse {
+        val items = ArrayList<HomePageList>()
+        val soup = Jsoup.parse(khttp.get(mainUrl).text)
+        for (section in soup.select("#content > section")) {
+            try {
+                if (section.attr("id") == "toplist-tabs") {
+                    for (top in section.select(".tab-content > [role=\"tabpanel\"]")) {
+                        val title = "Top of the " + top.attr("id").split("-")[1].capitalize(Locale.UK)
+                        val anime = top.select("li > a").map {
+                            AnimeSearchResponse(
+                                it.selectFirst(".thumb-title").text(),
+                                fixUrl(it.attr("href")),
+                                this.name,
+                                TvType.Anime,
+                                it.selectFirst("img").attr("src"),
+                                null,
+                                null,
+                                EnumSet.of(DubStatus.Subbed),
+                                null,
+                                null
+                            )
+                        }
+                        items.add(HomePageList(title, anime))
+                    }
+                } else {
+                    val title = section.selectFirst("h2").text()
+                    val anime = section.select("li > a").map {
+                        AnimeSearchResponse(
+                            it.selectFirst(".thumb-title").text(),
+                            fixUrl(it.attr("href")),
+                            this.name,
+                            TvType.Anime,
+                            it.selectFirst("img").attr("src"),
+                            null,
+                            null,
+                            EnumSet.of(DubStatus.Subbed),
+                            null,
+                            null
+                        )
+                    }
+                    items.add(HomePageList(title, anime))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        if(items.size <= 0) throw ErrorLoadingException()
+        return HomePageResponse(items)
     }
 
     private fun getIsMovie(type: String, id: Boolean = false): Boolean {
