@@ -88,7 +88,6 @@
     <string name="benene_count_text">%d Benenes gegeven aan ontwikkelaars</string>
     <string name="benene_count_text_none">Geen Benenes gegeven</string>
 
-    <string name="prerelease_commit_hash">unknown_prerelease</string>
     <string name="subs_auto_select_language">Taal automatisch selecteren</string>
     <string name="subs_download_languages">Talen downloaden</string>
     <string name="subs_hold_to_reset_to_default">Houd ingedrukt om naar standaard te resetten</string>

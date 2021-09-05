@@ -88,7 +88,6 @@
     <string name="benene_count_text">%d Benenes données au dev</string>
     <string name="benene_count_text_none">Aucune Benenes donnée</string>
 
-    <string name="prerelease_commit_hash">unknown_prerelease</string>
     <string name="subs_auto_select_language">Séléction automatique de la langue</string>
     <string name="subs_download_languages">Télécharger les langues</string>
     <string name="subs_hold_to_reset_to_default">Maintenir pour réinitialliser les valeurs par défault</string>

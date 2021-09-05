@@ -20,6 +20,7 @@ https://discord.gg/5Hus6fM
 * 🇬🇷 Greek
 * 🇸🇪 Swedish
 * 🇵🇭 Tagalog
+* 🇵🇱 Polish
 
 **SCREENSHOTS:**
 

@@ -12,6 +12,7 @@
     <string name="benene_count" translatable="false">benene_count</string>
     <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
+    <string name="prerelease_commit_hash" translatable="false">unknown_prerelease</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
@@ -121,7 +122,6 @@
     <string name="benene_count_text">%d Benenes given to devs</string>
     <string name="benene_count_text_none">No Benenes given</string>
 
-    <string name="prerelease_commit_hash">unknown_prerelease</string>
     <string name="subs_auto_select_language">Auto Select Language</string>
     <string name="subs_download_languages">Download Languages</string>
     <string name="subs_hold_to_reset_to_default">Hold to reset to default</string>

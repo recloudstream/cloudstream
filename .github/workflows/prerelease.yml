@@ -28,7 +28,7 @@ jobs:
     - name: Update prerelease_commit_hash
       run: |
         COMMIT_HASH="$(git log -1 --format='%H')"
-        sed -i "s/<string name=\"prerelease_commit_hash\">unknown_prerelease<\/string>/<string name=\"prerelease_commit_hash\">$COMMIT_HASH<\/string>/g" app/src/main/res/values/strings.xml
+        sed -i "s/<string name=\"prerelease_commit_hash\" translatable=\"false\">unknown_prerelease<\/string>/<string name=\"prerelease_commit_hash\">$COMMIT_HASH<\/string>/g" app/src/main/res/values/strings.xml
     - name: Decode Keystore
       env:
         ENCODED_STRING: ${{ secrets.KEYSTORE }}
