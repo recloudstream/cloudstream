@@ -137,11 +137,7 @@
     <string name="no_chomecast_support_toast">Deze provider heeft geen Chromecast ondersteuning</string>
     <string name="no_links_found_toast">Geen links gevonden</string>
     <string name="copy_link_toast">Link gekopieerd naar klembord</string>
-    <string name="subs_default_reset_toast">Terugzetten op standaardwaarde</string>
-    <string name="acra_report_toast">Sorry, de applicatie is gecrasht. Een anonieme bug report zal worden verzonden naar de
-        ontwikkelaars
-    </string>
-
+    
     <string name="season">Seizoen</string>
     <string name="no_season">Geen seizoen</string>
     <string name="episode">Aflevering</string>
