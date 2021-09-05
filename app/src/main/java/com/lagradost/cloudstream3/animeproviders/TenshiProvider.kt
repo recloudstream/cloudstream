@@ -59,7 +59,7 @@ class TenshiProvider : MainAPI() {
             try {
                 if (section.attr("id") == "toplist-tabs") {
                     for (top in section.select(".tab-content > [role=\"tabpanel\"]")) {
-                        val title = "Top of the " + top.attr("id").split("-")[1].capitalize(Locale.UK)
+                        val title = "Top - " + top.attr("id").split("-")[1].capitalize(Locale.UK)
                         val anime = top.select("li > a").map {
                             AnimeSearchResponse(
                                 it.selectFirst(".thumb-title").text(),
