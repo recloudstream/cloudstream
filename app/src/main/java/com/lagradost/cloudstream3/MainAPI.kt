@@ -27,11 +27,11 @@ object APIHolder {
     private const val defProvider = 0
 
     val apis = arrayListOf(
-        TrailersToProvider(),
+        GogoanimeProvider(),
         //ShiroProvider(), // v2 fucked me
         //AnimePaheProvider(), //ddos guard
         AnimeFlickProvider(),
-        GogoanimeProvider(),
+
         TenshiProvider(),
         WcoProvider(),
         // MeloMovieProvider(), // Captcha for links
@@ -46,6 +46,7 @@ object APIHolder {
 
     val restrictedApis = arrayListOf(
         NyaaProvider(),
+        TrailersToProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {

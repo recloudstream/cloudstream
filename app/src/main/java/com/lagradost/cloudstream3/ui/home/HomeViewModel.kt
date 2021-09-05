@@ -12,6 +12,9 @@ import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
+import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneRepo
+import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -131,19 +134,28 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun load(api: MainAPI?) = viewModelScope.launch {
-        repo = if (api?.hasMainPage == true) {
+        repo = if (api != null) {
             APIRepository(api)
         } else {
             autoloadRepo()
         }
-
         _apiName.postValue(repo?.name)
-        _page.postValue(Resource.Loading())
-        _page.postValue(repo?.getMainPage())
+        if (repo?.hasMainPage == true) {
+            _page.postValue(Resource.Loading())
+            _page.postValue(repo?.getMainPage())
+        } else {
+            _page.postValue(Resource.Success(HomePageResponse(emptyList())))
+        }
     }
 
     fun loadAndCancel(preferredApiName: String?) = viewModelScope.launch {
         val api = getApiFromNameNull(preferredApiName)
-        loadAndCancel(api)
+        if (preferredApiName == noneApi.name)
+            loadAndCancel(noneApi)
+        else if(preferredApiName == randomApi.name || api == null) {
+            loadAndCancel(apis.filter { it.hasMainPage }.random())
+        } else {
+            loadAndCancel(api)
+        }
     }
 }

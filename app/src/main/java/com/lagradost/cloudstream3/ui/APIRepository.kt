@@ -10,8 +10,19 @@ class APIRepository(val api: MainAPI) {
     companion object {
         var providersActive = HashSet<String>()
         var typesActive = HashSet<TvType>()
-    }
 
+        val noneApi = object : MainAPI() {
+            override val name: String
+                get() = "None"
+        }
+        val randomApi = object : MainAPI() {
+            override val name: String
+                get() = "Random"
+        }
+
+        val noneRepo = APIRepository(noneApi)
+    }
+    val hasMainPage: Boolean get() = api.hasMainPage
     val name: String get() = api.name
     val mainUrl: String get() = api.mainUrl
     val hasQuickSearch: Boolean get() = api.hasQuickSearch

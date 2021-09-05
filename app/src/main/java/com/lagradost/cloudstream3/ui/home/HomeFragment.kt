@@ -22,6 +22,8 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.MainActivity.Companion.backEvent
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
+import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
@@ -154,6 +156,8 @@ class HomeFragment : Fragment() {
                 toggleMainVisibility(false)
                 return null
             }
+        } else {
+            toggleMainVisibility(false)
         }
         return null
     }
@@ -173,10 +177,11 @@ class HomeFragment : Fragment() {
     }
 
     private val apiChangeClickListener = View.OnClickListener { view ->
-        val validAPIs = apis.filter { api -> api.hasMainPage }
-
+        val validAPIs = apis.filter { api -> api.hasMainPage }.toMutableList()
+        validAPIs.add(0, randomApi)
+        validAPIs.add(0, noneApi)
         view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api -> Pair(index, api.name) }) {
-            homeViewModel.loadAndCancel(validAPIs[itemId])
+            homeViewModel.loadAndCancel(validAPIs[itemId].name)
         }
     }
 
@@ -378,8 +383,8 @@ class HomeFragment : Fragment() {
                             reloadStored()
                         }
                         if (itemId == 0) {
-                           val card = callback.card
-                            if(card is DataStoreHelper.ResumeWatchingResult) {
+                            val card = callback.card
+                            if (card is DataStoreHelper.ResumeWatchingResult) {
                                 context?.removeLastWatched(card.parentId)
                                 reloadStored()
                             }
