@@ -121,7 +121,6 @@
     <string name="benene_count_text">%d केले दिए गए</string>
     <string name="benene_count_text_none">कोई केले नही दिए गए</string>
 
-    <string name="prerelease_commit_hash">unknown_prerelease</string>
     <string name="subs_auto_select_language">Auto Select Language</string>
     <string name="subs_download_languages">Download Languages</string>
     <string name="subs_hold_to_reset_to_default">रिसेट करने ले किये दबाये रखे</string>
