@@ -57,11 +57,11 @@
     <string name="skip_loading">Skip Loading</string>
     <string name="loading_chromecast">Loading…</string>
 
-    <string name="type_watching">Watching</string>
-    <string name="type_on_hold">On-Hold</string>
-    <string name="type_completed">Completed</string>
-    <string name="type_dropped">Dropped</string>
-    <string name="type_plan_to_watch">Plan to Watch</string>
+    <string name="type_watching">देखा जा रहा है</string>
+    <string name="type_on_hold">होल्ड पर</string>
+    <string name="type_completed">पूरा देखा</string>
+    <string name="type_dropped">अधूरा छोड़ा</string>
+    <string name="type_plan_to_watch">देखने की योजना</string>
     <string name="type_none">None</string>
 
     <string name="play_movie_button">मूवी चलाये</string>
@@ -84,7 +84,7 @@
     <string name="download_format" translatable="false">%s - %s</string>
 
     <string name="error_loading_links_toast">लिंक में गड़बड़ है</string>
-    <string name="download_storage_text">Internal Storage</string>
+    <string name="download_storage_text">अंदरूनी स्टोरेज</string>
 
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
@@ -97,7 +97,7 @@
     <string name="pref_disable_acra">Disable automatic bug reporting</string>
     <string name="home_more_info">और जानकारी</string>
     <string name="home_expanded_hide">छिपाये</string>
-    <string name="home_play">प्ले</string>
+    <string name="home_play">चलाये</string>
     <string name="home_info">जानकारी</string>
     <string name="filter_bookmarks">बुकमार्क छांटे</string>
     <string name="error_bookmarks_text">बुकमार्क्स</string>
@@ -122,8 +122,8 @@
     <string name="benene_count_text_none">कोई केले नही दिए गए</string>
 
     <string name="prerelease_commit_hash">unknown_prerelease</string>
-    <string name="subs_auto_select_language">भाषा का चयन हमपे छोड़ दे</string>
-    <string name="subs_download_languages">भाषाओं को डाउनलोड करे</string>
+    <string name="subs_auto_select_language">Auto Select Language</string>
+    <string name="subs_download_languages">Download Languages</string>
     <string name="subs_hold_to_reset_to_default">रिसेट करने ले किये दबाये रखे</string>
     <string name="continue_watching">देखना जारी रखें</string>
 
@@ -155,7 +155,7 @@
     <string name="settings_info">जानकारी</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">नतीजों को सूत्रों के हिसाब से बांटकर दिखता है</string>
-    <string name="bug_report_setthings_off">सिर्फ दुर्घटना होने पे आपकी कुछ जानकारी भेजी जाएगा</string>
+    <string name="bug_report_setthings_off">सिर्फ दुर्घटना होने पे आपकी कुछ जानकारी भेजी जाएगी</string>
     <string name="bug_report_setthings_on">आपकी जानकारी नही भेजी जाएगी</string>
     <string name="updates_setthings">Show app update</string>
     <string name="updates_setthings_des">हर बार खुलने पे नए अपडेट के लिए जांच करेगा</string>
