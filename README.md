@@ -21,6 +21,7 @@ https://discord.gg/5Hus6fM
 * 🇸🇪 Swedish
 * 🇵🇭 Tagalog
 * 🇵🇱 Polish
+* 🇮🇳 Hindi
 
 **SCREENSHOTS:**
 

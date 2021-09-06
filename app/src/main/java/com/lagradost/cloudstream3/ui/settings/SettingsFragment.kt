@@ -30,6 +30,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("\uD83C\uDDF8\uD83C\uDDEA", "Swedish", "sv"),
         Triple("\uD83C\uDDF5\uD83C\uDDED", "Tagalog", "tl"),
         Triple("\uD83C\uDDF5\uD83C\uDDF1", "Polish", "pl"),	
+        Triple("\uD83C\uDDEE\uD83C\uDDF3", "Hindi", "hi"),
     ) // idk, if you find a way of automating this it would be great
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
