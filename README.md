@@ -22,6 +22,7 @@ https://discord.gg/5Hus6fM
 * 🇵🇭 Tagalog
 * 🇵🇱 Polish
 * 🇮🇳 Hindi
+* 🇮🇳 Malayalam
 
 **SCREENSHOTS:**
 
