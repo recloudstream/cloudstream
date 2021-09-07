@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -39,6 +40,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val localePreference = findPreference<Preference>(getString(R.string.locale_key))!!
         val benenePreference = findPreference<Preference>(getString(R.string.benene_count))!!
         val watchQualityPreference = findPreference<Preference>(getString(R.string.quality_pref_key))!!
+        val legalPreference = findPreference<Preference>(getString(R.string.legal_notice_key))!!
+
+        legalPreference.setOnPreferenceClickListener {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(it.context)
+            builder.setTitle(R.string.legal_notice)
+            builder.setMessage(R.string.legal_notice_text)
+            builder.show()
+            return@setOnPreferenceClickListener true
+        }
 
         watchQualityPreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.quality_pref)

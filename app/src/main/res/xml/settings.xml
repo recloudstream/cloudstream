@@ -82,6 +82,12 @@
             app:isPreferenceVisible="true"
     >
         <Preference
+                android:key="@string/legal_notice_key"
+                android:title="@string/legal_notice"
+                android:icon="@drawable/ic_baseline_warning_24">
+        </Preference>
+
+        <Preference
                 android:key="@string/locale_key"
                 android:title="@string/app_language"
                 android:icon="@drawable/ic_baseline_language_24">

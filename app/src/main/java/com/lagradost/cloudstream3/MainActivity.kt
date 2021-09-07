@@ -389,11 +389,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         try {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
             val count = settingsManager.getInt(getString(R.string.benene_count), 0)
-            if (count > 30)
+            if (count > 30 && restrictedApis.size > 0 && !apis.contains(restrictedApis.first()))
                 apis.addAll(restrictedApis)
         } catch (e: Exception) {
             e.printStackTrace()
         }
+/*
+        val relativePath = (Environment.DIRECTORY_DOWNLOADS) + File.separatorChar
+        val displayName = "output.dex" //""output.dex"
+        val file =  getExternalFilesDir(null)?.absolutePath + File.separatorChar + displayName//"${Environment.getExternalStorageDirectory()}${File.separatorChar}$relativePath$displayName"
+        println(file)
 
+        val realFile = File(file)
+        println("REAALFILE: ${realFile.exists()} at ${realFile.length()}"  )
+        val src = ExtensionManager.getSourceFromDex(this, "com.example.testdex2.TestClassToDex", File(file))
+        val output = src?.doMath()
+        println("MASTER OUTPUT = $output")*/
     }
 }
