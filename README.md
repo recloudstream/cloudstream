@@ -29,7 +29,7 @@ https://discord.gg/5Hus6fM
 <img src="./.github/home.jpg" height="400"/><img src="./.github/search.jpg" height="400"/><img src="./.github/downloads.jpg" height="400"/><img src="./.github/results.jpg" height="400"/>
 <img src="./.github/player.jpg" height="200"/>
 
-***Legal notice:***
+***Disclaimer:***
 
 Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
 
