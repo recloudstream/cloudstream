@@ -435,7 +435,7 @@ class ThenosProvider : MainAPI() {
                         it.parentIndex,
                         it.index,
                         it.ratingKey ?: return@mappedSeason,
-                        it.parentThumb?.let { "$apiUrl$it" },
+                        it.thumb?.let { "$apiUrl$it" },
                         it.originallyAvailableAt,
                         (it.audienceRating?.times(10))?.toInt(),
                         it.summary
