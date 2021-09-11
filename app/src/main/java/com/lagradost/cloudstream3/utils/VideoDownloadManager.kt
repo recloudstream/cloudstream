@@ -96,6 +96,7 @@ object VideoDownloadManager {
     interface IDownloadableMinimum {
         val url: String
         val referer: String
+        val headers: Map<String, String>
     }
 
     fun IDownloadableMinimum.getId(): Int {
@@ -833,6 +834,9 @@ object VideoDownloadManager {
         connection.setRequestProperty("sec-fetch-user", "?1")
         connection.setRequestProperty("sec-fetch-mode", "navigate")
         connection.setRequestProperty("sec-fetch-dest", "video")
+        link.headers.entries.forEach {
+            connection.setRequestProperty(it.key, it.value)
+        }
 
         if (resume)
             connection.setRequestProperty("Range", "bytes=${fileLength}-")

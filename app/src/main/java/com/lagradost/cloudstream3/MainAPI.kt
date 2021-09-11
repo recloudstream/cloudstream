@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import ThenosProvider
 import android.app.Activity
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -42,6 +43,7 @@ object APIHolder {
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
         AsiaFlixProvider(),
+        ThenosProvider()
     )
 
     val restrictedApis = arrayListOf(

@@ -10,12 +10,14 @@ data class ExtractorLink(
     override val referer: String,
     val quality: Int,
     val isM3u8: Boolean = false,
+    override val headers: Map<String, String> = mapOf()
 ) : VideoDownloadManager.IDownloadableMinimum
 
 data class ExtractorSubtitleLink(
     val name: String,
     override val url: String,
     override val referer: String,
+    override val headers: Map<String, String> = mapOf()
 ) : VideoDownloadManager.IDownloadableMinimum
 
 enum class Qualities(var value: Int) {

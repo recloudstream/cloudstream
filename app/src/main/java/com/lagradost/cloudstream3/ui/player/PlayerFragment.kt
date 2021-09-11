@@ -1797,7 +1797,7 @@ class PlayerFragment : Fragment() {
                                 "sec-fetch-user" to "?1",
                                 "sec-fetch-mode" to "navigate",
                                 "sec-fetch-dest" to "video"
-                            )
+                            ) + currentUrl.headers // Adds the headers from the provider, e.g Authorization
                             setDefaultRequestProperties(headers)
                         }
                     }
