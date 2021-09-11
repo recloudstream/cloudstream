@@ -135,13 +135,6 @@
                     android:data="https://github.com/LagradOst/QuickNovel"/>
         </Preference>
         <Preference
-                android:title="@string/anim"
-                android:icon="@drawable/shiro_icon"
-                app:summary="https://github.com/Blatzar/shiro-app">
-            <intent android:action="android.intent.action.VIEW"
-                    android:data="https://github.com/Blatzar/shiro-app"/>
-        </Preference>
-        <Preference
                 android:title="@string/discord"
                 android:icon="@drawable/ic_baseline_discord_24"
                 app:summary="https://discord.gg/5Hus6fM">
