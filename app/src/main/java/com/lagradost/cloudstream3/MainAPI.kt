@@ -32,6 +32,7 @@ object APIHolder {
         //ShiroProvider(), // v2 fucked me
         //AnimePaheProvider(), //ddos guard
         AnimeFlickProvider(),
+        KawaiifuProvider(),
 
         TenshiProvider(),
         WcoProvider(),
