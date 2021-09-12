@@ -26,15 +26,16 @@ class KawaiifuProvider : MainAPI() {
         val soup = Jsoup.parse(khttp.get(mainUrl).text)
 
         items.add(HomePageList("Latest Updates", soup.select(".today-update .item").map {
-            AnimeSearchResponse(
-                it.selectFirst("img").attr("alt"),
+         val title = it.selectFirst("img").attr("alt")
+         AnimeSearchResponse(
+                title,
                 it.selectFirst("a").attr("href"),
                 this.name,
                 TvType.Anime,
                 it.selectFirst("img").attr("src"),
                 it.selectFirst("h4 > a").attr("href").split("-").last().toIntOrNull(),
                 null,
-                EnumSet.of(DubStatus.Subbed),
+                if (title.contains("(DUB)") EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
                 null,
                 null
             )
@@ -43,15 +44,16 @@ class KawaiifuProvider : MainAPI() {
             try {
                 val title = section.selectFirst(".title").text()
                 val anime = section.select(".list-film > .item").map { ani ->
-                    AnimeSearchResponse(
-                        ani.selectFirst("img").attr("alt"),
+                val animTitle = ani.selectFirst("img").attr("alt")
+                AnimeSearchResponse(
+                        animTitle,
                         ani.selectFirst("a").attr("href"),
                         this.name,
                         TvType.Anime,
                         ani.selectFirst("img").attr("src"),
                         ani.selectFirst(".vl-chil-date").text().toIntOrNull(),
                         null,
-                        EnumSet.of(DubStatus.Subbed),
+                        if (animTitle.contains("(DUB)") EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
                         null,
                         null
                     )
@@ -85,7 +87,7 @@ class KawaiifuProvider : MainAPI() {
                 poster,
                 year,
                 null,
-                EnumSet.of(DubStatus.Subbed),
+                if (title.contains("(DUB)") EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
                 null,
                 null,
             )
