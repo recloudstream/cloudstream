@@ -226,6 +226,8 @@ object VideoDownloadManager {
         progress: Long,
         total: Long,
     ) {
+        if(total <= 0) return // crash, invalid data
+
         main { // DON'T WANT TO SLOW IT DOWN
             val builder = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
                 .setAutoCancel(true)

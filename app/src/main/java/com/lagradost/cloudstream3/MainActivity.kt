@@ -25,6 +25,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -146,16 +147,20 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     private fun enterPIPMode() {
         if (!shouldShowPIPMode(canEnterPipMode) || !canShowPipMode) return
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            try {
-                enterPictureInPictureMode(PictureInPictureParams.Builder().build())
-            } catch (e: Exception) {
-                enterPictureInPictureMode()
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                try {
+                    enterPictureInPictureMode(PictureInPictureParams.Builder().build())
+                } catch (e: Exception) {
+                    enterPictureInPictureMode()
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    enterPictureInPictureMode()
+                }
             }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                enterPictureInPictureMode()
-            }
+        } catch (e : Exception) {
+            logError(e)
         }
     }
 

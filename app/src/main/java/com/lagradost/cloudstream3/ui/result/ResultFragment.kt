@@ -558,55 +558,59 @@ class ResultFragment : Fragment() {
                 }
 
                 ACTION_SHOW_OPTIONS -> {
-                    val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
-                    var dialog: AlertDialog? = null
-                    builder.setTitle(showTitle)
-                    val options = requireContext().resources.getStringArray(R.array.episode_long_click_options)
-                    val optionsValues =
-                        requireContext().resources.getIntArray(R.array.episode_long_click_options_values)
+                    context?.let { ctx ->
+                        val builder = AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                        var dialog: AlertDialog? = null
+                        builder.setTitle(showTitle)
+                        val options = requireContext().resources.getStringArray(R.array.episode_long_click_options)
+                        val optionsValues =
+                            requireContext().resources.getIntArray(R.array.episode_long_click_options_values)
 
-                    val verifiedOptions = ArrayList<String>()
-                    val verifiedOptionsValues = ArrayList<Int>()
+                        val verifiedOptions = ArrayList<String>()
+                        val verifiedOptionsValues = ArrayList<Int>()
 
-                    val hasDownloadSupport = api.hasDownloadSupport
+                        val hasDownloadSupport = api.hasDownloadSupport
 
-                    for (i in options.indices) {
-                        val opv = optionsValues[i]
-                        val op = options[i]
+                        for (i in options.indices) {
+                            val opv = optionsValues[i]
+                            val op = options[i]
 
-                        val isConnected = requireContext().isConnectedToChromecast()
-                        val add = when (opv) {
-                            ACTION_CHROME_CAST_EPISODE -> isConnected
-                            ACTION_CHROME_CAST_MIRROR -> isConnected
-                            ACTION_DOWNLOAD_EPISODE -> hasDownloadSupport
-                            ACTION_DOWNLOAD_MIRROR -> hasDownloadSupport
-                            ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> context?.isAppInstalled(VLC_PACKAGE) ?: false
-                            else -> true
+                            val isConnected = ctx.isConnectedToChromecast()
+                            val add = when (opv) {
+                                ACTION_CHROME_CAST_EPISODE -> isConnected
+                                ACTION_CHROME_CAST_MIRROR -> isConnected
+                                ACTION_DOWNLOAD_EPISODE -> hasDownloadSupport
+                                ACTION_DOWNLOAD_MIRROR -> hasDownloadSupport
+                                ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> context?.isAppInstalled(VLC_PACKAGE) ?: false
+                                else -> true
+                            }
+                            if (add) {
+                                verifiedOptions.add(op)
+                                verifiedOptionsValues.add(opv)
+                            }
                         }
-                        if (add) {
-                            verifiedOptions.add(op)
-                            verifiedOptionsValues.add(opv)
+
+                        builder.setItems(
+                            verifiedOptions.toTypedArray()
+                        ) { _, which ->
+                            handleAction(EpisodeClickEvent(verifiedOptionsValues[which], episodeClick.data))
+                            dialog?.dismiss()
                         }
-                    }
 
-                    builder.setItems(
-                        verifiedOptions.toTypedArray()
-                    ) { _, which ->
-                        handleAction(EpisodeClickEvent(verifiedOptionsValues[which], episodeClick.data))
-                        dialog?.dismiss()
+                        dialog = builder.create()
+                        dialog.show()
                     }
-
-                    dialog = builder.create()
-                    dialog.show()
                 }
                 ACTION_COPY_LINK -> {
-                    acquireSingeExtractorLink(getString(R.string.episode_action_copy_link)) { link ->
-                        val serviceClipboard =
-                            (requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?)
-                                ?: return@acquireSingeExtractorLink
-                        val clip = ClipData.newPlainText(link.name, link.url)
-                        serviceClipboard.setPrimaryClip(clip)
-                        showToast(activity, R.string.copy_link_toast, Toast.LENGTH_SHORT)
+                    activity?.let { act ->
+                        acquireSingeExtractorLink(act.getString(R.string.episode_action_copy_link)) { link ->
+                            val serviceClipboard =
+                                (act.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?)
+                                    ?: return@acquireSingeExtractorLink
+                            val clip = ClipData.newPlainText(link.name, link.url)
+                            serviceClipboard.setPrimaryClip(clip)
+                            showToast(act, R.string.copy_link_toast, Toast.LENGTH_SHORT)
+                        }
                     }
                 }
 
@@ -638,7 +642,7 @@ class ResultFragment : Fragment() {
                         val data = currentLinks ?: return@main
                         val subs = currentSubs
 
-                        val outputDir = requireContext().cacheDir
+                        val outputDir = act.cacheDir
                         val outputFile = withContext(Dispatchers.IO) {
                             File.createTempFile("mirrorlist", ".m3u8", outputDir)
                         }
@@ -682,7 +686,7 @@ class ResultFragment : Fragment() {
                         vlcIntent.putExtra("position", position)
 
                         vlcIntent.component = VLC_COMPONENT
-                        requireContext().setKey(VLC_LAST_ID_KEY, episodeClick.data.id)
+                        act.setKey(VLC_LAST_ID_KEY, episodeClick.data.id)
                         act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
                     }
                 }
@@ -939,7 +943,8 @@ class ResultFragment : Fragment() {
                             }
                             result_descript.setOnClickListener {
                                 val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-                                builder.setMessage(d.plot).setTitle( if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
+                                builder.setMessage(d.plot)
+                                    .setTitle(if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
                                     .show()
                             }
                             result_descript.text = syno
@@ -981,8 +986,7 @@ class ResultFragment : Fragment() {
                                 handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
                                 return@setOnLongClickListener true
                             }
-
-
+                            
 //                            result_options.setOnClickListener {
 //                                val card = currentEpisodes?.first() ?: return@setOnClickListener
 //                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
@@ -1072,7 +1076,7 @@ class ResultFragment : Fragment() {
         val tempUrl = url
         if (tempUrl != null) {
             result_reload_connectionerror.setOnClickListener {
-                viewModel.load(requireContext(), tempUrl, apiName)
+                viewModel.load(it.context, tempUrl, apiName)
             }
 
             result_reload_connection_open_in_browser.setOnClickListener {
@@ -1085,8 +1089,11 @@ class ResultFragment : Fragment() {
                 }
             }
 
-            if (viewModel.resultResponse.value == null)
-                viewModel.load(requireContext(), tempUrl, apiName)
+            if (viewModel.resultResponse.value == null) {
+                context?.let { ctx ->
+                    viewModel.load(ctx, tempUrl, apiName)
+                }
+            }
         }
     }
 }

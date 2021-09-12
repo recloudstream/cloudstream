@@ -45,27 +45,25 @@ class DownloadChildFragment : Fragment() {
     }
 
     private fun updateList(folder: String) = main {
-        val data = withContext(Dispatchers.IO) { context?.getKeys(folder) }
-        if (data == null) {
-            activity?.onBackPressed() // TODO FIX
-            return@main
-        }
-        val eps = withContext(Dispatchers.IO) {
-            data.mapNotNull { key ->
-                context?.getKey<VideoDownloadHelper.DownloadEpisodeCached>(key)
-            }.mapNotNull {
-                val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), it.id)
-                    ?: return@mapNotNull null
-                VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
+        context?.let { ctx ->
+            val data = withContext(Dispatchers.IO) { ctx.getKeys(folder) }
+            val eps = withContext(Dispatchers.IO) {
+                data.mapNotNull { key ->
+                    context?.getKey<VideoDownloadHelper.DownloadEpisodeCached>(key)
+                }.mapNotNull {
+                    val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(ctx, it.id)
+                        ?: return@mapNotNull null
+                    VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
+                }
             }
-        }
-        if (eps.isEmpty()) {
-            activity?.onBackPressed()
-            return@main
-        }
+            if (eps.isEmpty()) {
+                activity?.onBackPressed()
+                return@main
+            }
 
-        (download_child_list?.adapter as DownloadChildAdapter? ?: return@main).cardList = eps
-        download_child_list?.adapter?.notifyDataSetChanged()
+            (download_child_list?.adapter as DownloadChildAdapter? ?: return@main).cardList = eps
+            download_child_list?.adapter?.notifyDataSetChanged()
+        }
     }
 
     var downloadDeleteEventListener: ((Int) -> Unit)? = null

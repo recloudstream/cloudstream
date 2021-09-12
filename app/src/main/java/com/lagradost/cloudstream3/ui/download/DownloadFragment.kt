@@ -112,7 +112,9 @@ class DownloadFragment : Fragment() {
                     if (downloadClickEvent.data !is VideoDownloadHelper.DownloadEpisodeCached) return@DownloadHeaderAdapter
                     handleDownloadClick(activity, downloadClickEvent.data.name, downloadClickEvent)
                     if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
-                        downloadsViewModel.updateList(requireContext())
+                        context?.let { ctx ->
+                            downloadsViewModel.updateList(ctx)
+                        }
                     }
                 }
             )
@@ -121,8 +123,10 @@ class DownloadFragment : Fragment() {
             val list = (download_list?.adapter as DownloadHeaderAdapter?)?.cardList
             if (list != null) {
                 if (list.any { it.data.id == id }) {
-                    setList(ArrayList())
-                    downloadsViewModel.updateList(requireContext())
+                    context?.let { ctx ->
+                        setList(ArrayList())
+                        downloadsViewModel.updateList(ctx)
+                    }
                 }
             }
         }
