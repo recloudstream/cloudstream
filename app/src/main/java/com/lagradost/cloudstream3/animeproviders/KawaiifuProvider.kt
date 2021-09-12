@@ -35,7 +35,7 @@ class KawaiifuProvider : MainAPI() {
                 it.selectFirst("img").attr("src"),
                 it.selectFirst("h4 > a").attr("href").split("-").last().toIntOrNull(),
                 null,
-                if (title.contains("(DUB)") EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
+                if (title.contains("(DUB)")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
                 null,
                 null
             )
@@ -53,7 +53,7 @@ class KawaiifuProvider : MainAPI() {
                         ani.selectFirst("img").attr("src"),
                         ani.selectFirst(".vl-chil-date").text().toIntOrNull(),
                         null,
-                        if (animTitle.contains("(DUB)") EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
+                        if (animTitle.contains("(DUB)")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
                         null,
                         null
                     )
@@ -87,7 +87,7 @@ class KawaiifuProvider : MainAPI() {
                 poster,
                 year,
                 null,
-                if (title.contains("(DUB)") EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
+                if (title.contains("(DUB)")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
                 null,
                 null,
             )
