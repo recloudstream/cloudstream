@@ -13,27 +13,27 @@
         android:layout_marginBottom="5dp"
 >
     <!-- IDK BUT THIS DOES NOT SEAM LIKE A GOOD WAY OF DOING IT -->
-        <!--<LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal">
-            <View
-                    android:layout_weight="0.5"
-                    android:id="@+id/episode_view_procentage"
-                    android:alpha="0.2"
-                    android:background="@color/colorPrimary"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent">
-            </View>
-            <View
-                    android:id="@+id/episode_view_procentage_off"
-                    android:layout_weight="0.10"
-                    android:alpha="0"
-                    android:background="@color/transparent"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent">
-            </View>
-        </LinearLayout>-->
+    <!--<LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal">
+        <View
+                android:layout_weight="0.5"
+                android:id="@+id/episode_view_procentage"
+                android:alpha="0.2"
+                android:background="@color/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+        </View>
+        <View
+                android:id="@+id/episode_view_procentage_off"
+                android:layout_weight="0.10"
+                android:alpha="0"
+                android:background="@color/transparent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+        </View>
+    </LinearLayout>-->
     <androidx.core.widget.ContentLoadingProgressBar
             android:layout_marginBottom="-1.5dp"
             android:id="@+id/episode_progress"
@@ -45,55 +45,70 @@
             android:layout_gravity="bottom"
             android:layout_height="5dp">
     </androidx.core.widget.ContentLoadingProgressBar>
-    <GridLayout android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
         <ImageView
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/episode_play"
                 android:src="@drawable/ic_baseline_play_arrow_24"
-                android:contentDescription="@string/episode_play_img_des"/>
+                android:contentDescription="@string/episode_play_img_des"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+        />
+        <!--marquee_forever-->
         <TextView
                 android:id="@+id/episode_text"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_gravity="center_vertical" android:gravity="center_vertical" tools:text="Episode 1"
-                android:textColor="@color/textColor" android:layout_width="wrap_content"
+                android:layout_marginEnd="50dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical" tools:text="Episode 1"
+                android:textColor="@color/textColor"
+
+                android:scrollHorizontally="true"
+                android:ellipsize="marquee"
+
+                android:marqueeRepeatLimit="0"
+                android:singleLine="true"
+
+                android:layout_width="match_parent"
                 android:layout_height="match_parent">
         </TextView>
+    </LinearLayout>
 
-        <FrameLayout
-                android:layout_gravity="end"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-            <androidx.core.widget.ContentLoadingProgressBar
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/result_episode_progress_downloaded"
-                    android:indeterminate="false"
-                    android:progressDrawable="@drawable/circular_progress_bar"
-                    android:background="@drawable/circle_shape"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:max="100"
-                    android:layout_margin="5dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:progress="0"
-                    android:visibility="visible"
-            />
-            <ImageView
-                    android:visibility="visible"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:padding="2dp"
-                    android:layout_width="30dp"
-                    android:id="@+id/result_episode_download"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_baseline_play_arrow_24"
-                    android:contentDescription="@string/download"/>
-        </FrameLayout>
-    </GridLayout>
+    <FrameLayout
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+        <androidx.core.widget.ContentLoadingProgressBar
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/result_episode_progress_downloaded"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/circular_progress_bar"
+                android:background="@drawable/circle_shape"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:max="100"
+                android:layout_margin="5dp"
+                android:layout_gravity="end|center_vertical"
+                android:progress="0"
+                android:visibility="visible"
+        />
+        <ImageView
+                android:visibility="visible"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="2dp"
+                android:layout_width="30dp"
+                android:id="@+id/result_episode_download"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_baseline_play_arrow_24"
+                android:contentDescription="@string/download"/>
+    </FrameLayout>
 </androidx.cardview.widget.CardView>

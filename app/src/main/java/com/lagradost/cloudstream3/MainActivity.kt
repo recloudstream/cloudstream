@@ -23,8 +23,12 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
+import com.lagradost.cloudstream3.APIHolder.getApiSettings
+import com.lagradost.cloudstream3.APIHolder.getApiTypeSettings
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
+import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.DownloadChildFragment
 import com.lagradost.cloudstream3.ui.download.DownloadFragment
@@ -394,6 +398,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        APIRepository.dubStatusActive = getApiDubstatusSettings()
+
 /*
         val relativePath = (Environment.DIRECTORY_DOWNLOADS) + File.separatorChar
         val displayName = "output.dex" //""output.dex"

@@ -20,47 +20,53 @@
         </Preference>
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_picture_in_picture_alt_24"
-                app:key="pip_enabled"
+                app:key="@string/pip_enabled_key"
                 android:title="@string/picture_in_picture"
                 android:summary="@string/picture_in_picture_des"
                 app:defaultValue="true"
         />
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_aspect_ratio_24"
-                app:key="player_resize_enabled"
+                app:key="@string/player_resize_enabled_key"
                 android:title="@string/player_size_settings"
-                android:summary="@string/player_size_setthings_des"
+                android:summary="@string/player_size_settings_des"
                 app:defaultValue="true"
         />
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_speed_24"
-                app:key="playback_speed_enabled"
-                android:title="@string/eigengraumode_setthings"
-                android:summary="@string/eigengraumode_setthings_des"
+                app:key="@string/playback_speed_enabled_key"
+                android:title="@string/eigengraumode_settings"
+                android:summary="@string/eigengraumode_settings_des"
                 app:defaultValue="true"
         />
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_ondemand_video_24"
-                app:key="swipe_enabled"
-                android:title="@string/swipe_to_seek_setthings"
-                android:summary="@string/swipe_to_seek_setthings_des"
+                app:key="@string/swipe_enabled_key"
+                android:title="@string/swipe_to_seek_settings"
+                android:summary="@string/swipe_to_seek_settings_des"
                 app:defaultValue="true"
         />
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_ondemand_video_24"
-                app:key="swipe_vertical_enabled"
+                app:key="@string/swipe_vertical_enabled_key"
                 android:title="@string/swipe_to_change_settings"
                 android:summary="@string/swipe_to_change_settings_des"
                 app:defaultValue="true"
         />
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_touch_app_24"
-                app:key="double_tap_enabled"
-                android:title="@string/double_tap_to_seek_setthings"
-                android:summary="@string/double_tap_to_seek_setthings_des"
+                app:key="@string/double_tap_enabled_key"
+                android:title="@string/double_tap_to_seek_settings"
+                android:summary="@string/double_tap_to_seek_settings_des"
                 app:defaultValue="false"
         />
-
+        <SwitchPreference
+                android:icon="@drawable/ic_baseline_brightness_7_24"
+                app:key="@string/use_system_brightness_key"
+                android:title="@string/use_system_brightness_settings"
+                android:summary="@string/use_system_brightness_settings_des"
+                app:defaultValue="false"
+        />
     </PreferenceCategory>
     <PreferenceCategory
             android:key="search"
@@ -74,6 +80,11 @@
                 android:summary="@string/advanced_search_des"
                 app:defaultValue="true"
         />
+        <Preference
+                android:key="@string/display_sub_key"
+                android:title="@string/display_subbed_dubbed_settings"
+                android:icon="@drawable/ic_outline_voice_over_off_24">
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -96,20 +107,20 @@
                 android:key="acra.disable"
                 android:icon="@drawable/ic_baseline_bug_report_24"
                 android:title="@string/pref_disable_acra"
-                android:summaryOff="@string/bug_report_setthings_off"
-                android:summaryOn="@string/bug_report_setthings_on"
+                android:summaryOff="@string/bug_report_settings_off"
+                android:summaryOn="@string/bug_report_settings_on"
                 android:defaultValue="false"/>
         <SwitchPreference
                 app:key="@string/auto_update_key"
-                android:title="@string/updates_setthings"
-                android:summary="@string/updates_setthings_des"
+                android:title="@string/updates_settings"
+                android:summary="@string/updates_settings_des"
                 app:defaultValue="true"
                 android:icon="@drawable/ic_baseline_notifications_active_24"
         />
         <SwitchPreference
                 app:key="@string/prerelease_update_key"
-                android:title="@string/uprereleases_setthings"
-                android:summary="@string/uprereleases_setthings_des"
+                android:title="@string/uprereleases_settings"
+                android:summary="@string/uprereleases_settings_des"
                 app:defaultValue="false"
                 android:icon="@drawable/ic_baseline_developer_mode_24"
         />

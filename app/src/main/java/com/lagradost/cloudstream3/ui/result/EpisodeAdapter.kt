@@ -139,8 +139,10 @@ class EpisodeAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
             localCard = card
+
             val name = if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"
             episodeText.text = name
+            episodeText.isSelected = true // is needed for text repeating
 
             val displayPos = card.getDisplayPosition()
             episodeProgress?.max = (card.duration / 1000).toInt()

@@ -209,7 +209,7 @@ class GogoanimeProvider : MainAPI() {
             ) "1080" else qualityRegex.find(it.text())?.destructured?.component1().toString()
             ExtractorLink(
                 "Gogoanime",
-                "Gogoanime - " + qual + "p",
+                if(qual == "null") "Gogoanime" else "Gogoanime - " + qual + "p",
                 it.attr("href"),
                 page.url,
                 getQualityFromName(qual),

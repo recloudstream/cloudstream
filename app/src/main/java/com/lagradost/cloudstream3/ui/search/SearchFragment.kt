@@ -17,14 +17,13 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.APIHolder.getApiTypeSettings
-import com.lagradost.cloudstream3.HomePageList
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.providersActive
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.typesActive
 import com.lagradost.cloudstream3.ui.home.HomeFragment
@@ -39,6 +38,18 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment() {
+    companion object {
+        fun List<SearchResponse>.filterSearchResponse(): List<SearchResponse> {
+            return this.filter { response ->
+                if (response is AnimeSearchResponse) {
+                    response.dubStatus?.any { APIRepository.dubStatusActive.contains(it) } ?: false
+                } else {
+                    true
+                }
+            }
+        }
+    }
+
     private lateinit var searchViewModel: SearchViewModel
 
     override fun onCreateView(
@@ -187,7 +198,7 @@ class SearchFragment : Fragment() {
                     toggleSearch(isOn)
                 }
 
-                listView.setOnItemClickListener { _, _, i, _ ->
+                listView.setOnItemClickListener { _, _, _, _ ->
                     val types = HashSet<TvType>()
                     for ((index, api) in apis.withIndex()) {
                         if (listView.checkedItemPositions[index]) {
@@ -199,7 +210,7 @@ class SearchFragment : Fragment() {
                     }
                 }
 
-                listView2.setOnItemClickListener { _, _, i, _ ->
+                listView2.setOnItemClickListener { _, _, _, _ ->
                     for ((index, api) in apis.withIndex()) {
                         var isSupported = false
 
@@ -343,8 +354,12 @@ class SearchFragment : Fragment() {
 
         observe(searchViewModel.currentSearch) { list ->
             (search_master_recycler?.adapter as ParentItemAdapter?)?.apply {
-                items = list.map {
-                    HomePageList(it.apiName, if (it.data is Resource.Success) it.data.value else ArrayList())
+                items = list.map { ongoing ->
+                    val ongoingList = HomePageList(
+                        ongoing.apiName,
+                        if (ongoing.data is Resource.Success) ongoing.data.value.filterSearchResponse() else ArrayList()
+                    )
+                    ongoingList
                 }
                 notifyDataSetChanged()
             }

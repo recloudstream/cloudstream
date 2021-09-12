@@ -6,16 +6,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
+import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity.Companion.setLocale
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlin.concurrent.thread
 
@@ -30,7 +33,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("\uD83C\uDDEC\uD83C\uDDF7", "Greek", "gr"),
         Triple("\uD83C\uDDF8\uD83C\uDDEA", "Swedish", "sv"),
         Triple("\uD83C\uDDF5\uD83C\uDDED", "Tagalog", "tl"),
-        Triple("\uD83C\uDDF5\uD83C\uDDF1", "Polish", "pl"),	
+        Triple("\uD83C\uDDF5\uD83C\uDDF1", "Polish", "pl"),
         Triple("\uD83C\uDDEE\uD83C\uDDF3", "Hindi", "hi"),
         Triple("\uD83C\uDDEE\uD83C\uDDF3", "Malayalam", "ml"),
     ) // idk, if you find a way of automating this it would be great
@@ -43,6 +46,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val benenePreference = findPreference<Preference>(getString(R.string.benene_count))!!
         val watchQualityPreference = findPreference<Preference>(getString(R.string.quality_pref_key))!!
         val legalPreference = findPreference<Preference>(getString(R.string.legal_notice_key))!!
+        val subdubPreference = findPreference<Preference>(getString(R.string.display_sub_key))!!
 
         legalPreference.setOnPreferenceClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(it.context)
@@ -52,12 +56,44 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        subdubPreference.setOnPreferenceClickListener {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            activity?.getApiDubstatusSettings()?.let { current ->
+                val dublist = DubStatus.values()
+                val names = dublist.map { it.name }
+
+                val currentList = ArrayList<Int>()
+                for (i in current) {
+                    currentList.add(dublist.indexOf(i))
+                }
+
+                context?.showMultiDialog(
+                    names,
+                    currentList,
+                    getString(R.string.display_subbed_dubbed_settings),
+                    {}) { selectedList ->
+                    APIRepository.dubStatusActive = selectedList.map { dublist[it] }.toHashSet()
+
+                    settingsManager.edit().putStringSet(
+                        this.getString(R.string.display_sub_key),
+                        selectedList.map { names[it] }.toMutableSet()
+                    ).apply()
+                }
+            }
+
+
+
+            return@setOnPreferenceClickListener true
+        }
+
         watchQualityPreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.quality_pref)
             val prefValues = resources.getIntArray(R.array.quality_pref_values)
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
-            val currentQuality = settingsManager.getInt(getString(R.string.watch_quality_pref), Qualities.values().last().value)
+            val currentQuality =
+                settingsManager.getInt(getString(R.string.watch_quality_pref), Qualities.values().last().value)
             context?.showBottomDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentQuality),

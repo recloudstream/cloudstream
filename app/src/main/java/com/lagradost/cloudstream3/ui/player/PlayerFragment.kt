@@ -16,11 +16,13 @@ import android.graphics.drawable.Icon
 import android.media.AudioManager
 import android.net.Uri
 import android.os.*
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.view.WindowManager.LayoutParams.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -105,6 +107,7 @@ import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.coroutines.*
 import java.io.File
+import java.lang.reflect.Array.setInt
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -437,6 +440,8 @@ class PlayerFragment : Fragment() {
     private var playerResizeEnabled = true//settingsManager!!.getBoolean("player_resize_enabled", false)
     private var doubleTapEnabled = false
     private var useSystemBrightness = false
+    private var useTrueSystemBrightness = false
+    private val fullscreenNotch = true//settingsManager.getBoolean("fullscreen_notch", true)
 
     private var skipTime = 0L
     private var prevDiffX = 0.0
@@ -449,6 +454,63 @@ class PlayerFragment : Fragment() {
     private var currentY = 0F
     private var cachedVolume = 0f
     private var isValidTouch = false
+
+    private fun getBrightness(): Float {
+        return if (useSystemBrightness) {
+            if (useTrueSystemBrightness) {
+                1 - (Settings.System.getInt(
+                    context?.contentResolver,
+                    Settings.System.SCREEN_BRIGHTNESS
+                ) * (1 / 255).toFloat())
+            } else {
+                val lp = activity?.window?.attributes
+                1 - if (lp?.screenBrightness ?: -1.0f <= 0f)
+                    (Settings.System.getInt(
+                        context?.contentResolver,
+                        Settings.System.SCREEN_BRIGHTNESS
+                    ) * (1 / 255).toFloat())
+                else lp?.screenBrightness!!
+            }
+        } else brightness_overlay.alpha
+    }
+
+    private fun setBrightness(context: Context?, alpha: Float) {
+        val realAlpha = minOf(1f, maxOf(alpha, 0.005f)) // clamp
+        if (useSystemBrightness) {
+            if (useTrueSystemBrightness) {
+                Settings.System.putInt(
+                    context?.contentResolver,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+                )
+
+                Settings.System.putInt(
+                    context?.contentResolver,
+                    Settings.System.SCREEN_BRIGHTNESS, (realAlpha * 255).toInt()
+                )
+            } else {
+                val lp = activity?.window?.attributes
+                lp?.screenBrightness = 1 - realAlpha
+                activity?.window?.attributes = lp
+            }
+        } else {
+            brightness_overlay?.alpha = realAlpha
+        }
+
+        context?.setKey(VIDEO_PLAYER_BRIGHTNESS, realAlpha)
+    }
+
+    private fun changeBrightness(diffY: Float): Float {
+        val currentBrightness = getBrightness()
+        val alpha = minOf(
+            maxOf(
+                0.005f, // BRIGHTNESS_OVERRIDE_OFF doesn't seem to work
+                currentBrightness - diffY * 0.5f
+            ), 1.0f
+        )
+        setBrightness(context, alpha)
+        return alpha
+    }
 
     fun handleMotionEvent(motionEvent: MotionEvent) {
         // TIME_UNSET   ==   -9223372036854775807L
@@ -526,40 +588,9 @@ class PlayerFragment : Fragment() {
                         } else if (progressBarRightHolder != null) {
                             progressBarRightHolder?.alpha = 1f
 
-                            if (useSystemBrightness) {
-                                // https://developer.android.com/reference/android/view/WindowManager.LayoutParams#screenBrightness
-                                val lp = activity?.window?.attributes
-                                val currentBrightness =
-                                    if (lp?.screenBrightness ?: -1.0f <= 0f) (android.provider.Settings.System.getInt(
-                                        context?.contentResolver,
-                                        android.provider.Settings.System.SCREEN_BRIGHTNESS
-                                    ) * (1 / 255).toFloat())
-                                    else lp?.screenBrightness!!
-
-                                val alpha = minOf(
-                                    maxOf(
-                                        0.005f, // BRIGHTNESS_OVERRIDE_OFF doesn't seem to work
-                                        currentBrightness - diffY.toFloat() * 0.5f
-                                    ), 1.0f
-                                )// 0.05f *if (diffY > 0) 1 else -1
-                                lp?.screenBrightness = alpha
-                                activity?.window?.attributes = lp
-
-                                progressBarRight?.max = 100 * 100
-                                progressBarRight?.progress = (alpha * 100 * 100).toInt()
-                            } else {
-                                val alpha = minOf(
-                                    0.95f,
-                                    brightness_overlay.alpha + diffY.toFloat() * 0.5f
-                                ) // 0.05f *if (diffY > 0) 1 else -1
-                                brightness_overlay?.alpha = alpha
-
-                                context?.setKey(VIDEO_PLAYER_BRIGHTNESS, alpha)
-
-                                progressBarRight?.max = 100 * 100
-                                progressBarRight?.progress = ((1f - alpha) * 100 * 100).toInt()
-                            }
-
+                            val alpha = changeBrightness(-diffY.toFloat())
+                            progressBarRight?.max = 100 * 100
+                            progressBarRight?.progress = ((1f - alpha) * 100 * 100).toInt()
                             currentY = motionEvent.rawY
                         }
                     }
@@ -715,9 +746,9 @@ class PlayerFragment : Fragment() {
         override fun onChange(selfChange: Boolean) {
             val currentVolume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC)
             val maxVolume = audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-            val progressBarRight = activity.findViewById<ProgressBar>(R.id.progressBarRight)
+            val progressBarLeft = activity.findViewById<ProgressBar>(R.id.progressBarLeft)
             if (currentVolume != null && maxVolume != null) {
-                progressBarRight?.progress = currentVolume * 100 / maxVolume
+                progressBarLeft?.progress = currentVolume * 100 / maxVolume
             }
         }
     }
@@ -980,13 +1011,17 @@ class PlayerFragment : Fragment() {
         SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 
         settingsManager = PreferenceManager.getDefaultSharedPreferences(activity)
-        swipeEnabled = settingsManager.getBoolean("swipe_enabled", true)
-        swipeVerticalEnabled = settingsManager.getBoolean("swipe_vertical_enabled", true)
-        playBackSpeedEnabled = settingsManager.getBoolean("playback_speed_enabled", false)
-        playerResizeEnabled = settingsManager.getBoolean("player_resize_enabled", true)
-        doubleTapEnabled = settingsManager.getBoolean("double_tap_enabled", false)
+        context?.let { ctx ->
+            swipeEnabled = settingsManager.getBoolean(ctx.getString(R.string.swipe_enabled_key), true)
+            swipeVerticalEnabled = settingsManager.getBoolean(ctx.getString(R.string.swipe_vertical_enabled_key), true)
+            playBackSpeedEnabled = settingsManager.getBoolean(ctx.getString(R.string.player_speed), false)
+            playerResizeEnabled = settingsManager.getBoolean(ctx.getString(R.string.player_resize_enabled_key), true)
+            doubleTapEnabled = settingsManager.getBoolean(ctx.getString(R.string.double_tap_enabled_key), false)
+            useSystemBrightness = settingsManager.getBoolean(ctx.getString(R.string.use_system_brightness_key), false)
+        }
 
-        brightness_overlay?.alpha = context?.getKey(VIDEO_PLAYER_BRIGHTNESS, 0f) ?: 0f
+        if (swipeVerticalEnabled)
+            setBrightness(context, context?.getKey(VIDEO_PLAYER_BRIGHTNESS) ?: 1f)
 
         navigationBarHeight = requireContext().getNavigationBarHeight()
         statusBarHeight = requireContext().getStatusBarHeight()
@@ -1578,6 +1613,13 @@ class PlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fullscreenNotch) {
+            val params = activity?.window?.attributes
+            params?.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            activity?.window?.attributes = params
+        }
+
         torrentStream?.currentTorrent?.resume()
         onAudioFocusEvent += ::handlePauseEvent
 
@@ -1598,6 +1640,20 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroy() {
+
+        /*  val lp = activity?.window?.attributes
+
+
+          lp?.screenBrightness = 1f
+          activity?.window?.attributes = lp*/
+        // restoring screen brightness
+        val lp = activity?.window?.attributes
+        lp?.screenBrightness = BRIGHTNESS_OVERRIDE_NONE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            lp?.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+        }
+        activity?.window?.attributes = lp
+
         loading_overlay?.isVisible = false
         savePos()
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged

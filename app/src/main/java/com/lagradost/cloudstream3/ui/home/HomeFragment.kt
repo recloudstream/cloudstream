@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.search.*
+import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -252,8 +253,11 @@ class HomeFragment : Fragment() {
             when (data) {
                 is Resource.Success -> {
                     val d = data.value
+
                     currentHomePage = d
-                    (home_master_recycler?.adapter as ParentItemAdapter?)?.items = d.items
+                    (home_master_recycler?.adapter as ParentItemAdapter?)?.items =
+                        d.items.map { HomePageList(it.name, it.list.filterSearchResponse()) }
+
                     home_master_recycler?.adapter?.notifyDataSetChanged()
                     currentMainList.clear()
                     chooseRandomMainPage()?.let { response ->

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.movieproviders.*
-import com.lagradost.cloudstream3.torrentproviders.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 
@@ -48,7 +47,7 @@ object APIHolder {
     )
 
     val restrictedApis = arrayListOf(
-        NyaaProvider(),
+        //NyaaProvider(), //torrents in cs3 is wack
         TrailersToProvider(),
     )
 
@@ -82,6 +81,21 @@ object APIHolder {
             this.getString(R.string.search_providers_list_key),
             hashSet
         )?.toHashSet() ?: hashSet
+    }
+
+    fun Activity.getApiDubstatusSettings(): HashSet<DubStatus> {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val hashSet = HashSet<DubStatus>()
+        hashSet.addAll(DubStatus.values())
+        val list = settingsManager.getStringSet(
+            this.getString(R.string.display_sub_key),
+            hashSet.map { it.name }.toMutableSet()
+        ) ?: return hashSet
+
+        val names = DubStatus.values().map { it.name }.toHashSet()
+        //if(realSet.isEmpty()) return hashSet
+
+        return list.filter { names.contains(it) }.map { DubStatus.valueOf(it) }.toHashSet()
     }
 
     fun Activity.getApiTypeSettings(): HashSet<TvType> {
@@ -247,7 +261,7 @@ class HomePageResponse(
 
 class HomePageList(
     val name: String,
-    val list: List<SearchResponse>
+    var list: List<SearchResponse>
 )
 
 interface SearchResponse {
