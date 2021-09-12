@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3
 
-import ThenosProvider
 import android.app.Activity
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -10,7 +9,6 @@ import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
-
 
 const val USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"

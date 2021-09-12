@@ -1,10 +1,10 @@
+package com.lagradost.cloudstream3.movieproviders
+
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import java.util.concurrent.TimeUnit
 
 class ThenosProvider : MainAPI() {
@@ -31,7 +31,7 @@ class ThenosProvider : MainAPI() {
     override val vpnStatus: VPNStatus
         get() = VPNStatus.None
 
-    override fun getMainPage(): HomePageResponse? {
+    override fun getMainPage(): HomePageResponse {
         val map = mapOf(
             "New Releases" to "released",
             "Recently Added in Movies" to "recent",
@@ -44,8 +44,8 @@ class ThenosProvider : MainAPI() {
             val response = khttp.get(url)
             val mapped = mapper.readValue<ThenosLoadResponse>(response.text)
 
-            mapped.Metadata?.mapNotNull {
-                it?.toSearchResponse()
+            mapped.Metadata?.mapNotNull { meta ->
+                meta?.toSearchResponse()
             }?.let { searchResponses ->
                 list.add(
                     HomePageList(
@@ -61,7 +61,7 @@ class ThenosProvider : MainAPI() {
         )
     }
 
-    fun secondsToReadable(seconds: Int, completedValue: String): String {
+    private fun secondsToReadable(seconds: Int, completedValue: String): String {
         var secondsLong = seconds.toLong()
         val days = TimeUnit.SECONDS
             .toDays(secondsLong)
@@ -214,9 +214,9 @@ class ThenosProvider : MainAPI() {
         val returnValue = ArrayList<SearchResponse>()
 
         test.Hub?.forEach {
-            it.Metadata?.forEach metadata@{
-                if (it.ratingKey == null || it.title == null) return@metadata
-                it.toSearchResponse()?.let { response -> returnValue.add(response) }
+            it.Metadata?.forEach metadata@{ meta ->
+                if (meta.ratingKey == null || meta.title == null) return@metadata
+                meta.toSearchResponse()?.let { response -> returnValue.add(response) }
             }
         }
 
@@ -254,24 +254,25 @@ class ThenosProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val url = "https://api.thenos.org/library/watch/$data"
+        val url = "$apiUrl/library/watch/$data"
         val response = khttp.get(url)
         val mapped = mapper.readValue<ThenosSource>(response.text)
 
-        mapped.sources?.forEach {
-            val isM3u8 = it.type != "video/mp4"
+        mapped.sources?.forEach { source ->
+            val isM3u8 = source.type != "video/mp4"
             val token = khttp.get("https://token.noss.workers.dev/").text
             val authorization =
                 String(android.util.Base64.decode(token, android.util.Base64.DEFAULT), Charsets.ISO_8859_1)
+
             callback.invoke(
                 ExtractorLink(
                     this.name,
-                    "${this.name} ${it.label ?: ""}",
-                    (it.file)?.split("/")?.lastOrNull()?.let {
+                    "${this.name} ${source.label ?: ""}",
+                    (source.file)?.split("/")?.lastOrNull()?.let {
                         "https://www.googleapis.com/drive/v3/files/$it?alt=media"
                     } ?: return@forEach,
                     "https://www.thenos.org/",
-                    getQualityFromName(it.label ?: ""),
+                    getQualityFromName(source.label ?: ""),
                     isM3u8,
                     mapOf("authorization" to "Bearer $authorization")
                 )
@@ -424,21 +425,21 @@ class ThenosProvider : MainAPI() {
         val url = "$apiUrl/library/metadata/$id/children"
         val response = khttp.get(url)
         val mapped = mapper.readValue<ThenosSeriesResponse>(response.text)
-        mapped.Metadata?.forEach {
-            val fixedUrl = "https://api.thenos.org" + it.key
+        mapped.Metadata?.forEach { series_meta ->
+            val fixedUrl = apiUrl + series_meta.key
             val child = khttp.get(fixedUrl)
             val mappedSeason = mapper.readValue<SeasonResponse>(child.text)
-            mappedSeason.Metadata?.forEach mappedSeason@{
+            mappedSeason.Metadata?.forEach mappedSeason@{ meta ->
                 episodes.add(
                     TvSeriesEpisode(
-                        it.title,
-                        it.parentIndex,
-                        it.index,
-                        it.ratingKey ?: return@mappedSeason,
-                        it.thumb?.let { "$apiUrl$it" },
-                        it.originallyAvailableAt,
-                        (it.audienceRating?.times(10))?.toInt(),
-                        it.summary
+                        meta.title,
+                        meta.parentIndex,
+                        meta.index,
+                        meta.ratingKey ?: return@mappedSeason,
+                        meta.thumb?.let { "$apiUrl$it" },
+                        meta.originallyAvailableAt,
+                        (meta.audienceRating?.times(10))?.toInt(),
+                        meta.summary
                     )
                 )
             }

@@ -24,8 +24,6 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
-import com.lagradost.cloudstream3.APIHolder.getApiSettings
-import com.lagradost.cloudstream3.APIHolder.getApiTypeSettings
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.APIRepository
