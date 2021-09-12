@@ -475,7 +475,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun setBrightness(context: Context?, alpha: Float) {
-        val realAlpha = minOf(1f, maxOf(alpha, 0.005f)) // clamp
+        val realAlpha = minOf(1f - 0.05f, maxOf(alpha, 0f)) // clamp
         if (useSystemBrightness) {
             if (useTrueSystemBrightness) {
                 Settings.System.putInt(
@@ -1021,7 +1021,7 @@ class PlayerFragment : Fragment() {
         }
 
         if (swipeVerticalEnabled)
-            setBrightness(context, context?.getKey(VIDEO_PLAYER_BRIGHTNESS) ?: 1f)
+            setBrightness(context, context?.getKey(VIDEO_PLAYER_BRIGHTNESS) ?: 0f)
 
         navigationBarHeight = requireContext().getNavigationBarHeight()
         statusBarHeight = requireContext().getStatusBarHeight()

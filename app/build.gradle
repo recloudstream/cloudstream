@@ -31,8 +31,8 @@ android {
         applicationId "com.lagradost.cloudstream3"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 24
-        versionName "1.9.8"
+        versionCode 25
+        versionName "1.9.9"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
