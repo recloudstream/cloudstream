@@ -58,3 +58,5 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 + https://animepahe.com
 
 + https://gogoanime.vc
+
++ https://kawaiifu.com
