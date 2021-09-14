@@ -56,7 +56,7 @@ object DownloadButtonSetup {
                 activity?.let { ctx ->
                     val pkg = VideoDownloadManager.getDownloadResumePackage(ctx, id)
                     if (pkg != null) {
-                        VideoDownloadManager.downloadFromResume(ctx, pkg)
+                        VideoDownloadManager.downloadFromResumeUsingWorker(ctx, pkg)
                     } else {
                         VideoDownloadManager.downloadEvent.invoke(
                             Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)

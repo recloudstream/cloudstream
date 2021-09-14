@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.annotation.SuppressLint
+import android.app.*
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -17,12 +18,18 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.bumptech.glide.Glide
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.github.se_bastiaan.torrentstream.StreamStatus
 import com.github.se_bastiaan.torrentstream.Torrent
 import com.github.se_bastiaan.torrentstream.TorrentOptions
 import com.github.se_bastiaan.torrentstream.TorrentStream
 import com.github.se_bastiaan.torrentstream.listeners.TorrentListener
+import com.lagradost.cloudstream3.AnimeLoadResponse
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
@@ -217,7 +224,7 @@ object VideoDownloadManager {
         }
     }
 
-    private fun createNotification(
+    suspend fun createNotification(
         context: Context,
         source: String?,
         linkName: String?,
@@ -225,84 +232,72 @@ object VideoDownloadManager {
         state: DownloadType,
         progress: Long,
         total: Long,
-    ) {
-        if(total <= 0) return // crash, invalid data
+        notificationCallback: (Int, Notification) -> Unit
 
-        main { // DON'T WANT TO SLOW IT DOWN
-            val builder = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
-                .setAutoCancel(true)
-                .setColorized(true)
-                .setOnlyAlertOnce(true)
-                .setShowWhen(false)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setColor(context.colorFromAttribute(R.attr.colorPrimary))
-                .setContentTitle(ep.mainName)
-                .setSmallIcon(
-                    when (state) {
-                        DownloadType.IsDone -> imgDone
-                        DownloadType.IsDownloading -> imgDownloading
-                        DownloadType.IsPaused -> imgPaused
-                        DownloadType.IsFailed -> imgError
-                        DownloadType.IsStopped -> imgStopped
-                    }
-                )
+    ): Notification? {
+        if (total <= 0) return null// crash, invalid data
 
-            if (ep.sourceApiName != null) {
-                builder.setSubText(ep.sourceApiName)
-            }
-
-            if (source != null) {
-                val intent = Intent(context, MainActivity::class.java).apply {
-                    data = source.toUri()
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//        main { // DON'T WANT TO SLOW IT DOWN
+        val builder = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
+            .setAutoCancel(true)
+            .setColorized(true)
+            .setOnlyAlertOnce(true)
+            .setShowWhen(false)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setColor(context.colorFromAttribute(R.attr.colorPrimary))
+            .setContentTitle(ep.mainName)
+            .setSmallIcon(
+                when (state) {
+                    DownloadType.IsDone -> imgDone
+                    DownloadType.IsDownloading -> imgDownloading
+                    DownloadType.IsPaused -> imgPaused
+                    DownloadType.IsFailed -> imgError
+                    DownloadType.IsStopped -> imgStopped
                 }
-                val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-                builder.setContentIntent(pendingIntent)
-            }
+            )
 
-            if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
-                builder.setProgress(total.toInt(), progress.toInt(), false)
-            }
+        if (ep.sourceApiName != null) {
+            builder.setSubText(ep.sourceApiName)
+        }
 
-            val rowTwoExtra = if (ep.name != null) " - ${ep.name}\n" else ""
-            val rowTwo = if (ep.season != null && ep.episode != null) {
-                "${context.getString(R.string.season_short)}${ep.season}:${context.getString(R.string.episode_short)}${ep.episode}" + rowTwoExtra
-            } else if (ep.episode != null) {
-                "${context.getString(R.string.episode)} ${ep.episode}" + rowTwoExtra
-            } else {
-                (ep.name ?: "") + ""
+        if (source != null) {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                data = source.toUri()
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
-            val downloadFormat = context.getString(R.string.download_format)
+            val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            builder.setContentIntent(pendingIntent)
+        }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (ep.poster != null) {
-                    val poster = withContext(Dispatchers.IO) {
-                        context.getImageBitmapFromUrl(ep.poster)
-                    }
-                    if (poster != null)
-                        builder.setLargeIcon(poster)
+        if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
+            builder.setProgress(total.toInt(), progress.toInt(), false)
+        }
+
+        val rowTwoExtra = if (ep.name != null) " - ${ep.name}\n" else ""
+        val rowTwo = if (ep.season != null && ep.episode != null) {
+            "${context.getString(R.string.season_short)}${ep.season}:${context.getString(R.string.episode_short)}${ep.episode}" + rowTwoExtra
+        } else if (ep.episode != null) {
+            "${context.getString(R.string.episode)} ${ep.episode}" + rowTwoExtra
+        } else {
+            (ep.name ?: "") + ""
+        }
+        val downloadFormat = context.getString(R.string.download_format)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (ep.poster != null) {
+                val poster = withContext(Dispatchers.IO) {
+                    context.getImageBitmapFromUrl(ep.poster)
                 }
+                if (poster != null)
+                    builder.setLargeIcon(poster)
+            }
 
-                val progressPercentage = progress * 100 / total
-                val progressMbString = "%.1f".format(progress / 1000000f)
-                val totalMbString = "%.1f".format(total / 1000000f)
-                val bigText =
-                    if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
-                        (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString MB/$totalMbString MB)"
-                    } else if (state == DownloadType.IsFailed) {
-                        downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
-                    } else if (state == DownloadType.IsDone) {
-                        downloadFormat.format(context.getString(R.string.download_done), rowTwo)
-                    } else {
-                        downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
-                    }
-
-                val bodyStyle = NotificationCompat.BigTextStyle()
-                bodyStyle.bigText(bigText)
-                builder.setStyle(bodyStyle)
-            } else {
-                val txt = if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
-                    rowTwo
+            val progressPercentage = progress * 100 / total
+            val progressMbString = "%.1f".format(progress / 1000000f)
+            val totalMbString = "%.1f".format(total / 1000000f)
+            val bigText =
+                if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
+                    (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString MB/$totalMbString MB)"
                 } else if (state == DownloadType.IsFailed) {
                     downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
                 } else if (state == DownloadType.IsDone) {
@@ -311,68 +306,86 @@ object VideoDownloadManager {
                     downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
                 }
 
-                builder.setContentText(txt)
+            val bodyStyle = NotificationCompat.BigTextStyle()
+            bodyStyle.bigText(bigText)
+            builder.setStyle(bodyStyle)
+        } else {
+            val txt = if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
+                rowTwo
+            } else if (state == DownloadType.IsFailed) {
+                downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
+            } else if (state == DownloadType.IsDone) {
+                downloadFormat.format(context.getString(R.string.download_done), rowTwo)
+            } else {
+                downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
             }
 
-            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val actionTypes: MutableList<DownloadActionType> = ArrayList()
-                // INIT
-                if (state == DownloadType.IsDownloading) {
-                    actionTypes.add(DownloadActionType.Pause)
-                    actionTypes.add(DownloadActionType.Stop)
-                }
+            builder.setContentText(txt)
+        }
 
-                if (state == DownloadType.IsPaused) {
-                    actionTypes.add(DownloadActionType.Resume)
-                    actionTypes.add(DownloadActionType.Stop)
-                }
-
-                // ADD ACTIONS
-                for ((index, i) in actionTypes.withIndex()) {
-                    val actionResultIntent = Intent(context, VideoDownloadService::class.java)
-
-                    actionResultIntent.putExtra(
-                        "type", when (i) {
-                            DownloadActionType.Resume -> "resume"
-                            DownloadActionType.Pause -> "pause"
-                            DownloadActionType.Stop -> "stop"
-                        }
-                    )
-
-                    actionResultIntent.putExtra("id", ep.id)
-
-                    val pending: PendingIntent = PendingIntent.getService(
-                        // BECAUSE episodes lying near will have the same id +1, index will give the same requested as the previous episode, *100000 fixes this
-                        context, (4337 + index * 100000 + ep.id),
-                        actionResultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-
-                    builder.addAction(
-                        NotificationCompat.Action(
-                            when (i) {
-                                DownloadActionType.Resume -> pressToResumeIcon
-                                DownloadActionType.Pause -> pressToPauseIcon
-                                DownloadActionType.Stop -> pressToStopIcon
-                            }, when (i) {
-                                DownloadActionType.Resume -> context.getString(R.string.resume)
-                                DownloadActionType.Pause -> context.getString(R.string.pause)
-                                DownloadActionType.Stop -> context.getString(R.string.cancel)
-                            }, pending
-                        )
-                    )
-                }
+        if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val actionTypes: MutableList<DownloadActionType> = ArrayList()
+            // INIT
+            if (state == DownloadType.IsDownloading) {
+                actionTypes.add(DownloadActionType.Pause)
+                actionTypes.add(DownloadActionType.Stop)
             }
 
-            if (!hasCreatedNotChanel) {
-                context.createNotificationChannel()
+            if (state == DownloadType.IsPaused) {
+                actionTypes.add(DownloadActionType.Resume)
+                actionTypes.add(DownloadActionType.Stop)
             }
 
-            with(NotificationManagerCompat.from(context)) {
-                // notificationId is a unique int for each notification that you must define
-                notify(ep.id, builder.build())
+            // ADD ACTIONS
+            for ((index, i) in actionTypes.withIndex()) {
+                val actionResultIntent = Intent(context, VideoDownloadService::class.java)
+
+                actionResultIntent.putExtra(
+                    "type", when (i) {
+                        DownloadActionType.Resume -> "resume"
+                        DownloadActionType.Pause -> "pause"
+                        DownloadActionType.Stop -> "stop"
+                    }
+                )
+
+                actionResultIntent.putExtra("id", ep.id)
+
+                val pending: PendingIntent = PendingIntent.getService(
+                    // BECAUSE episodes lying near will have the same id +1, index will give the same requested as the previous episode, *100000 fixes this
+                    context, (4337 + index * 100000 + ep.id),
+                    actionResultIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+
+                builder.addAction(
+                    NotificationCompat.Action(
+                        when (i) {
+                            DownloadActionType.Resume -> pressToResumeIcon
+                            DownloadActionType.Pause -> pressToPauseIcon
+                            DownloadActionType.Stop -> pressToStopIcon
+                        }, when (i) {
+                            DownloadActionType.Resume -> context.getString(R.string.resume)
+                            DownloadActionType.Pause -> context.getString(R.string.pause)
+                            DownloadActionType.Stop -> context.getString(R.string.cancel)
+                        }, pending
+                    )
+                )
             }
         }
+
+        if (!hasCreatedNotChanel) {
+            context.createNotificationChannel()
+        }
+
+        val notification = builder.build()
+        notificationCallback(ep.id, notification)
+        with(NotificationManagerCompat.from(context)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(ep.id, notification)
+        }
+        return notification
+
+//        }
     }
 
     private const val reservedChars = "|\\?*<\":>+[]/\'"
@@ -678,7 +691,8 @@ object VideoDownloadManager {
                         createNotificationCallback.invoke(
                             CreateNotificationMetadata(
                                 type,
-                                lengthSize.first, lengthSize.second
+                                lengthSize.first,
+                                lengthSize.second
                             )
                         )
                     }
@@ -816,7 +830,8 @@ object VideoDownloadManager {
         val fileLength = stream.fileLength!!
 
         // CONNECT
-        val connection: URLConnection = URL(link.url.replace(" ", "%20")).openConnection() // IDK OLD PHONES BE WACK
+        val connection: URLConnection =
+            URL(link.url.replace(" ", "%20")).openConnection() // IDK OLD PHONES BE WACK
 
         // SET CONNECTION SETTINGS
         connection.connectTimeout = 10000
@@ -851,7 +866,8 @@ object VideoDownloadManager {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // fuck android
                 connection.contentLengthLong ?: 0L
             } else {
-                connection.getHeaderField("content-length").toLongOrNull() ?: connection.contentLength?.toLong() ?: 0L
+                connection.getHeaderField("content-length").toLongOrNull() ?: connection.contentLength?.toLong()
+                ?: 0L
             }
         } catch (e: Exception) {
             logError(e)
@@ -862,7 +878,11 @@ object VideoDownloadManager {
         if (extension == "mp4" && bytesTotal < 5000000) return ERROR_TOO_SMALL_CONNECTION // DATA IS LESS THAN 5MB, SOMETHING IS WRONG
 
         parentId?.let {
-            context.setKey(KEY_DOWNLOAD_INFO, it.toString(), DownloadedFileInfo(bytesTotal, relativePath, displayName))
+            context.setKey(
+                KEY_DOWNLOAD_INFO,
+                it.toString(),
+                DownloadedFileInfo(bytesTotal, relativePath, displayName)
+            )
         }
 
         // Could use connection.contentType for mime types when creating the file,
@@ -1140,7 +1160,13 @@ object VideoDownloadManager {
                 try {
                     downloadStatus[id] = type
                     downloadStatusEvent.invoke(Pair(id, type))
-                    downloadProgressEvent.invoke(Triple(id, bytesDownloaded, (bytesDownloaded / tsProgress) * totalTs))
+                    downloadProgressEvent.invoke(
+                        Triple(
+                            id,
+                            bytesDownloaded,
+                            (bytesDownloaded / tsProgress) * totalTs
+                        )
+                    )
                 } catch (e: Exception) {
                     // IDK MIGHT ERROR
                 }
@@ -1283,50 +1309,65 @@ object VideoDownloadManager {
         folder: String?,
         ep: DownloadEpisodeMetadata,
         link: ExtractorLink,
+        notificationCallback: (Int, Notification) -> Unit,
         tryResume: Boolean = false,
     ): Int {
         val name = sanitizeFilename(ep.name ?: "${context.getString(R.string.episode)} ${ep.episode}")
 
         if (link.isM3u8 || link.url.endsWith(".m3u8")) {
             val startIndex = if (tryResume) {
-                context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, ep.id.toString(), null)?.extraInfo?.toIntOrNull()
+                context.getKey<DownloadedFileInfo>(
+                    KEY_DOWNLOAD_INFO,
+                    ep.id.toString(),
+                    null
+                )?.extraInfo?.toIntOrNull()
             } else null
             return downloadHLS(context, link, name, folder, ep.id, startIndex) { meta ->
-                createNotification(
-                    context,
-                    source,
-                    link.name,
-                    ep,
-                    meta.type,
-                    meta.bytesDownloaded,
-                    meta.bytesTotal
-                )
+                main {
+                    createNotification(
+                        context,
+                        source,
+                        link.name,
+                        ep,
+                        meta.type,
+                        meta.bytesDownloaded,
+                        meta.bytesTotal,
+                        notificationCallback
+                    )
+                }
             }
         }
 
         return normalSafeApiCall {
             downloadThing(context, link, name, folder, "mp4", tryResume, ep.id) { meta ->
-                createNotification(
-                    context,
-                    source,
-                    link.name,
-                    ep,
-                    meta.type,
-                    meta.bytesDownloaded,
-                    meta.bytesTotal
-                )
+                main {
+                    createNotification(
+                        context,
+                        source,
+                        link.name,
+                        ep,
+                        meta.type,
+                        meta.bytesDownloaded,
+                        meta.bytesTotal,
+                        notificationCallback
+                    )
+                }
             }
+
         } ?: ERROR_UNKNOWN
     }
 
-    private fun downloadCheck(context: Context) {
+    fun downloadCheck(
+        context: Context, notificationCallback: (Int, Notification) -> Unit,
+    ): Int? {
         if (currentDownloads.size < maxConcurrentDownloads && downloadQueue.size > 0) {
             val pkg = downloadQueue.removeFirst()
             val item = pkg.item
             val id = item.ep.id
             if (currentDownloads.contains(id)) { // IF IT IS ALREADY DOWNLOADING, RESUME IT
                 downloadEvent.invoke(Pair(id, DownloadActionType.Resume))
-                return
+                /** ID needs to be returned to the work-manager to properly await notification */
+                return id
             }
 
             currentDownloads.add(id)
@@ -1340,7 +1381,15 @@ object VideoDownloadManager {
                         context.setKey(KEY_RESUME_PACKAGES, id.toString(), DownloadResumePackage(item, index))
                         val connectionResult = withContext(Dispatchers.IO) {
                             normalSafeApiCall {
-                                downloadSingleEpisode(context, item.source, item.folder, item.ep, link, resume)
+                                downloadSingleEpisode(
+                                    context,
+                                    item.source,
+                                    item.folder,
+                                    item.ep,
+                                    link,
+                                    notificationCallback,
+                                    resume
+                                )
                             }
                         }
                         if (connectionResult != null && connectionResult > 0) { // SUCCESS
@@ -1352,10 +1401,12 @@ object VideoDownloadManager {
                     logError(e)
                 } finally {
                     currentDownloads.remove(id)
-                    downloadCheck(context)
+                    // Because otherwise notifications will not get caught by the workmanager
+                    downloadCheckUsingWorker(context)
                 }
             }
         }
+        return null
     }
 
     fun getDownloadFileInfoAndUpdateSettings(context: Context, id: Int): DownloadedFileInfoResult? {
@@ -1414,23 +1465,28 @@ object VideoDownloadManager {
         return context.getKey(KEY_RESUME_PACKAGES, id.toString())
     }
 
-    fun downloadFromResume(context: Activity, pkg: DownloadResumePackage, setKey: Boolean = true) {
+    fun downloadFromResume(
+        context: Context,
+        pkg: DownloadResumePackage,
+        notificationCallback: (Int, Notification) -> Unit,
+        setKey: Boolean = true
+    ) {
         if (!currentDownloads.any { it == pkg.item.ep.id }) {
             if (currentDownloads.size == maxConcurrentDownloads) {
                 main {
-                    showToast( // can be replaced with regular Toast
-                        context,
-                        "${pkg.item.ep.mainName}${pkg.item.ep.episode?.let { " ${context.getString(R.string.episode)} $it " } ?: " "}${
-                            context.getString(
-                                R.string.queued
-                            )
-                        }",
-                        Toast.LENGTH_SHORT
-                    )
+//                    showToast( // can be replaced with regular Toast
+//                        context,
+//                        "${pkg.item.ep.mainName}${pkg.item.ep.episode?.let { " ${context.getString(R.string.episode)} $it " } ?: " "}${
+//                            context.getString(
+//                                R.string.queued
+//                            )
+//                        }",
+//                        Toast.LENGTH_SHORT
+//                    )
                 }
             }
             downloadQueue.addLast(pkg)
-            downloadCheck(context)
+            downloadCheck(context, notificationCallback)
             if (setKey) saveQueue(context)
         } else {
             downloadEvent.invoke(
@@ -1457,15 +1513,78 @@ object VideoDownloadManager {
     }*/
 
     fun downloadEpisode(
-        context: Activity?,
+        context: Context?,
         source: String?,
         folder: String?,
         ep: DownloadEpisodeMetadata,
-        links: List<ExtractorLink>
+        links: List<ExtractorLink>,
+        notificationCallback: (Int, Notification) -> Unit,
     ) {
         if (context == null) return
         if (links.isNotEmpty()) {
-            downloadFromResume(context, DownloadResumePackage(DownloadItem(source, folder, ep, links), null))
+            downloadFromResume(
+                context,
+                DownloadResumePackage(DownloadItem(source, folder, ep, links), null),
+                notificationCallback
+            )
         }
     }
+
+    /** Worker stuff */
+    private fun startWork(context: Context, key: String) {
+        val req = OneTimeWorkRequest.Builder(DownloadFileWorkManager::class.java)
+            .setInputData(
+                Data.Builder()
+                    .putString("key", key)
+                    .build()
+            )
+            .build()
+        (WorkManager.getInstance(context)).enqueueUniqueWork(
+            key,
+            ExistingWorkPolicy.KEEP,
+            req
+        )
+    }
+
+    fun downloadCheckUsingWorker(
+        context: Context,
+    ) {
+        startWork(context, DOWNLOAD_CHECK)
+    }
+
+    fun downloadFromResumeUsingWorker(
+        context: Context,
+        pkg: DownloadResumePackage,
+    ) {
+        val key = pkg.item.ep.id.toString()
+        context.setKey(WORK_KEY_PACKAGE, key, pkg)
+        startWork(context, key)
+    }
+
+    // Keys are needed to transfer the data to the worker reliably and without exceeding the data limit
+    const val WORK_KEY_PACKAGE = "work_key_package"
+    const val WORK_KEY_INFO = "work_key_info"
+
+    fun downloadEpisodeUsingWorker(
+        context: Context,
+        source: String?,
+        folder: String?,
+        ep: DownloadEpisodeMetadata,
+        links: List<ExtractorLink>,
+    ) {
+        val info = DownloadInfo(
+            source, folder, ep, links
+        )
+
+        val key = info.ep.id.toString()
+        context.setKey(WORK_KEY_INFO, key, info)
+        startWork(context, key)
+    }
+
+    data class DownloadInfo(
+        @JsonProperty("source") val source: String?,
+        @JsonProperty("folder") val folder: String?,
+        @JsonProperty("ep") val ep: DownloadEpisodeMetadata,
+        @JsonProperty("links") val links: List<ExtractorLink>
+    )
 }

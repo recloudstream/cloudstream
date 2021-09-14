@@ -24,13 +24,13 @@ android {
             }
         }
     }
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.lagradost.cloudstream3"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 25
         versionName "1.9.9"
 
@@ -131,4 +131,8 @@ dependencies {
 
     // TorrentStream
     implementation 'com.github.TorrentStream:TorrentStream-Android:2.7.0'
+
+    // Downloading
+    implementation "androidx.work:work-runtime:2.7.0-beta01"
+    implementation "androidx.work:work-runtime-ktx:2.7.0-beta01"
 }

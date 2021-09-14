@@ -492,8 +492,8 @@ class ResultFragment : Fragment() {
                     )
 
                     // DOWNLOAD VIDEO
-                    VideoDownloadManager.downloadEpisode(
-                        activity,
+                    VideoDownloadManager.downloadEpisodeUsingWorker(
+                        ctx,
                         src,//url ?: return,
                         folder,
                         meta,
