@@ -1014,7 +1014,7 @@ class PlayerFragment : Fragment() {
         context?.let { ctx ->
             swipeEnabled = settingsManager.getBoolean(ctx.getString(R.string.swipe_enabled_key), true)
             swipeVerticalEnabled = settingsManager.getBoolean(ctx.getString(R.string.swipe_vertical_enabled_key), true)
-            playBackSpeedEnabled = settingsManager.getBoolean(ctx.getString(R.string.player_speed), false)
+            playBackSpeedEnabled = settingsManager.getBoolean(ctx.getString(R.string.playback_speed_enabled_key), true)
             playerResizeEnabled = settingsManager.getBoolean(ctx.getString(R.string.player_resize_enabled_key), true)
             doubleTapEnabled = settingsManager.getBoolean(ctx.getString(R.string.double_tap_enabled_key), false)
             useSystemBrightness = settingsManager.getBoolean(ctx.getString(R.string.use_system_brightness_key), false)

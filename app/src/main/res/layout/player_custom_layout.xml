@@ -479,7 +479,7 @@
                             android:foreground="?attr/selectableItemBackgroundBorderless"
                             android:id="@+id/lock_player"
                             card_view:cardElevation="0dp"
-                            tools:visibility="gone"
+                            tools:visibility="visible"
                     >
                         <LinearLayout
                                 android:layout_width="wrap_content"
@@ -532,7 +532,7 @@
                                 android:foreground="?attr/selectableItemBackgroundBorderless"
                                 card_view:cardElevation="0dp"
                                 android:id="@+id/resize_player"
-                                tools:visibility="gone"
+                                tools:visibility="visible"
                         >
                             <LinearLayout
                                     android:layout_width="wrap_content"
