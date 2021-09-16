@@ -17,6 +17,7 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -107,7 +108,6 @@ import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.coroutines.*
 import java.io.File
-import java.lang.reflect.Array.setInt
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -966,6 +966,12 @@ class PlayerFragment : Fragment() {
             subStyle = style
             subView?.setStyle(ctx.fromSaveToStyle(style))
             subView?.translationY = -style.elevation.toPx.toFloat()
+
+            if (style.fixedTextSize != null) {
+                subView?.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, style.fixedTextSize!!)
+            } else {
+                subView?.setUserDefaultTextSize()
+            }
         }
     }
 
@@ -1014,7 +1020,7 @@ class PlayerFragment : Fragment() {
         context?.let { ctx ->
             swipeEnabled = settingsManager.getBoolean(ctx.getString(R.string.swipe_enabled_key), true)
             swipeVerticalEnabled = settingsManager.getBoolean(ctx.getString(R.string.swipe_vertical_enabled_key), true)
-            playBackSpeedEnabled = settingsManager.getBoolean(ctx.getString(R.string.playback_speed_enabled_key), true)
+            playBackSpeedEnabled = settingsManager.getBoolean(ctx.getString(R.string.playback_speed_enabled_key), false)
             playerResizeEnabled = settingsManager.getBoolean(ctx.getString(R.string.player_resize_enabled_key), true)
             doubleTapEnabled = settingsManager.getBoolean(ctx.getString(R.string.double_tap_enabled_key), false)
             useSystemBrightness = settingsManager.getBoolean(ctx.getString(R.string.use_system_brightness_key), false)
@@ -1739,7 +1745,7 @@ class PlayerFragment : Fragment() {
             endsWith("vtt", true) -> MimeTypes.TEXT_VTT
             endsWith("srt", true) -> MimeTypes.APPLICATION_SUBRIP
             endsWith("xml", true) || endsWith("ttml", true) -> MimeTypes.APPLICATION_TTML
-            else -> MimeTypes.TEXT_VTT
+            else -> MimeTypes.APPLICATION_SUBRIP // TODO get request to see
         }
     }
 

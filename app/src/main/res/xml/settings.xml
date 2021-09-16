@@ -37,7 +37,7 @@
                 app:key="@string/playback_speed_enabled_key"
                 android:title="@string/eigengraumode_settings"
                 android:summary="@string/eigengraumode_settings_des"
-                app:defaultValue="true"
+                app:defaultValue="false"
         />
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_ondemand_video_24"

@@ -123,6 +123,7 @@
     <string name="subs_edge_type">Edge Type</string>
     <string name="subs_subtitle_elevation">Subtitle Elevation</string>
     <string name="subs_font">Font</string>
+    <string name="subs_font_size">Font Size</string>
 
     <string name="search_provider_text_providers">Search using providers</string>
     <string name="search_provider_text_types">Search using types</string>

@@ -580,7 +580,7 @@ object VideoDownloadManager {
                 val currentMimeType = when (extension) {
                     "vtt" -> "text/vtt"
                     "mp4" -> "video/mp4"
-                    "srt" -> "text/plain"
+                    "srt" -> "application/x-subrip"//"text/plain"
                     else -> null
                 }
                 val newFile = ContentValues().apply {

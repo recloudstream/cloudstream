@@ -50,6 +50,8 @@ data class SaveCaptionStyle(
     var typeface: Int?,
     /**in dp**/
     var elevation: Int,
+    /**in sp**/
+    var fixedTextSize: Float?,
 )
 
 class SubtitlesFragment : Fragment() {
@@ -106,6 +108,7 @@ class SubtitlesFragment : Fragment() {
                 getDefColor(1),
                 null,
                 0,
+                null,
             )
         }
 
@@ -277,6 +280,44 @@ class SubtitlesFragment : Fragment() {
         subs_edge_type.setOnLongClickListener {
             state.edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE
             it.context.updateState()
+            showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
+            return@setOnLongClickListener true
+        }
+
+        subs_font_size.setOnClickListener { textView ->
+            val suffix = "sp"
+            val fontSizes = listOf(
+                Pair(null, "Normal"),
+                Pair(6f,"6$suffix"),
+                Pair(8f,"8$suffix"),
+                Pair(9f,"9$suffix"),
+                Pair(10f,"10$suffix"),
+                Pair(11f,"11$suffix"),
+                Pair(12f,"12$suffix"),
+                Pair(14f,"14$suffix"),
+                Pair(18f,"18$suffix"),
+                Pair(24f,"24$suffix"),
+                Pair(30f,"30$suffix"),
+                Pair(36f,"36$suffix"),
+                Pair(48f,"48$suffix"),
+                Pair(60f,"60$suffix"),
+            )
+
+            textView.context.showBottomDialog(
+                fontSizes.map { it.second },
+                fontSizes.map { it.first }.indexOf(state.fixedTextSize),
+                (textView as TextView).text.toString(),
+                false,
+                dismissCallback
+            ) { index ->
+                state.fixedTextSize = fontSizes.map { it.first }[index]
+                //textView.context.updateState() // font size not changed
+            }
+        }
+
+        subs_font_size.setOnLongClickListener { _ ->
+            state.fixedTextSize = null
+            //textView.context.updateState() // font size not changed
             showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
