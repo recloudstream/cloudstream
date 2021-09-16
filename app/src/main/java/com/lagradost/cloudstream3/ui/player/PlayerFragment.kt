@@ -810,9 +810,9 @@ class PlayerFragment : Fragment() {
     }
 
     private val resizeModes = listOf(
-        AspectRatioFrameLayout.RESIZE_MODE_FIT,
-        AspectRatioFrameLayout.RESIZE_MODE_FILL,
-        AspectRatioFrameLayout.RESIZE_MODE_ZOOM,
+        Pair(AspectRatioFrameLayout.RESIZE_MODE_FIT, R.string.resize_fit),
+        Pair(AspectRatioFrameLayout.RESIZE_MODE_FILL, R.string.resize_fill),
+        Pair(AspectRatioFrameLayout.RESIZE_MODE_ZOOM, R.string.resize_zoom),
     )
 
     private var localData: LoadResponse? = null
@@ -1470,14 +1470,17 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        player_view.resizeMode = resizeModes[resizeMode]
+        player_view.resizeMode = resizeModes[resizeMode].first
         if (playerResizeEnabled) {
             resize_player.visibility = VISIBLE
             resize_player.setOnClickListener {
                 resizeMode = (resizeMode + 1) % resizeModes.size
 
                 requireContext().setKey(RESIZE_MODE_KEY, resizeMode)
-                player_view.resizeMode = resizeModes[resizeMode]
+                player_view.resizeMode = resizeModes[resizeMode].first
+                activity?.let { act ->
+                    showToast(act, resizeModes[resizeMode].second, Toast.LENGTH_SHORT);
+                }
                 //exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
             }
         } else {
