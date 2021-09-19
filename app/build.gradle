@@ -130,7 +130,7 @@ dependencies {
     implementation 'org.mozilla:rhino:1.7R4'
 
     // TorrentStream
-    implementation 'com.github.TorrentStream:TorrentStream-Android:2.7.0'
+    //implementation 'com.github.TorrentStream:TorrentStream-Android:2.7.0'
 
     // Downloading
     implementation "androidx.work:work-runtime:2.7.0-beta01"

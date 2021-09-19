@@ -44,11 +44,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.se_bastiaan.torrentstream.StreamStatus
-import com.github.se_bastiaan.torrentstream.Torrent
-import com.github.se_bastiaan.torrentstream.TorrentOptions
-import com.github.se_bastiaan.torrentstream.TorrentStream
-import com.github.se_bastiaan.torrentstream.listeners.TorrentListener
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.TIME_UNSET
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
@@ -172,12 +167,12 @@ data class UriData(
 class PlayerFragment : Fragment() {
 
     // ============ TORRENT ============
-    private var torrentStream: TorrentStream? = null
+    //private var torrentStream: TorrentStream? = null
     private var lastTorrentUrl = ""
-    private val isTorrent: Boolean get() = torrentStream != null
+    //private val isTorrent: Boolean get() = torrentStream != null
     private fun initTorrentStream(torrentUrl: String) {
         if (lastTorrentUrl == torrentUrl) return
-        lastTorrentUrl = torrentUrl
+        /*lastTorrentUrl = torrentUrl
         torrentStream?.stopStream()
         torrentStream = null
 
@@ -232,7 +227,7 @@ class PlayerFragment : Fragment() {
                     println("stream stopped")
                 }
             })
-        }
+        }*/
     }
 
     // =================================
@@ -404,7 +399,7 @@ class PlayerFragment : Fragment() {
         bottom_player_bar?.startAnimation(fadeAnimation)
         player_top_holder?.startAnimation(fadeAnimation)
         //  video_holder?.startAnimation(fadeAnimation)
-        player_torrent_info?.isVisible = (isTorrent && isShowing)
+        //player_torrent_info?.isVisible = (isTorrent && isShowing)
         //  player_torrent_info?.startAnimation(fadeAnimation)
         //video_lock_holder?.startAnimation(fadeAnimation)
     }
@@ -1629,7 +1624,7 @@ class PlayerFragment : Fragment() {
             activity?.window?.attributes = params
         }
 
-        torrentStream?.currentTorrent?.resume()
+        //torrentStream?.currentTorrent?.resume()
         onAudioFocusEvent += ::handlePauseEvent
 
         activity?.hideSystemUI()
@@ -1667,8 +1662,8 @@ class PlayerFragment : Fragment() {
         savePos()
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
-        torrentStream?.stopStream()
-        torrentStream = null
+       // torrentStream?.stopStream()
+       // torrentStream = null
 
         super.onDestroy()
         canEnterPipMode = false
@@ -1685,7 +1680,7 @@ class PlayerFragment : Fragment() {
     override fun onPause() {
         savePos()
         super.onPause()
-        torrentStream?.currentTorrent?.pause()
+       // torrentStream?.currentTorrent?.pause()
         if (Util.SDK_INT <= 23) {
             if (player_view != null) player_view.onPause()
             releasePlayer()
@@ -1928,10 +1923,10 @@ class PlayerFragment : Fragment() {
             var epSeason: Int? = null
             var isEpisodeBased = true
 
-            if (isTorrent) {
+            /*if (isTorrent) {
                 hName = "Torrent Stream"
                 isEpisodeBased = false
-            } else if (isDownloadedFile) {
+            } else*/ if (isDownloadedFile) {
                 hName = uriData.name
                 epEpisode = uriData.episode
                 epSeason = uriData.season
@@ -1992,11 +1987,12 @@ class PlayerFragment : Fragment() {
                     video_title_rez?.text =
                         if (height == null || width == null) currentUrl?.name
                             ?: "" else
-                            if (isTorrent) "${width}x${height}" else
+                           // if (isTorrent) "${width}x${height}" else
                                 if (isDownloadedFile || currentUrl?.name == null) "${width}x${height}" else "${currentUrl.name} - ${width}x${height}"
 
                     if (!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
-                        if (!isDownloadedFile && !isTorrent && exoPlayer.duration in 5_000..10_000) {
+                        //&& !isTorrent
+                        if (!isDownloadedFile  && exoPlayer.duration in 5_000..10_000) {
                             // if(getapi apiName )
                             showToast(activity, R.string.vpn_might_be_needed, LENGTH_SHORT)
                         }

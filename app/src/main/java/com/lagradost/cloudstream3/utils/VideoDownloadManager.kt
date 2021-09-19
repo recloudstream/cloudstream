@@ -1,8 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
-import android.annotation.SuppressLint
-import android.app.*
-import android.app.Activity
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -12,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -24,14 +21,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.github.se_bastiaan.torrentstream.StreamStatus
-import com.github.se_bastiaan.torrentstream.Torrent
-import com.github.se_bastiaan.torrentstream.TorrentOptions
-import com.github.se_bastiaan.torrentstream.TorrentStream
-import com.github.se_bastiaan.torrentstream.listeners.TorrentListener
-import com.lagradost.cloudstream3.AnimeLoadResponse
 import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
@@ -517,22 +507,6 @@ object VideoDownloadManager {
         val bytesTotal: Long,
     )
 
-    fun getSizeAndProgressFromTorrent(torrent: Torrent?, progress: Float?): Pair<Long, Long>? {
-        try {
-            if (torrent == null || progress == null) return null
-            val length = torrent.videoFile?.length() ?: 0
-            if (length > 0) {
-                // val bytesTotal = (length * 100 / progress).toLong()
-                // if (bytesTotal > 0 && length > 0) {
-                return Pair((length * progress / 100).toLong(), length)
-                //}
-            }
-            return null
-        } catch (e: Exception) {
-            return null
-        }
-    }
-
     data class StreamData(
         val errorCode: Int,
         val resume: Boolean? = null,
@@ -623,173 +597,6 @@ object VideoDownloadManager {
         return StreamData(SUCCESS_STREAM, resume, fileLength, fileStream)
     }
 
-    private fun downloadTorrent(
-        context: Context,
-        link: String,
-        name: String,
-        folder: String?,
-        extension: String,
-        //tryResume: Boolean = false,
-        parentId: Int?,
-        createNotificationCallback: (CreateNotificationMetadata) -> Unit
-    ): Int {
-        val stream = setupStream(context, name, folder, extension, false)
-        if (stream.errorCode != SUCCESS_STREAM) return stream.errorCode
-
-        val torrentOptions: TorrentOptions = TorrentOptions.Builder()
-            .saveLocation(context.cacheDir.absolutePath)
-            .removeFilesAfterStop(true)
-            .build()
-
-        val torrentStream = TorrentStream.init(torrentOptions)
-        torrentStream.startStream(link)
-
-        var progress = 0f
-        var isDone = false
-        var isFailed = false
-
-        torrentStream.addListener(object : TorrentListener {
-            override fun onStreamPrepared(torrent: Torrent?) {
-
-                //showToast(context, "Stream Prepared", Toast.LENGTH_SHORT)
-            }
-
-            override fun onStreamStarted(torrent: Torrent?) {
-                // showToast(context, "Stream Started", Toast.LENGTH_SHORT)
-            }
-
-            override fun onStreamError(torrent: Torrent?, e: java.lang.Exception?) {
-                isFailed = true
-                e?.printStackTrace()
-                // showToast(context, e?.localizedMessage ?: "Error loading", Toast.LENGTH_SHORT)
-            }
-
-            override fun onStreamReady(torrent: Torrent?) {
-
-            }
-
-            @SuppressLint("SetTextI18n")
-            override fun onStreamProgress(torrent: Torrent?, status: StreamStatus?) {
-                try {
-                    println("Seeders ${status?.seeds}")
-                    println("Download Speed ${status?.downloadSpeed}")
-                    println("Progress ${status?.progress}%")
-
-                    val lengthSize = getSizeAndProgressFromTorrent(torrent, status?.progress)
-                    if (lengthSize != null) {
-                        progress = status?.progress!!
-                        val type = if (progress >= 100f) DownloadType.IsDone else DownloadType.IsDownloading
-                        parentId?.let { id ->
-                            try {
-                                downloadStatus[id] = type
-                                downloadStatusEvent.invoke(Pair(id, type))
-                                downloadProgressEvent.invoke(Triple(id, lengthSize.first, lengthSize.second))
-                            } catch (e: Exception) {
-                                // IDK MIGHT ERROR
-                            }
-                        }
-                        createNotificationCallback.invoke(
-                            CreateNotificationMetadata(
-                                type,
-                                lengthSize.first,
-                                lengthSize.second
-                            )
-                        )
-                    }
-                    val pro = status?.progress
-                    if (pro != null && pro >= 100) {
-                        isDone = true
-                    }
-
-                } catch (e: IllegalStateException) {
-                    logError(e)
-                }
-            }
-
-            override fun onStreamStopped() {
-                if (progress > 98) {
-                    isDone = true
-                } else {
-                    isFailed = true
-                }
-                println("stream stopped")
-            }
-        })
-
-        fun updateNot(type: DownloadType) {
-            val lengthSize = getSizeAndProgressFromTorrent(torrentStream.currentTorrent, progress) ?: return
-
-            createNotificationCallback.invoke(
-                CreateNotificationMetadata(
-                    type,
-                    lengthSize.first, lengthSize.second
-                )
-            )
-        }
-
-        val downloadEventListener = { event: Pair<Int, DownloadActionType> ->
-            if (event.first == parentId) {
-                when (event.second) {
-                    DownloadActionType.Pause -> {
-                        torrentStream?.currentTorrent?.pause()
-                        updateNot(DownloadType.IsPaused)
-                    }
-                    DownloadActionType.Stop -> {
-                        isFailed = true
-                        torrentStream.stopStream()
-                        torrentStream?.currentTorrent?.videoFile?.delete()
-                        updateNot(DownloadType.IsStopped)
-                        context.removeKey(KEY_RESUME_PACKAGES, event.first.toString())
-                        saveQueue(context)
-                    }
-                    DownloadActionType.Resume -> {
-                        torrentStream?.currentTorrent?.resume()
-                        updateNot(DownloadType.IsDownloading)
-                    }
-                }
-            }
-        }
-
-        if (parentId != null)
-            downloadEvent += downloadEventListener
-
-        var lastProgress = progress
-        var lastUpdateTime = System.currentTimeMillis()
-        while (!isDone && !isFailed) {
-            sleep(100)
-            if (lastProgress != progress) {
-                lastUpdateTime = System.currentTimeMillis()
-                lastProgress = progress
-            }
-            if (progress >= 98f && System.currentTimeMillis() - lastUpdateTime > 10000L) { // after 10 sec set as done
-                isDone = true
-            }
-        }
-
-        if (parentId != null)
-            downloadEvent -= downloadEventListener
-
-        // RETURN MESSAGE
-        return when {
-            isFailed -> {
-                parentId?.let { id -> downloadProgressEvent.invoke(Triple(id, 0, 0)) }
-                SUCCESS_STOPPED
-            }
-            isDone -> {
-                stream.fileStream?.let { fileStream ->
-                    torrentStream?.currentTorrent?.videoStream?.copyTo(fileStream)
-                    torrentStream?.currentTorrent?.videoFile?.delete()
-                }
-
-                SUCCESS_DOWNLOAD_DONE
-            }
-            else -> {
-                SUCCESS_DOWNLOAD_DONE
-                //idk
-            }
-        }
-    }
-
     fun downloadThing(
         context: Context,
         link: IDownloadableMinimum,
@@ -801,17 +608,7 @@ object VideoDownloadManager {
         createNotificationCallback: (CreateNotificationMetadata) -> Unit
     ): Int {
         if (link.url.startsWith("magnet") || link.url.endsWith(".torrent")) {
-            return normalSafeApiCall {
-                downloadTorrent(
-                    context,
-                    link.url,
-                    name,
-                    folder,
-                    extension,
-                    parentId,
-                    createNotificationCallback
-                )
-            } ?: ERROR_UNKNOWN
+            return ERROR_UNKNOWN
         }
 
         val relativePath = getRelativePath(folder)
