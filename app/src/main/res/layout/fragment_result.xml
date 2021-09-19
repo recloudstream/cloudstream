@@ -435,6 +435,13 @@
                     />
                 </LinearLayout>
 
+                <androidx.core.widget.ContentLoadingProgressBar
+                        style="@style/Widget.AppCompat.ProgressBar"
+                        android:id="@+id/result_episode_loading"
+                        android:layout_gravity="center"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp">
+                </androidx.core.widget.ContentLoadingProgressBar>
                 <androidx.recyclerview.widget.RecyclerView
                         android:layout_marginTop="0dp"
                         android:paddingBottom="100dp"

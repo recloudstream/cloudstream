@@ -104,6 +104,11 @@
                 android:icon="@drawable/ic_baseline_language_24">
         </Preference>
         <SwitchPreference
+                android:key="@string/show_fillers_key"
+                android:icon="@drawable/ic_baseline_skip_next_24"
+                android:title="@string/show_fillers_settings"
+                android:defaultValue="true"/>
+        <SwitchPreference
                 android:key="acra.disable"
                 android:icon="@drawable/ic_baseline_bug_report_24"
                 android:title="@string/pref_disable_acra"

@@ -22,9 +22,11 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.text.color
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.cast.framework.CastButtonFactory
@@ -35,6 +37,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
+import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
@@ -92,6 +95,7 @@ data class ResultEpisode(
     val duration: Long, // duration in MS
     val rating: Int?,
     val descript: String?,
+    val isFiller: Boolean?,
 )
 
 fun ResultEpisode.getRealPosition(): Long {
@@ -121,6 +125,7 @@ fun Context.buildResultEpisode(
     index: Int,
     rating: Int?,
     descript: String?,
+    isFiller: Boolean?,
 ): ResultEpisode {
     val posDur = getViewPos(id)
     return ResultEpisode(
@@ -136,6 +141,7 @@ fun Context.buildResultEpisode(
         posDur?.duration ?: 0,
         rating,
         descript,
+        isFiller
     )
 }
 
@@ -442,9 +448,11 @@ class ResultFragment : Fragment() {
                     if (isMovie) null else episodeClick.data.episode
                 )
 
+
                 val folder = when (currentType) {
                     TvType.Anime -> "Anime/$titleName"
                     TvType.Movie -> "Movies"
+                    TvType.AnimeMovie -> "Movies"
                     TvType.TvSeries -> "TVSeries/$titleName"
                     TvType.ONA -> "ONA"
                     TvType.Cartoon -> "Cartoons/$titleName"
@@ -817,11 +825,22 @@ class ResultFragment : Fragment() {
         }
 
         observe(viewModel.publicEpisodes) { episodes ->
-            if (result_episodes == null || result_episodes.adapter == null) return@observe
-            currentEpisodes = episodes
-            (result_episodes?.adapter as EpisodeAdapter?)?.cardList = episodes
-            (result_episodes?.adapter as EpisodeAdapter?)?.updateLayout()
-            (result_episodes?.adapter as EpisodeAdapter?)?.notifyDataSetChanged()
+            when (episodes) {
+                is Resource.Failure -> {
+                    result_episode_loading.isVisible = false
+                }
+                is Resource.Loading -> {
+                    result_episode_loading.isVisible = true
+                }
+                is Resource.Success -> {
+                    result_episode_loading.isVisible = false
+                    if (result_episodes == null || result_episodes.adapter == null) return@observe
+                    currentEpisodes = episodes.value
+                    (result_episodes?.adapter as EpisodeAdapter?)?.cardList = episodes.value
+                    (result_episodes?.adapter as EpisodeAdapter?)?.updateLayout()
+                    (result_episodes?.adapter as EpisodeAdapter?)?.notifyDataSetChanged()
+                }
+            }
         }
 
         observe(viewModel.selectedRange) { range ->
@@ -856,6 +875,10 @@ class ResultFragment : Fragment() {
                 is Resource.Success -> {
                     val d = data.value
                     if (d is LoadResponse) {
+                        if (d !is AnimeLoadResponse && result_episode_loading.isVisible) { // no episode loading when not anime
+                            result_episode_loading.isVisible = false
+                        }
+
                         updateVisStatus(2)
 
                         result_vpn?.text = when (api.vpnStatus) {
@@ -1034,7 +1057,8 @@ class ResultFragment : Fragment() {
                                                         0L,
                                                         0L,
                                                         null,
-                                                        null
+                                                        null,
+                                                        null,
                                                     )
                                                 )
                                             )
@@ -1073,25 +1097,28 @@ class ResultFragment : Fragment() {
             }
         }
 
-        val tempUrl = url
-        if (tempUrl != null) {
-            result_reload_connectionerror.setOnClickListener {
-                viewModel.load(it.context, tempUrl, apiName)
-            }
+        context?.let { ctx ->
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+            val showFillers = settingsManager.getBoolean(ctx.getString(R.string.show_fillers_key), true)
 
-            result_reload_connection_open_in_browser.setOnClickListener {
-                val i = Intent(ACTION_VIEW)
-                i.data = Uri.parse(tempUrl)
-                try {
-                    startActivity(i)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+            val tempUrl = url
+            if (tempUrl != null) {
+                result_reload_connectionerror.setOnClickListener {
+                    viewModel.load(it.context, tempUrl, apiName, showFillers)
                 }
-            }
 
-            if (viewModel.resultResponse.value == null) {
-                context?.let { ctx ->
-                    viewModel.load(ctx, tempUrl, apiName)
+                result_reload_connection_open_in_browser.setOnClickListener {
+                    val i = Intent(ACTION_VIEW)
+                    i.data = Uri.parse(tempUrl)
+                    try {
+                        startActivity(i)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
+                if (viewModel.resultResponse.value == null) {
+                    viewModel.load(ctx, tempUrl, apiName, showFillers)
                 }
             }
         }

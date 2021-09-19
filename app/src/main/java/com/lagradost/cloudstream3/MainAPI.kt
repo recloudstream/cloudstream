@@ -351,6 +351,7 @@ data class AnimeEpisode(
     val date: String? = null,
     val rating: Int? = null,
     val descript: String? = null,
+    val episode : Int? = null,
 )
 
 data class TorrentLoadResponse(

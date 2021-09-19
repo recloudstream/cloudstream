@@ -141,7 +141,7 @@ class EpisodeAdapter(
             localCard = card
 
             val name = if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"
-            episodeText.text = name
+            episodeText.text = if(card.isFiller == true) episodeText.context.getString(R.string.filler_format).format(name) else name
             episodeText.isSelected = true // is needed for text repeating
 
             val displayPos = card.getDisplayPosition()

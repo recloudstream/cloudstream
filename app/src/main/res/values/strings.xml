@@ -21,6 +21,7 @@
     <string name="double_tap_enabled_key" translatable="false">double_tap_enabled_key</string>
     <string name="swipe_vertical_enabled_key" translatable="false">swipe_vertical_enabled_key</string>
     <string name="display_sub_key" translatable="false">display_sub_key</string>
+    <string name="show_fillers_key" translatable="false">show_fillers_key</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
@@ -48,6 +49,7 @@
     <string name="player_speed_text_format" formatted="true">Speed (%.2fx)</string>
     <string name="rated_format" formatted="true">Rated: %.1f</string>
     <string name="new_update_format" formatted="true">New update found!\n%s -> %s</string>
+    <string name="filler_format" formatted="true">(Filler) %s</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Home</string>
@@ -169,6 +171,7 @@
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
     <string name="bug_report_settings_off">Only sends data on crashes</string>
     <string name="bug_report_settings_on">Sends no data</string>
+    <string name="show_fillers_settings">Show filler episode for anime</string>
     <string name="updates_settings">Show app updates</string>
     <string name="updates_settings_des">Automatically search for new updates on start</string>
     <string name="uprereleases_settings">Update to prereleases</string>

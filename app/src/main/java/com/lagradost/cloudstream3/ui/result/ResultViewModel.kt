@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.getFillerEpisodes
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class ResultViewModel : ViewModel() {
     private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
     private val episodeById: MutableLiveData<HashMap<Int, Int>> = MutableLiveData() // lookup by ID to get Index
 
-    private val _publicEpisodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
+    private val _publicEpisodes: MutableLiveData<Resource<List<ResultEpisode>>> = MutableLiveData()
     private val _publicEpisodesCount: MutableLiveData<Int> = MutableLiveData() // before the sorting
     private val _rangeOptions: MutableLiveData<List<String>> = MutableLiveData()
     val selectedRange: MutableLiveData<String> = MutableLiveData()
@@ -48,7 +49,7 @@ class ResultViewModel : ViewModel() {
 
     val resultResponse: LiveData<Resource<Any?>> get() = _resultResponse
     val episodes: LiveData<List<ResultEpisode>> get() = _episodes
-    val publicEpisodes: LiveData<List<ResultEpisode>> get() = _publicEpisodes
+    val publicEpisodes: LiveData<Resource<List<ResultEpisode>>> get() = _publicEpisodes
     val publicEpisodesCount: LiveData<Int> get() = _publicEpisodesCount
 
     private val dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
@@ -106,7 +107,7 @@ class ResultViewModel : ViewModel() {
         val seasons = seasonTypes.toList().map { it.first }.sortedBy { it }
         seasonSelections.postValue(seasons)
         if (seasons.isEmpty()) { // WHAT THE FUCK DID YOU DO????? HOW DID YOU DO THIS
-            _publicEpisodes.postValue(ArrayList())
+            _publicEpisodes.postValue(Resource.Success( ArrayList()))
             return
         }
 
@@ -156,7 +157,7 @@ class ResultViewModel : ViewModel() {
             selectedRange.postValue(allRange)
         }
 
-        _publicEpisodes.postValue(currentList)
+        _publicEpisodes.postValue(Resource.Success( currentList))
     }
 
     fun changeSeason(context: Context, selection: Int?) {
@@ -224,17 +225,18 @@ class ResultViewModel : ViewModel() {
         }
     }
 
-    private fun filterName(name : String?) : String? {
-        if(name == null) return null
+    private fun filterName(name: String?): String? {
+        if (name == null) return null
         Regex("[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
-            if(it.isEmpty())
+            if (it.isEmpty())
                 return null
         }
         return name
     }
 
-    fun load(context: Context, url: String, apiName: String) = viewModelScope.launch {
+    fun load(context: Context, url: String, apiName: String, showFillers : Boolean) = viewModelScope.launch {
         _resultResponse.postValue(Resource.Loading(url))
+        _publicEpisodes.postValue(Resource.Loading())
 
         _apiName.postValue(apiName)
         val api = getApiFromName(apiName)
@@ -273,14 +275,17 @@ class ResultViewModel : ViewModel() {
 
                         val dataList = (if (isDub) d.dubEpisodes else d.subEpisodes)
 
+                        val fillerEpisodes = if(showFillers) safeApiCall { getFillerEpisodes(d.name) } else null
+
                         if (dataList != null) { // TODO dub and sub at the same time
                             val episodes = ArrayList<ResultEpisode>()
                             for ((index, i) in dataList.withIndex()) {
+                                val episode = i.episode ?: (index + 1);
                                 episodes.add(
                                     context.buildResultEpisode(
                                         filterName(i.name),
                                         i.posterUrl,
-                                        index + 1, //TODO MAKE ABLE TO NOT HAVE SOME EPISODE
+                                        episode,
                                         null, // TODO FIX SEASON
                                         i.url,
                                         apiName,
@@ -288,6 +293,10 @@ class ResultViewModel : ViewModel() {
                                         index,
                                         i.rating,
                                         i.descript,
+                                        if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
+                                            it.contains(episode) && it[episode] == true
+                                        }
+                                            ?: false else false,
                                     )
                                 )
                             }
@@ -309,7 +318,8 @@ class ResultViewModel : ViewModel() {
                                     (mainId + index + 1).hashCode(),
                                     index,
                                     i.rating,
-                                    i.descript
+                                    i.descript,
+                                    null,
                                 )
                             )
                         }
@@ -329,6 +339,7 @@ class ResultViewModel : ViewModel() {
                                     0,
                                     null,
                                     null,
+                                    null,
                                 )
                             ), -1
                         )
@@ -345,6 +356,7 @@ class ResultViewModel : ViewModel() {
                                     d.apiName,
                                     (mainId), // HAS SAME ID
                                     0,
+                                    null,
                                     null,
                                     null,
                                 )
