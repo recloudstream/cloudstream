@@ -35,7 +35,7 @@
             </TextView>
             <ListView
                     android:id="@+id/sort_providers"
-                    android:background="?attr/bitDarkerGrayBackground"
+                    android:background="?attr/primaryBlackBackground"
                     tools:listitem="@layout/sort_bottom_single_choice"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -85,7 +85,7 @@
 
             <ListView
                     android:id="@+id/sort_subtitles"
-                    android:background="?attr/bitDarkerGrayBackground"
+                    android:background="?attr/primaryBlackBackground"
                     tools:listitem="@layout/sort_bottom_single_choice"
                     android:layout_width="match_parent"
                     android:layout_rowWeight="1"

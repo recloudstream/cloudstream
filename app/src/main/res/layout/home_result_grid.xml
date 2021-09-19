@@ -11,7 +11,7 @@
         android:elevation="10dp"
         app:cardCornerRadius="@dimen/roundedImageRadius"
         android:id="@+id/backgroundCard"
-        app:cardBackgroundColor="@color/darkBackground"
+        app:cardBackgroundColor="@color/primaryGrayBackground"
         xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
     <ImageView
@@ -57,8 +57,8 @@
     <androidx.core.widget.ContentLoadingProgressBar
             android:layout_marginBottom="-1.5dp"
             android:id="@+id/watchProgress"
-            android:progressTint="@color/colorPrimary"
-            android:progressBackgroundTint="@color/colorPrimary"
+            android:progressTint="?attr/colorPrimary"
+            android:progressBackgroundTint="?attr/colorPrimary"
             style="@android:style/Widget.Material.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             tools:progress="50"
@@ -90,7 +90,7 @@
             android:layout_height="match_parent">
 
         <!--
-                    <ImageView android:id="@+id/text_is_dub" android:tint="@color/colorPrimary"
+                    <ImageView android:id="@+id/text_is_dub" android:tint="?attr/colorPrimary"
                                android:src="@drawable/ic_baseline_subtitles_24" android:layout_width="wrap_content"
                                android:layout_height="20dp">
 

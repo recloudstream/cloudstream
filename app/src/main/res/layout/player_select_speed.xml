@@ -24,7 +24,7 @@
             android:layout_marginTop="-10dp"
             android:paddingTop="10dp"
             android:id="@+id/sort_speed"
-            android:background="?attr/bitDarkerGrayBackground"
+            android:background="?attr/primaryBlackBackground"
             tools:listitem="@layout/sort_bottom_single_choice"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

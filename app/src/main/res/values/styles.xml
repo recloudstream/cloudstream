@@ -1,16 +1,12 @@
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:navigationBarColor">?attr/bitDarkerGrayBackground</item>
+        <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:colorEdgeEffect">?attr/textColor</item>
 
         <!--<item name="android:navigationBarColor">@color/darkBackground</item>-->
-        <item name="android:statusBarColor">@color/grayBackground</item>
+        <item name="android:statusBarColor">?attr/iconGrayBackground</item>
 
         <item name="android:textColorHint">@color/searchColor</item>
         <item name="android:editTextColor">@color/textColor</item>
@@ -37,19 +33,22 @@
         <!--<item name="mediaRouteButtonTint">?attr/colorPrimary</item>-->
 
         <!-- DEF STYLE -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="textColor">@color/textColor</item>
         <item name="colorItemSeen">@color/colorItemSeen</item>
         <item name="grayTextColor">@color/grayTextColor</item>
-        <item name="darkBackground">@color/darkBackground</item>
-        <item name="bitDarkerGrayBackground">@color/bitDarkerGrayBackground</item>
-        <item name="grayBackground">@color/grayBackground</item>
+        <item name="darkBackground">@color/primaryGrayBackground</item>
+        <item name="primaryBlackBackground">@color/primaryBlackBackground</item>
+        <item name="iconGrayBackground">@color/iconGrayBackground</item>
         <item name="boxItemBackground">@color/itemBackground</item>
         <item name="iconColor">@color/iconColor</item>
         <item name="white">#FFF</item>
     </style>
     <style name="LoadedStyle">
         <item name="android:navigationBarColor">?attr/darkBackground</item>
-        <item name="android:windowBackground">?attr/bitDarkerGrayBackground</item>
+        <item name="android:windowBackground">?attr/primaryBlackBackground</item>
     </style>
     <style name="AppSearchViewStyle"
            parent="Theme.MaterialComponents.NoActionBar">
@@ -71,7 +70,6 @@
 
     <style name="PreferenceTheme" parent="@style/AppTheme">
     </style>
-
 
     <style name="Theme.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
@@ -96,8 +94,8 @@
         <item name="tabGravity">center</item>
         <item name="backgroundTint">@color/transparent</item>
         <item name="tabIndicator">@drawable/tab_selector</item>
-        <item name="tabIndicatorColor">@color/colorPrimary</item>
-        <item name="tabTextColor">@color/colorPrimary</item>
+        <item name="tabIndicatorColor">?attr/colorPrimary</item>
+        <item name="tabTextColor">?attr/colorPrimary</item>
         <item name="tabIndicatorFullWidth">false</item>
         <item name="tabIndicatorHeight">3dp</item>
         <item name="tabInlineLabel">true</item>
@@ -106,15 +104,15 @@
     </style>
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:textColor">@color/textColor</item>
-        <item name="android:textColorPrimary">@color/textColor</item>
+        <item name="android:textColor">?attr/textColor</item>
+        <item name="android:textColorPrimary">?attr/textColor</item>
         <!--<item name="android:background">@color/darkBackground</item>-->
         <item name="android:textAllCaps">false</item>
         <!--<item name="android:colorBackground">@color/darkBackground</item>-->
-        <item name="textColorAlertDialogListItem">@color/textColor</item>
-        <item name="colorControlNormal">@color/textColor</item>
+        <item name="textColorAlertDialogListItem">?attr/textColor</item>
+        <item name="colorControlNormal">?attr/textColor</item>
         <!-- colorPrimarySecond used because colorPrimary fails for no reason -->
-        <item name="colorControlActivated">@color/colorPrimarySecond</item>
+        <item name="colorControlActivated">?attr/colorPrimary</item>
 
         <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
         <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
@@ -124,17 +122,17 @@
         <item name="android:windowBackground">@color/transparent</item>
     </style>
     <style name="AlertDialogCustomBlack" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="android:windowBackground">@color/bitDarkerGrayBackground</item>
+        <item name="android:windowBackground">?attr/primaryBlackBackground</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">fill_parent</item>
         <!-- No backgrounds, titles or window float -->
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
-        <item name="android:navigationBarColor">@color/bitDarkerGrayBackground</item>
+        <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
     </style>
 
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
-        <item name="android:backgroundTint">?attr/bitDarkerGrayBackground</item>
+        <item name="android:backgroundTint">?attr/primaryBlackBackground</item>
     </style>
 
     <style name="SettingsItem">
@@ -165,16 +163,16 @@
     </style>
 
     <style name="WhiteButton" parent="NiceButton">
-        <item name="strokeColor">?attr/grayBackground</item>
+        <item name="strokeColor">?attr/iconGrayBackground</item>
         <item name="backgroundTint">?attr/textColor</item>
-        <item name="iconTint">?attr/grayBackground</item>
-        <item name="android:textColor">?attr/grayBackground</item>
-        <item name="rippleColor">?attr/grayBackground</item>
+        <item name="iconTint">?attr/iconGrayBackground</item>
+        <item name="android:textColor">?attr/iconGrayBackground</item>
+        <item name="rippleColor">?attr/iconGrayBackground</item>
     </style>
 
     <style name="BlackButton" parent="NiceButton">
         <item name="strokeColor">?attr/textColor</item>
-        <item name="backgroundTint">?attr/grayBackground</item>
+        <item name="backgroundTint">?attr/iconGrayBackground</item>
         <item name="iconTint">?attr/textColor</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="rippleColor">?attr/textColor</item>
@@ -186,7 +184,7 @@
             @array/cast_expanded_controller_control_buttons
         </item>
         <item name="castButtonColor">@null</item>
-        <item name="castSeekBarProgressAndThumbColor">@color/white</item> <!--@color/white ?attr/colorPrimary-->
+        <item name="castSeekBarProgressAndThumbColor">?attr/white</item> <!--@color/white ?attr/colorPrimary-->
         <item name="castSeekBarSecondaryProgressColor">?attr/darkBackground
         </item> <!--CHECK ?attr/darkBackground ?attr/colorPrimary-->
         <item name="castBackground">?attr/colorPrimary</item>

@@ -19,7 +19,7 @@
             android:elevation="10dp"
             app:cardCornerRadius="@dimen/roundedImageRadius"
             android:id="@+id/backgroundCard"
-            app:cardBackgroundColor="@color/darkBackground"
+            app:cardBackgroundColor="@color/primaryGrayBackground"
     >
 
         <ImageView
@@ -93,7 +93,7 @@
                 android:layout_height="match_parent">
 
 <!--
-            <ImageView android:id="@+id/text_is_dub" android:tint="@color/colorPrimary"
+            <ImageView android:id="@+id/text_is_dub" android:tint="?attr/colorPrimary"
                        android:src="@drawable/ic_baseline_subtitles_24" android:layout_width="wrap_content"
                        android:layout_height="20dp">
 

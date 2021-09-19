@@ -108,7 +108,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-            android:background="?attr/bitDarkerGrayBackground"
+            android:background="?attr/primaryBlackBackground"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:padding="10dp"
             android:id="@+id/download_list"

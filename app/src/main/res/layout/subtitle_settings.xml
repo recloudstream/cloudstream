@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/subs_root"
-        android:background="?attr/bitDarkerGrayBackground"
+        android:background="?attr/primaryBlackBackground"
 >
     <LinearLayout
             android:orientation="vertical"

@@ -44,8 +44,8 @@
                 <androidx.core.widget.ContentLoadingProgressBar
                         android:layout_marginBottom="-1.5dp"
                         android:id="@+id/episode_progress"
-                        android:progressTint="@color/colorPrimary"
-                        android:progressBackgroundTint="@color/colorPrimary"
+                        android:progressTint="?attr/colorPrimary"
+                        android:progressBackgroundTint="?attr/colorPrimary"
                         style="@android:style/Widget.Material.ProgressBar.Horizontal"
                         android:layout_width="match_parent"
                         tools:progress="50"

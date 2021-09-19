@@ -19,8 +19,8 @@
         <attr name="colorItemSeen" format="color"/>
 
         <attr name="darkBackground" format="color"/>
-        <attr name="bitDarkerGrayBackground" format="color"/>
-        <attr name="grayBackground" format="color"/>
+        <attr name="primaryBlackBackground" format="color"/>
+        <attr name="iconGrayBackground" format="color"/>
         <attr name="boxItemBackground" format="color"/>
 
         <attr name="textColor" format="color"/>

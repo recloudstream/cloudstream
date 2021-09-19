@@ -16,7 +16,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="?attr/darkBackground"
-                app:itemRippleColor="@color/colorRipple"
+
                 app:labelVisibilityMode="labeled"
 
                 app:layout_constraintLeft_toLeftOf="parent"

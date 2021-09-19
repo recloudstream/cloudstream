@@ -5,7 +5,7 @@
         android:id="@+id/result_root"
         android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:background="@color/bitDarkerGrayBackground"
+        android:background="?attr/primaryBlackBackground"
         android:clickable="true"
         android:focusable="true"
 >
@@ -32,12 +32,12 @@
 
                 android:visibility="visible"
                 android:textStyle="bold"
-                app:rippleColor="?attr/grayBackground"
-                android:textColor="?attr/grayBackground"
-                app:iconTint="?attr/grayBackground"
+                app:rippleColor="?attr/iconGrayBackground"
+                android:textColor="?attr/iconGrayBackground"
+                app:iconTint="?attr/iconGrayBackground"
                 android:textAllCaps="false"
                 app:iconGravity="textStart"
-                app:strokeColor="?attr/grayBackground"
+                app:strokeColor="?attr/iconGrayBackground"
                 app:backgroundTint="?attr/textColor"
 
                 app:icon="@drawable/ic_baseline_autorenew_24"
@@ -57,7 +57,7 @@
 
                 app:iconGravity="textStart"
                 app:strokeColor="?attr/textColor"
-                android:backgroundTint="?attr/grayBackground"
+                android:backgroundTint="?attr/iconGrayBackground"
                 app:rippleColor="?attr/textColor"
                 android:textColor="?attr/textColor"
                 app:iconTint="?attr/textColor"
@@ -91,22 +91,6 @@
             android:id="@+id/result_finish_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <com.google.android.material.appbar.AppBarLayout
-                android:visibility="gone"
-                android:id="@+id/result_barstatus"
-                android:background="@color/grayBackground"
-                android:layout_width="match_parent"
-                android:alpha="0"
-                tools:alpha="1"
-                android:layout_height="wrap_content">
-            <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/result_toolbar"
-                    android:paddingTop="@dimen/navbarHeight"
-                    app:title="Perfect Run"
-                    app:layout_scrollFlags="scroll|enterAlways"
-                    android:layout_width="match_parent" android:layout_height="wrap_content">
-            </com.google.android.material.appbar.MaterialToolbar>
-        </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
                 android:visibility="gone"
@@ -120,7 +104,7 @@
                     android:scaleType="centerCrop"
                     android:alpha="0.7"
                     tools:src="@drawable/example_poster"
-                    android:background="@color/darkBackground"
+                    android:background="@color/primaryGrayBackground"
                     android:id="@+id/result_poster_blur"
                     tools:ignore="ContentDescription"/>
             <ImageView
@@ -210,12 +194,12 @@
                             android:id="@+id/result_bookmark_button"
                             tools:text="Bookmark"
 
-                            app:rippleColor="?attr/bitDarkerGrayBackground"
+                            app:rippleColor="?attr/primaryBlackBackground"
                             android:textColor="?attr/textColor"
                             app:iconTint="?attr/textColor"
                             android:textAllCaps="false"
                             app:icon="@drawable/ic_outline_remove_red_eye_24"
-                            android:backgroundTint="?attr/grayBackground"
+                            android:backgroundTint="?attr/iconGrayBackground"
                             style="@style/Widget.MaterialComponents.Button"
                             android:layout_width="wrap_content"
                             android:layout_height="50dp">
@@ -410,7 +394,7 @@
                             android:id="@+id/result_season_button"
                             tools:text="Season 1"
 
-                            app:rippleColor="?attr/grayBackground"
+                            app:rippleColor="?attr/iconGrayBackground"
                             android:textColor="?attr/textColor"
                             app:iconTint="?attr/textColor"
                             android:textAllCaps="false"
@@ -427,7 +411,7 @@
                             android:id="@+id/result_episode_select"
                             tools:text="50-100"
 
-                            app:rippleColor="?attr/grayBackground"
+                            app:rippleColor="?attr/iconGrayBackground"
                             android:textColor="?attr/textColor"
                             app:iconTint="?attr/textColor"
                             android:textAllCaps="false"
@@ -466,7 +450,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
             <fragment
-                    app:customCastBackgroundColor="?attr/bitDarkerGrayBackground"
+                    app:customCastBackgroundColor="?attr/primaryBlackBackground"
                     app:castControlButtons="@array/cast_mini_controller_control_buttons"
                     android:id="@+id/cast_mini_controller"
                     android:layout_width="match_parent"

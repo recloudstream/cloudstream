@@ -196,7 +196,7 @@ class ResultFragment : Fragment() {
         super.onResume()
         activity?.let {
             it.window?.navigationBarColor =
-                it.colorFromAttribute(R.attr.bitDarkerGrayBackground)
+                it.colorFromAttribute(R.attr.primaryBlackBackground)
         }
     }
 
@@ -260,7 +260,7 @@ class ResultFragment : Fragment() {
         hideKeyboard()
 
         activity?.fixPaddingStatusbar(result_scroll)
-        activity?.fixPaddingStatusbar(result_barstatus)
+        //activity?.fixPaddingStatusbar(result_barstatus)
 
         val backParameter = result_back.layoutParams as CoordinatorLayout.LayoutParams
         backParameter.setMargins(
@@ -317,10 +317,10 @@ class ResultFragment : Fragment() {
             result_back.visibility = if (setAlpha > 0) VISIBLE else GONE
         })
 
-        result_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-        result_toolbar.setNavigationOnClickListener {
-            activity?.onBackPressed()
-        }
+        //  result_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        // result_toolbar.setNavigationOnClickListener {
+        //     activity?.onBackPressed()
+        // }
 
         result_back.setOnClickListener {
             activity?.popCurrentPage()
@@ -986,7 +986,7 @@ class ResultFragment : Fragment() {
                                 handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
                                 return@setOnLongClickListener true
                             }
-                            
+
 //                            result_options.setOnClickListener {
 //                                val card = currentEpisodes?.first() ?: return@setOnClickListener
 //                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
@@ -1055,7 +1055,7 @@ class ResultFragment : Fragment() {
                                 //val titleName = (if (preferEnglish) d.engName else d.japName) ?: d.name
                                 val titleName = d.name
                                 result_title.text = titleName
-                                result_toolbar.title = titleName
+                                //result_toolbar.title = titleName
                             }
                             else -> result_title.text = d.name
                         }
