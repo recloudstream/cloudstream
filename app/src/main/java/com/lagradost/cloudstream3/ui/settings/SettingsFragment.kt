@@ -26,6 +26,7 @@ import kotlin.concurrent.thread
 class SettingsFragment : PreferenceFragmentCompat() {
     private var beneneCount = 0
 
+    // idk, if you find a way of automating this it would be great
     private val languages = arrayListOf(
         Triple("\uD83C\uDDEC\uD83C\uDDE7", "English", "en"),
         Triple("\uD83C\uDDFB\uD83C\uDDF3", "Viet Nam", "vi"),
@@ -37,7 +38,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("\uD83C\uDDF5\uD83C\uDDF1", "Polish", "pl"),
         Triple("\uD83C\uDDEE\uD83C\uDDF3", "Hindi", "hi"),
         Triple("\uD83C\uDDEE\uD83C\uDDF3", "Malayalam", "ml"),
-    ) // idk, if you find a way of automating this it would be great
+    ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
@@ -142,7 +143,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         localePreference.setOnPreferenceClickListener { pref ->
-            val tempLangs = languages
+            val tempLangs = languages.toMutableList()
             if (beneneCount > 100) {
                 tempLangs.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))
             }
