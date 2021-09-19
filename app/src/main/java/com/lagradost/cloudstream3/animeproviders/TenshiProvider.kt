@@ -35,11 +35,6 @@ class TenshiProvider : MainAPI() {
     override val supportedTypes: Set<TvType>
         get() = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
 
-    private fun autoLoadToken(): Boolean {
-        if (token != null) return true
-        return loadToken()
-    }
-
     private fun loadToken(): Boolean {
         return try {
             val response = khttp.get(mainUrl)
@@ -147,11 +142,10 @@ class TenshiProvider : MainAPI() {
     private fun dateParser(dateString: String): String? {
         val format = SimpleDateFormat("dd 'of' MMM',' yyyy")
         val newFormat = SimpleDateFormat("dd-MM-yyyy")
-        return newFormat.format(
-            format.parse(
-                dateString.replace("th ", " ").replace("st ", " ").replace("nd ", " ").replace("rd ", " ")
-            )
-        )
+        val data = format.parse(
+            dateString.replace("th ", " ").replace("st ", " ").replace("nd ", " ").replace("rd ", " ")
+        ) ?: return null
+        return newFormat.format(data)
     }
 
 //    data class TenshiSearchResponse(
@@ -235,12 +229,12 @@ class TenshiProvider : MainAPI() {
 
         val episodeNodes = document.select("li[class*=\"episode\"] > a")
 
-        val episodes = ArrayList<AnimeEpisode>(episodeNodes?.map {
+        val episodes = ArrayList(episodeNodes?.map {
             AnimeEpisode(
                 it.attr("href"),
                 it.selectFirst(".episode-title")?.text()?.trim(),
                 it.selectFirst("img")?.attr("src"),
-                dateParser(it.selectFirst(".episode-date").text().trim()).toString(),
+                dateParser(it.selectFirst(".episode-date").text().trim()),
                 null,
                 it.attr("data-content").trim(),
             )
