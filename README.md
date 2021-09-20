@@ -23,6 +23,7 @@ https://discord.gg/5Hus6fM
 * 🇵🇱 Polish
 * 🇮🇳 Hindi
 * 🇮🇳 Malayalam
+* 🇪🇸 Spanish
 
 ***SCREENSHOTS:***
 
