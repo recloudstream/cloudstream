@@ -21,13 +21,12 @@ import kotlinx.coroutines.withContext
 
 class DownloadChildFragment : Fragment() {
     companion object {
-        fun newInstance(headerName: String, folder: String) =
-            DownloadChildFragment().apply {
-                arguments = Bundle().apply {
-                    putString("folder", folder)
-                    putString("name", headerName)
-                }
+        fun newInstance(headerName: String, folder: String) : Bundle {
+            return Bundle().apply {
+                putString("folder", folder)
+                putString("name", headerName)
             }
+        }
     }
 
     override fun onDestroyView() {

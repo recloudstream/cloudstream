@@ -5,6 +5,7 @@ import android.app.PictureInPictureParams
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -12,14 +13,23 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import androidx.transition.ChangeBounds
+import androidx.transition.TransitionManager
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
@@ -43,6 +53,7 @@ import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
+import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -172,7 +183,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     private fun AppCompatActivity.backPressed(): Boolean {
-        val currentFragment = supportFragmentManager.fragments.last {
+        /*val currentFragment = supportFragmentManager.fragments.last {
             it.isVisible
         }
 
@@ -200,8 +211,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             backEvent.invoke(true)
             return true
         }
+        */
         backEvent.invoke(false)
-
         return false
     }
 
@@ -282,16 +293,60 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         val navController = findNavController(R.id.nav_host_fragment)
 
-        navOptions = NavOptions.Builder()
+        /*navOptions = NavOptions.Builder()
             .setLaunchSingleTop(true)
             .setEnterAnim(R.anim.nav_enter_anim)
             .setExitAnim(R.anim.nav_exit_anim)
             .setPopEnterAnim(R.anim.nav_pop_enter)
             .setPopExitAnim(R.anim.nav_pop_exit)
             .setPopUpTo(navController.graph.startDestination, false)
-            .build()
+            .build()*/
+        nav_view.setupWithNavController(navController)
 
-        nav_view.setOnNavigationItemSelectedListener { item ->
+        var startUp = true
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+           // nav_view.hideKeyboard()
+            /*if (destination.id != R.id.navigation_player) {
+                requestedOrientation = if (settingsManager?.getBoolean("force_landscape", false) == true) {
+                    ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+                } else {
+                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                }
+            }*/
+
+            // Fucks up anime info layout since that has its own layout
+            cast_mini_controller_holder?.isVisible = destination.id != R.id.navigation_results
+
+            if (listOf(
+                    R.id.navigation_home,
+                    R.id.navigation_search,
+                    R.id.navigation_downloads,
+                    R.id.navigation_settings,
+                    R.id.navigation_download_child
+                ).contains(destination.id)
+            ) {
+                nav_view.visibility = VISIBLE
+                if (nav_view.marginBottom < 0) {
+                    nav_view.layoutParams = nav_view.layoutParams.apply {
+                        val transition = ChangeBounds()
+                        transition.duration = 100 // DURATION OF ANIMATION IN MS
+                        TransitionManager.beginDelayedTransition(homeRoot, transition)
+                        (this as ConstraintLayout.LayoutParams).setMargins(0, 0, 0, 0)
+                    }
+                }
+            } else {
+                if (startUp) nav_view.visibility = GONE
+                nav_view.layoutParams = nav_view.layoutParams.apply {
+                    val transition = ChangeBounds()
+                    transition.duration = 100 // DURATION OF ANIMATION IN MS
+                    TransitionManager.beginDelayedTransition(homeRoot, transition)
+                    (this as ConstraintLayout.LayoutParams).setMargins(0, 0, 0, -nav_view.height)
+                }
+            }
+            startUp = false
+        }
+
+        /*nav_view.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
                     navController.navigate(R.id.navigation_home, null, navOptions)
@@ -307,7 +362,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
             }
             true
-        }
+        }*/
 
         nav_view.itemRippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
 

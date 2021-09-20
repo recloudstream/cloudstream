@@ -9,15 +9,14 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
+import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
-import androidx.annotation.RequiresApi
+import androidx.annotation.*
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
@@ -29,6 +28,7 @@ import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
@@ -68,6 +68,14 @@ object UIHelper {
             if (it != null) {
                 activity?.hideKeyboard(it)
             }
+        }
+    }
+
+    fun Activity?.navigate(@IdRes navigation : Int, arguments : Bundle? = null) {
+        if(this is FragmentActivity) {
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?)?.navController?.navigate(
+                navigation, arguments
+            )
         }
     }
 
@@ -131,7 +139,8 @@ object UIHelper {
     }
 
     fun FragmentActivity.popCurrentPage() {
-        val currentFragment = supportFragmentManager.fragments.lastOrNull {
+        this.onBackPressed()
+        /*val currentFragment = supportFragmentManager.fragments.lastOrNull {
             it.isVisible
         } ?: return
 
@@ -143,7 +152,7 @@ object UIHelper {
                 R.anim.pop_exit
             )
             .remove(currentFragment)
-            .commitAllowingStateLoss()
+            .commitAllowingStateLoss()*/
     }
     /*
     fun FragmentActivity.popCurrentPage(isInPlayer: Boolean, isInExpandedView: Boolean, isInResults: Boolean) {

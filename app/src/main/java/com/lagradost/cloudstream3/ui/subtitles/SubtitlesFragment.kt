@@ -32,6 +32,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import kotlinx.android.synthetic.main.subtitle_settings.*
 
@@ -67,7 +68,10 @@ class SubtitlesFragment : Fragment() {
         }
 
         fun push(activity: Activity?, hide: Boolean = true) {
-            (activity as FragmentActivity?)?.supportFragmentManager?.beginTransaction()
+            activity.navigate(R.id.global_to_navigation_subtitles, Bundle().apply {
+                putBoolean("hide", hide)
+            })
+            /*(activity as FragmentActivity?)?.supportFragmentManager?.beginTransaction()
                 ?.setCustomAnimations(
                     R.anim.enter_anim,
                     R.anim.exit_anim,
@@ -82,7 +86,7 @@ class SubtitlesFragment : Fragment() {
                         }
                     }
                 )
-                ?.commit()
+                ?.commit()*/
         }
 
         private fun getDefColor(id: Int): Int {

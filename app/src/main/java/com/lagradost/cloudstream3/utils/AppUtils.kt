@@ -21,6 +21,7 @@ import com.google.android.gms.common.wrappers.Wrappers
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 
 object AppUtils {
     fun getVideoContentUri(context: Context, videoFilePath: String): Uri? {
@@ -77,10 +78,7 @@ object AppUtils {
     fun AppCompatActivity.loadResult(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0) {
         this.runOnUiThread {
             viewModelStore.clear()
-            this.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
-                .add(R.id.homeRoot, ResultFragment.newInstance(url, apiName, startAction, startValue))
-                .commit()
+            this.navigate(R.id.global_to_navigation_results, ResultFragment.newInstance(url, apiName, startAction, startValue))
         }
     }
 

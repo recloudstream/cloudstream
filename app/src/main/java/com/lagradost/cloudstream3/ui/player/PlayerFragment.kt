@@ -169,6 +169,7 @@ class PlayerFragment : Fragment() {
     // ============ TORRENT ============
     //private var torrentStream: TorrentStream? = null
     private var lastTorrentUrl = ""
+
     //private val isTorrent: Boolean get() = torrentStream != null
     private fun initTorrentStream(torrentUrl: String) {
         if (lastTorrentUrl == torrentUrl) return
@@ -751,29 +752,27 @@ class PlayerFragment : Fragment() {
     private var volumeObserver: SettingsContentObserver? = null
 
     companion object {
-        fun newInstance(data: PlayerData, startPos: Long? = null) =
-            PlayerFragment().apply {
-                arguments = Bundle().apply {
-                    //println(data)
-                    putString("data", mapper.writeValueAsString(data))
-                    println("PUT START: " + startPos)
-                    if (startPos != null) {
-                        putLong(STATE_RESUME_POSITION, startPos)
-                    }
+        fun newInstance(data: PlayerData, startPos: Long? = null): Bundle {
+            return Bundle().apply {
+                //println(data)
+                putString("data", mapper.writeValueAsString(data))
+                println("PUT START: " + startPos)
+                if (startPos != null) {
+                    putLong(STATE_RESUME_POSITION, startPos)
                 }
             }
+        }
 
-        fun newInstance(uriData: UriData, startPos: Long? = null) =
-            PlayerFragment().apply {
-                arguments = Bundle().apply {
-                    //println(data)
-                    putString("uriData", mapper.writeValueAsString(uriData))
+        fun newInstance(uriData: UriData, startPos: Long? = null): Bundle {
+            return Bundle().apply {
+                //println(data)
+                putString("uriData", mapper.writeValueAsString(uriData))
 
-                    if (startPos != null) {
-                        putLong(STATE_RESUME_POSITION, startPos)
-                    }
+                if (startPos != null) {
+                    putLong(STATE_RESUME_POSITION, startPos)
                 }
             }
+        }
     }
 
     private fun savePos() {
@@ -1662,8 +1661,8 @@ class PlayerFragment : Fragment() {
         savePos()
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
-       // torrentStream?.stopStream()
-       // torrentStream = null
+        // torrentStream?.stopStream()
+        // torrentStream = null
 
         super.onDestroy()
         canEnterPipMode = false
@@ -1680,7 +1679,7 @@ class PlayerFragment : Fragment() {
     override fun onPause() {
         savePos()
         super.onPause()
-       // torrentStream?.currentTorrent?.pause()
+        // torrentStream?.currentTorrent?.pause()
         if (Util.SDK_INT <= 23) {
             if (player_view != null) player_view.onPause()
             releasePlayer()
@@ -1987,12 +1986,12 @@ class PlayerFragment : Fragment() {
                     video_title_rez?.text =
                         if (height == null || width == null) currentUrl?.name
                             ?: "" else
-                           // if (isTorrent) "${width}x${height}" else
-                                if (isDownloadedFile || currentUrl?.name == null) "${width}x${height}" else "${currentUrl.name} - ${width}x${height}"
+                        // if (isTorrent) "${width}x${height}" else
+                            if (isDownloadedFile || currentUrl?.name == null) "${width}x${height}" else "${currentUrl.name} - ${width}x${height}"
 
                     if (!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
                         //&& !isTorrent
-                        if (!isDownloadedFile  && exoPlayer.duration in 5_000..10_000) {
+                        if (!isDownloadedFile && exoPlayer.duration in 5_000..10_000) {
                             // if(getapi apiName )
                             showToast(activity, R.string.vpn_might_be_needed, LENGTH_SHORT)
                         }

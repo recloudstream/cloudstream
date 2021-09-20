@@ -13,6 +13,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -92,15 +93,15 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private lateinit var homeViewModel: HomeViewModel
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+       // homeViewModel =
+       //     ViewModelProvider(activity ?: this).get(HomeViewModel::class.java)
 
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -406,6 +407,10 @@ class HomeFragment : Fragment() {
         home_master_recycler.layoutManager = GridLayoutManager(context, 1)
 
         reloadStored()
-        homeViewModel.loadAndCancel(context?.getKey<String>(HOMEPAGE_API))
+        val apiName = context?.getKey<String>(HOMEPAGE_API)
+        if(homeViewModel.apiName.value != apiName) {
+            println("COUGHT HOME : " + homeViewModel.apiName.value + " AT " + apiName)
+            homeViewModel.loadAndCancel(apiName)
+        }
     }
 }

@@ -62,6 +62,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
@@ -152,15 +153,15 @@ fun ResultEpisode.getWatchProgress(): Float {
 
 class ResultFragment : Fragment() {
     companion object {
-        fun newInstance(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0) =
-            ResultFragment().apply {
-                arguments = Bundle().apply {
-                    putString("url", url)
-                    putString("apiName", apiName)
-                    putInt("startAction", startAction)
-                    putInt("startValue", startValue)
-                }
+        fun newInstance(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0): Bundle {
+            return Bundle().apply {
+                putString("url", url)
+                putString("apiName", apiName)
+                putInt("startAction", startAction)
+                putInt("startValue", startValue)
+                putBoolean("restart", true)
             }
+        }
     }
 
     private var currentLoadingCount = 0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
@@ -262,6 +263,11 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val restart = arguments?.getBoolean("restart") ?: false
+        if (restart) {
+            arguments?.putBoolean("restart", false)
+        }
+
         activity?.window?.decorView?.clearFocus()
         hideKeyboard()
 
@@ -283,6 +289,7 @@ class ResultFragment : Fragment() {
         val apiName = arguments?.getString("apiName") ?: return
         startAction = arguments?.getInt("startAction") ?: START_ACTION_NORMAL
         startValue = arguments?.getInt("startValue") ?: START_VALUE_NORMAL
+
 
         val api = getApiFromName(apiName)
         if (media_route_button != null) {
@@ -701,19 +708,12 @@ class ResultFragment : Fragment() {
 
                 ACTION_PLAY_EPISODE_IN_PLAYER -> {
                     if (buildInPlayer) {
-                        (activity as AppCompatActivity?)?.supportFragmentManager?.beginTransaction()
-                            ?.setCustomAnimations(
-                                R.anim.enter_anim,
-                                R.anim.exit_anim,
-                                R.anim.pop_enter,
-                                R.anim.pop_exit
-                            )?.add(
-                                R.id.homeRoot,
-                                PlayerFragment.newInstance(
-                                    PlayerData(index, null, 0),
-                                    episodeClick.data.getRealPosition()
-                                )
-                            )?.commit()
+                        activity.navigate(
+                            R.id.global_to_navigation_player, PlayerFragment.newInstance(
+                                PlayerData(index, null, 0),
+                                episodeClick.data.getRealPosition()
+                            )
+                        )
                     }
                 }
 
@@ -827,13 +827,16 @@ class ResultFragment : Fragment() {
         observe(viewModel.publicEpisodes) { episodes ->
             when (episodes) {
                 is Resource.Failure -> {
-                    result_episode_loading.isVisible = false
+                    result_episode_loading?.isVisible = false
+                    //result_episodes?.isVisible = false
                 }
                 is Resource.Loading -> {
-                    result_episode_loading.isVisible = true
+                    result_episode_loading?.isVisible = true
+                   // result_episodes?.isVisible = false
                 }
                 is Resource.Success -> {
-                    result_episode_loading.isVisible = false
+                    //result_episodes?.isVisible = true
+                    result_episode_loading?.isVisible = false
                     if (result_episodes == null || result_episodes.adapter == null) return@observe
                     currentEpisodes = episodes.value
                     (result_episodes?.adapter as EpisodeAdapter?)?.cardList = episodes.value
@@ -862,8 +865,13 @@ class ResultFragment : Fragment() {
         }
 
         observe(viewModel.publicEpisodesCount) { count ->
-            result_episodes_text.text =
-                "$count ${if (count == 1) getString(R.string.episode) else getString(R.string.episodes)}"
+            if (count < 0) {
+                result_episodes_text?.isVisible = false
+            } else {
+               // result_episodes_text?.isVisible = true
+                result_episodes_text?.text =
+                    "$count ${if (count == 1) getString(R.string.episode) else getString(R.string.episodes)}"
+            }
         }
 
         observe(viewModel.id) {
@@ -1117,7 +1125,7 @@ class ResultFragment : Fragment() {
                     }
                 }
 
-                if (viewModel.resultResponse.value == null) {
+                if (restart || viewModel.resultResponse.value == null) {
                     viewModel.load(ctx, tempUrl, apiName, showFillers)
                 }
             }

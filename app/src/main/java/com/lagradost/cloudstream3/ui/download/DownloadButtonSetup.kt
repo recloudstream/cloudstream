@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.DialogInterface
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.FragmentActivity
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
@@ -12,6 +11,7 @@ import com.lagradost.cloudstream3.ui.player.UriData
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
@@ -85,30 +85,20 @@ object DownloadButtonSetup {
                         VideoDownloadManager.KEY_DOWNLOAD_INFO,
                         click.data.id.toString()
                     ) ?: return
-                    (act as FragmentActivity).supportFragmentManager.beginTransaction()
-                        .setCustomAnimations(
-                            R.anim.enter_anim,
-                            R.anim.exit_anim,
-                            R.anim.pop_enter,
-                            R.anim.pop_exit
-                        )
-                        .add(
-                            R.id.homeRoot,
-                            PlayerFragment.newInstance(
-                                UriData(
-                                    info.path.toString(),
-                                    keyInfo.relativePath,
-                                    keyInfo.displayName,
-                                    click.data.parentId,
-                                    click.data.id,
-                                    headerName ?: "null",
-                                    if (click.data.episode <= 0) null else click.data.episode,
-                                    click.data.season
-                                ),
-                                act.getViewPos(click.data.id)?.position ?: 0
-                            )
-                        )
-                        .commit()
+
+                    act.navigate(R.id.global_to_navigation_player, PlayerFragment.newInstance(
+                        UriData(
+                            info.path.toString(),
+                            keyInfo.relativePath,
+                            keyInfo.displayName,
+                            click.data.parentId,
+                            click.data.id,
+                            headerName ?: "null",
+                            if (click.data.episode <= 0) null else click.data.episode,
+                            click.data.season
+                        ),
+                        act.getViewPos(click.data.id)?.position ?: 0
+                    ))
                 }
             }
         }
