@@ -65,16 +65,16 @@ class InAppUpdater {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
         private fun Activity.getAppUpdate(): Update {
-            try {
+            return try {
                 val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-                return if (settingsManager.getBoolean(getString(R.string.prerelease_update_key), false)) {
+                if (settingsManager.getBoolean(getString(R.string.prerelease_update_key), false)) {
                     getPreReleaseUpdate()
                 } else {
                     getReleaseUpdate()
                 }
             } catch (e: Exception) {
                 println(e)
-                return Update(false, null, null, null)
+                Update(false, null, null, null)
             }
         }
 
@@ -84,8 +84,8 @@ class InAppUpdater {
             val response =
                 mapper.readValue<List<GithubRelease>>(khttp.get(url, headers = headers).text)
 
-            val versionRegex = Regex("""(.*?((\d)\.(\d)\.(\d)).*\.apk)""")
-
+            val versionRegex = Regex("""(.*?((\d+)\.(\d+)\.(\d+))\.apk)""")
+            val versionRegexLocal = Regex("""(.*?((\d+)\.(\d+)\.(\d+)).*)""")
             /*
             val releases = response.map { it.assets }.flatten()
                 .filter { it.content_type == "application/vnd.android.package-archive" }
@@ -112,16 +112,25 @@ class InAppUpdater {
                 )
             }
 
-            val foundVersion = foundAsset?.name?.let { versionRegex.find(it) }
-            val shouldUpdate =
-                if (found != null && foundAsset?.browser_download_url != "" && foundVersion != null) currentVersion?.versionName?.compareTo(
-                    foundVersion.groupValues[2]
-                )!! < 0 else false
-            return if (foundVersion != null) {
-                Update(shouldUpdate, foundAsset.browser_download_url, foundVersion.groupValues[2], found.body)
-            } else {
-                Update(false, null, null, null)
+            foundAsset?.name?.let { assetName ->
+                val foundVersion = versionRegex.find(assetName)
+                val shouldUpdate =
+                    if (foundAsset.browser_download_url != "" && foundVersion != null) currentVersion?.versionName?.let { versionName ->
+                        versionRegexLocal.find(versionName)?.groupValues?.let {
+                            it[3].toInt() * 100_000_000 + it[4].toInt() * 10_000 + it[5].toInt()
+                        }
+                    }?.compareTo(
+                        foundVersion.groupValues.let {
+                            it[3].toInt() * 100_000_000 + it[4].toInt() * 10_000 + it[5].toInt()
+                        }
+                    )!! < 0 else false
+                return if (foundVersion != null) {
+                    Update(shouldUpdate, foundAsset.browser_download_url, foundVersion.groupValues[2], found.body)
+                } else {
+                    Update(false, null, null, null)
+                }
             }
+            return Update(false, null, null, null)
         }
 
         private fun Activity.getPreReleaseUpdate(): Update {
