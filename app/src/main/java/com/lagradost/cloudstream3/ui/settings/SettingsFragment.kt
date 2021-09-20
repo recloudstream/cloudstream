@@ -28,6 +28,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     // idk, if you find a way of automating this it would be great
     private val languages = arrayListOf(
+        Triple("\uD83C\uDDEC\uD83C\uDDE7", "Spanish", "es"),
         Triple("\uD83C\uDDEC\uD83C\uDDE7", "English", "en"),
         Triple("\uD83C\uDDFB\uD83C\uDDF3", "Viet Nam", "vi"),
         Triple("\uD83C\uDDF3\uD83C\uDDF1", "Dutch", "nl"),
