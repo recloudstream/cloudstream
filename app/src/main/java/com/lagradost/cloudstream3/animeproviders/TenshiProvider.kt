@@ -335,4 +335,3 @@ class TenshiProvider : MainAPI() {
         return true
     }
 }
-}
