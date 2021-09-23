@@ -6,7 +6,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
+import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
+import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity.Companion.setLocale
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
@@ -19,6 +22,7 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlin.concurrent.thread
 
@@ -50,6 +54,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val watchQualityPreference = findPreference<Preference>(getString(R.string.quality_pref_key))!!
         val legalPreference = findPreference<Preference>(getString(R.string.legal_notice_key))!!
         val subdubPreference = findPreference<Preference>(getString(R.string.display_sub_key))!!
+        val providerLangPreference = findPreference<Preference>(getString(R.string.provider_lang_key))!!
 
         legalPreference.setOnPreferenceClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(it.context)
@@ -85,7 +90,39 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
             }
 
+            return@setOnPreferenceClickListener true
+        }
 
+        providerLangPreference.setOnPreferenceClickListener {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            activity?.getApiProviderLangSettings()?.let { current ->
+                val allLangs = HashSet<String>()
+                for (api in apis) {
+                    allLangs.add(api.lang)
+                }
+                for (api in restrictedApis) {
+                    allLangs.add(api.lang)
+                }
+
+                val currentList = ArrayList<Int>()
+                for (i in current) {
+                    currentList.add(allLangs.indexOf(i))
+                }
+
+                val names = allLangs.mapNotNull { SubtitleHelper.fromTwoLettersToLanguage(it) }
+
+                context?.showMultiDialog(
+                    names,
+                    currentList,
+                    getString(R.string.provider_lang_settings),
+                    {}) { selectedList ->
+                    settingsManager.edit().putStringSet(
+                        this.getString(R.string.provider_lang_key),
+                        selectedList.map { names[it] }.toMutableSet()
+                    ).apply()
+                }
+            }
 
             return@setOnPreferenceClickListener true
         }

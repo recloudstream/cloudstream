@@ -140,12 +140,16 @@ class TenshiProvider : MainAPI() {
 
     @SuppressLint("SimpleDateFormat")
     private fun dateParser(dateString: String): String? {
-        val format = SimpleDateFormat("dd 'of' MMM',' yyyy")
-        val newFormat = SimpleDateFormat("dd-MM-yyyy")
-        val data = format.parse(
-            dateString.replace("th ", " ").replace("st ", " ").replace("nd ", " ").replace("rd ", " ")
-        ) ?: return null
-        return newFormat.format(data)
+        try {
+            val format = SimpleDateFormat("dd 'of' MMM',' yyyy")
+            val newFormat = SimpleDateFormat("dd-MM-yyyy")
+            val data = format.parse(
+                dateString.replace("th ", " ").replace("st ", " ").replace("nd ", " ").replace("rd ", " ")
+            ) ?: return null
+            return newFormat.format(data)
+        } catch (e : Exception) {
+            return null
+        }
     }
 
 //    data class TenshiSearchResponse(

@@ -26,7 +26,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
-import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.*
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
@@ -78,6 +78,53 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         updateLocale() // android fucks me by chaining lang when rotating the phone
+    }
+
+     var mCastSession: CastSession? = null
+     lateinit var mSessionManager: SessionManager
+     val mSessionManagerListener: SessionManagerListener<Session> by lazy { SessionManagerListenerImpl() }
+
+    private inner class SessionManagerListenerImpl : SessionManagerListener<Session> {
+        override fun onSessionStarting(session: Session) {
+        }
+
+        override fun onSessionStarted(session: Session, sessionId: String) {
+            invalidateOptionsMenu()
+        }
+
+        override fun onSessionStartFailed(session: Session, i: Int) {
+        }
+
+        override fun onSessionEnding(session: Session) {
+        }
+
+        override fun onSessionResumed(session: Session, wasSuspended: Boolean) {
+            invalidateOptionsMenu()
+        }
+
+        override fun onSessionResumeFailed(session: Session, i: Int) {
+        }
+
+        override fun onSessionSuspended(session: Session, i: Int) {
+        }
+
+        override fun onSessionEnded(session: Session, error: Int) {
+        }
+
+        override fun onSessionResuming(session: Session, s: String) {
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mCastSession = mSessionManager.currentCastSession
+        mSessionManager.addSessionManagerListener(mSessionManagerListener)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mSessionManager.removeSessionManagerListener(mSessionManagerListener)
+        mCastSession = null
     }
 
     companion object {
@@ -268,6 +315,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
         updateLocale()
         super.onCreate(savedInstanceState)
+        mSessionManager = CastContext.getSharedInstance(this).sessionManager
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 

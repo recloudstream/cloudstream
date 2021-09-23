@@ -22,6 +22,8 @@
     <string name="swipe_vertical_enabled_key" translatable="false">swipe_vertical_enabled_key</string>
     <string name="display_sub_key" translatable="false">display_sub_key</string>
     <string name="show_fillers_key" translatable="false">show_fillers_key</string>
+    <string name="provider_lang_key" translatable="false">provider_lang_key</string>
+
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
@@ -276,4 +278,6 @@
 
         It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.
     </string>
+    <string name="general">General</string>
+    <string name="provider_lang_settings">Provider Languages</string>
 </resources>

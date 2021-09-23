@@ -14,6 +14,7 @@ import android.database.ContentObserver
 import android.graphics.Color
 import android.graphics.drawable.Icon
 import android.media.AudioManager
+import android.media.metrics.PlaybackErrorEvent
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
@@ -46,6 +47,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.TIME_UNSET
+import com.google.android.exoplayer2.PlaybackException.ERROR_CODE_AUDIO_TRACK_INIT_FAILED
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -165,7 +167,6 @@ data class UriData(
 
 // YE, I KNOW, THIS COULD BE HANDLED A LOT BETTER
 class PlayerFragment : Fragment() {
-
     // ============ TORRENT ============
     //private var torrentStream: TorrentStream? = null
     private var lastTorrentUrl = ""
@@ -752,6 +753,15 @@ class PlayerFragment : Fragment() {
     private var volumeObserver: SettingsContentObserver? = null
 
     companion object {
+        fun String.toSubtitleMimeType(): String {
+            return when {
+                endsWith("vtt", true) -> MimeTypes.TEXT_VTT
+                endsWith("srt", true) -> MimeTypes.APPLICATION_SUBRIP
+                endsWith("xml", true) || endsWith("ttml", true) -> MimeTypes.APPLICATION_TTML
+                else -> MimeTypes.APPLICATION_SUBRIP // TODO get request to see
+            }
+        }
+
         fun newInstance(data: PlayerData, startPos: Long? = null): Bundle {
             return Bundle().apply {
                 //println(data)
@@ -1050,7 +1060,7 @@ class PlayerFragment : Fragment() {
                         val epData = getEpisode() ?: return@addCastStateListener
 
                         val index = links.indexOf(getCurrentUrl())
-                        context?.startCast(
+                        (activity as MainActivity?)?.mCastSession?.startCast(
                             apiName,
                             currentIsMovie ?: return@addCastStateListener,
                             currentHeaderName,
@@ -1737,15 +1747,6 @@ class PlayerFragment : Fragment() {
 
     private val updateProgressAction = Runnable { updateProgressBar() }*/
 
-    private fun String.toSubtitleMimeType(): String {
-        return when {
-            endsWith("vtt", true) -> MimeTypes.TEXT_VTT
-            endsWith("srt", true) -> MimeTypes.APPLICATION_SUBRIP
-            endsWith("xml", true) || endsWith("ttml", true) -> MimeTypes.APPLICATION_TTML
-            else -> MimeTypes.APPLICATION_SUBRIP // TODO get request to see
-        }
-    }
-
     var activeSubtitles: List<String> = listOf()
     var preferredSubtitles: String = ""
 
@@ -2047,7 +2048,44 @@ class PlayerFragment : Fragment() {
                     }
                 }
 
-                override fun onPlayerError(error: ExoPlaybackException) {
+                override fun onPlayerError(error: PlaybackException) {
+                    println("CURRENT URL: " + currentUrl?.url)
+                    // Lets pray this doesn't spam Toasts :)
+                    val msg = error.message ?: ""
+                    when (val code = error.errorCode) {
+                        PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND, PlaybackException.ERROR_CODE_IO_NO_PERMISSION, PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> {
+                            if (currentUrl?.url != "") {
+                                showToast(
+                                    activity,
+                                    "${getString(R.string.source_error)}\n$code\n$msg",
+                                    LENGTH_SHORT
+                                )
+                                tryNextMirror()
+                            }
+                        }
+                        PlaybackException.ERROR_CODE_REMOTE_ERROR, PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS, PlaybackException.ERROR_CODE_TIMEOUT, PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED, PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
+                            showToast(activity, "${getString(R.string.remote_error)}\n$code\n$msg", LENGTH_SHORT)
+                        }
+                        PlaybackException.ERROR_CODE_DECODING_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER, PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED, PlaybackException.ERROR_CODE_DECODER_INIT_FAILED, PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
+                            showToast(
+                                activity,
+                                "${getString(R.string.render_error)}\n$code\n$msg",
+                                LENGTH_SHORT
+                            )
+                        }
+                        else -> {
+                            showToast(
+                                activity,
+                                "${getString(R.string.unexpected_error)}\n$code\n$msg",
+                                LENGTH_SHORT
+                            )
+                        }
+                    }
+
+                    super.onPlayerError(error)
+                }
+
+                /*override fun onPlayerError(error: ExoPlaybackException) {
                     println("CURRENT URL: " + currentUrl?.url)
                     // Lets pray this doesn't spam Toasts :)
                     when (error.type) {
@@ -2079,7 +2117,7 @@ class PlayerFragment : Fragment() {
                             )
                         }
                     }
-                }
+                }*/
             })
         } catch (e: java.lang.IllegalStateException) {
             println("Warning: Illegal state exception in PlayerFragment")

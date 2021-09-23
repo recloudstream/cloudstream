@@ -1,15 +1,12 @@
 package com.lagradost.cloudstream3.utils
 
-import android.content.Context
 import android.net.Uri
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.gms.cast.*
-import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF
-import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.api.PendingResult
 import com.google.android.gms.common.images.WebImage
@@ -59,13 +56,16 @@ object CastHelper {
                 .build()
         }
 
-        return MediaInfo.Builder(link.url)
+        val builder = MediaInfo.Builder(link.url)
             .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
             .setContentType(MimeTypes.VIDEO_UNKNOWN)
-            .setCustomData(data)
             .setMetadata(movieMetadata)
             .setMediaTracks(tracks)
-            .build()
+        data?.let {
+            builder.setCustomData(data)
+        }
+
+        return builder.build()
     }
 
     fun awaitLinks(pending: PendingResult<RemoteMediaClient.MediaChannelResult>?, callback: (Boolean) -> Unit) {
@@ -84,8 +84,7 @@ object CastHelper {
         }
     }
 
-
-    fun Context.startCast(
+    fun CastSession?.startCast(
         apiName: String,
         isMovie: Boolean,
         title: String?,
@@ -97,10 +96,9 @@ object CastHelper {
         startIndex: Int? = null,
         startTime: Long? = null,
     ) : Boolean {
+        if(this == null) return false
         if (episodes.isEmpty()) return false
         if (currentLinks.size <= currentEpisodeIndex) return false
-
-        val castContext = CastContext.getSharedInstance(this)
 
         val epData = episodes[currentEpisodeIndex]
 
@@ -112,15 +110,8 @@ object CastHelper {
         val mediaItem =
             getMediaInfo(epData, holder, index, JSONObject(mapper.writeValueAsString(holder)), subtitles)
 
-        val castPlayer = CastPlayer(castContext)
-
-        castPlayer.repeatMode = REPEAT_MODE_REPEAT_OFF
-
         awaitLinks(
-            castPlayer.loadItem(
-                MediaQueueItem.Builder(mediaItem).build(),
-                startTime ?: 0,
-            )
+            this.remoteMediaClient?.load(MediaLoadRequestData.Builder().setMediaInfo(mediaItem).setCurrentTime(startTime ?: 0L).build() )
         ) {
             if (currentLinks.size > index + 1)
                 startCast(

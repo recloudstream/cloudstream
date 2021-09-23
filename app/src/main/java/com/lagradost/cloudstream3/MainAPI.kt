@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3
 
 import android.app.Activity
+import android.content.Context
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -9,6 +10,8 @@ import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 const val USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -69,19 +72,30 @@ object APIHolder {
         return url.replace(getApiFromName(apiName).mainUrl, "").replace("/", "").hashCode()
     }
 
-    fun Activity.getApiSettings(): HashSet<String> {
+    fun Context.getApiSettings(): HashSet<String> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         val hashSet = HashSet<String>()
         hashSet.addAll(apis.map { it.name })
 
-        return settingsManager.getStringSet(
+        val set = settingsManager.getStringSet(
             this.getString(R.string.search_providers_list_key),
             hashSet
         )?.toHashSet() ?: hashSet
+
+        val activeLangs = getApiProviderLangSettings()
+        val list = HashSet<String>()
+        for (name in set) {
+            val api = getApiFromNameNull(name) ?: continue
+            if(activeLangs.contains(api.lang) ) {
+                list.add(name)
+            }
+        }
+        if(list.isEmpty()) return hashSet
+        return list
     }
 
-    fun Activity.getApiDubstatusSettings(): HashSet<DubStatus> {
+    fun Context.getApiDubstatusSettings(): HashSet<DubStatus> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val hashSet = HashSet<DubStatus>()
         hashSet.addAll(DubStatus.values())
@@ -96,7 +110,20 @@ object APIHolder {
         return list.filter { names.contains(it) }.map { DubStatus.valueOf(it) }.toHashSet()
     }
 
-    fun Activity.getApiTypeSettings(): HashSet<TvType> {
+    fun Context.getApiProviderLangSettings(): HashSet<String> {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val hashSet = HashSet<String>()
+        hashSet.add("en") // def is only en
+        val list = settingsManager.getStringSet(
+            this.getString(R.string.provider_lang_key),
+            hashSet.toMutableSet()
+        )
+
+        if(list.isNullOrEmpty()) return hashSet
+        return list.toHashSet()
+    }
+
+    fun Context.getApiTypeSettings(): HashSet<TvType> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val hashSet = HashSet<TvType>()
         hashSet.addAll(TvType.values())
@@ -119,6 +146,8 @@ object APIHolder {
 abstract class MainAPI {
     open val name = "NONE"
     open val mainUrl = "NONE"
+
+    open val lang = "en" // ISO_639_1 check SubtitleHelper
 
     /**If link is stored in the "data" string, so links can be instantly loaded*/
     open val instantLinkLoading = false

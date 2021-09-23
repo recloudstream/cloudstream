@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.android.gms.cast.MediaQueueItem
+import com.google.android.gms.cast.MediaSeekOptions
 import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF
 import com.google.android.gms.cast.MediaTrack
 import com.google.android.gms.cast.TextTrackStyle
@@ -33,12 +34,17 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import kotlin.concurrent.thread
 
 class SkipOpController(val view: ImageView) : UIController() {
     init {
         view.setImageResource(R.drawable.exo_controls_fastforward)
         view.setOnClickListener {
-            remoteMediaClient.seek(remoteMediaClient.approximateStreamPosition + 85000)
+            remoteMediaClient?.let {
+                val options = MediaSeekOptions.Builder()
+                    .setPosition(it.approximateStreamPosition + 85000)
+                it.seek(options.build())
+            }
         }
     }
 }
@@ -192,15 +198,11 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                             try { // THIS IS VERY IMPORTANT BECAUSE WE NEVER WANT TO AUTOLOAD THE NEXT EPISODE
                                 val currentIdIndex = remoteMediaClient?.getItemIndex()
 
-                                val nextId = remoteMediaClient.mediaQueue.itemIds?.get(currentIdIndex?.plus(1) ?: 0)
-
+                                val nextId = remoteMediaClient?.mediaQueue?.itemIds?.get(currentIdIndex?.plus(1) ?: 0)
                                 if (currentIdIndex == null && nextId != null) {
                                     awaitLinks(
                                         remoteMediaClient?.queueInsertAndPlayItem(
-                                            MediaQueueItem.Builder(
-                                                mediaItem
-                                            )
-                                                .build(),
+                                            MediaQueueItem.Builder(mediaItem).build(),
                                             nextId,
                                             startAt,
                                             JSONObject()
@@ -223,6 +225,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
                         bottomSheetDialog.dismiss()
                     }
+
                 }
             }
         }
@@ -253,8 +256,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
                 if (itemCount != null && itemCount - currentIdIndex == 1 && !isLoadingMore) {
                     isLoadingMore = true
-
-                    main {
+                    thread {
                         val index = meta.currentEpisodeIndex + 1
                         val epData = meta.episodes[index]
                         val links = ArrayList<ExtractorLink>()
@@ -280,9 +282,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                     currentEpisodeIndex = index
                                 )
 
-                                val done = withContext(Dispatchers.IO) {
+                                val done =
                                     JSONObject(mapper.writeValueAsString(jsonCopy))
-                                }
 
                                 val mediaInfo = getMediaInfo(
                                     epData,
@@ -304,19 +305,23 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                         loadIndex(index + 1)
                                     }
                                 }*/
+                                activity.runOnUiThread {
+                                    awaitLinks(
 
-                                awaitLinks(
-                                    remoteMediaClient?.queueAppendItem(
-                                        MediaQueueItem.Builder(mediaInfo).build(),
-                                        JSONObject()
-                                    )
-                                ) {
-                                    println("FAILED TO LOAD NEXT ITEM")
-                                    //  loadIndex(1)
+                                        remoteMediaClient?.queueAppendItem(
+                                            MediaQueueItem.Builder(mediaInfo).build(),
+                                            JSONObject()
+                                        )
+
+
+                                    ) {
+                                        println("FAILED TO LOAD NEXT ITEM")
+                                        //  loadIndex(1)
+                                    }
+                                    isLoadingMore = false
                                 }
-
-                                isLoadingMore = false
                             }
+
                         }
                     }
                 }
@@ -340,7 +345,11 @@ class SkipTimeController(val view: ImageView, forwards: Boolean) : UIController(
         //view.setImageResource(if (forwards) R.drawable.netflix_skip_forward else R.drawable.netflix_skip_back)
         view.setImageResource(if (forwards) R.drawable.go_forward_30 else R.drawable.go_back_30)
         view.setOnClickListener {
-            remoteMediaClient.seek(remoteMediaClient.approximateStreamPosition + time * 1000 * if (forwards) 1 else -1)
+            remoteMediaClient?.let {
+                val options = MediaSeekOptions.Builder()
+                    .setPosition(it.approximateStreamPosition + time * 1000 * if (forwards) 1 else -1)
+                it.seek(options.build())
+            }
         }
     }
 }

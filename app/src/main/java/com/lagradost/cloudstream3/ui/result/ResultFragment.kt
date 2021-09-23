@@ -427,7 +427,7 @@ class ResultFragment : Fragment() {
 
             fun startChromecast(startIndex: Int) {
                 val eps = currentEpisodes ?: return
-                context?.startCast(
+                (activity as MainActivity?)?.mCastSession?.startCast(
                     apiName,
                     currentIsMovie ?: return,
                     currentHeaderName,

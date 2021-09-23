@@ -31,8 +31,8 @@ android {
         applicationId "com.lagradost.cloudstream3"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 26
-        versionName "1.9.10"
+        versionCode 27
+        versionName "1.9.11"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
@@ -72,9 +72,6 @@ android {
 }
 
 repositories {
-    maven {
-        url 'https://github.com/psiegman/mvn-repo/raw/master/releases'
-    }
     maven { url 'https://jitpack.io' }
 }
 
@@ -108,9 +105,9 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // Exoplayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.14.2'
-    implementation 'com.google.android.exoplayer:extension-cast:2.14.2'
-    implementation "com.google.android.exoplayer:extension-mediasession:2.14.2"
+    implementation 'com.google.android.exoplayer:exoplayer:2.15.0'
+    implementation 'com.google.android.exoplayer:extension-cast:2.15.0'
+    implementation "com.google.android.exoplayer:extension-mediasession:2.15.0"
     //implementation "com.google.android.exoplayer:extension-leanback:2.14.0"
 
     // Bug reports

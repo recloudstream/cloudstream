@@ -69,6 +69,32 @@
         />
     </PreferenceCategory>
     <PreferenceCategory
+            android:key="general"
+            android:title="@string/general"
+            app:isPreferenceVisible="true"
+    >
+        <Preference
+                android:icon="@drawable/ic_baseline_language_24"
+                android:key="@string/provider_lang_key"
+                android:title="@string/provider_lang_settings">
+        </Preference>
+        <Preference
+                android:key="@string/locale_key"
+                android:title="@string/app_language"
+                android:icon="@drawable/ic_baseline_language_24">
+        </Preference>
+        <Preference
+                android:key="@string/display_sub_key"
+                android:title="@string/display_subbed_dubbed_settings"
+                android:icon="@drawable/ic_outline_voice_over_off_24">
+        </Preference>
+        <SwitchPreference
+                android:key="@string/show_fillers_key"
+                android:icon="@drawable/ic_baseline_skip_next_24"
+                android:title="@string/show_fillers_settings"
+                android:defaultValue="true"/>
+    </PreferenceCategory>
+    <PreferenceCategory
             android:key="search"
             android:title="@string/search"
             app:isPreferenceVisible="true"
@@ -80,11 +106,6 @@
                 android:summary="@string/advanced_search_des"
                 app:defaultValue="true"
         />
-        <Preference
-                android:key="@string/display_sub_key"
-                android:title="@string/display_subbed_dubbed_settings"
-                android:icon="@drawable/ic_outline_voice_over_off_24">
-        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -98,16 +119,6 @@
                 android:icon="@drawable/ic_baseline_warning_24">
         </Preference>
 
-        <Preference
-                android:key="@string/locale_key"
-                android:title="@string/app_language"
-                android:icon="@drawable/ic_baseline_language_24">
-        </Preference>
-        <SwitchPreference
-                android:key="@string/show_fillers_key"
-                android:icon="@drawable/ic_baseline_skip_next_24"
-                android:title="@string/show_fillers_settings"
-                android:defaultValue="true"/>
         <SwitchPreference
                 android:key="acra.disable"
                 android:icon="@drawable/ic_baseline_bug_report_24"
