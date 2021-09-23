@@ -290,17 +290,41 @@ class TenshiProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val response = khttp.get(data)
-        val src = Jsoup.parse(response.text).selectFirst(".embed-responsive > iframe").attr("src")
-        val mp4moe = Jsoup.parse(khttp.get(src, headers = mapOf("Referer" to data)).text).selectFirst("video#player")
+        val soup = Jsoup.parse(response.text)
 
-        val sources = mp4moe.select("source").map {
-            ExtractorLink(
-                this.name,
-                "${this.name} - ${it.attr("title")}" + if (it.attr("title").endsWith('p')) "" else 'p',
-                fixUrl(it.attr("src")),
-                this.mainUrl,
-                getQualityFromName(it.attr("title"))
-            )
+        data class Quality(
+            @JsonProperty("src") val src: String,
+            @JsonProperty("size") val size: Int
+        )
+
+        val sources = ArrayList<ExtractorLink>()
+        for (source in soup.select("""[aria-labelledby="mirror-dropdown"] > li > a.dropdown-item""")) {
+            val release = source.text().replace("/", "").trim()
+            val sourceHTML = khttp.get(
+                "https://tenshi.moe/embed?v=${source.attr("href").split("v=")[1].split("&")[0]}",
+                headers=mapOf("Referer" to data)
+            ).text
+
+            val match = Regex("""sources: (\[(?:.|\s)+?type: ['\"]video\/.*?['\"](?:.|\s)+?\])""").find(sourceHTML)
+            if (match != null) {
+                val qualities = mapper.readValue<List<Quality>>(
+                    match.destructured.component1()
+                        .replace("'", "\"")
+                        .replace(Regex("""(\w+): """), "\"\$1\": ")
+                        .replace(Regex("""\s+"""), "")
+                        .replace(",}", "}")
+                        .replace(",]", "]")
+                )
+                sources.addAll(qualities.map {
+                    ExtractorLink(
+                        this.name,
+                        "${this.name} $release - " + it.size + "p",
+                        fixUrl(it.src),
+                        this.mainUrl,
+                        getQualityFromName("${it.size}")
+                    )
+                })
+            }
         }
 
         for (source in sources) {
@@ -308,4 +332,5 @@ class TenshiProvider : MainAPI() {
         }
         return true
     }
+}
 }
