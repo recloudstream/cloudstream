@@ -5,7 +5,6 @@ import android.app.PictureInPictureParams
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -22,10 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
-import androidx.fragment.app.FragmentActivity
-import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import androidx.transition.ChangeBounds
@@ -39,11 +35,6 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
-import com.lagradost.cloudstream3.ui.download.DownloadChildFragment
-import com.lagradost.cloudstream3.ui.download.DownloadFragment
-import com.lagradost.cloudstream3.ui.home.HomeFragment
-import com.lagradost.cloudstream3.ui.search.SearchFragment
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
@@ -53,7 +44,7 @@ import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
-import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -97,7 +88,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val backEvent = Event<Boolean>()
         val onColorSelectedEvent = Event<Pair<Int, Int>>()
         val onDialogDismissedEvent = Event<Int>()
-        lateinit var navOptions: NavOptions
 
         var currentToast: Toast? = null
 
@@ -170,7 +160,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     enterPictureInPictureMode()
                 }
             }
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             logError(e)
         }
     }
@@ -259,7 +249,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val str = intent.dataString
         if (str != null) {
             if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.navigation_downloads, null, navOptions)
+                this.navigate(R.id.navigation_downloads)
             } else {
                 for (api in apis) {
                     if (str.startsWith(api.mainUrl)) {
@@ -305,7 +295,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         var startUp = true
         navController.addOnDestinationChangedListener { _, destination, _ ->
-           // nav_view.hideKeyboard()
+            // nav_view.hideKeyboard()
             /*if (destination.id != R.id.navigation_player) {
                 requestedOrientation = if (settingsManager?.getBoolean("force_landscape", false) == true) {
                     ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
