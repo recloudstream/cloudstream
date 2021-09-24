@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.net.URLDecoder
 
 class AllMoviesForYouProvider : MainAPI() {
     companion object {
@@ -142,7 +143,7 @@ class AllMoviesForYouProvider : MainAPI() {
                 url,
                 this.name,
                 type,
-                mapper.writeValueAsString(data),
+                mapper.writeValueAsString(data.filter { it != "about:blank" }),
                 backgroundPoster,
                 year?.toIntOrNull(),
                 descipt,
@@ -170,7 +171,7 @@ class AllMoviesForYouProvider : MainAPI() {
             }
             return false
         } else if (data.startsWith(mainUrl) && data != mainUrl) {
-            val realDataUrl = data.replace("&#038;", "&").replace("&amp;", "&")
+            val realDataUrl = URLDecoder.decode(data, Charsets.UTF_8)
             if (data.contains("trdownload")) {
                 callback(ExtractorLink(this.name, this.name, realDataUrl, mainUrl, Qualities.Unknown.value))
                 return true
