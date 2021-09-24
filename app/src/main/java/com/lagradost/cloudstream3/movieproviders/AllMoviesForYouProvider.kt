@@ -81,7 +81,7 @@ class AllMoviesForYouProvider : MainAPI() {
             document.selectFirst("div.Vote > div.post-ratings > span")?.text()?.toFloatOrNull()?.times(10)?.toInt()
         val year = document.selectFirst("span.Date")?.text()
         val duration = document.selectFirst("span.Time").text()
-        val backgroundPoster = fixUrl(document.selectFirst("div.Image > figure > img").attr("src"))
+        val backgroundPoster = fixUrl(document.selectFirst("div.Image > figure > img").attr("data-src"))
 
         if (type == TvType.TvSeries) {
             val list = ArrayList<Pair<Int, String>>()
