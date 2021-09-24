@@ -171,7 +171,7 @@ class AllMoviesForYouProvider : MainAPI() {
             }
             return false
         } else if (data.startsWith(mainUrl) && data != mainUrl) {
-            val realDataUrl = URLDecoder.decode(data, Charsets.UTF_8)
+            val realDataUrl = URLDecoder.decode(data, "application/x-www-form-urlencoded")
             if (data.contains("trdownload")) {
                 callback(ExtractorLink(this.name, this.name, realDataUrl, mainUrl, Qualities.Unknown.value))
                 return true
