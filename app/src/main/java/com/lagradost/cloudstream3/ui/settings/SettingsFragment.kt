@@ -110,16 +110,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     currentList.add(allLangs.indexOf(i))
                 }
 
-                val names = allLangs.mapNotNull { SubtitleHelper.fromTwoLettersToLanguage(it) }
+                val names = allLangs.mapNotNull {
+                    val fullName = SubtitleHelper.fromTwoLettersToLanguage(it)
+                    if (fullName.isNullOrEmpty()) {
+                        return@mapNotNull null
+                    }
+
+                    Pair(it, fullName)
+                }
 
                 context?.showMultiDialog(
-                    names,
+                    names.map { it.second },
                     currentList,
                     getString(R.string.provider_lang_settings),
                     {}) { selectedList ->
                     settingsManager.edit().putStringSet(
                         this.getString(R.string.provider_lang_key),
-                        selectedList.map { names[it] }.toMutableSet()
+                        selectedList.map { names[it].first }.toMutableSet()
                     ).apply()
                 }
             }
