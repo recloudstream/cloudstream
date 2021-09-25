@@ -49,9 +49,9 @@ fun getPacked(string: String): String? {
     return packedRegex.find(string)?.value
 }
 
-fun getAndUnpack(string: String): String? {
+fun getAndUnpack(string: String): String {
     val packedText = getPacked(string)
-    return JsUnpacker(packedText).unpack()
+    return JsUnpacker(packedText).unpack() ?: string
 }
 
 fun loadExtractor(url: String, referer: String?, callback: (ExtractorLink) -> Unit) {
@@ -65,7 +65,6 @@ fun loadExtractor(url: String, referer: String?, callback: (ExtractorLink) -> Un
 
 val extractorApis: Array<ExtractorApi> = arrayOf(
     //AllProvider(),
-    Shiro(),
     WcoStream(),
     Mp4Upload(),
     StreamTape(),

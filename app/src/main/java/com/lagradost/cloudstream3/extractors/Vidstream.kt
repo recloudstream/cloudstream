@@ -1,19 +1,29 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.pmap
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.extractorApis
+import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 
-class Vidstream {
+/**
+ * overrideMainUrl is necessary for for other vidstream clones like vidembed.cc
+ * If they diverge it'd be better to make them separate.
+ * */
+class Vidstream(overrideMainUrl: String? = null) {
     val name: String = "Vidstream"
-    private val mainUrl: String = "https://gogo-stream.com"
+    private val mainUrl: String = overrideMainUrl ?: "https://gogo-stream.com"
 
     private fun getExtractorUrl(id: String): String {
         return "$mainUrl/streaming.php?id=$id"
     }
 
-    private val normalApis = arrayListOf(Shiro(), MultiQuality())
+    private fun getDownloadUrl(id: String): String {
+        return "$mainUrl/download?id=$id"
+    }
+
+    private val normalApis = arrayListOf(MultiQuality())
 
     // https://gogo-stream.com/streaming.php?id=MTE3NDg5
     fun getUrl(id: String, isCasting: Boolean = false, callback: (ExtractorLink) -> Unit): Boolean {
@@ -23,22 +33,47 @@ class Vidstream {
                 val source = api.getSafeUrl(url)
                 source?.forEach { callback.invoke(it) }
             }
+            val extractorUrl = getExtractorUrl(id)
 
-            val url = getExtractorUrl(id)
-            with(khttp.get(url)) {
+            /** Stolen from GogoanimeProvider.kt extractor */
+            normalSafeApiCall {
+                val link = getDownloadUrl(id)
+                val page = khttp.get(link, headers = mapOf("Referer" to extractorUrl))
+                val pageDoc = Jsoup.parse(page.text)
+                val qualityRegex = Regex("(\\d+)P")
+
+                pageDoc.select(".dowload > a[download]").forEach {
+                    val qual = if (it.text()
+                            .contains("HDP")
+                    ) "1080" else qualityRegex.find(it.text())?.destructured?.component1().toString()
+
+                    callback.invoke(
+                        ExtractorLink(
+                            this.name,
+                            if (qual == "null") this.name else "${this.name} - " + qual + "p",
+                            it.attr("href"),
+                            page.url,
+                            getQualityFromName(qual),
+                            it.attr("href").contains(".m3u8")
+                        )
+                    )
+                }
+            }
+
+            with(khttp.get(extractorUrl)) {
                 val document = Jsoup.parse(this.text)
                 val primaryLinks = document.select("ul.list-server-items > li.linkserver")
                 //val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
 
                 // All vidstream links passed to extractors
-                primaryLinks.forEach { element ->
+                primaryLinks.distinctBy { it.attr("data-video") }.forEach { element ->
                     val link = element.attr("data-video")
                     //val name = element.text()
 
                     // Matches vidstream links with extractors
                     extractorApis.filter { !it.requiresReferer || !isCasting }.pmap { api ->
                         if (link.startsWith(api.mainUrl)) {
-                            val extractedLinks = api.getSafeUrl(link, url)
+                            val extractedLinks = api.getSafeUrl(link, extractorUrl)
                             if (extractedLinks?.isNotEmpty() == true) {
                                 extractedLinks.forEach {
                                     callback.invoke(it)

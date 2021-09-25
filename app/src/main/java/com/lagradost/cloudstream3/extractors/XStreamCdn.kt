@@ -45,6 +45,7 @@ class XStreamCdn : ExtractorApi() {
         val newUrl = url.replace("$mainUrl/v/", "$mainUrl/api/source/")
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
         with(khttp.post(newUrl, headers = headers)) {
+            if (this.text == """{"success":false,"data":"Video not found or has been removed"}""") return listOf()
             mapper.readValue<ResponseJson?>(this.text)?.let {
                 if (it.success && it.data != null) {
                     it.data.forEach { data ->
