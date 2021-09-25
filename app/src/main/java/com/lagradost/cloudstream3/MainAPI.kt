@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3
 
-import android.app.Activity
 import android.content.Context
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -10,11 +9,10 @@ import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 
 const val USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
 val mapper = JsonMapper.builder().addModule(KotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
@@ -44,7 +42,8 @@ object APIHolder {
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
         AsiaFlixProvider(),
-        ThenosProvider()
+        ThenosProvider(),
+        VidEmbedProvider()
     )
 
     val restrictedApis = arrayListOf(
@@ -87,11 +86,11 @@ object APIHolder {
         val list = HashSet<String>()
         for (name in set) {
             val api = getApiFromNameNull(name) ?: continue
-            if(activeLangs.contains(api.lang) ) {
+            if (activeLangs.contains(api.lang)) {
                 list.add(name)
             }
         }
-        if(list.isEmpty()) return hashSet
+        if (list.isEmpty()) return hashSet
         return list
     }
 
@@ -119,7 +118,7 @@ object APIHolder {
             hashSet.toMutableSet()
         )
 
-        if(list.isNullOrEmpty()) return hashSet
+        if (list.isNullOrEmpty()) return hashSet
         return list.toHashSet()
     }
 
@@ -132,11 +131,11 @@ object APIHolder {
             hashSet.map { it.name }.toMutableSet()
         )
 
-        if(list.isNullOrEmpty()) return hashSet
+        if (list.isNullOrEmpty()) return hashSet
 
         val names = TvType.values().map { it.name }.toHashSet()
         val realSet = list.filter { names.contains(it) }.map { TvType.valueOf(it) }.toHashSet()
-        if(realSet.isEmpty()) return hashSet
+        if (realSet.isEmpty()) return hashSet
 
         return realSet
     }
@@ -380,7 +379,7 @@ data class AnimeEpisode(
     val date: String? = null,
     val rating: Int? = null,
     val descript: String? = null,
-    val episode : Int? = null,
+    val episode: Int? = null,
 )
 
 data class TorrentLoadResponse(
