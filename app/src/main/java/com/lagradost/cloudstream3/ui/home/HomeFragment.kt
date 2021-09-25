@@ -192,14 +192,14 @@ class HomeFragment : Fragment() {
     }
 
     override fun onResume() {
-        backEvent += ::handleBack
         super.onResume()
+        reloadStored()
     }
-
+/*
     override fun onStop() {
         backEvent -= ::handleBack
         super.onStop()
-    }
+    }*/
 
     private fun reloadStored() {
         context?.let { ctx ->
@@ -208,11 +208,11 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun handleBack(poppedFragment: Boolean) {
+    /*private fun handleBack(poppedFragment: Boolean) {
         if (poppedFragment) {
             reloadStored()
         }
-    }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

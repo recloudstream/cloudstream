@@ -797,7 +797,10 @@ class ResultFragment : Fragment() {
                 else -> {
                 }
             }
+            arguments?.remove("startValue")
+            arguments?.remove("startAction")
             startAction = null
+            startValue = null
         }
 
         observe(viewModel.allEpisodes) {
