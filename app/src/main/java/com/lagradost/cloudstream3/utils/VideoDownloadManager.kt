@@ -260,7 +260,7 @@ object VideoDownloadManager {
         }
 
         if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
-            builder.setProgress(total.toInt(), progress.toInt(), false)
+            builder.setProgress((total / 1000).toInt(), (progress / 1000).toInt(), false)
         }
 
         val rowTwoExtra = if (ep.name != null) " - ${ep.name}\n" else ""

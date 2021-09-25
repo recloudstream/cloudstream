@@ -17,7 +17,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -37,8 +36,8 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
-import com.lagradost.cloudstream3.MainActivity.Companion.updateLocale
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
@@ -304,16 +303,20 @@ class ResultFragment : Fragment() {
 
             activity?.let {
                 if (it.isCastApiAvailable()) {
-                    CastButtonFactory.setUpMediaRouteButton(it, media_route_button)
-                    val castContext = CastContext.getSharedInstance(it.applicationContext)
+                    try {
+                        CastButtonFactory.setUpMediaRouteButton(it, media_route_button)
+                        val castContext = CastContext.getSharedInstance(it.applicationContext)
 
-                    if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = VISIBLE
-                    castContext.addCastStateListener { state ->
-                        if (media_route_button != null) {
-                            if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = GONE else {
-                                if (media_route_button.visibility == GONE) media_route_button.visibility = VISIBLE
+                        if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = VISIBLE
+                        castContext.addCastStateListener { state ->
+                            if (media_route_button != null) {
+                                if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = GONE else {
+                                    if (media_route_button.visibility == GONE) media_route_button.visibility = VISIBLE
+                                }
                             }
                         }
+                    } catch (e : Exception) {
+                        logError(e)
                     }
                 }
             }

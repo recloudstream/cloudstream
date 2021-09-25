@@ -53,6 +53,7 @@ class HomeViewModel : ViewModel() {
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
 
     fun loadResumeWatching(context: Context) = viewModelScope.launch {
+        println("Resume::")
         val resumeWatching = withContext(Dispatchers.IO) {
             context.getAllResumeStateIds().mapNotNull { id ->
                 context.getLastWatched(id)

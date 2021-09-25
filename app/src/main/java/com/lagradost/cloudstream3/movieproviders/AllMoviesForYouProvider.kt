@@ -7,6 +7,8 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.lang.Thread.sleep
+import java.net.URLDecoder
 
 class AllMoviesForYouProvider : MainAPI() {
     companion object {
@@ -79,7 +81,7 @@ class AllMoviesForYouProvider : MainAPI() {
             document.selectFirst("div.Vote > div.post-ratings > span")?.text()?.toFloatOrNull()?.times(10)?.toInt()
         val year = document.selectFirst("span.Date")?.text()
         val duration = document.selectFirst("span.Time").text()
-        val backgroundPoster = fixUrl(document.selectFirst("div.Image > figure > img").attr("src"))
+        val backgroundPoster = fixUrl(document.selectFirst("div.Image > figure > img").attr("data-src"))
 
         if (type == TvType.TvSeries) {
             val list = ArrayList<Pair<Int, String>>()
@@ -142,7 +144,7 @@ class AllMoviesForYouProvider : MainAPI() {
                 url,
                 this.name,
                 type,
-                mapper.writeValueAsString(data),
+                mapper.writeValueAsString(data.filter { it != "about:blank" }),
                 backgroundPoster,
                 year?.toIntOrNull(),
                 descipt,
@@ -170,9 +172,43 @@ class AllMoviesForYouProvider : MainAPI() {
             }
             return false
         } else if (data.startsWith(mainUrl) && data != mainUrl) {
-            val realDataUrl = data.replace("&#038;", "&").replace("&amp;", "&")
+            val realDataUrl = URLDecoder.decode(data, "application/x-www-form-urlencoded")
             if (data.contains("trdownload")) {
-                callback(ExtractorLink(this.name, this.name, realDataUrl, mainUrl, Qualities.Unknown.value))
+                val request = khttp.get(data, stream = true)
+                if (request.url.startsWith("https://streamhub.to/d/")) {
+                    val document = Jsoup.parse(request.text)
+                    val inputs = document.select("Form > input")
+                    if (inputs.size < 4) return false
+                    var op: String? = null
+                    var id: String? = null
+                    var mode: String? = null
+                    var hash: String? = null
+
+                    for (input in inputs) {
+                        val value = input.attr("value") ?: continue
+                        when (input.attr("name")) {
+                            "op" -> op = value
+                            "id" -> id = value
+                            "mode" -> mode = value
+                            "hash" -> hash = value
+                            else -> {
+                            }
+                        }
+                    }
+                    if(op == null || id == null || mode == null || hash == null) {
+                        return false
+                    }
+                    sleep(5000) // ye this is needed, wont work with 0 delay
+
+                    val postResponse = khttp.post(request.url, headers = mapOf("content-type" to "application/x-www-form-urlencoded", "referer" to request.url, "user-agent" to USER_AGENT, "accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"), data = mapOf("op" to op, "id" to id, "mode" to mode, "hash" to hash))
+                    val postDocument = Jsoup.parse(postResponse.text)
+
+                    val url = postDocument.selectFirst("a.downloadbtn").attr("href")
+                    if(url.isNullOrEmpty()) return false
+                    callback(ExtractorLink(this.name, this.name, url, mainUrl, Qualities.Unknown.value))
+                } else {
+                    callback(ExtractorLink(this.name, this.name, realDataUrl, mainUrl, Qualities.Unknown.value))
+                }
                 return true
             }
             val response = khttp.get(realDataUrl)

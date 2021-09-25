@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
@@ -117,14 +118,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onResume() {
         super.onResume()
-        mCastSession = mSessionManager.currentCastSession
-        mSessionManager.addSessionManagerListener(mSessionManagerListener)
+        try {
+            if(isCastApiAvailable()) {
+                mCastSession = mSessionManager.currentCastSession
+                mSessionManager.addSessionManagerListener(mSessionManagerListener)
+            }
+        } catch (e : Exception) {
+            logError(e)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        mSessionManager.removeSessionManagerListener(mSessionManagerListener)
-        mCastSession = null
+        try {
+            if(isCastApiAvailable()) {
+                mSessionManager.removeSessionManagerListener(mSessionManagerListener)
+                mCastSession = null
+            }
+        } catch (e : Exception) {
+            logError(e)
+        }
     }
 
     companion object {
@@ -188,7 +201,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         fun Context.updateLocale() {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
             val localeCode = settingsManager.getString(getString(R.string.locale_key), null)
-            println("LOCALE: " + localeCode)
             setLocale(this, localeCode)
         }
     }
@@ -219,43 +231,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
-    private fun AppCompatActivity.backPressed(): Boolean {
-        /*val currentFragment = supportFragmentManager.fragments.last {
-            it.isVisible
-        }
-
-        if (currentFragment is NavHostFragment) {
-            val child = currentFragment.childFragmentManager.fragments.last {
-                it.isVisible
-            }
-            if (child is DownloadChildFragment) {
-                val navController = findNavController(R.id.nav_host_fragment)
-                navController.navigate(R.id.navigation_downloads, Bundle(), navOptions)
-                return true
-            }
-            if (child is SearchFragment || child is HomeFragment || child is DownloadFragment || child is SettingsFragment) {
-                this.finish()
-                return true
-            }
-        }
-
-        if (currentFragment != null && supportFragmentManager.fragments.size > 2) {
-            //MainActivity.showNavbar()
-            supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
-                .remove(currentFragment)
-                .commitAllowingStateLoss()
-            backEvent.invoke(true)
-            return true
-        }
-        */
-        backEvent.invoke(false)
-        return false
-    }
-
     override fun onBackPressed() {
         this.updateLocale()
-        if (backPressed()) return
+        backEvent.invoke(true)
         super.onBackPressed()
         this.updateLocale()
     }
@@ -315,7 +293,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
         updateLocale()
         super.onCreate(savedInstanceState)
-        mSessionManager = CastContext.getSharedInstance(this).sessionManager
+        try {
+            if(isCastApiAvailable()) {
+                mSessionManager = CastContext.getSharedInstance(this).sessionManager
+            }
+        } catch (e : Exception) {
+            logError(e)
+        }
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
