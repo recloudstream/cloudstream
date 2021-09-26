@@ -9,6 +9,7 @@ class WcoStream : ExtractorApi() {
     override val name: String = "WcoStream"
     override val mainUrl: String = "https://vidstream.pro"
     override val requiresReferer = false
+    private val hlsHelper = M3u8Helper()
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val baseUrl = url.split("/e/")[0]
