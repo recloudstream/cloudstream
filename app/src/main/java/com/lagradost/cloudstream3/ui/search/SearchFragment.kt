@@ -370,7 +370,7 @@ class SearchFragment : Fragment() {
             typesActive = it.getApiTypeSettings()
         }
 
-        main_search.setOnQueryTextFocusChangeListener { searchView, b ->
+        /*main_search.setOnQueryTextFocusChangeListener { searchView, b ->
             if (b) {
                 // https://stackoverflow.com/questions/12022715/unable-to-show-keyboard-automatically-in-the-searchview
                 searchView?.postDelayed({
@@ -381,7 +381,7 @@ class SearchFragment : Fragment() {
                 }, 200)
             }
         }
-        main_search.onActionViewExpanded()
+        main_search.onActionViewExpanded()*/
 
         val masterAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = ParentItemAdapter(listOf(), { callback ->
             SearchHelper.handleSearchClickCallback(activity, callback)
