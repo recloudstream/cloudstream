@@ -41,16 +41,31 @@ class WcoStream : ExtractorApi() {
 
         if (mapped.success) {
             mapped.media.sources.forEach {
-                sources.add(
-                    ExtractorLink(
-                        name,
-                        name + if (it.label != null) "- ${it.label}" else "",
-                        it.file,
-                        "",
-                        Qualities.P720.value,
-                        it.file.contains(".m3u8")
+                if (it.file.contains("m3u8")) {
+                    hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(it.file, null)).forEach { stream ->
+                        sources.add(
+                            ExtractorLink(
+                                name,
+                                name + if (stream.quality != null) " - ${stream.quality}" else "",
+                                stream.streamUrl,
+                                "",
+                                getQualityFromName(stream.quality.toString()),
+                                true
+                            )
+                        )
+                    }
+                } else {
+                    sources.add(
+                        ExtractorLink(
+                            name,
+                            name + if (it.label != null) " - ${it.label}" else "",
+                            it.file,
+                            "",
+                            Qualities.P720.value,
+                            false
+                        )
                     )
-                )
+                }
             }
         }
         return sources
