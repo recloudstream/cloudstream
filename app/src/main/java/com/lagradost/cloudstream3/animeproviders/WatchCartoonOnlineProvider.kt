@@ -26,15 +26,14 @@ class WatchCartoonOnlineProvider : MainAPI() {
     override fun search(query: String): List<SearchResponse> {
         val url = "https://www.wcostream.com/search"
 
-        val response =
+        var response =
             khttp.post(
                 url,
                 headers = mapOf("Referer" to url),
                 data = mapOf("catara" to query, "konuara" to "series")
             )
-        val document = Jsoup.parse(response.text)
-        val items = document.select("div#blog > div.cerceve")
-        if (items.isNullOrEmpty()) return ArrayList()
+        var document = Jsoup.parse(response.text)
+        var items = document.select("div#blog > div.cerceve").toList()
         val returnValue = ArrayList<SearchResponse>()
 
         for (item in items) {
@@ -66,61 +65,116 @@ class WatchCartoonOnlineProvider : MainAPI() {
                 )
             }
         }
+
+        // "episodes-search", is used for finding movies, anime episodes should be filtered out
+        response =
+            khttp.post(
+                url,
+                headers = mapOf("Referer" to url),
+                data = mapOf("catara" to query, "konuara" to "episodes")
+            )
+        document = Jsoup.parse(response.text)
+        items = document.select("#catlist-listview2 > ul > li").filter { it?.text() != null && !it?.text().toString().contains("Episode") }
+
+
+        for (item in items) {
+            val titleHeader = item.selectFirst("a")
+            val title = titleHeader.text()
+            val href = fixUrl(titleHeader.attr("href"))
+            val isDubbed = title.contains("dubbed")
+            val set: EnumSet<DubStatus> =
+                EnumSet.of(if (isDubbed) DubStatus.Dubbed else DubStatus.Subbed)
+            returnValue.add(
+                TvSeriesSearchResponse(
+                    title,
+                    href,
+                    this.name,
+                    TvType.AnimeMovie,
+                    null,
+                    null,
+                    null,
+                )
+            )
+        }
+
         return returnValue
     }
 
     override fun load(url: String): LoadResponse {
+        val isMovie = !url.contains("/anime/")
+
         val response = khttp.get(url)
         val document = Jsoup.parse(response.text)
 
-        val title = document.selectFirst("td.vsbaslik > h2").text()
-        val poster = fixUrl(document.selectFirst("div#cat-img-desc > div > img").attr("src"))
-        val plot = document.selectFirst("div.iltext").text()
-        val genres = document.select("div#cat-genre > div.wcobtn > a").map { it.text() }
-        val episodes = document.select("div#catlist-listview > ul > li > a").reversed().map {
-            val text = it.text()
-            val match = Regex("Season ([0-9]*) Episode ([0-9]*).*? (.*)").find(text)
-            val href = it.attr("href")
-            if (match != null) {
-                val last = match.groupValues[3]
+
+        return if (!isMovie) {
+            val title = document.selectFirst("td.vsbaslik > h2").text()
+            val poster = fixUrl(document.selectFirst("div#cat-img-desc > div > img").attr("src"))
+            val plot = document.selectFirst("div.iltext").text()
+            val genres = document.select("div#cat-genre > div.wcobtn > a").map { it.text() }
+            val episodes = document.select("div#catlist-listview > ul > li > a").reversed().map {
+                val text = it.text()
+                val match = Regex("Season ([0-9]*) Episode ([0-9]*).*? (.*)").find(text)
+                val href = it.attr("href")
+                if (match != null) {
+                    val last = match.groupValues[3]
+                    return@map TvSeriesEpisode(
+                        if (last.startsWith("English")) null else last,
+                        match.groupValues[1].toIntOrNull(),
+                        match.groupValues[2].toIntOrNull(),
+                        href
+                    )
+                }
+                val match2 = Regex("Episode ([0-9]*).*? (.*)").find(text)
+                if (match2 != null) {
+                    val last = match2.groupValues[2]
+                    return@map TvSeriesEpisode(
+                        if (last.startsWith("English")) null else last,
+                        null,
+                        match2.groupValues[1].toIntOrNull(),
+                        href
+                    )
+                }
                 return@map TvSeriesEpisode(
-                    if (last.startsWith("English")) null else last,
-                    match.groupValues[1].toIntOrNull(),
-                    match.groupValues[2].toIntOrNull(),
-                    href
-                )
-            }
-            val match2 = Regex("Episode ([0-9]*).*? (.*)").find(text)
-            if (match2 != null) {
-                val last = match2.groupValues[2]
-                return@map TvSeriesEpisode(
-                    if (last.startsWith("English")) null else last,
+                    text,
                     null,
-                    match2.groupValues[1].toIntOrNull(),
+                    null,
                     href
                 )
             }
-            return@map TvSeriesEpisode(
-                text,
+            TvSeriesLoadResponse(
+                title,
+                url,
+                this.name,
+                TvType.TvSeries,
+                episodes,
+                poster,
+                null,
+                plot,
                 null,
                 null,
-                href
+                tags = genres
+            )
+        } else {
+            val title = document.selectFirst(".iltext .Apple-style-span")?.text().toString()
+            val b = document.select(".iltext b")
+            val description = if (b.isNotEmpty()) {
+                b.last().html().split("<br>")[0]
+            } else null
+
+            TvSeriesLoadResponse(
+                title,
+                url,
+                this.name,
+                TvType.TvSeries,
+                listOf(TvSeriesEpisode(title, null, null, url)),
+                null,
+                null,
+                description,
+                null,
+                null
             )
         }
-
-        return TvSeriesLoadResponse(
-            title,
-            url,
-            this.name,
-            TvType.TvSeries,
-            episodes,
-            poster,
-            null,
-            plot,
-            null,
-            null,
-            tags = genres
-        )
     }
 
     data class LinkResponse(
