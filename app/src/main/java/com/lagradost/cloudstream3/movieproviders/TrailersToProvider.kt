@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -33,8 +35,8 @@ class TrailersToProvider : MainAPI() {
         get() = VPNStatus.MightBeNeeded
 
     override fun getMainPage(): HomePageResponse? {
-        val response = khttp.get(mainUrl)
-        val document = Jsoup.parse(response.text)
+        val response = get(mainUrl).text
+        val document = Jsoup.parse(response)
         val returnList = ArrayList<HomePageList>()
         val docs = document.select("section.section > div.container")
         for (doc in docs) {
@@ -76,8 +78,8 @@ class TrailersToProvider : MainAPI() {
 
     override fun quickSearch(query: String): List<SearchResponse> {
         val url = "$mainUrl/en/quick-search?q=$query"
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
         val items = document.select("div.group-post-minimal > a.post-minimal")
         if (items.isNullOrEmpty()) return ArrayList()
 
@@ -104,8 +106,8 @@ class TrailersToProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/en/popular/movies-tvshows-collections?q=$query"
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
         val items = document.select("div.col-lg-8 > article.list-item")
         if (items.isNullOrEmpty()) return ArrayList()
         val returnValue = ArrayList<SearchResponse>()
@@ -133,8 +135,8 @@ class TrailersToProvider : MainAPI() {
         data: String,
         callback: (ExtractorLink) -> Unit,
     ): Boolean {
-        val response = khttp.get(data)
-        val url = "<source src='(.*?)'".toRegex().find(response.text)?.groupValues?.get(1)
+        val response = get(data).text
+        val url = "<source src='(.*?)'".toRegex().find(response)?.groupValues?.get(1)
         if (url != null) {
             callback.invoke(ExtractorLink(this.name, this.name, url, mainUrl, Qualities.Unknown.value, false))
         }
@@ -144,8 +146,8 @@ class TrailersToProvider : MainAPI() {
     private fun loadSubs(url: String, subtitleCallback: (SubtitleFile) -> Unit) {
         if (url.isEmpty()) return
 
-        val response = khttp.get(fixUrl(url))
-        val document = Jsoup.parse(response.text)
+        val response = get(fixUrl(url)).text
+        val document = Jsoup.parse(response)
 
         val items = document.select("div.list-group > a.list-group-item")
         for (item in items) {
@@ -181,8 +183,8 @@ class TrailersToProvider : MainAPI() {
 
             return isSucc
         } else if (url.contains("/episode/")) {
-            val response = khttp.get(url)
-            val document = Jsoup.parse(response.text)
+            val response = get(url).text
+            val document = Jsoup.parse(response)
             // val qSub = document.select("subtitle-content")
             val subUrl = document.select("subtitle-content")?.attr("data-url") ?: ""
 
@@ -198,8 +200,8 @@ class TrailersToProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
         var title = document?.selectFirst("h2.breadcrumbs-custom-title > a")?.text() ?: throw ErrorLoadingException("Service might be unavailable")
 
         val metaInfo = document.select("div.post-info-meta > ul.post-info-meta-list > li")

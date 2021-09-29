@@ -40,7 +40,7 @@ class HttpSession {
         allowRedirects: Boolean? = null,
         stream: Boolean = false, files: List<FileLike> = listOf(),
     ): Response {
-        val res = khttp.get(
+        val res = get(
             url, headers, params,
             data, json, auth,
             mergeCookies(sessionCookies, cookies), timeout,
@@ -62,7 +62,7 @@ class HttpSession {
         allowRedirects: Boolean? = null,
         stream: Boolean = false, files: List<FileLike> = listOf()
     ): Response {
-        val res = khttp.post(
+        val res = post(
             url, headers, params,
             data, json, auth,
             mergeCookies(sessionCookies, cookies), timeout,

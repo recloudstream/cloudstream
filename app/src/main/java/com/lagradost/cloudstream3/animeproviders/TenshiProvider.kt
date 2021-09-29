@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.cookies
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
-import khttp.structures.cookie.CookieJar
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat
@@ -15,7 +17,7 @@ import java.util.*
 class TenshiProvider : MainAPI() {
     companion object {
         var token: String? = null
-        var cookie: CookieJar? = null
+        var cookie: Map<String, String> = mapOf()
 
         fun getType(t: String): TvType {
             return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
@@ -32,14 +34,14 @@ class TenshiProvider : MainAPI() {
         get() = false
     override val hasMainPage: Boolean
         get() = true
-    
-    
+
+
     override val supportedTypes: Set<TvType>
         get() = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
 
     private fun loadToken(): Boolean {
         return try {
-            val response = khttp.get(mainUrl)
+            val response = get(mainUrl)
             cookie = response.cookies
             val document = Jsoup.parse(response.text)
             token = document.selectFirst("""meta[name="csrf-token"]""").attr("content")
@@ -48,10 +50,10 @@ class TenshiProvider : MainAPI() {
             false
         }
     }
-    
+
     override fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
-        val soup = Jsoup.parse(khttp.get(mainUrl).text)
+        val soup = Jsoup.parse(get(mainUrl).text)
         for (section in soup.select("#content > section")) {
             try {
                 if (section.attr("id") == "toplist-tabs") {
@@ -95,7 +97,7 @@ class TenshiProvider : MainAPI() {
                 e.printStackTrace()
             }
         }
-        if(items.size <= 0) throw ErrorLoadingException()
+        if (items.size <= 0) throw ErrorLoadingException()
         return HomePageResponse(items)
     }
 
@@ -149,7 +151,7 @@ class TenshiProvider : MainAPI() {
                 dateString.replace("th ", " ").replace("st ", " ").replace("nd ", " ").replace("rd ", " ")
             ) ?: return null
             return newFormat.format(data)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             return null
         }
     }
@@ -207,15 +209,15 @@ class TenshiProvider : MainAPI() {
 
     override fun search(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/anime"
-        var response = khttp.get(url, params = mapOf("q" to query), cookies = mapOf("loop-view" to "thumb"))
-        var document = Jsoup.parse(response.text)
+        var response = get(url, params = mapOf("q" to query), cookies = mapOf("loop-view" to "thumb")).text
+        var document = Jsoup.parse(response)
         val returnValue = parseSearchPage(document)
 
         while (!document.select("""a.page-link[rel="next"]""").isEmpty()) {
             val link = document.select("""a.page-link[rel="next"]""")
             if (link != null && !link.isEmpty()) {
-                response = khttp.get(link[0].attr("href"), cookies = mapOf("loop-view" to "thumb"))
-                document = Jsoup.parse(response.text)
+                response = get(link[0].attr("href"), cookies = mapOf("loop-view" to "thumb")).text
+                document = Jsoup.parse(response)
                 returnValue.addAll(parseSearchPage(document))
             } else {
                 break
@@ -226,8 +228,8 @@ class TenshiProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val response = khttp.get(url, timeout = 120.0, cookies = mapOf("loop-view" to "thumb"))
-        val document = Jsoup.parse(response.text)
+        val response = get(url, cookies = mapOf("loop-view" to "thumb")).text
+        val document = Jsoup.parse(response)
 
         val englishTitle = document.selectFirst("span.value > span[title=\"English\"]")?.parent()?.text()?.trim()
         val japaneseTitle = document.selectFirst("span.value > span[title=\"Japanese\"]")?.parent()?.text()?.trim()
@@ -291,8 +293,8 @@ class TenshiProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val response = khttp.get(data)
-        val soup = Jsoup.parse(response.text)
+        val response = get(data).text
+        val soup = Jsoup.parse(response)
 
         data class Quality(
             @JsonProperty("src") val src: String,
@@ -302,9 +304,9 @@ class TenshiProvider : MainAPI() {
         val sources = ArrayList<ExtractorLink>()
         for (source in soup.select("""[aria-labelledby="mirror-dropdown"] > li > a.dropdown-item""")) {
             val release = source.text().replace("/", "").trim()
-            val sourceHTML = khttp.get(
+            val sourceHTML = get(
                 "https://tenshi.moe/embed?v=${source.attr("href").split("v=")[1].split("&")[0]}",
-                headers=mapOf("Referer" to data)
+                headers = mapOf("Referer" to data)
             ).text
 
             val match = Regex("""sources: (\[(?:.|\s)+?type: ['\"]video\/.*?['\"](?:.|\s)+?\])""").find(sourceHTML)

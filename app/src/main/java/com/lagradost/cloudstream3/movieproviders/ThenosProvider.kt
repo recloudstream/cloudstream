@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import java.util.concurrent.TimeUnit
@@ -41,8 +43,8 @@ class ThenosProvider : MainAPI() {
         val list = ArrayList<HomePageList>()
         map.entries.forEach {
             val url = "$apiUrl/library/${it.value}"
-            val response = khttp.get(url)
-            val mapped = mapper.readValue<ThenosLoadResponse>(response.text)
+            val response = get(url).text
+            val mapped = mapper.readValue<ThenosLoadResponse>(response)
 
             mapped.Metadata?.mapNotNull { meta ->
                 meta?.toSearchResponse()
@@ -209,8 +211,8 @@ class ThenosProvider : MainAPI() {
     }
 
     private fun searchFromUrl(url: String): List<SearchResponse> {
-        val response = khttp.get(url)
-        val test = mapper.readValue<ThenosSearchResponse>(response.text)
+        val response = get(url).text
+        val test = mapper.readValue<ThenosSearchResponse>(response)
         val returnValue = ArrayList<SearchResponse>()
 
         test.Hub?.forEach {
@@ -255,12 +257,12 @@ class ThenosProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val url = "$apiUrl/library/watch/$data"
-        val response = khttp.get(url)
-        val mapped = mapper.readValue<ThenosSource>(response.text)
+        val response = get(url).text
+        val mapped = mapper.readValue<ThenosSource>(response)
 
         mapped.sources?.forEach { source ->
             val isM3u8 = source.type != "video/mp4"
-            val token = khttp.get("https://token.noss.workers.dev/").text
+            val token = get("https://token.noss.workers.dev/").text
             val authorization =
                 String(android.util.Base64.decode(token, android.util.Base64.DEFAULT), Charsets.ISO_8859_1)
 
@@ -423,12 +425,12 @@ class ThenosProvider : MainAPI() {
     private fun getAllEpisodes(id: String): List<TvSeriesEpisode> {
         val episodes = ArrayList<TvSeriesEpisode>()
         val url = "$apiUrl/library/metadata/$id/children"
-        val response = khttp.get(url)
-        val mapped = mapper.readValue<ThenosSeriesResponse>(response.text)
+        val response = get(url).text
+        val mapped = mapper.readValue<ThenosSeriesResponse>(response)
         mapped.Metadata?.forEach { series_meta ->
             val fixedUrl = apiUrl + series_meta.key
-            val child = khttp.get(fixedUrl)
-            val mappedSeason = mapper.readValue<SeasonResponse>(child.text)
+            val child = get(fixedUrl).text
+            val mappedSeason = mapper.readValue<SeasonResponse>(child)
             mappedSeason.Metadata?.forEach mappedSeason@{ meta ->
                 episodes.add(
                     TvSeriesEpisode(
@@ -450,8 +452,8 @@ class ThenosProvider : MainAPI() {
 
     override fun load(url: String): LoadResponse? {
         val fixedUrl = "$apiUrl/library/metadata/${url.split("/").last()}"
-        val response = khttp.get(fixedUrl)
-        val mapped = mapper.readValue<ThenosLoadResponse>(response.text)
+        val response = get(fixedUrl).text
+        val mapped = mapper.readValue<ThenosLoadResponse>(response)
 
         val isShow = mapped.Metadata?.any { it?.type == "show" } == true
         val metadata = mapped.Metadata?.getOrNull(0) ?: return null

@@ -1,6 +1,9 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
+import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.pmap
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.extractorApis
@@ -38,7 +41,7 @@ class Vidstream(overrideMainUrl: String? = null) {
             /** Stolen from GogoanimeProvider.kt extractor */
             normalSafeApiCall {
                 val link = getDownloadUrl(id)
-                val page = khttp.get(link, headers = mapOf("Referer" to extractorUrl))
+                val page = get(link, headers = mapOf("Referer" to extractorUrl))
                 val pageDoc = Jsoup.parse(page.text)
                 val qualityRegex = Regex("(\\d+)P")
 
@@ -60,7 +63,7 @@ class Vidstream(overrideMainUrl: String? = null) {
                 }
             }
 
-            with(khttp.get(extractorUrl)) {
+            with(get(extractorUrl)) {
                 val document = Jsoup.parse(this.text)
                 val primaryLinks = document.select("ul.list-server-items > li.linkserver")
                 //val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()

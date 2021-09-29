@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -14,7 +16,7 @@ class StreamTape : ExtractorApi() {
         Regex("""(i(|" \+ ')d(|" \+ ')=.*?&(|" \+ ')e(|" \+ ')x(|" \+ ')p(|" \+ ')i(|" \+ ')r(|" \+ ')e(|" \+ ')s(|" \+ ')=.*?&(|" \+ ')i(|" \+ ')p(|" \+ ')=.*?&(|" \+ ')t(|" \+ ')o(|" \+ ')k(|" \+ ')e(|" \+ ')n(|" \+ ')=.*)'""")
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        with(khttp.get(url)) {
+        with(get(url)) {
             linkRegex.find(this.text)?.let {
                 val extractedUrl = "https://streamtape.com/get_video?${it.groupValues[1]}".replace("""" + '""", "")
                 return listOf(

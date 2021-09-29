@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import org.jsoup.Jsoup
 import java.util.*
 
@@ -16,8 +18,8 @@ object SubtitleHelper {
 
     fun createISO() {
         val url = "https://infogalactic.com/info/List_of_ISO_639-1_codes"
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
         val headers = document.select("table.wikitable > tbody > tr")
 
         var text = "listOf(\n"

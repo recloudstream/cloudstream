@@ -1,5 +1,8 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
+import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -28,12 +31,12 @@ class MultiQuality : ExtractorApi() {
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
-        with(khttp.get(url)) {
+        with(get(url)) {
             sourceRegex.findAll(this.text).forEach { sourceMatch ->
                 val extractedUrl = sourceMatch.groupValues[1]
                 // Trusting this isn't mp4, may fuck up stuff
                 if (extractedUrl.endsWith(".m3u8")) {
-                    with(khttp.get(extractedUrl)) {
+                    with(get(extractedUrl)) {
                         m3u8Regex.findAll(this.text).forEach { match ->
                             extractedLinksList.add(
                                 ExtractorLink(

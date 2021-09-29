@@ -3,6 +3,10 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.post
+import com.lagradost.cloudstream3.network.text
+import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -21,8 +25,8 @@ class VMoveeProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
         val searchItems = document.select("div.search-page > div.result-item > article")
         if (searchItems.size == 0) return ArrayList()
         val returnValue = ArrayList<SearchResponse>()
@@ -75,24 +79,24 @@ class VMoveeProvider : MainAPI() {
 
         val url = "$mainUrl/dashboard/admin-ajax.php"
         val post =
-            khttp.post(
+            post(
                 url,
                 headers = mapOf("referer" to url),
                 data = mapOf("action" to "doo_player_ajax", "post" to data, "nume" to "2", "type" to "movie")
-            )
+            ).text
 
-        val ajax = mapper.readValue<LoadLinksAjax>(post.text)
+        val ajax = mapper.readValue<LoadLinksAjax>(post)
         var realUrl = ajax.embedUrl
         if (realUrl.startsWith("//")) {
             realUrl = "https:$realUrl"
         }
 
-        val request = khttp.get(realUrl)
+        val request = get(realUrl)
         val prefix = "https://reeoov.tube/v/"
         if (request.url.startsWith(prefix)) {
             val apiUrl = "https://reeoov.tube/api/source/${request.url.removePrefix(prefix)}"
-            val apiResponse = khttp.post(apiUrl,headers = mapOf("Referer" to request.url),data = mapOf("r" to "https://www.vmovee.watch/", "d" to "reeoov.tube"))
-            val apiData = mapper.readValue<ReeoovAPI>(apiResponse.text)
+            val apiResponse = post(apiUrl,headers = mapOf("Referer" to request.url),data = mapOf("r" to "https://www.vmovee.watch/", "d" to "reeoov.tube")).text
+            val apiData = mapper.readValue<ReeoovAPI>(apiResponse)
             for (d in apiData.data) {
                 callback.invoke(
                     ExtractorLink(
@@ -111,8 +115,8 @@ class VMoveeProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
 
         val sheader = document.selectFirst("div.sheader")
 

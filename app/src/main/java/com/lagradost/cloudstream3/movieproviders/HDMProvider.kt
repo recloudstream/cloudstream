@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
@@ -18,8 +20,8 @@ class HDMProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/$query"
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
         val items = document.select("div.col-md-2 > article > a")
         if (items.isEmpty()) return ArrayList()
         val returnValue = ArrayList<SearchResponse>()
@@ -42,8 +44,8 @@ class HDMProvider : MainAPI() {
     ): Boolean {
         if (data == "") return false
         val slug = ".*/(.*?)\\.mp4".toRegex().find(data)?.groupValues?.get(1) ?: return false
-        val response = khttp.get(data)
-        val key = "playlist\\.m3u8(.*?)\"".toRegex().find(response.text)?.groupValues?.get(1) ?: return false
+        val response = get(data).text
+        val key = "playlist\\.m3u8(.*?)\"".toRegex().find(response)?.groupValues?.get(1) ?: return false
         callback.invoke(
             ExtractorLink(
                 this.name,
@@ -58,14 +60,14 @@ class HDMProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse? {
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
         val title = document.selectFirst("h2.movieTitle")?.text() ?: throw ErrorLoadingException("No Data Found")
         val poster = document.selectFirst("div.post-thumbnail > img").attr("src")
         val descript = document.selectFirst("div.synopsis > p").text()
         val year = document.select("div.movieInfoAll > div.row > div.col-md-6")?.get(1)?.selectFirst("> p > a")?.text()
             ?.toIntOrNull()
-        val data = "src/player/\\?v=(.*?)\"".toRegex().find(response.text)?.groupValues?.get(1) ?: return null
+        val data = "src/player/\\?v=(.*?)\"".toRegex().find(response)?.groupValues?.get(1) ?: return null
 
         return MovieLoadResponse(
             title, url, this.name, TvType.Movie,

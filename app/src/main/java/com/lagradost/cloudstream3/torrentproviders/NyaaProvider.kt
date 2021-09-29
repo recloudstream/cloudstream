@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.torrentproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
@@ -23,8 +25,8 @@ class NyaaProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?f=0&c=0_0&q=$query&s=seeders&o=desc"
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
 
         val returnValues = ArrayList<SearchResponse>()
                 val elements = document.select("table > tbody > tr")
@@ -43,8 +45,8 @@ class NyaaProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
         val title = document.selectFirst("h3.panel-title").text()
         val description = document.selectFirst("div#torrent-description").text()
         val downloadLinks = document.select("div.panel-footer > a")

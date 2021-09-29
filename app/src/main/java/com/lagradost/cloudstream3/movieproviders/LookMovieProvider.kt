@@ -6,6 +6,8 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.extractors.M3u8Manifest
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 
@@ -71,12 +73,12 @@ class LookMovieProvider : MainAPI() {
 
     override fun quickSearch(query: String): List<SearchResponse> {
         val movieUrl = "$mainUrl/api/v1/movies/search/?q=$query"
-        val movieResponse = khttp.get(movieUrl)
-        val movies = mapper.readValue<LookMovieSearchResultRoot>(movieResponse.text).result
+        val movieResponse = get(movieUrl).text
+        val movies = mapper.readValue<LookMovieSearchResultRoot>(movieResponse).result
 
         val showsUrl = "$mainUrl/api/v1/shows/search/?q=$query"
-        val showsResponse = khttp.get(showsUrl)
-        val shows = mapper.readValue<LookMovieSearchResultRoot>(showsResponse.text).result
+        val showsResponse = get(showsUrl).text
+        val shows = mapper.readValue<LookMovieSearchResultRoot>(showsResponse).result
 
         val returnValue = ArrayList<SearchResponse>()
         if (!movies.isNullOrEmpty()) {
@@ -117,8 +119,8 @@ class LookMovieProvider : MainAPI() {
     override fun search(query: String): List<SearchResponse> {
         fun search(query: String, isMovie: Boolean): ArrayList<SearchResponse> {
             val url = "$mainUrl/${if (isMovie) "movies" else "shows"}/search/?q=$query"
-            val response = khttp.get(url)
-            val document = Jsoup.parse(response.text)
+            val response = get(url).text
+            val document = Jsoup.parse(response)
 
             val items = document.select("div.flex-wrap-movielist > div.movie-item-style-1")
             val returnValue = ArrayList<SearchResponse>()
@@ -161,8 +163,8 @@ class LookMovieProvider : MainAPI() {
     }
 
     private fun loadCurrentLinks(url: String, callback: (ExtractorLink) -> Unit) {
-        val response = khttp.get(url.replace("\$unixtime", unixTime.toString()))
-        M3u8Manifest.extractLinks(response.text).forEach {
+        val response = get(url.replace("\$unixtime", unixTime.toString())).text
+        M3u8Manifest.extractLinks(response).forEach {
             callback.invoke(
                 ExtractorLink(
                     this.name,
@@ -185,24 +187,24 @@ class LookMovieProvider : MainAPI() {
         val localData: LookMovieLinkLoad = mapper.readValue(data)
 
         if (localData.isMovie) {
-            val tokenResponse = khttp.get(localData.url)
-            val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse.text)
+            val tokenResponse = get(localData.url).text
+            val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse)
             val accessToken = root.data?.accessToken ?: return false
             addSubtitles(root.data.subtitles, subtitleCallback)
             loadCurrentLinks(localData.extraUrl.replace("\$accessToken", accessToken), callback)
             return true
         } else {
             loadCurrentLinks(localData.url, callback)
-            val subResponse = khttp.get(localData.extraUrl)
-            val subs = mapper.readValue<List<LookMovieTokenSubtitle>>(subResponse.text)
+            val subResponse = get(localData.extraUrl).text
+            val subs = mapper.readValue<List<LookMovieTokenSubtitle>>(subResponse)
             addSubtitles(subs, subtitleCallback)
         }
         return true
     }
 
     override fun load(url: String): LoadResponse? {
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
         val isMovie = url.contains("/movies/")
 
         val watchHeader = document.selectFirst("div.watch-heading")
@@ -215,7 +217,7 @@ class LookMovieProvider : MainAPI() {
         var poster = if (img.isNullOrEmpty()) null else "url\\((.*?)\\)".toRegex().find(img)?.groupValues?.get(1)
         if (poster.isNullOrEmpty()) poster = imgElement?.attr("data-background-image")
         val descript = document.selectFirst("p.description-short").text()
-        val id = "${if (isMovie) "id_movie" else "id_show"}:(.*?),".toRegex().find(response.text)?.groupValues?.get(1)
+        val id = "${if (isMovie) "id_movie" else "id_show"}:(.*?),".toRegex().find(response)?.groupValues?.get(1)
             ?.replace(" ", "")
             ?: return null
         val realSlug = url.replace("$mainUrl/${if (isMovie) "movies" else "shows"}/view/", "")
@@ -243,12 +245,12 @@ class LookMovieProvider : MainAPI() {
                 rating
             )
         } else {
-            val tokenResponse = khttp.get(realUrl)
-            val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse.text)
+            val tokenResponse = get(realUrl).text
+            val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse)
             val accessToken = root.data?.accessToken ?: return null
 
             val window =
-                "window\\['show_storage'] =((.|\\n)*?<)".toRegex().find(response.text)?.groupValues?.get(1)
+                "window\\['show_storage'] =((.|\\n)*?<)".toRegex().find(response)?.groupValues?.get(1)
                     ?: return null
             // val id = "id_show:(.*?),".toRegex().find(response.text)?.groupValues?.get(1) ?: return null
             val season = "seasons:.*\\[((.|\\n)*?)]".toRegex().find(window)?.groupValues?.get(1) ?: return null

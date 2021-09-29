@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getAndUnpack
@@ -21,12 +23,12 @@ class StreamSB : ExtractorApi() {
     override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
         val newUrl = url.replace("sbplay.org/embed-", "sbplay.org/play/").removeSuffix(".html")
-        with(khttp.get(newUrl, timeout = 10.0)) {
+        with(get(newUrl, timeout = 10)) {
             getAndUnpack(this.text)?.let {
                 sourceRegex.findAll(it).forEach { sourceMatch ->
                     val extractedUrl = sourceMatch.groupValues[1]
                     if (extractedUrl.contains(".m3u8")) {
-                        with(khttp.get(extractedUrl)) {
+                        with(get(extractedUrl)) {
                             m3u8UrlRegex.findAll(this.text).forEach { match ->
                                 val extractedUrlM3u8 = match.groupValues[2]
                                 val extractedRes = match.groupValues[1]

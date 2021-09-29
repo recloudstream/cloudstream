@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -79,9 +81,9 @@ class M3u8Helper {
     fun m3u8Generation(m3u8: M3u8Stream): List<M3u8Stream> {
         val generate = sequence {
             val m3u8Parent = getParentLink(m3u8.streamUrl)
-            val response = khttp.get(m3u8.streamUrl, headers = m3u8.headers)
+            val response = get(m3u8.streamUrl, headers = m3u8.headers).text
 
-            for (match in QUALITY_REGEX.findAll(response.text)) {
+            for (match in QUALITY_REGEX.findAll(response)) {
                 var (quality, m3u8Link, m3u8Link2) = match.destructured
                 if (m3u8Link.isNullOrEmpty()) m3u8Link = m3u8Link2
                 if (absoluteExtensionDetermination(m3u8Link) == "m3u8") {
@@ -134,18 +136,17 @@ class M3u8Helper {
 
         val secondSelection = selectBest(streams.ifEmpty { listOf(selected) })
         if (secondSelection != null) {
-            val m3u8Response = khttp.get(secondSelection.streamUrl, headers = headers)
-            val m3u8Data = m3u8Response.text
+            val m3u8Response = get(secondSelection.streamUrl, headers = headers).text
 
             var encryptionUri: String? = null
             var encryptionIv = byteArrayOf()
             var encryptionData = byteArrayOf()
 
-            val encryptionState = isEncrypted(m3u8Data)
+            val encryptionState = isEncrypted(m3u8Response)
 
             if (encryptionState) {
                 val match =
-                    ENCRYPTION_URL_IV_REGEX.find(m3u8Data)!!.destructured  // its safe to assume that its not going to be null
+                    ENCRYPTION_URL_IV_REGEX.find(m3u8Response)!!.destructured  // its safe to assume that its not going to be null
                 encryptionUri = match.component2()
 
                 if (isNotCompleteUrl(encryptionUri)) {
@@ -153,11 +154,11 @@ class M3u8Helper {
                 }
 
                 encryptionIv = match.component3().toByteArray()
-                val encryptionKeyResponse = khttp.get(encryptionUri, headers = headers)
-                encryptionData = encryptionKeyResponse.content
+                val encryptionKeyResponse = get(encryptionUri, headers = headers)
+                encryptionData = encryptionKeyResponse.body?.bytes() ?: byteArrayOf()
             }
 
-            val allTs = TS_EXTENSION_REGEX.findAll(m3u8Data)
+            val allTs = TS_EXTENSION_REGEX.findAll(m3u8Response)
             val allTsList = allTs.toList()
             val totalTs = allTsList.size
             if (totalTs == 0) {
@@ -176,8 +177,8 @@ class M3u8Helper {
 
                     while (lastYield != c) {
                         try {
-                            val tsResponse = khttp.get(url, headers = headers)
-                            var tsData = tsResponse.content
+                            val tsResponse = get(url, headers = headers)
+                            var tsData = tsResponse.body?.bytes() ?: byteArrayOf()
 
                             if (encryptionState) {
                                 tsData = getDecrypter(encryptionData, tsData, encryptionIv)

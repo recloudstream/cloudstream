@@ -3,6 +3,10 @@ package com.lagradost.cloudstream3.animeproviders
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.extractors.WcoStream
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.post
+import com.lagradost.cloudstream3.network.text
+import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.util.*
@@ -45,9 +49,9 @@ class WcoProvider : MainAPI() {
         val items = ArrayList<HomePageList>()
         for (i in urls) {
             try {
-                val response = khttp.get(
+                val response = JSONObject(get(
                     i.first,
-                ).jsonObject.getString("html") // I won't make a dataclass for this shit
+                ).text).getString("html") // I won't make a dataclass for this shit
                 val document = Jsoup.parse(response)
                 val results = document.select("div.flw-item").map {
                     val filmPoster = it.selectFirst("> div.film-poster")
@@ -116,15 +120,16 @@ class WcoProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search"
-        val response = khttp.get(url, params = mapOf("keyword" to query))
+        val response =
+            get(url, params = mapOf("keyword" to query))
         var document = Jsoup.parse(response.text)
         val returnValue = parseSearchPage(document)
 
         while (!document.select(".pagination").isEmpty()) {
             val link = document.select("a.page-link[rel=\"next\"]")
             if (!link.isEmpty()) {
-                val extraResponse = khttp.get(fixUrl(link[0].attr("href")))
-                document = Jsoup.parse(extraResponse.text)
+                val extraResponse = get(fixUrl(link[0].attr("href"))).text
+                document = Jsoup.parse(extraResponse)
                 returnValue.addAll(parseSearchPage(document))
             } else {
                 break
@@ -136,10 +141,10 @@ class WcoProvider : MainAPI() {
     override fun quickSearch(query: String): List<SearchResponse> {
         val returnValue: ArrayList<SearchResponse> = ArrayList()
 
-        val response = khttp.post(
+        val response = JSONObject(post(
             "https://wcostream.cc/ajax/search",
             data = mapOf("keyword" to query)
-        ).jsonObject.getString("html") // I won't make a dataclass for this shit
+        ).text).getString("html") // I won't make a dataclass for this shit
         val document = Jsoup.parse(response)
 
         document.select("a.nav-item").forEach {
@@ -177,8 +182,8 @@ class WcoProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val response = khttp.get(url, timeout = 120.0)
-        val document = Jsoup.parse(response.text)
+        val response = get(url, timeout = 120).text
+        val document = Jsoup.parse(response)
 
         val japaneseTitle = document.selectFirst("div.elements div.row > div:nth-child(1) > div.row-line:nth-child(1)")
             ?.text()?.trim()?.replace("Other names:", "")?.trim()
@@ -234,8 +239,8 @@ class WcoProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val response = khttp.get(data)
-        val servers = Jsoup.parse(response.text).select("#servers-list > ul > li").map {
+        val response = get(data).text
+        val servers = Jsoup.parse(response).select("#servers-list > ul > li").map {
             mapOf(
                 "link" to it?.selectFirst("a")?.attr("data-embed"),
                 "title" to it?.selectFirst("span")?.text()?.trim()

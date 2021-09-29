@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -38,8 +40,8 @@ class MeloMovieProvider : MainAPI() {
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/movie/search/?name=$query"
         val returnValue: ArrayList<SearchResponse> = ArrayList()
-        val response = khttp.get(url)
-        val mapped = response.let { mapper.readValue<List<MeloMovieSearchResult>>(it.text) }
+        val response = get(url).text
+        val mapped = response.let { mapper.readValue<List<MeloMovieSearchResult>>(it) }
         if (mapped.isEmpty()) return returnValue
 
         for (i in mapped) {
@@ -115,7 +117,7 @@ class MeloMovieProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse? {
-        val response = khttp.get(url).text
+        val response = get(url).text
 
         //backdrop = imgurl
         fun findUsingRegex(src: String): String? {

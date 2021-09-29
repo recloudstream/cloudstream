@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.*
 
 class MixDrop : ExtractorApi() {
@@ -13,7 +15,7 @@ class MixDrop : ExtractorApi() {
     }
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        with(khttp.get(url)) {
+        with(get(url)) {
             getAndUnpack(this.text)?.let { unpackedText ->
                 srcRegex.find(unpackedText)?.groupValues?.get(1)?.let { link ->
                     return listOf(

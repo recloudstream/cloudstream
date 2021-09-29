@@ -23,6 +23,8 @@ import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -82,7 +84,7 @@ class InAppUpdater {
             val url = "https://api.github.com/repos/LagradOst/CloudStream-3/releases"
             val headers = mapOf("Accept" to "application/vnd.github.v3+json")
             val response =
-                mapper.readValue<List<GithubRelease>>(khttp.get(url, headers = headers).text)
+                mapper.readValue<List<GithubRelease>>(get(url, headers = headers).text)
 
             val versionRegex = Regex("""(.*?((\d+)\.(\d+)\.(\d+))\.apk)""")
             val versionRegexLocal = Regex("""(.*?((\d+)\.(\d+)\.(\d+)).*)""")
@@ -138,7 +140,7 @@ class InAppUpdater {
             val releaseUrl = "https://api.github.com/repos/LagradOst/CloudStream-3/releases"
             val headers = mapOf("Accept" to "application/vnd.github.v3+json")
             val response =
-                mapper.readValue<List<GithubRelease>>(khttp.get(releaseUrl, headers = headers).text)
+                mapper.readValue<List<GithubRelease>>(get(releaseUrl, headers = headers).text)
 
             val found =
                 response.lastOrNull { rel ->
@@ -147,7 +149,7 @@ class InAppUpdater {
             val foundAsset = found?.assets?.getOrNull(0)
 
             val tagResponse =
-                mapper.readValue<GithubTag>(khttp.get(tagUrl, headers = headers).text)
+                mapper.readValue<GithubTag>(get(tagUrl, headers = headers).text)
 
             val shouldUpdate = (getString(R.string.prerelease_commit_hash) != tagResponse.github_object.sha)
 

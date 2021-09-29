@@ -1,12 +1,13 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
-import khttp.structures.cookie.CookieJar
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.network.*
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import okhttp3.Response
 import org.jsoup.Jsoup
 import java.util.*
 import kotlin.collections.ArrayList
@@ -15,7 +16,7 @@ class AnimePaheProvider : MainAPI() {
     companion object {
         const val MAIN_URL = "https://animepahe.com"
 
-        var cookies = CookieJar()
+        var cookies: Map<String, String> = mapOf()
         private fun getType(t: String): TvType {
             return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
             else if (t.contains("Movie")) TvType.AnimeMovie
@@ -23,9 +24,9 @@ class AnimePaheProvider : MainAPI() {
         }
 
         fun generateSession(): Boolean {
-            if (cookies.entries.size != 0) return true
+            if (cookies.isNotEmpty()) return true
             return try {
-                val response = khttp.get("$MAIN_URL/")
+                val response = get("$MAIN_URL/")
                 cookies = response.cookies
                 true
             } catch (e: Exception) {
@@ -82,8 +83,8 @@ class AnimePaheProvider : MainAPI() {
         val items = ArrayList<HomePageList>()
         for (i in urls) {
             try {
-                val response = khttp.get(i.first)
-                val episodes = mapper.readValue<AnimePaheLatestReleases>(response.text).data.map {
+                val response = get(i.first).text
+                val episodes = mapper.readValue<AnimePaheLatestReleases>(response).data.map {
 
                     AnimeSearchResponse(
                         it.animeTitle,
@@ -132,8 +133,8 @@ class AnimePaheProvider : MainAPI() {
         val url = "$mainUrl/api?m=search&l=8&q=$title"
         val headers = mapOf("referer" to "$mainUrl/")
 
-        val req = khttp.get(url, headers = headers)
-        val data = req.let { mapper.readValue<AnimePaheSearch>(it.text) }
+        val req = get(url, headers = headers).text
+        val data = req.let { mapper.readValue<AnimePaheSearch>(it) }
         for (anime in data.data) {
             if (anime.id == animeId) {
                 return "https://animepahe.com/anime/${anime.session}"
@@ -147,8 +148,8 @@ class AnimePaheProvider : MainAPI() {
         val url = "$mainUrl/api?m=search&l=8&q=$query"
         val headers = mapOf("referer" to "$mainUrl/")
 
-        val req = khttp.get(url, headers = headers)
-        val data = req.let { mapper.readValue<AnimePaheSearch>(it.text) }
+        val req = get(url, headers = headers).text
+        val data = req.let { mapper.readValue<AnimePaheSearch>(it) }
 
         return ArrayList(data.data.map {
             AnimeSearchResponse(
@@ -198,8 +199,8 @@ class AnimePaheProvider : MainAPI() {
             val uri = "$mainUrl/api?m=release&id=$id&sort=episode_asc&page=1"
             val headers = mapOf("referer" to "$mainUrl/")
 
-            val req = khttp.get(uri, headers = headers)
-            val data = req.let { mapper.readValue<AnimePaheAnimeData>(it.text) }
+            val req = get(uri, headers = headers).text
+            val data = req.let { mapper.readValue<AnimePaheAnimeData>(it) }
 
             val lastPage = data.lastPage
             val perPage = data.perPage
@@ -257,7 +258,7 @@ class AnimePaheProvider : MainAPI() {
             val (animeId, animeTitle) = regex.find(url)!!.destructured
             val link = getAnimeByIdAndTitle(animeTitle, animeId.toInt())!!
 
-            val html = khttp.get(link).text
+            val html = get(link).text
             val doc = Jsoup.parse(html)
 
             val japTitle = doc.selectFirst("h2.japanese")?.text()
@@ -454,17 +455,17 @@ class AnimePaheProvider : MainAPI() {
         }
 
         var responseCode = 302
-        var adflyContent: khttp.responses.Response? = null
+        var adflyContent: Response? = null
         var tries = 0
 
         while (responseCode != 200 && tries < 20) {
-            adflyContent = khttp.get(
-                khttp.get(adflyUri, cookies = cookies, allowRedirects = false).headers.getValue("location"),
+            adflyContent = get(
+                get(adflyUri, cookies = cookies, allowRedirects = false).url,
                 cookies = cookies,
                 allowRedirects = false
             )
-            cookies.putAll(adflyContent.cookies.toMap())
-            responseCode = adflyContent.statusCode
+            cookies = cookies + adflyContent.cookies
+            responseCode = adflyContent.code
             ++tries
         }
         if (tries > 19) {
@@ -475,33 +476,33 @@ class AnimePaheProvider : MainAPI() {
 
     private fun getStreamUrlFromKwik(adflyUri: String): String {
         val fContent =
-            khttp.get(bypassAdfly(adflyUri), headers = mapOf("referer" to "https://kwik.cx/"), cookies = cookies)
-        cookies.putAll(fContent.cookies.toMap())
+            get(bypassAdfly(adflyUri), headers = mapOf("referer" to "https://kwik.cx/"), cookies = cookies)
+        cookies = cookies + fContent.cookies
 
         val (fullString, key, v1, v2) = KWIK_PARAMS_RE.find(fContent.text)!!.destructured
         val decrypted = decrypt(fullString, key, v1.toInt(), v2.toInt())
         val uri = KWIK_D_URL.find(decrypted)!!.destructured.component1()
         val tok = KWIK_D_TOKEN.find(decrypted)!!.destructured.component1()
-        var content: khttp.responses.Response? = null
+        var content: Response? = null
 
         var code = 419
         var tries = 0
 
         while (code != 302 && tries < 20) {
-            content = khttp.post(
+            content = post(
                 uri,
                 allowRedirects = false,
                 data = mapOf("_token" to tok),
                 headers = mapOf("referer" to fContent.url),
-                cookies = cookieStrToMap(fContent.headers.getValue("set-cookie").replace("path=/,", ""))
+                cookies = fContent.cookies
             )
-            code = content.statusCode
+            code = content.code
             ++tries
         }
         if (tries > 19) {
             throw Exception("Failed to extract the stream uri from kwik.")
         }
-        return content?.headers?.getValue("location").toString()
+        return content?.headers?.values("location").toString()
     }
 
     private fun extractVideoLinks(episodeLink: String): List<ExtractorLink> {
@@ -516,8 +517,8 @@ class AnimePaheProvider : MainAPI() {
             link = link.replace(regex, "")
 
 
-            val req = khttp.get(link, headers = headers)
-            val jsonResponse = req.let { mapper.readValue<AnimePaheAnimeData>(it.text) }
+            val req = get(link, headers = headers).text
+            val jsonResponse = req.let { mapper.readValue<AnimePaheAnimeData>(it) }
             val ep = ((jsonResponse.data.map {
                 if (it.episode == episodeNum) {
                     it
@@ -527,8 +528,8 @@ class AnimePaheProvider : MainAPI() {
             }).filterNotNull())[0]
             link = "$mainUrl/api?m=links&id=${ep.animeId}&session=${ep.session}&p=kwik"
         }
-        val req = khttp.get(link, headers = headers)
-        val data = mapper.readValue<AnimePaheEpisodeLoadLinks>(req.text)
+        val req = get(link, headers = headers).text
+        val data = mapper.readValue<AnimePaheEpisodeLoadLinks>(req)
 
         val qualities = ArrayList<ExtractorLink>()
 

@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.extractorApis
@@ -36,7 +38,7 @@ class AnimeFlickProvider : MainAPI() {
 
     override fun search(query: String): ArrayList<SearchResponse> {
         val link = "https://animeflick.net/search.php?search=$query"
-        val html = khttp.get(link).text
+        val html = get(link).text
         val doc = Jsoup.parse(html)
 
         return ArrayList(doc.select(".row.mt-2").map {
@@ -59,7 +61,7 @@ class AnimeFlickProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val html = khttp.get(url).text
+        val html = get(url).text
         val doc = Jsoup.parse(html)
 
         val poster = mainUrl + doc.selectFirst("img.rounded").attr("src")
@@ -101,7 +103,7 @@ class AnimeFlickProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val html = khttp.get(data).text
+        val html = get(data).text
 
         val episodeRegex = Regex("""(https://.*?\.mp4)""")
         val links = episodeRegex.findAll(html).map {

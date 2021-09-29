@@ -5,6 +5,7 @@ import android.content.Context
 import android.widget.Toast
 import com.google.auto.service.AutoService
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import org.acra.ReportField
 import org.acra.config.CoreConfiguration
@@ -27,7 +28,7 @@ class CustomReportSender : ReportSender {
 
         thread { // to not run it on main thread
             normalSafeApiCall {
-                val post = khttp.post(url, data = data)
+                val post = post(url, data = data)
                 println("Report response: $post")
             }
         }

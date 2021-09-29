@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -23,7 +25,9 @@ class KawaiifuProvider : MainAPI() {
 
     override fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
-        val soup = Jsoup.parse(khttp.get(mainUrl).text)
+        val resp = get(mainUrl).text
+        println("RESP $resp")
+        val soup = Jsoup.parse(resp)
 
         items.add(HomePageList("Latest Updates", soup.select(".today-update .item").map {
          val title = it.selectFirst("img").attr("alt")
@@ -71,7 +75,7 @@ class KawaiifuProvider : MainAPI() {
 
     override fun search(query: String): ArrayList<SearchResponse> {
         val link = "$mainUrl/search-movie?keyword=${query}"
-        val html = khttp.get(link).text
+        val html = get(link).text
         val soup = Jsoup.parse(html)
 
         return ArrayList(soup.select(".item").map {
@@ -95,7 +99,7 @@ class KawaiifuProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val html = khttp.get(url).text
+        val html = get(url).text
         val soup = Jsoup.parse(html)
 
         val title = soup.selectFirst(".title").text()
@@ -104,7 +108,7 @@ class KawaiifuProvider : MainAPI() {
             .filter { it.select("strong").isEmpty() && it.select("iframe").isEmpty() }.joinToString("\n") { it.text() }
         val year = url.split("/").filter { it.contains("-") }[0].split("-")[1].toIntOrNull()
         val episodes = Jsoup.parse(
-            khttp.get(
+            get(
                 soup.selectFirst("a[href*=\".html-episode\"]").attr("href")
             ).text
         ).selectFirst(".list-ep").select("li").map {
@@ -140,7 +144,7 @@ class KawaiifuProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val htmlSource = khttp.get(data).text
+        val htmlSource = get(data).text
         val soupa = Jsoup.parse(htmlSource)
 
         val episodeNum = if (data.contains("ep=")) data.split("ep=")[1].split("&")[0].toIntOrNull() else null
@@ -159,7 +163,7 @@ class KawaiifuProvider : MainAPI() {
                 val sources = soupa.select("video > source").map { source -> Pair(source.attr("src"), source.attr("data-quality")) }
                 Triple(it.first, sources, it.second.second)
             } else {
-                val html = khttp.get(it.second.first).text
+                val html = get(it.second.first).text
                 val soup = Jsoup.parse(html)
 
                 val sources = soup.select("video > source").map { source -> Pair(source.attr("src"), source.attr("data-quality")) }

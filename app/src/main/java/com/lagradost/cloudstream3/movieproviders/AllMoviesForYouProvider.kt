@@ -2,9 +2,14 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.post
+import com.lagradost.cloudstream3.network.text
+import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
+import okio.Buffer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.lang.Thread.sleep
@@ -33,8 +38,8 @@ class AllMoviesForYouProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
 
         val items = document.select("ul.MovieList > li > article > a")
         val returnValue = ArrayList<SearchResponse>()
@@ -72,8 +77,8 @@ class AllMoviesForYouProvider : MainAPI() {
     override fun load(url: String): LoadResponse {
         val type = getType(url)
 
-        val response = khttp.get(url)
-        val document = Jsoup.parse(response.text)
+        val response = get(url).text
+        val document = Jsoup.parse(response)
 
         val title = document.selectFirst("h1.Title").text()
         val descipt = document.selectFirst("div.Description > p").text()
@@ -98,8 +103,8 @@ class AllMoviesForYouProvider : MainAPI() {
             val episodeList = ArrayList<TvSeriesEpisode>()
 
             for (season in list) {
-                val seasonResponse = khttp.get(season.second)
-                val seasonDocument = Jsoup.parse(seasonResponse.text)
+                val seasonResponse = get(season.second).text
+                val seasonDocument = Jsoup.parse(seasonResponse)
                 val episodes = seasonDocument.select("table > tbody > tr")
                 if (episodes.isNotEmpty()) {
                     episodes.forEach { episode ->
@@ -162,8 +167,8 @@ class AllMoviesForYouProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         if (data.startsWith("$mainUrl/episode/")) {
-            val response = khttp.get(data)
-            getLink(Jsoup.parse(response.text))?.let { links ->
+            val response = get(data).text
+            getLink(Jsoup.parse(response))?.let { links ->
                 for (link in links) {
                     if (link == data) continue
                     loadLinks(link, isCasting, subtitleCallback, callback)
@@ -174,9 +179,21 @@ class AllMoviesForYouProvider : MainAPI() {
         } else if (data.startsWith(mainUrl) && data != mainUrl) {
             val realDataUrl = URLDecoder.decode(data, "application/x-www-form-urlencoded")
             if (data.contains("trdownload")) {
-                val request = khttp.get(data, stream = true)
+                val request = get(data)
                 if (request.url.startsWith("https://streamhub.to/d/")) {
-                    val document = Jsoup.parse(request.text)
+                    val buffer = Buffer()
+                    val source = request.body?.source()
+                    var html = ""
+                    var tries = 0 // 20 tries = 163840 bytes = 0.16mb
+
+                    while (source?.exhausted() == false && tries < 20) {
+                        // 8192 = max size
+                        source.read(buffer, 8192)
+                        tries += 1
+                        html += buffer.readUtf8()
+                    }
+
+                    val document = Jsoup.parse(html)
                     val inputs = document.select("Form > input")
                     if (inputs.size < 4) return false
                     var op: String? = null
@@ -195,24 +212,33 @@ class AllMoviesForYouProvider : MainAPI() {
                             }
                         }
                     }
-                    if(op == null || id == null || mode == null || hash == null) {
+                    if (op == null || id == null || mode == null || hash == null) {
                         return false
                     }
                     sleep(5000) // ye this is needed, wont work with 0 delay
 
-                    val postResponse = khttp.post(request.url, headers = mapOf("content-type" to "application/x-www-form-urlencoded", "referer" to request.url, "user-agent" to USER_AGENT, "accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"), data = mapOf("op" to op, "id" to id, "mode" to mode, "hash" to hash))
-                    val postDocument = Jsoup.parse(postResponse.text)
+                    val postResponse = post(
+                        request.url,
+                        headers = mapOf(
+                            "content-type" to "application/x-www-form-urlencoded",
+                            "referer" to request.url,
+                            "user-agent" to USER_AGENT,
+                            "accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+                        ),
+                        data = mapOf("op" to op, "id" to id, "mode" to mode, "hash" to hash)
+                    ).text
+                    val postDocument = Jsoup.parse(postResponse)
 
                     val url = postDocument.selectFirst("a.downloadbtn").attr("href")
-                    if(url.isNullOrEmpty()) return false
+                    if (url.isNullOrEmpty()) return false
                     callback(ExtractorLink(this.name, this.name, url, mainUrl, Qualities.Unknown.value))
                 } else {
                     callback(ExtractorLink(this.name, this.name, realDataUrl, mainUrl, Qualities.Unknown.value))
                 }
                 return true
             }
-            val response = khttp.get(realDataUrl)
-            Regex("<iframe.*?src=\"(.*?)\"").find(response.text)?.groupValues?.get(1)?.let { url ->
+            val response = get(realDataUrl).text
+            Regex("<iframe.*?src=\"(.*?)\"").find(response)?.groupValues?.get(1)?.let { url ->
                 loadExtractor(url.trimStart(), realDataUrl, callback)
             }
             return true
