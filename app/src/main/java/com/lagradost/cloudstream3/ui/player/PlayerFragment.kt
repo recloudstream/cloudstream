@@ -67,6 +67,7 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.MainActivity.Companion.canEnterPipMode
+import com.lagradost.cloudstream3.MainActivity.Companion.getCastSession
 import com.lagradost.cloudstream3.MainActivity.Companion.isInPIPMode
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
@@ -1058,7 +1059,7 @@ class PlayerFragment : Fragment() {
                             val epData = getEpisode() ?: return@addCastStateListener
 
                             val index = links.indexOf(getCurrentUrl())
-                            (activity as MainActivity?)?.mCastSession?.startCast(
+                            activity?.getCastSession()?.startCast(
                                 apiName,
                                 currentIsMovie ?: return@addCastStateListener,
                                 currentHeaderName,

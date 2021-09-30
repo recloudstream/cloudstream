@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         updateLocale() // android fucks me by chaining lang when rotating the phone
     }
 
-    var mCastSession: CastSession? = null
+    private var mCastSession: CastSession? = null
     lateinit var mSessionManager: SessionManager
     private val mSessionManagerListener: SessionManagerListener<Session> by lazy { SessionManagerListenerImpl() }
 
@@ -135,6 +135,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     companion object {
+        fun Activity?.getCastSession() : CastSession? {
+            return (this as MainActivity?)?.mSessionManager?.currentCastSession
+        }
+
         var canEnterPipMode: Boolean = false
         var canShowPipMode: Boolean = false
         var isInPIPMode: Boolean = false
@@ -330,7 +334,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }*/
 
             // Fucks up anime info layout since that has its own layout
-            cast_mini_controller_holder?.isVisible = destination.id != R.id.navigation_results
+            cast_mini_controller_holder?.isVisible = !listOf(R.id.navigation_results,R.id.navigation_player).contains(destination.id)
 
             nav_view.isVisible = listOf(
                 R.id.navigation_home,

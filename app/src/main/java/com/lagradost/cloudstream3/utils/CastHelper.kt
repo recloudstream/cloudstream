@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.app.Activity
 import android.net.Uri
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -96,8 +97,10 @@ object CastHelper {
         startIndex: Int? = null,
         startTime: Long? = null,
     ) : Boolean {
+        println("HELLO:" + episodes.isNullOrEmpty())
         if(this == null) return false
         if (episodes.isEmpty()) return false
+        println("LINKS SIE:" + currentLinks.size)
         if (currentLinks.size <= currentEpisodeIndex) return false
 
         val epData = episodes[currentEpisodeIndex]
