@@ -143,7 +143,8 @@ class TenshiProvider : MainAPI() {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun dateParser(dateString: String): String? {
+    private fun dateParser(dateString: String?): String? {
+        if(dateString == null) return null
         try {
             val format = SimpleDateFormat("dd 'of' MMM',' yyyy")
             val newFormat = SimpleDateFormat("dd-MM-yyyy")
@@ -242,7 +243,7 @@ class TenshiProvider : MainAPI() {
                 it.attr("href"),
                 it.selectFirst(".episode-title")?.text()?.trim(),
                 it.selectFirst("img")?.attr("src"),
-                dateParser(it.selectFirst(".episode-date").text().trim()),
+                dateParser(it?.selectFirst(".episode-date")?.text()?.trim()),
                 null,
                 it.attr("data-content").trim(),
             )
