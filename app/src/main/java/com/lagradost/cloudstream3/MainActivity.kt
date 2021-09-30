@@ -12,20 +12,14 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.*
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.core.view.marginBottom
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
-import androidx.transition.ChangeBounds
-import androidx.transition.TransitionManager
 import com.google.android.gms.cast.framework.*
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
@@ -81,9 +75,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         updateLocale() // android fucks me by chaining lang when rotating the phone
     }
 
-     var mCastSession: CastSession? = null
-     lateinit var mSessionManager: SessionManager
-     val mSessionManagerListener: SessionManagerListener<Session> by lazy { SessionManagerListenerImpl() }
+    var mCastSession: CastSession? = null
+    lateinit var mSessionManager: SessionManager
+    private val mSessionManagerListener: SessionManagerListener<Session> by lazy { SessionManagerListenerImpl() }
 
     private inner class SessionManagerListenerImpl : SessionManagerListener<Session> {
         override fun onSessionStarting(session: Session) {
@@ -119,11 +113,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onResume() {
         super.onResume()
         try {
-            if(isCastApiAvailable()) {
+            if (isCastApiAvailable()) {
                 mCastSession = mSessionManager.currentCastSession
                 mSessionManager.addSessionManagerListener(mSessionManagerListener)
             }
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             logError(e)
         }
     }
@@ -131,11 +125,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onPause() {
         super.onPause()
         try {
-            if(isCastApiAvailable()) {
+            if (isCastApiAvailable()) {
                 mSessionManager.removeSessionManagerListener(mSessionManagerListener)
                 mCastSession = null
             }
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             logError(e)
         }
     }
@@ -294,10 +288,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         updateLocale()
         super.onCreate(savedInstanceState)
         try {
-            if(isCastApiAvailable()) {
+            if (isCastApiAvailable()) {
                 mSessionManager = CastContext.getSharedInstance(this).sessionManager
             }
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             logError(e)
         }
 
@@ -325,7 +319,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             .build()*/
         nav_view.setupWithNavController(navController)
 
-        var startUp = true
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // nav_view.hideKeyboard()
             /*if (destination.id != R.id.navigation_player) {
@@ -339,33 +332,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             // Fucks up anime info layout since that has its own layout
             cast_mini_controller_holder?.isVisible = destination.id != R.id.navigation_results
 
-            if (listOf(
-                    R.id.navigation_home,
-                    R.id.navigation_search,
-                    R.id.navigation_downloads,
-                    R.id.navigation_settings,
-                    R.id.navigation_download_child
-                ).contains(destination.id)
-            ) {
-                nav_view.visibility = VISIBLE
-                if (nav_view.marginBottom < 0) {
-                    nav_view.layoutParams = nav_view.layoutParams.apply {
-                        val transition = ChangeBounds()
-                        transition.duration = 100 // DURATION OF ANIMATION IN MS
-                        TransitionManager.beginDelayedTransition(homeRoot, transition)
-                        (this as ConstraintLayout.LayoutParams).setMargins(0, 0, 0, 0)
-                    }
-                }
-            } else {
-                if (startUp) nav_view.visibility = GONE
-                nav_view.layoutParams = nav_view.layoutParams.apply {
-                    val transition = ChangeBounds()
-                    transition.duration = 100 // DURATION OF ANIMATION IN MS
-                    TransitionManager.beginDelayedTransition(homeRoot, transition)
-                    (this as ConstraintLayout.LayoutParams).setMargins(0, 0, 0, -nav_view.height)
-                }
-            }
-            startUp = false
+            nav_view.isVisible = listOf(
+                R.id.navigation_home,
+                R.id.navigation_search,
+                R.id.navigation_downloads,
+                R.id.navigation_settings,
+                R.id.navigation_download_child
+            ).contains(destination.id)
         }
 
         /*nav_view.setOnNavigationItemSelectedListener { item ->
@@ -458,10 +431,28 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }*/
 
         var providersString = "Current providers are:\n"
+        var providersAndroidManifestString = "Current androidmanifest should be:\n"
         for (api in apis) {
             providersString += "+ ${api.mainUrl}\n"
+            providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
+                api.mainUrl.removePrefix(
+                    "https://"
+                )
+            }\" android:pathPrefix=\"/\"/>\n"
+        }
+
+        for (api in restrictedApis) {
+            providersString += "+ ${api.mainUrl}\n"
+            providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
+                api.mainUrl.removePrefix(
+                    "https://"
+                )
+            }\" android:pathPrefix=\"/\"/>\n"
         }
         println(providersString)
+
+
+        println(providersAndroidManifestString)
 
         handleAppIntent(intent)
 

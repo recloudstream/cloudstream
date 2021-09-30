@@ -38,14 +38,20 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
 
-                <data android:scheme="https" android:host="bestdubbedanime.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="gogoanime.vc" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="animeflick.net" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="kawaiifu.com" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="tenshi.moe" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="www.wcostream.com" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="wcostream.cc" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="bestdubbedanime.com" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="hdm.to" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="lookmovie.io" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="trailers.to" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="www.vmovee.watch" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.wcostream.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="allmoviesforyou.co" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="asiaflix.app" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.thenos.org" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="vidembed.cc" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="trailers.to" android:pathPrefix="/"/>
             </intent-filter>
         </activity>
 
