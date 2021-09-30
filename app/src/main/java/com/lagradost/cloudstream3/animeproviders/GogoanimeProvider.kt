@@ -18,6 +18,7 @@ class GogoanimeProvider : MainAPI() {
             else if (t.contains("Movie")) TvType.AnimeMovie
             else TvType.Anime
         }
+
         fun getStatus(t: String): ShowStatus {
             return when (t) {
                 "Completed" -> ShowStatus.Completed
@@ -25,6 +26,7 @@ class GogoanimeProvider : MainAPI() {
                 else -> ShowStatus.Completed
             }
         }
+
         val qualityRegex = Regex("(\\d+)P")
     }
 
@@ -58,7 +60,8 @@ class GogoanimeProvider : MainAPI() {
             "sec-fetch-dest" to "empty",
             "referer" to "$mainUrl/"
         )
-        val parseRegex = Regex("""<li>\s*\n.*\n.*<a\s*href=["'](.*?-episode-(\d+))["']\s*title=["'](.*?)["']>\n.*?img src="(.*?)"""")
+        val parseRegex =
+            Regex("""<li>\s*\n.*\n.*<a\s*href=["'](.*?-episode-(\d+))["']\s*title=["'](.*?)["']>\n.*?img src="(.*?)"""")
 
         val urls = listOf(
             Pair("1", "Recent Release - Sub"),
@@ -70,7 +73,11 @@ class GogoanimeProvider : MainAPI() {
         for (i in urls) {
             try {
                 val params = mapOf("page" to "1", "type" to i.first)
-                val html = get("https://ajax.gogo-load.com/ajax/page-recent-release.html", headers=headers, params=params).text
+                val html = get(
+                    "https://ajax.gogo-load.com/ajax/page-recent-release.html",
+                    headers = headers,
+                    params = params
+                ).text
                 items.add(HomePageList(i.second, (parseRegex.findAll(html).map {
                     val (link, epNum, title, poster) = it.destructured
                     AnimeSearchResponse(
@@ -81,7 +88,9 @@ class GogoanimeProvider : MainAPI() {
                         poster,
                         null,
                         null,
-                        if (listOf(1, 3).contains(i.first.toInt())) EnumSet.of(DubStatus.Subbed) else EnumSet.of(DubStatus.Dubbed),
+                        if (listOf(1, 3).contains(i.first.toInt())) EnumSet.of(DubStatus.Subbed) else EnumSet.of(
+                            DubStatus.Dubbed
+                        ),
                         null,
                         epNum.toIntOrNull()
                     )
@@ -90,7 +99,7 @@ class GogoanimeProvider : MainAPI() {
                 e.printStackTrace()
             }
         }
-        if(items.size <= 0) throw ErrorLoadingException()
+        if (items.size <= 0) throw ErrorLoadingException()
         return HomePageResponse(items)
     }
 
@@ -108,7 +117,9 @@ class GogoanimeProvider : MainAPI() {
                 it.selectFirst("img").attr("src"),
                 it.selectFirst(".released")?.text()?.split(":")?.getOrNull(1)?.trim()?.toIntOrNull(),
                 null,
-                if (it.selectFirst(".name").text().contains("Dub")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
+                if (it.selectFirst(".name").text().contains("Dub")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(
+                    DubStatus.Subbed
+                ),
                 null,
                 null
             )
@@ -120,7 +131,7 @@ class GogoanimeProvider : MainAPI() {
     private fun getProperAnimeLink(uri: String): String {
         if (uri.contains("-episode")) {
             val split = uri.split("/")
-            val slug = split[split.size-1].split("-episode")[0]
+            val slug = split[split.size - 1].split("-episode")[0]
             return "$mainUrl/category/$slug"
         }
         return uri
@@ -169,7 +180,7 @@ class GogoanimeProvider : MainAPI() {
 
         val animeId = doc.selectFirst("#movie_id").attr("value")
         val params = mapOf("ep_start" to "0", "ep_end" to "2000", "id" to animeId)
-        val responseHTML = get(episodeloadApi, params=params).text
+        val responseHTML = get(episodeloadApi, params = params).text
         val epiDoc = Jsoup.parse(responseHTML)
         val episodes = epiDoc.select("a").map {
             AnimeEpisode(
@@ -207,24 +218,27 @@ class GogoanimeProvider : MainAPI() {
         val page = get(link, headers = mapOf("Referer" to iframe))
         val pageDoc = Jsoup.parse(page.text)
 
-        return pageDoc.select(".dowload > a").map {
+        return pageDoc.select(".dowload > a").pmap {
             if (it.hasAttr("download")) {
                 val qual = if (it.text()
                         .contains("HDP")
                 ) "1080" else qualityRegex.find(it.text())?.destructured?.component1().toString()
-                listOf(ExtractorLink(
-                    "Gogoanime",
-                    if(qual == "null") "Gogoanime" else "Gogoanime - " + qual + "p",
-                    it.attr("href"),
-                    page.url,
-                    getQualityFromName(qual),
-                    it.attr("href").contains(".m3u8")
-                ))
+                listOf(
+                    ExtractorLink(
+                        "Gogoanime",
+                        if (qual == "null") "Gogoanime" else "Gogoanime - " + qual + "p",
+                        it.attr("href"),
+                        page.url,
+                        getQualityFromName(qual),
+                        it.attr("href").contains(".m3u8")
+                    )
+                )
             } else {
+                val url = it.attr("href")
                 val extractorLinks = ArrayList<ExtractorLink>()
                 for (api in extractorApis) {
-                    if (api.name.equals(it.text().replace("Download", "").trim(), ignoreCase = true)) {
-                        extractorLinks.addAll(api.getSafeUrl(it.attr("href")) ?: listOf())
+                    if (url.startsWith(api.mainUrl) ) {
+                        extractorLinks.addAll(api.getSafeUrl(url) ?: listOf())
                         break
                     }
                 }

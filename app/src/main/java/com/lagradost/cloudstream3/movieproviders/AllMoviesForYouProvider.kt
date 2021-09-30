@@ -3,16 +3,15 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.network.get
-import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.getPostForm
 import com.lagradost.cloudstream3.utils.loadExtractor
 import okio.Buffer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import java.lang.Thread.sleep
 import java.net.URLDecoder
 
 class AllMoviesForYouProvider : MainAPI() {
@@ -192,46 +191,13 @@ class AllMoviesForYouProvider : MainAPI() {
                         tries += 1
                         html += buffer.readUtf8()
                     }
+                    getPostForm(request.url,html)?.let { form ->
+                        val postDocument = Jsoup.parse(form)
 
-                    val document = Jsoup.parse(html)
-                    val inputs = document.select("Form > input")
-                    if (inputs.size < 4) return false
-                    var op: String? = null
-                    var id: String? = null
-                    var mode: String? = null
-                    var hash: String? = null
-
-                    for (input in inputs) {
-                        val value = input.attr("value") ?: continue
-                        when (input.attr("name")) {
-                            "op" -> op = value
-                            "id" -> id = value
-                            "mode" -> mode = value
-                            "hash" -> hash = value
-                            else -> {
-                            }
+                        postDocument.selectFirst("a.downloadbtn")?.attr("href")?.let { url ->
+                            callback(ExtractorLink(this.name, this.name, url, mainUrl, Qualities.Unknown.value))
                         }
                     }
-                    if (op == null || id == null || mode == null || hash == null) {
-                        return false
-                    }
-                    sleep(5000) // ye this is needed, wont work with 0 delay
-
-                    val postResponse = post(
-                        request.url,
-                        headers = mapOf(
-                            "content-type" to "application/x-www-form-urlencoded",
-                            "referer" to request.url,
-                            "user-agent" to USER_AGENT,
-                            "accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
-                        ),
-                        data = mapOf("op" to op, "id" to id, "mode" to mode, "hash" to hash)
-                    ).text
-                    val postDocument = Jsoup.parse(postResponse)
-
-                    val url = postDocument.selectFirst("a.downloadbtn").attr("href")
-                    if (url.isNullOrEmpty()) return false
-                    callback(ExtractorLink(this.name, this.name, url, mainUrl, Qualities.Unknown.value))
                 } else {
                     callback(ExtractorLink(this.name, this.name, realDataUrl, mainUrl, Qualities.Unknown.value))
                 }

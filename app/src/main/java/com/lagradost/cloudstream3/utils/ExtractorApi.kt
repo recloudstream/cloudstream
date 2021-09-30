@@ -1,7 +1,11 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.extractors.*
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.network.post
+import com.lagradost.cloudstream3.network.text
+import org.jsoup.Jsoup
 
 data class ExtractorLink(
     val source: String,
@@ -72,6 +76,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     XStreamCdn(),
     StreamSB(),
     Streamhub(),
+    SBPlay(),
 
     // dood extractors
     DoodToExtractor(),
@@ -92,6 +97,45 @@ fun requireReferer(name: String): Boolean {
 
 fun httpsify(url: String): String {
     return if (url.startsWith("//")) "https:$url" else url
+}
+
+fun getPostForm(requestUrl : String, html : String) : String? {
+    val document = Jsoup.parse(html)
+    val inputs = document.select("Form > input")
+    if (inputs.size < 4) return null
+    var op: String? = null
+    var id: String? = null
+    var mode: String? = null
+    var hash: String? = null
+
+    for (input in inputs) {
+        val value = input.attr("value") ?: continue
+        when (input.attr("name")) {
+            "op" -> op = value
+            "id" -> id = value
+            "mode" -> mode = value
+            "hash" -> hash = value
+            else -> {
+            }
+        }
+    }
+    if (op == null || id == null || mode == null || hash == null) {
+        return null
+    }
+    Thread.sleep(5000) // ye this is needed, wont work with 0 delay
+
+    val postResponse = post(
+        requestUrl,
+        headers = mapOf(
+            "content-type" to "application/x-www-form-urlencoded",
+            "referer" to requestUrl,
+            "user-agent" to USER_AGENT,
+            "accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+        ),
+        data = mapOf("op" to op, "id" to id, "mode" to mode, "hash" to hash)
+    ).text
+
+    return postResponse
 }
 
 abstract class ExtractorApi {
