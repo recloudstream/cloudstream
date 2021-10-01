@@ -200,9 +200,10 @@ class TrailersToProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val response = get(url).text
+        val response = get(if (url.endsWith("?preview=1")) url else "$url?preview=1").text
         val document = Jsoup.parse(response)
-        var title = document?.selectFirst("h2.breadcrumbs-custom-title > a")?.text() ?: throw ErrorLoadingException("Service might be unavailable")
+        var title = document?.selectFirst("h2.breadcrumbs-custom-title > a")?.text()
+            ?: throw ErrorLoadingException("Service might be unavailable")
 
         val metaInfo = document.select("div.post-info-meta > ul.post-info-meta-list > li")
         val year = metaInfo?.get(0)?.selectFirst("> span.small-text")?.text()?.takeLast(4)?.toIntOrNull()
@@ -228,20 +229,23 @@ class TrailersToProvider : MainAPI() {
 
         val isTvShow = url.contains("/tvshow/")
         if (isTvShow) {
-            val episodes = document.select("#seasons-accordion .card-body > .tour-modern") ?: throw ErrorLoadingException("No Episodes found")
+            val episodes = document.select("#seasons-accordion .card-body > .tour-modern")
+                ?: throw ErrorLoadingException("No Episodes found")
             val parsedEpisodes = episodes.withIndex().map { (index, item) ->
                 val epPoster = item.selectFirst("img").attr("src")
                 val main = item.selectFirst(".tour-modern-main")
                 val titleHeader = main.selectFirst("a")
                 val titleName = titleHeader.text()
                 val href = fixUrl(titleHeader.attr("href"))
-                val gValues = Regex(""".*?[\w\s]+ ([0-9]+)(?::[\w\s]+)?\s-\s(?:Episode )?([0-9]+)?(?:: )?(.*)""").find(titleName)?.destructured
+                val gValues =
+                    Regex(""".*?[\w\s]+ ([0-9]+)(?::[\w\s]+)?\s-\s(?:Episode )?([0-9]+)?(?:: )?(.*)""").find(titleName)?.destructured
                 val season = gValues?.component1()?.toIntOrNull()
                 var episode = gValues?.component2()?.toIntOrNull()
                 if (episode == null) {
                     episode = index + 1
                 }
-                val epName = if (gValues?.component3()?.isNotEmpty() == true) gValues.component3() else "Episode $episode"
+                val epName =
+                    if (gValues?.component3()?.isNotEmpty() == true) gValues.component3() else "Episode $episode"
                 val infoHeaders = main.select("span.small-text")
                 val date = infoHeaders?.get(0)?.text()
                 val ratingText = infoHeaders?.get(1)?.text()?.replace("/ 10", "")
@@ -286,7 +290,13 @@ class TrailersToProvider : MainAPI() {
             } else ""
 
             val data = mapper.writeValueAsString(
-                Pair(subUrl, fixUrl(document?.selectFirst("content")?.attr("data-url") ?: throw ErrorLoadingException("Link not found")))
+                Pair(
+                    subUrl,
+                    fixUrl(
+                        document?.selectFirst("content")?.attr("data-url")
+                            ?: throw ErrorLoadingException("Link not found")
+                    )
+                )
             )
             return MovieLoadResponse(
                 title,

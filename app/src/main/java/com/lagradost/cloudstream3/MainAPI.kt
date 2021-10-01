@@ -42,13 +42,13 @@ object APIHolder {
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
         AsiaFlixProvider(),
-        ThenosProvider(),
+        TrailersToProvider(), // be aware that this is fuckery
         VidEmbedProvider()
     )
 
     val restrictedApis = arrayListOf(
         //NyaaProvider(), //torrents in cs3 is wack
-        TrailersToProvider(),
+        ThenosProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
