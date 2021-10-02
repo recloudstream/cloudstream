@@ -230,16 +230,27 @@ class TenshiProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val response = get(url, cookies = mapOf("loop-view" to "thumb")).text
-        val document = Jsoup.parse(response)
+        var response = get(url, cookies = mapOf("loop-view" to "thumb")).text
+        var document = Jsoup.parse(response)
 
         val englishTitle = document.selectFirst("span.value > span[title=\"English\"]")?.parent()?.text()?.trim()
         val japaneseTitle = document.selectFirst("span.value > span[title=\"Japanese\"]")?.parent()?.text()?.trim()
         val canonicalTitle = document.selectFirst("header.entry-header > h1.mb-3").text().trim()
 
-        val episodeNodes = document.select("li[class*=\"episode\"] > a")
+        val episodeNodes = document.select("li[class*=\"episode\"] > a").toMutableList()
+        val totalEpisodePages = if (document.select(".pagination").size > 0)
+                document.select(".pagination .page-item a.page-link:not([rel])").last().text().toIntOrNull()
+            else 1
 
-        val episodes = ArrayList(episodeNodes?.map {
+        if (totalEpisodePages != null && totalEpisodePages > 1) {
+            for (pageNum in 2..totalEpisodePages) {
+                response = get("$url?page=$pageNum", cookies = mapOf("loop-view" to "thumb")).text
+                document = Jsoup.parse(response)
+                episodeNodes.addAll(document.select("li[class*=\"episode\"] > a"))
+            }
+        }
+
+        val episodes = ArrayList(episodeNodes.map {
             AnimeEpisode(
                 it.attr("href"),
                 it.selectFirst(".episode-title")?.text()?.trim(),
