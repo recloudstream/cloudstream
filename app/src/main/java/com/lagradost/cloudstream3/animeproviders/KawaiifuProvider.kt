@@ -17,8 +17,7 @@ class KawaiifuProvider : MainAPI() {
         get() = false
     override val hasMainPage: Boolean
         get() = true
-    
-    
+
     override val supportedTypes: Set<TvType>
         get() = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
 
@@ -26,12 +25,12 @@ class KawaiifuProvider : MainAPI() {
     override fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val resp = get(mainUrl).text
-        println("RESP $resp")
+
         val soup = Jsoup.parse(resp)
 
         items.add(HomePageList("Latest Updates", soup.select(".today-update .item").map {
-         val title = it.selectFirst("img").attr("alt")
-         AnimeSearchResponse(
+            val title = it.selectFirst("img").attr("alt")
+            AnimeSearchResponse(
                 title,
                 it.selectFirst("a").attr("href"),
                 this.name,
@@ -48,8 +47,8 @@ class KawaiifuProvider : MainAPI() {
             try {
                 val title = section.selectFirst(".title").text()
                 val anime = section.select(".list-film > .item").map { ani ->
-                val animTitle = ani.selectFirst("img").attr("alt")
-                AnimeSearchResponse(
+                    val animTitle = ani.selectFirst("img").attr("alt")
+                    AnimeSearchResponse(
                         animTitle,
                         ani.selectFirst("a").attr("href"),
                         this.name,
@@ -68,7 +67,7 @@ class KawaiifuProvider : MainAPI() {
                 e.printStackTrace()
             }
         }
-        if(items.size <= 0) throw ErrorLoadingException()
+        if (items.size <= 0) throw ErrorLoadingException()
         return HomePageResponse(items)
     }
 
@@ -151,7 +150,7 @@ class KawaiifuProvider : MainAPI() {
 
         val servers = soupa.select(".list-server").map {
             val serverName = it.selectFirst(".server-name").text()
-            val episodes = it.select(".list-ep > li > a").map { episode ->  Pair(episode.attr("href"), episode.text()) }
+            val episodes = it.select(".list-ep > li > a").map { episode -> Pair(episode.attr("href"), episode.text()) }
             val episode = if (episodeNum == null) episodes[0] else episodes.mapNotNull { ep ->
                 if ((if (ep.first.contains("ep=")) ep.first.split("ep=")[1].split("&")[0].toIntOrNull() else null) == episodeNum) {
                     ep
@@ -160,27 +159,31 @@ class KawaiifuProvider : MainAPI() {
             Pair(serverName, episode)
         }.map {
             if (it.second.first == data) {
-                val sources = soupa.select("video > source").map { source -> Pair(source.attr("src"), source.attr("data-quality")) }
+                val sources = soupa.select("video > source")
+                    .map { source -> Pair(source.attr("src"), source.attr("data-quality")) }
                 Triple(it.first, sources, it.second.second)
             } else {
                 val html = get(it.second.first).text
                 val soup = Jsoup.parse(html)
 
-                val sources = soup.select("video > source").map { source -> Pair(source.attr("src"), source.attr("data-quality")) }
+                val sources = soup.select("video > source")
+                    .map { source -> Pair(source.attr("src"), source.attr("data-quality")) }
                 Triple(it.first, sources, it.second.second)
             }
         }
 
         servers.forEach {
             it.second.forEach { source ->
-                callback(ExtractorLink(
-                    "Kawaiifu",
-                    "${it.first} - ${source.second}",
-                    source.first,
-                    "",
-                    getQualityFromName(source.second),
-                    source.first.contains(".m3u")
-                ))
+                callback(
+                    ExtractorLink(
+                        "Kawaiifu",
+                        "${it.first} - ${source.second}",
+                        source.first,
+                        "",
+                        getQualityFromName(source.second),
+                        source.first.contains(".m3u")
+                    )
+                )
             }
         }
         return true

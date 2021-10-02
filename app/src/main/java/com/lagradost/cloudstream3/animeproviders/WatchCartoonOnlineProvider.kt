@@ -24,6 +24,8 @@ class WatchCartoonOnlineProvider : MainAPI() {
         get() = setOf(
             TvType.Cartoon,
             TvType.Anime,
+            TvType.AnimeMovie,
+            TvType.TvSeries
         )
 
     override fun search(query: String): List<SearchResponse> {
@@ -108,7 +110,6 @@ class WatchCartoonOnlineProvider : MainAPI() {
         val isMovie = !url.contains("/anime/")
         val response = get(url).text
         val document = Jsoup.parse(response)
-
 
         return if (!isMovie) {
             val title = document.selectFirst("td.vsbaslik > h2").text()
