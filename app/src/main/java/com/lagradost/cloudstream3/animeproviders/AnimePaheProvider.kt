@@ -455,7 +455,7 @@ class AnimePaheProvider : MainAPI() {
         }
 
         var responseCode = 302
-        var adflyContent: response? = null
+        var adflyContent: Response? = null
         var tries = 0
 
         while (responseCode != 200 && tries < 20) {
@@ -465,7 +465,7 @@ class AnimePaheProvider : MainAPI() {
                 allowRedirects = false
             )
             cookies = cookies + adflyContent.cookies
-            responseCode = adflyContent.status
+            responseCode = adflyContent.code
             ++tries
         }
         if (tries > 19) {
@@ -483,7 +483,7 @@ class AnimePaheProvider : MainAPI() {
         val decrypted = decrypt(fullString, key, v1.toInt(), v2.toInt())
         val uri = KWIK_D_URL.find(decrypted)!!.destructured.component1()
         val tok = KWIK_D_TOKEN.find(decrypted)!!.destructured.component1()
-        var content: response? = null
+        var content: Response? = null
 
         var code = 419
         var tries = 0
@@ -496,7 +496,7 @@ class AnimePaheProvider : MainAPI() {
                 headers = mapOf("referer" to fContent.url),
                 cookies = fContent.cookies
             )
-            code = content.status
+            code = content.code
             ++tries
         }
         if (tries > 19) {
