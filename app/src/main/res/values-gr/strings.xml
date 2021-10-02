@@ -7,9 +7,6 @@
     <string name="title_settings">Ρυθμίσεις</string>
     <string name="search_hint">Ψάξε…</string>
     <string name="change_providers_img_des">Αλλαγή Παροχών</string>
-    <string name="search_providers_list_key">search_providers_list</string>
-    <string name="search_types_list_key">search_type_list</string>
-    <string name="grid_format_key">grid_format</string>
     <string name="search_poster_img_des">Πόστερ</string>
     <string name="no_data">Χωρίς δεδομένα</string>
     <string name="episode_more_options_des">Περισσότερες Επιλογές</string>
@@ -22,7 +19,7 @@
     <string name="result_share">Μοίρασε</string>
     <string name="result_open_in_browser">Άνοιγμα στον περιηγητή</string>
     <string name="skip_loading">Προσπέραση φορτώματος</string>
-    <string name="loading_chromecast">Φόρτωση...</string>
+    <string name="loading_chromecast">Φόρτωση…</string>
 
     <string name="type_watching">Watching</string>
     <string name="type_on_hold">On-Hold</string>
@@ -81,10 +78,6 @@
     <string name="subs_font">Γραμματοσειρά</string>
     <string name="search_provider_text_providers">Αναζήτηση με τους παρόχους</string>
     <string name="search_provider_text_types">Αναζήτηση με τύπους</string>
-    <string name="auto_update_key">auto_update</string>
-    <string name="prerelease_update_key">prerelease_update</string>
-    <string name="manual_check_update_key">manual_check_update</string>
-    <string name="benene_count">benene_count</string>
     <string name="benene_count_text">%d Benenes given to devs</string>
     <string name="benene_count_text_none">No Benenes given</string>
 

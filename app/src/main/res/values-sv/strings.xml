@@ -203,4 +203,17 @@
     <string name="storage_error">Ett nerladdningsfel uppstod, kolla om appen har lagringsbehörigheter</string>
     <string name="watch_quality_pref">Föredragen videokvalitet</string>
     <string name="general">Allmänna Inställningar</string>
+    <string name="subs_font_size">Textstorlek</string>
+    <string name="use_system_brightness_settings">Använd system ljusstyrka</string>
+    <string name="use_system_brightness_settings_des">Använder systemets ljusstyrka instället för en svart överlaga</string>
+    <string name="show_fillers_settings">Visa filler avsnitt för anime</string>
+    <string name="display_subbed_dubbed_settings">Visa Dubbad/Subbad anime</string>
+    <string name="resize_fit">Anpassad till skärmstorlek</string>
+    <string name="provider_lang_settings">Leverantörspråk</string>
+    <string name="resize_fill">Utsträckt</string>
+    <string name="resize_zoom">Inzoomad</string>
+    <string name="unexpected_error">Oförväntat uppspelingsfel</string>
+    <string name="source_error">Källfel</string>
+    <string name="remote_error">Fjärrfel</string>
+    <string name="render_error">Renderingsfel</string>
 </resources>

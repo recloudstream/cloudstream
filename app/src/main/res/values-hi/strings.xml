@@ -39,7 +39,6 @@
     <string name="download_failed">डाउनलोड नही हो पाया</string>
     <string name="download_canceled">डाउनलोड रद्द</string>
     <string name="download_done">डाउनलोड पूरा हुआ</string>
-    <string name="download_format" translatable="false">%s - %s</string>
 
     <string name="error_loading_links_toast">लिंक में गड़बड़ है</string>
     <string name="download_storage_text">अंदरूनी स्टोरेज</string>
@@ -112,7 +111,6 @@
 
     <string name="delete_file">फ़ाइल डिलीट करें</string>
     <string name="delete">डिलीट</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">रोके</string>
     <string name="resume">वापिस चलाये</string>
     <string name="delete_message">एज इस चीज़ को हमेशा के लिए नष्ट कर देगा %s\nक्या आपका निर्णय निश्चित है ?</string>

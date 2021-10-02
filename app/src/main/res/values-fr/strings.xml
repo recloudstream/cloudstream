@@ -46,7 +46,6 @@
     <string name="download_failed">Echec du Téléchargement</string>
     <string name="download_canceled">Téléchargement Annulé</string>
     <string name="download_done">Téléchargement Terminé</string>
-    <string name="download_format" translatable="false">%s - %s</string>
 
     <string name="error_loading_links_toast">Erreur lors du téléchargement des liens</string>
     <string name="download_storage_text">Stockage Interne</string>
@@ -151,7 +150,6 @@
 
     <string name="delete_file">Supprimer le Fichier</string>
     <string name="delete">Supprimer</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Pause</string>
     <string name="resume">Reprendre</string>
     <string name="delete_message">Cela va supprimer définitivement %s\nÊtes vous sûr ?</string>

@@ -41,7 +41,6 @@
     <string name="download_failed">ഡൌൺലോഡ് മുടങ്ങി</string>
     <string name="download_canceled">ഡൌൺലോഡ് റദ്ദാക്കി</string>
     <string name="download_done">ഡൌൺലോഡ് പൂർത്തിയായി</string>
-    <string name="download_format" translatable="false">%s - %s</string>
 
     <string name="error_loading_links_toast">ലിങ്കിൽ തകരാർ</string>
     <string name="download_storage_text">ആന്തരിക സ്റ്റോറേജ്</string>
@@ -141,7 +140,6 @@
 
     <string name="delete_file">ഫയൽ ഡിലീറ്റ് ചെയ്യുക</string>
     <string name="delete">ഡിലീറ്റ്</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">നിർത്തുക</string>
     <string name="resume">തുടരുക</string>
     <string name="delete_message">സ്ഥിരമായി %sനെ ഡിലീറ്റ് ചെയ്യുക\nഉറപ്പാണോ?</string>

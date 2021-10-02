@@ -40,7 +40,6 @@
     <string name="download_failed">Tải lỗi</string>
     <string name="download_canceled">Đã hủy</string>
     <string name="download_done">Tải thành công</string>
-    <string name="download_format" translatable="false">%s - %s</string>
 
     <string name="error_loading_links_toast">Đã có lỗi xảy ra. Vui lòng thử lại sau</string>
     <string name="download_storage_text">Bộ nhớ máy</string>
@@ -145,7 +144,6 @@
 
     <string name="delete_file">Xóa Tệp</string>
     <string name="delete">Xóa</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Tạm Dừng</string>
     <string name="resume">Tiếp Tục</string>
     <string name="delete_message">Điều này sẽ xóa %s\nBạn có chắc chắn muốn xóa?</string>

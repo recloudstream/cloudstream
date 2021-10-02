@@ -1,25 +1,8 @@
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
 <resources>
     <!-- KEYS DON'T TRANSLATE -->
-    <string name="search_providers_list_key" translatable="false">search_providers_list</string>
-    <string name="locale_key" translatable="false">app_locale</string>
-    <string name="search_types_list_key" translatable="false">search_type_list</string>
-    <string name="grid_format_key" translatable="false">grid_format</string>
-    <string name="auto_update_key" translatable="false">auto_update</string>
-    <string name="prerelease_update_key" translatable="false">prerelease_update</string>
-    <string name="manual_check_update_key" translatable="false">manual_check_update</string>
-    <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
-    <string name="benene_count" translatable="false">benene_count</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" translatable="false">%d %s | %sMB</string>
-    <string name="storage_size_format" translatable="false">%s • %sGB</string>
-    <string name="download_size_format" translatable="false">%sMB / %sMB</string>
-    <string name="episode_name_format" translatable="false">%s %s</string>
-    <string name="ffw_text_format" translatable="false">+%d</string>
-    <string name="rew_text_format" translatable="false">-%d</string>
-    <string name="ffw_text_regular_format" translatable="false">%d</string>
-    <string name="rew_text_regular_format" translatable="false">%d</string>
     <string name="player_speed_text_format">Bilis (%.2fx)</string>
     <string name="rated_format">Marka: %.1f</string>
     <string name="new_update_format">May nahanap na bagong update!\n%s -> %s</string>
@@ -70,7 +53,6 @@
     <string name="download_failed">Nabogong Magdownload</string>
     <string name="download_canceled">Itinigil ang Download</string>
     <string name="download_done">Natapos Magdownload</string>
-    <string name="download_format" translatable="false">%s - %s</string>
 
     <string name="error_loading_links_toast">Nabigong kuhain ang mga kawing</string>
     <string name="download_storage_text">Panloob na Imbakan</string>
@@ -112,7 +94,6 @@
     <string name="benene_count_text">%d Saging na ang naibigay sa mga tagalikha</string>
     <string name="benene_count_text_none">Walang saging na binigay</string>
 
-    <string name="prerelease_commit_hash">Hindi kilala</string>
     <string name="subs_auto_select_language">Pakusang piliin ang wika</string>
     <string name="subs_download_languages">i-Download ang mga lenggwahe</string>
     <string name="subs_hold_to_reset_to_default">Pindutin para maibalik sa dati ang mga settings</string>
@@ -178,7 +159,6 @@
 
     <string name="delete_file">Tanggalin ang File</string>
     <string name="delete">Tanggalin</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Hinto</string>
     <string name="resume">Pagpatuloy</string>
     <string name="delete_message">Ito ay tuluyang tatanggalin ang file %s\nSigurado ka ba?</string>

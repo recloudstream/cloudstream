@@ -7,9 +7,6 @@
     <string name="title_settings">Instellingen</string>
     <string name="search_hint">Zoeken…</string>
     <string name="change_providers_img_des">Aanbieders wijzigen</string>
-    <string name="search_providers_list_key">search_providers_list</string>
-    <string name="search_types_list_key">search_type_list</string>
-    <string name="grid_format_key">grid_format</string>
     <string name="search_poster_img_des">Poster</string>
     <string name="no_data">Geen gegevens</string>
     <string name="episode_more_options_des">Meer Opties</string>
@@ -81,10 +78,6 @@
     <string name="subs_font">Lettertype</string>
     <string name="search_provider_text_providers">Zoeken met providers</string>
     <string name="search_provider_text_types">Zoeken met types</string>
-    <string name="auto_update_key">auto_update</string>
-    <string name="prerelease_update_key">prerelease_update</string>
-    <string name="manual_check_update_key">manual_check_update</string>
-    <string name="benene_count">benene_count</string>
     <string name="benene_count_text">%d Benenes gegeven aan ontwikkelaars</string>
     <string name="benene_count_text_none">Geen Benenes gegeven</string>
 
@@ -147,7 +140,6 @@
 
     <string name="delete_file">Bestand verwijderen</string>
     <string name="delete">Verwijderen</string>
-    <string name="cancel" vertaalbaar="false">@string/sort_cancel</string>
     <string name="pause">Pauze</string>
     <string name="resume">Hervat</string>
     <string name="delete_message">Dit wordt zeker permanent verwijderd %a\Weet u het zeker?</string>

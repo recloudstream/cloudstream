@@ -96,7 +96,7 @@ fun get(
         .followSslRedirects(allowRedirects)
         .callTimeout(timeout, TimeUnit.SECONDS)
         .build()
-    println("cookie2: " + cookies)
+
     val request = getRequestCreator(url, headers, referer, params, cookies, cacheTime, cacheUnit)
     return client.newCall(request).execute()
 }
