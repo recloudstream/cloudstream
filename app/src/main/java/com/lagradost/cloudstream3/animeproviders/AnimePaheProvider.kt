@@ -465,7 +465,7 @@ class AnimePaheProvider : MainAPI() {
                 allowRedirects = false
             )
             cookies = cookies + adflyContent.cookies
-            responseCode = adflyContent.code
+            responseCode = adflyContent.status
             ++tries
         }
         if (tries > 19) {
@@ -496,7 +496,7 @@ class AnimePaheProvider : MainAPI() {
                 headers = mapOf("referer" to fContent.url),
                 cookies = fContent.cookies
             )
-            code = content.code
+            code = content.status
             ++tries
         }
         if (tries > 19) {
