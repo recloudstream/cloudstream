@@ -42,12 +42,12 @@ object APIHolder {
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
         AsiaFlixProvider(),
-        TrailersToProvider(), // be aware that this is fuckery
         VidEmbedProvider(),
-        VfFilm()
+        VfFilmProvider()
     )
 
     val restrictedApis = arrayListOf(
+        TrailersToProvider(), // be aware that this is fuckery
         //NyaaProvider(), //torrents in cs3 is wack
         ThenosProvider(),
     )

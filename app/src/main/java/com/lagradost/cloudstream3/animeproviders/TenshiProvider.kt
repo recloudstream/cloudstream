@@ -212,6 +212,7 @@ class TenshiProvider : MainAPI() {
         val url = "$mainUrl/anime"
         var response = get(url, params = mapOf("q" to query), cookies = mapOf("loop-view" to "thumb")).text
         var document = Jsoup.parse(response)
+
         val returnValue = parseSearchPage(document)
 
         while (!document.select("""a.page-link[rel="next"]""").isEmpty()) {

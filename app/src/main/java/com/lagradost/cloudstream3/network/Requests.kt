@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.network
 import com.lagradost.cloudstream3.USER_AGENT
 import okhttp3.*
 import okhttp3.Headers.Companion.toHeaders
-import okio.Buffer
 import java.net.URI
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -73,7 +72,12 @@ fun getCache(cacheTime: Int, cacheUnit: TimeUnit): CacheControl {
  */
 fun getHeaders(headers: Map<String, String>, referer: String?, cookie: Map<String, String>): Headers {
     val refererMap = (referer ?: DEFAULT_REFERER)?.let { mapOf("referer" to it) } ?: mapOf()
-    return (DEFAULT_COOKIES + DEFAULT_HEADERS + cookie + headers + refererMap).toHeaders()
+    val cookieHeaders = (DEFAULT_COOKIES + cookie)
+    val cookieMap = if(cookieHeaders.isNotEmpty()) mapOf("Cookie" to cookieHeaders.entries.joinToString(separator = "; ") {
+        "${it.key}=${it.value};"
+    }) else mapOf()
+    val tempHeaders = (DEFAULT_HEADERS + cookieMap + headers + refererMap)
+    return tempHeaders.toHeaders()
 }
 
 fun get(
@@ -92,6 +96,7 @@ fun get(
         .followSslRedirects(allowRedirects)
         .callTimeout(timeout, TimeUnit.SECONDS)
         .build()
+    println("cookie2: " + cookies)
     val request = getRequestCreator(url, headers, referer, params, cookies, cacheTime, cacheUnit)
     return client.newCall(request).execute()
 }
