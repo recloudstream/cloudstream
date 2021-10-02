@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
+import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity.Companion.setLocale
@@ -128,6 +129,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         this.getString(R.string.provider_lang_key),
                         selectedList.map { names[it].first }.toMutableSet()
                     ).apply()
+                    APIRepository.providersActive = it.context.getApiSettings()
                 }
             }
 

@@ -1,13 +1,11 @@
 package com.lagradost.cloudstream3.ui.search
 
-import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
@@ -19,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.APIHolder.getApiTypeSettings
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -115,8 +114,9 @@ class SearchFragment : Fragment() {
         searchMagIcon.scaleY = 0.65f
         search_filter.setOnClickListener { searchView ->
             val apiNamesSetting = activity?.getApiSettings()
-            if (apiNamesSetting != null) {
-                val apiNames = apis.map { it.name }
+            val langs = activity?.getApiProviderLangSettings()
+            if (apiNamesSetting != null && langs != null) {
+                val apiNames = apis.filter { langs.contains(it.lang) }.map { it.name }
                 val builder =
                     AlertDialog.Builder(searchView.context, R.style.AlertDialogCustom).setView(R.layout.provider_list)
 
@@ -149,25 +149,6 @@ class SearchFragment : Fragment() {
 
                 listView2.adapter = arrayAdapter2
                 listView2.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
-
-
-                /*fun updateMulti() {
-                    val set = HashSet<TvType>()
-
-                    for ((index, api) in apis.withIndex()) {
-                        if (listView?.checkedItemPositions[index]) {
-                            set.addAll(api.supportedTypes)
-                        }
-                    }
-
-                    if (set.size == 0) {
-                        set.addAll(TvType.values())
-                    }
-
-                    for ((index, choice) in typeChoices.withIndex()) {
-                        listView2?.setItemChecked(index, choice.second.any { set.contains(it) })
-                    }
-                }*/
 
                 for ((index, item) in apiNames.withIndex()) {
                     listView.setItemChecked(index, apiNamesSetting.contains(item))
@@ -227,8 +208,6 @@ class SearchFragment : Fragment() {
                             isSupported
                         )
                     }
-
-                    //updateMulti()
                 }
 
                 dialog.setOnDismissListener {

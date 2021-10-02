@@ -76,14 +76,14 @@ object APIHolder {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         val hashSet = HashSet<String>()
-        hashSet.addAll(apis.map { it.name })
+        val activeLangs = getApiProviderLangSettings()
+        hashSet.addAll(apis.filter { activeLangs.contains(it.lang) }.map { it.name })
 
         val set = settingsManager.getStringSet(
             this.getString(R.string.search_providers_list_key),
             hashSet
         )?.toHashSet() ?: hashSet
 
-        val activeLangs = getApiProviderLangSettings()
         val list = HashSet<String>()
         for (name in set) {
             val api = getApiFromNameNull(name) ?: continue
@@ -361,6 +361,7 @@ interface LoadResponse {
     val tags: List<String>?
     val duration: String?
     val trailerUrl: String?
+    val recommendations: List<SearchResponse>?
 }
 
 fun LoadResponse?.isEpisodeBased(): Boolean {
@@ -396,7 +397,8 @@ data class TorrentLoadResponse(
     override val rating: Int? = null,
     override val tags: List<String>? = null,
     override val duration: String? = null,
-    override val trailerUrl: String? = null
+    override val trailerUrl: String? = null,
+    override val recommendations: List<SearchResponse>? = null,
 ) : LoadResponse
 
 data class AnimeLoadResponse(
@@ -423,6 +425,7 @@ data class AnimeLoadResponse(
     override val rating: Int? = null,
     override val duration: String? = null,
     override val trailerUrl: String? = null,
+    override val recommendations: List<SearchResponse>? = null,
 ) : LoadResponse
 
 data class MovieLoadResponse(
@@ -441,6 +444,7 @@ data class MovieLoadResponse(
     override val tags: List<String>? = null,
     override val duration: String? = null,
     override val trailerUrl: String? = null,
+    override val recommendations: List<SearchResponse>? = null,
 ) : LoadResponse
 
 data class TvSeriesEpisode(
@@ -471,4 +475,5 @@ data class TvSeriesLoadResponse(
     override val tags: List<String>? = null,
     override val duration: String? = null,
     override val trailerUrl: String? = null,
+    override val recommendations: List<SearchResponse>? = null,
 ) : LoadResponse
