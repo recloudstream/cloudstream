@@ -43,7 +43,8 @@ object APIHolder {
         AllMoviesForYouProvider(),
         AsiaFlixProvider(),
         TrailersToProvider(), // be aware that this is fuckery
-        VidEmbedProvider()
+        VidEmbedProvider(),
+        VfFilm()
     )
 
     val restrictedApis = arrayListOf(
