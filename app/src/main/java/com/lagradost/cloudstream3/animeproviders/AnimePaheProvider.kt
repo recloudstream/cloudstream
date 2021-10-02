@@ -455,7 +455,7 @@ class AnimePaheProvider : MainAPI() {
         }
 
         var responseCode = 302
-        var adflyContent: Response? = null
+        var adflyContent: response? = null
         var tries = 0
 
         while (responseCode != 200 && tries < 20) {
@@ -483,7 +483,7 @@ class AnimePaheProvider : MainAPI() {
         val decrypted = decrypt(fullString, key, v1.toInt(), v2.toInt())
         val uri = KWIK_D_URL.find(decrypted)!!.destructured.component1()
         val tok = KWIK_D_TOKEN.find(decrypted)!!.destructured.component1()
-        var content: Response? = null
+        var content: response? = null
 
         var code = 419
         var tries = 0
