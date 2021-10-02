@@ -2054,31 +2054,32 @@ class PlayerFragment : Fragment() {
                     println("CURRENT URL: " + currentUrl?.url)
                     // Lets pray this doesn't spam Toasts :)
                     val msg = error.message ?: ""
+                    val errorName = error.errorCodeName
                     when (val code = error.errorCode) {
                         PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND, PlaybackException.ERROR_CODE_IO_NO_PERMISSION, PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> {
                             if (currentUrl?.url != "") {
                                 showToast(
                                     activity,
-                                    "${getString(R.string.source_error)}\n$code\n$msg",
+                                    "${getString(R.string.source_error)}\n$errorName ($code)\n$msg",
                                     LENGTH_SHORT
                                 )
                                 tryNextMirror()
                             }
                         }
                         PlaybackException.ERROR_CODE_REMOTE_ERROR, PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS, PlaybackException.ERROR_CODE_TIMEOUT, PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED, PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
-                            showToast(activity, "${getString(R.string.remote_error)}\n$code\n$msg", LENGTH_SHORT)
+                            showToast(activity, "${getString(R.string.remote_error)}\n$errorName ($code)\n$msg", LENGTH_SHORT)
                         }
                         PlaybackException.ERROR_CODE_DECODING_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER, PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED, PlaybackException.ERROR_CODE_DECODER_INIT_FAILED, PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
                             showToast(
                                 activity,
-                                "${getString(R.string.render_error)}\n$code\n$msg",
+                                "${getString(R.string.render_error)}\n$errorName ($code)\n$msg",
                                 LENGTH_SHORT
                             )
                         }
                         else -> {
                             showToast(
                                 activity,
-                                "${getString(R.string.unexpected_error)}\n$code\n$msg",
+                                "${getString(R.string.unexpected_error)}\n$errorName ($code)\n$msg",
                                 LENGTH_SHORT
                             )
                         }
@@ -2086,40 +2087,6 @@ class PlayerFragment : Fragment() {
 
                     super.onPlayerError(error)
                 }
-
-                /*override fun onPlayerError(error: ExoPlaybackException) {
-                    println("CURRENT URL: " + currentUrl?.url)
-                    // Lets pray this doesn't spam Toasts :)
-                    when (error.type) {
-                        ExoPlaybackException.TYPE_SOURCE -> {
-                            if (currentUrl?.url != "") {
-                                showToast(
-                                    activity,
-                                    "${getString(R.string.source_error)}\n" + error.sourceException.message,
-                                    LENGTH_SHORT
-                                )
-                                tryNextMirror()
-                            }
-                        }
-                        ExoPlaybackException.TYPE_REMOTE -> {
-                            showToast(activity, getString(R.string.remote_error), LENGTH_SHORT)
-                        }
-                        ExoPlaybackException.TYPE_RENDERER -> {
-                            showToast(
-                                activity,
-                                "${getString(R.string.render_error)}\n" + error.rendererException.message,
-                                LENGTH_SHORT
-                            )
-                        }
-                        ExoPlaybackException.TYPE_UNEXPECTED -> {
-                            showToast(
-                                activity,
-                                "${getString(R.string.unexpected_error)}\n" + error.unexpectedException.message,
-                                LENGTH_SHORT
-                            )
-                        }
-                    }
-                }*/
             })
         } catch (e: java.lang.IllegalStateException) {
             println("Warning: Illegal state exception in PlayerFragment")
