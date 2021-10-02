@@ -16,63 +16,6 @@ private val DEFAULT_COOKIES: Map<String, String> = mapOf()
 private val DEFAULT_REFERER: String? = null
 
 
-// lowercase to avoid conflicts
-class response(response: Response) {
-    companion object {
-        private var responseText: String? = null
-        private var responseBody: ResponseBody? = null
-    }
-
-    public val rawResponse: Response = response
-
-    val text: String
-        get() {
-            if (responseText != null) return responseText!!
-            if (responseBody == null) responseBody = rawResponse.body
-
-            responseText = responseBody.toString()
-            return responseText!!
-        }
-
-    val body: ResponseBody
-        get() {
-            if (responseBody == null) responseBody = rawResponse.body
-            return responseBody!!
-        }
-
-    val url: String
-        get() {
-            return rawResponse.request.url.toString()
-        }
-
-    val cookies: Map<String, String>
-        get() {
-            val cookieList =
-                rawResponse.headers.filter { it.first.equals("set-cookie", ignoreCase = true) }.getOrNull(0)?.second?.split(";")
-            return cookieList?.associate {
-                val split = it.split("=")
-                (split.getOrNull(0)?.trim() ?: "") to (split.getOrNull(1)?.trim() ?: "")
-            }?.filter { it.key.isNotBlank() && it.value.isNotBlank() } ?: mapOf()
-        }
-
-    val headers: Headers
-        get() {
-            return rawResponse.headers
-        }
-
-    val ok: Boolean
-        get() {
-            return rawResponse.isSuccessful
-        }
-
-    val status: Int
-        get() {
-            return rawResponse.code
-        }
-
-}
-
-
 /** WARNING! CAN ONLY BE READ ONCE */
 val Response.text: String
     get() {
@@ -147,7 +90,7 @@ fun get(
     cacheTime: Int = DEFAULT_TIME,
     cacheUnit: TimeUnit = DEFAULT_TIME_UNIT,
     timeout: Long = 0L
-): response {
+): Response {
     val client = OkHttpClient().newBuilder()
         .followRedirects(allowRedirects)
         .followSslRedirects(allowRedirects)
@@ -155,7 +98,7 @@ fun get(
         .build()
 
     val request = getRequestCreator(url, headers, referer, params, cookies, cacheTime, cacheUnit)
-    return response(client.newCall(request).execute())
+    return client.newCall(request).execute()
 }
 
 
@@ -170,14 +113,14 @@ fun post(
     cacheTime: Int = DEFAULT_TIME,
     cacheUnit: TimeUnit = DEFAULT_TIME_UNIT,
     timeout: Long = 0L
-): response {
+): Response {
     val client = OkHttpClient().newBuilder()
         .followRedirects(allowRedirects)
         .followSslRedirects(allowRedirects)
         .callTimeout(timeout, TimeUnit.SECONDS)
         .build()
     val request = postRequestCreator(url, headers, referer, params, cookies, data, cacheTime, cacheUnit)
-    return response(client.newCall(request).execute())
+    return client.newCall(request).execute()
 }
 
 
