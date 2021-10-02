@@ -147,7 +147,7 @@ fun get(
     cacheTime: Int = DEFAULT_TIME,
     cacheUnit: TimeUnit = DEFAULT_TIME_UNIT,
     timeout: Long = 0L
-): Response {
+): response {
     val client = OkHttpClient().newBuilder()
         .followRedirects(allowRedirects)
         .followSslRedirects(allowRedirects)
@@ -170,7 +170,7 @@ fun post(
     cacheTime: Int = DEFAULT_TIME,
     cacheUnit: TimeUnit = DEFAULT_TIME_UNIT,
     timeout: Long = 0L
-): Response {
+): response {
     val client = OkHttpClient().newBuilder()
         .followRedirects(allowRedirects)
         .followSslRedirects(allowRedirects)
