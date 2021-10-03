@@ -82,6 +82,8 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     DoodToExtractor(),
     DoodSoExtractor(),
     DoodLaExtractor(),
+
+    AsianLoad()
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

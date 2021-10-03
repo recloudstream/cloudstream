@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.JsUnpacker
 import com.lagradost.cloudstream3.utils.Qualities
+import java.net.URI
 
 class Streamhub : ExtractorApi() {
     override val mainUrl: String
@@ -31,7 +32,7 @@ class Streamhub : ExtractorApi() {
                             link,
                             referer ?: "",
                             Qualities.Unknown.value,
-                            link.endsWith(".m3u8")
+                            URI(link).path.endsWith(".m3u8")
                         )
                     )
                 }

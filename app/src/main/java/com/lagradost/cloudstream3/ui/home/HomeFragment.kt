@@ -407,7 +407,7 @@ class HomeFragment : Fragment() {
         reloadStored()
         val apiName = context?.getKey<String>(HOMEPAGE_API)
         if(homeViewModel.apiName.value != apiName) {
-            println("COUGHT HOME : " + homeViewModel.apiName.value + " AT " + apiName)
+            println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
             homeViewModel.loadAndCancel(apiName)
         }
     }
