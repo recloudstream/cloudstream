@@ -54,7 +54,7 @@ class DownloadChildFragment : Fragment() {
                         ?: return@mapNotNull null
                     VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
                 }
-            }
+            }.sortedBy { it.data.episode + (it.data.season?: 0)*100000 }
             if (eps.isEmpty()) {
                 activity?.onBackPressed()
                 return@main

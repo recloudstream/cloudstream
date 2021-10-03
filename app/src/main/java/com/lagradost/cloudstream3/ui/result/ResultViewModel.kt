@@ -280,7 +280,7 @@ class ResultViewModel : ViewModel() {
                         if (dataList != null) { // TODO dub and sub at the same time
                             val episodes = ArrayList<ResultEpisode>()
                             for ((index, i) in dataList.withIndex()) {
-                                val episode = i.episode ?: (index + 1);
+                                val episode = i.episode ?: (index + 1)
                                 episodes.add(
                                     context.buildResultEpisode(
                                         filterName(i.name),

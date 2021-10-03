@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.cookies
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -16,8 +15,8 @@ import java.util.*
 
 class TenshiProvider : MainAPI() {
     companion object {
-        var token: String? = null
-        var cookie: Map<String, String> = mapOf()
+        //var token: String? = null
+        //var cookie: Map<String, String> = mapOf()
 
         fun getType(t: String): TvType {
             return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
@@ -39,7 +38,7 @@ class TenshiProvider : MainAPI() {
     override val supportedTypes: Set<TvType>
         get() = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
 
-    private fun loadToken(): Boolean {
+    /*private fun loadToken(): Boolean {
         return try {
             val response = get(mainUrl)
             cookie = response.cookies
@@ -49,7 +48,7 @@ class TenshiProvider : MainAPI() {
         } catch (e: Exception) {
             false
         }
-    }
+    }*/
 
     override fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
@@ -259,8 +258,7 @@ class TenshiProvider : MainAPI() {
                 null,
                 it.attr("data-content").trim(),
             )
-        }
-            ?: ArrayList<AnimeEpisode>())
+        })
         val status = when (document.selectFirst("li.status > .value")?.text()?.trim()) {
             "Ongoing" -> ShowStatus.Ongoing
             "Completed" -> ShowStatus.Completed
@@ -322,7 +320,7 @@ class TenshiProvider : MainAPI() {
                 headers = mapOf("Referer" to data)
             ).text
 
-            val match = Regex("""sources: (\[(?:.|\s)+?type: ['\"]video\/.*?['\"](?:.|\s)+?\])""").find(sourceHTML)
+            val match = Regex("""sources: (\[(?:.|\s)+?type: ['"]video/.*?['"](?:.|\s)+?])""").find(sourceHTML)
             if (match != null) {
                 val qualities = mapper.readValue<List<Quality>>(
                     match.destructured.component1()

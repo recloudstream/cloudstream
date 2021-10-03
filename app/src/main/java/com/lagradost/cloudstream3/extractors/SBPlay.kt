@@ -23,7 +23,7 @@ class SBPlay : ExtractorApi() {
         val response = get(url, referer = referer).text
         val document = Jsoup.parse(response)
 
-        val links = ArrayList<ExtractorLink>();
+        val links = ArrayList<ExtractorLink>()
 
         val tree = document.select("table > tbody > tr > td > a")
         for (item in tree) {

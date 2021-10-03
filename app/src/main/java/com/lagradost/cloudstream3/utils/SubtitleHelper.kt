@@ -16,7 +16,7 @@ object SubtitleHelper {
         val ISO_639_6: String,
     )
 
-    fun createISO() {
+    /*fun createISO() {
         val url = "https://infogalactic.com/info/List_of_ISO_639-1_codes"
         val response = get(url).text
         val document = Jsoup.parse(response)
@@ -40,7 +40,7 @@ object SubtitleHelper {
         }
         text += ")"
         println("ISO CREATED:\n$text")
-    }
+    }*/
 
     /** lang -> ISO_639_1*/
     fun fromLanguageToTwoLetters(input: String): String? {

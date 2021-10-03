@@ -10,7 +10,6 @@ import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 import java.util.*
 
-
 class GogoanimeProvider : MainAPI() {
     companion object {
         fun getType(t: String): TvType {

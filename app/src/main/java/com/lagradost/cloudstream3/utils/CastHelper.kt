@@ -72,7 +72,7 @@ object CastHelper {
         if (pending == null) return
         main {
             val res = withContext(Dispatchers.IO) { pending.await() }
-            when (res.status?.statusCode) {
+            when (res.status.statusCode) {
                 CastStatusCodes.FAILED -> {
                     callback.invoke(true)
                     println("FAILED AND LOAD NEXT")

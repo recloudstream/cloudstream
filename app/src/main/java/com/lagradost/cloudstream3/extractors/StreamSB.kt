@@ -24,7 +24,7 @@ class StreamSB : ExtractorApi() {
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
         val newUrl = url.replace("sbplay.org/embed-", "sbplay.org/play/").removeSuffix(".html")
         with(get(newUrl, timeout = 10)) {
-            getAndUnpack(this.text)?.let {
+            getAndUnpack(this.text).let {
                 sourceRegex.findAll(it).forEach { sourceMatch ->
                     val extractedUrl = sourceMatch.groupValues[1]
                     if (extractedUrl.contains(".m3u8")) {

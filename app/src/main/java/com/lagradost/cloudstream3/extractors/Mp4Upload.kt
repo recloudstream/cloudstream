@@ -12,7 +12,7 @@ class Mp4Upload : ExtractorApi() {
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         with(get(url)) {
-            getAndUnpack(this.text)?.let { unpackedText ->
+            getAndUnpack(this.text).let { unpackedText ->
                 srcRegex.find(unpackedText)?.groupValues?.get(1)?.let { link ->
                     return listOf(
                         ExtractorLink(

@@ -293,7 +293,7 @@ class TrailersToProvider : MainAPI() {
                 Pair(
                     subUrl,
                     fixUrl(
-                        document?.selectFirst("content")?.attr("data-url")
+                        document.selectFirst("content")?.attr("data-url")
                             ?: throw ErrorLoadingException("Link not found")
                     )
                 )

@@ -29,7 +29,7 @@ class MultiQuality : ExtractorApi() {
         }
     }
 
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
+    override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
         with(get(url)) {
             sourceRegex.findAll(this.text).forEach { sourceMatch ->
@@ -65,6 +65,5 @@ class MultiQuality : ExtractorApi() {
             }
             return extractedLinksList
         }
-        return null
     }
 }

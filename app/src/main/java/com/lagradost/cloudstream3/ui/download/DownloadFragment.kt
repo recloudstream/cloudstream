@@ -102,10 +102,7 @@ class DownloadFragment : Fragment() {
                     } else {
                         val folder = getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
                         val navController = activity?.findNavController(R.id.nav_host_fragment)
-                        navController?.navigate(R.id.navigation_download_child, Bundle().apply {
-                            putString("folder", folder)
-                            putString("name", click.data.name)
-                        })
+                        navController?.navigate(R.id.navigation_download_child, DownloadChildFragment.newInstance(click.data.name,folder))
                     }
                 },
                 { downloadClickEvent ->

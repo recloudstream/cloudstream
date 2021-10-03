@@ -95,7 +95,7 @@ class VidEmbedProvider : MainAPI() {
         val description = soup.selectFirst(".post-entry")?.text()?.trim()
         var poster: String? = null
 
-        val episodes = soup.select(".listing.items.lists > .video-block").withIndex().map { (index, li) ->
+        val episodes = soup.select(".listing.items.lists > .video-block").withIndex().map { (_, li) ->
             val epTitle = if (li.selectFirst(".name") != null)
                 if (li.selectFirst(".name").text().contains("Episode"))
                     "Episode " + li.selectFirst(".name").text().split("Episode")[1].trim()
@@ -162,7 +162,7 @@ class VidEmbedProvider : MainAPI() {
 
     // This loads the homepage, which is basically a collection of search results with labels.
     // Optional function, but make sure to enable hasMainPage if you program this.
-    override fun getMainPage(): HomePageResponse? {
+    override fun getMainPage(): HomePageResponse {
         val urls = listOf(
             mainUrl,
             "$mainUrl/movies",
@@ -262,8 +262,8 @@ class VidEmbedProvider : MainAPI() {
 
                 // Having a referer is often required. It's a basic security check most providers have.
                 // Try to replicate what your browser does.
-                val html = get(it.second, headers = mapOf("referer" to iframeLink)).text
-                sourceRegex.findAll(html).forEach { match ->
+                val serverHtml = get(it.second, headers = mapOf("referer" to iframeLink)).text
+                sourceRegex.findAll(serverHtml).forEach { match ->
                     callback.invoke(
                         ExtractorLink(
                             this.name,
@@ -279,7 +279,7 @@ class VidEmbedProvider : MainAPI() {
                         )
                     )
                 }
-                trackRegex.findAll(html).forEach { match ->
+                trackRegex.findAll(serverHtml).forEach { match ->
                     subtitleCallback.invoke(
                         SubtitleFile(
                             match.groupValues.getOrNull(2) ?: "Unknown",

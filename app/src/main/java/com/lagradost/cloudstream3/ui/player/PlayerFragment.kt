@@ -33,7 +33,6 @@ import android.widget.*
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -47,7 +46,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.TIME_UNSET
-import com.google.android.exoplayer2.PlaybackException.ERROR_CODE_AUDIO_TRACK_INIT_FAILED
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -247,8 +245,6 @@ class PlayerFragment : Fragment() {
     private lateinit var playerData: PlayerData
     private lateinit var uriData: UriData
     private var isDownloadedFile = false
-    private var downloadId = 0
-    private var isLoading = true
     private var isShowing = true
     private lateinit var exoPlayer: SimpleExoPlayer
 
@@ -748,8 +744,6 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private var volumeObserver: SettingsContentObserver? = null
-
     companion object {
         fun String.toSubtitleMimeType(): String {
             return when {
@@ -764,7 +758,6 @@ class PlayerFragment : Fragment() {
             return Bundle().apply {
                 //println(data)
                 putString("data", mapper.writeValueAsString(data))
-                println("PUT START: " + startPos)
                 if (startPos != null) {
                     putLong(STATE_RESUME_POSITION, startPos)
                 }
@@ -1042,88 +1035,89 @@ class PlayerFragment : Fragment() {
                     exoPlayer.play()
             }
         }*/
+        activity?.let { act ->
+            if (act.isCastApiAvailable() && !isDownloadedFile) {
+                try {
+                    CastButtonFactory.setUpMediaRouteButton(act, player_media_route_button)
+                    val castContext = CastContext.getSharedInstance(requireContext())
 
-        if (activity?.isCastApiAvailable() == true && !isDownloadedFile) {
-            try {
-                CastButtonFactory.setUpMediaRouteButton(activity, player_media_route_button)
-                val castContext = CastContext.getSharedInstance(requireContext())
+                    if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) player_media_route_button.visibility =
+                        VISIBLE
+                    castContext.addCastStateListener { state ->
+                        if (player_media_route_button != null) {
+                            player_media_route_button.isVisible = state != CastState.NO_DEVICES_AVAILABLE
 
-                if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) player_media_route_button.visibility = VISIBLE
-                castContext.addCastStateListener { state ->
-                    if (player_media_route_button != null) {
-                        player_media_route_button.isVisible = state != CastState.NO_DEVICES_AVAILABLE
+                            if (state == CastState.CONNECTED) {
+                                if (!this::exoPlayer.isInitialized) return@addCastStateListener
+                                val links = sortUrls(getUrls() ?: return@addCastStateListener)
+                                val epData = getEpisode() ?: return@addCastStateListener
 
-                        if (state == CastState.CONNECTED) {
-                            if (!this::exoPlayer.isInitialized) return@addCastStateListener
-                            val links = sortUrls(getUrls() ?: return@addCastStateListener)
-                            val epData = getEpisode() ?: return@addCastStateListener
+                                val index = links.indexOf(getCurrentUrl())
+                                activity?.getCastSession()?.startCast(
+                                    apiName,
+                                    currentIsMovie ?: return@addCastStateListener,
+                                    currentHeaderName,
+                                    currentPoster,
+                                    epData.index,
+                                    episodes,
+                                    links,
+                                    context?.getSubs(supportsDownloadedFiles = false) ?: emptyList(),
+                                    index,
+                                    exoPlayer.currentPosition
+                                )
 
-                            val index = links.indexOf(getCurrentUrl())
-                            activity?.getCastSession()?.startCast(
-                                apiName,
-                                currentIsMovie ?: return@addCastStateListener,
-                                currentHeaderName,
-                                currentPoster,
-                                epData.index,
-                                episodes,
-                                links,
-                                context?.getSubs(supportsDownloadedFiles = false) ?: emptyList(),
-                                index,
-                                exoPlayer.currentPosition
-                            )
-
-                            /*
-                            val customData =
-                                links.map { JSONObject().put("name", it.name) }
-                            val jsonArray = JSONArray()
-                            for (item in customData) {
-                                jsonArray.put(item)
-                            }
-
-                            val mediaItems = links.map {
-                                val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
-
-                                movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
-                                    epData.name ?: "Episode ${epData.episode}")
-
-                                if (currentHeaderName != null)
-                                    movieMetadata.putString(MediaMetadata.KEY_TITLE, currentHeaderName)
-
-                                val srcPoster = epData.poster ?: currentPoster
-                                if (srcPoster != null) {
-                                    movieMetadata.addImage(WebImage(Uri.parse(srcPoster)))
+                                /*
+                                val customData =
+                                    links.map { JSONObject().put("name", it.name) }
+                                val jsonArray = JSONArray()
+                                for (item in customData) {
+                                    jsonArray.put(item)
                                 }
 
-                                MediaQueueItem.Builder(
-                                    MediaInfo.Builder(it.url)
-                                        .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                                        .setContentType(MimeTypes.VIDEO_UNKNOWN)
+                                val mediaItems = links.map {
+                                    val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
 
-                                        .setCustomData(JSONObject().put("data", jsonArray))
-                                        .setMetadata(movieMetadata)
+                                    movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
+                                        epData.name ?: "Episode ${epData.episode}")
+
+                                    if (currentHeaderName != null)
+                                        movieMetadata.putString(MediaMetadata.KEY_TITLE, currentHeaderName)
+
+                                    val srcPoster = epData.poster ?: currentPoster
+                                    if (srcPoster != null) {
+                                        movieMetadata.addImage(WebImage(Uri.parse(srcPoster)))
+                                    }
+
+                                    MediaQueueItem.Builder(
+                                        MediaInfo.Builder(it.url)
+                                            .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                                            .setContentType(MimeTypes.VIDEO_UNKNOWN)
+
+                                            .setCustomData(JSONObject().put("data", jsonArray))
+                                            .setMetadata(movieMetadata)
+                                            .build()
+                                    )
                                         .build()
-                                )
-                                    .build()
-                            }.toTypedArray()
+                                }.toTypedArray()
 
-                            val castPlayer = CastPlayer(castContext)
-                            castPlayer.loadItems(
-                                mediaItems,
-                                if (index > 0) index else 0,
-                                exoPlayer.currentPosition,
-                                MediaStatus.REPEAT_MODE_REPEAT_SINGLE
-                            )*/
-                            //  activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
-                            safeReleasePlayer()
-                            activity?.popCurrentPage()
+                                val castPlayer = CastPlayer(castContext)
+                                castPlayer.loadItems(
+                                    mediaItems,
+                                    if (index > 0) index else 0,
+                                    exoPlayer.currentPosition,
+                                    MediaStatus.REPEAT_MODE_REPEAT_SINGLE
+                                )*/
+                                //  activity?.popCurrentPage(isInPlayer = true, isInExpandedView = false, isInResults = false)
+                                safeReleasePlayer()
+                                activity?.popCurrentPage()
+                            }
                         }
                     }
+                } catch (e: Exception) {
+                    logError(e)
                 }
-            } catch (e : Exception) {
-                logError(e)
             }
         }
-
         isDownloadedFile = false
         arguments?.getString("uriData")?.let {
             uriData = mapper.readValue(it)
@@ -1159,7 +1153,7 @@ class PlayerFragment : Fragment() {
 
         activity?.let {
             it.contentResolver?.registerContentObserver(
-                android.provider.Settings.System.CONTENT_URI, true, SettingsContentObserver(
+                Settings.System.CONTENT_URI, true, SettingsContentObserver(
                     Handler(
                         Looper.getMainLooper()
                     ), it
@@ -1172,13 +1166,13 @@ class PlayerFragment : Fragment() {
 
             observeDirectly(viewModel.episodes) { _episodes ->
                 episodes = _episodes
-                if (isLoading) {
-                    /*if (playerData.episodeIndex > 0 && playerData.episodeIndex < episodes.size) {
+                /*if (isLoading) {
+                    if (playerData.episodeIndex > 0 && playerData.episodeIndex < episodes.size) {
 
                     } else {
                         // WHAT THE FUCK DID YOU DO
-                    }*/
-                }
+                    }
+                }*/
             }
 
             observe(viewModel.apiName) {
@@ -1485,7 +1479,7 @@ class PlayerFragment : Fragment() {
                 requireContext().setKey(RESIZE_MODE_KEY, resizeMode)
                 player_view.resizeMode = resizeModes[resizeMode].first
                 activity?.let { act ->
-                    showToast(act, resizeModes[resizeMode].second, Toast.LENGTH_SHORT);
+                    showToast(act, resizeModes[resizeMode].second, LENGTH_SHORT)
                 }
                 //exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
             }
@@ -1506,18 +1500,6 @@ class PlayerFragment : Fragment() {
         changeSkip()
 
         // initPlayer()
-    }
-
-    private fun getRendererIndex(trackIndex: Int): Int? {
-        if (!this::exoPlayer.isInitialized) return null
-
-        for (renderIndex in 0 until exoPlayer.rendererCount) {
-            if (exoPlayer.getRendererType(renderIndex) == renderIndex) {
-                return renderIndex
-            }
-        }
-
-        return null
     }
 
     private fun getCurrentUrl(): ExtractorLink? {
@@ -2067,7 +2049,11 @@ class PlayerFragment : Fragment() {
                             }
                         }
                         PlaybackException.ERROR_CODE_REMOTE_ERROR, PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS, PlaybackException.ERROR_CODE_TIMEOUT, PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED, PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
-                            showToast(activity, "${getString(R.string.remote_error)}\n$errorName ($code)\n$msg", LENGTH_SHORT)
+                            showToast(
+                                activity,
+                                "${getString(R.string.remote_error)}\n$errorName ($code)\n$msg",
+                                LENGTH_SHORT
+                            )
                         }
                         PlaybackException.ERROR_CODE_DECODING_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER, PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED, PlaybackException.ERROR_CODE_DECODER_INIT_FAILED, PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
                             showToast(

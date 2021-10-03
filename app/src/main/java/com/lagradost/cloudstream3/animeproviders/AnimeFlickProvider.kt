@@ -9,7 +9,6 @@ import com.lagradost.cloudstream3.utils.extractorApis
 import org.jsoup.Jsoup
 import java.util.*
 
-
 class AnimeFlickProvider : MainAPI() {
     companion object {
         fun getType(t: String): TvType {

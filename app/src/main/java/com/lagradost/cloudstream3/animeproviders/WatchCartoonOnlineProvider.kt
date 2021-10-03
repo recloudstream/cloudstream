@@ -80,16 +80,16 @@ class WatchCartoonOnlineProvider : MainAPI() {
                 data = mapOf("catara" to query, "konuara" to "episodes")
             ).text
         document = Jsoup.parse(response)
-        items = document.select("#catlist-listview2 > ul > li").filter { it?.text() != null && !it?.text().toString().contains("Episode") }
+        items = document.select("#catlist-listview2 > ul > li").filter { it?.text() != null && !it.text().toString().contains("Episode") }
 
 
         for (item in items) {
             val titleHeader = item.selectFirst("a")
             val title = titleHeader.text()
             val href = fixUrl(titleHeader.attr("href"))
-            val isDubbed = title.contains("dubbed")
-            val set: EnumSet<DubStatus> =
-                EnumSet.of(if (isDubbed) DubStatus.Dubbed else DubStatus.Subbed)
+            //val isDubbed = title.contains("dubbed")
+            //val set: EnumSet<DubStatus> =
+            //   EnumSet.of(if (isDubbed) DubStatus.Dubbed else DubStatus.Subbed)
             returnValue.add(
                 TvSeriesSearchResponse(
                     title,

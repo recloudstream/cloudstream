@@ -85,7 +85,7 @@ class M3u8Helper {
 
             for (match in QUALITY_REGEX.findAll(response)) {
                 var (quality, m3u8Link, m3u8Link2) = match.destructured
-                if (m3u8Link.isNullOrEmpty()) m3u8Link = m3u8Link2
+                if (m3u8Link.isEmpty()) m3u8Link = m3u8Link2
                 if (absoluteExtensionDetermination(m3u8Link) == "m3u8") {
                     if (isNotCompleteUrl(m3u8Link)) {
                         m3u8Link = "$m3u8Parent/$m3u8Link"
@@ -138,7 +138,7 @@ class M3u8Helper {
         if (secondSelection != null) {
             val m3u8Response = get(secondSelection.streamUrl, headers = headers).text
 
-            var encryptionUri: String? = null
+            var encryptionUri: String?
             var encryptionIv = byteArrayOf()
             var encryptionData = byteArrayOf()
 

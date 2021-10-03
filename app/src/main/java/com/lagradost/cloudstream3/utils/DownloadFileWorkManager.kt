@@ -10,7 +10,6 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.WORK_KEY_INFO
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.WORK_KEY_PACKAGE
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.createNotification
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadCheck
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadEpisode
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadFromResume

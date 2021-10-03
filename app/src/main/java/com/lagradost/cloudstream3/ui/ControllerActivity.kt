@@ -28,15 +28,12 @@ import com.lagradost.cloudstream3.sortUrls
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.CastHelper.awaitLinks
 import com.lagradost.cloudstream3.utils.CastHelper.getMediaInfo
-import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import kotlin.concurrent.thread
 
-class SkipOpController(val view: ImageView) : UIController() {
+/*class SkipOpController(val view: ImageView) : UIController() {
     init {
         view.setImageResource(R.drawable.exo_controls_fastforward)
         view.setOnClickListener {
@@ -47,12 +44,12 @@ class SkipOpController(val view: ImageView) : UIController() {
             }
         }
     }
-}
+}*/
 
 private fun RemoteMediaClient.getItemIndex(): Int? {
     return try {
-        val index = this.mediaQueue?.itemIds?.indexOf(this.currentItem?.itemId ?: 0)
-        if (index == null || index < 0) null else index
+        val index = this.mediaQueue.itemIds.indexOf(this.currentItem?.itemId ?: 0)
+        if (index < 0) null else index
     } catch (e: Exception) {
         null
     }
@@ -136,7 +133,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
                         subtitleList.setOnItemClickListener { _, _, which, _ ->
                             if (which == 0) {
-                                remoteMediaClient.setActiveMediaTracks(longArrayOf()) // NO SUBS
+                                remoteMediaClient?.setActiveMediaTracks(longArrayOf()) // NO SUBS
                             } else {
                                 val font = TextTrackStyle()
                                 font.fontFamily = "Google Sans" //TODO FONT SETTINGS
@@ -147,10 +144,10 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 font.foregroundColor = Color.WHITE
                                 font.fontScale = 1.05f
 
-                                remoteMediaClient.setTextTrackStyle(font)
+                                remoteMediaClient?.setTextTrackStyle(font)
 
-                                remoteMediaClient.setActiveMediaTracks(longArrayOf(subTracks[which - 1].id))
-                                    .setResultCallback {
+                                remoteMediaClient?.setActiveMediaTracks(longArrayOf(subTracks[which - 1].id))
+                                    ?.setResultCallback {
                                         if (!it.status.isSuccess) {
                                             Log.e(
                                                 "CHROMECAST", "Failed with status code:" +
@@ -332,7 +329,9 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
     }
 
     override fun onSessionConnected(castSession: CastSession?) {
-        super.onSessionConnected(castSession)
+        castSession?.let {
+            super.onSessionConnected(it)
+        }
         remoteMediaClient?.queueSetRepeatMode(REPEAT_MODE_REPEAT_OFF, JSONObject())
     }
 }

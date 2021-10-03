@@ -661,10 +661,9 @@ object VideoDownloadManager {
 
         val contentLength = try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // fuck android
-                connection.contentLengthLong ?: 0L
+                connection.contentLengthLong
             } else {
-                connection.getHeaderField("content-length").toLongOrNull() ?: connection.contentLength?.toLong()
-                ?: 0L
+                connection.getHeaderField("content-length").toLongOrNull() ?: connection.contentLength.toLong()
             }
         } catch (e: Exception) {
             logError(e)

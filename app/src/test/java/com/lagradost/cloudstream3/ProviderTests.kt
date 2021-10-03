@@ -13,6 +13,115 @@ class ProviderTests {
         return allApis
     }
 
+    private fun loadLinks(api: MainAPI, url: String?): Boolean {
+        Assert.assertNotNull("Api ${api.name} has invalid url on episode", url)
+        if (url == null) return true
+        var linksLoaded = 0
+        try {
+            val success = api.loadLinks(url, false, {}) { link ->
+                Assert.assertTrue(
+                    "Api ${api.name} returns link with invalid Quality",
+                    Qualities.values().map { it.value }.contains(link.quality)
+                )
+                Assert.assertTrue("Api ${api.name} returns link with invalid url", link.url.length > 4)
+                linksLoaded++
+            }
+            if (success) {
+                return linksLoaded > 0
+            }
+            Assert.assertTrue("Api ${api.name} has returns false on .loadLinks", success)
+        } catch (e: Exception) {
+            if (e.cause is NotImplementedError) {
+                Assert.fail("Provider has not implemented .loadLinks")
+            }
+            logError(e)
+        }
+        return true
+    }
+
+    private fun test_single_provider(api: MainAPI) {
+        val searchQueries = listOf("over", "iron", "guy")
+        var correctResponses = 0
+        var searchResult: List<SearchResponse>? = null
+        for (query in searchQueries) {
+            val response = try {
+                api.search(query)
+            } catch (e: Exception) {
+                if (e.cause is NotImplementedError) {
+                    Assert.fail("Provider has not implemented .search")
+                }
+                logError(e)
+                null
+            }
+            if (!response.isNullOrEmpty()) {
+                correctResponses++
+                if (searchResult == null) {
+                    searchResult = response
+                }
+            }
+        }
+
+        if (correctResponses == 0 || searchResult == null) {
+            println("Api ${api.name} did not return any valid search responses")
+            return
+        }
+
+        try {
+            var validResults = false
+            for (result in searchResult) {
+                Assert.assertEquals("Invalid apiName on response on ${api.name}", result.apiName, api.name)
+                val load = api.load(result.url) ?: continue
+                Assert.assertEquals("Invalid apiName on load on ${api.name}", load.apiName, result.apiName)
+                Assert.assertTrue(
+                    "Api ${api.name} on load does not contain any of the supportedTypes",
+                    api.supportedTypes.contains(load.type)
+                )
+                when (load) {
+                    is AnimeLoadResponse -> {
+                        val gotNoEpisodes =
+                            load.dubEpisodes.isNullOrEmpty() && load.subEpisodes.isNullOrEmpty()
+                        if (gotNoEpisodes) {
+                            println("Api ${api.name} got no episodes on ${load.url}")
+                            continue
+                        }
+
+                        val url = (load.dubEpisodes ?: load.subEpisodes)?.first()?.url
+                        validResults = loadLinks(api, url)
+                        if (!validResults) continue
+                    }
+                    is MovieLoadResponse -> {
+                        val gotNoEpisodes = load.dataUrl.isBlank()
+                        if (gotNoEpisodes) {
+                            println("Api ${api.name} got no movie on ${load.url}")
+                            continue
+                        }
+
+                        validResults = loadLinks(api, load.dataUrl)
+                        if (!validResults) continue
+                    }
+                    is TvSeriesLoadResponse -> {
+                        val gotNoEpisodes = load.episodes.isEmpty()
+                        if (gotNoEpisodes) {
+                            println("Api ${api.name} got no episodes on ${load.url}")
+                            continue
+                        }
+
+                        validResults = loadLinks(api, load.episodes.first().data)
+                        if (!validResults) continue
+                    }
+                }
+                break
+            }
+
+            Assert.assertTrue("Api ${api.name} did not load on any}", validResults)
+        } catch (e: Exception) {
+            if (e.cause is NotImplementedError) {
+                Assert.fail("Provider has not implemented .load")
+            }
+            logError(e)
+        }
+    }
+
     @Test
     fun providers_exist() {
         Assert.assertTrue(getAllProviders().isNotEmpty())
@@ -23,7 +132,7 @@ class ProviderTests {
         val isoNames = SubtitleHelper.languages.map { it.ISO_639_1 }
         Assert.assertFalse("ISO does not contain any languages", isoNames.isNullOrEmpty())
         for (api in getAllProviders()) {
-            Assert.assertTrue("Api does not contain a mainurl", api.mainUrl != "NONE")
+            Assert.assertTrue("Api does not contain a mainUrl", api.mainUrl != "NONE")
             Assert.assertTrue("Api does not contain a name", api.name != "NONE")
             Assert.assertTrue("Api ${api.name} does not contain a valid language code", isoNames.contains(api.lang))
             Assert.assertTrue("Api ${api.name} does not contain any supported types", api.supportedTypes.isNotEmpty())
@@ -57,118 +166,13 @@ class ProviderTests {
         }
     }
 
-    private fun loadLinks(api: MainAPI, url: String?): Boolean {
-        Assert.assertNotNull("Api ${api.name} has invalid url on episode", url)
-        if (url == null) return true
-        var linksLoaded = 0
-        try {
-            val success = api.loadLinks(url, false, {}) { link ->
-                Assert.assertTrue(
-                    "Api ${api.name} returns link with invalid Quality",
-                    Qualities.values().map { it.value }.contains(link.quality)
-                )
-                Assert.assertTrue("Api ${api.name} returns link with invalid url", link.url.length > 4)
-                linksLoaded++
-            }
-            if (success) {
-                return linksLoaded > 0
-            }
-            Assert.assertTrue("Api ${api.name} has returns false on .loadLinks", success)
-        } catch (e: Exception) {
-            if (e.cause is NotImplementedError) {
-                Assert.fail("Provider has not implemented .loadLinks")
-            }
-            logError(e)
-        }
-        return true
-    }
-
     @Test
     fun provider_correct() {
-        val searchQueries = listOf("over", "iron", "guy")
         val providers = getAllProviders()
         for ((index, api) in providers.withIndex()) {
             try {
                 println("Trying $api (${index + 1}/${providers.size})")
-                var correctResponses = 0
-                var searchResult: List<SearchResponse>? = null
-                for (query in searchQueries) {
-                    val response = try {
-                        api.search(query)
-                    } catch (e: Exception) {
-                        if (e.cause is NotImplementedError) {
-                            Assert.fail("Provider has not implemented .search")
-                        }
-                        logError(e)
-                        null
-                    }
-                    if (!response.isNullOrEmpty()) {
-                        correctResponses++
-                        if (searchResult == null) {
-                            searchResult = response
-                        }
-                    }
-                }
-
-                if (correctResponses == 0 || searchResult == null) {
-                    println("Api ${api.name} did not return any valid search responses")
-                    continue
-                }
-
-                try {
-                    var validResults = false
-                    for (result in searchResult) {
-                        Assert.assertEquals("Invalid apiName on response on ${api.name}", result.apiName, api.name)
-                        val load = api.load(result.url) ?: continue
-                        Assert.assertEquals("Invalid apiName on load on ${api.name}", load.apiName, result.apiName)
-                        Assert.assertTrue(
-                            "Api ${api.name} on load does not contain any of the supportedTypes",
-                            api.supportedTypes.contains(load.type)
-                        )
-                        when (load) {
-                            is AnimeLoadResponse -> {
-                                val gotNoEpisodes =
-                                    load.dubEpisodes.isNullOrEmpty() && load.subEpisodes.isNullOrEmpty()
-                                if (gotNoEpisodes) {
-                                    println("Api ${api.name} got no episodes on ${load.url}")
-                                    continue
-                                }
-
-                                val url = (load.dubEpisodes ?: load.subEpisodes)?.first()?.url
-                                validResults = loadLinks(api, url)
-                                if (!validResults) continue
-                            }
-                            is MovieLoadResponse -> {
-                                val gotNoEpisodes = load.dataUrl.isBlank()
-                                if (gotNoEpisodes) {
-                                    println("Api ${api.name} got no movie on ${load.url}")
-                                    continue
-                                }
-
-                                validResults = loadLinks(api, load.dataUrl)
-                                if (!validResults) continue
-                            }
-                            is TvSeriesLoadResponse -> {
-                                val gotNoEpisodes = load.episodes.isEmpty()
-                                if (gotNoEpisodes) {
-                                    println("Api ${api.name} got no episodes on ${load.url}")
-                                    continue
-                                }
-
-                                validResults = loadLinks(api, load.episodes.first().data)
-                                if (!validResults) continue
-                            }
-                        }
-                        break
-                    }
-
-                    Assert.assertTrue("Api ${api.name} did not load on any}", validResults)
-                } catch (e: Exception) {
-                    if (e.cause is NotImplementedError) {
-                        Assert.fail("Provider has not implemented .load")
-                    }
-                    logError(e)
-                }
+                test_single_provider(api)
             } catch (e: Exception) {
                 logError(e)
             }
