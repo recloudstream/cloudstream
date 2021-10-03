@@ -264,7 +264,7 @@ class ThenosProvider : MainAPI() {
             val isM3u8 = source.type != "video/mp4"
             val token = get("https://token.noss.workers.dev/").text
             val authorization =
-                String(android.util.Base64.decode(token, android.util.Base64.DEFAULT), Charsets.ISO_8859_1)
+                base64Decode(token)
 
             callback.invoke(
                 ExtractorLink(

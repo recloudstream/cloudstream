@@ -198,6 +198,15 @@ abstract class MainAPI {
     }
 }
 
+/** Might need a different implementation for desktop*/
+fun base64Decode(string: String): String {
+    return try {
+        String(android.util.Base64.decode(string, android.util.Base64.DEFAULT), Charsets.ISO_8859_1)
+    } catch (e: Exception) {
+        String(Base64.getDecoder().decode(string))
+    }
+}
+
 class ErrorLoadingException(message: String? = null) : Exception(message)
 
 fun parseRating(ratingString: String?): Int? {

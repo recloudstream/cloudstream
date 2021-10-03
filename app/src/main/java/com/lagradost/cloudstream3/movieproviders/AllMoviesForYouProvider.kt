@@ -5,10 +5,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.network.url
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.getPostForm
-import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.*
 import okio.Buffer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -63,7 +60,8 @@ class AllMoviesForYouProvider : MainAPI() {
         }
         document.select("div.OptionBx")?.forEach { element ->
             val baseElement = element.selectFirst("> a.Button")
-            if (element.selectFirst("> p.AAIco-dns")?.text() == "Streamhub") {
+            val elementText = element.selectFirst("> p.AAIco-dns")?.text()
+            if (elementText == "Streamhub" || elementText == "Dood") {
                 baseElement?.attr("href")?.let { href ->
                     list.add(href)
                 }
@@ -108,7 +106,7 @@ class AllMoviesForYouProvider : MainAPI() {
                 if (episodes.isNotEmpty()) {
                     episodes.forEach { episode ->
                         val epNum = episode.selectFirst("> td > span.Num")?.text()?.toIntOrNull()
-                        val poster = episode.selectFirst("> td.MvTbImg > a > img")?.attr("src")
+                        val poster = episode.selectFirst("> td.MvTbImg > a > img")?.attr("data-src")
                         val aName = episode.selectFirst("> td.MvTbTtl > a")
                         val name = aName.text()
                         val href = aName.attr("href")
@@ -165,6 +163,7 @@ class AllMoviesForYouProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
+        if (data == "about:blank") return false
         if (data.startsWith("$mainUrl/episode/")) {
             val response = get(data).text
             getLink(Jsoup.parse(response))?.let { links ->
@@ -176,10 +175,11 @@ class AllMoviesForYouProvider : MainAPI() {
             }
             return false
         } else if (data.startsWith(mainUrl) && data != mainUrl) {
-            val realDataUrl = URLDecoder.decode(data, "application/x-www-form-urlencoded")
+            val realDataUrl = URLDecoder.decode(data, "UTF-8")
             if (data.contains("trdownload")) {
                 val request = get(data)
-                if (request.url.startsWith("https://streamhub.to/d/")) {
+                val requestUrl = request.url
+                if (requestUrl.startsWith("https://streamhub.to/d/")) {
                     val buffer = Buffer()
                     val source = request.body?.source()
                     var html = ""
@@ -191,11 +191,20 @@ class AllMoviesForYouProvider : MainAPI() {
                         tries += 1
                         html += buffer.readUtf8()
                     }
-                    getPostForm(request.url,html)?.let { form ->
+                    getPostForm(request.url, html)?.let { form ->
                         val postDocument = Jsoup.parse(form)
 
                         postDocument.selectFirst("a.downloadbtn")?.attr("href")?.let { url ->
                             callback(ExtractorLink(this.name, this.name, url, mainUrl, Qualities.Unknown.value))
+                        }
+                    }
+                } else if (requestUrl.startsWith("https://dood")) {
+                    for (extractor in extractorApis) {
+                        if (requestUrl.startsWith(extractor.mainUrl)) {
+                            extractor.getSafeUrl(requestUrl)?.forEach { link ->
+                                callback(link)
+                            }
+                            break
                         }
                     }
                 } else {

@@ -1,16 +1,15 @@
 package com.lagradost.cloudstream3.animeproviders
 
-import com.lagradost.cloudstream3.*
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import okhttp3.Response
 import org.jsoup.Jsoup
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AnimePaheProvider : MainAPI() {
     companion object {
@@ -434,7 +433,7 @@ class AnimePaheProvider : MainAPI() {
             }
         }
         var returnValue = String(encodedUri.joinToString("").toByteArray(), Charsets.UTF_8)
-        returnValue = String(android.util.Base64.decode(returnValue, android.util.Base64.DEFAULT), Charsets.ISO_8859_1)
+        returnValue = base64Decode(returnValue)
         return returnValue.slice(16..returnValue.length - 17)
     }
 

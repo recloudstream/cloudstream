@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import com.lagradost.cloudstream3.movieproviders.ThenosProvider
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -39,7 +40,7 @@ class ProviderTests {
         return true
     }
 
-    private fun test_single_provider(api: MainAPI) {
+    private fun testSingleProviderApi(api: MainAPI) : Boolean {
         val searchQueries = listOf("over", "iron", "guy")
         var correctResponses = 0
         var searchResult: List<SearchResponse>? = null
@@ -62,8 +63,8 @@ class ProviderTests {
         }
 
         if (correctResponses == 0 || searchResult == null) {
-            println("Api ${api.name} did not return any valid search responses")
-            return
+            System.err.println("Api ${api.name} did not return any valid search responses")
+            return false
         }
 
         try {
@@ -119,16 +120,18 @@ class ProviderTests {
                 Assert.fail("Provider has not implemented .load")
             }
             logError(e)
+            return false
         }
+        return true
     }
 
     @Test
-    fun providers_exist() {
+    fun providersExist() {
         Assert.assertTrue(getAllProviders().isNotEmpty())
     }
 
     @Test
-    fun provider_correct_data() {
+    fun providerCorrectData() {
         val isoNames = SubtitleHelper.languages.map { it.ISO_639_1 }
         Assert.assertFalse("ISO does not contain any languages", isoNames.isNullOrEmpty())
         for (api in getAllProviders()) {
@@ -140,7 +143,7 @@ class ProviderTests {
     }
 
     @Test
-    fun provider_correct_homepage() {
+    fun providerCorrectHomepage() {
         for (api in getAllProviders()) {
             if (api.hasMainPage) {
                 try {
@@ -167,12 +170,21 @@ class ProviderTests {
     }
 
     @Test
-    fun provider_correct() {
+    fun testSingleProvider() {
+        testSingleProviderApi(ThenosProvider())
+    }
+
+    @Test
+    fun providerCorrect() {
         val providers = getAllProviders()
         for ((index, api) in providers.withIndex()) {
             try {
                 println("Trying $api (${index + 1}/${providers.size})")
-                test_single_provider(api)
+                if(testSingleProviderApi(api)) {
+                    println("Success $api (${index + 1}/${providers.size})")
+                } else {
+                    System.err.println("Error $api (${index + 1}/${providers.size})")
+                }
             } catch (e: Exception) {
                 logError(e)
             }
