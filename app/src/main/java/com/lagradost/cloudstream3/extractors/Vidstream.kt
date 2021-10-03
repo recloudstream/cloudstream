@@ -14,9 +14,8 @@ import org.jsoup.Jsoup
  * overrideMainUrl is necessary for for other vidstream clones like vidembed.cc
  * If they diverge it'd be better to make them separate.
  * */
-class Vidstream(overrideMainUrl: String? = null) {
+class Vidstream(val mainUrl: String) {
     val name: String = "Vidstream"
-    private val mainUrl: String = overrideMainUrl ?: "https://gogo-stream.com"
 
     private fun getExtractorUrl(id: String): String {
         return "$mainUrl/streaming.php?id=$id"
@@ -41,7 +40,9 @@ class Vidstream(overrideMainUrl: String? = null) {
             /** Stolen from GogoanimeProvider.kt extractor */
             normalSafeApiCall {
                 val link = getDownloadUrl(id)
-                val page = get(link, headers = mapOf("Referer" to extractorUrl))
+                println("Generated vidstream download link: $link")
+                val page = get(link, referer = extractorUrl)
+
                 val pageDoc = Jsoup.parse(page.text)
                 val qualityRegex = Regex("(\\d+)P")
 

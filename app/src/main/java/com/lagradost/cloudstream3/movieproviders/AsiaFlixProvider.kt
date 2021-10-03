@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import java.net.URI
 
 class AsiaFlixProvider : MainAPI() {
     override val mainUrl: String
@@ -162,7 +163,7 @@ class AsiaFlixProvider : MainAPI() {
                     it,
                     "https://asianload1.com/", /** <------ This provider should be added instead */
                     getQualityFromName(it),
-                    it.endsWith(".m3u8")
+                    URI(it).path.endsWith(".m3u8")
                 )
             )
         }

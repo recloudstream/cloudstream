@@ -36,6 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.lang.Thread.sleep
+import java.net.URI
 import java.net.URL
 import java.net.URLConnection
 import java.util.*
@@ -1110,7 +1111,7 @@ object VideoDownloadManager {
     ): Int {
         val name = sanitizeFilename(ep.name ?: "${context.getString(R.string.episode)} ${ep.episode}")
 
-        if (link.isM3u8 || link.url.endsWith(".m3u8")) {
+        if (link.isM3u8 || URI(link.url).path.endsWith(".m3u8")) {
             val startIndex = if (tryResume) {
                 context.getKey<DownloadedFileInfo>(
                     KEY_DOWNLOAD_INFO,
