@@ -41,7 +41,7 @@ object APIHolder {
         VMoveeProvider(),
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
-        AsiaFlixProvider(),
+
         VidEmbedProvider(),
         VfFilmProvider()
     )
@@ -50,6 +50,7 @@ object APIHolder {
         TrailersToProvider(), // be aware that this is fuckery
         //NyaaProvider(), //torrents in cs3 is wack
         ThenosProvider(),
+        AsiaFlixProvider(),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {

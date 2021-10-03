@@ -8,12 +8,14 @@
         android:id="@+id/searchRoot"
         tools:context=".ui.search.SearchFragment"
         android:orientation="vertical"
+        android:background="?attr/darkBackground"
         android:layout_marginTop="@dimen/navbarHeight">
-    <FrameLayout android:visibility="visible"
-                 android:layout_margin="10dp"
-                 android:background="@drawable/search_background"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
+    <FrameLayout
+            android:visibility="visible"
+            android:layout_margin="10dp"
+            android:background="@drawable/search_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
     >
         <FrameLayout
                 android:layout_gravity="center_vertical"
@@ -62,8 +64,9 @@
     </FrameLayout>
 
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+            android:background="?attr/primaryBlackBackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingStart="8dp"
             android:paddingTop="5dp"
@@ -74,6 +77,7 @@
             android:orientation="vertical"
     />
     <androidx.recyclerview.widget.RecyclerView
+            android:background="?attr/primaryBlackBackground"
             android:id="@+id/search_master_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -9,6 +9,7 @@
         android:layout_height="match_parent"
         android:background="?attr/darkBackground"
         tools:context=".ui.download.DownloadFragment">
+
     <com.google.android.material.appbar.AppBarLayout
             android:background="?attr/darkBackground"
             android:layout_width="match_parent"
@@ -106,7 +107,7 @@
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
+    
     <androidx.recyclerview.widget.RecyclerView
             android:background="?attr/primaryBlackBackground"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -129,4 +130,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ProgressBar
+            android:visibility="visible"
+            tools:visibility="gone"
+            android:id="@+id/download_loading"
+            android:layout_gravity="center"
+            android:layout_width="50dp" android:layout_height="50dp">
+    </ProgressBar>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
