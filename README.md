@@ -43,21 +43,6 @@ CloudStream 3 does not host any content on the app, and has no control over what
 It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.
 
 ***Sites used:***
-
-+ https://tenshi.moe
-
-+ https://wcostream.cc
-
-+ https://bestdubbedanime.com
-
-+ https://hdm.to
-
-+ https://www.vmovee.watch
-
-+ https://www.wcostream.com
-
-+ https://animepahe.com
-
-+ https://gogoanime.vc
-
-+ https://kawaiifu.com
+<!-- Do not remove those two comments -->
+<!--SITE LIST START-->
+<!--SITE LIST END-->
