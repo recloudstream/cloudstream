@@ -65,5 +65,3 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [https://kawaiifu.com](https://kawaiifu.com) 
 - [https://bestdubbedanime.com](https://bestdubbedanime.com) 
 <!--SITE LIST END-->
-
-
