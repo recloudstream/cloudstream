@@ -30,7 +30,7 @@ with open("README.md", "r+", encoding='utf-8') as readme:
     for site in sites:
         readme.write("- [{0}]({0}) \n".format(site))
     
-    readme.write(END_MARKER+"\n")
+    readme.write(END_MARKER)
     readme.write(raw.split(END_MARKER)[-1])
     
     readme.truncate()
