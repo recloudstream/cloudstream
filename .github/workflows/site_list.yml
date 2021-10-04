@@ -8,6 +8,7 @@ on:
       - 'app/src/main/java/com/lagradost/cloudstream3/*providers/*Provider.kt'
       - '.github/workflows/site_list.yml'
       - '.github/site-list.py'
+      - 'app/src/main/java/com/lagradost/cloudstream3/MainAPI.kt'
 
 concurrency: 
   group: "site-list"
