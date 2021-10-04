@@ -1,19 +1,22 @@
 #!/usr/bin/python3
 
 from glob import glob
-from re import findall, search, compile, sub, DOTALL
+from re import findall, compile, sub, DOTALL
+from typing import List, Dict
 
 # Globals
-URL_REGEX = compile("override val mainUrl(?:\:\s?String)?[^\"']+[\"'](https?://[a-zA-Z0-9\.-]+)[\"']")
+URL_REGEX = compile(
+    "override val mainUrl(?:\:\s?String)?[^\"']+[\"'](https?://[a-zA-Z0-9\.-]+)[\"']")
 NAME_REGEX = compile("class (.+?) ?: MainAPI\(\)")
 START_MARKER = "<!--SITE LIST START-->"
 END_MARKER = "<!--SITE LIST END-->"
 GLOB = "app/src/main/java/com/lagradost/cloudstream3/*providers/*Provider.kt"
 MAIN_API = "app/src/main/java/com/lagradost/cloudstream3/MainAPI.kt"
-API_REGEX = compile("val (?:restrictedA|a)pis = arrayListOf\((.+?)\)(?=\n\n)", DOTALL)
+API_REGEX = compile(
+    "val (?:restrictedA|a)pis = arrayListOf\((.+?)\)(?=\n\n)", DOTALL)
 
-sites = []
-enabled_sites = []
+sites: Dict[str, str] = {}
+enabled_sites: List[str] = []
 
 
 with open(MAIN_API, "r", encoding="utf-8") as f:
@@ -27,15 +30,18 @@ with open(MAIN_API, "r", encoding="utf-8") as f:
 for path in glob(GLOB):
     with open(path, "r", encoding='utf-8') as file:
         try:
-            site_text = file.read()
-            name = findall(NAME_REGEX, site_text)
+            site_text: str = file.read()
+            name: List[str] = findall(NAME_REGEX, site_text)
+            provider_text: str = findall(URL_REGEX, site_text)
+
             if name:
                 if name[0] not in enabled_sites:
                     continue
-            url = search(URL_REGEX, site_text).groups()[0]
-            sites.append(url)
+                sites[name[0]] = provider_text[0]
+
         except Exception as ex:
             print("{0}: {1}".format(path, ex))
+
 
 with open("README.md", "r+", encoding='utf-8') as readme:
     raw = readme.read()
@@ -46,9 +52,10 @@ with open("README.md", "r+", encoding='utf-8') as readme:
     readme.write(raw.split(START_MARKER)[0])
     readme.write(START_MARKER+"\n")
 
-    for site in sites:
-        readme.write(
-            "- [{0}]({1}) \n".format(sub("^https?://", "", site), site))
+    for site in enabled_sites:
+        if site in sites:
+            readme.write(
+                "- [{0}]({1}) \n".format(sub("^https?://", "", sites[site]), sites[site]))
 
     readme.write(END_MARKER)
     readme.write(raw.split(END_MARKER)[-1])
