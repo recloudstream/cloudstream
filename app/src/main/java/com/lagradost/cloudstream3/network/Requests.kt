@@ -73,9 +73,10 @@ fun getCache(cacheTime: Int, cacheUnit: TimeUnit): CacheControl {
 fun getHeaders(headers: Map<String, String>, referer: String?, cookie: Map<String, String>): Headers {
     val refererMap = (referer ?: DEFAULT_REFERER)?.let { mapOf("referer" to it) } ?: mapOf()
     val cookieHeaders = (DEFAULT_COOKIES + cookie)
-    val cookieMap = if(cookieHeaders.isNotEmpty()) mapOf("Cookie" to cookieHeaders.entries.joinToString(separator = "; ") {
-        "${it.key}=${it.value};"
-    }) else mapOf()
+    val cookieMap =
+        if (cookieHeaders.isNotEmpty()) mapOf("Cookie" to cookieHeaders.entries.joinToString(separator = "; ") {
+            "${it.key}=${it.value};"
+        }) else mapOf()
     val tempHeaders = (DEFAULT_HEADERS + cookieMap + headers + refererMap)
     return tempHeaders.toHeaders()
 }
@@ -89,16 +90,19 @@ fun get(
     allowRedirects: Boolean = true,
     cacheTime: Int = DEFAULT_TIME,
     cacheUnit: TimeUnit = DEFAULT_TIME_UNIT,
-    timeout: Long = 0L
+    timeout: Long = 0L,
+    interceptor: Interceptor? = null
 ): Response {
+
     val client = OkHttpClient().newBuilder()
         .followRedirects(allowRedirects)
         .followSslRedirects(allowRedirects)
         .callTimeout(timeout, TimeUnit.SECONDS)
-        .build()
+
+    if (interceptor != null) client.addInterceptor(interceptor)
 
     val request = getRequestCreator(url, headers, referer, params, cookies, cacheTime, cacheUnit)
-    return client.newCall(request).execute()
+    return client.build().newCall(request).execute()
 }
 
 

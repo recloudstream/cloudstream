@@ -14,6 +14,7 @@ import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
 import org.acra.sender.ReportSender
 import org.acra.sender.ReportSenderFactory
+import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
 
 class CustomReportSender : ReportSender {
@@ -55,6 +56,7 @@ class CustomSenderFactory : ReportSenderFactory {
 class AcraApplication : Application() {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
+        context = base
 
         initAcra {
             //core configuration:
@@ -74,5 +76,15 @@ class AcraApplication : Application() {
                 //opening this block automatically enables the plugin.
             }*/
         }
+    }
+
+    companion object {
+        private var _context: WeakReference<Context>? = null
+        var context
+            get() = _context?.get()
+            private set(value) {
+                _context = WeakReference(value)
+            }
+
     }
 }
