@@ -55,7 +55,7 @@ with open("README.md", "r+", encoding='utf-8') as readme:
     for site in enabled_sites:
         if site in sites:
             readme.write(
-                "- [{0}]({1}) \n".format(sub("^https?://", "", sites[site]), sites[site]))
+                "- [{0}]({1}) \n".format(sub("^https?://(?:www\.)?", "", sites[site]), sites[site]))
 
     readme.write(END_MARKER)
     readme.write(raw.split(END_MARKER)[-1])
