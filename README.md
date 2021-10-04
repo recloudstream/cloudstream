@@ -43,21 +43,25 @@ CloudStream 3 does not host any content on the app, and has no control over what
 It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.
 
 ***Sites used:***
-
-+ https://tenshi.moe
-
-+ https://wcostream.cc
-
-+ https://bestdubbedanime.com
-
-+ https://hdm.to
-
-+ https://www.vmovee.watch
-
-+ https://www.wcostream.com
-
-+ https://animepahe.com
-
-+ https://gogoanime.vc
-
-+ https://kawaiifu.com
+<!-- Do not remove those two comments -->
+<!--SITE LIST START-->
+- [trailers.to](https://trailers.to) 
+- [melomovie.com](https://melomovie.com) 
+- [hdm.to](https://hdm.to) 
+- [lookmovie.io](https://lookmovie.io) 
+- [asianload.cc](https://asianload.cc) 
+- [www.thenos.org](https://www.thenos.org) 
+- [asiaflix.app](https://asiaflix.app) 
+- [allmoviesforyou.co](https://allmoviesforyou.co) 
+- [vf-film.org](https://vf-film.org) 
+- [vidembed.cc](https://vidembed.cc) 
+- [www.vmovee.watch](https://www.vmovee.watch) 
+- [nyaa.si](https://nyaa.si) 
+- [www.wcostream.com](https://www.wcostream.com) 
+- [animeflick.net](https://animeflick.net) 
+- [tenshi.moe](https://tenshi.moe) 
+- [gogoanime.vc](https://gogoanime.vc) 
+- [wcostream.cc](https://wcostream.cc) 
+- [kawaiifu.com](https://kawaiifu.com) 
+- [bestdubbedanime.com](https://bestdubbedanime.com) 
+<!--SITE LIST END-->
