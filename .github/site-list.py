@@ -37,7 +37,7 @@ for path in glob(GLOB):
         except Exception as ex:
             print("{0}: {1}".format(path, ex))
 
-with open("../README.md", "r+", encoding='utf-8') as readme:
+with open("README.md", "r+", encoding='utf-8') as readme:
     raw = readme.read()
     if START_MARKER not in raw or END_MARKER not in raw:
         raise RuntimeError("Missing start and end markers")
