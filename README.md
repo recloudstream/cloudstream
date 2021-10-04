@@ -45,4 +45,24 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 ***Sites used:***
 <!-- Do not remove those two comments -->
 <!--SITE LIST START-->
+- [https://trailers.to](https://trailers.to) 
+- [https://melomovie.com](https://melomovie.com) 
+- [https://hdm.to](https://hdm.to) 
+- [https://lookmovie.io](https://lookmovie.io) 
+- [https://asianload.cc](https://asianload.cc) 
+- [https://www.thenos.org](https://www.thenos.org) 
+- [https://asiaflix.app](https://asiaflix.app) 
+- [https://allmoviesforyou.co](https://allmoviesforyou.co) 
+- [https://vf-film.org](https://vf-film.org) 
+- [https://vidembed.cc](https://vidembed.cc) 
+- [https://www.vmovee.watch](https://www.vmovee.watch) 
+- [https://nyaa.si](https://nyaa.si) 
+- [https://www.wcostream.com](https://www.wcostream.com) 
+- [https://animeflick.net](https://animeflick.net) 
+- [https://tenshi.moe](https://tenshi.moe) 
+- [https://gogoanime.vc](https://gogoanime.vc) 
+- [https://wcostream.cc](https://wcostream.cc) 
+- [https://kawaiifu.com](https://kawaiifu.com) 
+- [https://bestdubbedanime.com](https://bestdubbedanime.com) 
 <!--SITE LIST END-->
+
