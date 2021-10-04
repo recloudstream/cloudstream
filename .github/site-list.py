@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from glob import glob
-from re import search, compile
+from re import search, compile, sub
 
 # Globals
 URL_REGEX = compile("override val mainUrl(?:\:\s?String)?[^\"']+[\"'](https?://[a-zA-Z0-9\.-]+)[\"']")
@@ -28,7 +28,7 @@ with open("README.md", "r+", encoding='utf-8') as readme:
     readme.write(START_MARKER+"\n")
     
     for site in sites:
-        readme.write("- [{0}]({0}) \n".format(site))
+        readme.write("- [{0}]({1}) \n".format(sub("^https?://", "", site), site))
     
     readme.write(END_MARKER)
     readme.write(raw.split(END_MARKER)[-1])
