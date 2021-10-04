@@ -46,9 +46,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 <!-- Do not remove those two comments -->
 <!--SITE LIST START-->
 - [trailers.to](https://trailers.to) 
-- [melomovie.com](https://melomovie.com) 
 - [hdm.to](https://hdm.to) 
-- [lookmovie.io](https://lookmovie.io) 
 - [asianload.cc](https://asianload.cc) 
 - [www.thenos.org](https://www.thenos.org) 
 - [asiaflix.app](https://asiaflix.app) 
@@ -56,7 +54,6 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [vf-film.org](https://vf-film.org) 
 - [vidembed.cc](https://vidembed.cc) 
 - [www.vmovee.watch](https://www.vmovee.watch) 
-- [nyaa.si](https://nyaa.si) 
 - [www.wcostream.com](https://www.wcostream.com) 
 - [animeflick.net](https://animeflick.net) 
 - [tenshi.moe](https://tenshi.moe) 
