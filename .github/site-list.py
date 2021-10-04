@@ -25,8 +25,12 @@ with open("README.md", "r+", encoding='utf-8') as readme:
     readme.seek(0)
     
     readme.write(raw.split(START_MARKER)[0])
+    readme.write(START_MARKER+"\n")
+    
     for site in sites:
         readme.write("- [{0}]({0}) \n".format(site))
+    
+    readme.write(END_MARKER+"\n")
     readme.write(raw.split(END_MARKER)[-1])
     
     readme.truncate()
