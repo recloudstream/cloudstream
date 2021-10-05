@@ -58,6 +58,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [vidembed.cc](https://vidembed.cc) 
 - [vf-film.org](https://vf-film.org) 
 - [asianload.cc](https://asianload.cc) 
+- [sflix.to](https://sflix.to) 
 - [trailers.to](https://trailers.to) 
 - [thenos.org](https://www.thenos.org) 
 - [asiaflix.app](https://asiaflix.app) 
