@@ -99,7 +99,7 @@ class SflixProvider : MainAPI() {
         get() = VPNStatus.None
 
     override fun search(query: String): List<SearchResponse> {
-        val url = "$mainUrl/search/$query"
+        val url = "$mainUrl/search/${query.replace(" ", "-")}"
         val html = get(url).text
         val document = Jsoup.parse(html)
 
