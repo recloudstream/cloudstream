@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -29,7 +30,7 @@ class SflixProvider : MainAPI() {
         get() = true
 
     override val hasDownloadSupport: Boolean
-        get() = false
+        get() = true
 
     override val supportedTypes: Set<TvType>
         get() = setOf(
@@ -257,21 +258,39 @@ class SflixProvider : MainAPI() {
     )
 
     data class SourceObject(
+        @JsonProperty("sources") val sources: List<Sources1?>?,
         @JsonProperty("sources_1") val sources1: List<Sources1?>?,
         @JsonProperty("sources_2") val sources2: List<Sources1?>?,
+        @JsonProperty("sourcesBackup") val sourcesBackup: List<Sources1?>?,
         @JsonProperty("tracks") val tracks: List<Tracks?>?
     )
 
-    private fun Sources1.toExtractorLink(): ExtractorLink? {
+    private fun Sources1.toExtractorLink(name: String): List<ExtractorLink>? {
         return this.file?.let {
-            ExtractorLink(
-                this@SflixProvider.name,
-                this.label?.let { "${this@SflixProvider.name} - $it" } ?: this@SflixProvider.name,
-                it,
-                this@SflixProvider.mainUrl,
-                getQualityFromName(this.label ?: ""),
-                URI(this.file).path.endsWith(".m3u8") || this.label.equals("hls", ignoreCase = true),
-            )
+            val isM3u8 = URI(this.file).path.endsWith(".m3u8") || this.type.equals("hls", ignoreCase = true)
+            if (isM3u8) {
+                M3u8Helper().m3u8Generation(M3u8Helper.M3u8Stream(this.file, null), true).map { stream ->
+                    val qualityString = if ((stream.quality ?: 0) == 0) label ?: "" else "${stream.quality}p"
+                    ExtractorLink(
+                        this@SflixProvider.name,
+                        "${this@SflixProvider.name} $qualityString $name",
+                        stream.streamUrl,
+                        mainUrl,
+                        getQualityFromName(stream.quality.toString()),
+                        true
+                    )
+                }
+            } else {
+                listOf(ExtractorLink(
+                    this@SflixProvider.name,
+                    this.label?.let { "${this@SflixProvider.name} - $it" } ?: this@SflixProvider.name,
+                    it,
+                    this@SflixProvider.mainUrl,
+                    getQualityFromName(this.type ?: ""),
+                    false,
+                ))
+            }
+
         }
     }
 
@@ -319,18 +338,15 @@ class SflixProvider : MainAPI() {
 
         val mapped = mapper.readValue<SourceObject>(sources)
 
-        mapped.sources1?.forEach {
-            it?.toExtractorLink()?.let { extractorLink ->
-                callback.invoke(
-                    extractorLink
-                )
-            }
-        }
-        mapped.sources2?.forEach {
-            it?.toExtractorLink()?.let { extractorLink ->
-                callback.invoke(
-                    extractorLink
-                )
+        val list = listOf(
+            mapped.sources1 to "source 1",
+            mapped.sources2 to "source 2",
+            mapped.sources to "source 0",
+            mapped.sourcesBackup to "source 3"
+        )
+        list.forEach { subList ->
+            subList.first?.forEach {
+                it?.toExtractorLink(subList.second)?.forEach(callback)
             }
         }
         mapped.tracks?.forEach {

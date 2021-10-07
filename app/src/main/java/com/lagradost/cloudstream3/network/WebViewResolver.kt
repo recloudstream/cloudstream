@@ -1,10 +1,8 @@
 package com.lagradost.cloudstream3.network
 
 import android.annotation.SuppressLint
-import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.net.http.SslError
+import android.webkit.*
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import kotlinx.coroutines.delay
@@ -26,6 +24,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
     @SuppressLint("SetJavaScriptEnabled")
     suspend fun resolveUsingWebView(request: Request): Request? {
         val url = request.url.toString()
+        println("Initial web-view request: $url")
         var webView: WebView? = null
 
         fun destroyWebView() {
@@ -43,6 +42,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
             webView = WebView(
                 AcraApplication.context ?: throw RuntimeException("No base context in WebViewResolver")
             ).apply {
+                settings.cacheMode
                 settings.javaScriptEnabled = true
             }
 
@@ -62,9 +62,14 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
                             10,
                             TimeUnit.MINUTES
                         )
+                        println("Web-view request finished: $webViewUrl")
                         destroyWebView()
                     }
                     return super.shouldInterceptRequest(view, request)
+                }
+
+                override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+                    handler?.proceed() // Ignore ssl issues
                 }
             }
 
@@ -83,6 +88,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
             loop += 1
         }
 
+        println("Web-view timeout after ${totalTime / 1000}s")
         destroyWebView()
         return null
     }

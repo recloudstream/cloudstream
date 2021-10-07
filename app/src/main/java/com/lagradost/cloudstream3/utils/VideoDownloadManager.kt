@@ -202,7 +202,7 @@ object VideoDownloadManager {
                 return cachedBitmaps[url]
             }
 
-            val bitmap = Glide.with(this)
+            val bitmap = GlideApp.with(this)
                 .asBitmap()
                 .load(url).into(720, 720)
                 .get()

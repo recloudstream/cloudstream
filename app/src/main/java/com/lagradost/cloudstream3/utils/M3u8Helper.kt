@@ -12,7 +12,8 @@ import kotlin.math.pow
 class M3u8Helper {
     private val ENCRYPTION_DETECTION_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),")
     private val ENCRYPTION_URL_IV_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),URI=\"([^\"]+)\"(?:,IV=(.*))?")
-    private val QUALITY_REGEX = Regex("""#EXT-X-STREAM-INF:(?:(?:.*?(?:RESOLUTION=\d+x(\d+)).*?\s+(.*))|(?:.*?\s+(.*)))""")
+    private val QUALITY_REGEX =
+        Regex("""#EXT-X-STREAM-INF:(?:(?:.*?(?:RESOLUTION=\d+x(\d+)).*?\s+(.*))|(?:.*?\s+(.*)))""")
     private val TS_EXTENSION_REGEX = Regex("""(.*\.ts.*)""")
 
     fun absoluteExtensionDetermination(url: String): String? {
@@ -78,7 +79,7 @@ class M3u8Helper {
         return !url.contains("https://") && !url.contains("http://")
     }
 
-    fun m3u8Generation(m3u8: M3u8Stream): List<M3u8Stream> {
+    fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean): List<M3u8Stream> {
         val generate = sequence {
             val m3u8Parent = getParentLink(m3u8.streamUrl)
             val response = get(m3u8.streamUrl, headers = m3u8.headers).text
@@ -99,7 +100,7 @@ class M3u8Helper {
                                 m3u8Link,
                                 quality.toIntOrNull(),
                                 m3u8.headers
-                            )
+                            ), false
                         )
                     )
                 }
@@ -107,6 +108,15 @@ class M3u8Helper {
                     M3u8Stream(
                         m3u8Link,
                         quality.toIntOrNull(),
+                        m3u8.headers
+                    )
+                )
+            }
+            if (returnThis) {
+                yield(
+                    M3u8Stream(
+                        m3u8.streamUrl,
+                        0,
                         m3u8.headers
                     )
                 )
@@ -131,7 +141,7 @@ class M3u8Helper {
         }
         val headers = selected.headers
 
-        val streams = qualities.map { m3u8Generation(it) }.flatten()
+        val streams = qualities.map { m3u8Generation(it, false) }.flatten()
         //val sslVerification = if (headers.containsKey("ssl_verification")) headers["ssl_verification"].toBoolean() else true
 
         val secondSelection = selectBest(streams.ifEmpty { listOf(selected) })

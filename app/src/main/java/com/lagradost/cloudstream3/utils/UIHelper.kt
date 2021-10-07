@@ -96,7 +96,7 @@ object UIHelper {
     fun ImageView?.setImage(url : String?) {
         if(this == null || url.isNullOrBlank()) return
         try {
-            Glide.with(this.context)
+            GlideApp.with(this.context)
                 .load(GlideUrl(url))
                 .into(this)
         } catch (e : Exception) {

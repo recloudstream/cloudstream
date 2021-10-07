@@ -3,10 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.network.url
-import com.lagradost.cloudstream3.utils.ExtractorApi
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.*
 import java.net.URI
 
 class AsianLoad : ExtractorApi() {
@@ -17,8 +14,6 @@ class AsianLoad : ExtractorApi() {
     override val requiresReferer: Boolean
         get() = true
 
-    private val urlRegex = Regex("""(.*?)([^/]+$)""")
-    private val m3u8UrlRegex = Regex("""RESOLUTION=\d*x(\d*).*\n(.*\.m3u8)""")
     private val sourceRegex = Regex("""sources:[\W\w]*?file:\s*?["'](.*?)["']""")
     override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
@@ -27,21 +22,25 @@ class AsianLoad : ExtractorApi() {
                 val extractedUrl = sourceMatch.groupValues[1]
                 // Trusting this isn't mp4, may fuck up stuff
                 if (URI(extractedUrl).path.endsWith(".m3u8")) {
-                    with(get(extractedUrl, referer = this.url)) {
-                        m3u8UrlRegex.findAll(this.text).forEach { match ->
+                    M3u8Helper().m3u8Generation(
+                        M3u8Helper.M3u8Stream(
+                            extractedUrl,
+                            headers = mapOf("referer" to this.url)
+                        ), true
+                    )
+                        .forEach { stream ->
+                            val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
                             extractedLinksList.add(
                                 ExtractorLink(
                                     name,
-                                    "$name ${match.groupValues[1]}p",
-                                    urlRegex.find(this.url)!!.groupValues[1] + match.groupValues[2],
+                                    "$name $qualityString",
+                                    stream.streamUrl,
                                     url,
-                                    getQualityFromName(match.groupValues[1]),
-                                    isM3u8 = true
+                                    getQualityFromName(stream.quality.toString()),
+                                    true
                                 )
                             )
                         }
-
-                    }
                 } else if (extractedUrl.endsWith(".mp4")) {
                     extractedLinksList.add(
                         ExtractorLink(
