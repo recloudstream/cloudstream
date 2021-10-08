@@ -16,7 +16,6 @@ import android.widget.Toast
 import androidx.annotation.FontRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.google.android.exoplayer2.text.Cue
 import com.google.android.exoplayer2.ui.CaptionStyleCompat
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
@@ -299,10 +298,22 @@ class SubtitlesFragment : Fragment() {
                 Pair(11f,"11$suffix"),
                 Pair(12f,"12$suffix"),
                 Pair(14f,"14$suffix"),
+                Pair(16f,"16$suffix"),
                 Pair(18f,"18$suffix"),
+                Pair(19f,"19$suffix"),
+                Pair(21f,"21$suffix"),
+                Pair(23f,"23$suffix"),
                 Pair(24f,"24$suffix"),
+                Pair(26f,"26$suffix"),
+                Pair(28f,"28$suffix"),
                 Pair(30f,"30$suffix"),
+                Pair(32f,"32$suffix"),
+                Pair(34f,"34$suffix"),
                 Pair(36f,"36$suffix"),
+                Pair(38f,"38$suffix"),
+                Pair(40f,"40$suffix"),
+                Pair(42f,"42$suffix"),
+                Pair(44f,"44$suffix"),
                 Pair(48f,"48$suffix"),
                 Pair(60f,"60$suffix"),
             )
