@@ -70,22 +70,6 @@ class SubtitlesFragment : Fragment() {
             activity.navigate(R.id.global_to_navigation_subtitles, Bundle().apply {
                 putBoolean("hide", hide)
             })
-            /*(activity as FragmentActivity?)?.supportFragmentManager?.beginTransaction()
-                ?.setCustomAnimations(
-                    R.anim.enter_anim,
-                    R.anim.exit_anim,
-                    R.anim.pop_enter,
-                    R.anim.pop_exit
-                )
-                ?.add(
-                    R.id.homeRoot,
-                    SubtitlesFragment().apply {
-                        arguments = Bundle().apply {
-                            putBoolean("hide", hide)
-                        }
-                    }
-                )
-                ?.commit()*/
         }
 
         private fun getDefColor(id: Int): Int {
@@ -351,6 +335,7 @@ class SubtitlesFragment : Fragment() {
                 Pair(R.font.times_new_roman, "Times New Roman"),
                 Pair(R.font.verdana, "Verdana"),
                 Pair(R.font.ubuntu_regular, "Ubuntu"),
+                Pair(R.font.comic_sans, "Comic Sans"),
                 Pair(R.font.poppins_regular, "Poppins"),
             )
 
