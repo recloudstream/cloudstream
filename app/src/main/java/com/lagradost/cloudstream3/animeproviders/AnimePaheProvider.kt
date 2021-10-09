@@ -12,6 +12,7 @@ import org.jsoup.Jsoup
 import java.util.*
 
 class AnimePaheProvider : MainAPI() {
+    // credit to https://github.com/justfoolingaround/animdl/tree/master/animdl/core/codebase/providers/animepahe
     companion object {
         const val MAIN_URL = "https://animepahe.com"
 
