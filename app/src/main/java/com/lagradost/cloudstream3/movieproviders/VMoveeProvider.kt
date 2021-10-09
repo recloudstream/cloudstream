@@ -111,7 +111,7 @@ class VMoveeProvider : MainAPI() {
             }
         }
 
-        return super.loadLinks(data, isCasting, subtitleCallback, callback)
+        return true
     }
 
     override fun load(url: String): LoadResponse {

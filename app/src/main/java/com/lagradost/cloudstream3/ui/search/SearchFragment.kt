@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.APIHolder.getApiTypeSettings
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.providersActive
@@ -35,6 +36,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
+import java.lang.Exception
+import java.util.concurrent.locks.ReentrantLock
 
 class SearchFragment : Fragment() {
     companion object {
@@ -331,16 +334,25 @@ class SearchFragment : Fragment() {
             }
         }
 
+        val listLock = ReentrantLock()
         observe(searchViewModel.currentSearch) { list ->
-            (search_master_recycler?.adapter as ParentItemAdapter?)?.apply {
-                items = list.map { ongoing ->
-                    val ongoingList = HomePageList(
-                        ongoing.apiName,
-                        if (ongoing.data is Resource.Success) ongoing.data.value.filterSearchResponse() else ArrayList()
-                    )
-                    ongoingList
+            try {
+                // https://stackoverflow.com/questions/6866238/concurrent-modification-exception-adding-to-an-arraylist
+                listLock.lock()
+                (search_master_recycler?.adapter as ParentItemAdapter?)?.apply {
+                    items = list.map { ongoing ->
+                        val ongoingList = HomePageList(
+                            ongoing.apiName,
+                            if (ongoing.data is Resource.Success) ongoing.data.value.filterSearchResponse() else ArrayList()
+                        )
+                        ongoingList
+                    }
+                    notifyDataSetChanged()
                 }
-                notifyDataSetChanged()
+            } catch (e: Exception) {
+                logError(e)
+            } finally {
+                listLock.unlock()
             }
         }
 

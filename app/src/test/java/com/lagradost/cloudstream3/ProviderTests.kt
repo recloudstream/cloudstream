@@ -40,7 +40,7 @@ class ProviderTests {
         return true
     }
 
-    private fun testSingleProviderApi(api: MainAPI) : Boolean {
+    private fun testSingleProviderApi(api: MainAPI): Boolean {
         val searchQueries = listOf("over", "iron", "guy")
         var correctResponses = 0
         var searchResult: List<SearchResponse>? = null
@@ -144,7 +144,7 @@ class ProviderTests {
 
     @Test
     fun providerCorrectHomepage() {
-        for (api in getAllProviders()) {
+        getAllProviders().pmap { api ->
             if (api.hasMainPage) {
                 try {
                     val homepage = api.getMainPage()
@@ -177,13 +177,13 @@ class ProviderTests {
     @Test
     fun providerCorrect() {
         val providers = getAllProviders()
-        for ((index, api) in providers.withIndex()) {
+        providers.pmap { api ->
             try {
-                println("Trying $api (${index + 1}/${providers.size})")
-                if(testSingleProviderApi(api)) {
-                    println("Success $api (${index + 1}/${providers.size})")
+                println("Trying $api")
+                if (testSingleProviderApi(api)) {
+                    println("Success $api")
                 } else {
-                    System.err.println("Error $api (${index + 1}/${providers.size})")
+                    System.err.println("Error $api")
                 }
             } catch (e: Exception) {
                 logError(e)

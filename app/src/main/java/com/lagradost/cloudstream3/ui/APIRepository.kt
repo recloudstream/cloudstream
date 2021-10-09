@@ -37,7 +37,9 @@ class APIRepository(val api: MainAPI) {
     suspend fun search(query: String): Resource<List<SearchResponse>> {
         return safeApiCall {
             return@safeApiCall (api.search(query)
-                ?: throw ErrorLoadingException()).filter { typesActive.contains(it.type) }.toList()
+                ?: throw ErrorLoadingException())
+//                .filter { typesActive.contains(it.type) }
+                .toList()
         }
     }
 

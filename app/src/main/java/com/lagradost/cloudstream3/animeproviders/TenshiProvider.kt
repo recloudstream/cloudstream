@@ -78,7 +78,7 @@ class TenshiProvider : MainAPI() {
                     val title = section.selectFirst("h2").text()
                     val anime = section.select("li > a").map {
                         AnimeSearchResponse(
-                            it.selectFirst(".thumb-title").text(),
+                            it.selectFirst(".thumb-title")?.text() ?: "",
                             fixUrl(it.attr("href")),
                             this.name,
                             TvType.Anime,

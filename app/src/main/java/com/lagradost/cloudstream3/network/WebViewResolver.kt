@@ -39,11 +39,14 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
         var fixedRequest: Request? = null
 
         main {
+            // Useful for debugging
+//            WebView.setWebContentsDebuggingEnabled(true)
             webView = WebView(
                 AcraApplication.context ?: throw RuntimeException("No base context in WebViewResolver")
             ).apply {
-                settings.cacheMode
+                // Bare minimum to bypass captcha
                 settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
             }
 
             webView?.webViewClient = object : WebViewClient() {
@@ -52,6 +55,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
                     request: WebResourceRequest
                 ): WebResourceResponse? {
                     val webViewUrl = request.url.toString()
+//                    println("Override url $webViewUrl")
                     if (interceptUrl.containsMatchIn(webViewUrl)) {
                         fixedRequest = getRequestCreator(
                             webViewUrl,
@@ -62,6 +66,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
                             10,
                             TimeUnit.MINUTES
                         )
+
                         println("Web-view request finished: $webViewUrl")
                         destroyWebView()
                     }
@@ -77,8 +82,9 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
         }
 
         var loop = 0
-        // Timeouts after this amount, 20s
-        val totalTime = 20000L
+        // Timeouts after this amount, 60s
+        val totalTime = 60000L
+
         val delayTime = 100L
 
         // A bit sloppy, but couldn't find a better way

@@ -6,11 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.pmap
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.providersActive
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.internal.notify
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.thread
 
 data class OnGoingSearch(
     val apiName: String,
@@ -30,7 +37,7 @@ class SearchViewModel : ViewModel() {
         _searchResponse.postValue(Resource.Success(ArrayList()))
     }
 
-    var onGoingSearch : Job? = null
+    var onGoingSearch: Job? = null
     fun searchAndCancel(query: String) {
         onGoingSearch?.cancel()
         onGoingSearch = search(query)
@@ -48,11 +55,14 @@ class SearchViewModel : ViewModel() {
 
         _currentSearch.postValue(ArrayList())
 
-        repos.filter { a ->
-            (providersActive.size == 0 || providersActive.contains(a.name))
-        }.map { a ->
-            currentList.add(OnGoingSearch(a.name, a.search(query)))
-            _currentSearch.postValue(currentList)
+        withContext(Dispatchers.IO) { // This interrupts UI otherwise
+            repos.filter { a ->
+                (providersActive.size == 0 || providersActive.contains(a.name))
+            }.apmap { a -> // Parallel
+                val search = a.search(query)
+                currentList.add(OnGoingSearch(a.name,search ))
+                _currentSearch.postValue(currentList)
+            }
         }
         _currentSearch.postValue(currentList)
 

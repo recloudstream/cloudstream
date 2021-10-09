@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -47,6 +48,7 @@ object APIHolder {
         AsianLoadProvider(),
 
         SflixProvider(),
+        ZoroProvider()
     )
 
     val restrictedApis = arrayListOf(
@@ -203,6 +205,7 @@ abstract class MainAPI {
 }
 
 /** Might need a different implementation for desktop*/
+@SuppressLint("NewApi")
 fun base64Decode(string: String): String {
     return try {
         String(android.util.Base64.decode(string, android.util.Base64.DEFAULT), Charsets.ISO_8859_1)
