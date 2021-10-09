@@ -34,6 +34,9 @@
                     android:layout_height="wrap_content">
             </TextView>
             <ListView
+                    android:nextFocusRight="@id/apply_btt"
+                    android:nextFocusLeft="@id/sort_subtitles"
+
                     android:id="@+id/sort_providers"
                     android:background="?attr/primaryBlackBackground"
                     tools:listitem="@layout/sort_bottom_single_choice"
@@ -58,6 +61,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <TextView
+                        android:nextFocusRight="@id/sort_providers"
+                        android:nextFocusDown="@id/sort_subtitles"
+
                         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
                         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
 
@@ -84,6 +90,9 @@
             </FrameLayout>
 
             <ListView
+                    android:nextFocusRight="@id/cancel_btt"
+                    android:nextFocusLeft="@id/sort_providers"
+
                     android:id="@+id/sort_subtitles"
                     android:background="?attr/primaryBlackBackground"
                     tools:listitem="@layout/sort_bottom_single_choice"
@@ -103,17 +112,23 @@
             android:layout_height="60dp">
 
         <com.google.android.material.button.MaterialButton
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusLeft="@id/cancel_btt"
+
+                android:id="@+id/apply_btt"
                 style="@style/WhiteButton"
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_apply"
-                android:id="@+id/apply_btt"
                 android:layout_width="wrap_content"
         />
         <com.google.android.material.button.MaterialButton
+                android:nextFocusRight="@id/apply_btt"
+                android:nextFocusLeft="@id/apply_btt"
+
+                android:id="@+id/cancel_btt"
                 style="@style/BlackButton"
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_cancel"
-                android:id="@+id/cancel_btt"
                 android:layout_width="wrap_content"
         />
     </LinearLayout>

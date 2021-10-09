@@ -3,7 +3,7 @@
 <!--  android:layout_width="114dp"
         android:layout_height="180dp"-->
 <androidx.cardview.widget.CardView
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:foreground="@drawable/outline_drawable"
         android:layout_margin="2dp"
         android:layout_width="114dp"
         android:layout_height="180dp"

@@ -8,11 +8,14 @@
         android:layout_height="wrap_content">
 
     <FrameLayout
+            android:nextFocusDown="@id/home_expanded_recycler"
+
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:id="@+id/home_expanded_drag_down"
             android:padding="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+        <requestFocus/>
         <TextView
                 android:id="@+id/home_expanded_text"
                 android:layout_width="wrap_content"
@@ -33,6 +36,8 @@
         </ImageView>
     </FrameLayout>
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+            android:descendantFocusability="afterDescendants"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/home_expanded_recycler"

@@ -266,6 +266,10 @@
                         android:layout_height="40dp">
                 </TextView>
                 <ImageButton
+                        android:nextFocusUp="@id/video_go_back"
+                        android:nextFocusDown="@id/lock_player"
+                        android:nextFocusLeft="@id/exo_rew"
+
                         android:paddingLeft="100dp"
                         android:id="@id/exo_rew"
                         android:layout_height="70dp"
@@ -293,6 +297,11 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp">
                 <ImageButton
+                        android:nextFocusUp="@id/video_go_back"
+                        android:nextFocusDown="@id/lock_player"
+                        android:nextFocusLeft="@id/exo_rew"
+                        android:nextFocusRight="@id/exo_ffwd"
+
                         android:id="@id/exo_play"
                         android:scaleType="fitCenter"
                         android:layout_height="70dp"
@@ -304,6 +313,11 @@
                         android:focusable="true"
                 />
                 <ImageButton
+                        android:nextFocusUp="@id/video_go_back"
+                        android:nextFocusDown="@id/lock_player"
+                        android:nextFocusLeft="@id/exo_rew"
+                        android:nextFocusRight="@id/exo_ffwd"
+
                         android:id="@id/exo_pause"
                         android:scaleType="fitCenter"
                         android:layout_height="70dp"
@@ -337,6 +351,10 @@
                         android:layout_height="40dp">
                 </TextView>
                 <ImageButton
+                        android:nextFocusUp="@id/video_go_back"
+                        android:nextFocusDown="@id/lock_player"
+                        android:nextFocusRight="@id/exo_rew"
+
                         android:layout_gravity="center"
                         android:id="@id/exo_ffwd"
                         android:layout_height="70dp"
@@ -467,6 +485,10 @@
                         android:paddingBottom="10dp"
                 >
                     <androidx.cardview.widget.CardView
+                            android:nextFocusLeft="@id/skip_episode"
+                            android:nextFocusRight="@id/resize_player"
+
+                            android:id="@+id/lock_player"
                             xmlns:card_view="http://schemas.android.com/apk/res-auto"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
@@ -477,7 +499,6 @@
                             card_view:cardCornerRadius="@dimen/card_corner_radius"
                             card_view:cardBackgroundColor="@color/transparent"
                             android:foreground="?attr/selectableItemBackgroundBorderless"
-                            android:id="@+id/lock_player"
                             card_view:cardElevation="0dp"
                             tools:visibility="visible"
                     >
@@ -520,6 +541,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent">
                         <androidx.cardview.widget.CardView
+                                android:nextFocusLeft="@id/lock_player"
+                                android:nextFocusRight="@id/playback_speed_btt"
+
+                                android:id="@+id/resize_player"
                                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
@@ -531,7 +556,6 @@
                                 card_view:cardBackgroundColor="@color/transparent"
                                 android:foreground="?attr/selectableItemBackgroundBorderless"
                                 card_view:cardElevation="0dp"
-                                android:id="@+id/resize_player"
                                 tools:visibility="visible"
                         >
                             <LinearLayout
@@ -566,6 +590,10 @@
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
                         <androidx.cardview.widget.CardView
+                                android:nextFocusLeft="@id/resize_player"
+                                android:nextFocusRight="@id/sources_btt"
+
+                                android:id="@+id/playback_speed_btt"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_marginTop="5dp"
@@ -575,7 +603,6 @@
                                 app:cardCornerRadius="@dimen/card_corner_radius"
                                 app:cardBackgroundColor="@color/transparent"
                                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                                android:id="@+id/playback_speed_btt"
                                 app:cardElevation="0dp"
 
                         >
@@ -613,6 +640,11 @@
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
                         <androidx.cardview.widget.CardView
+                                android:nextFocusLeft="@id/playback_speed_btt"
+                                android:nextFocusRight="@id/skip_op"
+
+                                android:id="@+id/sources_btt"
+
                                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
@@ -623,7 +655,6 @@
                                 card_view:cardCornerRadius="@dimen/card_corner_radius"
                                 card_view:cardBackgroundColor="@color/transparent"
                                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                                android:id="@+id/sources_btt"
                                 card_view:cardElevation="0dp"
 
                         >
@@ -660,6 +691,10 @@
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
                         <androidx.cardview.widget.CardView
+                                android:nextFocusLeft="@id/sources_btt"
+                                android:nextFocusRight="@id/skip_episode"
+                                android:id="@+id/skip_op"
+
                                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
@@ -672,7 +707,6 @@
                                 android:foreground="?attr/selectableItemBackgroundBorderless"
                                 card_view:cardElevation="0dp"
 
-                                android:id="@+id/skip_op"
                         >
                             <LinearLayout
                                     android:layout_width="wrap_content"
@@ -705,6 +739,11 @@
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
                         <androidx.cardview.widget.CardView
+                                android:nextFocusLeft="@id/skip_op"
+                                android:nextFocusRight="@id/lock_player"
+
+                                android:id="@+id/skip_episode"
+
                                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
@@ -716,7 +755,6 @@
                                 card_view:cardBackgroundColor="@color/transparent"
                                 android:foreground="?attr/selectableItemBackgroundBorderless"
                                 card_view:cardElevation="0dp"
-                                android:id="@+id/skip_episode"
                         >
                             <LinearLayout
                                     android:layout_width="wrap_content"

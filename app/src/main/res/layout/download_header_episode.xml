@@ -8,7 +8,7 @@
         app:cardCornerRadius="@dimen/roundedImageRadius"
         app:cardBackgroundColor="@color/itemBackground"
         android:id="@+id/episode_holder"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:foreground="@drawable/outline_drawable"
         android:layout_marginBottom="10dp"
 >
     <LinearLayout

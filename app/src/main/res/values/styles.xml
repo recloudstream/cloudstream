@@ -65,6 +65,7 @@
     <style name="AppModalStyle"
            parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/rounded_dialog</item>
+        <item name="behavior_peekHeight">512dp</item>
     </style>
 
 
@@ -153,13 +154,17 @@
         <item name="android:padding">5dp</item>
         <item name="android:layout_marginStart">5dp</item>
         <item name="android:layout_marginEnd">5dp</item>
-        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_height">40dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
         <item name="iconGravity">textStart</item>
         <item name="iconSize">20dp</item>
         <item name="cornerRadius">4dp</item>
         <item name="android:textSize">15sp</item>
+
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:foreground">@drawable/outline_drawable</item>
     </style>
 
     <style name="WhiteButton" parent="NiceButton">
@@ -167,7 +172,7 @@
         <item name="backgroundTint">?attr/textColor</item>
         <item name="iconTint">?attr/iconGrayBackground</item>
         <item name="android:textColor">?attr/iconGrayBackground</item>
-        <item name="rippleColor">?attr/iconGrayBackground</item>
+        <item name="rippleColor">?attr/primaryBlackBackground</item>
     </style>
 
     <style name="BlackButton" parent="NiceButton">
@@ -177,6 +182,12 @@
         <item name="android:textColor">?attr/textColor</item>
         <item name="rippleColor">?attr/textColor</item>
     </style>
+
+    <style name="MultiSelectButton" parent="BlackButton">
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
     <!--@color/white ?attr/colorPrimary-->
     <!--CHECK ?attr/darkBackground ?attr/colorPrimary-->
     <!-- CHROMECAST -->

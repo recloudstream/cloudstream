@@ -10,7 +10,7 @@
         tools:context=".ui.home.HomeFragment">
 
     <FrameLayout
-            android:visibility="visible"
+            android:visibility="gone"
             tools:visibility="gone"
             android:id="@+id/home_loading"
             android:layout_width="match_parent"
@@ -85,6 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             <ImageView
+                    android:nextFocusDown="@id/home_main_info"
                     android:id="@+id/home_change_api"
                     android:layout_margin="10dp"
                     android:layout_gravity="end"
@@ -94,6 +95,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:contentDescription="@string/home_change_provider_img_des">
+                <requestFocus/>
             </ImageView>
             <LinearLayout
                     android:layout_marginTop="-20dp"
@@ -102,7 +104,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <ImageView
-                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:foreground="@drawable/outline_drawable"
                         android:id="@+id/home_main_poster"
                         tools:src="@drawable/example_poster"
                         android:layout_gravity="center"
@@ -129,6 +131,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                     <ImageView
+                            android:nextFocusLeft="@id/home_reroll_next"
+                            android:nextFocusUp="@id/home_change_api"
+                            android:nextFocusRight="@id/home_main_play"
+                            android:nextFocusDown="@id/home_watch_child_more_info"
+
                             android:layout_gravity="center"
                             android:layout_marginEnd="2dp"
                             android:id="@+id/home_reroll_prev"
@@ -140,6 +147,11 @@
                             android:contentDescription="@string/home_next_random_img_des">
                     </ImageView>
                     <com.google.android.material.button.MaterialButton
+                            android:nextFocusLeft="@id/home_reroll_prev"
+                            android:nextFocusUp="@id/home_change_api"
+                            android:nextFocusRight="@id/home_main_info"
+                            android:nextFocusDown="@id/home_watch_child_more_info"
+
                             style="@style/WhiteButton"
                             android:visibility="visible"
                             android:layout_gravity="center"
@@ -150,6 +162,11 @@
                             android:layout_width="120dp">
                     </com.google.android.material.button.MaterialButton>
                     <com.google.android.material.button.MaterialButton
+                            android:nextFocusLeft="@id/home_main_play"
+                            android:nextFocusUp="@id/home_change_api"
+                            android:nextFocusRight="@id/home_reroll_next"
+                            android:nextFocusDown="@id/home_watch_child_more_info"
+
                             style="@style/BlackButton"
                             android:visibility="visible"
                             android:layout_gravity="center"
@@ -162,6 +179,11 @@
                             android:layout_width="120dp">
                     </com.google.android.material.button.MaterialButton>
                     <ImageView
+                            android:nextFocusLeft="@id/home_main_info"
+                            android:nextFocusUp="@id/home_change_api"
+                            android:nextFocusRight="@id/home_reroll_prev"
+                            android:nextFocusDown="@id/home_watch_child_more_info"
+
                             android:layout_gravity="center"
                             android:layout_marginStart="2dp"
                             android:id="@+id/home_reroll_next"
@@ -184,6 +206,9 @@
                     android:layout_height="wrap_content">
 
                 <FrameLayout
+                        android:nextFocusUp="@id/home_main_info"
+                        android:nextFocusDown="@id/home_watch_child_recyclerview"
+
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:id="@+id/home_watch_child_more_info"
                         android:padding="12dp"
@@ -211,6 +236,8 @@
                 </FrameLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
+                        android:descendantFocusability="afterDescendants"
+
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:id="@+id/home_watch_child_recyclerview"
                         android:orientation="horizontal"
@@ -229,12 +256,17 @@
                     android:layout_height="wrap_content">
 
                 <FrameLayout
+                        android:nextFocusUp="@id/home_watch_child_recyclerview"
+                        android:nextFocusForward="@id/home_bookmarked_child_recyclerview"
+
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:id="@+id/home_bookmarked_child_more_info"
                         android:padding="12dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                     <ImageView
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+
                             android:id="@+id/home_bookmark_select"
                             android:src="@drawable/ic_baseline_filter_list_24"
                             android:layout_width="24dp"
@@ -264,6 +296,8 @@
                 </FrameLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
+                        android:descendantFocusability="afterDescendants"
+
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:id="@+id/home_bookmarked_child_recyclerview"
                         android:orientation="horizontal"
@@ -274,6 +308,7 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
+                    android:descendantFocusability="afterDescendants"
                     android:id="@+id/home_master_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

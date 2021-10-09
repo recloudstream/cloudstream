@@ -8,17 +8,24 @@
         android:layout_height="match_parent">
 
     <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/toggle1"
+
             android:layout_marginTop="10dp"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:textStyle="bold"
             android:textSize="20sp"
+            
             android:textColor="?attr/textColor"
-            android:id="@+id/toggle1"
-            tools:text="Search" android:layout_width="match_parent" android:layout_height="wrap_content">
+            tools:text="Search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
     </com.google.android.material.switchmaterial.SwitchMaterial>
     <ListView
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusLeft="@id/apply_btt"
+
             android:id="@+id/listview1"
             android:layout_marginTop="-10dp"
             android:layout_marginBottom="60dp"
@@ -29,6 +36,9 @@
             android:layout_rowWeight="1"
     />
     <ListView
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusLeft="@id/apply_btt"
+
             android:id="@+id/listview2"
             android:layout_marginTop="-10dp"
             android:layout_marginBottom="60dp"
@@ -48,17 +58,23 @@
             android:layout_height="60dp">
 
         <com.google.android.material.button.MaterialButton
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusLeft="@id/cancel_btt"
+
+                android:id="@+id/apply_btt"
                 style="@style/WhiteButton"
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_apply"
-                android:id="@+id/apply_btt"
                 android:layout_width="wrap_content"
         />
         <com.google.android.material.button.MaterialButton
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/apply_btt"
+
+                android:id="@+id/cancel_btt"
                 style="@style/BlackButton"
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_cancel"
-                android:id="@+id/cancel_btt"
                 android:layout_width="wrap_content"
         />
     </LinearLayout>

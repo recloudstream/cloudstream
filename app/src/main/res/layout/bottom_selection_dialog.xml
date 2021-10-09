@@ -22,6 +22,9 @@
             android:layout_height="wrap_content">
     </TextView>
     <ListView
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusLeft="@id/apply_btt"
+
             android:id="@+id/listview1"
             android:layout_marginTop="-10dp"
             android:layout_marginBottom="60dp"

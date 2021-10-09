@@ -16,7 +16,10 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
-import androidx.annotation.*
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.annotation.IdRes
+import androidx.annotation.RequiresApi
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
@@ -30,7 +33,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -71,8 +73,8 @@ object UIHelper {
         }
     }
 
-    fun Activity?.navigate(@IdRes navigation : Int, arguments : Bundle? = null) {
-        if(this is FragmentActivity) {
+    fun Activity?.navigate(@IdRes navigation: Int, arguments: Bundle? = null) {
+        if (this is FragmentActivity) {
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?)?.navController?.navigate(
                 navigation, arguments
             )
@@ -93,13 +95,13 @@ object UIHelper {
         return color
     }
 
-    fun ImageView?.setImage(url : String?) {
-        if(this == null || url.isNullOrBlank()) return
+    fun ImageView?.setImage(url: String?) {
+        if (this == null || url.isNullOrBlank()) return
         try {
             GlideApp.with(this.context)
                 .load(GlideUrl(url))
                 .into(this)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             logError(e)
         }
     }
@@ -211,6 +213,7 @@ object UIHelper {
     fun Context.fixPaddingStatusbar(v: View) {
         v.setPadding(v.paddingLeft, v.paddingTop + getStatusBarHeight(), v.paddingRight, v.paddingBottom)
     }
+
     fun Context.getNavigationBarHeight(): Int {
         var result = 0
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
@@ -279,31 +282,6 @@ object UIHelper {
     fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
-
-    /**id, icon, stringRes */
-    @SuppressLint("RestrictedApi")
-    fun View.popupMenu(
-        items: List<Triple<Int, Int, Int>>,
-        onMenuItemClick: MenuItem.() -> Unit,
-    ): PopupMenu {
-        val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
-        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, R.attr.actionOverflowMenuStyle, 0)
-
-        items.forEach { (id, icon, stringRes) ->
-            popup.menu.add(0, id, 0, stringRes).setIcon(icon)
-        }
-
-        (popup.menu as? MenuBuilder)?.setOptionalIconsVisible(true)
-
-        popup.setOnMenuItemClickListener {
-            it.onMenuItemClick()
-            true
-        }
-
-        popup.show()
-        return popup
     }
 
     /**id, stringRes */

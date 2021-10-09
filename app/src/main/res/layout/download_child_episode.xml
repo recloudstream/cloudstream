@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+
+        android:nextFocusRight="@id/download_child_episode_download"
+        android:nextFocusLeft="@id/download_child_episode_download"
+
+        android:id="@+id/download_child_episode_holder"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         app:cardCornerRadius="@dimen/roundedImageRadius"
         app:cardBackgroundColor="@color/transparent"
         app:cardElevation="0dp"
-        android:id="@+id/download_child_episode_holder"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:foreground="@drawable/outline_drawable"
         android:layout_marginBottom="5dp"
 >
     <androidx.core.widget.ContentLoadingProgressBar
-            android:layout_marginBottom="-1.5dp"
             android:id="@+id/download_child_episode_progress"
+
+            android:layout_marginBottom="-1.5dp"
             android:progressTint="?attr/colorPrimary"
             android:progressBackgroundTint="?attr/colorPrimary"
             style="@android:style/Widget.Material.ProgressBar.Horizontal"
@@ -23,13 +28,15 @@
             android:layout_gravity="bottom"
             android:layout_height="5dp">
     </androidx.core.widget.ContentLoadingProgressBar>
-    <GridLayout android:layout_width="match_parent" android:layout_height="match_parent">
+    <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
         <ImageView
+                android:id="@+id/download_child_episode_play"
                 android:visibility="gone"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_gravity="center_vertical"
-                android:id="@+id/download_child_episode_play"
                 android:src="@drawable/ic_baseline_play_arrow_24"
                 android:contentDescription="@string/episode_play_img_des"/>
         <LinearLayout
@@ -38,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="50dp"
                 android:layout_width="match_parent"
-            >
+        >
             <TextView
                     android:id="@+id/download_child_episode_text"
                     android:layout_marginStart="10dp"
@@ -74,11 +81,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
             <androidx.core.widget.ContentLoadingProgressBar
+                    android:id="@+id/download_child_episode_progress_downloaded"
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:id="@+id/download_child_episode_progress_downloaded"
                     android:indeterminate="false"
                     android:progressDrawable="@drawable/circular_progress_bar"
                     android:background="@drawable/circle_shape"
@@ -90,6 +97,10 @@
                     android:visibility="visible"
             />
             <ImageView
+                    android:nextFocusRight="@id/download_child_episode_holder"
+                    android:nextFocusLeft="@id/download_child_episode_holder"
+
+                    android:id="@+id/download_child_episode_download"
                     android:visibility="visible"
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
@@ -97,7 +108,6 @@
                     android:layout_gravity="center_vertical"
                     android:padding="2dp"
                     android:layout_width="30dp"
-                    android:id="@+id/download_child_episode_download"
                     android:background="?selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_baseline_play_arrow_24"
                     android:contentDescription="@string/download"/>

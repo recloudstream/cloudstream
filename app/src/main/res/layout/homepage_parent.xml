@@ -8,6 +8,8 @@
         android:layout_height="wrap_content">
 
     <FrameLayout
+            android:nextFocusDown="@id/home_child_recyclerview"
+
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:id="@+id/home_child_more_info"
             android:padding="12dp"
@@ -34,6 +36,8 @@
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+            android:descendantFocusability="afterDescendants"
+
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:id="@+id/home_child_recyclerview"
             android:orientation="horizontal"

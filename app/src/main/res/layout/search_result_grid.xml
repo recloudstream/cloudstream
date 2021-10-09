@@ -6,12 +6,12 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
 
+        android:foreground="@drawable/outline_drawable"
         android:focusable="true"
         android:clickable="true"
         android:id="@+id/search_result_root"
 >
     <androidx.cardview.widget.CardView
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:layout_margin="2dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,8 +23,9 @@
     >
 
         <ImageView
-                android:duplicateParentState="true"
                 android:id="@+id/imageView"
+
+                android:duplicateParentState="true"
                 android:scaleType="centerCrop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -39,6 +40,8 @@
                 android:layout_gravity="bottom" tools:ignore="ContentDescription">
         </ImageView>
         <TextView
+                android:id="@+id/imageText"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -46,7 +49,6 @@
                 android:paddingBottom="5dp"
                 android:paddingTop="5dp"
                 android:textColor="@color/textColor"
-                android:id="@+id/imageText"
                 android:textStyle="bold"
                 android:maxLines="2"
                 android:paddingStart="5dp"
@@ -54,9 +56,10 @@
                 android:ellipsize="end"
         />
         <TextView
-                android:text="Movie"
-                android:visibility="gone"
                 android:id="@+id/text_type"
+
+                tools:text="Movie"
+                android:visibility="gone"
                 android:textColor="@color/textColor"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
@@ -92,12 +95,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-<!--
-            <ImageView android:id="@+id/text_is_dub" android:tint="?attr/colorPrimary"
-                       android:src="@drawable/ic_baseline_subtitles_24" android:layout_width="wrap_content"
-                       android:layout_height="20dp">
+            <!--
+                        <ImageView android:id="@+id/text_is_dub" android:tint="?attr/colorPrimary"
+                                   android:src="@drawable/ic_baseline_subtitles_24" android:layout_width="wrap_content"
+                                   android:layout_height="20dp">
 
-            </ImageView>-->
+                        </ImageView>-->
             <TextView
                     android:text="@string/app_dubbed_text"
                     android:id="@+id/text_is_dub"

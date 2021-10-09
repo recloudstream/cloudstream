@@ -109,6 +109,8 @@
     </com.google.android.material.appbar.AppBarLayout>
     
     <androidx.recyclerview.widget.RecyclerView
+            android:descendantFocusability="afterDescendants"
+
             android:background="?attr/primaryBlackBackground"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:padding="10dp"

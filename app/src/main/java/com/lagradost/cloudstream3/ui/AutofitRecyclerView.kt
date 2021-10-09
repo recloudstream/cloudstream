@@ -117,6 +117,7 @@ class GrdLayoutManager(val context: Context, val spanCoun: Int) : GridLayoutMana
     }
 }
 
+// https://riptutorial.com/android/example/4810/gridlayoutmanager-with-dynamic-span-count
 class AutofitRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     RecyclerView(context, attrs) {
 
@@ -145,13 +146,4 @@ class AutofitRecyclerView @JvmOverloads constructor(context: Context, attrs: Att
 
         layoutManager = manager
     }
-
-
-    /*override fun onMeasure(widthSpec: Int, heightSpec: Int) {
-        super.onMeasure(widthSpec, heightSpec)
-        if (spanCount == 0 && columnWidth > 0) {
-            val count = max(1, measuredWidth / columnWidth)
-            spanCount = count
-        }
-    }*/
 }

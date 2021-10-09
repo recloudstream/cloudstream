@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+
+        android:nextFocusLeft="@id/episode_poster"
+        android:nextFocusRight="@id/result_episode_download"
+        android:id="@+id/episode_holder"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/roundedImageRadius"
         app:cardBackgroundColor="@color/itemBackground"
-        android:id="@+id/episode_holder"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+
+        android:foreground="@drawable/outline_drawable"
         android:layout_marginBottom="10dp"
 >
     <LinearLayout
@@ -26,8 +31,11 @@
                     android:layout_height="72dp"
             >
                 <ImageView
-                        android:foreground="?android:attr/selectableItemBackground"
+                        android:nextFocusLeft="@id/result_episode_download"
+                        android:nextFocusRight="@id/episode_holder"
+
                         android:id="@+id/episode_poster"
+                        android:foreground="@drawable/outline_drawable"
                         tools:src="@drawable/example_poster"
                         android:scaleType="centerCrop"
                         android:layout_width="match_parent"
@@ -98,6 +106,10 @@
                         android:visibility="visible"
                 />
                 <ImageView
+                        android:nextFocusLeft="@id/episode_poster"
+                        android:nextFocusRight="@id/episode_holder"
+                        android:id="@+id/result_episode_download"
+
                         android:visibility="visible"
                         android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
@@ -105,7 +117,6 @@
                         android:layout_gravity="center_vertical"
                         android:padding="2dp"
                         android:layout_width="30dp"
-                        android:id="@+id/result_episode_download"
                         android:background="?selectableItemBackgroundBorderless"
                         android:src="@drawable/ic_baseline_play_arrow_24"
                         android:contentDescription="@string/download"/>

@@ -23,6 +23,10 @@
                 android:layout_marginEnd="30dp"
                 android:layout_height="30dp">
             <androidx.appcompat.widget.SearchView
+                    android:nextFocusRight="@id/search_filter"
+                    android:nextFocusLeft="@id/search_filter"
+                    android:nextFocusDown="@id/cardSpace"
+
                     android:id="@+id/main_search"
                     app:queryBackground="@color/transparent"
                     app:searchIcon="@drawable/search_icon"
@@ -34,6 +38,8 @@
                     android:layout_gravity="center_vertical"
                     app:iconifiedByDefault="false"
                     tools:ignore="RtlSymmetry">
+                <requestFocus/>
+
                 <androidx.core.widget.ContentLoadingProgressBar
                         android:id="@+id/search_loading_bar"
                         android:layout_width="20dp" android:layout_height="20dp"
@@ -51,6 +57,10 @@
             </androidx.appcompat.widget.SearchView>
         </FrameLayout>
         <ImageView
+                android:nextFocusRight="@id/main_search"
+                android:nextFocusLeft="@id/main_search"
+                android:nextFocusDown="@id/cardSpace"
+
                 android:id="@+id/search_filter"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_baseline_tune_24"
@@ -64,6 +74,8 @@
     </FrameLayout>
 
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+            android:descendantFocusability="afterDescendants"
+
             android:background="?attr/primaryBlackBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -77,6 +89,8 @@
             android:orientation="vertical"
     />
     <androidx.recyclerview.widget.RecyclerView
+            android:descendantFocusability="afterDescendants"
+
             android:background="?attr/primaryBlackBackground"
             android:id="@+id/search_master_recycler"
             android:layout_width="match_parent"

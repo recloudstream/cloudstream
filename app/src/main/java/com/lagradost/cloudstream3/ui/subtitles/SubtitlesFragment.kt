@@ -54,6 +54,8 @@ data class SaveCaptionStyle(
     var fixedTextSize: Float?,
 )
 
+const val DEF_SUBS_ELEVATION = 20
+
 class SubtitlesFragment : Fragment() {
     companion object {
         val applyStyleEvent = Event<SaveCaptionStyle>()
@@ -94,7 +96,7 @@ class SubtitlesFragment : Fragment() {
                 CaptionStyleCompat.EDGE_TYPE_OUTLINE,
                 getDefColor(1),
                 null,
-                0,
+                DEF_SUBS_ELEVATION,
                 null,
             )
         }
@@ -237,7 +239,7 @@ class SubtitlesFragment : Fragment() {
         }
 
         subs_subtitle_elevation.setOnLongClickListener {
-            state.elevation = 0
+            state.elevation = DEF_SUBS_ELEVATION
             it.context.updateState()
             showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true

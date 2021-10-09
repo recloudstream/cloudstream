@@ -225,6 +225,8 @@ class ResultFragment : Fragment() {
                 result_loading.visibility = GONE
                 result_finish_loading.visibility = VISIBLE
                 result_loading_error.visibility = GONE
+
+                result_bookmark_button.requestFocus()
             }
         }
     }
