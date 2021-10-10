@@ -1621,7 +1621,7 @@ class PlayerFragment : Fragment() {
         onAudioFocusEvent += ::handlePauseEvent
 
         activity?.hideSystemUI()
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         if (Util.SDK_INT <= 23) {
             if (!isCurrentlyPlaying) {
                 initPlayer()
