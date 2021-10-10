@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.animeproviders
 
+import androidx.core.net.toUri
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
@@ -9,6 +10,7 @@ import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.toSubti
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
+import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -247,6 +249,20 @@ class ZoroProvider : MainAPI() {
         )
     }
 
+    private fun getM3u8FromRapidCloud(url: String): String {
+        return get(
+            "$url&autoPlay=1&oa=0",
+            headers = mapOf("Referer" to "https://zoro.to/", "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0"),
+            interceptor = WebViewResolver(
+                Regex("""/getSources""")
+            )
+        ).text
+    }
+
+    private data class rapidCloudResponse(
+        @JsonProperty("link") val link: String
+    )
+
     override fun loadLinks(
         data: String,
         isCasting: Boolean,
@@ -256,33 +272,51 @@ class ZoroProvider : MainAPI() {
 
         // Copy pasted from Sflix :)
 
-        val sources = get(
+        val servers: List<Pair<DubStatus, String>> = Jsoup.parse(
+            mapper.readValue<Response>(
+                get("$mainUrl/ajax/v2/episode/servers?episodeId=" + data.split("=")[1]).text
+            ).html
+        ).select(".server-item[data-type][data-id]").map {
+            Pair(if (it.attr("data-type") == "sub") DubStatus.Subbed else DubStatus.Dubbed, it.attr("data-id")!!)
+        }
+
+        val res = get(
             data,
             interceptor = WebViewResolver(
                 Regex("""/getSources""")
             )
-        ).text
-
-        val mapped = mapper.readValue<SflixProvider.SourceObject>(sources)
-
-        val list = listOf(
-            mapped.sources to "source 1",
-            mapped.sources1 to "source 2",
-            mapped.sources2 to "source 3",
-            mapped.sourcesBackup to "source backup"
         )
 
-        list.forEach { subList ->
-            subList.first?.forEach {
-                it?.toExtractorLink(this, subList.second)?.forEach(callback)
+        val recaptchaToken = res.request.url.queryParameter("_token")
+
+        val responses = servers.map {
+            val link = "$mainUrl/ajax/v2/episode/sources?id=${it.second}&_token=$recaptchaToken"
+            Pair(it.first, getM3u8FromRapidCloud(mapper.readValue<rapidCloudResponse>(get(link, res.request.headers.toMap()).text).link))
+        }
+
+        responses.forEach {
+            if (it.second.contains("<html")) return@forEach
+            val mapped = mapper.readValue<SflixProvider.SourceObject>(it.second)
+            val list = listOf(
+                mapped.sources to "source 1",
+                mapped.sources1 to "source 2",
+                mapped.sources2 to "source 3",
+                mapped.sourcesBackup to "source backup"
+            )
+
+            list.forEach { subList ->
+                subList.first?.forEach { a ->
+                    a?.toExtractorLink(this, subList.second + " - ${it.first}")?.forEach(callback)
+                }
+            }
+
+            mapped.tracks?.forEach { track ->
+                track?.toSubtitleFile()?.let { subtitleFile ->
+                    subtitleCallback.invoke(subtitleFile)
+                }
             }
         }
 
-        mapped.tracks?.forEach {
-            it?.toSubtitleFile()?.let { subtitleFile ->
-                subtitleCallback.invoke(subtitleFile)
-            }
-        }
         return true
     }
 }
