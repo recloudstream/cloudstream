@@ -1274,7 +1274,7 @@ class PlayerFragment : Fragment() {
             fastForward()
         }
 
-        overlay_loading_skip_button.setOnClickListener {
+        overlay_loading_skip_button?.setOnClickListener {
             setMirrorId(
                 sortUrls(getUrls() ?: return@setOnClickListener).first()
                     .getId()
@@ -1697,7 +1697,7 @@ class PlayerFragment : Fragment() {
         arguments?.putBoolean(STATE_PLAYER_PLAYING, isPlayerPlaying)
         arguments?.putInt(RESIZE_MODE_KEY, resizeMode)
         arguments?.putFloat(PLAYBACK_SPEED, playbackSpeed)
-        if (!isDownloadedFile) {
+        if (!isDownloadedFile && this::playerData.isInitialized) {
             arguments?.putString("data", mapper.writeValueAsString(playerData))
         }
     }
@@ -1713,7 +1713,7 @@ class PlayerFragment : Fragment() {
         outState.putBoolean(STATE_PLAYER_PLAYING, isPlayerPlaying)
         outState.putInt(RESIZE_MODE_KEY, resizeMode)
         outState.putFloat(PLAYBACK_SPEED, playbackSpeed)
-        if (!isDownloadedFile) {
+        if (!isDownloadedFile && this::playerData.isInitialized) {
             outState.putString("data", mapper.writeValueAsString(playerData))
         }
         super.onSaveInstanceState(outState)
@@ -1901,15 +1901,15 @@ class PlayerFragment : Fragment() {
                 override fun onAnimationRepeat(animation: Animation?) {}
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    loading_overlay.post { video_go_back_holder_holder.visibility = GONE; }
+                    loading_overlay?.post { video_go_back_holder_holder?.visibility = GONE; }
                 }
             })
-            overlay_loading_skip_button.visibility = GONE
+            overlay_loading_skip_button?.visibility = GONE
 
-            loading_overlay.startAnimation(alphaAnimation)
+            loading_overlay?.startAnimation(alphaAnimation)
 
             exoPlayer.setHandleAudioBecomingNoisy(true) // WHEN HEADPHONES ARE PLUGGED OUT https://github.com/google/ExoPlayer/issues/7288
-            player_view.player = exoPlayer
+            player_view?.player = exoPlayer
             // Sets the speed
             exoPlayer.playbackParameters = PlaybackParameters(playbackSpeed)
             player_speed_text?.text =

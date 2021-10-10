@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
@@ -255,7 +256,14 @@ class HomeFragment : Fragment() {
 
                     currentHomePage = d
                     (home_master_recycler?.adapter as ParentItemAdapter?)?.items =
-                        d.items.map { HomePageList(it.name, it.list.filterSearchResponse()) }
+                        d.items.mapNotNull {
+                            try {
+                                HomePageList(it.name, it.list.filterSearchResponse())
+                            } catch (e : Exception) {
+                                logError(e)
+                                null
+                            }
+                        }
 
                     home_master_recycler?.adapter?.notifyDataSetChanged()
                     currentMainList.clear()
