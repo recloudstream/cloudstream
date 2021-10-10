@@ -24,6 +24,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
     @SuppressLint("SetJavaScriptEnabled")
     suspend fun resolveUsingWebView(request: Request): Request? {
         val url = request.url.toString()
+        val headers = request.headers
         println("Initial web-view request: $url")
         var webView: WebView? = null
 
@@ -77,8 +78,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
                     handler?.proceed() // Ignore ssl issues
                 }
             }
-
-            webView?.loadUrl(url)
+            webView?.loadUrl(url, headers.toMap())
         }
 
         var loop = 0
