@@ -51,10 +51,7 @@ class AnimeFlickProvider : MainAPI() {
                 getType(title),
                 poster,
                 null,
-                null,
                 EnumSet.of(DubStatus.Subbed),
-                null,
-                null
             )
         })
     }

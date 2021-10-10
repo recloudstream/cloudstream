@@ -63,10 +63,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
                         TvType.Anime,
                         poster,
                         null,
-                        null,
                         set,
-                        null,
-                        null
                     )
                 )
             }

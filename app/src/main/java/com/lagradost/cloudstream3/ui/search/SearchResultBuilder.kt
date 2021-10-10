@@ -5,10 +5,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import com.lagradost.cloudstream3.AnimeSearchResponse
-import com.lagradost.cloudstream3.DubStatus
-import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.isMovieType
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
@@ -24,8 +21,9 @@ object SearchResultBuilder {
         val cardView: ImageView = itemView.imageView
         val cardText: TextView = itemView.imageText
 
-        val textIsDub: View? = itemView.text_is_dub
-        val textIsSub: View? = itemView.text_is_sub
+        val textIsDub: TextView? = itemView.text_is_dub
+        val textIsSub: TextView? = itemView.text_is_sub
+        println(card.name)
 
         val bg: CardView = itemView.backgroundCard
 
@@ -45,7 +43,13 @@ object SearchResultBuilder {
         cardView.setImage(card.posterUrl)
 
         bg.setOnClickListener {
-            clickCallback.invoke(SearchClickCallback(if(card is DataStoreHelper.ResumeWatchingResult) SEARCH_ACTION_PLAY_FILE else SEARCH_ACTION_LOAD, it, card))
+            clickCallback.invoke(
+                SearchClickCallback(
+                    if (card is DataStoreHelper.ResumeWatchingResult) SEARCH_ACTION_PLAY_FILE else SEARCH_ACTION_LOAD,
+                    it,
+                    card
+                )
+            )
         }
 
         bg.setOnLongClickListener {
@@ -69,14 +73,30 @@ object SearchResultBuilder {
                 }
             }
             is AnimeSearchResponse -> {
-                if (card.dubStatus?.size == 1) {
-                    //search_result_lang?.visibility = View.VISIBLE
+                if (card.dubStatus != null && card.dubStatus.size > 0) {
                     if (card.dubStatus.contains(DubStatus.Dubbed)) {
                         textIsDub?.visibility = View.VISIBLE
-                        //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.dubColor))
-                    } else if (card.dubStatus.contains(DubStatus.Subbed)) {
-                        //search_result_lang?.setColorFilter(ContextCompat.getColor(activity, R.color.subColor))
+                    }
+                    if (card.dubStatus.contains(DubStatus.Subbed)) {
                         textIsSub?.visibility = View.VISIBLE
+                    }
+                }
+
+                textIsDub?.apply {
+                    val dubText = context.getString(R.string.app_dubbed_text)
+                    text = if (card.dubEpisodes != null && card.dubEpisodes > 0) {
+                        context.getString(R.string.app_dub_sub_episode_text_format).format(dubText, card.dubEpisodes)
+                    } else {
+                        dubText
+                    }
+                }
+
+                textIsSub?.apply {
+                    val subText = context.getString(R.string.app_subbed_text)
+                    text = if (card.subEpisodes != null && card.subEpisodes > 0) {
+                        context.getString(R.string.app_dub_sub_episode_text_format).format(subText, card.subEpisodes)
+                    } else {
+                        subText
                     }
                 }
             }

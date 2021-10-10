@@ -36,7 +36,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
-import java.lang.Exception
 import java.util.concurrent.locks.ReentrantLock
 
 class SearchFragment : Fragment() {
@@ -44,7 +43,7 @@ class SearchFragment : Fragment() {
         fun List<SearchResponse>.filterSearchResponse(): List<SearchResponse> {
             return this.filter { response ->
                 if (response is AnimeSearchResponse) {
-                    response.dubStatus?.any { APIRepository.dubStatusActive.contains(it) } ?: false
+                    (response.dubStatus.isNullOrEmpty()) || (response.dubStatus.any { APIRepository.dubStatusActive.contains(it) })
                 } else {
                     true
                 }

@@ -123,7 +123,6 @@
                 android:gravity="center"
                 android:background="@drawable/sub_bg_color"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
-        >
-        </TextView>
+        />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

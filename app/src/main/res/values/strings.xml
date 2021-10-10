@@ -34,6 +34,7 @@
     <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
     <string name="ffw_text_regular_format" translatable="false" formatted="true">%d</string>
     <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
+    <string name="app_dub_sub_episode_text_format">%s Ep %d</string>
 
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>

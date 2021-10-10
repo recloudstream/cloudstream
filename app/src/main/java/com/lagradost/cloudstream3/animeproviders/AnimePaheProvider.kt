@@ -93,8 +93,8 @@ class AnimePaheProvider : MainAPI() {
                         TvType.Anime,
                         it.snapshot,
                         null,
-                        null,
                         EnumSet.of(DubStatus.Subbed),
+                        null,
                         null,
                         it.episode
                     )
@@ -159,8 +159,8 @@ class AnimePaheProvider : MainAPI() {
                 TvType.Anime,
                 it.poster,
                 it.year,
-                null,
                 EnumSet.of(DubStatus.Subbed),
+                null,
                 null,
                 it.episodes
             )

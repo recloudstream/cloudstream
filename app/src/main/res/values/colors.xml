@@ -25,8 +25,8 @@
     <color name="dubColorBg">#803B65F5</color>
     <color name="subColor">#F54A3B</color> <!--F53B66 FA3D79-->
     <color name="subColorBg">#80F53B66</color>
-    <color name="typeColor">#F54A3B</color>
-    <color name="typeColorBg">#4DF54A3B</color>
+    <color name="typeColor">#3BF585</color>
+    <color name="typeColorBg">#803BF585</color>
 
     <color name="video_ripple">#73FFFFFF</color>
     <color name="black_overlay">#66000000</color>

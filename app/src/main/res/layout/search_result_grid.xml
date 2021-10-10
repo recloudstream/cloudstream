@@ -55,23 +55,6 @@
                 android:paddingEnd="5dp"
                 android:ellipsize="end"
         />
-        <TextView
-                android:id="@+id/text_type"
-
-                tools:text="Movie"
-                android:visibility="gone"
-                android:textColor="@color/textColor"
-                android:paddingRight="10dp"
-                android:paddingLeft="10dp"
-                android:paddingTop="4dp"
-                android:layout_marginBottom="5dp"
-                android:layout_gravity="start"
-                android:paddingBottom="8dp"
-                android:minWidth="50dp"
-                android:gravity="center"
-                android:background="@drawable/type_bg_color"
-                android:layout_width="wrap_content" android:layout_height="wrap_content">
-        </TextView>
         <!--<View
                 android:id="@+id/search_result_lang"
                 android:layout_gravity="bottom"
@@ -94,6 +77,22 @@
                 android:layout_gravity="end"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+           <!-- <TextView
+                    android:text="Movie"
+                    android:textColor="@color/textColor"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="4dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_gravity="end"
+                    android:paddingBottom="8dp"
+                    android:minWidth="50dp"
+                    android:gravity="end"
+                    android:background="@drawable/type_bg_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+            </TextView>-->
 
             <!--
                         <ImageView android:id="@+id/text_is_dub" android:tint="?attr/colorPrimary"

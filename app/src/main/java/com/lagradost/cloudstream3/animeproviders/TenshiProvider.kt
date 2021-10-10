@@ -66,10 +66,7 @@ class TenshiProvider : MainAPI() {
                                 TvType.Anime,
                                 it.selectFirst("img").attr("src"),
                                 null,
-                                null,
                                 EnumSet.of(DubStatus.Subbed),
-                                null,
-                                null
                             )
                         }
                         items.add(HomePageList(title, anime))
@@ -84,10 +81,7 @@ class TenshiProvider : MainAPI() {
                             TvType.Anime,
                             it.selectFirst("img").attr("src"),
                             null,
-                            null,
                             EnumSet.of(DubStatus.Subbed),
-                            null,
-                            null
                         )
                     }
                     items.add(HomePageList(title, anime))
@@ -130,10 +124,7 @@ class TenshiProvider : MainAPI() {
                         TvType.Anime,
                         img,
                         null,
-                        null,
                         EnumSet.of(DubStatus.Subbed),
-                        null,
-                        null
                     )
                 }
             )

@@ -11,7 +11,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 import java.util.*
-import kotlin.collections.ArrayList
 
 class DubbedAnimeProvider : MainAPI() {
     override val mainUrl: String
@@ -76,10 +75,7 @@ class DubbedAnimeProvider : MainAPI() {
                 TvType.Anime,
                 poster,
                 null,
-                null,
                 EnumSet.of(DubStatus.Dubbed),
-                null,
-                null
             )
         }
     }
@@ -98,10 +94,7 @@ class DubbedAnimeProvider : MainAPI() {
                 TvType.Anime,
                 poster,
                 null,
-                null,
                 EnumSet.of(DubStatus.Dubbed),
-                null,
-                null
             )
         }
     }
@@ -164,10 +157,7 @@ class DubbedAnimeProvider : MainAPI() {
                         TvType.Anime,
                         img,
                         null,
-                        null,
                         EnumSet.of(DubStatus.Dubbed),
-                        null,
-                        null
                     )
                 }
             )
@@ -201,10 +191,7 @@ class DubbedAnimeProvider : MainAPI() {
                         TvType.Anime,
                         img,
                         null,
-                        null,
                         EnumSet.of(DubStatus.Dubbed),
-                        null,
-                        null
                     )
                 }
             )

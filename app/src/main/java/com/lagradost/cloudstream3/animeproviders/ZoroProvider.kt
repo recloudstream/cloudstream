@@ -56,9 +56,14 @@ class ZoroProvider : MainAPI() {
         }
     }
 
-    fun Element.toSearchResult(): SearchResponse? {
+    private fun Element.toSearchResult(): SearchResponse? {
         val href = fixUrl(this.select("a").attr("href"))
         val title = this.select("h3.film-name").text()
+        /*val episodes = this.select("div.fd-infor > span.fdi-item")?.get(1)?.text()?.let { eps ->
+            // current episode / max episode
+            val epRegex = Regex("Ep (\\d+)/")//Regex("Ep (\\d+)/(\\d+)")
+            epRegex.find(eps)?.groupValues?.get(1)?.toIntOrNull()
+        }*/
         if (href.contains("/news/") || title.trim().equals("News", ignoreCase = true)) return null
         val posterUrl = fixUrl(this.select("img").attr("data-src"))
         val type = getType(this.select("div.fd-infor > span.fdi-item").text())
@@ -71,9 +76,6 @@ class ZoroProvider : MainAPI() {
             posterUrl,
             null,
             null,
-            EnumSet.of(DubStatus.Subbed),
-            null,
-            null
         )
     }
 
@@ -142,7 +144,25 @@ class ZoroProvider : MainAPI() {
 
         return document.select(".flw-item").map {
             val title = it.selectFirst(".film-detail > .film-name > a")?.attr("title").toString()
-            val poster = it.selectFirst(".film-poster > img")?.attr("data-src")
+            val filmPoster = it.selectFirst(".film-poster")
+            val poster = filmPoster.selectFirst("img")?.attr("data-src")
+
+            val episodes = filmPoster.selectFirst("div.rtl > div.tick-eps")?.text()?.let { eps ->
+                // current episode / max episode
+                val epRegex = Regex("Ep (\\d+)/")//Regex("Ep (\\d+)/(\\d+)")
+                epRegex.find(eps)?.groupValues?.get(1)?.toIntOrNull()
+            }
+            val dubsub = filmPoster.selectFirst("div.ltr")?.text()
+            val dubExist = dubsub?.contains("DUB") ?: false
+            val subExist = dubsub?.contains("SUB") ?: false || dubsub?.contains("RAW") ?: false
+
+            val set = if (dubExist && subExist) {
+                EnumSet.of(DubStatus.Dubbed, DubStatus.Subbed)
+            } else if (dubExist) {
+                EnumSet.of(DubStatus.Dubbed)
+            } else {
+                EnumSet.of(DubStatus.Subbed)
+            }
 
             val tvType = getType(it.selectFirst(".film-detail > .fd-infor > .fdi-item")?.text().toString())
             val href = fixUrl(it.selectFirst(".film-name a").attr("href"))
@@ -154,15 +174,15 @@ class ZoroProvider : MainAPI() {
                 tvType,
                 poster,
                 null,
+                set,
                 null,
-                EnumSet.of(DubStatus.Subbed),
-                null,
-                null
+                if (dubExist) episodes else null,
+                if (subExist) episodes else null,
             )
         }
     }
 
-    override fun load(url: String): LoadResponse? {
+    override fun load(url: String): LoadResponse {
         val html = get(url).text
         val document = Jsoup.parse(html)
 
@@ -173,7 +193,6 @@ class ZoroProvider : MainAPI() {
         var year: Int? = null
         var japaneseTitle: String? = null
         var status: ShowStatus? = null
-
 
         for (info in document.select(".anisc-info > .item.item-title")) {
             val text = info?.text().toString()

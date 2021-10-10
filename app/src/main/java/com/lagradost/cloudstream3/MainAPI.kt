@@ -323,12 +323,12 @@ data class AnimeSearchResponse(
     override val type: TvType,
 
     override val posterUrl: String?,
-    val year: Int?,
-
-    val otherName: String?,
+    val year: Int? = null,
     val dubStatus: EnumSet<DubStatus>?,
-    val dubEpisodes: Int?,
-    val subEpisodes: Int?,
+
+    val otherName: String? = null,
+    val dubEpisodes: Int? = null,
+    val subEpisodes: Int? = null,
     override val id: Int? = null,
 ) : SearchResponse
 

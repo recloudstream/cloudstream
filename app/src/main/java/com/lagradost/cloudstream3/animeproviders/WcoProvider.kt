@@ -1,16 +1,15 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.extractors.WcoStream
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.network.text
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class WcoProvider : MainAPI() {
@@ -64,7 +63,7 @@ class WcoProvider : MainAPI() {
                     val poster = filmPoster.selectFirst("> img").attr("data-src")
                     val set: EnumSet<DubStatus> =
                         EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed)
-                    AnimeSearchResponse(title, href, this.name, TvType.Anime, poster, null, null, set, null, null)
+                    AnimeSearchResponse(title, href, this.name, TvType.Anime, poster,null, set)
                 }
                 items.add(HomePageList(i.second, results))
             } catch (e: Exception) {
@@ -107,11 +106,8 @@ class WcoProvider : MainAPI() {
                         TvType.Anime,
                         img,
                         year,
-                        null,
                         EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed),
-                        null,
-                        null
-                    )
+                        )
                 }
             )
         }
@@ -169,10 +165,7 @@ class WcoProvider : MainAPI() {
                             TvType.Anime,
                             img,
                             year,
-                            null,
                             EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed),
-                            null,
-                            null
                         )
                     }
                 )

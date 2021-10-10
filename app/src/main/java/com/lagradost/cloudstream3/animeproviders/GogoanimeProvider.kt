@@ -79,6 +79,7 @@ class GogoanimeProvider : MainAPI() {
                 ).text
                 items.add(HomePageList(i.second, (parseRegex.findAll(html).map {
                     val (link, epNum, title, poster) = it.destructured
+                    val isSub = listOf(1, 3).contains(i.first.toInt())
                     AnimeSearchResponse(
                         title,
                         link,
@@ -86,12 +87,12 @@ class GogoanimeProvider : MainAPI() {
                         TvType.Anime,
                         poster,
                         null,
-                        null,
-                        if (listOf(1, 3).contains(i.first.toInt())) EnumSet.of(DubStatus.Subbed) else EnumSet.of(
+                        if (isSub) EnumSet.of(DubStatus.Subbed) else EnumSet.of(
                             DubStatus.Dubbed
                         ),
                         null,
-                        epNum.toIntOrNull()
+                        if (!isSub) epNum.toIntOrNull() else null,
+                        if (isSub) epNum.toIntOrNull() else null,
                     )
                 }).toList()))
             } catch (e: Exception) {
@@ -115,12 +116,9 @@ class GogoanimeProvider : MainAPI() {
                 TvType.Anime,
                 it.selectFirst("img").attr("src"),
                 it.selectFirst(".released")?.text()?.split(":")?.getOrNull(1)?.trim()?.toIntOrNull(),
-                null,
                 if (it.selectFirst(".name").text().contains("Dub")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(
                     DubStatus.Subbed
                 ),
-                null,
-                null
             )
         }
 
@@ -236,7 +234,7 @@ class GogoanimeProvider : MainAPI() {
                 val url = it.attr("href")
                 val extractorLinks = ArrayList<ExtractorLink>()
                 for (api in extractorApis) {
-                    if (url.startsWith(api.mainUrl) ) {
+                    if (url.startsWith(api.mainUrl)) {
                         extractorLinks.addAll(api.getSafeUrl(url) ?: listOf())
                         break
                     }

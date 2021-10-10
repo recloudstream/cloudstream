@@ -37,10 +37,7 @@ class KawaiifuProvider : MainAPI() {
                 TvType.Anime,
                 it.selectFirst("img").attr("src"),
                 it.selectFirst("h4 > a").attr("href").split("-").last().toIntOrNull(),
-                null,
                 if (title.contains("(DUB)")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
-                null,
-                null
             )
         }))
         for (section in soup.select(".section")) {
@@ -55,10 +52,7 @@ class KawaiifuProvider : MainAPI() {
                         TvType.Anime,
                         ani.selectFirst("img").attr("src"),
                         ani.selectFirst(".vl-chil-date").text().toIntOrNull(),
-                        null,
                         if (animTitle.contains("(DUB)")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
-                        null,
-                        null
                     )
                 }
                 items.add(HomePageList(title, anime))
@@ -89,10 +83,7 @@ class KawaiifuProvider : MainAPI() {
                 TvType.Anime,
                 poster,
                 year,
-                null,
                 if (title.contains("(DUB)")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
-                null,
-                null,
             )
         })
     }
