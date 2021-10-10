@@ -145,7 +145,7 @@ class HomeFragment : Fragment() {
                     activity.loadSearchResult(random)
                 }
 
-                home_main_text.text = random.name + if (random is AnimeSearchResponse) {
+                home_main_text.text = random.name + if (random is AnimeSearchResponse && !random.dubStatus.isNullOrEmpty()) {
                     random.dubStatus?.joinToString(prefix = " • ", separator = " | ") { it.name }
                 } else ""
                 home_main_poster?.setImage(random.posterUrl)
