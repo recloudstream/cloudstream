@@ -1392,6 +1392,7 @@ class PlayerFragment : Fragment() {
             val subsSettings = sourceDialog.findViewById<View>(R.id.subs_settings)!!
 
             subsSettings.setOnClickListener {
+                saveArguments()
                 SubtitlesFragment.push(activity)
                 sourceDialog.dismiss()
             }
@@ -1564,7 +1565,6 @@ class PlayerFragment : Fragment() {
 
     private var isCurrentlySkippingEp = false
 
-
     fun tryNextMirror() {
         val urls = getUrls()
         val current = getCurrentUrl()
@@ -1637,7 +1637,6 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroy() {
-
         /*  val lp = activity?.window?.attributes
 
 
@@ -1686,6 +1685,20 @@ class PlayerFragment : Fragment() {
         if (Util.SDK_INT > 23) {
             if (player_view != null) player_view.onPause()
             releasePlayer()
+        }
+    }
+
+    private fun saveArguments() {
+        if (this::exoPlayer.isInitialized) {
+            arguments?.putInt(STATE_RESUME_WINDOW, exoPlayer.currentWindowIndex)
+            arguments?.putLong(STATE_RESUME_POSITION, exoPlayer.currentPosition)
+        }
+        arguments?.putBoolean(STATE_PLAYER_FULLSCREEN, isFullscreen)
+        arguments?.putBoolean(STATE_PLAYER_PLAYING, isPlayerPlaying)
+        arguments?.putInt(RESIZE_MODE_KEY, resizeMode)
+        arguments?.putFloat(PLAYBACK_SPEED, playbackSpeed)
+        if (!isDownloadedFile) {
+            arguments?.putString("data", mapper.writeValueAsString(playerData))
         }
     }
 

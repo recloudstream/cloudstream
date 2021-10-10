@@ -29,6 +29,7 @@
             android:layout_height="5dp">
     </androidx.core.widget.ContentLoadingProgressBar>
     <GridLayout
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         <ImageView
