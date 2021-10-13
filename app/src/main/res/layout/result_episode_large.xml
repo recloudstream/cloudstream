@@ -17,6 +17,7 @@
         android:layout_marginBottom="10dp"
 >
     <LinearLayout
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:padding="10dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -29,14 +30,16 @@
             <androidx.cardview.widget.CardView
                     android:layout_width="126dp"
                     android:layout_height="72dp"
+                    android:foreground="@drawable/outline_drawable"
             >
                 <ImageView
                         android:nextFocusLeft="@id/result_episode_download"
                         android:nextFocusRight="@id/episode_holder"
 
                         android:id="@+id/episode_poster"
-                        android:foreground="@drawable/outline_drawable"
                         tools:src="@drawable/example_poster"
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+
                         android:scaleType="centerCrop"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

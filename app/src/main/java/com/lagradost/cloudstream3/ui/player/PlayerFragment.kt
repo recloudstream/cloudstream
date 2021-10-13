@@ -824,22 +824,22 @@ class PlayerFragment : Fragment() {
 
         exo_play.isClickable = isClick
         exo_pause.isClickable = isClick
-        exo_ffwd.isClickable = isClick
-        exo_rew.isClickable = isClick
+        exo_ffwd?.isClickable = isClick
+        exo_rew?.isClickable = isClick
         exo_prev.isClickable = isClick
         video_go_back.isClickable = isClick
         exo_progress.isClickable = isClick
         //next_episode_btt.isClickable = isClick
-        playback_speed_btt.isClickable = isClick
+        playback_speed_btt?.isClickable = isClick
         skip_op?.isClickable = isClick
         skip_episode?.isClickable = isClick
-        resize_player.isClickable = isClick
+        resize_player?.isClickable = isClick
         exo_progress.isEnabled = isClick
-        player_media_route_button.isEnabled = isClick
+        player_media_route_button?.isEnabled = isClick
         if (isClick) {
-            player_pause_holder.alpha = 1f
-            player_rew_holder.alpha = 1f
-            player_ffwd_holder.alpha = 1f
+            player_pause_holder?.alpha = 1f
+            player_rew_holder?.alpha = 1f
+            player_ffwd_holder?.alpha = 1f
         }
 
         //video_go_back_holder2.isEnabled = isClick
@@ -1001,7 +1001,7 @@ class PlayerFragment : Fragment() {
             setPreferredSubLanguage(ctx.getAutoSelectLanguageISO639_1())
         }
 
-        subView = player_view.findViewById(R.id.exo_subtitles)
+        subView = player_view?.findViewById(R.id.exo_subtitles)
         subView?.let { sView ->
             (sView.parent as ViewGroup?)?.removeView(sView)
             subtitle_holder.addView(sView)
@@ -1041,11 +1041,11 @@ class PlayerFragment : Fragment() {
                     CastButtonFactory.setUpMediaRouteButton(act, player_media_route_button)
                     val castContext = CastContext.getSharedInstance(requireContext())
 
-                    if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) player_media_route_button.visibility =
+                    if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) player_media_route_button?.visibility =
                         VISIBLE
                     castContext.addCastStateListener { state ->
                         if (player_media_route_button != null) {
-                            player_media_route_button.isVisible = state != CastState.NO_DEVICES_AVAILABLE
+                            player_media_route_button?.isVisible = state != CastState.NO_DEVICES_AVAILABLE
 
                             if (state == CastState.CONNECTED) {
                                 if (!this::exoPlayer.isInitialized) return@addCastStateListener
@@ -1138,7 +1138,7 @@ class PlayerFragment : Fragment() {
                     GONE else VISIBLE
             else VISIBLE
 
-        player_media_route_button.isVisible = !isDownloadedFile
+        player_media_route_button?.isVisible = !isDownloadedFile
         if (savedInstanceState != null) {
             currentWindow = savedInstanceState.getInt(STATE_RESUME_WINDOW)
             playbackPosition = savedInstanceState.getLong(STATE_RESUME_POSITION)
@@ -1217,13 +1217,13 @@ class PlayerFragment : Fragment() {
             }
         }
         val fastForwardTime = settingsManager.getInt(getString(R.string.fast_forward_button_time_key), 10)
-        exo_rew_text.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
-        exo_ffwd_text.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
+        exo_rew_text?.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
+        exo_ffwd_text?.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
         fun rewind() {
-            player_rew_holder.alpha = 1f
+            player_rew_holder?.alpha = 1f
 
             val rotateLeft = AnimationUtils.loadAnimation(context, R.anim.rotate_left)
-            exo_rew.startAnimation(rotateLeft)
+            exo_rew?.startAnimation(rotateLeft)
 
             val goLeft = AnimationUtils.loadAnimation(context, R.anim.go_left)
             goLeft.setAnimationListener(object : Animation.AnimationListener {
@@ -1232,25 +1232,25 @@ class PlayerFragment : Fragment() {
                 override fun onAnimationRepeat(animation: Animation?) {}
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    exo_rew_text.post {
-                        exo_rew_text.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
-                        player_rew_holder.alpha = if (isShowing) 1f else 0f
+                    exo_rew_text?.post {
+                        exo_rew_text?.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
+                        player_rew_holder?.alpha = if (isShowing) 1f else 0f
                     }
                 }
             })
-            exo_rew_text.startAnimation(goLeft)
-            exo_rew_text.text = getString(R.string.rew_text_format).format(fastForwardTime)
+            exo_rew_text?.startAnimation(goLeft)
+            exo_rew_text?.text = getString(R.string.rew_text_format).format(fastForwardTime)
             seekTime(fastForwardTime * -1000L)
         }
 
-        exo_rew.setOnClickListener {
+        exo_rew?.setOnClickListener {
             rewind()
         }
 
         fun fastForward() {
-            player_ffwd_holder.alpha = 1f
+            player_ffwd_holder?.alpha = 1f
             val rotateRight = AnimationUtils.loadAnimation(context, R.anim.rotate_right)
-            exo_ffwd.startAnimation(rotateRight)
+            exo_ffwd?.startAnimation(rotateRight)
 
             val goRight = AnimationUtils.loadAnimation(context, R.anim.go_right)
             goRight.setAnimationListener(object : Animation.AnimationListener {
@@ -1259,18 +1259,18 @@ class PlayerFragment : Fragment() {
                 override fun onAnimationRepeat(animation: Animation?) {}
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    exo_ffwd_text.post {
-                        exo_ffwd_text.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
-                        player_ffwd_holder.alpha = if (isShowing) 1f else 0f
+                    exo_ffwd_text?.post {
+                        exo_ffwd_text?.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
+                        player_ffwd_holder?.alpha = if (isShowing) 1f else 0f
                     }
                 }
             })
-            exo_ffwd_text.startAnimation(goRight)
-            exo_ffwd_text.text = getString(R.string.ffw_text_format).format(fastForwardTime)
+            exo_ffwd_text?.startAnimation(goRight)
+            exo_ffwd_text?.text = getString(R.string.ffw_text_format).format(fastForwardTime)
             seekTime(fastForwardTime * 1000L)
         }
 
-        exo_ffwd.setOnClickListener {
+        exo_ffwd?.setOnClickListener {
             fastForward()
         }
 
@@ -1284,7 +1284,7 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        lock_player.setOnClickListener {
+        lock_player?.setOnClickListener {
             isLocked = !isLocked
             val fadeTo = if (isLocked) 0f else 1f
 
@@ -1295,10 +1295,10 @@ class PlayerFragment : Fragment() {
 
             // MENUS
             //centerMenu.startAnimation(fadeAnimation)
-            player_pause_holder.startAnimation(fadeAnimation)
-            player_ffwd_holder.startAnimation(fadeAnimation)
-            player_rew_holder.startAnimation(fadeAnimation)
-            player_media_route_button.startAnimation(fadeAnimation)
+            player_pause_holder?.startAnimation(fadeAnimation)
+            player_ffwd_holder?.startAnimation(fadeAnimation)
+            player_rew_holder?.startAnimation(fadeAnimation)
+            player_media_route_button?.startAnimation(fadeAnimation)
             //video_bar.startAnimation(fadeAnimation)
 
             //TITLE
@@ -1355,8 +1355,8 @@ class PlayerFragment : Fragment() {
             activity?.popCurrentPage()
         }
 
-        playback_speed_btt.isVisible = playBackSpeedEnabled
-        playback_speed_btt.setOnClickListener {
+        playback_speed_btt?.isVisible = playBackSpeedEnabled
+        playback_speed_btt?.setOnClickListener {
             val speedsText = listOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x")
             val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
             val speedIndex = speedsNumbers.indexOf(playbackSpeed)
@@ -1368,7 +1368,7 @@ class PlayerFragment : Fragment() {
                 requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
                 val param = PlaybackParameters(playbackSpeed)
                 exoPlayer.playbackParameters = param
-                player_speed_text.text =
+                player_speed_text?.text =
                     getString(R.string.player_speed_text_format).format(playbackSpeed).replace(".0x", "x")
             }
         }
@@ -1471,21 +1471,21 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        player_view.resizeMode = resizeModes[resizeMode].first
+        player_view?.resizeMode = resizeModes[resizeMode].first
         if (playerResizeEnabled) {
-            resize_player.visibility = VISIBLE
-            resize_player.setOnClickListener {
+            resize_player?.visibility = VISIBLE
+            resize_player?.setOnClickListener {
                 resizeMode = (resizeMode + 1) % resizeModes.size
 
                 requireContext().setKey(RESIZE_MODE_KEY, resizeMode)
-                player_view.resizeMode = resizeModes[resizeMode].first
+                player_view?.resizeMode = resizeModes[resizeMode].first
                 activity?.let { act ->
                     showToast(act, resizeModes[resizeMode].second, LENGTH_SHORT)
                 }
                 //exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
             }
         } else {
-            resize_player.visibility = GONE
+            resize_player?.visibility = GONE
         }
 
         skip_op?.setOnClickListener {
@@ -1605,7 +1605,7 @@ class PlayerFragment : Fragment() {
         if (!isCurrentlyPlaying) {
             initPlayer()
         }
-        if (player_view != null) player_view.onResume()
+        if (player_view != null) player_view?.onResume()
     }
 
     override fun onResume() {
@@ -1626,7 +1626,7 @@ class PlayerFragment : Fragment() {
             if (!isCurrentlyPlaying) {
                 initPlayer()
             }
-            if (player_view != null) player_view.onResume()
+            if (player_view != null) player_view?.onResume()
         }
     }
 
@@ -1674,7 +1674,7 @@ class PlayerFragment : Fragment() {
         super.onPause()
         // torrentStream?.currentTorrent?.pause()
         if (Util.SDK_INT <= 23) {
-            if (player_view != null) player_view.onPause()
+            if (player_view != null) player_view?.onPause()
             releasePlayer()
         }
     }
@@ -1683,7 +1683,7 @@ class PlayerFragment : Fragment() {
         savePos()
         super.onStop()
         if (Util.SDK_INT > 23) {
-            if (player_view != null) player_view.onPause()
+            if (player_view != null) player_view?.onPause()
             releasePlayer()
         }
     }
@@ -1941,7 +1941,7 @@ class PlayerFragment : Fragment() {
                 }
             }
 
-            player_view.performClick()
+            player_view?.performClick()
 
             //TODO FIX
             video_title?.text = hName +

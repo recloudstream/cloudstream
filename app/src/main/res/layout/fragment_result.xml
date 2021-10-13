@@ -322,6 +322,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                     <com.google.android.material.button.MaterialButton
+                            android:layout_marginBottom="5dp"
                             android:nextFocusUp="@id/result_descript"
                             android:nextFocusDown="@id/result_download_movie"
 
