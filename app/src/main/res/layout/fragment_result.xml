@@ -416,6 +416,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                        android:layout_marginBottom="10dp"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layout_width="match_parent"
@@ -423,7 +424,6 @@
                     <com.google.android.material.button.MaterialButton
                             tools:visibility="visible"
                             tools:text="Season 1"
-
                             android:nextFocusUp="@id/result_descript"
                             android:nextFocusRight="@id/result_episode_select"
                             android:nextFocusLeft="@id/result_episode_select"
@@ -432,9 +432,8 @@
                             android:id="@+id/result_season_button"
                             android:visibility="gone"
                             android:layout_gravity="center_vertical"
-
-                            style="@style/MultiSelectButton"
-                            android:layout_marginEnd="10dp">
+                            android:layout_marginStart="0dp"
+                            style="@style/MultiSelectButton">
                     </com.google.android.material.button.MaterialButton>
                     <com.google.android.material.button.MaterialButton
                             tools:visibility="visible"
@@ -448,7 +447,7 @@
                             android:id="@+id/result_episode_select"
                             android:visibility="gone"
                             android:layout_gravity="center_vertical"
-
+                            android:layout_marginStart="0dp"
                             style="@style/MultiSelectButton"
                     >
                     </com.google.android.material.button.MaterialButton>

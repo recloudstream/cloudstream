@@ -19,7 +19,6 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import com.bumptech.glide.Glide
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -215,7 +214,7 @@ object VideoDownloadManager {
         }
     }
 
-    suspend fun createNotification(
+    private suspend fun createNotification(
         context: Context,
         source: String?,
         linkName: String?,
@@ -256,7 +255,11 @@ object VideoDownloadManager {
                 data = source.toUri()
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
-            val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.getActivity(context, 0, intent,  PendingIntent.FLAG_IMMUTABLE)
+            } else {
+                PendingIntent.getActivity(context, 0, intent,  0)
+            }
             builder.setContentIntent(pendingIntent)
         }
 
