@@ -938,7 +938,7 @@ object VideoDownloadManager {
                     KEY_DOWNLOAD_INFO,
                     it.toString(),
                     DownloadedFileInfo(
-                        bytesDownloaded * (totalTs / tsProgress.toFloat()),
+                        (bytesDownloaded * (totalTs / tsProgress.toFloat())).toLong(),
                         relativePath,
                         displayName,
                         tsProgress.toString()
