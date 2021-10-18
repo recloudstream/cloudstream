@@ -9,7 +9,7 @@ import java.net.InetAddress
  * Based on https://github.com/tachiyomiorg/tachiyomi/blob/master/app/src/main/java/eu/kanade/tachiyomi/network/DohProviders.kt
  */
 
-private fun OkHttpClient.Builder.addGenericDns(url: String, ips: List<String>) = dns(
+ fun OkHttpClient.Builder.addGenericDns(url: String, ips: List<String>) = dns(
     DnsOverHttps
         .Builder()
         .client(build())

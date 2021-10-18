@@ -23,7 +23,7 @@ private val DEFAULT_DATA: Map<String, String> = mapOf()
 private val DEFAULT_COOKIES: Map<String, String> = mapOf()
 private val DEFAULT_REFERER: String? = null
 
-fun Context.initRequestClient() {
+fun Context.initRequestClient(): OkHttpClient {
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
     val dns = settingsManager.getInt(this.getString(R.string.dns_pref), 0)
     baseClient = OkHttpClient.Builder()
@@ -44,6 +44,7 @@ fun Context.initRequestClient() {
         }
         // Needs to be build as otherwise the other builders will change this object
         .build()
+    return baseClient
 }
 
 /** WARNING! CAN ONLY BE READ ONCE */
