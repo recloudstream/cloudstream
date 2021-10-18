@@ -31,6 +31,21 @@
         <item>-2</item>
     </array>
 
+    <array name="dns_pref">
+        <item>None</item>
+        <item>Google</item>
+        <item>Cloudflare</item>
+<!--        <item>OpenDns</item>-->
+        <item>AdGuard</item>
+    </array>
+    <array name="dns_pref_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+<!--        <item>3</item>-->
+        <item>4</item>
+    </array>
+
     <array name="episode_long_click_options">
         <item>@string/episode_action_chomecast_episode</item>
         <item>@string/episode_action_chomecast_mirror</item>

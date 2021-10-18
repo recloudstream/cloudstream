@@ -63,6 +63,9 @@ android {
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            applicationIdSuffix ".debug"
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -141,5 +144,6 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:2.7.0-rc01"
 
     // Networking
-    implementation "com.squareup.okhttp3:okhttp:4.9.0"
+    implementation "com.squareup.okhttp3:okhttp:4.9.1"
+    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1"
 }
