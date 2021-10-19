@@ -26,6 +26,9 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.network.initRequestClient
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -46,6 +49,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import java.util.*
+import java.util.zip.GZIPInputStream
 import kotlin.concurrent.thread
 
 
@@ -135,7 +139,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     companion object {
-        fun Activity?.getCastSession() : CastSession? {
+        fun Activity?.getCastSession(): CastSession? {
             return (this as MainActivity?)?.mSessionManager?.currentCastSession
         }
 
@@ -290,6 +294,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             true
         ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
         updateLocale()
+        initRequestClient()
         super.onCreate(savedInstanceState)
         try {
             if (isCastApiAvailable()) {
@@ -334,7 +339,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }*/
 
             // Fucks up anime info layout since that has its own layout
-            cast_mini_controller_holder?.isVisible = !listOf(R.id.navigation_results,R.id.navigation_player).contains(destination.id)
+            cast_mini_controller_holder?.isVisible =
+                !listOf(R.id.navigation_results, R.id.navigation_player).contains(destination.id)
 
             nav_view.isVisible = listOf(
                 R.id.navigation_home,

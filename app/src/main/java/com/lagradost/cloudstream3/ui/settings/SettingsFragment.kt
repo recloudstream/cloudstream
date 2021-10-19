@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.setLocale
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.network.initRequestClient
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
@@ -53,6 +54,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val localePreference = findPreference<Preference>(getString(R.string.locale_key))!!
         val benenePreference = findPreference<Preference>(getString(R.string.benene_count))!!
         val watchQualityPreference = findPreference<Preference>(getString(R.string.quality_pref_key))!!
+        val dnsPreference = findPreference<Preference>(getString(R.string.dns_key))!!
         val legalPreference = findPreference<Preference>(getString(R.string.legal_notice_key))!!
         val subdubPreference = findPreference<Preference>(getString(R.string.display_sub_key))!!
         val providerLangPreference = findPreference<Preference>(getString(R.string.provider_lang_key))!!
@@ -150,6 +152,25 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true,
                 {}) {
                 settingsManager.edit().putInt(getString(R.string.watch_quality_pref), prefValues[it]).apply()
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        dnsPreference.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.dns_pref)
+            val prefValues = resources.getIntArray(R.array.dns_pref_values)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            val currentDns =
+                settingsManager.getInt(getString(R.string.dns_pref), 0)
+            context?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentDns),
+                getString(R.string.dns_pref),
+                true,
+                {}) {
+                settingsManager.edit().putInt(getString(R.string.dns_pref), prefValues[it]).apply()
+                context?.initRequestClient()
             }
             return@setOnPreferenceClickListener true
         }

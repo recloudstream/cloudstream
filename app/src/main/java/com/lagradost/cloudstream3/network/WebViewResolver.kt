@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.network
 import android.annotation.SuppressLint
 import android.net.http.SslError
 import android.webkit.*
+import androidx.core.view.contains
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import kotlinx.coroutines.delay
@@ -10,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import java.net.URI
 import java.util.concurrent.TimeUnit
 
 class WebViewResolver(val interceptUrl: Regex) : Interceptor {
@@ -56,7 +58,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
                     request: WebResourceRequest
                 ): WebResourceResponse? {
                     val webViewUrl = request.url.toString()
-//                    println("Override url $webViewUrl")
+
                     if (interceptUrl.containsMatchIn(webViewUrl)) {
                         fixedRequest = getRequestCreator(
                             webViewUrl,
@@ -71,7 +73,27 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
                         println("Web-view request finished: $webViewUrl")
                         destroyWebView()
                     }
-                    return super.shouldInterceptRequest(view, request)
+
+                    return try {
+                        when {
+                            // suppress favicon requests as we don't display them anywhere
+                            webViewUrl.endsWith("/favicon.ico") -> WebResourceResponse("image/png", null, null)
+                            webViewUrl.contains("recaptcha") -> super.shouldInterceptRequest(view, request)
+
+                            request.method == "GET" -> get(
+                                webViewUrl,
+                                headers = request.requestHeaders
+                            ).toWebResourceResponse()
+
+                            request.method == "POST" -> post(
+                                webViewUrl,
+                                headers = request.requestHeaders
+                            ).toWebResourceResponse()
+                            else -> return super.shouldInterceptRequest(view, request)
+                        }
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
 
                 override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
@@ -97,6 +119,20 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
         println("Web-view timeout after ${totalTime / 1000}s")
         destroyWebView()
         return null
+    }
+
+    fun Response.toWebResourceResponse(): WebResourceResponse {
+        val contentTypeValue = this.header("Content-Type")
+        // 1. contentType. 2. charset
+        val typeRegex = Regex("""(.*);(?:.*charset=(.*)(?:|;)|)""")
+        return if (contentTypeValue != null) {
+            val found = typeRegex.find(contentTypeValue ?: "")
+            val contentType = found?.groupValues?.getOrNull(1)?.ifBlank { null } ?: contentTypeValue
+            val charset = found?.groupValues?.getOrNull(2)?.ifBlank { null }
+            WebResourceResponse(contentType, charset, this.body?.byteStream())
+        } else {
+            WebResourceResponse("application/octet-stream", null, this.body?.byteStream())
+        }
     }
 
 }

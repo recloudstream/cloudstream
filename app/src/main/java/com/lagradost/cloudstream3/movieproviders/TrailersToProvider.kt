@@ -183,7 +183,7 @@ class TrailersToProvider : MainAPI() {
 
             return isSucc
         } else if (url.contains("/episode/")) {
-            val response = get(url).text
+            val response = get(url, params = mapOf("preview" to "1")).text
             val document = Jsoup.parse(response)
             // val qSub = document.select("subtitle-content")
             val subUrl = document.select("subtitle-content")?.attr("data-url") ?: ""

@@ -93,6 +93,12 @@
                 android:icon="@drawable/ic_baseline_skip_next_24"
                 android:title="@string/show_fillers_settings"
                 android:defaultValue="true"/>
+        <Preference
+                android:key="@string/dns_key"
+                android:title="@string/dns_pref"
+                android:summary="@string/dns_pref_summary"
+                android:icon="@drawable/ic_baseline_dns_24">
+        </Preference>
     </PreferenceCategory>
     <PreferenceCategory
             android:key="search"

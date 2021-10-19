@@ -1,12 +1,20 @@
 package com.lagradost.cloudstream3.network
 
+import android.content.Context
+import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
 import okhttp3.*
 import okhttp3.Headers.Companion.toHeaders
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.dnsoverhttps.DnsOverHttps
+import java.io.File
+import java.net.InetAddress
 import java.net.URI
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+var baseClient = OkHttpClient()
 private const val DEFAULT_TIME = 10
 private val DEFAULT_TIME_UNIT = TimeUnit.MINUTES
 private const val DEFAULT_USER_AGENT = USER_AGENT
@@ -15,6 +23,29 @@ private val DEFAULT_DATA: Map<String, String> = mapOf()
 private val DEFAULT_COOKIES: Map<String, String> = mapOf()
 private val DEFAULT_REFERER: String? = null
 
+fun Context.initRequestClient(): OkHttpClient {
+    val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+    val dns = settingsManager.getInt(this.getString(R.string.dns_pref), 0)
+    baseClient = OkHttpClient.Builder()
+        .cache(
+            // Note that you need to add a ResponseInterceptor to make this 100% active.
+            // The server response dictates if and when stuff should be cached.
+            Cache(
+                directory = File(cacheDir, "http_cache"),
+                maxSize = 50L * 1024L * 1024L // 50 MiB
+            )
+        ).apply {
+            when (dns) {
+                1 -> addGoogleDns()
+                2 -> addCloudFlareDns()
+//                3 -> addOpenDns()
+                4 -> addAdGuardDns()
+            }
+        }
+        // Needs to be build as otherwise the other builders will change this object
+        .build()
+    return baseClient
+}
 
 /** WARNING! CAN ONLY BE READ ONCE */
 val Response.text: String
@@ -93,14 +124,13 @@ fun get(
     timeout: Long = 0L,
     interceptor: Interceptor? = null
 ): Response {
-
-    val client = OkHttpClient().newBuilder()
+    val client = baseClient
+        .newBuilder()
         .followRedirects(allowRedirects)
         .followSslRedirects(allowRedirects)
         .callTimeout(timeout, TimeUnit.SECONDS)
 
     if (interceptor != null) client.addInterceptor(interceptor)
-
     val request = getRequestCreator(url, headers, referer, params, cookies, cacheTime, cacheUnit)
     return client.build().newCall(request).execute()
 }
@@ -118,7 +148,8 @@ fun post(
     cacheUnit: TimeUnit = DEFAULT_TIME_UNIT,
     timeout: Long = 0L
 ): Response {
-    val client = OkHttpClient().newBuilder()
+    val client = baseClient
+        .newBuilder()
         .followRedirects(allowRedirects)
         .followSslRedirects(allowRedirects)
         .callTimeout(timeout, TimeUnit.SECONDS)
