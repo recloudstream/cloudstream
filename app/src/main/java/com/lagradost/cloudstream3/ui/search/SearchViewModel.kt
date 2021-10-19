@@ -8,16 +8,12 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.pmap
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.providersActive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.internal.notify
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.thread
 
 data class OnGoingSearch(
     val apiName: String,
@@ -86,9 +82,5 @@ class SearchViewModel : ViewModel() {
         }
 
         _searchResponse.postValue(Resource.Success(list))
-    }
-
-    fun quickSearch(query: String) {
-        return
     }
 }

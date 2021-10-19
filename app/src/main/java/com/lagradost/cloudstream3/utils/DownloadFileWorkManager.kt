@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 
 const val DOWNLOAD_CHECK = "DownloadCheck"
 
-class DownloadFileWorkManager(val context: Context, val workerParams: WorkerParameters) :
+class DownloadFileWorkManager(val context: Context, private val workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {

@@ -65,7 +65,7 @@ class DownloadChildFragment : Fragment() {
         }
     }
 
-    var downloadDeleteEventListener: ((Int) -> Unit)? = null
+    private var downloadDeleteEventListener: ((Int) -> Unit)? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

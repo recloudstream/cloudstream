@@ -77,11 +77,11 @@ class VfFilmProvider : MainAPI() {
 
     private fun getDirect(original: String): String {  // original data, https://vf-film.org/?trembed=1&trid=55313&trtype=1 for example
         val response = get(original).text
-        val url = "iframe .*src=\"(.*?)\"".toRegex().find(response)?.groupValues?.get(1).toString()  // https://vudeo.net/embed-uweno86lzx8f.html for example
+        val url = "iframe .*src=\"(.*?)\"".toRegex().find(response)?.groupValues?.get(1)
+            .toString()  // https://vudeo.net/embed-uweno86lzx8f.html for example
         val vudoResponse = get(url).text
         val document = Jsoup.parse(vudoResponse)
-        val vudoUrl = Regex("sources: \\[\"(.*?)\"]").find(document.html())?.groupValues?.get(1).toString()  // direct mp4 link, https://m11.vudeo.net/2vp3ukyw2avjdohilpebtzuct42q5jwvpmpsez3xjs6d7fbs65dpuey2rbra/v.mp4 for exemple
-        return vudoUrl
+        return Regex("sources: \\[\"(.*?)\"]").find(document.html())?.groupValues?.get(1).toString()
     }
 
 
@@ -105,20 +105,20 @@ class VfFilmProvider : MainAPI() {
 
 
         val players = document.select("ul.TPlayerNv > li")
-        var number_player = 0
+        var numberPlayer = 0
         var found = false
         for (player in players) {
             if (player.selectFirst("> span").text() == "Vudeo") {
                 found = true
                 break
             } else {
-                number_player += 1
+                numberPlayer += 1
             }
         }
-        if (found == false) {
-            number_player = 0
+        if (!found) {
+            numberPlayer = 0
         }
-        val i = number_player.toString()
+        val i = numberPlayer.toString()
         val trid = Regex("iframe .*trid=(.*?)&").find(document.html())?.groupValues?.get(1)
 
         val data = getDirect("https://vf-film.org/?trembed=$i&trid=$trid&trtype=1")

@@ -27,8 +27,8 @@ class EasyDownloadButton : IDisposable {
         }
     }
 
-    var downloadProgressEventListener: ((Triple<Int, Long, Long>) -> Unit)? = null
-    var downloadStatusEventListener: ((Pair<Int, VideoDownloadManager.DownloadType>) -> Unit)? = null
+    private var downloadProgressEventListener: ((Triple<Int, Long, Long>) -> Unit)? = null
+    private var downloadStatusEventListener: ((Pair<Int, VideoDownloadManager.DownloadType>) -> Unit)? = null
 
     fun setUpMaterialButton(
         setupCurrentBytes: Long?,

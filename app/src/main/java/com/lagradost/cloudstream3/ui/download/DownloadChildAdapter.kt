@@ -100,7 +100,7 @@ class DownloadChildAdapter(
         private val progressBarDownload: ContentLoadingProgressBar = itemView.download_child_episode_progress_downloaded
         private val downloadImage: ImageView = itemView.download_child_episode_download
 
-        var localCard: VisualDownloadChildCached? = null
+        private var localCard: VisualDownloadChildCached? = null
 
         fun bind(card: VisualDownloadChildCached) {
             localCard = card

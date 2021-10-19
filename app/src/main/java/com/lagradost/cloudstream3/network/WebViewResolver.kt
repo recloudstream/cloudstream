@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.network
 import android.annotation.SuppressLint
 import android.net.http.SslError
 import android.webkit.*
-import androidx.core.view.contains
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import kotlinx.coroutines.delay
@@ -11,7 +10,6 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import java.net.URI
 import java.util.concurrent.TimeUnit
 
 class WebViewResolver(val interceptUrl: Regex) : Interceptor {
@@ -134,5 +132,4 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
             WebResourceResponse("application/octet-stream", null, this.body?.byteStream())
         }
     }
-
 }

@@ -89,7 +89,7 @@ class DownloadFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_downloads, container, false)
     }
 
-    var downloadDeleteEventListener: ((Int) -> Unit)? = null
+    private var downloadDeleteEventListener: ((Int) -> Unit)? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

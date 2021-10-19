@@ -187,10 +187,10 @@ class WcoProvider : MainAPI() {
         val isDubbed = canonicalTitle.contains("Dub")
         val episodeNodes = document.select(".tab-content .nav-item > a")
 
-        val episodes = ArrayList<AnimeEpisode>(episodeNodes?.map {
+        val episodes = ArrayList(episodeNodes?.map {
             AnimeEpisode(it.attr("href"))
-        }
-            ?: ArrayList<AnimeEpisode>())
+        } ?: ArrayList())
+        
         val statusElem = document.selectFirst("div.elements div.row > div:nth-child(1) > div.row-line:nth-child(2)")
         val status = when (statusElem?.text()?.replace("Status:", "")?.trim()) {
             "Ongoing" -> ShowStatus.Ongoing

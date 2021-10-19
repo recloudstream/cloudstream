@@ -39,7 +39,6 @@
     <string name="result_go_back">Gå tillbaka</string>
     <string name="episode_poster_img_des">@string/result_poster_img_des</string>
     <string name="play_episode">Spela Avsnitt</string>
-    <string name="need_storage">Allow to download episodes</string>
     <string name="download">Ladda ner</string>
     <string name="download_storage_text">Intern lagring</string>
 

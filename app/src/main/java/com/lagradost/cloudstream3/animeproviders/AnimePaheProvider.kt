@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.utils.getQualityFromName
 import okhttp3.Response
 import org.jsoup.Jsoup
 import java.util.*
+import kotlin.math.pow
 
 class AnimePaheProvider : MainAPI() {
     // credit to https://github.com/justfoolingaround/animdl/tree/master/animdl/core/codebase/providers/animepahe
@@ -209,10 +210,8 @@ class AnimePaheProvider : MainAPI() {
             val episodes = ArrayList<AnimeEpisode>()
 
             fun getEpisodeTitle(k: AnimeData): String {
-                return if (k.title.isEmpty()) {
+                return k.title.ifEmpty {
                     "Episode ${k.episode}"
-                } else {
-                    k.title
                 }
             }
 
@@ -222,10 +221,8 @@ class AnimePaheProvider : MainAPI() {
                         AnimeEpisode(
                             "$mainUrl/api?m=links&id=${it.animeId}&session=${it.session}&p=kwik!!TRUE!!",
                             getEpisodeTitle(it),
-                            if (it.snapshot.length == 0) {
+                            it.snapshot.ifEmpty {
                                 null
-                            } else {
-                                it.snapshot
                             },
                             it.createdAt
                         )
@@ -355,7 +352,7 @@ class AnimePaheProvider : MainAPI() {
             acc += (when (isNumber("$i")) {
                 true -> "$i".toLong()
                 false -> "0".toLong()
-            }) * Math.pow(s1.toDouble(), n.toDouble()).toInt()
+            }) * s1.toDouble().pow(n.toDouble()).toInt()
         }
 
         var k = ""

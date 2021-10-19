@@ -1,14 +1,6 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import org.jsoup.Jsoup
-import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.extractors.Vidstream
-import com.lagradost.cloudstream3.network.get
-import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.getQualityFromName
-import java.util.*
-import kotlin.collections.ArrayList
+import com.lagradost.cloudstream3.TvType
 
 /** Needs to inherit from MainAPI() to
  * make the app know what functions to call

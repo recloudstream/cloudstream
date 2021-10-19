@@ -150,27 +150,27 @@ class GogoanimeProvider : MainAPI() {
         var nativeName: String? = null
         var type: String? = null
 
-        animeBody.select("p.type").forEach {
-            when (it.selectFirst("span").text().trim()) {
+        animeBody.select("p.type").forEach { pType ->
+            when (pType.selectFirst("span").text().trim()) {
                 "Plot Summary:" -> {
-                    description = it.text().replace("Plot Summary:", "").trim()
+                    description = pType.text().replace("Plot Summary:", "").trim()
                 }
                 "Genre:" -> {
-                    genre.addAll(it.select("a").map {
+                    genre.addAll(pType.select("a").map {
                         it.attr("title")
                     })
                 }
                 "Released:" -> {
-                    year = it.text().replace("Released:", "").trim().toIntOrNull()
+                    year = pType.text().replace("Released:", "").trim().toIntOrNull()
                 }
                 "Status:" -> {
-                    status = it.text().replace("Status:", "").trim()
+                    status = pType.text().replace("Status:", "").trim()
                 }
                 "Other name:" -> {
-                    nativeName = it.text().replace("Other name:", "").trim()
+                    nativeName = pType.text().replace("Other name:", "").trim()
                 }
                 "Type:" -> {
-                    type = it.text().replace("type:", "").trim()
+                    type = pType.text().replace("type:", "").trim()
                 }
             }
         }

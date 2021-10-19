@@ -166,10 +166,10 @@ open class VidstreamProviderTemplate : MainAPI() {
         urls.pmap { url ->
             val response = get(url, timeout = 20).text
             val document = Jsoup.parse(response)
-            document.select("div.main-inner")?.forEach {
+            document.select("div.main-inner")?.forEach { inner ->
                 // Always trim your text unless you want the risk of spaces at the start or end.
-                val title = it.select(".widget-title").text().trim()
-                val elements = it.select(".video-block").map {
+                val title = inner.select(".widget-title").text().trim()
+                val elements = inner.select(".video-block").map {
                     val link = fixUrl(it.select("a").attr("href"))
                     val image = it.select(".picture > img").attr("src")
                     val name = it.select("div.name").text().trim().replace(Regex("""[Ee]pisode \d+"""), "")

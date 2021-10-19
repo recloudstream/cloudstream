@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.animeproviders
 
-import androidx.core.net.toUri
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
@@ -10,7 +9,6 @@ import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.toSubti
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -259,7 +257,7 @@ class ZoroProvider : MainAPI() {
         ).text
     }
 
-    private data class rapidCloudResponse(
+    private data class RapidCloudResponse(
         @JsonProperty("link") val link: String
     )
 
@@ -291,7 +289,7 @@ class ZoroProvider : MainAPI() {
 
         val responses = servers.map {
             val link = "$mainUrl/ajax/v2/episode/sources?id=${it.second}&_token=$recaptchaToken"
-            Pair(it.first, getM3u8FromRapidCloud(mapper.readValue<rapidCloudResponse>(get(link, res.request.headers.toMap()).text).link))
+            Pair(it.first, getM3u8FromRapidCloud(mapper.readValue<RapidCloudResponse>(get(link, res.request.headers.toMap()).text).link))
         }
 
         responses.forEach {

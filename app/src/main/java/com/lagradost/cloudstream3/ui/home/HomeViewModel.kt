@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeViewModel : ViewModel() {
-    var repo: APIRepository? = null
+    private var repo: APIRepository? = null
 
     private val _apiName = MutableLiveData<String>()
     val apiName: LiveData<String> = _apiName
@@ -126,7 +126,7 @@ class HomeViewModel : ViewModel() {
         _bookmarks.postValue(list)
     }
 
-    var onGoingLoad: Job? = null
+    private var onGoingLoad: Job? = null
     private fun loadAndCancel(api: MainAPI?) {
         onGoingLoad?.cancel()
         onGoingLoad = load(api)

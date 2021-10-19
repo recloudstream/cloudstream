@@ -98,7 +98,7 @@ class DownloadHeaderAdapter(
         private val downloadBar: ContentLoadingProgressBar = itemView.download_header_progress_downloaded
         private val downloadImage: ImageView = itemView.download_header_episode_download
         private val normalImage: ImageView = itemView.download_header_goto_child
-        var localCard: VisualDownloadHeaderCached? = null
+        private var localCard: VisualDownloadHeaderCached? = null
 
         fun bind(card: VisualDownloadHeaderCached) {
             localCard = card

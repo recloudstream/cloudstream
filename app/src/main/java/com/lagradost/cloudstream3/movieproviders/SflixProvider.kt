@@ -65,7 +65,7 @@ class SflixProvider : MainAPI() {
         }
     }
 
-    override fun getMainPage(): HomePageResponse? {
+    override fun getMainPage(): HomePageResponse {
         val html = get("$mainUrl/home").text
         val document = Jsoup.parse(html)
 
@@ -78,16 +78,16 @@ class SflixProvider : MainAPI() {
         map.forEach {
             all.add(HomePageList(
                 it.key,
-                document.select(it.value).select("div.film-poster").map {
-                    it.toSearchResult()
+                document.select(it.value).select("div.film-poster").map { element ->
+                    element.toSearchResult()
                 }
             ))
         }
 
         document.select("section.block_area.block_area_home.section-id-02").forEach {
             val title = it.select("h2.cat-heading").text().trim()
-            val elements = it.select("div.film-poster").map {
-                it.toSearchResult()
+            val elements = it.select("div.film-poster").map { element ->
+                element.toSearchResult()
             }
             all.add(HomePageList(title, elements))
         }
@@ -133,7 +133,7 @@ class SflixProvider : MainAPI() {
         }
     }
 
-    override fun load(url: String): LoadResponse? {
+    override fun load(url: String): LoadResponse {
         val html = get(url).text
         val document = Jsoup.parse(html)
 
@@ -195,14 +195,14 @@ class SflixProvider : MainAPI() {
             val seasonsDocument = Jsoup.parse(seasonsHtml)
             val episodes = arrayListOf<TvSeriesEpisode>()
 
-            seasonsDocument.select("div.dropdown-menu.dropdown-menu-model > a").forEachIndexed { season, it ->
-                val seasonId = it.attr("data-id")
+            seasonsDocument.select("div.dropdown-menu.dropdown-menu-model > a").forEachIndexed { season, element ->
+                val seasonId = element.attr("data-id")
                 if (seasonId.isNullOrBlank()) return@forEachIndexed
 
                 val seasonHtml = get("$mainUrl/ajax/v2/season/episodes/$seasonId").text
                 val seasonDocument = Jsoup.parse(seasonHtml)
                 seasonDocument.select("div.flw-item.film_single-item.episode-item.eps-item")
-                    .forEachIndexed { i, it ->
+                    .forEachIndexed { _, it ->
                         val episodeImg = it.select("img")
                         val episodeTitle = episodeImg.attr("title")
                         val episodePosterUrl = episodeImg.attr("src")
@@ -321,7 +321,7 @@ class SflixProvider : MainAPI() {
         // For re-use in Zoro
 
         fun Sources.toExtractorLink(caller: MainAPI, name: String): List<ExtractorLink>? {
-            return this.file?.let {
+            return this.file?.let { file ->
                 val isM3u8 = URI(this.file).path.endsWith(".m3u8") || this.type.equals("hls", ignoreCase = true)
                 if (isM3u8) {
                     M3u8Helper().m3u8Generation(M3u8Helper.M3u8Stream(this.file, null), true).map { stream ->
@@ -339,7 +339,7 @@ class SflixProvider : MainAPI() {
                     listOf(ExtractorLink(
                         caller.name,
                         this.label?.let { "${caller.name} - $it" } ?: caller.name,
-                        it,
+                        file,
                         caller.mainUrl,
                         getQualityFromName(this.type ?: ""),
                         false,
