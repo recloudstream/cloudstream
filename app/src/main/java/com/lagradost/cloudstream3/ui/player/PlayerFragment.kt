@@ -871,12 +871,21 @@ class PlayerFragment : Fragment() {
     }
 
     private fun getPen(code: Int): PendingIntent {
-        return PendingIntent.getBroadcast(
-            activity,
-            code,
-            Intent("media_control").putExtra("control_type", code),
-            0
-        )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getBroadcast(
+                activity,
+                code,
+                Intent("media_control").putExtra("control_type", code),
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                activity,
+                code,
+                Intent("media_control").putExtra("control_type", code),
+                0
+            )
+        }
     }
 
     @SuppressLint("NewApi")
