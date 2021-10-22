@@ -11,7 +11,7 @@
 
     <FrameLayout
             android:visibility="gone"
-            tools:visibility="visible"
+            tools:visibility="gone"
             android:id="@+id/home_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -42,7 +42,7 @@
 
     <LinearLayout
             android:visibility="gone"
-            tools:visibility="visible"
+            tools:visibility="gone"
             android:id="@+id/home_loading_error"
             android:orientation="vertical"
             android:layout_gravity="center"
@@ -84,7 +84,7 @@
     </LinearLayout>
     <androidx.core.widget.NestedScrollView
             android:background="?attr/primaryBlackBackground"
-            tools:visibility="gone"
+            tools:visibility="visible"
             android:visibility="gone"
             android:id="@+id/home_loaded"
             android:layout_width="match_parent"
@@ -140,7 +140,7 @@
                 </LinearLayout>
 
                 <ImageView
-                        android:nextFocusDown="@id/home_main_info"
+                        android:nextFocusDown="@id/home_main_poster_recyclerview"
                         android:id="@+id/home_change_api"
                         android:layout_margin="10dp"
                         android:layout_gravity="center|end"
@@ -162,6 +162,8 @@
                     android:layout_height="wrap_content">
                 <androidx.recyclerview.widget.RecyclerView
                         android:descendantFocusability="afterDescendants"
+                        android:nextFocusUp="@id/home_change_api"
+                        android:nextFocusDown="@id/home_main_info"
 
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:id="@+id/home_main_poster_recyclerview"
@@ -202,7 +204,7 @@
 
                     <com.google.android.material.button.MaterialButton
                             android:nextFocusLeft="@id/home_main_info"
-                            android:nextFocusUp="@id/home_change_api"
+                            android:nextFocusUp="@id/home_main_poster_recyclerview"
                             android:nextFocusRight="@id/home_main_info"
                             android:nextFocusDown="@id/home_watch_child_more_info"
 
@@ -217,7 +219,7 @@
                     </com.google.android.material.button.MaterialButton>
                     <com.google.android.material.button.MaterialButton
                             android:nextFocusLeft="@id/home_main_play"
-                            android:nextFocusUp="@id/home_change_api"
+                            android:nextFocusUp="@id/home_main_poster_recyclerview"
                             android:nextFocusRight="@id/home_main_play"
                             android:nextFocusDown="@id/home_watch_child_more_info"
 
