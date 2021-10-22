@@ -165,6 +165,10 @@
                         android:nextFocusUp="@id/home_change_api"
                         android:nextFocusDown="@id/home_main_info"
 
+                        android:clipToPadding="false"
+                        android:paddingStart="148dp"
+                        android:paddingEnd="148dp"
+
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:id="@+id/home_main_poster_recyclerview"
                         android:orientation="horizontal"

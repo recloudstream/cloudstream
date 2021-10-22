@@ -3,7 +3,9 @@ package com.lagradost.cloudstream3.widget
 import android.content.Context
 import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.mvvm.logError
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -38,17 +40,21 @@ class CenterZoomLayoutManager : LinearLayoutManager {
         var largestSize = 0f
         for (i in 0 until childCount) {
             getChildAt(i)?.let { child ->
-                val childMidpoint = (getDecoratedRight(child) + getDecoratedLeft(child)) / 2f
-                val d = min(d1, abs(midpoint - childMidpoint))
-                val scale = s0 + (s1 - s0) * (d - d0) / (d1 - d0)
-                child.scaleX = scale
-                child.scaleY = scale
+                try {
+                    val childMidpoint = (getDecoratedRight(child) + getDecoratedLeft(child)) / 2f
+                    val d = min(d1, abs(midpoint - childMidpoint))
+                    val scale = s0 + (s1 - s0) * (d - d0) / (d1 - d0)
+                    child.scaleX = scale
+                    child.scaleY = scale
 
-                if (scale > largestSize) {
-                    (child.tag as Int?)?.let { tag ->
-                        largestSize = scale
-                        largestTag = tag
+                    if (scale > largestSize) {
+                        (child.tag as Int?)?.let { tag ->
+                            largestSize = scale
+                            largestTag = tag
+                        }
                     }
+                } catch (e : Exception) {
+                    logError(e)
                 }
             }
         }
@@ -72,7 +78,24 @@ class CenterZoomLayoutManager : LinearLayoutManager {
 
     override fun onLayoutCompleted(state: RecyclerView.State?) {
         super.onLayoutCompleted(state)
+        if(waitForSnap != null) {
+            this.getChildAt(snapChild ?: 1)?.let { view ->
+                LinearSnapHelper().calculateDistanceToFinalSnap(this,view)?.get(0)?.let { dx ->
+                    println("DX: $dx")
+                    waitForSnap?.invoke(dx)
+                    waitForSnap = null
+                }
+            }
+        }
         updateSize()
+    }
+
+    private var waitForSnap : ((Int) -> Unit)? = null
+    private var snapChild : Int? = null
+
+    fun snap(snap : Int? = null, callback : (Int) -> Unit) {
+        waitForSnap = callback
+        snapChild = snap
     }
 
     override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {

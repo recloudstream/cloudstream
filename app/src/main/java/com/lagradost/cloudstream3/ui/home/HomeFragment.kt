@@ -123,12 +123,25 @@ class HomeFragment : Fragment() {
             if (randomItems.isNullOrEmpty()) {
                 toggleMainVisibility(false)
             } else {
+                val randomSize = randomItems.size
                 home_main_poster_recyclerview.adapter =
                     HomeChildItemAdapter(randomItems, R.layout.home_result_big_grid) { callback ->
                         handleSearchClickCallback(activity, callback)
                     }
                 home_main_poster_recyclerview.post {
-                    (home_main_poster_recyclerview.layoutManager as CenterZoomLayoutManager?)?.updateSize(forceUpdate = true)
+                    (home_main_poster_recyclerview.layoutManager as CenterZoomLayoutManager?)?.let { manager ->
+
+                        manager.updateSize(forceUpdate = true)
+                        if (randomSize > 2) {
+                            manager.scrollToPosition(randomSize / 2)
+                            manager.snap { dx ->
+                                home_main_poster_recyclerview?.post {
+                                    // this is the best I can do, fuck android for not including instant scroll
+                                    home_main_poster_recyclerview?.smoothScrollBy(dx,0)
+                                }
+                            }
+                        }
+                    }
                 }
 
                 toggleMainVisibility(true)
