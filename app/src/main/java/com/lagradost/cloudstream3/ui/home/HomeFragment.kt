@@ -15,10 +15,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
@@ -39,10 +42,11 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.widget.CenterZoomLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
 
 const val HOME_BOOKMARK_VALUE = "home_bookmarked_last"
@@ -106,61 +110,32 @@ class HomeFragment : Fragment() {
     }
 
     private var currentHomePage: HomePageResponse? = null
-    var currentMainIndex = 0
-    var currentMainList: ArrayList<SearchResponse> = ArrayList()
 
     private fun toggleMainVisibility(visible: Boolean) {
         home_main_holder.isVisible = visible
     }
 
     @SuppressLint("SetTextI18n")
-    private fun chooseRandomMainPage(item: SearchResponse? = null): SearchResponse? {
+    private fun chooseRandomMainPage() {
         val home = currentHomePage
         if (home != null && home.items.isNotEmpty()) {
-            var random: SearchResponse? = item
-
-            var breakCount = 0
-            val MAX_BREAK_COUNT = 10
-
-            while (random?.posterUrl == null) {
-                try {
-                    random = home.items.random().list.random()
-                } catch (e: Exception) {
-                    // probs Collection is empty.
+            val randomItems = home.items.shuffled().flatMap { it.list }.distinctBy { it.url }.toList().shuffled()
+            if (randomItems.isNullOrEmpty()) {
+                toggleMainVisibility(false)
+            } else {
+                home_main_poster_recyclerview.adapter =
+                    HomeChildItemAdapter(randomItems, R.layout.home_result_big_grid) { callback ->
+                        handleSearchClickCallback(activity, callback)
+                    }
+                home_main_poster_recyclerview.post {
+                    (home_main_poster_recyclerview.layoutManager as CenterZoomLayoutManager?)?.updateSize(forceUpdate = true)
                 }
-
-                breakCount++
-                if (breakCount > MAX_BREAK_COUNT) {
-                    break
-                }
-            }
-
-            if (random?.posterUrl != null) {
-                home_main_poster.setOnClickListener {
-                    activity.loadSearchResult(random)
-                }
-                home_main_play.setOnClickListener {
-                    activity.loadSearchResult(random, START_ACTION_RESUME_LATEST)
-                }
-                home_main_info.setOnClickListener {
-                    activity.loadSearchResult(random)
-                }
-
-                home_main_text.text = random.name + if (random is AnimeSearchResponse && !random.dubStatus.isNullOrEmpty()) {
-                    random.dubStatus?.joinToString(prefix = " • ", separator = " | ") { it.name }
-                } else ""
-                home_main_poster?.setImage(random.posterUrl)
 
                 toggleMainVisibility(true)
-                return random
-            } else {
-                toggleMainVisibility(false)
-                return null
             }
         } else {
             toggleMainVisibility(false)
         }
-        return null
     }
 
     private fun fixGrid() {
@@ -214,39 +189,30 @@ class HomeFragment : Fragment() {
         }
     }*/
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fixGrid()
 
-        home_reroll_next.setOnClickListener {
-            currentMainIndex++
-            if (currentMainIndex >= currentMainList.size) {
-                val newItem = chooseRandomMainPage()
-                if (newItem != null) {
-                    currentMainList.add(newItem)
-                }
-                currentMainIndex = currentMainList.size - 1
-            }
-            chooseRandomMainPage(currentMainList[currentMainIndex])
-        }
-
-        home_reroll_prev.setOnClickListener {
-            currentMainIndex--
-            if (currentMainIndex < 0) {
-                val newItem = chooseRandomMainPage()
-                if (newItem != null) {
-                    currentMainList.add(0, newItem)
-                }
-                currentMainIndex = 0
-            }
-            chooseRandomMainPage(currentMainList[currentMainIndex])
-        }
-
         home_change_api.setOnClickListener(apiChangeClickListener)
         home_change_api_loading.setOnClickListener(apiChangeClickListener)
 
-        observe(homeViewModel.apiName) {
-            context?.setKey(HOMEPAGE_API, it)
+        observe(homeViewModel.apiName) { apiName ->
+            context?.setKey(HOMEPAGE_API, apiName)
+            home_provider_name?.text = apiName
+            home_provider_meta_info?.isVisible = false
+
+            getApiFromNameNull(apiName)?.let { currentApi ->
+                val typeChoices = listOf(
+                    Pair(R.string.movies, listOf(TvType.Movie)),
+                    Pair(R.string.tv_series, listOf(TvType.TvSeries)),
+                    Pair(R.string.cartoons, listOf(TvType.Cartoon)),
+                    Pair(R.string.anime, listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie)),
+                    Pair(R.string.torrent, listOf(TvType.Torrent)),
+                ).filter { item -> currentApi.supportedTypes.any { type -> item.second.contains(type) } }
+                home_provider_meta_info?.text = typeChoices.joinToString(separator = " ") { getString(it.first) }
+                home_provider_meta_info?.isVisible = true
+            }
         }
 
         observe(homeViewModel.page) { data ->
@@ -259,18 +225,14 @@ class HomeFragment : Fragment() {
                         d.items.mapNotNull {
                             try {
                                 HomePageList(it.name, it.list.filterSearchResponse())
-                            } catch (e : Exception) {
+                            } catch (e: Exception) {
                                 logError(e)
                                 null
                             }
                         }
 
                     home_master_recycler?.adapter?.notifyDataSetChanged()
-                    currentMainList.clear()
-                    chooseRandomMainPage()?.let { response ->
-                        currentMainList.add(response)
-                    }
-                    currentMainIndex = 0
+                    chooseRandomMainPage()
 
                     home_loading.visibility = View.GONE
                     home_loading_error.visibility = View.GONE
@@ -407,15 +369,35 @@ class HomeFragment : Fragment() {
             }
         }
 
-        context?.fixPaddingStatusbar(home_root)
+        context?.fixPaddingStatusbarView(home_statusbar)
+        context?.fixPaddingStatusbar(home_loading_statusbar)
 
         home_master_recycler.adapter = adapter
         home_master_recycler.layoutManager = GridLayoutManager(context, 1)
 
+        LinearSnapHelper().attachToRecyclerView(home_main_poster_recyclerview) // snap
+        val centerLayoutManager = CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        centerLayoutManager.setOnSizeListener { index ->
+            (home_main_poster_recyclerview.adapter as HomeChildItemAdapter?)?.cardList?.get(index)?.let { random ->
+                home_main_play.setOnClickListener {
+                    activity.loadSearchResult(random, START_ACTION_RESUME_LATEST)
+                }
+                home_main_info.setOnClickListener {
+                    activity.loadSearchResult(random)
+                }
+
+                home_main_text.text =
+                    random.name + if (random is AnimeSearchResponse && !random.dubStatus.isNullOrEmpty()) {
+                        random.dubStatus.joinToString(prefix = " • ", separator = " | ") { it.name }
+                    } else ""
+            }
+        }
+        home_main_poster_recyclerview.layoutManager = centerLayoutManager  // scale
+
         reloadStored()
         val apiName = context?.getKey<String>(HOMEPAGE_API)
-        if(homeViewModel.apiName.value != apiName || apiName == null) {
-            println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
+        if (homeViewModel.apiName.value != apiName || apiName == null) {
+            //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
             homeViewModel.loadAndCancel(apiName)
         }
     }

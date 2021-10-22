@@ -39,6 +39,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.getCastSession
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
@@ -310,7 +311,8 @@ class ResultFragment : Fragment() {
                         CastButtonFactory.setUpMediaRouteButton(it, media_route_button)
                         val castContext = CastContext.getSharedInstance(it.applicationContext)
 
-                        if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = VISIBLE
+                        if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility =
+                            VISIBLE
                         castContext.addCastStateListener { state ->
                             if (media_route_button != null) {
                                 if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = GONE else {
@@ -318,7 +320,7 @@ class ResultFragment : Fragment() {
                                 }
                             }
                         }
-                    } catch (e : Exception) {
+                    } catch (e: Exception) {
                         logError(e)
                     }
                 }
@@ -535,16 +537,18 @@ class ResultFragment : Fragment() {
                                     val topFolder = "$folder"
 
                                     withContext(Dispatchers.IO) {
-                                        VideoDownloadManager.downloadThing(
-                                            ctx,
-                                            link,
-                                            fileName,
-                                            topFolder,
-                                            "vtt",
-                                            false,
-                                            null
-                                        ) {
-                                            // no notification
+                                        normalSafeApiCall {
+                                            VideoDownloadManager.downloadThing(
+                                                ctx,
+                                                link,
+                                                fileName,
+                                                topFolder,
+                                                "vtt",
+                                                false,
+                                                null
+                                            ) {
+                                                // no notification
+                                            }
                                         }
                                     }
                                 }
@@ -841,7 +845,7 @@ class ResultFragment : Fragment() {
                 }
                 is Resource.Loading -> {
                     result_episode_loading?.isVisible = true
-                   // result_episodes?.isVisible = false
+                    // result_episodes?.isVisible = false
                 }
                 is Resource.Success -> {
                     //result_episodes?.isVisible = true
@@ -877,7 +881,7 @@ class ResultFragment : Fragment() {
             if (count < 0) {
                 result_episodes_text?.isVisible = false
             } else {
-               // result_episodes_text?.isVisible = true
+                // result_episodes_text?.isVisible = true
                 result_episodes_text?.text =
                     "$count ${if (count == 1) getString(R.string.episode) else getString(R.string.episodes)}"
             }

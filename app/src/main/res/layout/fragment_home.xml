@@ -11,7 +11,7 @@
 
     <FrameLayout
             android:visibility="gone"
-            tools:visibility="gone"
+            tools:visibility="visible"
             android:id="@+id/home_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -22,22 +22,27 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp">
         </ProgressBar>
-        <ImageView
-                android:id="@+id/home_change_api_loading"
-                android:layout_margin="10dp"
-                android:layout_gravity="end"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+        <FrameLayout
+                android:id="@+id/home_loading_statusbar"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+            <ImageView
+                    android:id="@+id/home_change_api_loading"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
 
-                android:src="@drawable/ic_outline_settings_24"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:contentDescription="@string/home_change_provider_img_des">
-        </ImageView>
+                    android:src="@drawable/ic_outline_settings_24"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:contentDescription="@string/home_change_provider_img_des">
+            </ImageView>
+        </FrameLayout>
     </FrameLayout>
 
     <LinearLayout
             android:visibility="gone"
-            tools:visibility="gone"
+            tools:visibility="visible"
             android:id="@+id/home_loading_error"
             android:orientation="vertical"
             android:layout_gravity="center"
@@ -46,6 +51,8 @@
         <com.google.android.material.button.MaterialButton
                 android:layout_gravity="center"
                 style="@style/WhiteButton"
+
+                android:layout_margin="5dp"
 
                 app:icon="@drawable/ic_baseline_autorenew_24"
                 android:text="@string/reload_error"
@@ -56,6 +63,8 @@
         <com.google.android.material.button.MaterialButton
                 android:layout_gravity="center"
                 style="@style/BlackButton"
+
+                android:layout_margin="5dp"
 
                 app:icon="@drawable/ic_baseline_public_24"
                 android:text="@string/result_open_in_browser"
@@ -74,7 +83,8 @@
         />
     </LinearLayout>
     <androidx.core.widget.NestedScrollView
-            tools:visibility="visible"
+            android:background="?attr/primaryBlackBackground"
+            tools:visibility="gone"
             android:visibility="gone"
             android:id="@+id/home_loaded"
             android:layout_width="match_parent"
@@ -84,26 +94,83 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            <ImageView
-                    android:nextFocusDown="@id/home_main_info"
-                    android:id="@+id/home_change_api"
-                    android:layout_margin="10dp"
-                    android:layout_gravity="end"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
+            <View
+                    android:background="?attr/darkBackground"
+                    android:id="@+id/home_statusbar"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+            <FrameLayout
+                    android:id="@+id/home_settings_bar"
+                    android:background="?attr/darkBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+                <LinearLayout
+                        android:gravity="center"
 
-                    android:src="@drawable/ic_outline_settings_24"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:contentDescription="@string/home_change_provider_img_des">
-                <requestFocus/>
-            </ImageView>
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_marginEnd="50dp"
+                        android:layout_height="match_parent">
+                    <TextView
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center"
+                            android:id="@+id/home_provider_name"
+                            android:textColor="?attr/textColor"
+                            android:textSize="20sp"
+                            tools:text="Hello World"
+                            android:layout_width="match_parent"
+
+                            android:layout_height="wrap_content">
+                    </TextView>
+                    <TextView
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center"
+                            android:id="@+id/home_provider_meta_info"
+                            android:textColor="?attr/grayTextColor"
+                            android:textSize="14sp"
+                            tools:text="Hello World"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                    </TextView>
+                </LinearLayout>
+
+                <ImageView
+                        android:nextFocusDown="@id/home_main_info"
+                        android:id="@+id/home_change_api"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="center|end"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+
+                        android:src="@drawable/ic_outline_settings_24"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:contentDescription="@string/home_change_provider_img_des">
+                    <requestFocus/>
+                </ImageView>
+            </FrameLayout>
+
             <LinearLayout
-                    android:layout_marginTop="-20dp"
+                    android:layout_marginTop="10dp"
                     android:id="@+id/home_main_holder"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                <ImageView
+                <androidx.recyclerview.widget.RecyclerView
+                        android:descendantFocusability="afterDescendants"
+
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:id="@+id/home_main_poster_recyclerview"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/home_result_grid"
+                />
+                <!--<ImageView
                         android:foreground="@drawable/outline_drawable"
                         android:id="@+id/home_main_poster"
                         tools:src="@drawable/example_poster"
@@ -112,7 +179,7 @@
                         android:layout_width="150dp"
                         android:layout_height="212dp"
                         android:contentDescription="@string/home_main_poster_img_des">
-                </ImageView>
+                </ImageView>-->
                 <TextView
                         android:id="@+id/home_main_text"
                         android:layout_gravity="center"
@@ -123,31 +190,18 @@
                         android:textSize="15sp"
                         android:textColor="@color/textColor"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:layout_height="40sp"/>
                 <LinearLayout
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                    <ImageView
-                            android:nextFocusLeft="@id/home_reroll_next"
-                            android:nextFocusUp="@id/home_change_api"
-                            android:nextFocusRight="@id/home_main_play"
-                            android:nextFocusDown="@id/home_watch_child_more_info"
 
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="2dp"
-                            android:id="@+id/home_reroll_prev"
-                            android:background="?android:attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_baseline_arrow_back_24"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:padding="10dp"
-                            android:contentDescription="@string/home_next_random_img_des">
-                    </ImageView>
                     <com.google.android.material.button.MaterialButton
-                            android:nextFocusLeft="@id/home_reroll_prev"
+                            android:nextFocusLeft="@id/home_main_info"
                             android:nextFocusUp="@id/home_change_api"
                             android:nextFocusRight="@id/home_main_info"
                             android:nextFocusDown="@id/home_watch_child_more_info"
@@ -164,7 +218,7 @@
                     <com.google.android.material.button.MaterialButton
                             android:nextFocusLeft="@id/home_main_play"
                             android:nextFocusUp="@id/home_change_api"
-                            android:nextFocusRight="@id/home_reroll_next"
+                            android:nextFocusRight="@id/home_main_play"
                             android:nextFocusDown="@id/home_watch_child_more_info"
 
                             style="@style/BlackButton"
@@ -178,22 +232,6 @@
                             android:focusable="true"
                             android:layout_width="120dp">
                     </com.google.android.material.button.MaterialButton>
-                    <ImageView
-                            android:nextFocusLeft="@id/home_main_info"
-                            android:nextFocusUp="@id/home_change_api"
-                            android:nextFocusRight="@id/home_reroll_prev"
-                            android:nextFocusDown="@id/home_watch_child_more_info"
-
-                            android:layout_gravity="center"
-                            android:layout_marginStart="2dp"
-                            android:id="@+id/home_reroll_next"
-                            android:background="?android:attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_baseline_arrow_forward_24"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:padding="10dp"
-                            android:contentDescription="@string/home_next_random_img_des">
-                    </ImageView>
                 </LinearLayout>
             </LinearLayout>
 

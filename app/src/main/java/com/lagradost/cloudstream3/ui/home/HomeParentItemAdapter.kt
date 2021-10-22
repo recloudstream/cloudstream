@@ -47,7 +47,7 @@ class ParentItemAdapter(
         private val moreInfo: FrameLayout = itemView.home_child_more_info
         fun bind(info: HomePageList) {
             title.text = info.name
-            recyclerView.adapter = HomeChildItemAdapter(info.list, clickCallback)
+            recyclerView.adapter = HomeChildItemAdapter(info.list, clickCallback = clickCallback)
             (recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
 
             moreInfo.setOnClickListener {

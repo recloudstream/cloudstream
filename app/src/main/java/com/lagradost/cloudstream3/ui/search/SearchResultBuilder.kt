@@ -19,11 +19,10 @@ object SearchResultBuilder {
         itemView: View
     ) {
         val cardView: ImageView = itemView.imageView
-        val cardText: TextView = itemView.imageText
+        val cardText: TextView? = itemView.imageText
 
         val textIsDub: TextView? = itemView.text_is_dub
         val textIsSub: TextView? = itemView.text_is_sub
-        println(card.name)
 
         val bg: CardView = itemView.backgroundCard
 
@@ -37,7 +36,7 @@ object SearchResultBuilder {
         textIsDub?.visibility = View.GONE
         textIsSub?.visibility = View.GONE
 
-        cardText.text = card.name
+        cardText?.text = card.name
 
         //imageTextProvider.text = card.apiName
         cardView.setImage(card.posterUrl)
@@ -69,7 +68,7 @@ object SearchResultBuilder {
                 playImg?.visibility = View.VISIBLE
 
                 if (!card.type.isMovieType()) {
-                    cardText.text = cardText.context.getNameFull(card.name, card.episode, card.season)
+                    cardText?.text = cardText?.context?.getNameFull(card.name, card.episode, card.season)
                 }
             }
             is AnimeSearchResponse -> {

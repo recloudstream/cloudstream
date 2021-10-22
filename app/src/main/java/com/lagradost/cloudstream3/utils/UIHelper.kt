@@ -214,6 +214,12 @@ object UIHelper {
         v.setPadding(v.paddingLeft, v.paddingTop + getStatusBarHeight(), v.paddingRight, v.paddingBottom)
     }
 
+    fun Context.fixPaddingStatusbarView(v: View) {
+        val params = v.layoutParams
+        params.height = getStatusBarHeight()
+        v.layoutParams = params
+    }
+
     fun Context.getNavigationBarHeight(): Int {
         var result = 0
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
