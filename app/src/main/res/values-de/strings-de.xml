@@ -126,7 +126,7 @@
     <string name="anim">Anime-App von denselben Entwicklern</string>
     <string name="discord">Discord beitreten</string>
     <string name="benene">Gebe den Entwicklern eine Benene</string>
-    <string name="benene_des">Gegebene Benene</string>
+    <string name="benene_des">Gegebene Benenes</string>
     <string name="app_language">App-Sprache</string>
     <string name="no_chomecast_support_toast">Dieser Anbieter hat keine Chromecast-Unterstützung</string>
     <string name="no_links_found_toast">Keine Links gefunden</string>
