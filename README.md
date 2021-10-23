@@ -24,6 +24,7 @@ https://discord.gg/5Hus6fM
 * 🇮🇳 Hindi
 * 🇮🇳 Malayalam
 * 🇪🇸 Spanish
+* 🇳🇴 Norsk
 
 ***SCREENSHOTS:***
 
