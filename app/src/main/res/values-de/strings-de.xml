@@ -155,7 +155,7 @@
     <string name="site">Seite</string>
     <string name="synopsis">Zusammenfassung</string>
     <string name="queued">In der Warteschlange</string>
-    <string name="no_subtitles">Keine Untertitel</string>
+    <string name="no_subtitles">Kein Untertitel</string>
     <string name="default_subtitles">Standard</string>
     <string name="free_storage">Frei</string>
     <string name="used_storage">Benutzt</string>
