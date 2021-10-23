@@ -33,10 +33,10 @@
 
     <string name="type_watching">Ser på</string>
     <string name="type_on_hold">På vent</string>
-    <string name="type_completed">fullført</string>
+    <string name="type_completed">Fullført</string>
     <string name="type_dropped">Falt</string>
     <string name="type_plan_to_watch">Planlegg å se</string>
-    <string name="type_none">ingen</string>
+    <string name="type_none">Ingen</string>
 
     <string name="play_movie_button">Spill filmer</string>
     <string name="play_torrent_button">Strøm Torrent</string>
@@ -152,11 +152,11 @@
     <string name="play_episode_toast">spille episode</string>
     <string name="subs_default_reset_toast">tilbakestill standardverdien</string>
     <string name="acra_report_toast">Beklager, programmet krasjet. En anonym feilrapport vil bli sendt til utviklerne</string>
-    <string name="season">Årstid</string>
+    <string name="season">Sesong</string>
     <string name="no_season">Ingen sesong</string>
     <string name="episode">Episode</string>
     <string name="episodes">Episoder</string>
-    <string name="season_short">Å</string>
+    <string name="season_short">S</string>
     <string name="episode_short">E</string>
 
     <string name="delete_file">Slett fil</string>
