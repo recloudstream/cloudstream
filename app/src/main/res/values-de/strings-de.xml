@@ -32,7 +32,7 @@
     <string name="type_watching">Am schauen</string>
     <string name="type_on_hold">Pausiert</string>
     <string name="type_completed">Abgeschlossen</string>
-    <string name="type_dropped">Gestoppt</string>
+    <string name="type_dropped">Abgebrochen</string>
     <string name="type_plan_to_watch">Geplant</string>
     <string name="type_none">Nichts</string>
     <string name="play_movie_button">Film abspielen</string>
@@ -62,7 +62,7 @@
     <string name="pref_disable_acra">Automatische Fehlerberichterstattung deaktivieren</string>
     <string name="home_more_info">Mehr Infos</string>
     <string name="home_expanded_hide">Ausblenden</string>
-    <string name="home_play">Starten</string>
+    <string name="home_play">Abspielen</string>
     <string name="home_info">Info</string>
     <string name="filter_bookmarks">Lesezeichen filtern</string>
     <string name="error_bookmarks_text">Lesezeichen</string>
@@ -113,8 +113,8 @@
     <string name="search">Suche</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Erweiterte Suche</string>
-    <string name="advanced_search_des">Liefert die Suchergebnisse getrennt von Anbietern</string>
-    <string name="bug_report_settings_off">Senden Daten nur bei Abstürzen</string>
+    <string name="advanced_search_des">Liefert die Suchergebnisse getrennt von den jeweiligen Anbietern</string>
+    <string name="bug_report_settings_off">Sendet Daten nur bei Abstürzen</string>
     <string name="bug_report_settings_on">Sendet keine Daten</string>
     <string name="show_fillers_settings">Filler-Episoden für Animes anzeigen</string>
     <string name="updates_settings">App-Updates anzeigen</string>
@@ -124,8 +124,8 @@
     <string name="github">Github</string>
     <string name="lightnovel">Light Novel App von denselben Entwicklern</string>
     <string name="anim">Anime-App von denselben Entwicklern</string>
-    <string name="discord">Discord Beitreten</string>
-    <string name="benene">Geben Sie den Entwicklern eine Benene</string>
+    <string name="discord">Discord beitreten</string>
+    <string name="benene">Gebe den Entwicklern eine Benene</string>
     <string name="benene_des">Gegebene Benene</string>
     <string name="app_language">App-Sprache</string>
     <string name="no_chomecast_support_toast">Dieser Anbieter hat keine Chromecast-Unterstützung</string>
@@ -194,4 +194,5 @@
     <string name="resize_fit">An Bildschirm anpassen</string>
     <string name="resize_fill">Strecken</string>
     <string name="resize_zoom">Zoomen</string>
+    <string name="provider_lang_settings">Anbietersprache</string>
 </resources>
