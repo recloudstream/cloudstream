@@ -265,7 +265,6 @@ class GogoanimeProvider : MainAPI() {
                 }
             }
         }
-        println("GOGO: ${qualities.size}, $qualities")
         return qualities
     }
 
