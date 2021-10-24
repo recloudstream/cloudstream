@@ -11,14 +11,13 @@ class StreamTape : ExtractorApi() {
     override val mainUrl: String = "https://streamtape.com"
     override val requiresReferer = false
 
-    // Because they add concatenation to fuck up scrapers, DON'T LET LAG CODE ANYTHING
     private val linkRegex =
-        Regex("""(i(|" \+ ')d(|" \+ ')=.*?&(|" \+ ')e(|" \+ ')x(|" \+ ')p(|" \+ ')i(|" \+ ')r(|" \+ ')e(|" \+ ')s(|" \+ ')=.*?&(|" \+ ')i(|" \+ ')p(|" \+ ')=.*?&(|" \+ ')t(|" \+ ')o(|" \+ ')k(|" \+ ')e(|" \+ ')n(|" \+ ')=.*)'""")
+        Regex("""'robotlink'\)\.innerHTML = '(.+?)'\+ \('(.+?)'\)""")
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         with(get(url)) {
             linkRegex.find(this.text)?.let {
-                val extractedUrl = "https://streamtape.com/get_video?${it.groupValues[1]}".replace("""" + '""", "")
+                val extractedUrl = "https:${it.groups[1]!!.value + it.groups[2]!!.value.substring(3,)}"
                 return listOf(
                     ExtractorLink(
                         name,
