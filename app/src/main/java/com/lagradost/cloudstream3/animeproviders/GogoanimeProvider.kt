@@ -205,6 +205,28 @@ class GogoanimeProvider : MainAPI() {
         )
     }
 
+    private val garbages = listOf(
+        "URASDGHUSRFSJGYfdsffsderFStewthsfSFtrfte",
+        "AdeqwrwedffryretgsdFrsftrsvfsfsr",
+        "werFrefdsfrersfdsrfer36343534",
+        "AawehyfcghysfdsDGDYdgdsf",
+        "wstdgdsgtert",
+        "Adrefsd",
+        "sdf"
+    )
+
+    private fun decryptRedirect(uri: String): String {
+        val isGogoCdn = Regex("""download\.php\?url=([^?&/]+)""").find(uri)
+        if (isGogoCdn?.destructured == null) return uri
+
+        var encryptedUrl = isGogoCdn.destructured.component1()
+        garbages.forEach {
+            encryptedUrl = encryptedUrl.replace(it, "")
+        }
+
+        return base64Decode(encryptedUrl + "=".repeat(encryptedUrl.length % 4))
+    }
+
     private fun extractVideos(uri: String): List<ExtractorLink> {
         val html = get(uri).text
         val doc = Jsoup.parse(html)
@@ -212,36 +234,39 @@ class GogoanimeProvider : MainAPI() {
         val iframe = "https:" + doc.selectFirst("div.play-video > iframe").attr("src")
         val link = iframe.replace("streaming.php", "download")
 
-        val page = get(link, headers = mapOf("Referer" to iframe))
+        val page = get(link, referer=iframe, cacheTime = 0)
         val pageDoc = Jsoup.parse(page.text)
 
-        return pageDoc.select(".dowload > a").pmap {
+        val qualities = ArrayList<ExtractorLink>()
+
+        pageDoc.select(".dowload > a").pmap {
             if (it.hasAttr("download")) {
                 val qual = if (it.text()
                         .contains("HDP")
                 ) "1080" else qualityRegex.find(it.text())?.destructured?.component1().toString()
-                listOf(
+                qualities.add(
                     ExtractorLink(
                         "Gogoanime",
                         if (qual == "null") "Gogoanime" else "Gogoanime - " + qual + "p",
-                        it.attr("href"),
+                        decryptRedirect(it.attr("href")),
                         page.url,
                         getQualityFromName(qual),
-                        it.attr("href").contains(".m3u8")
+                        it.attr("href").contains(".m3u8"),
+                        mapOf("Referer" to it.attr("href"))
                     )
                 )
             } else {
                 val url = it.attr("href")
-                val extractorLinks = ArrayList<ExtractorLink>()
                 for (api in extractorApis) {
                     if (url.startsWith(api.mainUrl)) {
-                        extractorLinks.addAll(api.getSafeUrl(url) ?: listOf())
+                        qualities.addAll(api.getSafeUrl(url) ?: listOf())
                         break
                     }
                 }
-                extractorLinks
             }
-        }.flatten()
+        }
+        println("GOGO: ${qualities.size}, $qualities")
+        return qualities
     }
 
     override fun loadLinks(
