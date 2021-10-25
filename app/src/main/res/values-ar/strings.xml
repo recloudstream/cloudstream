@@ -63,7 +63,7 @@
     <string name="app_subbed_text">مترجمة</string>
 
     <string name="popup_delete_file">حذف ملف</string>
-    <string name="popup_play_file">حذف ملف</string>
+    <string name="popup_play_file">تشغيل الملف</string>
     <string name="popup_resume_download">متابعة التنزيل</string>
     <string name="popup_pause_download">إيقاف التنزيل مؤقتًا</string>
 
