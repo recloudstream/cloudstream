@@ -1,0 +1,230 @@
+<resources>
+    <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
+    <string name="result_poster_img_des">ملصق</string>
+    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="episode_poster_img_des">ملصق الحلقة</string>
+    <string name="home_main_poster_img_des">الملصق الرئيسي</string>
+    <string name="home_next_random_img_des">التالي عشوائي</string>
+    <string name="go_back_img_des">ارجع للخلف</string>
+    <string name="home_change_provider_img_des">تغيير المصدر</string>
+    <string name="preview_background_img_des">معاينة الخلفية</string>
+
+    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
+    <string name="player_speed_text_format" formatted="true">سرعة (%.2fx)</string>
+    <string name="rated_format" formatted="true">Rated: %.1f</string>
+    <string name="new_update_format" formatted="true">!تم إيجاد تحديث جديد\n%s -> %s</string>
+    <string name="filler_format" formatted="true">(Filler) %s</string>
+
+    <string name="app_name">CloudStream</string>
+    <string name="title_home">الصفحة الرئيسية</string>
+    <string name="title_search">بحث</string>
+    <string name="title_downloads">التحميلات</string>
+    <string name="title_settings">الإعدادات</string>
+
+    <string name="search_hint">…بحث</string>	
+    <string name="no_data">لايوجد بيانات</string>
+    <string name="episode_more_options_des">المزيد من الخيارات</string>
+    <string name="next_episode">الحلقة القادمة</string>
+    <string name="result_tags">الأنواع</string>
+    <string name="result_share">شارك</string>
+    <string name="result_open_in_browser">فتح في البروسر</string>
+    <string name="skip_loading">تخطي التحميل</string>
+    <string name="loading_chromecast">…تحميل</string>
+
+    <string name="type_watching">مشاهدة</string>
+    <string name="type_on_hold">في الانتظار</string>
+    <string name="type_completed">مكتمل</string>
+    <string name="type_dropped">إسقاط</string>
+    <string name="type_plan_to_watch">تخطط للمشاهدة</string>
+    <string name="type_none">لا شيء</string>
+
+    <string name="play_movie_button">تشغيل الفيلم</string>
+    <string name="play_torrent_button">تشغيل التورنت</string>
+    <string name="pick_source">المصادر</string>
+    <string name="pick_subtitle">الترجمة</string>
+    <string name="reload_error">…إعادة محاولة الاتصال</string>
+    <string name="result_go_back">ارجع للخلف</string>
+    <string name="play_episode">تشغيل الحلقة</string>
+    <!--<string name="need_storage">السماح بتحميل الحلقات</string>-->
+
+    <string name="download">تحميل</string>
+    <string name="downloaded">تم التنزيل</string>
+    <string name="downloading">جارى التحميل</string>
+    <string name="download_paused">توقف التنزيل مؤقتًا</string>
+    <string name="download_started">بدأ التنزيل</string>
+    <string name="download_failed">التحميل فشل</string>
+    <string name="download_canceled">تم إلغاء التنزيل</string>
+    <string name="download_done">تنزيل تم</string>
+
+    <string name="error_loading_links_toast">خطأ في تحميل الرابط</string>
+    <string name="download_storage_text">التخزين الداخلي</string>
+
+    <string name="app_dubbed_text">دبلجة</string>
+    <string name="app_subbed_text">مترجمة</string>
+
+    <string name="popup_delete_file">حذف ملف</string>
+    <string name="popup_play_file">حذف ملف</string>
+    <string name="popup_resume_download">متابعة التنزيل</string>
+    <string name="popup_pause_download">إيقاف التنزيل مؤقتًا</string>
+
+    <string name="pref_disable_acra">قم بتعطيل الإبلاغ عن الأخطاء تلقائيًا</string>
+    <string name="home_more_info">مزيد من المعلومات</string>
+    <string name="home_expanded_hide">إخفاء</string>
+    <string name="home_play">العب=</string>
+    <string name="home_info">معلومات</string>
+    <string name="filter_bookmarks">تصفية المواقع المفضلة</string>
+    <string name="error_bookmarks_text">إشارات مرجعية</string>
+    <string name="action_remove_from_bookmarks">حذف</string>
+    <string name="sort_apply">تطبيق</string>
+    <string name="sort_cancel">إلغاء</string>
+    <string name="player_speed">سرعة اللاعب</string>
+
+    <string name="subtitles_settings">إعدادات الترجمة</string>
+    <string name="subs_text_color">لون الخط</string>
+    <string name="subs_outline_color">لون المخطط التفصيلي</string>
+    <string name="subs_background_color">لون الخلفية</string>
+    <string name="subs_window_color">لون النافذة</string>
+    <string name="subs_edge_type">نوع الحافة</string>
+    <string name="subs_subtitle_elevation">ارتفاع الترجمة</string>
+    <string name="subs_font">الخط</string>
+    <string name="subs_font_size">حجم الخط</string>
+
+    <string name="search_provider_text_providers">ابحث باستخدام المصادر</string>
+    <string name="search_provider_text_types">البحث باستخدام الأنواع</string>
+
+    <string name="benene_count_text">%d البنينيس المعطاة الى المطورين</string>
+    <string name="benene_count_text_none">لم يتم إعطاء بنين</string>
+
+    <string name="subs_auto_select_language">تحديد اللغة تلقائيًا</string>
+    <string name="subs_download_languages">تحميل اللغات</string>
+    <string name="subs_hold_to_reset_to_default">اضغط بإستمرار لإعادة التعيين</string>
+    <string name="continue_watching">استمر في المشاهدة</string>
+
+    <string name="action_remove_watching">حذف</string>
+    <string name="action_open_watching">مزيد من المعلومات</string>
+
+    <string name="vpn_might_be_needed">قد تكون هناك حاجة إلى شبكة ظاهرية خاصة لكي يعمل هذا المزود بشكل صحيح</string>
+    <string name="vpn_torrent">هذا المزود هو تورنت ، يوصى باستخدام  شبكة ظاهرية خاصة</string>
+    <string name="torrent_plot">الوصف</string>
+    <string name="normal_no_plot">لم يتم العثور على قطعة</string>
+    <string name="torrent_no_plot">لم يتم العثور على وصف</string>
+
+    <string name="picture_in_picture">صورة داخل صورة</string>
+    <string name="picture_in_picture_des">يستمر في التشغيل في مشغل مصغر فوق التطبيقات الأخرى</string>
+    <string name="player_size_settings">زر تغيير حجم اللاعب</string>
+    <string name="player_size_settings_des">قم بإزالة الحدود السوداء</string>
+    <string name="player_subtitles_settings">الترجمة</string>
+    <string name="player_subtitles_settings_des">إعدادات ترجمة اللاعب</string>
+    <string name="eigengraumode_settings">وضع إيغنغرافي</string>
+    <string name="eigengraumode_settings_des">يضيف خيار السرعة في اللاعب</string>
+    <string name="swipe_to_seek_settings">اسحب للسعي</string>
+    <string name="swipe_to_seek_settings_des">اسحب إلى اليسار أو اليمين للتحكم في الوقت في مشغل الفيديو</string>
+    <string name="swipe_to_change_settings">اسحب لتغيير الإعدادات</string>
+    <string name="swipe_to_change_settings_des">اسحب على الجانب الأيسر أو الأيمن لتغيير السطوع أو مستوى الصوت</string>
+    <string name="double_tap_to_seek_settings">انقر مرتين  للسعي للأمام أو للخلف</string>
+    <string name="double_tap_to_seek_settings_des">اضغط مرتين على الجانب الأيمن أو الأيسر للسعي للأمام أو للخلف	</string>
+    <string name="use_system_brightness_settings">استخدم سطوع النظام</string>
+    <string name="use_system_brightness_settings_des">استخدم سطوع النظام في مشغل التطبيق بدلاً من التراكب الداكن</string>
+
+    <string name="search">بحث</string>
+    <string name="settings_info">معلومات</string>
+    <string name="advanced_search">البحث المتقدم</string>
+    <string name="advanced_search_des">يعطيك نتائج البحث مفصولة عن طريق مزود</string>
+    <string name="bug_report_settings_off">إرسال البيانات عن الأعطال فقط</string>
+    <string name="bug_report_settings_on">لا ترسل أي بيانات</string>
+    <string name="show_fillers_settings">عرض حلقة حشو لأنيمي</string>
+    <string name="updates_settings">إظهار تحديثات التطبيق</string>
+    <string name="updates_settings_des">ابحث تلقائيًا عن التحديثات الجديدة عند البداية</string>
+    <string name="uprereleases_settings">التحديث إلى ما قبل الإصدارات</string>
+    <string name="uprereleases_settings_des">ابحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
+    <string name="github">Github</string>
+    <string name="lightnovel">تطبيق رواية خفيف من نفس المطورين</string>
+    <string name="anim">تطبيق Anime من نفس المطورين</string>
+    <string name="discord">انضم إلى إل ديسكورد</string>
+    <string name="benene">أعط موزة للمطورين</string>
+    <string name="benene_des">أعط الموز</string>
+
+    <string name="app_language">لغة التطبيق</string>
+
+    <string name="no_chomecast_support_toast">ChromeCast هذا المزود ليس لديه دعم</string>
+    <string name="no_links_found_toast">لم يتم العثور على روابط</string>
+    <string name="copy_link_toast">تم نسخ الرابط إلى الحافظة</string>
+    <string name="play_episode_toast">تشغيل الحلقة</string>
+    <string name="subs_default_reset_toast">إعادة التعيين إلى القيمة الافتراضية</string>
+    <string name="acra_report_toast">عذرا ، تعطل التطبيق. سيتم إرسال تقرير خطأ مجهول إلى المطورين</string>
+    <string name="season">موسم</string>
+    <string name="no_season">لا موسم</string>
+    <string name="episode">حلقة</string>
+    <string name="episodes">الحلقات</string>
+    <string name="season_short">س</string>
+    <string name="episode_short">ه</string>
+
+    <string name="delete_file">حذف ملف</string>
+    <string name="delete">حذف</string>
+    <string name="cancel" translatable="false">@string/sort_cancel</string>
+    <string name="pause">إيقاف مؤقت</string>
+    <string name="resume">أكمل</string>
+    <string name="delete_message">This will permanently delete %s\nAre you sure?</string>
+
+    <string name="status_ongoing">جاري التنفيذ</string>
+    <string name="status_completed">اكتمل</string>
+    <string name="status">الحالة</string>
+    <string name="year">سنة</string>
+    <string name="rating">تقييم</string>
+    <string name="duration">المدة الزمنية</string>
+    <string name="site">موقع</string>
+    <string name="synopsis">ملخص</string>
+
+    <string name="queued">في قائمة الانتظار</string>
+    <string name="no_subtitles">الترجمة ليست موجودة</string>
+    <string name="default_subtitles">الإفتراضي</string>
+
+    <string name="free_storage">حر</string>
+    <string name="used_storage">مستخدم</string>
+    <string name="app_storage">تطبيق</string>
+
+    <string name="movies">أفلام</string>
+    <string name="tv_series">مسلسل تلفزيونى</string>
+    <string name="cartoons">رسوم متحركة</string>
+    <string name="anime">انمي</string>
+    <string name="torrent">تورنت</string>
+
+    <string name="source_error">خطأ في المصدر</string>
+    <string name="remote_error">خطأ بعيد</string>
+    <string name="render_error">خطأ في جهاز العرض</string>
+    <string name="unexpected_error">خطأ غير متوقع في اللاعب</string>
+    <string name="storage_error">خطأ في التنزيل ، تحقق من أذونات التخزين</string>
+
+    <string name="episode_action_chomecast_episode">Chromecast حلقة</string>
+    <string name="episode_action_chomecast_mirror">Chromecast مرآة</string>
+    <string name="episode_action_play_in_app">العب في التطبيق</string>
+    <string name="episode_action_play_in_vlc">VLC العب في</string>
+    <string name="episode_action_play_in_browser">العب في البروسر</string>
+    <string name="episode_action_copy_link">انسخ الرابط</string>
+    <string name="episode_action_auto_download">التحميل التلقائي</string>
+    <string name="episode_action_download_mirror">تحميل المرآة</string>
+    <string name="episode_action_reload_links">إعادة تحميل الروابط</string>
+
+    <string name="no_update_found">لم يتم العثور على تحديث</string>
+    <string name="check_for_update">تحقق من التحديثات</string>
+
+    <string name="video_lock">قفل</string>
+    <string name="video_aspect_ratio_resize">تغيير الحجم</string>
+    <string name="video_source">مصدر</string>
+    <string name="video_skip_op">OP تخطي</string>
+
+    <string name="dont_show_again">لا تظهر مرة أخرى</string>
+    <string name="update">تحديث</string>
+    <string name="watch_quality_pref">جودة المشاهدة المفضلة</string>
+    <string name="dns_pref">DNS فوق HTTPS</string>
+    <string name="dns_pref_summary">مفيد لتجاوز كتل مزود خدمة الإنترنت</string>
+	
+    <string name="display_subbed_dubbed_settings">عرض أنمي مدبلج / مترجم</string>
+
+    <string name="resize_fit">تناسب الشاشة</string>
+    <string name="resize_fill">امتداد</string>
+    <string name="resize_zoom">تكبير</string>
+
+    <string name="general">عام</string>
+    <string name="provider_lang_settings">لغات الموفر</string>
+</resources>
