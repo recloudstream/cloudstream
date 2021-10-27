@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:background="?attr/primaryBlackBackground"
         android:layout_height="match_parent">
 
+    <!--
+       app:thumbTint="@color/toggle_selector"
+       app:trackTint="@color/toggle_selector"-->
     <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/toggle1"
 
@@ -15,7 +18,8 @@
             android:paddingEnd="20dp"
             android:textStyle="bold"
             android:textSize="20sp"
-            
+            app:useMaterialThemeColors="false"
+
             android:textColor="?attr/textColor"
             tools:text="Search"
             android:layout_width="match_parent"

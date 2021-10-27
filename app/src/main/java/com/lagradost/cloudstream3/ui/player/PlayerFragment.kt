@@ -136,6 +136,9 @@ enum class PlayerEventType(val value: Int) {
     ToggleMute(8),
     Lock(9),
     ToggleHide(10),
+    ShowSpeed(11),
+    ShowMirrors(12),
+    Resize(13),
 }
 
 /*
@@ -404,7 +407,7 @@ class PlayerFragment : Fragment() {
 
     private fun onClickChange() {
         isShowing = !isShowing
-
+        activity?.hideSystemUI()
         updateClick()
     }
 
@@ -821,37 +824,45 @@ class PlayerFragment : Fragment() {
     private var localData: LoadResponse? = null
 
     private fun toggleLock() {
-        if(!isShowing) {
+        if (!isShowing) {
             onClickChange()
         }
 
         isLocked = !isLocked
+        if(isLocked && isShowing) {
+            player_pause_holder?.postDelayed({
+                if (isLocked && isShowing) {
+                    onClickChange()
+                }
+            }, 200)
+        }
+
         //if(isShowing) {
-            val fadeTo = if (isLocked) 0f else 1f
+        val fadeTo = if (isLocked) 0f else 1f
 
-            val fadeAnimation = AlphaAnimation(video_title.alpha, fadeTo)
-            fadeAnimation.duration = 100
-            //   fadeAnimation.startOffset = 100
-            fadeAnimation.fillAfter = true
+        val fadeAnimation = AlphaAnimation(video_title.alpha, fadeTo)
+        fadeAnimation.duration = 100
+        //   fadeAnimation.startOffset = 100
+        fadeAnimation.fillAfter = true
 
-            // MENUS
-            //centerMenu.startAnimation(fadeAnimation)
-            player_pause_holder?.startAnimation(fadeAnimation)
-            player_ffwd_holder?.startAnimation(fadeAnimation)
-            player_rew_holder?.startAnimation(fadeAnimation)
-            player_media_route_button?.startAnimation(fadeAnimation)
-            //video_bar.startAnimation(fadeAnimation)
+        // MENUS
+        //centerMenu.startAnimation(fadeAnimation)
+        player_pause_holder?.startAnimation(fadeAnimation)
+        player_ffwd_holder?.startAnimation(fadeAnimation)
+        player_rew_holder?.startAnimation(fadeAnimation)
+        player_media_route_button?.startAnimation(fadeAnimation)
+        //video_bar.startAnimation(fadeAnimation)
 
-            //TITLE
-            video_title_rez.startAnimation(fadeAnimation)
-            video_title.startAnimation(fadeAnimation)
+        //TITLE
+        video_title_rez.startAnimation(fadeAnimation)
+        video_title.startAnimation(fadeAnimation)
 
-            // BOTTOM
-            lock_holder.startAnimation(fadeAnimation)
-            video_go_back_holder2.startAnimation(fadeAnimation)
+        // BOTTOM
+        lock_holder.startAnimation(fadeAnimation)
+        video_go_back_holder2.startAnimation(fadeAnimation)
 
-            shadow_overlay.startAnimation(fadeAnimation)
-       // }
+        shadow_overlay.startAnimation(fadeAnimation)
+        // }
 
         updateLock()
     }
@@ -1015,6 +1026,9 @@ class PlayerFragment : Fragment() {
                         skipToNextEpisode()
                     }
                 }
+                PlayerEventType.PrevEpisode.value -> {
+                    //TODO PrevEpisode
+                }
                 PlayerEventType.Lock.value -> {
                     toggleLock()
                 }
@@ -1029,6 +1043,128 @@ class PlayerFragment : Fragment() {
                         // is not muted
                         lastMuteVolume = exoPlayer.volume
                         exoPlayer.volume = 0f
+                    }
+                }
+                PlayerEventType.Resize.value -> {
+                    resizeMode = (resizeMode + 1) % resizeModes.size
+
+                    context?.setKey(RESIZE_MODE_KEY, resizeMode)
+                    player_view?.resizeMode = resizeModes[resizeMode].first
+                    showToast(activity, resizeModes[resizeMode].second, LENGTH_SHORT)
+                }
+                PlayerEventType.ShowSpeed.value -> {
+                    val speedsText = listOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x")
+                    val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
+                    val speedIndex = speedsNumbers.indexOf(playbackSpeed)
+
+                    context?.let { ctx ->
+                        ctx.showDialog(speedsText, speedIndex, ctx.getString(R.string.player_speed), false, {
+                            activity?.hideSystemUI()
+                        }) { index ->
+                            playbackSpeed = speedsNumbers[index]
+                            requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
+                            val param = PlaybackParameters(playbackSpeed)
+                            exoPlayer.playbackParameters = param
+                            player_speed_text?.text =
+                                getString(R.string.player_speed_text_format).format(playbackSpeed).replace(".0x", "x")
+                        }
+                    }
+                }
+                PlayerEventType.ShowMirrors.value -> {
+                    if (!this::exoPlayer.isInitialized) return
+                    context?.let { ctx ->
+                        //val isPlaying = exoPlayer.isPlaying
+                        exoPlayer.pause()
+                        val currentSubtitles = activeSubtitles
+
+                        val sourceBuilder = AlertDialog.Builder(ctx, R.style.AlertDialogCustomBlack)
+                            .setView(R.layout.player_select_source_and_subs)
+
+                        val sourceDialog = sourceBuilder.create()
+                        sourceDialog.show()
+                        //  bottomSheetDialog.setContentView(R.layout.sort_bottom_sheet)
+                        val providerList = sourceDialog.findViewById<ListView>(R.id.sort_providers)!!
+                        val subtitleList = sourceDialog.findViewById<ListView>(R.id.sort_subtitles)!!
+                        val applyButton = sourceDialog.findViewById<MaterialButton>(R.id.apply_btt)!!
+                        val cancelButton = sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
+                        val subsSettings = sourceDialog.findViewById<View>(R.id.subs_settings)!!
+
+                        subsSettings.setOnClickListener {
+                            saveArguments()
+                            SubtitlesFragment.push(activity)
+                            sourceDialog.dismiss()
+                        }
+                        var sourceIndex = 0
+                        var startSource = 0
+                        var sources: List<ExtractorLink> = emptyList()
+
+                        val nonSortedUrls = getUrls()
+                        if (nonSortedUrls.isNullOrEmpty()) {
+                            sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.visibility = GONE
+                        } else {
+                            sources = sortUrls(nonSortedUrls)
+                            startSource = sources.indexOf(getCurrentUrl())
+                            sourceIndex = startSource
+
+                            val sourcesArrayAdapter =
+                                ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+                            sourcesArrayAdapter.addAll(sources.map { it.name })
+
+                            providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                            providerList.adapter = sourcesArrayAdapter
+                            providerList.setSelection(sourceIndex)
+                            providerList.setItemChecked(sourceIndex, true)
+
+                            providerList.setOnItemClickListener { _, _, which, _ ->
+                                sourceIndex = which
+                                providerList.setItemChecked(which, true)
+                            }
+
+                            sourceDialog.setOnDismissListener {
+                                activity?.hideSystemUI()
+                            }
+                        }
+
+                        val startIndexFromMap =
+                            currentSubtitles.map { it.removeSuffix(" ") }
+                                .indexOf(preferredSubtitles.removeSuffix(" ")) + 1
+                        var subtitleIndex = startIndexFromMap
+
+                        if (currentSubtitles.isEmpty()) {
+                            sourceDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility = GONE
+                        } else {
+                            val subsArrayAdapter =
+                                ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+                            subsArrayAdapter.add(getString(R.string.no_subtitles))
+                            subsArrayAdapter.addAll(currentSubtitles)
+
+                            subtitleList.adapter = subsArrayAdapter
+                            subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+
+                            subtitleList.setSelection(subtitleIndex)
+                            subtitleList.setItemChecked(subtitleIndex, true)
+
+                            subtitleList.setOnItemClickListener { _, _, which, _ ->
+                                subtitleIndex = which
+                                subtitleList.setItemChecked(which, true)
+                            }
+                        }
+
+                        cancelButton.setOnClickListener {
+                            sourceDialog.dismiss()
+                        }
+
+                        applyButton.setOnClickListener {
+                            if (sourceIndex != startSource) {
+                                playbackPosition = if (this::exoPlayer.isInitialized) exoPlayer.currentPosition else 0
+                                setMirrorId(sources[sourceIndex].getId())
+                                initPlayer(getCurrentUrl())
+                            }
+                            if (subtitleIndex != startIndexFromMap) {
+                                setPreferredSubLanguage(if (subtitleIndex <= 0) null else currentSubtitles[subtitleIndex - 1])
+                            }
+                            sourceDialog.dismiss()
+                        }
                     }
                 }
             }
@@ -1367,7 +1503,7 @@ class PlayerFragment : Fragment() {
         }
 
         lock_player?.setOnClickListener {
-            toggleLock()
+            handlePlayerEvent(PlayerEventType.Lock)
         }
 
         class Listener : DoubleClickListener(this) {
@@ -1386,8 +1522,7 @@ class PlayerFragment : Fragment() {
             }
 
             override fun onSingleClick() {
-                onClickChange()
-                activity?.hideSystemUI()
+                handlePlayerEvent(PlayerEventType.ToggleHide)
             }
 
             override fun onMotionEvent(event: MotionEvent) {
@@ -1415,132 +1550,18 @@ class PlayerFragment : Fragment() {
 
         playback_speed_btt?.isVisible = playBackSpeedEnabled
         playback_speed_btt?.setOnClickListener {
-            val speedsText = listOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x")
-            val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
-            val speedIndex = speedsNumbers.indexOf(playbackSpeed)
-
-            context?.showDialog(speedsText, speedIndex, getString(R.string.player_speed), false, {
-                activity?.hideSystemUI()
-            }) { index ->
-                playbackSpeed = speedsNumbers[index]
-                requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
-                val param = PlaybackParameters(playbackSpeed)
-                exoPlayer.playbackParameters = param
-                player_speed_text?.text =
-                    getString(R.string.player_speed_text_format).format(playbackSpeed).replace(".0x", "x")
-            }
+            handlePlayerEvent(PlayerEventType.ShowSpeed)
         }
 
         sources_btt.setOnClickListener {
-            if (!this::exoPlayer.isInitialized) return@setOnClickListener
-            //val isPlaying = exoPlayer.isPlaying
-            exoPlayer.pause()
-            val currentSubtitles = activeSubtitles
-
-            val sourceBuilder = AlertDialog.Builder(view.context, R.style.AlertDialogCustomBlack)
-                .setView(R.layout.player_select_source_and_subs)
-
-            val sourceDialog = sourceBuilder.create()
-            sourceDialog.show()
-            //  bottomSheetDialog.setContentView(R.layout.sort_bottom_sheet)
-            val providerList = sourceDialog.findViewById<ListView>(R.id.sort_providers)!!
-            val subtitleList = sourceDialog.findViewById<ListView>(R.id.sort_subtitles)!!
-            val applyButton = sourceDialog.findViewById<MaterialButton>(R.id.apply_btt)!!
-            val cancelButton = sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
-            val subsSettings = sourceDialog.findViewById<View>(R.id.subs_settings)!!
-
-            subsSettings.setOnClickListener {
-                saveArguments()
-                SubtitlesFragment.push(activity)
-                sourceDialog.dismiss()
-            }
-            var sourceIndex = 0
-            var startSource = 0
-            var sources: List<ExtractorLink> = emptyList()
-
-            val nonSortedUrls = getUrls()
-            if (nonSortedUrls.isNullOrEmpty()) {
-                sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.visibility = GONE
-            } else {
-                sources = sortUrls(nonSortedUrls)
-                startSource = sources.indexOf(getCurrentUrl())
-                sourceIndex = startSource
-
-                val sourcesArrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
-                sourcesArrayAdapter.addAll(sources.map { it.name })
-
-                providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-                providerList.adapter = sourcesArrayAdapter
-                providerList.setSelection(sourceIndex)
-                providerList.setItemChecked(sourceIndex, true)
-
-                providerList.setOnItemClickListener { _, _, which, _ ->
-                    sourceIndex = which
-                    providerList.setItemChecked(which, true)
-                }
-
-                sourceDialog.setOnDismissListener {
-                    activity?.hideSystemUI()
-                }
-            }
-
-            val startIndexFromMap =
-                currentSubtitles.map { it.removeSuffix(" ") }.indexOf(preferredSubtitles.removeSuffix(" ")) + 1
-            var subtitleIndex = startIndexFromMap
-
-            if (currentSubtitles.isEmpty()) {
-                sourceDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility = GONE
-            } else {
-                val subsArrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
-                subsArrayAdapter.add(getString(R.string.no_subtitles))
-                subsArrayAdapter.addAll(currentSubtitles)
-
-                subtitleList.adapter = subsArrayAdapter
-                subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-
-                subtitleList.setSelection(subtitleIndex)
-                subtitleList.setItemChecked(subtitleIndex, true)
-
-                subtitleList.setOnItemClickListener { _, _, which, _ ->
-                    subtitleIndex = which
-                    subtitleList.setItemChecked(which, true)
-                }
-            }
-
-            cancelButton.setOnClickListener {
-                sourceDialog.dismiss()
-            }
-
-            applyButton.setOnClickListener {
-                if (sourceIndex != startSource) {
-                    playbackPosition = if (this::exoPlayer.isInitialized) exoPlayer.currentPosition else 0
-                    setMirrorId(sources[sourceIndex].getId())
-                    initPlayer(getCurrentUrl())
-                } /*else {
-                    if (isPlaying) {
-                        // exoPlayer.play()
-                    }
-                }*/
-
-                if (subtitleIndex != startIndexFromMap) {
-                    setPreferredSubLanguage(if (subtitleIndex <= 0) null else currentSubtitles[subtitleIndex - 1])
-                }
-                sourceDialog.dismiss()
-            }
+            handlePlayerEvent(PlayerEventType.ShowMirrors)
         }
 
         player_view?.resizeMode = resizeModes[resizeMode].first
         if (playerResizeEnabled) {
             resize_player?.visibility = VISIBLE
             resize_player?.setOnClickListener {
-                resizeMode = (resizeMode + 1) % resizeModes.size
-
-                requireContext().setKey(RESIZE_MODE_KEY, resizeMode)
-                player_view?.resizeMode = resizeModes[resizeMode].first
-                activity?.let { act ->
-                    showToast(act, resizeModes[resizeMode].second, LENGTH_SHORT)
-                }
-                //exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+                handlePlayerEvent(PlayerEventType.Resize)
             }
         } else {
             resize_player?.visibility = GONE
@@ -1551,9 +1572,7 @@ class PlayerFragment : Fragment() {
         }
 
         skip_episode?.setOnClickListener {
-            if (hasNextEpisode()) {
-                skipToNextEpisode()
-            }
+            handlePlayerEvent(PlayerEventType.NextEpisode)
         }
 
         changeSkip()

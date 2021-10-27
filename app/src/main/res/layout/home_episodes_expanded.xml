@@ -18,12 +18,7 @@
         <requestFocus/>
         <TextView
                 android:id="@+id/home_expanded_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/textColor"
-                android:gravity="center_vertical"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                style="@style/WatchHeaderText"
                 tools:text="Trending"
         />
         <ImageView

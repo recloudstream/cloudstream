@@ -219,7 +219,8 @@
                             android:text="@string/home_play"
 
                             app:icon="@drawable/ic_baseline_play_arrow_24"
-                            android:layout_width="120dp">
+                            android:minWidth="120dp"
+                            android:layout_width="wrap_content">
                     </com.google.android.material.button.MaterialButton>
                     <com.google.android.material.button.MaterialButton
                             android:nextFocusLeft="@id/home_main_play"
@@ -236,7 +237,9 @@
                             android:id="@+id/home_main_info"
                             android:clickable="true"
                             android:focusable="true"
-                            android:layout_width="120dp">
+
+                            android:minWidth="120dp"
+                            android:layout_width="wrap_content">
                     </com.google.android.material.button.MaterialButton>
                 </LinearLayout>
             </LinearLayout>
@@ -261,12 +264,7 @@
                     <TextView
                             android:layout_gravity="center_vertical"
                             android:id="@+id/home_watch_parent_item_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="?attr/textColor"
-                            android:gravity="center_vertical"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
+                            style="@style/WatchHeaderText"
                             android:text="@string/continue_watching"
                     />
                     <ImageView
@@ -321,12 +319,7 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="40dp"
                             android:id="@+id/home_bookmarked_parent_item_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="?attr/textColor"
-                            android:gravity="center_vertical"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
+                            style="@style/WatchHeaderText"
                             tools:text="Bookmarked"
                     />
                     <ImageView

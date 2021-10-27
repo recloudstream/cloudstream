@@ -150,6 +150,16 @@
         <item name="drawableEndCompat">@drawable/ic_baseline_keyboard_arrow_right_24</item>
     </style>
 
+    <style name="WatchHeaderText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/textColor</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_marginEnd">50dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="NiceButton">
         <item name="android:padding">5dp</item>
         <item name="android:layout_marginStart">5dp</item>
@@ -195,11 +205,11 @@
         <item name="castControlButtons">
             @array/cast_expanded_controller_control_buttons
         </item>
-       <!-- <item name="castButtonColor">@null</item>
+        <!-- <item name="castButtonColor">@null</item>
 
-        <item name="castSeekBarSecondaryProgressColor">@color/darkBar
-        </item>
-        -->
+         <item name="castSeekBarSecondaryProgressColor">@color/darkBar
+         </item>
+         -->
         <item name="castSeekBarProgressAndThumbColor">?attr/colorPrimary</item>
         <item name="castBackground">?attr/colorPrimary</item>
         <item name="castProgressBarColor">?attr/colorPrimary</item>

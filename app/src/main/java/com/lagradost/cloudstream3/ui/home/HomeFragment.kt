@@ -223,7 +223,7 @@ class HomeFragment : Fragment() {
                     Pair(R.string.anime, listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie)),
                     Pair(R.string.torrent, listOf(TvType.Torrent)),
                 ).filter { item -> currentApi.supportedTypes.any { type -> item.second.contains(type) } }
-                home_provider_meta_info?.text = typeChoices.joinToString(separator = " ") { getString(it.first) }
+                home_provider_meta_info?.text = typeChoices.joinToString(separator = ", ") { getString(it.first) }
                 home_provider_meta_info?.isVisible = true
             }
         }

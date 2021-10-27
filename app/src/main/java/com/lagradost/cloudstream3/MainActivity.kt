@@ -137,12 +137,27 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        println("Keycode: $keyCode")
+        //println("Keycode: $keyCode")
+        //showToast(
+        //    this,
+        //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
+        //    Toast.LENGTH_LONG
+        //)
+
+        // Tested keycodes on remote:
+        // KeyEvent.KEYCODE_MEDIA_FAST_FORWARD
+        // KeyEvent.KEYCODE_MEDIA_REWIND
+        // KeyEvent.KEYCODE_MENU
+        // KeyEvent.KEYCODE_MEDIA_NEXT
+        // KeyEvent.KEYCODE_MEDIA_PREVIOUS
+        // KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
+
+        // 149 keycode_numpad 5
         when (keyCode) {
-            KeyEvent.KEYCODE_FORWARD, KeyEvent.KEYCODE_D, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD -> {
+            KeyEvent.KEYCODE_FORWARD, KeyEvent.KEYCODE_D, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
                 PlayerEventType.SeekForward
             }
-            KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_A, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD -> {
+            KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_A, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD, KeyEvent.KEYCODE_MEDIA_REWIND -> {
                 PlayerEventType.SeekBack
             }
             KeyEvent.KEYCODE_MEDIA_NEXT -> {
@@ -157,14 +172,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             KeyEvent.KEYCODE_MEDIA_PLAY -> {
                 PlayerEventType.Play
             }
-            KeyEvent.KEYCODE_L -> {
+            KeyEvent.KEYCODE_L, KeyEvent.KEYCODE_NUMPAD_7 -> {
                 PlayerEventType.Lock
             }
-            KeyEvent.KEYCODE_H -> {
+            KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_MENU -> {
                 PlayerEventType.ToggleHide
             }
-            KeyEvent.KEYCODE_M -> {
+            KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_VOLUME_MUTE -> {
                 PlayerEventType.ToggleMute
+            }
+            KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9 -> {
+                PlayerEventType.ShowMirrors
+            }
+            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3  -> {
+                PlayerEventType.ShowSpeed
+            }
+            KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0 -> {
+                PlayerEventType.Resize
             }
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE -> { // space is not captured due to navigation
                 PlayerEventType.PlayPauseToggle
