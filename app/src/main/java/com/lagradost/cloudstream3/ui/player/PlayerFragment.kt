@@ -131,7 +131,11 @@ enum class PlayerEventType(val value: Int) {
     SeekBack(3),
     SkipCurrentChapter(4),
     NextEpisode(5),
-    PlayPauseToggle(6)
+    PrevEpisode(5),
+    PlayPauseToggle(7),
+    ToggleMute(8),
+    Lock(9),
+    ToggleHide(10),
 }
 
 /*
@@ -335,9 +339,7 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun onClickChange() {
-        isShowing = !isShowing
-
+    private fun updateClick() {
         click_overlay?.isVisible = !isShowing
 
         val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
@@ -398,6 +400,12 @@ class PlayerFragment : Fragment() {
         //player_torrent_info?.isVisible = (isTorrent && isShowing)
         //  player_torrent_info?.startAnimation(fadeAnimation)
         //video_lock_holder?.startAnimation(fadeAnimation)
+    }
+
+    private fun onClickChange() {
+        isShowing = !isShowing
+
+        updateClick()
     }
 
     private fun forceLetters(inp: Int, letters: Int = 2): String {
@@ -812,6 +820,42 @@ class PlayerFragment : Fragment() {
 
     private var localData: LoadResponse? = null
 
+    private fun toggleLock() {
+        if(!isShowing) {
+            onClickChange()
+        }
+
+        isLocked = !isLocked
+        //if(isShowing) {
+            val fadeTo = if (isLocked) 0f else 1f
+
+            val fadeAnimation = AlphaAnimation(video_title.alpha, fadeTo)
+            fadeAnimation.duration = 100
+            //   fadeAnimation.startOffset = 100
+            fadeAnimation.fillAfter = true
+
+            // MENUS
+            //centerMenu.startAnimation(fadeAnimation)
+            player_pause_holder?.startAnimation(fadeAnimation)
+            player_ffwd_holder?.startAnimation(fadeAnimation)
+            player_rew_holder?.startAnimation(fadeAnimation)
+            player_media_route_button?.startAnimation(fadeAnimation)
+            //video_bar.startAnimation(fadeAnimation)
+
+            //TITLE
+            video_title_rez.startAnimation(fadeAnimation)
+            video_title.startAnimation(fadeAnimation)
+
+            // BOTTOM
+            lock_holder.startAnimation(fadeAnimation)
+            video_go_back_holder2.startAnimation(fadeAnimation)
+
+            shadow_overlay.startAnimation(fadeAnimation)
+       // }
+
+        updateLock()
+    }
+
     private fun updateLock() {
         video_locked_img.setImageResource(if (isLocked) R.drawable.video_locked else R.drawable.video_unlocked)
         val color = if (isLocked) ContextCompat.getColor(requireContext(), R.color.videoColorPrimary)
@@ -836,7 +880,7 @@ class PlayerFragment : Fragment() {
         resize_player?.isClickable = isClick
         exo_progress.isEnabled = isClick
         player_media_route_button?.isEnabled = isClick
-        if (isClick) {
+        if (isClick && isShowing) {
             player_pause_holder?.alpha = 1f
             player_rew_holder?.alpha = 1f
             player_ffwd_holder?.alpha = 1f
@@ -847,13 +891,8 @@ class PlayerFragment : Fragment() {
         // Clickable doesn't seem to work on com.google.android.exoplayer2.ui.DefaultTimeBar
         //exo_progress.visibility = if (isLocked) INVISIBLE else VISIBLE
 
-        val fadeTo = if (!isLocked) 1f else 0f
-        val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
 
-        fadeAnimation.duration = 100
-        fadeAnimation.fillAfter = true
-
-        shadow_overlay.startAnimation(fadeAnimation)
+        //updateClick()
     }
 
     private var resizeMode = 0
@@ -954,13 +993,47 @@ class PlayerFragment : Fragment() {
         handlePlayerEvent(event.value)
     }
 
+    var lastMuteVolume = 0f
+
     private fun handlePlayerEvent(event: Int) {
         if (!this::exoPlayer.isInitialized) return
-        when (event) {
-            PlayerEventType.Play.value -> exoPlayer.play()
-            PlayerEventType.Pause.value -> exoPlayer.pause()
-            PlayerEventType.SeekBack.value -> seekTime(-30000L)
-            PlayerEventType.SeekForward.value -> seekTime(30000L)
+        try {
+            when (event) {
+                PlayerEventType.Play.value -> exoPlayer.play()
+                PlayerEventType.Pause.value -> exoPlayer.pause()
+                PlayerEventType.SeekBack.value -> seekTime(-30000L)
+                PlayerEventType.SeekForward.value -> seekTime(30000L)
+                PlayerEventType.PlayPauseToggle.value -> {
+                    if (exoPlayer.isPlaying) {
+                        exoPlayer.pause()
+                    } else {
+                        exoPlayer.play()
+                    }
+                }
+                PlayerEventType.NextEpisode.value -> {
+                    if (hasNextEpisode()) {
+                        skipToNextEpisode()
+                    }
+                }
+                PlayerEventType.Lock.value -> {
+                    toggleLock()
+                }
+                PlayerEventType.ToggleHide.value -> {
+                    onClickChange()
+                }
+                PlayerEventType.ToggleMute.value -> {
+                    if (exoPlayer.volume <= 0) {
+                        //is muted
+                        exoPlayer.volume = lastMuteVolume
+                    } else {
+                        // is not muted
+                        lastMuteVolume = exoPlayer.volume
+                        exoPlayer.volume = 0f
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logError(e)
         }
     }
 //endregion
@@ -1294,31 +1367,7 @@ class PlayerFragment : Fragment() {
         }
 
         lock_player?.setOnClickListener {
-            isLocked = !isLocked
-            val fadeTo = if (isLocked) 0f else 1f
-
-            val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
-            fadeAnimation.duration = 100
-            //   fadeAnimation.startOffset = 100
-            fadeAnimation.fillAfter = true
-
-            // MENUS
-            //centerMenu.startAnimation(fadeAnimation)
-            player_pause_holder?.startAnimation(fadeAnimation)
-            player_ffwd_holder?.startAnimation(fadeAnimation)
-            player_rew_holder?.startAnimation(fadeAnimation)
-            player_media_route_button?.startAnimation(fadeAnimation)
-            //video_bar.startAnimation(fadeAnimation)
-
-            //TITLE
-            video_title_rez.startAnimation(fadeAnimation)
-            video_title.startAnimation(fadeAnimation)
-
-            // BOTTOM
-            lock_holder.startAnimation(fadeAnimation)
-            video_go_back_holder2.startAnimation(fadeAnimation)
-
-            updateLock()
+            toggleLock()
         }
 
         class Listener : DoubleClickListener(this) {
@@ -1765,7 +1814,10 @@ class PlayerFragment : Fragment() {
         }
         // player_torrent_info?.visibility = if(isTorrent) VISIBLE else GONE
         //
+
         isShowing = true
+        onClickChange()
+
         player_torrent_info?.isVisible = false
         //player_torrent_info?.alpha = 0f
         println("LOADED: ${uri} or ${currentUrl}")
@@ -1982,6 +2034,10 @@ class PlayerFragment : Fragment() {
             }*/
 
             //https://stackoverflow.com/questions/47731779/detect-pause-resume-in-exoplayer
+            MainActivity.playerEventListener = { eventType ->
+                handlePlayerEvent(eventType)
+            }
+
             exoPlayer.addListener(object : Player.Listener {
                 override fun onRenderedFirstFrame() {
                     super.onRenderedFirstFrame()
