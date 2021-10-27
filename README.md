@@ -14,6 +14,7 @@ https://discord.gg/5Hus6fM
 + Chromecast
 
 ***The list of supported languages:***
+* 🇱🇧 Arabic
 * 🇬🇧 English
 * 🇳🇱 Dutch
 * 🇫🇷 French
@@ -24,6 +25,8 @@ https://discord.gg/5Hus6fM
 * 🇮🇳 Hindi
 * 🇮🇳 Malayalam
 * 🇪🇸 Spanish
+* 🇳🇴 Norsk
+* 🇩🇪 German
 
 ***SCREENSHOTS:***
 
