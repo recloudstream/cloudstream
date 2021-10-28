@@ -49,6 +49,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 <!-- Do not remove those two comments -->
 <!--SITE LIST START-->
 - [gogoanime.vc](https://gogoanime.vc) 
+- [allanime.site](https://allanime.site) 
 - [animeflick.net](https://animeflick.net) 
 - [kawaiifu.com](https://kawaiifu.com) 
 - [tenshi.moe](https://tenshi.moe) 
