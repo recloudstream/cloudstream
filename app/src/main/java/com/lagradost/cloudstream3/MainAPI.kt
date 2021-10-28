@@ -28,6 +28,7 @@ object APIHolder {
 
     val apis = arrayListOf(
         GogoanimeProvider(),
+        AllAnimeProvider(),
         //ShiroProvider(), // v2 fucked me
         //AnimePaheProvider(), //ddos guard
         AnimeFlickProvider(),
