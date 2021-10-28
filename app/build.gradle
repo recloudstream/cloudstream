@@ -34,7 +34,7 @@ android {
         applicationId "com.lagradost.cloudstream3"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 31
+        versionCode 32
         versionName "2.1.2"
 
         resValue "string", "app_version",
@@ -141,8 +141,8 @@ dependencies {
     //implementation 'com.github.TorrentStream:TorrentStream-Android:2.7.0'
 
     // Downloading
-    implementation "androidx.work:work-runtime:2.7.0-rc01"
-    implementation "androidx.work:work-runtime-ktx:2.7.0-rc01"
+    implementation "androidx.work:work-runtime:2.7.0"
+    implementation "androidx.work:work-runtime-ktx:2.7.0"
 
     // Networking
     implementation "com.squareup.okhttp3:okhttp:4.9.1"
