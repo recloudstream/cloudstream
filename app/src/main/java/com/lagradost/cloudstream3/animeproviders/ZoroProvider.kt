@@ -250,7 +250,10 @@ class ZoroProvider : MainAPI() {
     private fun getM3u8FromRapidCloud(url: String): String {
         return get(
             "$url&autoPlay=1&oa=0",
-            headers = mapOf("Referer" to "https://zoro.to/", "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0"),
+            headers = mapOf(
+                "Referer" to "https://zoro.to/",
+                "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0"
+            ),
             interceptor = WebViewResolver(
                 Regex("""/getSources""")
             )
@@ -284,17 +287,35 @@ class ZoroProvider : MainAPI() {
                 Regex("""/getSources""")
             )
         )
+//        println("RES TEXT ${res.text}")
 
         val recaptchaToken = res.request.url.queryParameter("_token")
 
         val responses = servers.map {
             val link = "$mainUrl/ajax/v2/episode/sources?id=${it.second}&_token=$recaptchaToken"
-            Pair(it.first, getM3u8FromRapidCloud(mapper.readValue<RapidCloudResponse>(get(link, res.request.headers.toMap()).text).link))
+            Pair(
+                it.first,
+                getM3u8FromRapidCloud(
+                    mapper.readValue<RapidCloudResponse>(
+                        get(
+                            link,
+                            res.request.headers.toMap()
+                        ).text
+                    ).link
+                )
+            )
         }
 
         responses.forEach {
             if (it.second.contains("<html")) return@forEach
             val mapped = mapper.readValue<SflixProvider.SourceObject>(it.second)
+
+            mapped.tracks?.forEach { track ->
+                track?.toSubtitleFile()?.let { subtitleFile ->
+                    subtitleCallback.invoke(subtitleFile)
+                }
+            }
+
             val list = listOf(
                 mapped.sources to "source 1",
                 mapped.sources1 to "source 2",
@@ -305,12 +326,6 @@ class ZoroProvider : MainAPI() {
             list.forEach { subList ->
                 subList.first?.forEach { a ->
                     a?.toExtractorLink(this, subList.second + " - ${it.first}")?.forEach(callback)
-                }
-            }
-
-            mapped.tracks?.forEach { track ->
-                track?.toSubtitleFile()?.let { subtitleFile ->
-                    subtitleCallback.invoke(subtitleFile)
                 }
             }
         }

@@ -297,7 +297,11 @@ class SflixProvider : MainAPI() {
         ).text
 
         val mapped = mapper.readValue<SourceObject>(sources)
-
+        mapped.tracks?.forEach {
+            it?.toSubtitleFile()?.let { subtitleFile ->
+                subtitleCallback.invoke(subtitleFile)
+            }
+        }
         val list = listOf(
             mapped.sources to "source 1",
             mapped.sources1 to "source 2",
@@ -307,11 +311,6 @@ class SflixProvider : MainAPI() {
         list.forEach { subList ->
             subList.first?.forEach {
                 it?.toExtractorLink(this, subList.second)?.forEach(callback)
-            }
-        }
-        mapped.tracks?.forEach {
-            it?.toSubtitleFile()?.let { subtitleFile ->
-                subtitleCallback.invoke(subtitleFile)
             }
         }
         return true

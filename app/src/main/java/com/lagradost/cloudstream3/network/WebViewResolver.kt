@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.net.http.SslError
 import android.webkit.*
 import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import java.net.URI
 import java.util.concurrent.TimeUnit
 
 class WebViewResolver(val interceptUrl: Regex) : Interceptor {
@@ -48,6 +50,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
                 // Bare minimum to bypass captcha
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
+                settings.userAgentString = USER_AGENT
             }
 
             webView?.webViewClient = object : WebViewClient() {
@@ -56,6 +59,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
                     request: WebResourceRequest
                 ): WebResourceResponse? {
                     val webViewUrl = request.url.toString()
+//                    println("Loading WebView URL: $webViewUrl")
 
                     if (interceptUrl.containsMatchIn(webViewUrl)) {
                         fixedRequest = getRequestCreator(
@@ -70,12 +74,28 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
 
                         println("Web-view request finished: $webViewUrl")
                         destroyWebView()
+                        return null
                     }
 
+                    // Suppress image requests as we don't display them anywhere
+                    // Less data, low chance of causing issues.
+                    val blacklistedFiles = listOf(".jpg", ".png", ".webp", ".jpeg", ".webm", ".mp4")
+
+                    /** NOTE!  request.requestHeaders is not perfect!
+                     *  They don't contain all the headers the browser actually gives.
+                     *  Overriding with okhttp might fuck up otherwise working requests,
+                     *  e.g the recaptcha request.
+                     * **/
                     return try {
                         when {
-                            // suppress favicon requests as we don't display them anywhere
-                            webViewUrl.endsWith("/favicon.ico") -> WebResourceResponse("image/png", null, null)
+                            blacklistedFiles.any { URI(webViewUrl).path.endsWith(it) } || webViewUrl.endsWith(
+                                "/favicon.ico"
+                            ) -> WebResourceResponse(
+                                "image/png",
+                                null,
+                                null
+                            )
+
                             webViewUrl.contains("recaptcha") -> super.shouldInterceptRequest(view, request)
 
                             request.method == "GET" -> get(
