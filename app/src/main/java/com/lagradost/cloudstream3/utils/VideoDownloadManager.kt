@@ -348,7 +348,7 @@ object VideoDownloadManager {
                     // BECAUSE episodes lying near will have the same id +1, index will give the same requested as the previous episode, *100000 fixes this
                     context, (4337 + index * 100000 + ep.id),
                     actionResultIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
 
                 builder.addAction(

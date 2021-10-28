@@ -868,28 +868,28 @@ class PlayerFragment : Fragment() {
     }
 
     private fun updateLock() {
-        video_locked_img.setImageResource(if (isLocked) R.drawable.video_locked else R.drawable.video_unlocked)
+        video_locked_img?.setImageResource(if (isLocked) R.drawable.video_locked else R.drawable.video_unlocked)
         val color = if (isLocked) ContextCompat.getColor(requireContext(), R.color.videoColorPrimary)
         else Color.WHITE
 
-        video_locked_text.setTextColor(color)
-        video_locked_img.setColorFilter(color)
+        video_locked_text?.setTextColor(color)
+        video_locked_img?.setColorFilter(color)
 
         val isClick = !isLocked
 
-        exo_play.isClickable = isClick
-        exo_pause.isClickable = isClick
+        exo_play?.isClickable = isClick
+        exo_pause?.isClickable = isClick
         exo_ffwd?.isClickable = isClick
         exo_rew?.isClickable = isClick
-        exo_prev.isClickable = isClick
-        video_go_back.isClickable = isClick
-        exo_progress.isClickable = isClick
+        exo_prev?.isClickable = isClick
+        video_go_back?.isClickable = isClick
+        exo_progress?.isClickable = isClick
         //next_episode_btt.isClickable = isClick
         playback_speed_btt?.isClickable = isClick
         skip_op?.isClickable = isClick
         skip_episode?.isClickable = isClick
         resize_player?.isClickable = isClick
-        exo_progress.isEnabled = isClick
+        exo_progress?.isEnabled = isClick
         player_media_route_button?.isEnabled = isClick
         if (isClick && isShowing) {
             player_pause_holder?.alpha = 1f
@@ -1215,6 +1215,7 @@ class PlayerFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        updateLock()
         context?.let { ctx ->
             setPreferredSubLanguage(ctx.getAutoSelectLanguageISO639_1())
         }
