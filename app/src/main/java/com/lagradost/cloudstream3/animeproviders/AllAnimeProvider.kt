@@ -193,7 +193,7 @@ class AllAnimeProvider : MainAPI() {
             null, // no dub, because there is no way to switch from dub to sub //episodes.second,
             episodes.first,
             getStatus(showData.status.toString()),
-            description.replace(Regex("""\<(.*?)\>"""), "")
+            description?.replace(Regex("""\<(.*?)\>"""), "")
         )
     }
 
