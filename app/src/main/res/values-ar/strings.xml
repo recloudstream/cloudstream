@@ -25,7 +25,7 @@
     <string name="no_data">لايوجد بيانات</string>
     <string name="episode_more_options_des">المزيد من الخيارات</string>
     <string name="next_episode">الحلقة القادمة</string>
-    <string name="result_tags">الأنواع</string>
+    <string name="result_tags">النواع</string>
     <string name="result_share">شارك</string>
     <string name="result_open_in_browser">فتح في الويب </string>
     <string name="skip_loading">تخطي التحميل</string>
@@ -106,7 +106,7 @@
     <string name="vpn_might_be_needed">قد تكون هناك حاجة إلى شبكة ظاهرية خاصة لكي يعمل هذا المزود بشكل صحيح</string>
     <string name="vpn_torrent">هذا المزود هو تورنت ، يوصى باستخدام  شبكة ظاهرية خاصة</string>
     <string name="torrent_plot">الوصف</string>
-    <string name="normal_no_plot">لم يتم العثور على قطعة</string>
+    <string name="normal_no_plot">لم يتم العثور على وصف</string>
     <string name="torrent_no_plot">لم يتم العثور على وصف</string>
 
     <string name="picture_in_picture">صورة داخل صورة</string>
@@ -116,7 +116,7 @@
     <string name="player_subtitles_settings">الترجمة</string>
     <string name="player_subtitles_settings_des">إعدادات ترجمة المشغل</string>
     <string name="eigengraumode_settings">وضع إيغنغرافي</string>
-    <string name="eigengraumode_settings_des">يضيف خيار السرعة في اللاعب</string>
+    <string name="eigengraumode_settings_des">يضيف خيار السرعة في المشغل</string>
     <string name="swipe_to_seek_settings">اسحب للسعي</string>
     <string name="swipe_to_seek_settings_des">اسحب إلى اليسار أو اليمين للتحكم في الوقت في مشغل الفيديو</string>
     <string name="swipe_to_change_settings">اسحب لتغيير الإعدادات</string>
@@ -129,7 +129,7 @@
     <string name="search">بحث</string>
     <string name="settings_info">معلومات</string>
     <string name="advanced_search">البحث المتقدم</string>
-    <string name="advanced_search_des">يعطيك نتائج البحث مفصولة عن طريق مزود</string>
+    <string name="advanced_search_des">يعطيك نتائج البحث مفصولة عن طريق المزود</string>
     <string name="bug_report_settings_off">إرسال البيانات عن الأعطال فقط</string>
     <string name="bug_report_settings_on">لا ترسل أي بيانات</string>
     <string name="show_fillers_settings">عرض حلقة فلر لأنيمي</string>
@@ -184,7 +184,7 @@
     <string name="app_storage">تطبيق</string>
 
     <string name="movies">أفلام</string>
-    <string name="tv_series">مسلسلت</string>
+    <string name="tv_series">مسلسلات</string>
     <string name="cartoons">رسوم متحركة</string>
     <string name="anime">انمي</string>
     <string name="torrent">تورنت</string>
