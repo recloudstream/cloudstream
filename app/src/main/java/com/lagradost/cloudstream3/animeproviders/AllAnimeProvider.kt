@@ -247,12 +247,12 @@ class AllAnimeProvider : MainAPI() {
         @JsonProperty("episodeIframeHead") val episodeIframeHead: String
     )
     
-    private fun getM3u8Qualities(m3u8Link: String, referer: String): ArrayList<ExtractorLink> {
+    private fun getM3u8Qualities(m3u8Link: String, referer: String, qualityName: String): ArrayList<ExtractorLink> {
         return ArrayList(hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(m3u8Link, null), true).map { stream ->
             val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
             ExtractorLink(
                 this.name,
-                "${this.name} $qualityString",
+                "${this.name} - $qualityName $qualityString",
                 stream.streamUrl,
                 referer,
                 getQualityFromName(stream.quality.toString()),
@@ -283,7 +283,7 @@ class AllAnimeProvider : MainAPI() {
                     // for now ignore
                 } else if (!embedIsBlacklisted(link)) {
                     if (URI(link).path.contains(".m3u")) {
-                        getM3u8Qualities(link, data).forEach(callback)
+                        getM3u8Qualities(link, data, URI(link).host).forEach(callback)
                     } else {
                         callback(
                             ExtractorLink(
@@ -305,7 +305,7 @@ class AllAnimeProvider : MainAPI() {
                     val links = mapper.readValue<AllAnimeVideoApiResponse>(response.text).links
                     links.forEach { server ->
                         if (server.hls != null && server.hls) {
-                            getM3u8Qualities(server.link, "$apiEndPoint/player?uri=" + (if (URI(server.link).host.isNotEmpty()) server.link else apiEndPoint + URI(server.link).path)).forEach(callback)
+                            getM3u8Qualities(server.link, "$apiEndPoint/player?uri=" + (if (URI(server.link).host.isNotEmpty()) server.link else apiEndPoint + URI(server.link).path), server.resolutionStr).forEach(callback)
                         } else {
                             callback(ExtractorLink(
                                 "AllAnime - " + URI(server.link).host,
