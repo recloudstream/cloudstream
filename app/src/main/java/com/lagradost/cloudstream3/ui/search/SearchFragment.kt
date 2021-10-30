@@ -300,6 +300,8 @@ class SearchFragment : Fragment() {
         main_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 searchViewModel.searchAndCancel(query)
+                main_search?.clearFocus()
+                search_filter?.requestFocus()
                 return true
             }
 

@@ -9,10 +9,8 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
@@ -52,7 +50,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import java.util.*
 import kotlin.concurrent.thread
-import kotlin.math.roundToInt
 
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -140,28 +137,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
-    private fun Activity.getRootView(): View {
-        return findViewById(android.R.id.content)
-    }
-
-    private fun Context.convertDpToPx(dp: Float): Float {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            this.resources.displayMetrics
-        )
-    }
-
-    private fun Activity.isKeyboardOpen(): Boolean {
-        val visibleBounds = Rect()
-        this.getRootView().getWindowVisibleDisplayFrame(visibleBounds)
-        val heightDiff = getRootView().height - visibleBounds.height()
-        val marginOfError = this.convertDpToPx(50F).roundToInt()
-        return heightDiff > marginOfError
-    }
-
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        println("Keycode: $keyCode")
+        //println("Keycode: $keyCode")
         //showToast(
         //    this,
         //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
@@ -222,11 +199,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             playerEventListener?.invoke(playerEvent)
         }
 
-        when (keyCode) {
-            KeyEvent.KEYCODE_DPAD_CENTER -> {
-                println("DPAD PRESSED ${this.isKeyboardOpen()}")
-            }
-        }
+        //when (keyCode) {
+        //    KeyEvent.KEYCODE_DPAD_CENTER -> {
+        //        println("DPAD PRESSED ${this.isKeyboardOpen()}")
+        //    }
+        //}
 
         return super.onKeyDown(keyCode, event)
     }

@@ -13,6 +13,9 @@
     <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/toggle1"
 
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+
             android:layout_marginTop="10dp"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
@@ -24,11 +27,14 @@
             tools:text="Search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
+        <requestFocus/>
     </com.google.android.material.switchmaterial.SwitchMaterial>
     <ListView
             android:nextFocusRight="@id/cancel_btt"
             android:nextFocusLeft="@id/apply_btt"
+
+            android:nextFocusUp="@id/toggle1"
+            android:nextFocusDown="@id/apply_btt"
 
             android:id="@+id/listview1"
             android:layout_marginTop="-10dp"
@@ -42,6 +48,9 @@
     <ListView
             android:nextFocusRight="@id/cancel_btt"
             android:nextFocusLeft="@id/apply_btt"
+
+            android:nextFocusUp="@id/toggle1"
+            android:nextFocusDown="@id/apply_btt"
 
             android:id="@+id/listview2"
             android:layout_marginTop="-10dp"
