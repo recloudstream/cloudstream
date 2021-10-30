@@ -103,7 +103,7 @@
                     android:id="@+id/home_settings_bar"
                     android:background="?attr/darkBackground"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp">
+                    android:layout_height="70dp">
                 <LinearLayout
                         android:gravity="center"
 

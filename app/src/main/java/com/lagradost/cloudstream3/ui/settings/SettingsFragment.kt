@@ -1,5 +1,8 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.app.UiModeManager
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -30,6 +33,22 @@ import kotlin.concurrent.thread
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
+    companion object {
+        fun Context.isTvSettings(): Boolean {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            var value = settingsManager.getInt(this.getString(R.string.app_layout_key), -1)
+            if (value == -1) {
+                value = if (isAutoTv()) 1 else 0
+            }
+            return value == 1
+        }
+
+        private fun Context.isAutoTv(): Boolean {
+            val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager?
+            return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+        }
+    }
+
     private var beneneCount = 0
 
     // idk, if you find a way of automating this it would be great
@@ -61,6 +80,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val legalPreference = findPreference<Preference>(getString(R.string.legal_notice_key))!!
         val subdubPreference = findPreference<Preference>(getString(R.string.display_sub_key))!!
         val providerLangPreference = findPreference<Preference>(getString(R.string.provider_lang_key))!!
+        val allLayoutPreference = findPreference<Preference>(getString(R.string.app_layout_key))!!
 
         legalPreference.setOnPreferenceClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(it.context)
@@ -141,6 +161,29 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        allLayoutPreference.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.app_layout)
+            val prefValues = resources.getIntArray(R.array.app_layout_values)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            val currentLayout =
+                settingsManager.getInt(getString(R.string.app_layout_key), -1)
+            context?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentLayout),
+                getString(R.string.app_layout),
+                true,
+                {}) {
+                try {
+                    settingsManager.edit().putInt(getString(R.string.app_layout_key), prefValues[it]).apply()
+                    activity?.recreate()
+                } catch (e : Exception) {
+                    logError(e)
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
         watchQualityPreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.quality_pref)
             val prefValues = resources.getIntArray(R.array.quality_pref_values)
@@ -193,7 +236,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     settingsManager.edit().putInt(getString(R.string.benene_count), beneneCount).apply()
                     it.summary = getString(R.string.benene_count_text).format(beneneCount)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    logError(e)
                 }
 
                 return@setOnPreferenceClickListener true

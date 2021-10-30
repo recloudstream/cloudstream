@@ -36,6 +36,7 @@ import androidx.preference.PreferenceManager
 import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import kotlin.math.roundToInt
 
 
@@ -68,7 +69,7 @@ object UIHelper {
         activity?.window?.decorView?.clearFocus()
         view.let {
             if (it != null) {
-                activity?.hideKeyboard(it)
+                hideKeyboard(it)
             }
         }
     }
@@ -202,6 +203,10 @@ object UIHelper {
     }*/
 
     fun Context.getStatusBarHeight(): Int {
+        if(isTvSettings()) {
+            return 0
+        }
+
         var result = 0
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         if (resourceId > 0) {
@@ -285,9 +290,14 @@ object UIHelper {
         ) == AppOpsManager.MODE_ALLOWED
     }
 
-    fun Context.hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    fun hideKeyboard(view: View) {
+        val inputMethodManager = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    fun showInputMethod(view: View) {
+        val inputMethodManager = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+        inputMethodManager?.showSoftInput(view, 0)
     }
 
     /**id, stringRes */

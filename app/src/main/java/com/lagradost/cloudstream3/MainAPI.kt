@@ -254,11 +254,8 @@ fun sortSubs(urls: List<SubtitleFile>): List<SubtitleFile> {
 }
 
 /** https://www.imdb.com/title/tt2861424/ -> tt2861424 */
-fun imdbUrlToId(url: String): String {
-    return url
-        .removePrefix("https://www.imdb.com/title/")
-        .removePrefix("https://imdb.com/title/tt2861424/")
-        .replace("/", "")
+fun imdbUrlToId(url: String): String? {
+    return Regex("/title/(tt[0-9]*)").find(url)?.groupValues?.get(1) ?: Regex("tt[0-9]{5,}").find(url)?.groupValues?.get(0)
 }
 
 fun imdbUrlToIdNullable(url: String?): String? {

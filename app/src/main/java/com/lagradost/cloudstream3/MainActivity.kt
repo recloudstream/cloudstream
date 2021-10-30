@@ -9,8 +9,10 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
@@ -31,6 +33,7 @@ import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -49,6 +52,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import java.util.*
 import kotlin.concurrent.thread
+import kotlin.math.roundToInt
 
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -136,8 +140,28 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    private fun Activity.getRootView(): View {
+        return findViewById(android.R.id.content)
+    }
+
+    private fun Context.convertDpToPx(dp: Float): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            this.resources.displayMetrics
+        )
+    }
+
+    private fun Activity.isKeyboardOpen(): Boolean {
+        val visibleBounds = Rect()
+        this.getRootView().getWindowVisibleDisplayFrame(visibleBounds)
+        val heightDiff = getRootView().height - visibleBounds.height()
+        val marginOfError = this.convertDpToPx(50F).roundToInt()
+        return heightDiff > marginOfError
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        //println("Keycode: $keyCode")
+        println("Keycode: $keyCode")
         //showToast(
         //    this,
         //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
@@ -160,16 +184,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_A, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD, KeyEvent.KEYCODE_MEDIA_REWIND -> {
                 PlayerEventType.SeekBack
             }
-            KeyEvent.KEYCODE_MEDIA_NEXT -> {
+            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1 -> {
                 PlayerEventType.NextEpisode
             }
-            KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
+            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1 -> {
                 PlayerEventType.PrevEpisode
             }
             KeyEvent.KEYCODE_MEDIA_PAUSE -> {
                 PlayerEventType.Pause
             }
-            KeyEvent.KEYCODE_MEDIA_PLAY -> {
+            KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_BUTTON_START -> {
                 PlayerEventType.Play
             }
             KeyEvent.KEYCODE_L, KeyEvent.KEYCODE_NUMPAD_7 -> {
@@ -184,18 +208,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9 -> {
                 PlayerEventType.ShowMirrors
             }
-            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3  -> {
+            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3 -> {
                 PlayerEventType.ShowSpeed
             }
             KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0 -> {
                 PlayerEventType.Resize
             }
-            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE -> { // space is not captured due to navigation
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
                 PlayerEventType.PlayPauseToggle
             }
             else -> null
         }?.let { playerEvent ->
             playerEventListener?.invoke(playerEvent)
+        }
+
+        when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_CENTER -> {
+                println("DPAD PRESSED ${this.isKeyboardOpen()}")
+            }
         }
 
         return super.onKeyDown(keyCode, event)
@@ -371,7 +401,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
-        setContentView(R.layout.activity_main)
+        if (isTvSettings()) {
+            setContentView(R.layout.activity_main_tv)
+        } else {
+            setContentView(R.layout.activity_main)
+        }
+
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission

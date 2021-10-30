@@ -996,7 +996,7 @@ class PlayerFragment : Fragment() {
                 activity?.unregisterReceiver(it)
             }
             activity?.hideSystemUI()
-            this.view?.let { activity?.hideKeyboard(it) }
+            this.view?.let { hideKeyboard(it) }
         }
     }
 

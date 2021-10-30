@@ -68,4 +68,16 @@
         <item>7</item>
         <item>8</item>
     </array>
+
+    <array name="app_layout">
+        <item>@string/automatic</item>
+        <item>@string/phone_layout</item>
+        <item>@string/tv_layout</item>
+    </array>
+
+    <array name="app_layout_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </array>
 </resources>

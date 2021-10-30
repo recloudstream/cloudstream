@@ -27,6 +27,9 @@
                     android:nextFocusLeft="@id/search_filter"
                     android:nextFocusDown="@id/cardSpace"
 
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+
                     android:id="@+id/main_search"
                     app:queryBackground="@color/transparent"
                     app:searchIcon="@drawable/search_icon"
@@ -38,7 +41,7 @@
                     android:layout_gravity="center_vertical"
                     app:iconifiedByDefault="false"
                     tools:ignore="RtlSymmetry">
-                <requestFocus/>
+
 
                 <androidx.core.widget.ContentLoadingProgressBar
                         android:id="@+id/search_loading_bar"
@@ -70,6 +73,7 @@
                 android:layout_gravity="end|center_vertical"
                 app:tint="?attr/textColor"
                 android:contentDescription="@string/change_providers_img_des">
+            <requestFocus/>
         </ImageView>
     </FrameLayout>
 
