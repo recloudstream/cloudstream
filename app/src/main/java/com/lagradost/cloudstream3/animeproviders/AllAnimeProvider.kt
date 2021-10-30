@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -26,6 +27,8 @@ class AllAnimeProvider : MainAPI() {
         get() = false
     override val hasMainPage: Boolean
         get() = false
+    
+    private val hlsHelper = M3u8Helper()
 
     private fun getStatus(t: String): ShowStatus {
         return when (t) {
@@ -243,6 +246,21 @@ class AllAnimeProvider : MainAPI() {
     private data class ApiEndPoint(
         @JsonProperty("episodeIframeHead") val episodeIframeHead: String
     )
+    
+    private fun getM3u8Qualities(m3u8Link: String, referer: String): ArrayList<ExtractorLink> {
+        return ArrayList(hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(m3u8Link, null), true).map { stream ->
+            val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
+            ExtractorLink(
+                this.name,
+                "${this.name} $qualityString",
+                stream.streamUrl,
+                referer,
+                getQualityFromName(stream.quality.toString()),
+                true,
+                stream.headers
+            )
+        })
+    }
 
     override fun loadLinks(
         data: String,
@@ -264,16 +282,20 @@ class AllAnimeProvider : MainAPI() {
                 if (Regex("""streaming\.php\?""").matches(link)) {
                     // for now ignore
                 } else if (!embedIsBlacklisted(link)) {
-                    callback(
-                        ExtractorLink(
-                            "AllAnime - " + URI(link).host,
-                            "",
-                            link,
-                            data,
-                            getQualityFromName("1080"),
-                            URI(link).path.contains(".m3u")
+                    if (URI(link).path.contains(".m3u")) {
+                        getM3u8Qualities(link, referer).forEach(callback)
+                    } else {
+                        callback(
+                            ExtractorLink(
+                                "AllAnime - " + URI(link).host,
+                                "",
+                                link,
+                                data,
+                                getQualityFromName("1080"),
+                                false
+                            )
                         )
-                    )
+                    }
                 }
             } else {
                 link = apiEndPoint + URI(link).path + ".json?" + URI(link).query
@@ -282,14 +304,18 @@ class AllAnimeProvider : MainAPI() {
                 if (response.code < 400) {
                     val links = mapper.readValue<AllAnimeVideoApiResponse>(response.text).links
                     links.forEach { server ->
-                        callback(ExtractorLink(
-                            "AllAnime - " + URI(server.link).host,
-                            server.resolutionStr,
-                            server.link,
-                            "$apiEndPoint/player?uri=" + (if (URI(server.link).host.isNotEmpty()) server.link else apiEndPoint + URI(server.link).path),
-                            getQualityFromName("1080"),
-                            server.hls != null && server.hls
-                        ))
+                        if (server.hls != null && server.hls) {
+                            getM3u8Qualities(server.link, "$apiEndPoint/player?uri=" + (if (URI(server.link).host.isNotEmpty()) server.link else apiEndPoint + URI(server.link).path)).forEach(callback)
+                        } else {
+                            callback(ExtractorLink(
+                                "AllAnime - " + URI(server.link).host,
+                                server.resolutionStr,
+                                server.link,
+                                "$apiEndPoint/player?uri=" + (if (URI(server.link).host.isNotEmpty()) server.link else apiEndPoint + URI(server.link).path),
+                                getQualityFromName("1080"),
+                                false
+                            ))
+                        }
                     }
                 }
             }
