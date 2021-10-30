@@ -283,7 +283,7 @@ class AllAnimeProvider : MainAPI() {
                     // for now ignore
                 } else if (!embedIsBlacklisted(link)) {
                     if (URI(link).path.contains(".m3u")) {
-                        getM3u8Qualities(link, referer).forEach(callback)
+                        getM3u8Qualities(link, data).forEach(callback)
                     } else {
                         callback(
                             ExtractorLink(
