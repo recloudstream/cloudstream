@@ -32,7 +32,6 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -830,7 +829,7 @@ class PlayerFragment : Fragment() {
         }
 
         isLocked = !isLocked
-        if(isLocked && isShowing) {
+        if (isLocked && isShowing) {
             player_pause_holder?.postDelayed({
                 if (isLocked && isShowing) {
                     onClickChange()
@@ -873,7 +872,7 @@ class PlayerFragment : Fragment() {
         val color = if (isLocked) context?.colorFromAttribute(R.attr.colorPrimary)
         else Color.WHITE
 
-        if(color != null) {
+        if (color != null) {
             video_locked_text?.setTextColor(color)
             video_locked_img?.setColorFilter(color)
         }
@@ -1941,6 +1940,9 @@ class PlayerFragment : Fragment() {
                             ) + currentUrl.headers // Adds the headers from the provider, e.g Authorization
                             setDefaultRequestProperties(headers)
                         }
+
+                        //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
+                        setAllowCrossProtocolRedirects(true)
                     }
                 } else {
                     DefaultDataSourceFactory(requireContext(), USER_AGENT)

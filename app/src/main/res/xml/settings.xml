@@ -100,11 +100,6 @@
                 android:icon="@drawable/ic_baseline_dns_24">
         </Preference>
         <Preference
-                android:icon="@drawable/ic_baseline_language_24"
-                android:key="@string/provider_lang_key"
-                android:title="@string/provider_lang_settings">
-        </Preference>
-        <Preference
                 android:icon="@drawable/ic_baseline_tv_24"
                 android:key="@string/app_layout_key"
                 android:title="@string/app_layout">
