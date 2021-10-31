@@ -6,7 +6,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         app:cardCornerRadius="@dimen/roundedImageRadius"
-        app:cardBackgroundColor="@color/itemBackground"
+        app:cardBackgroundColor="?attr/boxItemBackground"
         android:id="@+id/episode_holder"
         android:foreground="@drawable/outline_drawable"
         android:layout_marginBottom="10dp"
@@ -41,14 +41,14 @@
                     android:id="@+id/download_header_title"
                     tools:text="Perfect Run"
                     android:textStyle="bold"
-                    android:textColor="@color/textColor"
+                    android:textColor="?attr/textColor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
             </TextView>
             <TextView
                     android:id="@+id/download_header_info"
                     tools:text="1 episode | 285MB"
-                    android:textColor="@color/grayTextColor"
+                    android:textColor="?attr/grayTextColor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
             </TextView>

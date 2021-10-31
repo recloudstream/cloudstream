@@ -11,7 +11,7 @@
         android:elevation="10dp"
         app:cardCornerRadius="@dimen/roundedImageRadius"
         android:id="@+id/backgroundCard"
-        app:cardBackgroundColor="@color/primaryGrayBackground"
+        app:cardBackgroundColor="?attr/primaryGrayBackground"
         xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
     <ImageView

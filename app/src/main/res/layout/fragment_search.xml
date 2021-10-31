@@ -8,7 +8,7 @@
         android:id="@+id/searchRoot"
         tools:context=".ui.search.SearchFragment"
         android:orientation="vertical"
-        android:background="?attr/darkBackground"
+        android:background="?attr/primaryGrayBackground"
         android:layout_marginTop="@dimen/navbarHeight">
     <FrameLayout
             android:visibility="visible"
@@ -32,6 +32,7 @@
 
                     android:id="@+id/main_search"
                     app:queryBackground="@color/transparent"
+
                     app:searchIcon="@drawable/search_icon"
                     android:paddingStart="-10dp"
                     android:iconifiedByDefault="false"
@@ -41,7 +42,6 @@
                     android:layout_gravity="center_vertical"
                     app:iconifiedByDefault="false"
                     tools:ignore="RtlSymmetry">
-
 
                 <androidx.core.widget.ContentLoadingProgressBar
                         android:id="@+id/search_loading_bar"

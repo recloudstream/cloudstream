@@ -16,9 +16,8 @@
         <attr name="colorSearch" format="color"/>
         <attr name="colorOngoing" format="color"/>
         <attr name="colorPrimaryDark" format="color"/>
-        <attr name="colorItemSeen" format="color"/>
 
-        <attr name="darkBackground" format="color"/>
+        <attr name="primaryGrayBackground" format="color"/>
         <attr name="primaryBlackBackground" format="color"/>
         <attr name="iconGrayBackground" format="color"/>
         <attr name="boxItemBackground" format="color"/>

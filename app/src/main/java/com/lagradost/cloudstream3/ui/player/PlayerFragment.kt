@@ -89,6 +89,7 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -869,11 +870,13 @@ class PlayerFragment : Fragment() {
 
     private fun updateLock() {
         video_locked_img?.setImageResource(if (isLocked) R.drawable.video_locked else R.drawable.video_unlocked)
-        val color = if (isLocked) ContextCompat.getColor(requireContext(), R.color.videoColorPrimary)
+        val color = if (isLocked) context?.colorFromAttribute(R.attr.colorPrimary)
         else Color.WHITE
 
-        video_locked_text?.setTextColor(color)
-        video_locked_img?.setColorFilter(color)
+        if(color != null) {
+            video_locked_text?.setTextColor(color)
+            video_locked_img?.setColorFilter(color)
+        }
 
         val isClick = !isLocked
 

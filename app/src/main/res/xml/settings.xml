@@ -109,6 +109,11 @@
                 android:key="@string/app_layout_key"
                 android:title="@string/app_layout">
         </Preference>
+        <Preference
+                android:icon="@drawable/ic_baseline_color_lens_24"
+                android:key="@string/primary_color_key"
+                android:title="@string/primary_color_settings">
+        </Preference>
     </PreferenceCategory>
     <PreferenceCategory
             android:key="search"

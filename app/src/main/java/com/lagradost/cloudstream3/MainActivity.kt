@@ -365,6 +365,30 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.style.LoadedStyle,
             true
         ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
+
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+
+        val currentTheme = when (settingsManager.getString("theme", "")) {
+            "Black" -> R.style.AppTheme
+            "Light" -> R.style.LightMode
+            else -> R.style.AppTheme
+        }
+
+        val currentOverlayTheme = when (settingsManager.getString(getString(R.string.primary_color_key), "Normal")) {
+            "Normal" -> R.style.OverlayPrimaryColorNormal
+            "Blue" -> R.style.OverlayPrimaryColorBlue
+            "Purple" -> R.style.OverlayPrimaryColorPurple
+            "Green" -> R.style.OverlayPrimaryColorGreen
+            "GreenApple" -> R.style.OverlayPrimaryColorGreenApple
+            "Red" -> R.style.OverlayPrimaryColorRed
+            "Banana" -> R.style.OverlayPrimaryColorBanana
+            "Party" -> R.style.OverlayPrimaryColorParty
+            else -> R.style.OverlayPrimaryColorNormal
+        }
+
+        //theme.applyStyle(currentTheme, true)
+        theme.applyStyle(currentOverlayTheme, true)
+
         updateLocale()
         initRequestClient()
         super.onCreate(savedInstanceState)

@@ -80,4 +80,25 @@
         <item>0</item>
         <item>1</item>
     </array>
+
+    <string-array name="themes_overlay_names">
+        <item>Normal</item>
+        <item>Cool</item>
+        <item>Fire</item>
+        <item>Burple</item>
+        <item>Green</item>
+        <item>Apple</item>
+        <item>Banana</item>
+        <item>Party</item>
+    </string-array>
+    <string-array name="themes_overlay_names_values">
+        <item>Normal</item>
+        <item>Blue</item>
+        <item>Red</item>
+         <item>Purple</item>
+        <item>Green</item>
+        <item>GreenApple</item>
+        <item>Banana</item>
+        <item>Party</item>
+    </string-array>
 </resources>

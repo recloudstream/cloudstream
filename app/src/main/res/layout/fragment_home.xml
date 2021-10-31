@@ -95,13 +95,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             <View
-                    android:background="?attr/darkBackground"
+                    android:background="?attr/primaryGrayBackground"
                     android:id="@+id/home_statusbar"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"/>
             <FrameLayout
                     android:id="@+id/home_settings_bar"
-                    android:background="?attr/darkBackground"
+                    android:background="?attr/primaryGrayBackground"
                     android:layout_width="match_parent"
                     android:layout_height="70dp">
                 <LinearLayout
@@ -194,12 +194,13 @@
                         android:textStyle="bold"
                         android:layout_margin="5dp"
                         android:textSize="15sp"
-                        android:textColor="@color/textColor"
+                        android:textColor="?attr/textColor"
                         android:layout_width="match_parent"
                         android:maxLines="2"
                         android:ellipsize="end"
                         android:layout_height="40sp"/>
                 <LinearLayout
+                        android:padding="5dp"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:orientation="horizontal"
@@ -268,6 +269,7 @@
                             android:text="@string/continue_watching"
                     />
                     <ImageView
+                            android:tint="?attr/textColor"
                             android:layout_marginEnd="5dp"
                             android:layout_gravity="end|center_vertical"
                             android:src="@drawable/ic_baseline_arrow_forward_24"
@@ -309,6 +311,8 @@
                     <ImageView
                             android:background="?android:attr/selectableItemBackgroundBorderless"
 
+                            android:tint="?attr/textColor"
+
                             android:id="@+id/home_bookmark_select"
                             android:src="@drawable/ic_baseline_filter_list_24"
                             android:layout_width="24dp"
@@ -323,6 +327,7 @@
                             tools:text="Bookmarked"
                     />
                     <ImageView
+                            android:tint="?attr/textColor"
                             android:layout_marginEnd="5dp"
                             android:layout_gravity="end|center_vertical"
                             android:src="@drawable/ic_baseline_arrow_forward_24"

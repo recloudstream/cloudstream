@@ -3,7 +3,6 @@
     <color name="colorPrimary">#3d50fa</color>
     <color name="colorPrimarySecond">@color/colorPrimary</color>
     <color name="colorSearch">#303135</color> <!--#3444D1 @color/itemBackground-->
-    <color name="colorItemSeen">#1E1E32</color>
     <color name="colorOngoing">#F53B66</color> <!--FF8181-->
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#3b65f5</color> <!-- 818fff-->
@@ -11,12 +10,11 @@
     <color name="primaryGrayBackground">#2B2C30</color> <!--0f0f10 0E0E10 303135 2B2C30-->
     <color name="primaryBlackBackground">#111111</color> <!--1C1C20 191a1f 19181E 202125 1C1C20-->
     <color name="iconGrayBackground">#1C1C20</color> <!--141419 202125-->
-    <color name="itemBackground">#161616</color> <!-- 17171B 1B1B20-->
+    <color name="boxItemBackground">#161616</color> <!-- 17171B 1B1B20-->
 
     <color name="textColor">#e9eaee</color> <!--FFF-->
     <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->
 
-    <color name="searchColor">@color/textColor</color> <!--DADADA-->
     <color name="searchColorTransparent">#1AFFFFFF</color> <!--DADADA-->
     <color name="transparent">#00000000</color>
 
@@ -34,10 +32,27 @@
     <color name="darkBar">#121212</color>
     <color name="videoProgress">#66B5B5B5</color> <!--66B5B5B5-->
     <!--<color name="videoCache">#663D50FA</color>--> <!--66B5B5B5-->
-    <color name="videoColorPrimary">@color/colorPrimary</color> <!--0e09df 617EFF 3d50fa-->
 
     <color name="iconColor">#9ba0a6</color>
 
     <color name="usedStorageColor">#FFF</color>
     <color name="freeStorageColor">#676767</color>
+
+    <!--Light Mode -->
+    <color name="lightPrimaryGrayBackground">#fff</color>
+    <color name="lightBitDarkerGrayBackground">#EFEFEF</color>
+    <color name="lightGrayBackground">#FFF</color>
+    <color name="lightItemBackground">#EDEDED</color>
+    <color name="lightTextColor">#202125</color>
+    <color name="lightGrayTextColor">#5f6267</color>
+    <color name="lightIconColor">#5f6267</color>
+
+    <!--Other Colors -->
+    <color name="colorPrimaryBlue">#5664B7</color>
+    <color name="colorPrimaryRed">#D50000</color>
+    <color name="colorPrimaryPurple">#6200EA</color> <!-- Burple-->
+    <color name="colorPrimaryGreen">#00BFA5</color>
+    <color name="colorPrimaryGreenApple">#48E484</color>
+    <color name="colorPrimaryBanana">#E4D448</color>
+    <color name="colorPrimaryParty">#ea596e</color>
 </resources>

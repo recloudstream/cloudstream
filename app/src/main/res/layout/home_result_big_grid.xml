@@ -11,7 +11,7 @@
         android:elevation="10dp"
         app:cardCornerRadius="@dimen/roundedImageRadius"
         android:id="@+id/backgroundCard"
-        app:cardBackgroundColor="@color/primaryGrayBackground"
+        app:cardBackgroundColor="?attr/primaryGrayBackground"
         xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
     <ImageView
@@ -32,7 +32,7 @@
         <TextView
                 android:text="@string/app_dubbed_text"
                 android:id="@+id/text_is_dub"
-                android:textColor="@color/textColor"
+                android:textColor="?attr/textColor"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
                 android:paddingTop="4dp"
@@ -48,7 +48,7 @@
                 android:id="@+id/text_is_sub"
                 android:text="@string/app_subbed_text"
                 android:layout_gravity="end"
-                android:textColor="@color/textColor"
+                android:textColor="?attr/textColor"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
                 android:paddingTop="4dp"

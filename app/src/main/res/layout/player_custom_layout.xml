@@ -269,6 +269,7 @@
                         android:nextFocusUp="@id/video_go_back"
                         android:nextFocusDown="@id/lock_player"
                         android:nextFocusLeft="@id/exo_rew"
+                        android:tint="@color/white"
 
                         android:paddingLeft="100dp"
                         android:id="@id/exo_rew"
@@ -302,6 +303,8 @@
                         android:nextFocusLeft="@id/exo_rew"
                         android:nextFocusRight="@id/exo_ffwd"
 
+                        android:tint="@color/white"
+
                         android:id="@id/exo_play"
                         android:scaleType="fitCenter"
                         android:layout_height="70dp"
@@ -319,6 +322,8 @@
                         android:nextFocusRight="@id/exo_ffwd"
 
                         android:id="@id/exo_pause"
+                        android:tint="@color/white"
+
                         android:scaleType="fitCenter"
                         android:layout_height="70dp"
                         android:layout_width="70dp"
@@ -354,6 +359,7 @@
                         android:nextFocusUp="@id/video_go_back"
                         android:nextFocusDown="@id/lock_player"
                         android:nextFocusRight="@id/exo_rew"
+                        android:tint="@color/white"
 
                         android:layout_gravity="center"
                         android:id="@id/exo_ffwd"

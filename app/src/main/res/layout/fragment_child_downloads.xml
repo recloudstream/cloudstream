@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:background="?attr/darkBackground"
+        android:background="?attr/primaryGrayBackground"
         android:id="@+id/download_child_root"
         android:orientation="vertical"
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,7 +17,7 @@
                 android:id="@+id/download_child_toolbar"
                 android:paddingTop="@dimen/navbarHeight"
                 tools:title="Overlord"
-                android:background="?attr/darkBackground"
+                android:background="?attr/primaryGrayBackground"
                 app:navigationIconTint="?attr/iconColor"
                 app:titleTextColor="?attr/textColor"
                 app:layout_scrollFlags="scroll|enterAlways"
