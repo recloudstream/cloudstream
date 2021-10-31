@@ -240,4 +240,5 @@
     <string name="phone_layout">Phone Ayos</string>
     <string name="primary_color_settings">Pangunahin Kulay</string>
     <string name="app_theme_settings">App Tema</string>
+    <string name="preferred_media_settings">Ginustong Nilalaman</string>
 </resources>
