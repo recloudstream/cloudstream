@@ -105,6 +105,9 @@ class DownloadHeaderAdapter(
             val d = card.data
 
             poster?.setImage(d.poster)
+            poster?.setOnClickListener {
+                clickCallback.invoke(DownloadHeaderClickEvent(1, d))
+            }
 
             title.text = d.name
             val mbString = "%.1f".format(card.totalBytes / 1000000f)

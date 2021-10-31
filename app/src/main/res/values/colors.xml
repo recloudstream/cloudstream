@@ -37,8 +37,8 @@
 
     <color name="iconColor">#9ba0a6</color>
 
-    <color name="usedStorageColor">#FFF</color>
-    <color name="freeStorageColor">#676767</color>
+    <!-- <color name="usedStorageColor">?attr/white</color>#fff-->
+    <!-- <color name="freeStorageColor">?attr/grayTextColor</color> #676767-->
 
     <!--Light Mode -->
     <color name="lightPrimaryGrayBackground">#f1f1f1</color>

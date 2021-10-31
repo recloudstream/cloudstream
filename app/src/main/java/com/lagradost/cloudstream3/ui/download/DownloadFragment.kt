@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -15,8 +16,9 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
-import com.lagradost.cloudstream3.utils.DataStore.getFolderName
+import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
@@ -99,13 +101,24 @@ class DownloadFragment : Fragment() {
             DownloadHeaderAdapter(
                 ArrayList(),
                 { click ->
-                    if (click.data.type.isMovieType()) {
-                        //wont be called
-                    } else {
-                        val folder = getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
-                        val navController = activity?.findNavController(R.id.nav_host_fragment)
-                        navController?.navigate(R.id.navigation_download_child, DownloadChildFragment.newInstance(click.data.name,folder))
+                    when (click.action) {
+                        0 -> {
+                            if (click.data.type.isMovieType()) {
+                                //wont be called
+                            } else {
+                                val folder = DataStore.getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
+                                val navController = activity?.findNavController(R.id.nav_host_fragment)
+                                navController?.navigate(
+                                    R.id.navigation_download_child,
+                                    DownloadChildFragment.newInstance(click.data.name, folder)
+                                )
+                            }
+                        }
+                        1 -> {
+                            (activity as AppCompatActivity?)?.loadResult(click.data.url, click.data.apiName)
+                        }
                     }
+
                 },
                 { downloadClickEvent ->
                     if (downloadClickEvent.data !is VideoDownloadHelper.DownloadEpisodeCached) return@DownloadHeaderAdapter

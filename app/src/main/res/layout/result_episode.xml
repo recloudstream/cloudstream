@@ -109,6 +109,8 @@
                 android:nextFocusLeft="@id/episode_holder"
                 android:nextFocusRight="@id/episode_holder"
 
+                android:tint="?attr/white"
+
                 android:id="@+id/result_episode_download"
                 android:visibility="visible"
                 android:layout_marginEnd="10dp"

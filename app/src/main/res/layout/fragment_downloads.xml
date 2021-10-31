@@ -40,7 +40,7 @@
                 <View
                         android:layout_weight="0.5"
                         android:id="@+id/download_used"
-                        android:background="@color/usedStorageColor"
+                        android:background="?attr/white"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"/>
                 <View
@@ -52,7 +52,7 @@
                 <View
                         android:id="@+id/download_free"
                         android:layout_weight="0.10"
-                        android:background="@color/freeStorageColor"
+                        android:background="?attr/grayTextColor"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"/>
             </LinearLayout>
@@ -65,7 +65,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
                         android:layout_gravity="center_vertical"
-                        android:background="@color/usedStorageColor"
+                        android:background="?attr/white"
                         android:layout_width="10dp"
                         android:layout_height="10dp"/>
                 <TextView
@@ -94,7 +94,7 @@
                 <View
                         android:layout_margin="5dp"
                         android:layout_gravity="center_vertical"
-                        android:background="@color/freeStorageColor"
+                        android:background="?attr/grayTextColor"
                         android:layout_width="10dp"
                         android:layout_height="10dp"/>
                 <TextView
