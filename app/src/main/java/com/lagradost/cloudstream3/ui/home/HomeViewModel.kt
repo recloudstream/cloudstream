@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
@@ -148,12 +149,21 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadAndCancel(preferredApiName: String?) = viewModelScope.launch {
+    fun loadAndCancel(preferredApiName: String?, currentPrefMedia: Int) = viewModelScope.launch {
         val api = getApiFromNameNull(preferredApiName)
         if (preferredApiName == noneApi.name)
             loadAndCancel(noneApi)
         else if(preferredApiName == randomApi.name || api == null) {
-            loadAndCancel(apis.filter { it.hasMainPage }.random())
+            val allApis = apis.filter { api -> api.hasMainPage }.toMutableList()
+            var validAPIs = allApis
+            if (currentPrefMedia > 0) {
+                val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
+                val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon)
+                val mediaTypeList = if (currentPrefMedia==1) listEnumMovieTv else listEnumAnime
+
+                validAPIs = allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }.toMutableList()
+            }
+            loadAndCancel(validAPIs.random())
         } else {
             loadAndCancel(api)
         }

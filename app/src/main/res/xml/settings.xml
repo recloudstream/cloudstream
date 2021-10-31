@@ -84,6 +84,11 @@
                 android:icon="@drawable/ic_baseline_language_24">
         </Preference>
         <Preference
+            android:key="@string/prefer_media_type_key"
+            android:title="@string/preferred_media_settings"
+            android:icon="@drawable/ic_baseline_play_arrow_24">
+        </Preference>
+        <Preference
                 android:key="@string/display_sub_key"
                 android:title="@string/display_subbed_dubbed_settings"
                 android:icon="@drawable/ic_outline_voice_over_off_24">
