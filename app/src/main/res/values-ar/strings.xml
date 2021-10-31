@@ -161,7 +161,6 @@
 
     <string name="delete_file">حذف ملف</string>
     <string name="delete">حذف</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">إيقاف مؤقت</string>
     <string name="resume">أكمل</string>
     <string name="delete_message">This will permanently delete %s\nAre you sure?</string>

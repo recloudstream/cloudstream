@@ -276,7 +276,7 @@
     <string name="resize_fill">Stretch</string>
     <string name="resize_zoom">Zoom</string>
 
-    <string name="legal_notice" translatable="false">Disclaimer</string>
+    <string name="legal_notice">Disclaimer</string>
     <string name="legal_notice_key" translatable="false">legal_notice_key</string>
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
         should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.

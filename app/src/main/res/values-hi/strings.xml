@@ -12,7 +12,6 @@
     <string name="no_data">डेटा उपलब्ध नही है</string>
     <string name="episode_more_options_des">अन्य ऑप्शन</string>
     <string name="next_episode">अगला एपिसोड</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">शैलियां</string>
     <string name="result_share">शेयर</string>
     <string name="result_open_in_browser">ब्राउज़र में खोलें</string>

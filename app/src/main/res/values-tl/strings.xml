@@ -1,40 +1,9 @@
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
 <resources>
     <!-- KEYS DON'T TRANSLATE -->
-    <string name="search_providers_list_key" translatable="false">search_providers_list</string>
-    <string name="locale_key" translatable="false">app_locale</string>
-    <string name="search_types_list_key" translatable="false">search_type_list</string>
-    <string name="grid_format_key" translatable="false">grid_format</string>
-    <string name="auto_update_key" translatable="false">auto_update</string>
-    <string name="prerelease_update_key" translatable="false">prerelease_update</string>
-    <string name="manual_check_update_key" translatable="false">manual_check_update</string>
-    <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
-    <string name="benene_count" translatable="false">benene_count</string>
-    <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
-    <string name="quality_pref_key" translatable="false">quality_pref_key</string>
-    <string name="prerelease_commit_hash" translatable="false">unknown_prerelease</string>
-    <string name="use_system_brightness_key" translatable="false">use_system_brightness_key</string>
-    <string name="swipe_enabled_key" translatable="false">swipe_enabled_key</string>
-    <string name="playback_speed_enabled_key" translatable="false">playback_speed_enabled_key</string>
-    <string name="player_resize_enabled_key" translatable="false">player_resize_enabled_key</string>
-    <string name="pip_enabled_key" translatable="false">pip_enabled_key</string>
-    <string name="double_tap_enabled_key" translatable="false">double_tap_enabled_key</string>
-    <string name="swipe_vertical_enabled_key" translatable="false">swipe_vertical_enabled_key</string>
-    <string name="display_sub_key" translatable="false">display_sub_key</string>
-    <string name="show_fillers_key" translatable="false">show_fillers_key</string>
-    <string name="provider_lang_key" translatable="false">provider_lang_key</string>
-    <string name="dns_key" translatable="false">dns_key</string>
 
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
-    <string name="storage_size_format" translatable="false" formatted="true">%s • %sGB</string>
-    <string name="download_size_format" translatable="false" formatted="true">%sMB / %sMB</string>
-    <string name="episode_name_format" translatable="false" formatted="true">%s %s</string>
-    <string name="ffw_text_format" translatable="false" formatted="true">+%d</string>
-    <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
-    <string name="ffw_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
     <string name="app_dub_sub_episode_text_format">%s Ep %d</string>
 
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
@@ -43,9 +12,7 @@
     <string name="episode_poster_img_des">Episodyo Paskil</string>
     <string name="home_main_poster_img_des">Pangunahing Paskil</string>
     <string name="home_next_random_img_des">Susunod Walang tiyak</string>
-    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">Pumunta Likod</string>
-    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">Pagbabago Pinagmulan</string>
     <string name="preview_background_img_des">Prebiyu Likuran</string>
 
@@ -65,7 +32,6 @@
     <string name="no_data">Wala Datos</string>
     <string name="episode_more_options_des">Mas Opsyon</string>
     <string name="next_episode">Susunod Episodyo</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Dyanra</string>
     <string name="result_share">Magbahagi</string>
     <string name="result_open_in_browser">Buksan Ito Panlabas</string>
@@ -96,7 +62,6 @@
     <string name="download_failed">Pag-iimbak nabigo</string>
     <string name="download_canceled">Pag-iimbak Kinansela</string>
     <string name="download_done">Tapos</string>
-    <string name="download_format" translatable="false">%s - %s</string>
 
     <string name="error_loading_links_toast">Kamalian</string>
     <string name="download_storage_text">Espasyo sa Imbakan</string>
@@ -204,7 +169,6 @@
 
     <string name="delete_file">Tanggalin</string>
     <string name="delete">Tanggalin</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Humawak</string>
     <string name="resume">Magpatuloy</string>
     <string name="delete_message">Permanenteng tatanggalin %s\nSigurado ka ba?</string>
@@ -270,23 +234,6 @@
     <string name="resize_zoom">Magpalaki</string>
 
     <string name="legal_notice" translatable="false">Disclaimer</string>
-    <string name="legal_notice_key" translatable="false">legal_notice_key</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
-        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
-
-        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
-
-        The app is purely for educational and personal use.
-
-        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
-        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
-        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
-        user-friendly interface.
-
-        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
-        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
-        CloudStream 3 at your own risk.
-    </string>
     <string name="general">General</string>
     <string name="provider_lang_settings">Pinagmulan wika</string>
 </resources>

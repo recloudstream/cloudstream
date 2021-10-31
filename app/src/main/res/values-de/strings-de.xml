@@ -3,11 +3,9 @@
     <string name="result_poster_img_des">Poster</string>
     <string name="search_poster_img_des">@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Episode Poster</string>
-    <string name="home_main_poster_img_des">Main Poster</string>
-    <string name="home_next_random_img_des">Next Random</string>
-    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
-    <string name="go_back_img_des">Go back</string>
-    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
+    <string name="home_main_poster_img_des">Hauptposter</string>
+    <string name="home_next_random_img_des">Nächstes Poster</string>
+    <string name="go_back_img_des">Zurück</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
     <string name="player_speed_text_format" formatted="true">Geschwindigkeit (%.2fx)</string>
@@ -23,7 +21,6 @@
     <string name="no_data">Keine Daten vorhanden</string>
     <string name="episode_more_options_des">Mehr Optionen</string>
     <string name="next_episode">Nächste Episode</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Teilen</string>
     <string name="result_open_in_browser">Im Browser öffnen</string>
@@ -50,7 +47,6 @@
     <string name="download_failed">Download fehlgeschlagen</string>
     <string name="download_canceled">Download abgebrochen</string>
     <string name="download_done">Download abgeschlossen</string>
-    <string name="download_format" translatable="false">%s - %s</string>
     <string name="error_loading_links_toast">Fehler beim Laden von Links</string>
     <string name="download_storage_text">Interner Speicher</string>
     <string name="app_dubbed_text">Dub</string>
@@ -142,7 +138,6 @@
     <string name="episode_short">E</string>
     <string name="delete_file">Gelöschte Dateien</string>
     <string name="delete">Löschen</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Pausieren</string>
     <string name="resume">Fortsetzen</string>
     <string name="delete_message">Dies löscht dauerhaft %s\nBist du dir sicher?</string>
@@ -195,4 +190,8 @@
     <string name="resize_fill">Strecken</string>
     <string name="resize_zoom">Zoomen</string>
     <string name="provider_lang_settings">Anbietersprache</string>
+    <string name="legal_notice">Die Haftungsklausel</string>
+    <string name="app_layout">App-Layout</string>
+    <string name="automatic">Automatisch</string>
+    <string name="primary_color_settings">Primärfarbe</string>
 </resources>
