@@ -67,6 +67,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("\uD83C\uDDF3\uD83C\uDDF4", "Norsk", "no"),
         Triple("\ud83c\udde9\ud83c\uddea", "German", "de"),
         Triple("🇱🇧", "Arabic", "ar"),
+        Triple("🇹🇷", "Turkish", "tr")
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

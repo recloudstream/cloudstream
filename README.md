@@ -27,6 +27,7 @@ https://discord.gg/5Hus6fM
 * 🇪🇸 Spanish
 * 🇳🇴 Norsk
 * 🇩🇪 German
+* 🇹🇷 Turkish
 
 ***SCREENSHOTS:***
 
