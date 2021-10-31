@@ -46,6 +46,17 @@
         <item>4</item>
     </array>
 
+    <array name="media_type_pref">
+        <item>All</item>
+        <item>Movies and TV</item>
+        <item>Anime</item>
+    </array>
+    <array name="media_type_pref_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </array>
+
     <array name="episode_long_click_options">
         <item>@string/episode_action_chomecast_episode</item>
         <item>@string/episode_action_chomecast_mirror</item>

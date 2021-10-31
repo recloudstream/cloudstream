@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -166,11 +167,24 @@ class HomeFragment : Fragment() {
     }
 
     private val apiChangeClickListener = View.OnClickListener { view ->
-        val validAPIs = apis.filter { api -> api.hasMainPage }.toMutableList()
+        val allApis = apis.filter { api -> api.hasMainPage }.toMutableList()
+        var validAPIs = allApis
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+        val currentPrefMedia = settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
+
+        // Filter API depending on preferred media type
+        if (currentPrefMedia > 0) {
+            val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
+            val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon)
+            val mediaTypeList = if (currentPrefMedia==1) listEnumMovieTv else listEnumAnime
+
+            validAPIs = allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }.toMutableList()
+        }
+
         validAPIs.add(0, randomApi)
         validAPIs.add(0, noneApi)
         view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api -> Pair(index, api.name) }) {
-            homeViewModel.loadAndCancel(validAPIs[itemId].name)
+            homeViewModel.loadAndCancel(validAPIs[itemId].name, currentPrefMedia)
         }
     }
 
@@ -411,7 +425,7 @@ class HomeFragment : Fragment() {
         val apiName = context?.getKey<String>(HOMEPAGE_API)
         if (homeViewModel.apiName.value != apiName || apiName == null) {
             //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
-            homeViewModel.loadAndCancel(apiName)
+            homeViewModel.loadAndCancel(apiName, 0)
         }
     }
 }
