@@ -26,6 +26,7 @@
     <string name="dns_key" translatable="false">dns_key</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
+    <string name="app_theme_key" translatable="false">app_theme_key</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
@@ -302,4 +303,5 @@
     <string name="phone_layout">Phone Layout</string>
 
     <string name="primary_color_settings">Primary Color</string>
+    <string name="app_theme_settings">App Theme</string>
 </resources>

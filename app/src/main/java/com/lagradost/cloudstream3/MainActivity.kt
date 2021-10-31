@@ -361,16 +361,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        theme.applyStyle(
-            R.style.LoadedStyle,
-            true
-        ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
-
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val currentTheme = when (settingsManager.getString("theme", "")) {
+        val currentTheme = when (settingsManager.getString(getString(R.string.app_theme_key), "Black")) {
             "Black" -> R.style.AppTheme
             "Light" -> R.style.LightMode
+            "Amoled" -> R.style.AmoledMode
             else -> R.style.AppTheme
         }
 
@@ -386,8 +382,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             else -> R.style.OverlayPrimaryColorNormal
         }
 
-        //theme.applyStyle(currentTheme, true)
+        theme.applyStyle(currentTheme, true)
         theme.applyStyle(currentOverlayTheme, true)
+
+        theme.applyStyle(
+            R.style.LoadedStyle,
+            true
+        ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
 
         updateLocale()
         initRequestClient()

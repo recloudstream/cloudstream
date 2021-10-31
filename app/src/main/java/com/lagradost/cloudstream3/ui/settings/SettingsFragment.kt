@@ -82,6 +82,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val providerLangPreference = findPreference<Preference>(getString(R.string.provider_lang_key))!!
         val allLayoutPreference = findPreference<Preference>(getString(R.string.app_layout_key))!!
         val colorPrimaryPreference = findPreference<Preference>(getString(R.string.primary_color_key))!!
+        val appThemePreference = findPreference<Preference>(getString(R.string.app_theme_key))!!
 
         legalPreference.setOnPreferenceClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(it.context)
@@ -199,6 +200,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 {}) {
                 try {
                     settingsManager.edit().putString(getString(R.string.primary_color_key), prefValues[it]).apply()
+                    activity?.recreate()
+                } catch (e : Exception) {
+                    logError(e)
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        appThemePreference.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.themes_names)
+            val prefValues = resources.getStringArray(R.array.themes_names_values)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            val currentLayout = settingsManager.getString( getString(R.string.app_theme_key),prefValues.first())
+            context?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentLayout),
+                getString(R.string.app_theme_settings),
+                true,
+                {}) {
+                try {
+                    settingsManager.edit().putString(getString(R.string.app_theme_key), prefValues[it]).apply()
                     activity?.recreate()
                 } catch (e : Exception) {
                     logError(e)

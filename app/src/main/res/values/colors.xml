@@ -19,6 +19,8 @@
     <color name="transparent">#00000000</color>
 
     <color name="white">#FFF</color>
+    <color name="black">#000</color>
+
     <color name="dubColor">#3d50fa</color> <!--3b65f5 f18c82 8294F1-->
     <color name="dubColorBg">#803B65F5</color>
     <color name="subColor">#F54A3B</color> <!--F53B66 FA3D79-->
@@ -39,10 +41,10 @@
     <color name="freeStorageColor">#676767</color>
 
     <!--Light Mode -->
-    <color name="lightPrimaryGrayBackground">#fff</color>
-    <color name="lightBitDarkerGrayBackground">#EFEFEF</color>
-    <color name="lightGrayBackground">#FFF</color>
-    <color name="lightItemBackground">#EDEDED</color>
+    <color name="lightPrimaryGrayBackground">#f1f1f1</color>
+    <color name="lightBitDarkerGrayBackground">#fff</color>
+    <color name="lightGrayBackground">#eeeeee</color>
+    <color name="lightItemBackground">#eeeeee</color>
     <color name="lightTextColor">#202125</color>
     <color name="lightGrayTextColor">#5f6267</color>
     <color name="lightIconColor">#5f6267</color>

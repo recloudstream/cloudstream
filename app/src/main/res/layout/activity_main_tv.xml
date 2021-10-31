@@ -17,6 +17,9 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/primaryGrayBackground"
 
+                app:itemTextColor="@color/item_select_color"
+                app:itemIconTint="@color/item_select_color"
+
                 android:outlineSpotShadowColor="@color/transparent"
                 android:outlineAmbientShadowColor="@color/transparent"
 

@@ -504,7 +504,8 @@
                             android:layout_marginEnd="20dp"
                             card_view:cardCornerRadius="@dimen/card_corner_radius"
                             card_view:cardBackgroundColor="@color/transparent"
-                            android:foreground="?attr/selectableItemBackgroundBorderless"
+
+                            android:foreground="@drawable/video_bottom_button"
                             card_view:cardElevation="0dp"
                             tools:visibility="visible"
                     >
@@ -560,7 +561,7 @@
                                 android:layout_marginEnd="20dp"
                                 card_view:cardCornerRadius="@dimen/card_corner_radius"
                                 card_view:cardBackgroundColor="@color/transparent"
-                                android:foreground="?attr/selectableItemBackgroundBorderless"
+                                android:foreground="@drawable/video_bottom_button"
                                 card_view:cardElevation="0dp"
                                 tools:visibility="visible"
                         >
@@ -608,7 +609,7 @@
                                 android:layout_marginEnd="20dp"
                                 app:cardCornerRadius="@dimen/card_corner_radius"
                                 app:cardBackgroundColor="@color/transparent"
-                                android:foreground="?attr/selectableItemBackgroundBorderless"
+                                android:foreground="@drawable/video_bottom_button"
                                 app:cardElevation="0dp"
 
                         >
@@ -660,7 +661,7 @@
                                 android:layout_marginEnd="20dp"
                                 card_view:cardCornerRadius="@dimen/card_corner_radius"
                                 card_view:cardBackgroundColor="@color/transparent"
-                                android:foreground="?attr/selectableItemBackgroundBorderless"
+                                android:foreground="@drawable/video_bottom_button"
                                 card_view:cardElevation="0dp"
 
                         >
@@ -710,7 +711,7 @@
                                 android:layout_marginEnd="20dp"
                                 card_view:cardCornerRadius="@dimen/card_corner_radius"
                                 card_view:cardBackgroundColor="@color/transparent"
-                                android:foreground="?attr/selectableItemBackgroundBorderless"
+                                android:foreground="@drawable/video_bottom_button"
                                 card_view:cardElevation="0dp"
 
                         >
@@ -759,7 +760,7 @@
                                 android:layout_marginEnd="20dp"
                                 card_view:cardCornerRadius="@dimen/card_corner_radius"
                                 card_view:cardBackgroundColor="@color/transparent"
-                                android:foreground="?attr/selectableItemBackgroundBorderless"
+                                android:foreground="@drawable/video_bottom_button"
                                 card_view:cardElevation="0dp"
                         >
                             <LinearLayout

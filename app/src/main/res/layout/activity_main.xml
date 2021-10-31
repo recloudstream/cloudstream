@@ -18,6 +18,8 @@
                 android:background="?attr/primaryGrayBackground"
 
                 app:labelVisibilityMode="labeled"
+                app:itemTextColor="@color/item_select_color"
+                app:itemIconTint="@color/item_select_color"
 
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
