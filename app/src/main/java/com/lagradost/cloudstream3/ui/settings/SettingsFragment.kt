@@ -1,16 +1,22 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
+import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity.Companion.setLocale
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
@@ -26,11 +32,40 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadDir
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.isScopedStorage
+import java.io.File
 import kotlin.concurrent.thread
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private var beneneCount = 0
+
+    // Open file picker
+    private val pathPicker = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        val context = AcraApplication.context ?: return@registerForActivityResult
+        // RW perms for the path
+        val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+
+        context.contentResolver.takePersistableUriPermission(uri, flags)
+
+        val file = UniFile.fromUri(context, uri)
+        println("Selected URI path: $uri - Full path: ${file.filePath}")
+
+        // Stores the real URI using download_path_key
+        // Important that the URI is stored instead of filepath due to permissions.
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .edit().putString(getString(R.string.download_path_key), uri.toString()).apply()
+
+        // From URI -> File path
+        // File path here is purely for cosmetic purposes in settings
+        (file.filePath ?: uri.toString()).let {
+            PreferenceManager.getDefaultSharedPreferences(context)
+                .edit().putString(getString(R.string.download_path_pref), it).apply()
+        }
+    }
 
     // idk, if you find a way of automating this it would be great
     private val languages = arrayListOf(
@@ -61,6 +96,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val legalPreference = findPreference<Preference>(getString(R.string.legal_notice_key))!!
         val subdubPreference = findPreference<Preference>(getString(R.string.display_sub_key))!!
         val providerLangPreference = findPreference<Preference>(getString(R.string.provider_lang_key))!!
+        val downloadPathPreference = findPreference<Preference>(getString(R.string.download_path_key))!!
 
         legalPreference.setOnPreferenceClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(it.context)
@@ -138,6 +174,48 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
             }
 
+            return@setOnPreferenceClickListener true
+        }
+
+        fun getDownloadDirs(): List<String> {
+            val defaultDir = getDownloadDir()?.filePath
+
+            // app_name_download_path = Cloudstream and does not change depending on release.
+            // DOES NOT WORK ON SCOPED STORAGE.
+            val secondaryDir = if (isScopedStorage) null else Environment.getExternalStorageDirectory().absolutePath +
+                    File.separator + resources.getString(R.string.app_name_download_path)
+
+            val currentDir = context?.getBasePath()?.let { it.first?.filePath ?: it.second }
+
+            return (listOf(defaultDir, secondaryDir) +
+                    requireContext().getExternalFilesDirs("").mapNotNull { it.path } +
+                    currentDir).filterNotNull().distinct()
+        }
+
+        downloadPathPreference.setOnPreferenceClickListener {
+            val dirs = getDownloadDirs()
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            val currentDir =
+                settingsManager.getString(getString(R.string.download_path_pref), null) ?: getDownloadDir().toString()
+
+            context?.showBottomDialog(
+                dirs + listOf("Custom"),
+                dirs.indexOf(currentDir),
+                getString(R.string.download_path_pref),
+                true,
+                {}) {
+                // Last = custom
+                if (it == dirs.size) {
+                    pathPicker.launch(Uri.EMPTY)
+                } else {
+                    // Sets both visual and actual paths.
+                    // key = used path
+                    // pref = visual path
+                    settingsManager.edit().putString(getString(R.string.download_path_key), dirs[it]).apply()
+                    settingsManager.edit().putString(getString(R.string.download_path_pref), dirs[it]).apply()
+                }
+            }
             return@setOnPreferenceClickListener true
         }
 

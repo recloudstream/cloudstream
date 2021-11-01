@@ -24,6 +24,10 @@
     <string name="show_fillers_key" translatable="false">show_fillers_key</string>
     <string name="provider_lang_key" translatable="false">provider_lang_key</string>
     <string name="dns_key" translatable="false">dns_key</string>
+    <string name="download_path_key" translatable="false">download_path_key</string>
+
+
+    <string name="app_name_download_path" translatable="false">Cloudstream</string>
 
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
@@ -267,6 +271,7 @@
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
 
+    <string name="download_path_pref">Download path</string>
 
     <string name="display_subbed_dubbed_settings">Display Dubbed/Subbed Anime</string>
 
