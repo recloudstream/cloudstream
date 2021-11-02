@@ -297,11 +297,10 @@ class ResultViewModel : ViewModel() {
                         _dubSubSelections.postValue(d.episodes.keys)
                         val fillerEpisodes = if (showFillers) safeApiCall { getFillerEpisodes(d.name) } else null
 
-                        var idIndex = mainId
+                        var idIndex = 0
                         val res = d.episodes.map { ep ->
                             val episodes = ArrayList<ResultEpisode>()
                             for ((index, i) in ep.value.withIndex()) {
-                                idIndex++
 
                                 val episode = i.episode ?: (index + 1)
                                 episodes.add(
@@ -312,7 +311,7 @@ class ResultViewModel : ViewModel() {
                                         null, // TODO FIX SEASON
                                         i.url,
                                         apiName,
-                                        idIndex,
+                                        mainId + index + 1 + idIndex * 100000,
                                         index,
                                         i.rating,
                                         i.description,
@@ -322,6 +321,7 @@ class ResultViewModel : ViewModel() {
                                     )
                                 )
                             }
+                            idIndex++
 
                             Pair(ep.key, episodes)
                         }.toMap()
