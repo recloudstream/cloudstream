@@ -109,7 +109,7 @@ class DubbedAnimeProvider : MainAPI() {
             HomePageList("Trending", parseDocumentTrending(trendingUrl)),
             HomePageList("Recently Added", parseDocument(recentlyAddedUrl)),
             HomePageList("Recent Releases", parseDocument(lastEpisodeUrl, true)),
-           // HomePageList("All", parseDocument(allUrl))
+            // HomePageList("All", parseDocument(allUrl))
         )
 
         return HomePageResponse(listItems)
@@ -268,20 +268,12 @@ class DubbedAnimeProvider : MainAPI() {
             }
 
             val img = fixUrl(document.select("div.fkimgs > img").attr("src"))
-            return AnimeLoadResponse(
-                null,
-                null,
-                title,
-                url,
-                this.name,
-                TvType.Anime,
-                img,
-                year,
-                ArrayList(episodes),
-                null,
-                null,
-                descript,
-            )
+            return newAnimeLoadResponse(title, url, TvType.Anime) {
+                posterUrl = img
+                this.year = year
+                addEpisodes(DubStatus.Dubbed, episodes)
+                plot = descript
+            }
         }
     }
 }

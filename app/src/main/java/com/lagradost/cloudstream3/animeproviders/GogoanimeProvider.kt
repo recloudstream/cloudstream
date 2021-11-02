@@ -185,24 +185,18 @@ class GogoanimeProvider : MainAPI() {
                 "Episode " + it.selectFirst(".name").text().replace("EP", "").trim()
             )
         }.reversed()
-        return AnimeLoadResponse(
-            title,
-            nativeName,
-            title,
-            link,
-            this.name,
-            getType(type.toString()),
-            poster,
-            year,
-            null,
-            episodes,
-            getStatus(status.toString()),
-            description,
-            ArrayList(genre),
-            null,
-            null,
-            null,
-        )
+
+        return newAnimeLoadResponse(title, link, getType(type.toString())) {
+            japName = nativeName
+            engName = title
+            posterUrl = poster
+            this.year = year
+            addEpisodes(DubStatus.Subbed, episodes) // TODO CHECK
+            plot = description
+            tags = genre
+
+            showStatus = getStatus(status.toString())
+        }
     }
 
     private fun extractVideos(uri: String): List<ExtractorLink> {

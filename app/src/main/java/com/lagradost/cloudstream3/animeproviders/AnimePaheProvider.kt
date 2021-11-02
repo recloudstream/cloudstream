@@ -293,30 +293,26 @@ class AnimePaheProvider : MainAPI() {
                 }
             }
 
-            AnimeLoadResponse(
-                animeTitle,
-                japTitle,
-                animeTitle,
-                url,
-                this.name,
-                getType(tvType.toString()),
-                poster,
-                year,
-                null,
-                episodes,
-                status,
-                synopsis,
-                if (!doc.select(".anime-genre > ul a").isEmpty()) {
+            newAnimeLoadResponse(animeTitle, url, getType(tvType.toString())) {
+                engName = animeTitle
+                japName = japTitle
+
+                this.posterUrl = poster
+                this.year = year
+
+                addEpisodes(DubStatus.Subbed, episodes)
+                this.showStatus = status
+                plot = synopsis
+                tags = if (!doc.select(".anime-genre > ul a").isEmpty()) {
                     ArrayList(doc.select(".anime-genre > ul a").map { it.text().toString() })
                 } else {
                     null
-                },
-                ArrayList(),
-                malId,
-                anilistId,
-                null,
-                trailer
-            )
+                }
+
+                this.malId = malId
+                this.anilistId = anilistId
+                this.trailerUrl = trailer
+            }
         }
     }
 
@@ -324,7 +320,6 @@ class AnimePaheProvider : MainAPI() {
     private fun isNumber(s: String?): Boolean {
         return s?.toIntOrNull() != null
     }
-
 
     private fun cookieStrToMap(cookie: String): Map<String, String> {
         val cookies = mutableMapOf<String, String>()
@@ -346,7 +341,6 @@ class AnimePaheProvider : MainAPI() {
 
         val slice2 = characterMap.slice(0 until s2)
         var acc: Long = 0
-
 
         for ((n, i) in content.reversed().withIndex()) {
             acc += (when (isNumber("$i")) {

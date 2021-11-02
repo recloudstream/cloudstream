@@ -431,8 +431,23 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="0dp"
                             style="@style/MultiSelectButton"
-                    >
-                    </com.google.android.material.button.MaterialButton>
+                    />
+
+                    <com.google.android.material.button.MaterialButton
+                            tools:visibility="visible"
+                            tools:text="Dubbed"
+
+                            android:nextFocusUp="@id/result_descript"
+                            android:nextFocusRight="@id/result_season_button"
+                            android:nextFocusLeft="@id/result_season_button"
+                            android:nextFocusDown="@id/result_episodes"
+
+                            android:id="@+id/result_dub_select"
+                            android:visibility="gone"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="0dp"
+                            style="@style/MultiSelectButton"
+                    />
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

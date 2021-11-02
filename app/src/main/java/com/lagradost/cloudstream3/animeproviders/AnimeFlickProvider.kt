@@ -76,21 +76,15 @@ class AnimeFlickProvider : MainAPI() {
             AnimeEpisode(link, name)
         }.reversed()
 
-        return AnimeLoadResponse(
-            title,
-            null,
-            title,
-            url,
-            this.name,
-            getType(title),
-            poster,
-            year,
-            null,
-            episodes,
-            null,
-            description,
-            genres
-        )
+        return newAnimeLoadResponse(title, url, getType(title)) {
+            posterUrl = poster
+            this.year = year
+
+            addEpisodes(DubStatus.Subbed, episodes)
+
+            plot = description
+            tags = genres
+        }
     }
 
     override fun loadLinks(
