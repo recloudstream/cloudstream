@@ -471,7 +471,6 @@ object VideoDownloadManager {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun ContentResolver.getExistingDownloadUriOrNullQ(relativePath: String, displayName: String): Uri? {
-        println("GETTING INFO $relativePath :::::::::. $displayName")
         try {
             val projection = arrayOf(
                 MediaStore.MediaColumns._ID,
@@ -874,7 +873,7 @@ object VideoDownloadManager {
 
         // Not present in latest testing.
 
-        println("Going to dir $directoryName from ${this.uri} ---- ${this.filePath}")
+//        println("Going to dir $directoryName from ${this.uri} ---- ${this.filePath}")
 
         try {
             val allDirectories = directoryName?.split("/")
@@ -939,7 +938,6 @@ object VideoDownloadManager {
      * Should only be used to get a download path.
      * */
     private fun basePathToFile(context: Context, path: String?): UniFile? {
-        println("BASE TO FILE $path")
         return when {
             path.isNullOrBlank() -> getDownloadDir()
             path.startsWith("content://") -> UniFile.fromUri(context, path.toUri())
@@ -955,13 +953,10 @@ object VideoDownloadManager {
     fun Context.getBasePath(): Pair<UniFile?, String?> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val basePathSetting = settingsManager.getString(getString(R.string.download_path_key), null)
-        println("GET CURRENT path $basePathSetting")
-
         return basePathToFile(this, basePathSetting) to basePathSetting
     }
 
     private fun UniFile?.isDownloadDir(): Boolean {
-        println("DOWNLOAD DIR $this ${this?.filePath} ${this?.uri}")
         return this != null && this.filePath == getDownloadDir()?.filePath
     }
 
@@ -985,7 +980,6 @@ object VideoDownloadManager {
         } else {
             val dir = basePath?.gotoDir(folder)
             val file = dir?.findFile(displayName)
-            println("FOUND FILE ${file?.filePath} ${file?.uri} ${file?.exists()}")
             val success = file?.delete()
             if (success != true) return ERROR_DELETING_FILE else {
                 // Cleans up empty directory
