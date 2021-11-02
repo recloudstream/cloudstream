@@ -5,11 +5,13 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.*
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -36,6 +38,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import okhttp3.internal.closeQuietly
 import java.io.*
 import java.lang.Thread.sleep
 import java.net.URI
@@ -468,6 +471,7 @@ object VideoDownloadManager {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun ContentResolver.getExistingDownloadUriOrNullQ(relativePath: String, displayName: String): Uri? {
+        println("GETTING INFO $relativePath :::::::::. $displayName")
         try {
             val projection = arrayOf(
                 MediaStore.MediaColumns._ID,
@@ -531,52 +535,6 @@ object VideoDownloadManager {
     )
 
     /**
-     * Guarantees a directory is present with the dir name (if createMissingDirectories is true).
-     * Works recursively when '/' is present.
-     * Will remove any file with the dir name if present and add directory.
-     *
-     * @param directoryName if null will use the current path.
-     * @return UniFile / null if createMissingDirectories = false and folder is not found.
-     * */
-    private fun UniFile.gotoDir(directoryName: String?, createMissingDirectories: Boolean = true): UniFile? {
-
-        // Can give this error on scoped storage, haven't solved.
-        // W/DocumentsContract: Failed to create document
-        // java.lang.IllegalArgumentException: Parent document isn't a directory
-
-        try {
-            val allDirectories = directoryName?.split("/")
-            return if (allDirectories?.size == 1 || allDirectories == null) {
-                val found = this.findFile(directoryName)
-                when {
-                    directoryName.isNullOrBlank() -> this
-                    found?.isDirectory == true -> found
-
-                    !createMissingDirectories -> null
-                    // Below creates directories
-                    found?.isFile == true -> {
-                        found.delete()
-                        this.createDirectory(directoryName)
-                    }
-                    this.isDirectory -> this.createDirectory(directoryName)
-                    else -> this.parentFile?.createDirectory(directoryName)
-                }
-            } else {
-                var currentDirectory = this
-                allDirectories.forEach {
-                    // If the next directory is not found it returns the deepest directory possible.
-                    val nextDir = currentDirectory.gotoDir(it, createMissingDirectories)
-                    currentDirectory = nextDir ?: return null
-                }
-                currentDirectory
-            }
-        } catch (e: Exception) {
-            logError(e)
-            return null
-        }
-    }
-
-    /**
      * Sets up the appropriate file and creates a data stream from the file.
      * Used for initializing downloads.
      * */
@@ -594,11 +552,10 @@ object VideoDownloadManager {
         val baseFile = context.getBasePath()
 
         if (isScopedStorage && baseFile.first?.isDownloadDir() == true) {
-            val relativePath = getRelativePath(folder)
             val cr = context.contentResolver ?: return StreamData(ERROR_CONTENT_RESOLVER_NOT_FOUND)
 
             val currentExistingFile =
-                cr.getExistingDownloadUriOrNullQ(relativePath, displayName) // CURRENT FILE WITH THE SAME PATH
+                cr.getExistingDownloadUriOrNullQ(folder ?: "", displayName) // CURRENT FILE WITH THE SAME PATH
 
             fileLength =
                 if (currentExistingFile == null || !resume) 0 else (cr.getFileLength(currentExistingFile)
@@ -630,7 +587,7 @@ object VideoDownloadManager {
                     put(MediaStore.MediaColumns.TITLE, name)
                     if (currentMimeType != null)
                         put(MediaStore.MediaColumns.MIME_TYPE, currentMimeType)
-                    put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, folder)
                 }
 
                 cr.insert(
@@ -642,7 +599,6 @@ object VideoDownloadManager {
             fileStream = cr.openOutputStream(newFileUri, "w" + (if (appendFile) "a" else ""))
                 ?: return StreamData(ERROR_CONTENT_RESOLVER_NOT_FOUND)
         } else {
-            println("SEYUP FFFFFFF")
             val subDir = baseFile.first?.gotoDir(folder)
             val rFile = subDir?.findFile(displayName)
             if (rFile?.exists() != true) {
@@ -650,7 +606,7 @@ object VideoDownloadManager {
                 if (subDir?.createFile(displayName) == null) return StreamData(ERROR_CONTENT_RESOLVER_NOT_FOUND)
             } else {
                 if (resume) {
-                    fileLength = rFile.length()
+                    fileLength = rFile.size()
                 } else {
                     fileLength = 0
                     if (!rFile.delete()) return StreamData(ERROR_CONTENT_RESOLVER_NOT_FOUND)
@@ -680,15 +636,14 @@ object VideoDownloadManager {
 
         val basePath = context.getBasePath()
 
-//        val relativePath = getRelativePath(folder)
         val displayName = getDisplayName(name, extension)
-
+        val relativePath = if (isScopedStorage && basePath.first.isDownloadDir()) getRelativePath(folder) else folder
 
         fun deleteFile(): Int {
-            return delete(context, name, folder, extension, parentId, basePath.first)
+            return delete(context, name, relativePath, extension, parentId, basePath.first)
         }
 
-        val stream = setupStream(context, name, folder, extension, tryResume)
+        val stream = setupStream(context, name, relativePath, extension, tryResume)
         if (stream.errorCode != SUCCESS_STREAM) return stream.errorCode
 
         val resume = stream.resume!!
@@ -746,7 +701,12 @@ object VideoDownloadManager {
             context.setKey(
                 KEY_DOWNLOAD_INFO,
                 it.toString(),
-                DownloadedFileInfo(bytesTotal, folder ?: "", displayName, basePath = basePath.second)
+                DownloadedFileInfo(
+                    bytesTotal,
+                    relativePath ?: "",
+                    displayName,
+                    basePath = basePath.second
+                )
             )
         }
 
@@ -897,6 +857,57 @@ object VideoDownloadManager {
         }
     }
 
+
+    /**
+     * Guarantees a directory is present with the dir name (if createMissingDirectories is true).
+     * Works recursively when '/' is present.
+     * Will remove any file with the dir name if present and add directory.
+     *
+     * @param directoryName if null will use the current path.
+     * @return UniFile / null if createMissingDirectories = false and folder is not found.
+     * */
+    private fun UniFile.gotoDir(directoryName: String?, createMissingDirectories: Boolean = true): UniFile? {
+
+        // May give this error on scoped storage.
+        // W/DocumentsContract: Failed to create document
+        // java.lang.IllegalArgumentException: Parent document isn't a directory
+
+        // Not present in latest testing.
+
+        println("Going to dir $directoryName from ${this.uri} ---- ${this.filePath}")
+
+        try {
+            val allDirectories = directoryName?.split("/")
+            return if (allDirectories?.size == 1 || allDirectories == null) {
+                val found = this.findFile(directoryName)
+                when {
+                    directoryName.isNullOrBlank() -> this
+                    found?.isDirectory == true -> found
+
+                    !createMissingDirectories -> null
+                    // Below creates directories
+                    found?.isFile == true -> {
+                        found.delete()
+                        this.createDirectory(directoryName)
+                    }
+                    this.isDirectory -> this.createDirectory(directoryName)
+                    else -> this.parentFile?.createDirectory(directoryName)
+                }
+            } else {
+                var currentDirectory = this
+                allDirectories.forEach {
+                    // If the next directory is not found it returns the deepest directory possible.
+                    val nextDir = currentDirectory.gotoDir(it, createMissingDirectories)
+                    currentDirectory = nextDir ?: return null
+                }
+                currentDirectory
+            }
+        } catch (e: Exception) {
+            logError(e)
+            return null
+        }
+    }
+
     private fun getDisplayName(name: String, extension: String): String {
         return "$name.$extension"
     }
@@ -918,7 +929,7 @@ object VideoDownloadManager {
         )
     }
 
-    @Deprecated("TODO fix unifile to work with download directory.")
+    @Deprecated("TODO fix UniFile to work with download directory.")
     private fun getRelativePath(folder: String?): String {
         return (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace('/', File.separatorChar)
     }
@@ -928,8 +939,9 @@ object VideoDownloadManager {
      * Should only be used to get a download path.
      * */
     private fun basePathToFile(context: Context, path: String?): UniFile? {
+        println("BASE TO FILE $path")
         return when {
-            path == null -> getDownloadDir()
+            path.isNullOrBlank() -> getDownloadDir()
             path.startsWith("content://") -> UniFile.fromUri(context, path.toUri())
             else -> UniFile.fromFile(File(path))
         }
@@ -943,6 +955,8 @@ object VideoDownloadManager {
     fun Context.getBasePath(): Pair<UniFile?, String?> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val basePathSetting = settingsManager.getString(getString(R.string.download_path_key), null)
+        println("GET CURRENT path $basePathSetting")
+
         return basePathToFile(this, basePathSetting) to basePathSetting
     }
 
@@ -970,8 +984,9 @@ object VideoDownloadManager {
             }
         } else {
             val dir = basePath?.gotoDir(folder)
-            val success = dir?.findFile(displayName)
-                ?.delete()
+            val file = dir?.findFile(displayName)
+            println("FOUND FILE ${file?.filePath} ${file?.uri} ${file?.exists()}")
+            val success = file?.delete()
             if (success != true) return ERROR_DELETING_FILE else {
                 // Cleans up empty directory
                 if (dir.listFiles()?.isEmpty() == true) dir.delete()
@@ -991,7 +1006,7 @@ object VideoDownloadManager {
         folder: String?,
         parentId: Int?,
         startIndex: Int?,
-        createNotificationCallback: (VideoDownloadManager.CreateNotificationMetadata) -> Unit
+        createNotificationCallback: (CreateNotificationMetadata) -> Unit
     ): Int {
         val extension = "mp4"
         fun logcatPrint(vararg items: Any?) {
@@ -1014,17 +1029,19 @@ object VideoDownloadManager {
         )
 
         var realIndex = startIndex ?: 0
-        val stream = setupStream(context, name, folder, extension, realIndex > 0)
+        val basePath = context.getBasePath()
+
+        val relativePath = if (isScopedStorage && basePath.first.isDownloadDir()) getRelativePath(folder) else folder
+
+        val stream = setupStream(context, name, relativePath, extension, realIndex > 0)
         if (stream.errorCode != SUCCESS_STREAM) return stream.errorCode
 
         if (!stream.resume!!) realIndex = 0
         val fileLengthAdd = stream.fileLength!!
         val tsIterator = m3u8Helper.hlsYield(listOf(m3u8), realIndex)
 
-//        val relativePath = getRelativePath(folder)
         val displayName = getDisplayName(name, extension)
 
-        val basePath = context.getBasePath()
 
         val fileStream = stream.fileStream!!
 
@@ -1038,7 +1055,7 @@ object VideoDownloadManager {
         val totalTs = firstTs.totalTs.toLong()
 
         fun deleteFile(): Int {
-            return delete(context, name, folder, extension, parentId, basePath.first)
+            return delete(context, name, relativePath, extension, parentId, basePath.first)
         }
         /*
             Most of the auto generated m3u8 out there have TS of the same size.
@@ -1057,7 +1074,7 @@ object VideoDownloadManager {
                     it.toString(),
                     DownloadedFileInfo(
                         (bytesDownloaded * (totalTs / tsProgress.toFloat())).toLong(),
-                        folder ?: "",
+                        relativePath ?: "",
                         displayName,
                         tsProgress.toString(),
                         basePath = basePath.second
@@ -1350,9 +1367,23 @@ object VideoDownloadManager {
             val file = base?.gotoDir(info.relativePath, false)?.findFile(info.displayName)
 //            val normalPath = context.getNormalPath(getFile(info.relativePath), info.displayName)
 //            val dFile = File(normalPath)
+
             if (file?.exists() != true) return null
 
-            return DownloadedFileInfoResult(file.length(), info.totalBytes, file.uri)
+            return DownloadedFileInfoResult(file.size(), info.totalBytes, file.uri)
+        }
+    }
+
+    /**
+     * Gets the true download size as Scoped Storage sometimes wrongly returns 0.
+     * */
+    fun UniFile.size(): Long {
+        val len = length()
+        return if (len <= 1) {
+            val inputStream = this.openInputStream()
+            return inputStream.available().toLong().also { inputStream.closeQuietly() }
+        } else {
+            len
         }
     }
 
@@ -1382,7 +1413,12 @@ object VideoDownloadManager {
 //            val normalPath = context.getNormalPath(getFile(info.relativePath), info.displayName)
 //            val dFile = File(normalPath)
             if (file?.exists() != true) return true
-            return file.delete()
+            return try {
+                file.delete()
+            } catch (e: Exception) {
+                val cr = context.contentResolver
+                cr.delete(file.uri, null, null) > 0
+            }
         }
     }
 
