@@ -36,11 +36,13 @@ object DownloadButtonSetup {
 
                     builder.setTitle(R.string.delete_file)
                         .setMessage(
-                            ctx.getString(R.string.delete_message).format(ctx.getNameFull(
-                                click.data.name,
-                                click.data.episode,
-                                click.data.season
-                            ))
+                            ctx.getString(R.string.delete_message).format(
+                                ctx.getNameFull(
+                                    click.data.name,
+                                    click.data.episode,
+                                    click.data.season
+                                )
+                            )
                         )
                         .setPositiveButton(R.string.delete, dialogClickListener)
                         .setNegativeButton(R.string.cancel, dialogClickListener)
@@ -54,13 +56,19 @@ object DownloadButtonSetup {
             }
             DOWNLOAD_ACTION_RESUME_DOWNLOAD -> {
                 activity?.let { ctx ->
-                    val pkg = VideoDownloadManager.getDownloadResumePackage(ctx, id)
-                    if (pkg != null) {
-                        VideoDownloadManager.downloadFromResumeUsingWorker(ctx, pkg)
-                    } else {
+                    if (VideoDownloadManager.downloadStatus.containsKey(id) && VideoDownloadManager.downloadStatus[id] == VideoDownloadManager.DownloadType.IsPaused) {
                         VideoDownloadManager.downloadEvent.invoke(
                             Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
                         )
+                    } else {
+                        val pkg = VideoDownloadManager.getDownloadResumePackage(ctx, id)
+                        if (pkg != null) {
+                            VideoDownloadManager.downloadFromResumeUsingWorker(ctx, pkg)
+                        } else {
+                            VideoDownloadManager.downloadEvent.invoke(
+                                Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
+                            )
+                        }
                     }
                 }
             }
@@ -69,7 +77,7 @@ object DownloadButtonSetup {
                     val length =
                         VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(act, click.data.id)?.fileLength
                             ?: 0
-                    if(length > 0) {
+                    if (length > 0) {
                         MainActivity.showToast(act, R.string.delete, Toast.LENGTH_LONG)
                     } else {
                         MainActivity.showToast(act, R.string.download, Toast.LENGTH_LONG)
@@ -86,19 +94,21 @@ object DownloadButtonSetup {
                         click.data.id.toString()
                     ) ?: return
 
-                    act.navigate(R.id.global_to_navigation_player, PlayerFragment.newInstance(
-                        UriData(
-                            info.path.toString(),
-                            keyInfo.relativePath,
-                            keyInfo.displayName,
-                            click.data.parentId,
-                            click.data.id,
-                            headerName ?: "null",
-                            if (click.data.episode <= 0) null else click.data.episode,
-                            click.data.season
-                        ),
-                        act.getViewPos(click.data.id)?.position ?: 0
-                    ))
+                    act.navigate(
+                        R.id.global_to_navigation_player, PlayerFragment.newInstance(
+                            UriData(
+                                info.path.toString(),
+                                keyInfo.relativePath,
+                                keyInfo.displayName,
+                                click.data.parentId,
+                                click.data.id,
+                                headerName ?: "null",
+                                if (click.data.episode <= 0) null else click.data.episode,
+                                click.data.season
+                            ),
+                            act.getViewPos(click.data.id)?.position ?: 0
+                        )
+                    )
                 }
             }
         }

@@ -230,21 +230,17 @@ class ZoroProvider : MainAPI() {
                 it.selectFirst(".ssli-order")?.text()?.toIntOrNull()
             )
         }
-        return AnimeLoadResponse(
-            title,
-            japaneseTitle,
-            title,
-            url,
-            this.name,
-            TvType.Anime,
-            poster,
-            year,
-            null,
-            episodes,
-            status,
-            description,
-            tags,
-        )
+
+        return newAnimeLoadResponse(title, url, TvType.Anime) {
+            japName = japaneseTitle
+            engName = title
+            posterUrl = poster
+            this.year = year
+            addEpisodes(DubStatus.Subbed, episodes)
+            showStatus = status
+            plot = description
+            this.tags = tags
+        }
     }
 
     private fun getM3u8FromRapidCloud(url: String): String {

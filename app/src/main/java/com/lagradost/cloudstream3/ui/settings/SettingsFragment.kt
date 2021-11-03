@@ -1,7 +1,11 @@
 package com.lagradost.cloudstream3.ui.settings
 
+
 import android.content.Intent
 import android.net.Uri
+import android.app.UiModeManager
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Environment
 import android.widget.Toast
@@ -40,6 +44,22 @@ import kotlin.concurrent.thread
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
+    companion object {
+        fun Context.isTvSettings(): Boolean {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            var value = settingsManager.getInt(this.getString(R.string.app_layout_key), -1)
+            if (value == -1) {
+                value = if (isAutoTv()) 1 else 0
+            }
+            return value == 1
+        }
+
+        private fun Context.isAutoTv(): Boolean {
+            val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager?
+            return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+        }
+    }
+
     private var beneneCount = 0
 
     // Open file picker
@@ -83,6 +103,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("\uD83C\uDDF3\uD83C\uDDF4", "Norsk", "no"),
         Triple("\ud83c\udde9\ud83c\uddea", "German", "de"),
         Triple("🇱🇧", "Arabic", "ar"),
+        Triple("🇹🇷", "Turkish", "tr")
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -97,6 +118,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val subdubPreference = findPreference<Preference>(getString(R.string.display_sub_key))!!
         val providerLangPreference = findPreference<Preference>(getString(R.string.provider_lang_key))!!
         val downloadPathPreference = findPreference<Preference>(getString(R.string.download_path_key))!!
+        val allLayoutPreference = findPreference<Preference>(getString(R.string.app_layout_key))!!
+        val colorPrimaryPreference = findPreference<Preference>(getString(R.string.primary_color_key))!!
+        val preferedMediaTypePreference = findPreference<Preference>(getString(R.string.prefer_media_type_key))!!
+        val appThemePreference = findPreference<Preference>(getString(R.string.app_theme_key))!!
 
         legalPreference.setOnPreferenceClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(it.context)
@@ -177,6 +202,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+
         fun getDownloadDirs(): List<String> {
             val defaultDir = getDownloadDir()?.filePath
 
@@ -214,6 +240,93 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     // pref = visual path
                     settingsManager.edit().putString(getString(R.string.download_path_key), dirs[it]).apply()
                     settingsManager.edit().putString(getString(R.string.download_path_pref), dirs[it]).apply()
+
+        if (preferedMediaTypePreference != null) {
+            preferedMediaTypePreference.setOnPreferenceClickListener {
+                val prefNames = resources.getStringArray(R.array.media_type_pref)
+                val prefValues = resources.getIntArray(R.array.media_type_pref_values)
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+                val currentPrefMedia =
+                    settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
+
+                context?.showBottomDialog(
+                    prefNames.toList(),
+                    prefValues.indexOf(currentPrefMedia),
+                    getString(R.string.preferred_media_settings),
+                    true,
+                    {}) {
+                    settingsManager.edit()
+                        .putInt(getString(R.string.preferred_media_settings), prefValues[it])
+                        .apply()
+                    context?.initRequestClient()
+                }
+                return@setOnPreferenceClickListener true
+            }
+        }
+
+        allLayoutPreference.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.app_layout)
+            val prefValues = resources.getIntArray(R.array.app_layout_values)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            val currentLayout =
+                settingsManager.getInt(getString(R.string.app_layout_key), -1)
+            context?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentLayout),
+                getString(R.string.app_layout),
+                true,
+                {}) {
+                try {
+                    settingsManager.edit().putInt(getString(R.string.app_layout_key), prefValues[it]).apply()
+                    activity?.recreate()
+                } catch (e : Exception) {
+                    logError(e)
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        colorPrimaryPreference.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.themes_overlay_names)
+            val prefValues = resources.getStringArray(R.array.themes_overlay_names_values)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            val currentLayout = settingsManager.getString( getString(R.string.primary_color_key),prefValues.first())
+            context?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentLayout),
+                getString(R.string.primary_color_settings),
+                true,
+                {}) {
+                try {
+                    settingsManager.edit().putString(getString(R.string.primary_color_key), prefValues[it]).apply()
+                    activity?.recreate()
+                } catch (e : Exception) {
+                    logError(e)
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        appThemePreference.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.themes_names)
+            val prefValues = resources.getStringArray(R.array.themes_names_values)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            val currentLayout = settingsManager.getString( getString(R.string.app_theme_key),prefValues.first())
+            context?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentLayout),
+                getString(R.string.app_theme_settings),
+                true,
+                {}) {
+                try {
+                    settingsManager.edit().putString(getString(R.string.app_theme_key), prefValues[it]).apply()
+                    activity?.recreate()
+                } catch (e : Exception) {
+                    logError(e)
                 }
             }
             return@setOnPreferenceClickListener true
@@ -271,7 +384,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     settingsManager.edit().putInt(getString(R.string.benene_count), beneneCount).apply()
                     it.summary = getString(R.string.benene_count_text).format(beneneCount)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    logError(e)
                 }
 
                 return@setOnPreferenceClickListener true

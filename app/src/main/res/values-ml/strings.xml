@@ -14,7 +14,6 @@
     <string name="no_data">ടാറ്റ ലഭ്യമല്ല</string>
     <string name="episode_more_options_des">കൂടുതൽ ഓപ്ഷൻസ്</string>
     <string name="next_episode">അടുത്ത എപ്പിസോഡ്</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">തരം</string>
     <string name="result_share">ഷെയർ</string>
     <string name="result_open_in_browser">ബ്രൗസറിൽ തുറക്കുക</string>

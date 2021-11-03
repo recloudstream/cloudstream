@@ -18,7 +18,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.text.color
 import androidx.core.view.isVisible
@@ -196,7 +195,7 @@ class ResultFragment : Fragment() {
         super.onDestroy()
         activity?.let {
             it.window?.navigationBarColor =
-                it.colorFromAttribute(R.attr.darkBackground)
+                it.colorFromAttribute(R.attr.primaryGrayBackground)
         }
     }
 
@@ -236,7 +235,7 @@ class ResultFragment : Fragment() {
     private var currentId: Int? = null
     private var currentIsMovie: Boolean? = null
     private var episodeRanges: List<String>? = null
-
+    private var dubRange: Set<DubStatus>? = null
     var url: String? = null
 
     private fun fromIndexToSeasonText(selection: Int?): String {
@@ -682,7 +681,6 @@ class ResultFragment : Fragment() {
                         }
                         outputFile.writeText(text)
 
-
                         val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
 
                         vlcIntent.setPackage(VLC_PACKAGE)
@@ -859,6 +857,25 @@ class ResultFragment : Fragment() {
             }
         }
 
+        observe(viewModel.dubStatus) { status ->
+            result_dub_select?.text = status.toString()
+        }
+
+        observe(viewModel.dubSubSelections) { range ->
+            dubRange = range
+            result_dub_select?.visibility = if (range.size <= 1) GONE else VISIBLE
+        }
+
+        result_dub_select.setOnClickListener {
+            val ranges = dubRange
+            if (ranges != null) {
+                it.popupMenuNoIconsAndNoStringRes(ranges.map { status -> Pair(status.ordinal, status.toString()) }
+                    .toList()) {
+                    viewModel.changeDubStatus(requireContext(), DubStatus.values()[itemId])
+                }
+            }
+        }
+
         observe(viewModel.selectedRange) { range ->
             result_episode_select?.text = range
         }
@@ -959,19 +976,24 @@ class ResultFragment : Fragment() {
 
                         metadataInfoArray.add(Pair(R.string.site, d.apiName))
 
-                        if (metadataInfoArray.size > 0) {
-                            result_metadata.visibility = VISIBLE
-                            val text = SpannableStringBuilder()
-                            val grayColor = ContextCompat.getColor(requireContext(), R.color.grayTextColor)
-                            val textColor = ContextCompat.getColor(requireContext(), R.color.textColor)
-                            for (meta in metadataInfoArray) {
-                                text.color(grayColor) { append(getString(meta.first) + ": ") }
-                                    .color(textColor) { append("${meta.second}\n") }
+                        context?.let { ctx ->
+                            if (metadataInfoArray.size > 0) {
+                                result_metadata.visibility = VISIBLE
+                                val text = SpannableStringBuilder()
+                                val grayColor =
+                                    ctx.colorFromAttribute(R.attr.grayTextColor) //ContextCompat.getColor(requireContext(), R.color.grayTextColor)
+                                val textColor =
+                                    ctx.colorFromAttribute(R.attr.textColor) //ContextCompat.getColor(requireContext(), R.color.textColor)
+                                for (meta in metadataInfoArray) {
+                                    text.color(grayColor) { append(getString(meta.first) + ": ") }
+                                        .color(textColor) { append("${meta.second}\n") }
+                                }
+                                result_metadata.text = text
+                            } else {
+                                result_metadata.visibility = GONE
                             }
-                            result_metadata.text = text
-                        } else {
-                            result_metadata.visibility = GONE
                         }
+
 
                         result_poster?.setImage(d.posterUrl)
                         result_poster_holder?.visibility = if (d.posterUrl.isNullOrBlank()) GONE else VISIBLE

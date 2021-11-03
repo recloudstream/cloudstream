@@ -10,14 +10,12 @@
     <string name="title_downloads">Nerladdningar</string>
     <string name="title_settings">Instälningar</string>
     <string name="search_hint">Sök…</string>
-    <string name="change_providers_img_des">Ändra Providers</string>
     <string name="search_poster_img_des">Poster</string>
     <string name="no_data">Ingen Data</string>
     <string name="episode_more_options_des">Mer Instälningar</string>
     <string name="go_back_img_des">Gå tillbacka</string>
     <string name="next_episode">Nästa avsnitt</string>
     <string name="result_poster_img_des">Affisch</string>
-    <string name="result_plot">Sammanfattning</string>
     <string name="result_tags">Genrer</string>
     <string name="result_share">Dela</string>
     <string name="result_open_in_browser">Öppna i webbläsaren</string>

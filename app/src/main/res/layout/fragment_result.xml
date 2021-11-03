@@ -83,7 +83,7 @@
                     android:scaleType="centerCrop"
                     android:alpha="0.7"
                     tools:src="@drawable/example_poster"
-                    android:background="@color/primaryGrayBackground"
+                    android:background="?attr/primaryGrayBackground"
                     tools:ignore="ContentDescription"/>
             <ImageView
                     android:src="@drawable/background_shadow"
@@ -208,6 +208,7 @@
                                 android:layout_height="50dp"
                                 android:mediaRouteTypes="user"
                                 android:visibility="gone"
+                                app:mediaRouteButtonTint="?attr/textColor"
                         />
                         <ImageView
                                 android:nextFocusUp="@id/result_back"
@@ -220,6 +221,9 @@
                                 android:layout_height="25dp"
                                 android:layout_marginRight="10dp"
                                 android:elevation="10dp"
+
+                                android:tint="?attr/textColor"
+
                                 android:background="?android:attr/selectableItemBackgroundBorderless"
                                 android:src="@drawable/ic_outline_share_24"
                                 android:layout_gravity="center" android:contentDescription="@string/result_share">
@@ -235,6 +239,9 @@
                                 android:layout_height="25dp"
                                 android:layout_margin="5dp"
                                 android:elevation="10dp"
+
+                                android:tint="?attr/textColor"
+
                                 android:background="?android:attr/selectableItemBackgroundBorderless"
                                 android:src="@drawable/ic_baseline_public_24"
                                 android:layout_gravity="center"
@@ -261,6 +268,7 @@
                 />
 
                 <TextView
+                        android:textColor="?attr/textColor"
                         android:padding="10dp"
                         android:foreground="@drawable/outline_drawable"
 
@@ -383,7 +391,7 @@
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
                             tools:text="128MB / 237MB"
-                            android:textColor="@color/grayTextColor"
+                            android:textColor="?attr/grayTextColor"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent">
                     </TextView>
@@ -423,8 +431,23 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="0dp"
                             style="@style/MultiSelectButton"
-                    >
-                    </com.google.android.material.button.MaterialButton>
+                    />
+
+                    <com.google.android.material.button.MaterialButton
+                            tools:visibility="visible"
+                            tools:text="Dubbed"
+
+                            android:nextFocusUp="@id/result_descript"
+                            android:nextFocusRight="@id/result_season_button"
+                            android:nextFocusLeft="@id/result_season_button"
+                            android:nextFocusDown="@id/result_episodes"
+
+                            android:id="@+id/result_dub_select"
+                            android:visibility="gone"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="0dp"
+                            style="@style/MultiSelectButton"
+                    />
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

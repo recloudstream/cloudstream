@@ -268,24 +268,19 @@ class TenshiProvider : MainAPI() {
         val synonyms =
             document.select("li.synonym.meta-data > div.info-box > span.value").map { it?.text()?.trim().toString() }
 
-        return AnimeLoadResponse(
-            englishTitle,
-            japaneseTitle,
-            canonicalTitle,
-            url,
-            this.name,
-            getType(type ?: ""),
-            poster,
-            year.toIntOrNull(),
-            null,
-            episodes,
-            status,
-            synopsis,
-            ArrayList(genre),
-            ArrayList(synonyms),
-            null,
-            null,
-        )
+        return newAnimeLoadResponse(canonicalTitle,url,getType(type ?: "")) {
+            engName = englishTitle
+            japName = japaneseTitle
+
+            posterUrl = poster
+            this.year = year.toIntOrNull()
+
+            addEpisodes(DubStatus.Subbed,episodes)
+            showStatus = status
+            tags = genre
+            this.synonyms = synonyms
+            plot = synopsis
+        }
     }
 
 

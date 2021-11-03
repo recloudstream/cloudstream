@@ -208,22 +208,16 @@ class WcoProvider : MainAPI() {
         val genre = document.select("div.elements div.row > div:nth-child(1) > div.row-line:nth-child(5) > a")
             .map { it?.text()?.trim().toString() }
 
-        return AnimeLoadResponse(
-            canonicalTitle,
-            japaneseTitle,
-            canonicalTitle,
-            url,
-            this.name,
-            getType(type ?: ""),
-            poster,
-            year,
-            if (isDubbed) episodes else null,
-            if (!isDubbed) episodes else null,
-            status,
-            synopsis,
-            ArrayList(genre),
-            ArrayList(),
-        )
+        return newAnimeLoadResponse(canonicalTitle,url,getType(type ?: "")) {
+            japName = japaneseTitle
+            engName = canonicalTitle
+            posterUrl = poster
+            this.year = year
+            addEpisodes(if(isDubbed) DubStatus.Dubbed else DubStatus.Subbed,episodes)
+            showStatus = status
+            plot = synopsis
+            tags = genre
+        }
     }
 
     override fun loadLinks(

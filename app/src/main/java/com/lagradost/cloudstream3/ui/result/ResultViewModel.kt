@@ -55,12 +55,19 @@ class ResultViewModel : ViewModel() {
     val publicEpisodes: LiveData<Resource<List<ResultEpisode>>> get() = _publicEpisodes
     val publicEpisodesCount: LiveData<Int> get() = _publicEpisodesCount
 
-    private val dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
+    val dubStatus: MutableLiveData<DubStatus> get() = _dubStatus
+    private val _dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
 
     private val page: MutableLiveData<LoadResponse> = MutableLiveData()
     val id: MutableLiveData<Int> = MutableLiveData()
     val selectedSeason: MutableLiveData<Int> = MutableLiveData(-2)
     val seasonSelections: MutableLiveData<List<Int?>> = MutableLiveData()
+
+    val dubSubSelections: MutableLiveData<Set<DubStatus>> get() = _dubSubSelections
+    private val _dubSubSelections: MutableLiveData<Set<DubStatus>> = MutableLiveData()
+
+    val dubSubEpisodes: MutableLiveData<Map<DubStatus, List<ResultEpisode>>?> get() = _dubSubEpisodes
+    private val _dubSubEpisodes: MutableLiveData<Map<DubStatus, List<ResultEpisode>>?> = MutableLiveData()
 
     private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData()
     val watchStatus: LiveData<WatchType> get() = _watchStatus
@@ -110,7 +117,7 @@ class ResultViewModel : ViewModel() {
         val seasons = seasonTypes.toList().map { it.first }.sortedBy { it }
         seasonSelections.postValue(seasons)
         if (seasons.isEmpty()) { // WHAT THE FUCK DID YOU DO????? HOW DID YOU DO THIS
-            _publicEpisodes.postValue(Resource.Success( ArrayList()))
+            _publicEpisodes.postValue(Resource.Success(ArrayList()))
             return
         }
 
@@ -160,7 +167,7 @@ class ResultViewModel : ViewModel() {
             selectedRange.postValue(allRange)
         }
 
-        _publicEpisodes.postValue(Resource.Success( currentList))
+        _publicEpisodes.postValue(Resource.Success(currentList))
     }
 
     fun changeSeason(context: Context, selection: Int?) {
@@ -169,6 +176,13 @@ class ResultViewModel : ViewModel() {
 
     fun changeRange(context: Context, range: Int?) {
         filterEpisodes(context, _episodes.value, null, range)
+    }
+
+    fun changeDubStatus(context: Context, status: DubStatus?) {
+        dubSubEpisodes.value?.get(status)?.let { episodes ->
+            dubStatus.postValue(status)
+            updateEpisodes(context, null, episodes, null)
+        }
     }
 
     private fun updateEpisodes(context: Context, localId: Int?, list: List<ResultEpisode>, selection: Int?) {
@@ -237,7 +251,7 @@ class ResultViewModel : ViewModel() {
         return name
     }
 
-    fun load(context: Context, url: String, apiName: String, showFillers : Boolean) = viewModelScope.launch {
+    fun load(context: Context, url: String, apiName: String, showFillers: Boolean) = viewModelScope.launch {
         _resultResponse.postValue(Resource.Loading(url))
         _publicEpisodes.postValue(Resource.Loading())
 
@@ -273,16 +287,21 @@ class ResultViewModel : ViewModel() {
 
                 when (d) {
                     is AnimeLoadResponse -> {
-                        val isDub = d.dubEpisodes != null && d.dubEpisodes.isNotEmpty()
-                        dubStatus.postValue(if (isDub) DubStatus.Dubbed else DubStatus.Subbed)
+                        //TODO context.getKey<>() isdub
 
-                        val dataList = (if (isDub) d.dubEpisodes else d.subEpisodes)
+                        val isDub =
+                            d.episodes.containsKey(DubStatus.Dubbed) && !d.episodes[DubStatus.Dubbed].isNullOrEmpty()
+                        val dubStatus = if (isDub) DubStatus.Dubbed else DubStatus.Subbed
+                        _dubStatus.postValue(dubStatus)
 
-                        val fillerEpisodes = if(showFillers) safeApiCall { getFillerEpisodes(d.name) } else null
+                        _dubSubSelections.postValue(d.episodes.keys)
+                        val fillerEpisodes = if (showFillers) safeApiCall { getFillerEpisodes(d.name) } else null
 
-                        if (dataList != null) { // TODO dub and sub at the same time
+                        var idIndex = 0
+                        val res = d.episodes.map { ep ->
                             val episodes = ArrayList<ResultEpisode>()
-                            for ((index, i) in dataList.withIndex()) {
+                            for ((index, i) in ep.value.withIndex()) {
+
                                 val episode = i.episode ?: (index + 1)
                                 episodes.add(
                                     context.buildResultEpisode(
@@ -292,17 +311,23 @@ class ResultViewModel : ViewModel() {
                                         null, // TODO FIX SEASON
                                         i.url,
                                         apiName,
-                                        (mainId + index + 1),
+                                        mainId + index + 1 + idIndex * 100000,
                                         index,
                                         i.rating,
-                                        i.descript,
+                                        i.description,
                                         if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
                                             it.contains(episode) && it[episode] == true
-                                        }
-                                            ?: false else false,
+                                        } ?: false else false,
                                     )
                                 )
                             }
+                            idIndex++
+
+                            Pair(ep.key, episodes)
+                        }.toMap()
+
+                        _dubSubEpisodes.postValue(res)
+                        res[dubStatus]?.let { episodes ->
                             updateEpisodes(context, mainId, episodes, -1)
                         }
                     }
@@ -366,11 +391,10 @@ class ResultViewModel : ViewModel() {
                             ), -1
                         )
                     }
-
                 }
             }
             else -> {
-
+                // nothing
             }
         }
     }

@@ -1,10 +1,12 @@
 # CloudStream-3
 
+![GitHub release](https://img.shields.io/github/v/release/LagradOst/cloudstream-3?sort=semver&style=for-the-badge)
+[![Discord](https://img.shields.io/discord/737724143126052974?style=for-the-badge)](https://discord.gg/5Hus6fM)
+
+
 **DOWNLOAD:**
 https://github.com/LagradOst/CloudStream-3/releases
 
-**Discord:**
-https://discord.gg/5Hus6fM
 
 ***Features:***
 + **AdFree**, No ads whatsoever
@@ -27,6 +29,7 @@ https://discord.gg/5Hus6fM
 * 🇪🇸 Spanish
 * 🇳🇴 Norsk
 * 🇩🇪 German
+* 🇹🇷 Turkish
 
 ***SCREENSHOTS:***
 
@@ -49,6 +52,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 <!-- Do not remove those two comments -->
 <!--SITE LIST START-->
 - [gogoanime.vc](https://gogoanime.vc) 
+- [allanime.site](https://allanime.site) 
 - [animeflick.net](https://animeflick.net) 
 - [kawaiifu.com](https://kawaiifu.com) 
 - [tenshi.moe](https://tenshi.moe) 

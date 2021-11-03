@@ -9,7 +9,6 @@
     <string name="no_data">Thật tiếc! Không có kết quả nào phù hợp. Hãy thử nhập một tên khác</string>
     <string name="episode_more_options_des">More Options</string>
     <string name="next_episode">Tập tiếp theo</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Thể loại</string>
     <string name="result_share">Chia sẻ</string>
     <string name="result_open_in_browser">Mở bằng trình duyệt</string>

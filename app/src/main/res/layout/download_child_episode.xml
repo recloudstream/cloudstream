@@ -60,7 +60,7 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:singleLine="true"
 
-                    android:textColor="@color/textColor"
+                    android:textColor="?attr/textColor"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
             </TextView>
@@ -71,7 +71,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     tools:text="128MB / 237MB"
-                    android:textColor="@color/grayTextColor"
+                    android:textColor="?attr/grayTextColor"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent">
             </TextView>
@@ -111,6 +111,7 @@
                     android:layout_width="30dp"
                     android:background="?selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_baseline_play_arrow_24"
+                    android:tint="?attr/textColor"
                     android:contentDescription="@string/download"/>
         </FrameLayout>
     </GridLayout>

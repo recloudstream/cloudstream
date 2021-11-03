@@ -76,6 +76,7 @@
     <string name="subs_edge_type">Kolor krawędzi</string>
     <string name="subs_subtitle_elevation">Wzniesienie napisów</string>
     <string name="subs_font">Czcionka</string>
+    <string name="subs_font_size">Rozmiar czcionki</string>
 
     <string name="search_provider_text_providers">Szukaj według dostawców</string>
     <string name="search_provider_text_types">Szukaj według typów</string>
@@ -134,7 +135,7 @@
     <string name="no_links_found_toast">Nie znaleziono linków</string>
     <string name="copy_link_toast">Skopiowano do schowka</string>
     <string name="play_episode_toast">Odtwórz odcinek</string>
-    <string name="subs_default_reset_toast">Resetuj</string>
+    <string name="subs_default_reset_toast">Zresetowano</string>
     <string name="acra_report_toast">Awaria aplikacji. Anonimowe zgłoszenie błedu zostanie wysłane programistom</string>
 
     <string name="season">Sezon</string>
@@ -200,4 +201,29 @@
     <string name="dont_show_again">Nie pokazuj ponownie</string>
     <string name="update">Aktualizacja</string>
     <string name="watch_quality_pref">Domyślna jakość</string>
+    <string name="use_system_brightness_settings">Używaj jasności systemowej</string>
+    <string name="use_system_brightness_settings_des">Używaj jasności systemowej zamiast ciemnej nakładki</string>
+    <string name="show_fillers_settings">Pokaż odcineki-wypełniacze dla anime</string>
+    <string name="dns_pref_summary">Przydatne w pomijaniu blokad dostawców internetu</string>
+    <string name="display_subbed_dubbed_settings">Wyświel Anime z dubbingiem/napisami</string>
+    <string name="resize_fit">Dopasuj do ekranu</string>
+    <string name="resize_fill">Rozciągnij</string>
+    <string name="resize_zoom">Powiększ</string>
+    <string name="provider_lang_settings">Języki dostawców</string>
+    <string name="general">Ogólne</string>
+    <string name="app_layout">Układ aplikacji</string>
+    <string name="automatic">Automatyczny</string>
+    <string name="tv_layout">Układ dla telewizorów</string>
+    <string name="phone_layout">Układ dla telefonów</string>
+    <string name="primary_color_settings">Kolor podstawowy</string>
+    <string name="dns_pref">DNS over HTTPS</string>
+    <string name="legal_notice">Zastrzeżenie</string>
+    <string name="result_poster_img_des">Plakat</string>
+    <string name="episode_poster_img_des">Plakat odcinka</string>
+    <string name="home_main_poster_img_des">Główny plakat</string>
+    <string name="home_next_random_img_des">Następny losowy</string>
+    <string name="go_back_img_des">Wstecz</string>
+    <string name="filler_format">(WYpełniacz) %s</string>
+    <string name="home_change_provider_img_des">Zmień dostawcę</string>
+    <string name="preview_background_img_des">Pogląd tła</string>
 </resources>

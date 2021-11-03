@@ -6,11 +6,9 @@
     <string name="title_downloads">Downloads</string>
     <string name="title_settings">Instellingen</string>
     <string name="search_hint">Zoeken…</string>
-    <string name="change_providers_img_des">Aanbieders wijzigen</string>
     <string name="search_poster_img_des">Poster</string>
     <string name="no_data">Geen gegevens</string>
     <string name="episode_more_options_des">Meer Opties</string>
-    <string name="episode_play_img_des">Aflevering afspelen</string>
     <string name="go_back_img_des">Ga terug</string>
     <string name="next_episode">Volgende aflevering</string>
     <string name="result_poster_img_des">Poster</string>

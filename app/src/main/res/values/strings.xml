@@ -25,9 +25,11 @@
     <string name="provider_lang_key" translatable="false">provider_lang_key</string>
     <string name="dns_key" translatable="false">dns_key</string>
     <string name="download_path_key" translatable="false">download_path_key</string>
-
-
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
+    <string name="app_layout_key" translatable="false">app_layout_key</string>
+    <string name="primary_color_key" translatable="false">primary_color_key</string>
+    <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
+    <string name="app_theme_key" translatable="false">app_theme_key</string>
 
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
@@ -279,7 +281,7 @@
     <string name="resize_fill">Stretch</string>
     <string name="resize_zoom">Zoom</string>
 
-    <string name="legal_notice" translatable="false">Disclaimer</string>
+    <string name="legal_notice">Disclaimer</string>
     <string name="legal_notice_key" translatable="false">legal_notice_key</string>
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
         should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
@@ -299,4 +301,13 @@
     </string>
     <string name="general">General</string>
     <string name="provider_lang_settings">Provider Languages</string>
+    <string name="app_layout">App Layout</string>
+    <string name="preferred_media_settings">Preferred Media</string>
+
+    <string name="automatic">Auto</string>
+    <string name="tv_layout">Tv Layout</string>
+    <string name="phone_layout">Phone Layout</string>
+
+    <string name="primary_color_settings">Primary Color</string>
+    <string name="app_theme_settings">App Theme</string>
 </resources>

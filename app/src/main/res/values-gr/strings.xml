@@ -6,11 +6,9 @@
     <string name="title_downloads">Λήψεις</string>
     <string name="title_settings">Ρυθμίσεις</string>
     <string name="search_hint">Ψάξε…</string>
-    <string name="change_providers_img_des">Αλλαγή Παροχών</string>
     <string name="search_poster_img_des">Πόστερ</string>
     <string name="no_data">Χωρίς δεδομένα</string>
     <string name="episode_more_options_des">Περισσότερες Επιλογές</string>
-    <string name="episode_play_img_des">Αναπαραγωγή Επισοδείου</string>
     <string name="go_back_img_des">Πίσω</string>
     <string name="next_episode">Επόμενο Επισόδειο</string>
     <string name="result_poster_img_des">Πόστερ</string>

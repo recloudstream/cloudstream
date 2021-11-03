@@ -46,6 +46,17 @@
         <item>4</item>
     </array>
 
+    <array name="media_type_pref">
+        <item>All</item>
+        <item>Movies and TV</item>
+        <item>Anime</item>
+    </array>
+    <array name="media_type_pref_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </array>
+
     <array name="episode_long_click_options">
         <item>@string/episode_action_chomecast_episode</item>
         <item>@string/episode_action_chomecast_mirror</item>
@@ -68,4 +79,48 @@
         <item>7</item>
         <item>8</item>
     </array>
+
+    <array name="app_layout">
+        <item>@string/automatic</item>
+        <item>@string/phone_layout</item>
+        <item>@string/tv_layout</item>
+    </array>
+
+    <array name="app_layout_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </array>
+
+    <string-array name="themes_overlay_names">
+        <item>Normal</item>
+        <item>Cool</item>
+        <item>Fire</item>
+        <item>Burple</item>
+        <item>Green</item>
+        <item>Apple</item>
+        <item>Banana</item>
+        <item>Party</item>
+    </string-array>
+    <string-array name="themes_overlay_names_values">
+        <item>Normal</item>
+        <item>Blue</item>
+        <item>Red</item>
+         <item>Purple</item>
+        <item>Green</item>
+        <item>GreenApple</item>
+        <item>Banana</item>
+        <item>Party</item>
+    </string-array>
+
+    <string-array name="themes_names">
+        <item>Normal</item>
+        <item>Amoled</item>
+        <item>Flashbang</item>
+    </string-array>
+    <string-array name="themes_names_values">
+        <item>Black</item>
+        <item>Amoled</item>
+        <item>Light</item>
+    </string-array>
 </resources>

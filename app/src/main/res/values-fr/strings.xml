@@ -6,15 +6,12 @@
     <string name="title_downloads">Téléchargements</string>
     <string name="title_settings">Paramètres</string>
     <string name="search_hint">Rechercher…</string>
-    <string name="change_providers_img_des">Changer les fournisseurs</string>
     <string name="search_poster_img_des">Miniature</string>
     <string name="no_data">Aucune Donnée</string>
     <string name="episode_more_options_des">Plus d\'options</string>
-    <string name="episode_play_img_des">Lire l\'épisode</string>
     <string name="go_back_img_des">Retour</string>
     <string name="next_episode">Episode suivant</string>
     <string name="result_poster_img_des">Miniature</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Partager</string>
     <string name="result_open_in_browser">Ouvrir dans le naviguateur</string>

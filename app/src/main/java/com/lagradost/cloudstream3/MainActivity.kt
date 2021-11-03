@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -160,16 +161,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_A, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD, KeyEvent.KEYCODE_MEDIA_REWIND -> {
                 PlayerEventType.SeekBack
             }
-            KeyEvent.KEYCODE_MEDIA_NEXT -> {
+            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1 -> {
                 PlayerEventType.NextEpisode
             }
-            KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
+            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1 -> {
                 PlayerEventType.PrevEpisode
             }
             KeyEvent.KEYCODE_MEDIA_PAUSE -> {
                 PlayerEventType.Pause
             }
-            KeyEvent.KEYCODE_MEDIA_PLAY -> {
+            KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_BUTTON_START -> {
                 PlayerEventType.Play
             }
             KeyEvent.KEYCODE_L, KeyEvent.KEYCODE_NUMPAD_7 -> {
@@ -184,19 +185,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9 -> {
                 PlayerEventType.ShowMirrors
             }
-            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3  -> {
+            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3 -> {
                 PlayerEventType.ShowSpeed
             }
             KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0 -> {
                 PlayerEventType.Resize
             }
-            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE -> { // space is not captured due to navigation
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
                 PlayerEventType.PlayPauseToggle
             }
             else -> null
         }?.let { playerEvent ->
             playerEventListener?.invoke(playerEvent)
         }
+
+        //when (keyCode) {
+        //    KeyEvent.KEYCODE_DPAD_CENTER -> {
+        //        println("DPAD PRESSED ${this.isKeyboardOpen()}")
+        //    }
+        //}
 
         return super.onKeyDown(keyCode, event)
     }
@@ -354,10 +361,35 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+
+        val currentTheme = when (settingsManager.getString(getString(R.string.app_theme_key), "Black")) {
+            "Black" -> R.style.AppTheme
+            "Light" -> R.style.LightMode
+            "Amoled" -> R.style.AmoledMode
+            else -> R.style.AppTheme
+        }
+
+        val currentOverlayTheme = when (settingsManager.getString(getString(R.string.primary_color_key), "Normal")) {
+            "Normal" -> R.style.OverlayPrimaryColorNormal
+            "Blue" -> R.style.OverlayPrimaryColorBlue
+            "Purple" -> R.style.OverlayPrimaryColorPurple
+            "Green" -> R.style.OverlayPrimaryColorGreen
+            "GreenApple" -> R.style.OverlayPrimaryColorGreenApple
+            "Red" -> R.style.OverlayPrimaryColorRed
+            "Banana" -> R.style.OverlayPrimaryColorBanana
+            "Party" -> R.style.OverlayPrimaryColorParty
+            else -> R.style.OverlayPrimaryColorNormal
+        }
+
+        theme.applyStyle(currentTheme, true)
+        theme.applyStyle(currentOverlayTheme, true)
+
         theme.applyStyle(
             R.style.LoadedStyle,
             true
         ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
+
         updateLocale()
         initRequestClient()
         super.onCreate(savedInstanceState)
@@ -371,7 +403,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
-        setContentView(R.layout.activity_main)
+        if (isTvSettings()) {
+            setContentView(R.layout.activity_main_tv)
+        } else {
+            setContentView(R.layout.activity_main)
+        }
+
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission

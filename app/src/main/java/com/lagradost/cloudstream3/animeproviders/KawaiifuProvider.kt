@@ -109,23 +109,13 @@ class KawaiifuProvider : MainAPI() {
         }
         val poster = soup.selectFirst("a.thumb > img").attr("src")
 
-
-        return AnimeLoadResponse(
-            title,
-            null,
-            title,
-            url,
-            this.name,
-            TvType.Anime,
-            poster,
-            year,
-            null,
-            episodes,
-            ShowStatus.Ongoing,
-            description,
-            ArrayList(tags),
-            ArrayList()
-        )
+        return newAnimeLoadResponse(title, url, TvType.Anime) {
+            this.year = year
+            posterUrl = poster
+            addEpisodes(DubStatus.Subbed, episodes)
+            plot = description
+            this.tags = tags
+        }
     }
 
     override fun loadLinks(

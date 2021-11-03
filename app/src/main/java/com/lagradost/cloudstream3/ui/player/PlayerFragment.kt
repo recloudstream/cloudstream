@@ -32,7 +32,6 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -89,6 +88,7 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -829,7 +829,7 @@ class PlayerFragment : Fragment() {
         }
 
         isLocked = !isLocked
-        if(isLocked && isShowing) {
+        if (isLocked && isShowing) {
             player_pause_holder?.postDelayed({
                 if (isLocked && isShowing) {
                     onClickChange()
@@ -869,11 +869,13 @@ class PlayerFragment : Fragment() {
 
     private fun updateLock() {
         video_locked_img?.setImageResource(if (isLocked) R.drawable.video_locked else R.drawable.video_unlocked)
-        val color = if (isLocked) ContextCompat.getColor(requireContext(), R.color.videoColorPrimary)
+        val color = if (isLocked) context?.colorFromAttribute(R.attr.colorPrimary)
         else Color.WHITE
 
-        video_locked_text?.setTextColor(color)
-        video_locked_img?.setColorFilter(color)
+        if (color != null) {
+            video_locked_text?.setTextColor(color)
+            video_locked_img?.setColorFilter(color)
+        }
 
         val isClick = !isLocked
 
@@ -996,7 +998,7 @@ class PlayerFragment : Fragment() {
                 activity?.unregisterReceiver(it)
             }
             activity?.hideSystemUI()
-            this.view?.let { activity?.hideKeyboard(it) }
+            this.view?.let { hideKeyboard(it) }
         }
     }
 
@@ -1938,6 +1940,9 @@ class PlayerFragment : Fragment() {
                             ) + currentUrl.headers // Adds the headers from the provider, e.g Authorization
                             setDefaultRequestProperties(headers)
                         }
+
+                        //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
+                        setAllowCrossProtocolRedirects(true)
                     }
                 } else {
                     DefaultDataSourceFactory(requireContext(), USER_AGENT)

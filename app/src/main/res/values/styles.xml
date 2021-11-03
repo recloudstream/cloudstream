@@ -8,9 +8,6 @@
         <!--<item name="android:navigationBarColor">@color/darkBackground</item>-->
         <item name="android:statusBarColor">?attr/iconGrayBackground</item>
 
-        <item name="android:textColorHint">@color/searchColor</item>
-        <item name="android:editTextColor">@color/textColor</item>
-
         <item name="android:scrollbarThumbVertical">@null</item>
         <item name="android:scrollbarThumbHorizontal">@null</item>
 
@@ -32,22 +29,139 @@
         <item name="castMiniControllerStyle">@style/CustomCastMiniController</item>
         <!--<item name="mediaRouteButtonTint">?attr/colorPrimary</item>-->
 
+        <!-- Preference -->
+        <item name="android:textColor">?attr/textColor</item>
+        <item name="android:textColorSecondary">?attr/grayTextColor</item>
+        <item name="android:icon">?attr/grayTextColor</item>
+
+        <item name="android:textColorHint">?attr/grayTextColor</item>
+        <item name="android:editTextColor">?attr/textColor</item>
+        <item name="android:colorForeground">?attr/textColor</item>
+        <item name="android:colorControlHighlight">?attr/textColor</item> <!--iconRipple-->
+
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <!--<item name="preferenceTheme">@style/PreferencesTheme</item>-->
+
         <!-- DEF STYLE -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="textColor">@color/textColor</item>
-        <item name="colorItemSeen">@color/colorItemSeen</item>
         <item name="grayTextColor">@color/grayTextColor</item>
-        <item name="darkBackground">@color/primaryGrayBackground</item>
+        <item name="primaryGrayBackground">@color/primaryGrayBackground</item>
         <item name="primaryBlackBackground">@color/primaryBlackBackground</item>
         <item name="iconGrayBackground">@color/iconGrayBackground</item>
-        <item name="boxItemBackground">@color/itemBackground</item>
+        <item name="boxItemBackground">@color/boxItemBackground</item>
         <item name="iconColor">@color/iconColor</item>
         <item name="white">#FFF</item>
     </style>
+
+    <!--   <style name="PreferencesTheme" parent="@style/Base.Theme.AppCompat">
+         <item name="android:textColorPrimary">?attr/textColor</item>
+         <item name="android:textColorSecondary">?attr/grayTextColor</item>
+         <item name="android:colorAccent">?attr/colorAccent</item>
+         <item name="android:colorControlHighlight">@color/colorPrimary</item>
+       <item name="android:tint">?attr/textColor</item>
+    </style>-->
+
+    <style name="AmoledMode">
+        <item name="primaryGrayBackground">@color/black</item>
+        <item name="primaryBlackBackground">@color/black</item>
+        <item name="iconGrayBackground">@color/primaryBlackBackground</item>
+        <item name="boxItemBackground">@color/black</item>
+        <item name="textColor">@color/textColor</item>
+        <item name="grayTextColor">@color/grayTextColor</item>
+        <item name="white">@color/white</item>
+    </style>
+
+    <style name="LightMode">
+        <item name="primaryGrayBackground">@color/lightPrimaryGrayBackground</item>
+        <item name="primaryBlackBackground">@color/lightBitDarkerGrayBackground</item>
+        <item name="iconGrayBackground">@color/lightGrayBackground</item>
+        <item name="boxItemBackground">@color/lightItemBackground</item>
+        <item name="textColor">@color/lightTextColor</item>
+        <item name="grayTextColor">@color/lightGrayTextColor</item>
+        <item name="white">#000</item>
+    </style>
+
+    <style name="OverlayPrimaryColorNormal">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorOnPrimary">@color/colorAccent</item>
+        <!-- Needed for leanback fuckery -->
+        <item name="android:colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="OverlayPrimaryColorBlue">
+        <item name="colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="android:colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="colorPrimaryDark">#4855A2</item>
+        <item name="colorAccent">#5A6BCB</item>
+        <item name="colorOnPrimary">#5A6BCB</item>
+        <!-- Needed for leanback fuckery -->
+        <item name="android:colorAccent">@color/colorPrimaryBlue</item>
+    </style>
+
+    <style name="OverlayPrimaryColorPurple">
+        <item name="colorPrimary">@color/colorPrimaryPurple</item>
+        <item name="android:colorPrimary">@color/colorPrimaryPurple</item>
+        <item name="colorPrimaryDark">#4704A3</item>
+        <item name="colorAccent">#7125DB</item>
+        <item name="colorOnPrimary">#7125DB</item>
+        <item name="android:colorAccent">@color/colorPrimaryPurple</item>
+    </style>
+
+    <style name="OverlayPrimaryColorGreen">
+        <item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="android:colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">#007363</item>
+        <item name="colorAccent">#39C1AE</item>
+        <item name="colorOnPrimary">#39C1AE</item>
+        <item name="android:colorAccent">@color/colorPrimaryGreen</item>
+    </style>
+
+    <style name="OverlayPrimaryColorGreenApple">
+        <item name="colorPrimary">@color/colorPrimaryGreenApple</item>
+        <item name="android:colorPrimary">@color/colorPrimaryGreenApple</item>
+        <item name="colorPrimaryDark">#319B5A</item>
+        <item name="colorAccent">#51C57E</item>
+        <item name="colorOnPrimary">#51C57E</item>
+        <item name="android:colorAccent">@color/colorPrimaryGreenApple</item>
+    </style>
+
+    <style name="OverlayPrimaryColorRed">
+        <item name="colorPrimary">@color/colorPrimaryRed</item>
+        <item name="android:colorPrimary">@color/colorPrimaryRed</item>
+        <item name="colorPrimaryDark">#D53333</item>
+        <item name="colorAccent">#F53B3B</item>
+        <item name="colorOnPrimary">#EC3838</item>
+        <!-- Needed for leanback fuckery -->
+        <item name="android:colorAccent">@color/colorPrimaryRed</item>
+    </style>
+
+    <style name="OverlayPrimaryColorBanana">
+        <item name="colorPrimary">@color/colorPrimaryBanana</item>
+        <item name="android:colorPrimary">@color/colorPrimaryBanana</item>
+        <item name="colorPrimaryDark">#9B7D31</item>
+        <item name="colorAccent">#C5B251</item>
+        <item name="colorOnPrimary">#C5A851</item>
+        <item name="android:colorAccent">@color/colorPrimaryBanana</item>
+    </style>
+
+    <style name="OverlayPrimaryColorParty">
+        <item name="colorPrimary">@color/colorPrimaryParty</item>
+        <item name="android:colorPrimary">@color/colorPrimaryParty</item>
+        <item name="colorPrimaryDark">#C1495B</item>
+        <item name="colorAccent">#FD798C</item>
+        <item name="colorOnPrimary">#BF5968</item>
+        <item name="android:colorAccent">@color/colorPrimaryParty</item>
+    </style>
+
     <style name="LoadedStyle">
-        <item name="android:navigationBarColor">?attr/darkBackground</item>
+        <item name="android:navigationBarColor">?attr/primaryGrayBackground</item>
         <item name="android:windowBackground">?attr/primaryBlackBackground</item>
     </style>
     <style name="AppSearchViewStyle"
@@ -161,6 +275,9 @@
     </style>
 
     <style name="NiceButton">
+        <!--removes shadow-->
+        <item name="android:stateListAnimator">@null</item>
+
         <item name="android:padding">5dp</item>
         <item name="android:layout_marginStart">5dp</item>
         <item name="android:layout_marginEnd">5dp</item>
