@@ -34,7 +34,6 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
                 val info = applicationContext.getKey<VideoDownloadManager.DownloadInfo>(WORK_KEY_INFO, key)
                 val pkg =
                     applicationContext.getKey<VideoDownloadManager.DownloadResumePackage>(WORK_KEY_PACKAGE, key)
-println("INFO $info PKG :::  $pkg")
                 if (info != null) {
                     downloadEpisode(
                         applicationContext,

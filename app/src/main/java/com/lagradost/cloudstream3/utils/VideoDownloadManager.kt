@@ -1365,6 +1365,8 @@ object VideoDownloadManager {
         val info = context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return null
         val base = basePathToFile(context, info.basePath)
 
+        println("INFFOFOFOF $info ${base?.filePath} ")
+
         if (isScopedStorage && base.isDownloadDir()) {
             val cr = context.contentResolver ?: return null
             val fileUri =
@@ -1373,7 +1375,11 @@ object VideoDownloadManager {
             if (fileLength == 0L) return null
             return DownloadedFileInfoResult(fileLength, info.totalBytes, fileUri)
         } else {
+
             val file = base?.gotoDir(info.relativePath, false)?.findFile(info.displayName)
+            println("ffffffile ${file?.filePath} ${file?.uri} $file ")
+
+
 //            val normalPath = context.getNormalPath(getFile(info.relativePath), info.displayName)
 //            val dFile = File(normalPath)
 
@@ -1409,7 +1415,7 @@ object VideoDownloadManager {
         downloadStatusEvent.invoke(Pair(id, DownloadType.IsStopped))
         downloadDeleteEvent.invoke(id)
         val base = basePathToFile(context, info.basePath)
-
+        println("DOWNLOAD DIRRRR ----- ${base?.filePath} -------- ${info.relativePath} --------- ${info.displayName} -------- ${info.basePath}  $")
         if (isScopedStorage && base.isDownloadDir()) {
             val cr = context.contentResolver ?: return false
             val fileUri =
