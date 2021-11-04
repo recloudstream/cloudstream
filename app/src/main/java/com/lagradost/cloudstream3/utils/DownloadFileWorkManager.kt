@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
@@ -33,7 +34,7 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
                 val info = applicationContext.getKey<VideoDownloadManager.DownloadInfo>(WORK_KEY_INFO, key)
                 val pkg =
                     applicationContext.getKey<VideoDownloadManager.DownloadResumePackage>(WORK_KEY_PACKAGE, key)
-
+println("INFO $info PKG :::  $pkg")
                 if (info != null) {
                     downloadEpisode(
                         applicationContext,
@@ -44,6 +45,7 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
                         ::handleNotification
                     )
                     awaitDownload(info.ep.id)
+
                 } else if (pkg != null) {
                     downloadFromResume(applicationContext, pkg, ::handleNotification)
                     awaitDownload(pkg.item.ep.id)
@@ -52,6 +54,7 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
             }
             return Result.success()
         } catch (e: Exception) {
+            logError(e)
             if (key != null) {
                 removeKeys(key)
             }
@@ -79,6 +82,7 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
         }
         downloadStatusEvent += listener
         while (!isDone) {
+            println("AWAITING $id")
             delay(1000)
         }
         downloadStatusEvent -= listener

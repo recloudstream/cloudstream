@@ -217,6 +217,7 @@ object VideoDownloadManager {
             }
             return null
         } catch (e: Exception) {
+            logError(e)
             return null
         }
     }
@@ -440,6 +441,7 @@ object VideoDownloadManager {
             }
             return list
         } catch (e: Exception) {
+            logError(e)
             return null
         }
     }
@@ -502,6 +504,7 @@ object VideoDownloadManager {
             }
             return null
         } catch (e: Exception) {
+            logError(e)
             return null
         }
     }
@@ -512,6 +515,7 @@ object VideoDownloadManager {
             this.openFileDescriptor(fileUri, "r")
                 .use { it?.statSize ?: 0 }
         } catch (e: Exception) {
+            logError(e)
             null
         }
     }
@@ -600,16 +604,17 @@ object VideoDownloadManager {
         } else {
             val subDir = baseFile.first?.gotoDir(folder)
             val rFile = subDir?.findFile(displayName)
+            println("RFILE ${baseFile.first?.filePath} $folder $subDir")
             if (rFile?.exists() != true) {
                 fileLength = 0
-                if (subDir?.createFile(displayName) == null) return StreamData(ERROR_CONTENT_RESOLVER_NOT_FOUND)
+                if (subDir?.createFile(displayName) == null) return StreamData(ERROR_CREATE_FILE)
             } else {
                 if (resume) {
                     fileLength = rFile.size()
                 } else {
                     fileLength = 0
-                    if (!rFile.delete()) return StreamData(ERROR_CONTENT_RESOLVER_NOT_FOUND)
-                    if (subDir.createFile(displayName) == null) return StreamData(ERROR_CONTENT_RESOLVER_NOT_FOUND)
+                    if (!rFile.delete()) return StreamData(ERROR_DELETING_FILE)
+                    if (subDir.createFile(displayName) == null) return StreamData(ERROR_CREATE_FILE)
                 }
             }
             fileStream = (subDir.findFile(displayName) ?: subDir.createFile(displayName))!!.openOutputStream()
@@ -813,6 +818,7 @@ object VideoDownloadManager {
                 fileStream.write(buffer, 0, count)
             }
         } catch (e: Exception) {
+            logError(e)
             isFailed = true
             updateNotification()
         }
@@ -861,6 +867,7 @@ object VideoDownloadManager {
      * Guarantees a directory is present with the dir name (if createMissingDirectories is true).
      * Works recursively when '/' is present.
      * Will remove any file with the dir name if present and add directory.
+     * Will not work if the parent directory does not exist.
      *
      * @param directoryName if null will use the current path.
      * @return UniFile / null if createMissingDirectories = false and folder is not found.
@@ -876,6 +883,15 @@ object VideoDownloadManager {
 //        println("Going to dir $directoryName from ${this.uri} ---- ${this.filePath}")
 
         try {
+            // Creates itself from parent if doesn't exist.
+            if (!this.exists() && createMissingDirectories && !this.name.isNullOrBlank()) {
+                if (this.parentFile != null) {
+                    this.parentFile?.createDirectory(this.name)
+                } else if (this.filePath != null) {
+                    UniFile.fromFile(File(this.filePath!!).parentFile)?.createDirectory(this.name)
+                }
+            }
+
             val allDirectories = directoryName?.split("/")
             return if (allDirectories?.size == 1 || allDirectories == null) {
                 val found = this.findFile(directoryName)
@@ -1284,7 +1300,6 @@ object VideoDownloadManager {
                     )
                 }
             }
-
         } ?: ERROR_UNKNOWN
     }
 
@@ -1320,7 +1335,7 @@ object VideoDownloadManager {
                                     link,
                                     notificationCallback,
                                     resume
-                                )
+                                ).also { println("Single episode finished with return code: $it") }
                             }
                         }
                         if (connectionResult != null && connectionResult > 0) { // SUCCESS
@@ -1410,6 +1425,7 @@ object VideoDownloadManager {
             return try {
                 file.delete()
             } catch (e: Exception) {
+                logError(e)
                 val cr = context.contentResolver
                 cr.delete(file.uri, null, null) > 0
             }
