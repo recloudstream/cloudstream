@@ -240,210 +240,221 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     // pref = visual path
                     settingsManager.edit().putString(getString(R.string.download_path_key), dirs[it]).apply()
                     settingsManager.edit().putString(getString(R.string.download_path_pref), dirs[it]).apply()
+                }
+            }
 
-        if (preferedMediaTypePreference != null) {
-            preferedMediaTypePreference.setOnPreferenceClickListener {
-                val prefNames = resources.getStringArray(R.array.media_type_pref)
-                val prefValues = resources.getIntArray(R.array.media_type_pref_values)
+            if (preferedMediaTypePreference != null) {
+                preferedMediaTypePreference.setOnPreferenceClickListener {
+                    val prefNames = resources.getStringArray(R.array.media_type_pref)
+                    val prefValues = resources.getIntArray(R.array.media_type_pref_values)
+                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+                    val currentPrefMedia =
+                        settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
+
+                    context?.showBottomDialog(
+                        prefNames.toList(),
+                        prefValues.indexOf(currentPrefMedia),
+                        getString(R.string.preferred_media_settings),
+                        true,
+                        {}) {
+                        settingsManager.edit()
+                            .putInt(getString(R.string.preferred_media_settings), prefValues[it])
+                            .apply()
+                        context?.initRequestClient()
+                    }
+                    return@setOnPreferenceClickListener true
+                }
+            }
+
+            allLayoutPreference.setOnPreferenceClickListener {
+                val prefNames = resources.getStringArray(R.array.app_layout)
+                val prefValues = resources.getIntArray(R.array.app_layout_values)
                 val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
-                val currentPrefMedia =
-                    settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
-
+                val currentLayout =
+                    settingsManager.getInt(getString(R.string.app_layout_key), -1)
                 context?.showBottomDialog(
                     prefNames.toList(),
-                    prefValues.indexOf(currentPrefMedia),
-                    getString(R.string.preferred_media_settings),
+                    prefValues.indexOf(currentLayout),
+                    getString(R.string.app_layout),
                     true,
                     {}) {
-                    settingsManager.edit()
-                        .putInt(getString(R.string.preferred_media_settings), prefValues[it])
+                    try {
+                        settingsManager.edit().putInt(getString(R.string.app_layout_key), prefValues[it])
+                            .apply()
+                        activity?.recreate()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
+                }
+                return@setOnPreferenceClickListener true
+            }
+
+            colorPrimaryPreference.setOnPreferenceClickListener {
+                val prefNames = resources.getStringArray(R.array.themes_overlay_names)
+                val prefValues = resources.getStringArray(R.array.themes_overlay_names_values)
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+                val currentLayout =
+                    settingsManager.getString(getString(R.string.primary_color_key), prefValues.first())
+                context?.showBottomDialog(
+                    prefNames.toList(),
+                    prefValues.indexOf(currentLayout),
+                    getString(R.string.primary_color_settings),
+                    true,
+                    {}) {
+                    try {
+                        settingsManager.edit().putString(getString(R.string.primary_color_key), prefValues[it])
+                            .apply()
+                        activity?.recreate()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
+                }
+                return@setOnPreferenceClickListener true
+            }
+
+            appThemePreference.setOnPreferenceClickListener {
+                val prefNames = resources.getStringArray(R.array.themes_names)
+                val prefValues = resources.getStringArray(R.array.themes_names_values)
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+                val currentLayout =
+                    settingsManager.getString(getString(R.string.app_theme_key), prefValues.first())
+                context?.showBottomDialog(
+                    prefNames.toList(),
+                    prefValues.indexOf(currentLayout),
+                    getString(R.string.app_theme_settings),
+                    true,
+                    {}) {
+                    try {
+                        settingsManager.edit().putString(getString(R.string.app_theme_key), prefValues[it])
+                            .apply()
+                        activity?.recreate()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
+                }
+                return@setOnPreferenceClickListener true
+            }
+
+            watchQualityPreference.setOnPreferenceClickListener {
+                val prefNames = resources.getStringArray(R.array.quality_pref)
+                val prefValues = resources.getIntArray(R.array.quality_pref_values)
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+                val currentQuality =
+                    settingsManager.getInt(
+                        getString(R.string.watch_quality_pref),
+                        Qualities.values().last().value
+                    )
+                context?.showBottomDialog(
+                    prefNames.toList(),
+                    prefValues.indexOf(currentQuality),
+                    getString(R.string.watch_quality_pref),
+                    true,
+                    {}) {
+                    settingsManager.edit().putInt(getString(R.string.watch_quality_pref), prefValues[it])
                         .apply()
+                }
+                return@setOnPreferenceClickListener true
+            }
+
+            dnsPreference.setOnPreferenceClickListener {
+                val prefNames = resources.getStringArray(R.array.dns_pref)
+                val prefValues = resources.getIntArray(R.array.dns_pref_values)
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+                val currentDns =
+                    settingsManager.getInt(getString(R.string.dns_pref), 0)
+                context?.showBottomDialog(
+                    prefNames.toList(),
+                    prefValues.indexOf(currentDns),
+                    getString(R.string.dns_pref),
+                    true,
+                    {}) {
+                    settingsManager.edit().putInt(getString(R.string.dns_pref), prefValues[it]).apply()
                     context?.initRequestClient()
                 }
                 return@setOnPreferenceClickListener true
             }
-        }
 
-        allLayoutPreference.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.app_layout)
-            val prefValues = resources.getIntArray(R.array.app_layout_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+            try {
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
-            val currentLayout =
-                settingsManager.getInt(getString(R.string.app_layout_key), -1)
-            context?.showBottomDialog(
-                prefNames.toList(),
-                prefValues.indexOf(currentLayout),
-                getString(R.string.app_layout),
-                true,
-                {}) {
-                try {
-                    settingsManager.edit().putInt(getString(R.string.app_layout_key), prefValues[it]).apply()
-                    activity?.recreate()
-                } catch (e : Exception) {
-                    logError(e)
+                beneneCount = settingsManager.getInt(getString(R.string.benene_count), 0)
+
+                benenePreference.summary =
+                    if (beneneCount <= 0) getString(R.string.benene_count_text_none) else getString(R.string.benene_count_text).format(
+                        beneneCount
+                    )
+                benenePreference.setOnPreferenceClickListener {
+                    try {
+                        beneneCount++
+                        settingsManager.edit().putInt(getString(R.string.benene_count), beneneCount).apply()
+                        it.summary = getString(R.string.benene_count_text).format(beneneCount)
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
+
+                    return@setOnPreferenceClickListener true
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            return@setOnPreferenceClickListener true
-        }
 
-        colorPrimaryPreference.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.themes_overlay_names)
-            val prefValues = resources.getStringArray(R.array.themes_overlay_names_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-
-            val currentLayout = settingsManager.getString( getString(R.string.primary_color_key),prefValues.first())
-            context?.showBottomDialog(
-                prefNames.toList(),
-                prefValues.indexOf(currentLayout),
-                getString(R.string.primary_color_settings),
-                true,
-                {}) {
-                try {
-                    settingsManager.edit().putString(getString(R.string.primary_color_key), prefValues[it]).apply()
-                    activity?.recreate()
-                } catch (e : Exception) {
-                    logError(e)
-                }
-            }
-            return@setOnPreferenceClickListener true
-        }
-
-        appThemePreference.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.themes_names)
-            val prefValues = resources.getStringArray(R.array.themes_names_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-
-            val currentLayout = settingsManager.getString( getString(R.string.app_theme_key),prefValues.first())
-            context?.showBottomDialog(
-                prefNames.toList(),
-                prefValues.indexOf(currentLayout),
-                getString(R.string.app_theme_settings),
-                true,
-                {}) {
-                try {
-                    settingsManager.edit().putString(getString(R.string.app_theme_key), prefValues[it]).apply()
-                    activity?.recreate()
-                } catch (e : Exception) {
-                    logError(e)
-                }
-            }
-            return@setOnPreferenceClickListener true
-        }
-
-        watchQualityPreference.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.quality_pref)
-            val prefValues = resources.getIntArray(R.array.quality_pref_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-
-            val currentQuality =
-                settingsManager.getInt(getString(R.string.watch_quality_pref), Qualities.values().last().value)
-            context?.showBottomDialog(
-                prefNames.toList(),
-                prefValues.indexOf(currentQuality),
-                getString(R.string.watch_quality_pref),
-                true,
-                {}) {
-                settingsManager.edit().putInt(getString(R.string.watch_quality_pref), prefValues[it]).apply()
-            }
-            return@setOnPreferenceClickListener true
-        }
-
-        dnsPreference.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.dns_pref)
-            val prefValues = resources.getIntArray(R.array.dns_pref_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-
-            val currentDns =
-                settingsManager.getInt(getString(R.string.dns_pref), 0)
-            context?.showBottomDialog(
-                prefNames.toList(),
-                prefValues.indexOf(currentDns),
-                getString(R.string.dns_pref),
-                true,
-                {}) {
-                settingsManager.edit().putInt(getString(R.string.dns_pref), prefValues[it]).apply()
-                context?.initRequestClient()
-            }
-            return@setOnPreferenceClickListener true
-        }
-
-        try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-
-            beneneCount = settingsManager.getInt(getString(R.string.benene_count), 0)
-
-            benenePreference.summary =
-                if (beneneCount <= 0) getString(R.string.benene_count_text_none) else getString(R.string.benene_count_text).format(
-                    beneneCount
-                )
-            benenePreference.setOnPreferenceClickListener {
-                try {
-                    beneneCount++
-                    settingsManager.edit().putInt(getString(R.string.benene_count), beneneCount).apply()
-                    it.summary = getString(R.string.benene_count_text).format(beneneCount)
-                } catch (e: Exception) {
-                    logError(e)
-                }
-
-                return@setOnPreferenceClickListener true
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        updatePreference.setOnPreferenceClickListener {
-            thread {
-                if (!requireActivity().runAutoUpdate(false)) {
-                    activity?.runOnUiThread {
-                        showToast(activity, R.string.no_update_found, Toast.LENGTH_SHORT)
+            updatePreference.setOnPreferenceClickListener {
+                thread {
+                    if (!requireActivity().runAutoUpdate(false)) {
+                        activity?.runOnUiThread {
+                            showToast(activity, R.string.no_update_found, Toast.LENGTH_SHORT)
+                        }
                     }
                 }
+                return@setOnPreferenceClickListener true
             }
-            return@setOnPreferenceClickListener true
+
+            localePreference.setOnPreferenceClickListener { pref ->
+                val tempLangs = languages.toMutableList()
+                if (beneneCount > 100) {
+                    tempLangs.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))
+                }
+                val current = getCurrentLocale()
+                val languageCodes = tempLangs.map { it.third }
+                val languageNames = tempLangs.map { "${it.first}  ${it.second}" }
+                val index = languageCodes.indexOf(current)
+                pref?.context?.showDialog(
+                    languageNames, index, getString(R.string.app_language), true, { }
+                ) { languageIndex ->
+                    try {
+                        val code = languageCodes[languageIndex]
+                        setLocale(activity, code)
+                        val settingsManager = PreferenceManager.getDefaultSharedPreferences(pref.context)
+                        settingsManager.edit().putString(getString(R.string.locale_key), code).apply()
+                        activity?.recreate()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
+                }
+                return@setOnPreferenceClickListener true
+            }
         }
 
-        localePreference.setOnPreferenceClickListener { pref ->
-            val tempLangs = languages.toMutableList()
-            if (beneneCount > 100) {
-                tempLangs.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))
-            }
-            val current = getCurrentLocale()
-            val languageCodes = tempLangs.map { it.third }
-            val languageNames = tempLangs.map { "${it.first}  ${it.second}" }
-            val index = languageCodes.indexOf(current)
-            pref?.context?.showDialog(
-                languageNames, index, getString(R.string.app_language), true, { }
-            ) { languageIndex ->
-                try {
-                    val code = languageCodes[languageIndex]
-                    setLocale(activity, code)
-                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(pref.context)
-                    settingsManager.edit().putString(getString(R.string.locale_key), code).apply()
-                    activity?.recreate()
-                } catch (e: Exception) {
-                    logError(e)
+        private fun getCurrentLocale(): String {
+            val res = context!!.resources
+// Change locale settings in the app.
+            // val dm = res.displayMetrics
+            val conf = res.configuration
+            return conf?.locale?.language ?: "en"
+        }
+
+        override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+            if (preference != null) {
+                if (preference.key == getString(R.string.subtitle_settings_key)) {
+                    SubtitlesFragment.push(activity, false)
                 }
             }
-            return@setOnPreferenceClickListener true
+            return super.onPreferenceTreeClick(preference)
         }
     }
-
-    private fun getCurrentLocale(): String {
-        val res = context!!.resources
-// Change locale settings in the app.
-        // val dm = res.displayMetrics
-        val conf = res.configuration
-        return conf?.locale?.language ?: "en"
-    }
-
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        if (preference != null) {
-            if (preference.key == getString(R.string.subtitle_settings_key)) {
-                SubtitlesFragment.push(activity, false)
-            }
-        }
-        return super.onPreferenceTreeClick(preference)
-    }
-}
