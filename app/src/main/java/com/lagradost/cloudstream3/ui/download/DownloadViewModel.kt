@@ -57,8 +57,6 @@ class DownloadViewModel : ViewModel() {
             for (c in children) {
                 val childFile = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, c.id) ?: continue
 
-                println("FFFFFFFFFFFFFFFFFFF  $childFile")
-
                 if (childFile.fileLength <= 1) continue
                 val len = childFile.totalBytes
                 val flen = childFile.fileLength
@@ -113,6 +111,6 @@ class DownloadViewModel : ViewModel() {
         _availableBytes.postValue(localBytesAvailable)
         _downloadBytes.postValue(localDownloadedBytes)
 
-        _headerCards.postValue(visual.also { println("VISUAL $it") })
+        _headerCards.postValue(visual)
     }
 }
