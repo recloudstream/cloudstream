@@ -64,6 +64,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     // Open file picker
     private val pathPicker = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        // It lies, it can be null if file manager quits.
+        if (uri == null) return@registerForActivityResult
         val context = context ?: AcraApplication.context ?: return@registerForActivityResult
         // RW perms for the path
         val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
