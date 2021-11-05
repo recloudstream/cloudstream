@@ -23,7 +23,7 @@ import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -165,7 +165,7 @@ class ResultFragment : Fragment() {
     }
 
     private var currentLoadingCount = 0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
-    private lateinit var viewModel: ResultViewModel
+    private val viewModel: ResultViewModel by activityViewModels()
     private var allEpisodes: HashMap<Int, ArrayList<ExtractorLink>> = HashMap()
     private var allEpisodesSubs: HashMap<Int, ArrayList<SubtitleFile>> = HashMap()
     private var currentHeaderName: String? = null
@@ -178,8 +178,8 @@ class ResultFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        viewModel =
-            ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
+       // viewModel =
+       //     ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
         return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
@@ -1161,6 +1161,7 @@ class ResultFragment : Fragment() {
                 }
 
                 if (restart || viewModel.resultResponse.value == null) {
+                    viewModel.clear()
                     viewModel.load(ctx, tempUrl, apiName, showFillers)
                 }
             }

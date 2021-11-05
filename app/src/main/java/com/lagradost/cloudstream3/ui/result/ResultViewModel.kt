@@ -37,6 +37,22 @@ const val EPISODE_RANGE_SIZE = 50
 const val EPISODE_RANGE_OVERLOAD = 60
 
 class ResultViewModel : ViewModel() {
+    fun clear() {
+        repo = null
+        _resultResponse.value = null
+        _episodes.value = null
+        episodeById.value = null
+        _publicEpisodes.value = null
+        _publicEpisodesCount.value = null
+        _rangeOptions.value = null
+        selectedRange.value = null
+        selectedRangeInt.value = null
+        _dubStatus.value = null
+        id.value = null
+        selectedSeason.value = -2
+        _dubSubEpisodes.value = null
+    }
+
     private var repo: APIRepository? = null
 
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
@@ -55,7 +71,7 @@ class ResultViewModel : ViewModel() {
     val publicEpisodes: LiveData<Resource<List<ResultEpisode>>> get() = _publicEpisodes
     val publicEpisodesCount: LiveData<Int> get() = _publicEpisodesCount
 
-    val dubStatus: MutableLiveData<DubStatus> get() = _dubStatus
+    val dubStatus: LiveData<DubStatus> get() = _dubStatus
     private val _dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
 
     private val page: MutableLiveData<LoadResponse> = MutableLiveData()
@@ -63,10 +79,10 @@ class ResultViewModel : ViewModel() {
     val selectedSeason: MutableLiveData<Int> = MutableLiveData(-2)
     val seasonSelections: MutableLiveData<List<Int?>> = MutableLiveData()
 
-    val dubSubSelections: MutableLiveData<Set<DubStatus>> get() = _dubSubSelections
+    val dubSubSelections: LiveData<Set<DubStatus>> get() = _dubSubSelections
     private val _dubSubSelections: MutableLiveData<Set<DubStatus>> = MutableLiveData()
 
-    val dubSubEpisodes: MutableLiveData<Map<DubStatus, List<ResultEpisode>>?> get() = _dubSubEpisodes
+    val dubSubEpisodes: LiveData<Map<DubStatus, List<ResultEpisode>>?> get() = _dubSubEpisodes
     private val _dubSubEpisodes: MutableLiveData<Map<DubStatus, List<ResultEpisode>>?> = MutableLiveData()
 
     private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData()
@@ -180,7 +196,7 @@ class ResultViewModel : ViewModel() {
 
     fun changeDubStatus(context: Context, status: DubStatus?) {
         dubSubEpisodes.value?.get(status)?.let { episodes ->
-            dubStatus.postValue(status)
+            _dubStatus.postValue(status)
             updateEpisodes(context, null, episodes, null)
         }
     }

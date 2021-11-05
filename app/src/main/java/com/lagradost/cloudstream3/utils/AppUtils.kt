@@ -75,9 +75,11 @@ object AppUtils {
         return ""
     }
 
+    //private val viewModel: ResultViewModel by activityViewModels()
+
     fun AppCompatActivity.loadResult(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0) {
         this.runOnUiThread {
-            viewModelStore.clear()
+           // viewModelStore.clear()
             this.navigate(R.id.global_to_navigation_results, ResultFragment.newInstance(url, apiName, startAction, startValue))
         }
     }
