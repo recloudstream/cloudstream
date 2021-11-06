@@ -18,8 +18,10 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
+import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 
@@ -75,9 +77,11 @@ object AppUtils {
         return ""
     }
 
+    //private val viewModel: ResultViewModel by activityViewModels()
+
     fun AppCompatActivity.loadResult(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0) {
         this.runOnUiThread {
-            viewModelStore.clear()
+           // viewModelStore.clear()
             this.navigate(R.id.global_to_navigation_results, ResultFragment.newInstance(url, apiName, startAction, startValue))
         }
     }
@@ -183,5 +187,20 @@ object AppUtils {
             null
         }
         return currentAudioFocusRequest
+    }
+
+    fun filterProviderByPreferredMedia(apis: ArrayList<MainAPI>, currentPrefMedia: Int): List<MainAPI> {
+        val allApis = apis.filter { api -> api.hasMainPage }
+        return if (currentPrefMedia < 1) {
+            allApis
+        } else {
+            // Filter API depending on preferred media type
+            val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
+            val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon)
+            val mediaTypeList = if (currentPrefMedia==1) listEnumMovieTv else listEnumAnime
+
+            val filteredAPI = allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }
+            filteredAPI
+        }
     }
 }

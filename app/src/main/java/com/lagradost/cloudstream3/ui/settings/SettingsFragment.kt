@@ -29,6 +29,9 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initRequestClient
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
+import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -203,8 +206,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             return@setOnPreferenceClickListener true
         }
-
-
+        
         fun getDownloadDirs(): List<String> {
             val defaultDir = getDownloadDir()?.filePath
 
@@ -246,29 +248,29 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             return@setOnPreferenceClickListener true
         }
+        
+        preferedMediaTypePreference.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.media_type_pref)
+            val prefValues = resources.getIntArray(R.array.media_type_pref_values)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
-        if (preferedMediaTypePreference != null) {
-            preferedMediaTypePreference.setOnPreferenceClickListener {
-                val prefNames = resources.getStringArray(R.array.media_type_pref)
-                val prefValues = resources.getIntArray(R.array.media_type_pref_values)
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+            val currentPrefMedia =
+                settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
 
-                val currentPrefMedia =
-                    settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
-
-                context?.showBottomDialog(
-                    prefNames.toList(),
-                    prefValues.indexOf(currentPrefMedia),
-                    getString(R.string.preferred_media_settings),
-                    true,
-                    {}) {
-                    settingsManager.edit()
-                        .putInt(getString(R.string.preferred_media_settings), prefValues[it])
-                        .apply()
-                    context?.initRequestClient()
-                }
-                return@setOnPreferenceClickListener true
+            context?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentPrefMedia),
+                getString(R.string.preferred_media_settings),
+                true,
+                {}) {
+                settingsManager.edit()
+                    .putInt(getString(R.string.preferred_media_settings), prefValues[it])
+                    .apply()
+                val apiRandom = AppUtils.filterProviderByPreferredMedia(apis, prefValues[it]).random()
+                context?.setKey(HOMEPAGE_API, apiRandom.name)
+                context?.initRequestClient()
             }
+            return@setOnPreferenceClickListener true
         }
 
         allLayoutPreference.setOnPreferenceClickListener {

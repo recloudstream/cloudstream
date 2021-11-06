@@ -13,7 +13,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +34,7 @@ import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
+import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -97,15 +98,15 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private lateinit var homeViewModel: HomeViewModel
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+        //homeViewModel =
+       //     ViewModelProvider(this).get(HomeViewModel::class.java)
 
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -167,19 +168,9 @@ class HomeFragment : Fragment() {
     }
 
     private val apiChangeClickListener = View.OnClickListener { view ->
-        val allApis = apis.filter { api -> api.hasMainPage }.toMutableList()
-        var validAPIs = allApis
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
         val currentPrefMedia = settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
-
-        // Filter API depending on preferred media type
-        if (currentPrefMedia > 0) {
-            val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
-            val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon)
-            val mediaTypeList = if (currentPrefMedia==1) listEnumMovieTv else listEnumAnime
-
-            validAPIs = allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }.toMutableList()
-        }
+        val validAPIs = AppUtils.filterProviderByPreferredMedia(apis, currentPrefMedia).toMutableList()
 
         validAPIs.add(0, randomApi)
         validAPIs.add(0, noneApi)
@@ -423,9 +414,11 @@ class HomeFragment : Fragment() {
 
         reloadStored()
         val apiName = context?.getKey<String>(HOMEPAGE_API)
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+        val currentPrefMedia = settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
         if (homeViewModel.apiName.value != apiName || apiName == null) {
             //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
-            homeViewModel.loadAndCancel(apiName, 0)
+            homeViewModel.loadAndCancel(apiName, currentPrefMedia)
         }
     }
 }

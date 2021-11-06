@@ -34,7 +34,7 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.transition.Fade
 import androidx.transition.Transition
@@ -86,7 +86,6 @@ import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
-import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
@@ -248,7 +247,7 @@ class PlayerFragment : Fragment() {
 
     private var isFullscreen = false
     private var isPlayerPlaying = true
-    private lateinit var viewModel: ResultViewModel
+    private val viewModel: ResultViewModel by activityViewModels()
     private lateinit var playerData: PlayerData
     private lateinit var uriData: UriData
     private var isDownloadedFile = false
@@ -791,20 +790,20 @@ class PlayerFragment : Fragment() {
         if (this::exoPlayer.isInitialized) {
             if (exoPlayer.duration > 0 && exoPlayer.currentPosition > 0) {
                 context?.let { ctx ->
-                    if (this::viewModel.isInitialized) {
+                    //if (this::viewModel.isInitialized) {
                         viewModel.setViewPos(
                             ctx,
                             if (isDownloadedFile) uriData.id else getEpisode()?.id,
                             exoPlayer.currentPosition,
                             exoPlayer.duration
                         )
-                    } else {
+                    /*} else {
                         ctx.setViewPos(
                             if (isDownloadedFile) uriData.id else getEpisode()?.id,
                             exoPlayer.currentPosition,
                             exoPlayer.duration
                         )
-                    }
+                    }*/
 
                     if (isDownloadedFile) {
                         ctx.setLastWatched(uriData.parentId, uriData.id, uriData.episode, uriData.season, true)
@@ -880,6 +879,7 @@ class PlayerFragment : Fragment() {
         val isClick = !isLocked
 
         exo_play?.isClickable = isClick
+        sources_btt?.isClickable = isClick
         exo_pause?.isClickable = isClick
         exo_ffwd?.isClickable = isClick
         exo_rew?.isClickable = isClick
@@ -1055,8 +1055,9 @@ class PlayerFragment : Fragment() {
                     showToast(activity, resizeModes[resizeMode].second, LENGTH_SHORT)
                 }
                 PlayerEventType.ShowSpeed.value -> {
-                    val speedsText = listOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x")
-                    val speedsNumbers = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f)
+                    val speedsText =
+                        listOf("0.5x", "0.75x", "0.85x", "1x", "1.15x", "1.25x", "1.4x", "1.5x", "1.75x", "2x")
+                    val speedsNumbers = listOf(0.5f, 0.75f, 0.85f, 1f, 1.15f, 1.25f, 1.4f, 1.5f, 1.75f, 2f)
                     val speedIndex = speedsNumbers.indexOf(playbackSpeed)
 
                     context?.let { ctx ->
@@ -1383,7 +1384,7 @@ class PlayerFragment : Fragment() {
         }
 
         if (!isDownloadedFile) {
-            viewModel = ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
+            //viewModel = ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
 
             observeDirectly(viewModel.episodes) { _episodes ->
                 episodes = _episodes
