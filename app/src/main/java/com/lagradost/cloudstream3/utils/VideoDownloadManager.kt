@@ -5,13 +5,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.*
-import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.provider.OpenableColumns
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -23,7 +21,6 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.android.exoplayer2.util.UriUtil
 import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -39,7 +36,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.internal.closeQuietly
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.lang.Thread.sleep
 import java.net.URI
 import java.net.URL
@@ -450,8 +450,8 @@ object VideoDownloadManager {
      * Used for getting video player subs.
      * @return List of pairs for the files in this format: <Name, Uri>
      * */
-    fun getFolder(context: Context, relativePath: String): List<Pair<String, Uri>>? {
-        val base = context.getBasePath().first
+    fun getFolder(context: Context, relativePath: String, basePath: String?): List<Pair<String, Uri>>? {
+        val base = basePathToFile(context, basePath)
         val folder = base?.gotoDir(relativePath, false)
 
         if (isScopedStorage && base.isDownloadDir()) {

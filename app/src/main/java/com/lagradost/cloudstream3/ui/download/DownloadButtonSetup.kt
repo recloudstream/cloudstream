@@ -98,6 +98,7 @@ object DownloadButtonSetup {
                         R.id.global_to_navigation_player, PlayerFragment.newInstance(
                             UriData(
                                 info.path.toString(),
+                                keyInfo.basePath,
                                 keyInfo.relativePath,
                                 keyInfo.displayName,
                                 click.data.parentId,
