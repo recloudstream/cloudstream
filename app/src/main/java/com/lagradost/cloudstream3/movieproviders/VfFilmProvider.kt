@@ -10,9 +10,9 @@ import org.jsoup.Jsoup
 // referer = https://vf-film.org, USERAGENT ALSO REQUIRED
 class VfFilmProvider : MainAPI() {
     override val mainUrl: String
-        get() = "https://vf-film.org"
+        get() = "https://vf-film.me"
     override val name: String
-        get() = "vf-film.org"
+        get() = "vf-film.me"
 
     override val lang: String = "fr"
 
@@ -121,7 +121,7 @@ class VfFilmProvider : MainAPI() {
         val i = numberPlayer.toString()
         val trid = Regex("iframe .*trid=(.*?)&").find(document.html())?.groupValues?.get(1)
 
-        val data = getDirect("https://vf-film.org/?trembed=$i&trid=$trid&trtype=1")
+        val data = getDirect("https://vf-film.me/?trembed=$i&trid=$trid&trtype=1")
 
 
         return MovieLoadResponse(
