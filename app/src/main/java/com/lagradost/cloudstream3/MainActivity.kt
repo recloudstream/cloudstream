@@ -28,6 +28,8 @@ import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initRequestClient
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
+import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.OAuth2Apis
+import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.appString
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
@@ -347,13 +349,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         if (intent == null) return
         val str = intent.dataString
         if (str != null) {
-            if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
-                this.navigate(R.id.navigation_downloads)
+            if (str.contains(appString)) {
+                for (api in OAuth2Apis) {
+                    if (str.contains("/${api.redirectUrl}")) {
+                        api.handleRedirect(this, str)
+                    }
+                }
             } else {
-                for (api in apis) {
-                    if (str.startsWith(api.mainUrl)) {
-                        loadResult(str, api.name)
-                        break
+                if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
+                    this.navigate(R.id.navigation_downloads)
+                } else {
+                    for (api in apis) {
+                        if (str.startsWith(api.mainUrl)) {
+                            loadResult(str, api.name)
+                            break
+                        }
                     }
                 }
             }

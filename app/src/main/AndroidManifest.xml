@@ -63,6 +63,12 @@
                 <data android:scheme="https" android:host="vidembed.cc" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="trailers.to" android:pathPrefix="/"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="cloudstreamapp"/>
+            </intent-filter>
         </activity>
 
         <receiver

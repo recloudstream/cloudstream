@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.syncproviders.OAuth2Interface
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -48,6 +49,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.widget.CenterZoomLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -419,6 +421,20 @@ class HomeFragment : Fragment() {
         if (homeViewModel.apiName.value != apiName || apiName == null) {
             //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
             homeViewModel.loadAndCancel(apiName, currentPrefMedia)
+        }
+
+        // nice profile pic on homepage
+        home_profile_picture_holder?.isVisible = false
+        context?.let { ctx ->
+            for (syncApi in OAuth2Interface.OAuth2Apis) {
+                val login = syncApi.loginInfo(ctx)
+                val pic = login?.profilePicture
+                if(pic != null) {
+                    home_profile_picture.setImage(pic)
+                    home_profile_picture_holder.isVisible = true
+                    break
+                }
+            }
         }
     }
 }

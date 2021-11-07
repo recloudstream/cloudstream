@@ -310,4 +310,22 @@
 
     <string name="primary_color_settings">Primary Color</string>
     <string name="app_theme_settings">App Theme</string>
+
+    <!-- account stuff -->
+    <string name="anilist_key" translatable="false">anilist_key</string>
+    <string name="mal_key" translatable="false">mal_key</string>
+    <!--
+    <string name="mal_account_settings" translatable="false">MAL</string>
+    <string name="anilist_account_settings" translatable="false">AniList</string>
+    <string name="tmdb_account_settings" translatable="false">TMDB</string>
+    <string name="imdb_account_settings" translatable="false">IMDB</string>
+    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
+    <string name="trakt_account_settings" translatable="false">Trakt</string>
+    -->
+    <string name="login_format">%s %s</string>
+    <string name="account">account</string>
+    <string name="logout">Logout</string>
+    <string name="login">Login</string>
+    <!-- ============ -->
+
 </resources>

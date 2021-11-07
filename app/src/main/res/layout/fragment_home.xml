@@ -105,39 +105,60 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp">
                 <LinearLayout
-                        android:gravity="center"
-
+                        android:layout_marginEnd="50dp"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
 
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_marginEnd="50dp"
-                        android:layout_height="match_parent">
-                    <TextView
-                            android:gravity="center_vertical"
-                            android:layout_gravity="center"
-                            android:id="@+id/home_provider_name"
-                            android:textColor="?attr/textColor"
-                            android:textSize="20sp"
-                            tools:text="Hello World"
-                            android:layout_width="match_parent"
 
-                            android:layout_height="wrap_content">
-                    </TextView>
-                    <TextView
-                            android:gravity="center_vertical"
-                            android:layout_gravity="center"
-                            android:id="@+id/home_provider_meta_info"
-                            android:textColor="?attr/grayTextColor"
-                            android:textSize="14sp"
-                            tools:text="Hello World"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    <androidx.cardview.widget.CardView
+                            android:id="@+id/home_profile_picture_holder"
+                            android:layout_marginEnd="20dp"
+                            app:cardCornerRadius="100dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp">
+                        <ImageView
+                                android:id="@+id/home_profile_picture"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                tools:ignore="ContentDescription">
+                        </ImageView>
+                    </androidx.cardview.widget.CardView>
+                    <LinearLayout
+                            android:gravity="center"
+
+                            android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-                    </TextView>
+                            android:layout_height="match_parent">
+                        <TextView
+                                android:gravity="center_vertical"
+                                android:layout_gravity="center"
+                                android:id="@+id/home_provider_name"
+                                android:textColor="?attr/textColor"
+                                android:textSize="20sp"
+                                tools:text="Hello World"
+                                android:layout_width="match_parent"
+
+                                android:layout_height="wrap_content">
+                        </TextView>
+                        <TextView
+                                android:gravity="center_vertical"
+                                android:layout_gravity="center"
+                                android:id="@+id/home_provider_meta_info"
+                                android:textColor="?attr/grayTextColor"
+                                android:textSize="14sp"
+                                tools:text="Hello World"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                        </TextView>
+                    </LinearLayout>
                 </LinearLayout>
+
 
                 <ImageView
                         android:nextFocusDown="@id/home_main_poster_recyclerview"

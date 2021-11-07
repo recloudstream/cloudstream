@@ -177,6 +177,17 @@
                 app:key="@string/manual_check_update_key"
                 app:icon="@drawable/ic_baseline_system_update_24"
         />
+
+        <Preference
+                android:key="@string/mal_key"
+                android:icon="@drawable/mal_logo">
+        </Preference>
+
+        <Preference
+                android:key="@string/anilist_key"
+                android:icon="@drawable/ic_anilist_icon">
+        </Preference>
+
         <Preference
                 android:title="@string/github"
                 android:icon="@drawable/ic_github_logo"

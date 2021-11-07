@@ -1,8 +1,10 @@
 package com.lagradost.cloudstream3.utils
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
@@ -18,12 +20,11 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
-import com.lagradost.cloudstream3.MainAPI
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import java.net.URL
+import java.net.URLDecoder
 
 object AppUtils {
     fun getVideoContentUri(context: Context, videoFilePath: String): Uri? {
@@ -42,6 +43,29 @@ object AppUtils {
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values
             )
         }
+    }
+
+    fun Context.openBrowser(url: String) {
+        val components = arrayOf(ComponentName(applicationContext, MainActivity::class.java))
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            startActivity(Intent.createChooser(intent, null).putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components))
+        else
+            startActivity(intent)
+    }
+
+    fun splitQuery(url: URL): Map<String, String> {
+        val queryPairs: MutableMap<String, String> = LinkedHashMap()
+        val query: String = url.query
+        val pairs = query.split("&").toTypedArray()
+        for (pair in pairs) {
+            val idx = pair.indexOf("=")
+            queryPairs[URLDecoder.decode(pair.substring(0, idx), "UTF-8")] =
+                URLDecoder.decode(pair.substring(idx + 1), "UTF-8")
+        }
+        return queryPairs
     }
 
     /**| S1:E2 Hello World
@@ -81,8 +105,11 @@ object AppUtils {
 
     fun AppCompatActivity.loadResult(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0) {
         this.runOnUiThread {
-           // viewModelStore.clear()
-            this.navigate(R.id.global_to_navigation_results, ResultFragment.newInstance(url, apiName, startAction, startValue))
+            // viewModelStore.clear()
+            this.navigate(
+                R.id.global_to_navigation_results,
+                ResultFragment.newInstance(url, apiName, startAction, startValue)
+            )
         }
     }
 
@@ -197,7 +224,7 @@ object AppUtils {
             // Filter API depending on preferred media type
             val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
             val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon)
-            val mediaTypeList = if (currentPrefMedia==1) listEnumMovieTv else listEnumAnime
+            val mediaTypeList = if (currentPrefMedia == 1) listEnumMovieTv else listEnumAnime
 
             val filteredAPI = allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }
             filteredAPI

@@ -1,13 +1,15 @@
 package com.lagradost.cloudstream3.ui.settings
 
 
-import android.content.Intent
-import android.net.Uri
 import android.app.UiModeManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -27,6 +29,9 @@ import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initRequestClient
+import com.lagradost.cloudstream3.syncproviders.OAuth2Interface
+import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.aniListApi
+import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.malApi
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppUtils
@@ -39,6 +44,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadDir
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.isScopedStorage
@@ -61,6 +67,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager?
             return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
         }
+
+        private const val accountEnabled = false
     }
 
     private var beneneCount = 0
@@ -111,6 +119,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("🇹🇷", "Turkish", "tr")
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
+    private fun showLoginInfo(context: Context, api: OAuth2Interface, info: OAuth2Interface.LoginInfo) {
+        val builder =
+            AlertDialog.Builder(context, R.style.AlertDialogCustom).setView(R.layout.account_managment)
+        val dialog = builder.show()
+
+        dialog.findViewById<ImageView>(R.id.account_profile_picture)?.setImage(info.profilePicture)
+        dialog.findViewById<TextView>(R.id.account_logout)?.setOnClickListener {
+            it.context?.let { ctx ->
+                api.logOut(ctx)
+                dialog.dismiss()
+            }
+        }
+
+        dialog.findViewById<TextView>(R.id.account_name)?.text = info.name ?: context.getString(R.string.no_data)
+        dialog.findViewById<TextView>(R.id.account_site)?.text = api.name
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings, rootKey)
@@ -127,6 +152,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val colorPrimaryPreference = findPreference<Preference>(getString(R.string.primary_color_key))!!
         val preferedMediaTypePreference = findPreference<Preference>(getString(R.string.prefer_media_type_key))!!
         val appThemePreference = findPreference<Preference>(getString(R.string.app_theme_key))!!
+
+        val syncApis = listOf(Pair(R.string.mal_key, malApi), Pair(R.string.anilist_key, aniListApi))
+        for (sync in syncApis) {
+            findPreference<Preference>(getString(sync.first))?.apply {
+                isVisible = accountEnabled
+                val api = sync.second
+                title = getString(R.string.login_format).format(api.name, getString(R.string.account))
+                setOnPreferenceClickListener { pref ->
+                    pref.context?.let { ctx ->
+                        val info = api.loginInfo(ctx)
+                        if (info != null) {
+                            showLoginInfo(ctx, api, info)
+                        } else {
+                            api.authenticate(ctx)
+                        }
+                    }
+
+                    return@setOnPreferenceClickListener true
+                }
+            }
+        }
 
         legalPreference.setOnPreferenceClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(it.context)
@@ -206,7 +252,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             return@setOnPreferenceClickListener true
         }
-        
+
         fun getDownloadDirs(): List<String> {
             val defaultDir = getDownloadDir()?.filePath
 
@@ -248,7 +294,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             return@setOnPreferenceClickListener true
         }
-        
+
         preferedMediaTypePreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.media_type_pref)
             val prefValues = resources.getIntArray(R.array.media_type_pref_values)
