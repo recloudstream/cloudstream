@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -44,8 +45,10 @@ class DownloadFragment : Fragment() {
     }
 
     private fun setList(list: List<VisualDownloadHeaderCached>) {
-        (download_list?.adapter as DownloadHeaderAdapter?)?.cardList = list
-        download_list?.adapter?.notifyDataSetChanged()
+        main {
+            (download_list?.adapter as DownloadHeaderAdapter?)?.cardList = list
+            download_list?.adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun onDestroyView() {

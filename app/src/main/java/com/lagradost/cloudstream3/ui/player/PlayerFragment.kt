@@ -78,7 +78,6 @@ import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAu
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getCurrentSavedStyle
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.getFocusRequest
-import com.lagradost.cloudstream3.utils.AppUtils.getVideoContentUri
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.onAudioFocusEvent
 import com.lagradost.cloudstream3.utils.AppUtils.requestLocalAudioFocus
@@ -107,6 +106,7 @@ import kotlin.concurrent.thread
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.properties.Delegates
+
 
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
 const val STATE_RESUME_WINDOW = "resumeWindow"
@@ -158,6 +158,7 @@ data class PlayerData(
 
 data class UriData(
     val uri: String,
+    val basePath: String?,
     val relativePath: String,
     val displayName: String,
     val parentId: Int?,
@@ -791,12 +792,12 @@ class PlayerFragment : Fragment() {
             if (exoPlayer.duration > 0 && exoPlayer.currentPosition > 0) {
                 context?.let { ctx ->
                     //if (this::viewModel.isInitialized) {
-                        viewModel.setViewPos(
-                            ctx,
-                            if (isDownloadedFile) uriData.id else getEpisode()?.id,
-                            exoPlayer.currentPosition,
-                            exoPlayer.duration
-                        )
+                    viewModel.setViewPos(
+                        ctx,
+                        if (isDownloadedFile) uriData.id else getEpisode()?.id,
+                        exoPlayer.currentPosition,
+                        exoPlayer.duration
+                    )
                     /*} else {
                         ctx.setViewPos(
                             if (isDownloadedFile) uriData.id else getEpisode()?.id,
@@ -1608,7 +1609,7 @@ class PlayerFragment : Fragment() {
             if (isDownloadedFile) {
                 if (!supportsDownloadedFiles) return null
                 val list = ArrayList<SubtitleFile>()
-                VideoDownloadManager.getFolder(this, uriData.relativePath)?.forEach { file ->
+                VideoDownloadManager.getFolder(this, uriData.relativePath, uriData.basePath)?.forEach { file ->
                     val name = uriData.displayName.removeSuffix(".mp4")
                     if (file.first != uriData.displayName && file.first.startsWith(name)) {
                         val realName = file.first.removePrefix(name)
@@ -1882,15 +1883,7 @@ class PlayerFragment : Fragment() {
                 mediaItemBuilder.setUri(currentUrl.url)
             } else if (trueUri != null || uri != null) {
                 val uriPrimary = trueUri ?: Uri.parse(uri)
-                if (uriPrimary.scheme == "content") {
-                    mediaItemBuilder.setUri(uriPrimary)
-                    //      video_title?.text = uriPrimary.toString()
-                } else {
-                    //mediaItemBuilder.setUri(Uri.parse(currentUrl.url))
-                    val realUri = trueUri ?: getVideoContentUri(requireContext(), uri ?: uriPrimary.path ?: "")
-                    //    video_title?.text = uri.toString()
-                    mediaItemBuilder.setUri(realUri)
-                }
+                mediaItemBuilder.setUri(uriPrimary)
             }
 
             val subs = context?.getSubs() ?: emptyList()
@@ -1913,7 +1906,7 @@ class PlayerFragment : Fragment() {
             activeSubtitles = subItemsId
             mediaItemBuilder.setSubtitles(subItems)
 
-//might add https://github.com/ed828a/Aihua/blob/1896f46888b5a954b367e83f40b845ce174a2328/app/src/main/java/com/dew/aihua/player/playerUI/VideoPlayer.kt#L287 toggle caps
+            //might add https://github.com/ed828a/Aihua/blob/1896f46888b5a954b367e83f40b845ce174a2328/app/src/main/java/com/dew/aihua/player/playerUI/VideoPlayer.kt#L287 toggle caps
 
             val mediaItem = mediaItemBuilder.build()
             val trackSelector = DefaultTrackSelector(requireContext())
@@ -2214,7 +2207,8 @@ class PlayerFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     private fun initPlayer() {
         if (isDownloadedFile) {
-            initPlayer(null, uriData.uri.removePrefix("file://").replace("%20", " ")) // FIX FILE PERMISSION
+            //.removePrefix("file://").replace("%20", " ") // FIX FILE PERMISSION
+            initPlayer(null, uriData.uri)
         }
         println("INIT PLAYER")
         view?.setOnTouchListener { _, _ -> return@setOnTouchListener true } // VERY IMPORTANT https://stackoverflow.com/questions/28818926/prevent-clicking-on-a-button-in-an-activity-while-showing-a-fragment

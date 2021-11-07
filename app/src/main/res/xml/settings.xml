@@ -105,6 +105,11 @@
                 android:icon="@drawable/ic_baseline_dns_24">
         </Preference>
         <Preference
+                android:key="@string/download_path_key"
+                android:title="@string/download_path_pref"
+                android:icon="@drawable/netflix_download">
+        </Preference>
+        <Preference
                 android:icon="@drawable/ic_baseline_tv_24"
                 android:key="@string/app_layout_key"
                 android:title="@string/app_layout">
