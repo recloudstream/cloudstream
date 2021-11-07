@@ -64,6 +64,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [allmoviesforyou.co](https://allmoviesforyou.co) 
 - [vidembed.cc](https://vidembed.cc) 
 - [vf-film.me](https://vf-film.me) 
+- [vf-serie.org](https://vf-serie.org) 
 - [asianload.cc](https://asianload.cc) 
 - [sflix.to](https://sflix.to) 
 - [zoro.to](https://zoro.to) 
