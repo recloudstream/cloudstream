@@ -57,6 +57,11 @@
 
     </LinearLayout>
     <TextView
+            android:id="@+id/account_switch_account"
+            android:text="@string/switch_account"
+            style="@style/SettingsItem">
+    </TextView>
+    <TextView
             android:id="@+id/account_logout"
             android:text="@string/logout"
             style="@style/SettingsItem">

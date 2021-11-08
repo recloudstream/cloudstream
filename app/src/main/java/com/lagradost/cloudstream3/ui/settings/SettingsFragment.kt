@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
@@ -119,7 +120,37 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("🇹🇷", "Turkish", "tr")
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
-    private fun showLoginInfo(context: Context, api: OAuth2Interface, info: OAuth2Interface.LoginInfo) {
+    private fun showAccountSwitch(context: Context, api: OAuth2Interface.AccountManager) {
+        val builder =
+            AlertDialog.Builder(context, R.style.AlertDialogCustom).setView(R.layout.account_switch)
+        val dialog = builder.show()
+
+        val accounts = api.getAccounts(context)
+        dialog.findViewById<TextView>(R.id.account_add)?.setOnClickListener {
+            api.authenticate(it.context)
+        }
+
+        val ogIndex = api.accountIndex
+
+        val items = ArrayList<OAuth2Interface.LoginInfo>()
+
+        for (index in accounts) {
+            api.accountIndex = index
+            val accountInfo = api.loginInfo(context)
+            if (accountInfo != null) {
+                items.add(accountInfo)
+            }
+        }
+        api.accountIndex = ogIndex
+        val adapter = AccountAdapter(items, R.layout.account_single) {
+            dialog?.dismiss()
+            api.changeAccount(it.view.context, it.card.accountIndex)
+        }
+        val list = dialog.findViewById<RecyclerView>(R.id.account_list)
+        list?.adapter = adapter
+    }
+
+    private fun showLoginInfo(context: Context, api: OAuth2Interface.AccountManager, info: OAuth2Interface.LoginInfo) {
         val builder =
             AlertDialog.Builder(context, R.style.AlertDialogCustom).setView(R.layout.account_managment)
         val dialog = builder.show()
@@ -134,6 +165,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         dialog.findViewById<TextView>(R.id.account_name)?.text = info.name ?: context.getString(R.string.no_data)
         dialog.findViewById<TextView>(R.id.account_site)?.text = api.name
+        dialog.findViewById<TextView>(R.id.account_switch_account)?.setOnClickListener {
+            dialog.dismiss()
+            showAccountSwitch(it.context, api)
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

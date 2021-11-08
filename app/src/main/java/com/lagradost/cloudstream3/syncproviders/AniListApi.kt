@@ -17,31 +17,32 @@ import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
-import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import java.net.URL
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class AniListApi(var accountId: String) : OAuth2Interface {
+class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
     override val name: String
         get() = "AniList"
     override val key: String
         get() = "6871"
     override val redirectUrl: String
         get() = "anilistlogin"
-
-    override fun logOut(context: Context) {
-        context.removeKeys(accountId)
-    }
+    override val idPrefix: String
+        get() = "anilist"
 
     override fun loginInfo(context: Context): OAuth2Interface.LoginInfo? {
         // context.getUser(true)?.
         context.getKey<AniListUser>(accountId, ANILIST_USER_KEY)?.let { user ->
-            return OAuth2Interface.LoginInfo(profilePicture = user.picture, name = user.name)
+            return OAuth2Interface.LoginInfo(profilePicture = user.picture, name = user.name, accountIndex = accountIndex)
         }
         return null
+    }
+
+    override fun logOut(context: Context) {
+        context.removeAccountKeys()
     }
 
     override fun authenticate(context: Context) {
@@ -58,6 +59,7 @@ class AniListApi(var accountId: String) : OAuth2Interface {
 
             val endTime = unixTime + expiresIn.toLong()
 
+            context.switchToNewAccount()
             context.setKey(accountId, ANILIST_UNIXTIME_KEY, endTime)
             context.setKey(accountId, ANILIST_TOKEN_KEY, token)
             context.setKey(ANILIST_SHOULD_UPDATE_LIST, true)
@@ -552,7 +554,7 @@ class AniListApi(var accountId: String) : OAuth2Interface {
         }
     }
 
-    fun Context.getUser(setSettings: Boolean = true): AniListUser? {
+    private fun Context.getUser(setSettings: Boolean = true): AniListUser? {
         val q = """
 				{
   					Viewer {
@@ -582,6 +584,7 @@ class AniListApi(var accountId: String) : OAuth2Interface {
             )
             if (setSettings) {
                 setKey(accountId, ANILIST_USER_KEY, user)
+                registerAccount()
             }
             /* // TODO FIX FAVS
             for(i in u.favourites.anime.nodes) {

@@ -326,6 +326,8 @@
     <string name="account">account</string>
     <string name="logout">Logout</string>
     <string name="login">Login</string>
+    <string name="switch_account">Switch account</string>
+    <string name="add_account">Add account</string>
     <!-- ============ -->
 
 </resources>

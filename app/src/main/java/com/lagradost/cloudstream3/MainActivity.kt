@@ -29,6 +29,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initRequestClient
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.OAuth2Apis
+import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.OAuth2accountApis
 import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.appString
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -371,6 +372,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // init accounts
+        for (api in OAuth2accountApis) {
+            api.init(this)
+        }
+
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         val currentTheme = when (settingsManager.getString(getString(R.string.app_theme_key), "Black")) {
@@ -592,6 +598,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             e.printStackTrace()
         }
         APIRepository.dubStatusActive = getApiDubstatusSettings()
+
 
 /*
         val relativePath = (Environment.DIRECTORY_DOWNLOADS) + File.separatorChar

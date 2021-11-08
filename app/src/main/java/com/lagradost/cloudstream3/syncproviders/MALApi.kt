@@ -19,7 +19,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import java.net.URL
@@ -28,22 +27,24 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MALApi(var accountId: String) : OAuth2Interface {
+class MALApi(index : Int) : OAuth2Interface.AccountManager(index) {
     override val name: String
         get() = "MAL"
     override val key: String
         get() = "1714d6f2f4f7cc19644384f8c4629910"
     override val redirectUrl: String
         get() = "mallogin"
+    override val idPrefix: String
+        get() = "mal"
 
     override fun logOut(context: Context) {
-        context.removeKeys(accountId)
+        context.removeAccountKeys()
     }
 
     override fun loginInfo(context: Context): OAuth2Interface.LoginInfo? {
         //context.getMalUser(true)?
         context.getKey<MalUser>(accountId, MAL_USER_KEY)?.let { user ->
-            return OAuth2Interface.LoginInfo(profilePicture = user.picture, name = user.name)
+            return OAuth2Interface.LoginInfo(profilePicture = user.picture, name = user.name, accountIndex = accountIndex)
         }
         return null
     }
@@ -84,6 +85,7 @@ class MALApi(var accountId: String) : OAuth2Interface {
                     }
 
                     if (res != "") {
+                        context.switchToNewAccount()
                         context.storeToken(res)
                         context.getMalUser()
                         context.setKey(MAL_SHOULD_UPDATE_LIST, true)
@@ -383,7 +385,7 @@ class MALApi(var accountId: String) : OAuth2Interface {
         }
     }
 
-    fun Context.getMalUser(setSettings: Boolean = true): MalUser? {
+    private fun Context.getMalUser(setSettings: Boolean = true): MalUser? {
         checkMalToken()
         return try {
             val res = get(
@@ -399,6 +401,7 @@ class MALApi(var accountId: String) : OAuth2Interface {
             val user = mapper.readValue<MalUser>(res)
             if (setSettings) {
                 setKey(accountId, MAL_USER_KEY, user)
+                registerAccount()
             }
             user
         } catch (e: Exception) {
