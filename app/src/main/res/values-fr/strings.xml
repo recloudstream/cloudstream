@@ -17,14 +17,12 @@
     <string name="result_open_in_browser">Ouvrir dans le naviguateur</string>
     <string name="skip_loading">Passer le chargement</string>
     <string name="loading_chromecast">Chargement…</string>
-
     <string name="type_watching">En visionnage</string>
     <string name="type_on_hold">En pose</string>
     <string name="type_completed">Terminé</string>
     <string name="type_dropped">Abandonné</string>
     <string name="type_plan_to_watch">A regarder</string>
     <string name="type_none">Aucun</string>
-
     <string name="play_movie_button">Lire</string>
     <string name="play_torrent_button">Streamer Torrent</string>
     <string name="pick_source">Sources</string>
@@ -34,7 +32,6 @@
     <string name="episode_poster_img_des">Miniature de l\'Episode</string>
     <string name="play_episode">Lire l\'Episode</string>
     <string name="need_storage">Permet de télécharger les épisodes</string>
-
     <string name="download">Télécharger</string>
     <string name="downloaded">Téléchargé</string>
     <string name="downloading">Téléchargement</string>
@@ -43,18 +40,14 @@
     <string name="download_failed">Echec du Téléchargement</string>
     <string name="download_canceled">Téléchargement Annulé</string>
     <string name="download_done">Téléchargement Terminé</string>
-
     <string name="error_loading_links_toast">Erreur lors du téléchargement des liens</string>
     <string name="download_storage_text">Stockage Interne</string>
-
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
-
     <string name="popup_delete_file">Supprimer le fichier</string>
     <string name="popup_play_file">Lire le fichier</string>
     <string name="popup_resume_download">Reprendre le téléchargement</string>
     <string name="popup_pause_download">Mettre en pause le téléchargement</string>
-
     <string name="pref_disable_acra">Désactiver le rapport de bug automatique</string>
     <string name="home_more_info">Plus d\'informations</string>
     <string name="home_expanded_hide">Cacher</string>
@@ -80,24 +73,19 @@
     <string name="subs_font">Police</string>
     <string name="search_provider_text_providers">Rechercher en utilisant les fournisseurs</string>
     <string name="search_provider_text_types">Rechercher en utilisant les types</string>
-
     <string name="benene_count_text">%d Benenes données au dev</string>
     <string name="benene_count_text_none">Aucune Benenes donnée</string>
-
     <string name="subs_auto_select_language">Séléction automatique de la langue</string>
     <string name="subs_download_languages">Télécharger les langues</string>
     <string name="subs_hold_to_reset_to_default">Maintenir pour réinitialliser les valeurs par défault</string>
     <string name="continue_watching">Continer à regarder</string>
-
     <string name="action_remove_watching">Supprimer</string>
     <string name="action_open_watching">Plus d\'info</string>
-
     <string name="vpn_might_be_needed">Un VPN peut être requit pour que ce fournisseur fonctionne</string>
     <string name="vpn_torrent">Ce fournisseur est un torrent, un VPN est recommendé</string>
     <string name="torrent_plot">Description</string>
     <string name="normal_no_plot">Aucune description trouvée</string>
     <string name="torrent_no_plot">Aucune description trouvée</string>
-
     <string name="picture_in_picture">Lecteur en mode Picture-in-Picture</string>
     <string name="picture_in_picture_des">Continuer la lecture dans une fenêtre miniature en superposition sur d\'autres applis</string>
     <string name="player_size_settings">Boutton de redimentionnement du lecteur</string>
@@ -128,29 +116,24 @@
     <string name="discord">Rejoindre le serveur Discord</string>
     <string name="benene">Donner une benene aux devs</string>
     <string name="benene_des">benenes données</string>
-
     <string name="app_language">Language de l\'application</string>
-
     <string name="no_chomecast_support_toast">Ce fournisseur ne supporte pas le Chromecast</string>
     <string name="no_links_found_toast">Aucun lien trouvé</string>
     <string name="copy_link_toast">Lien copié dans le presse-papiers</string>
     <string name="play_episode_toast">Lecture de l\'episode</string>
     <string name="subs_default_reset_toast">Réinitialiser aux valeurs par défault</string>
     <string name="acra_report_toast">Désolé, l\'application à crashé. Un rapport de bug anonyme va être envoyé aux devloppeurs</string>
-
     <string name="season">Saison</string>
     <string name="no_season">Pas de Saison</string>
     <string name="episode">Episode</string>
     <string name="episodes">Episodes</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
-
     <string name="delete_file">Supprimer le Fichier</string>
     <string name="delete">Supprimer</string>
     <string name="pause">Pause</string>
     <string name="resume">Reprendre</string>
     <string name="delete_message">Cela va supprimer définitivement %s\nÊtes vous sûr ?</string>
-
     <string name="status_ongoing">En cours</string>
     <string name="status_completed">Terminé</string>
     <string name="status">Status</string>
@@ -159,27 +142,22 @@
     <string name="duration">Durée</string>
     <string name="site">Site</string>
     <string name="synopsis">Synopsis</string>
-
     <string name="queued">Liste d\'attente</string>
     <string name="no_subtitles">Pas de sous-titres</string>
     <string name="default_subtitles">Défault</string>
-
     <string name="free_storage">Libre</string>
     <string name="used_storage">Utilisé</string>
     <string name="app_storage">Application</string>
-
     <string name="movies">Films</string>
     <string name="tv_series">Séries TV</string>
     <string name="cartoons">Dessin animés</string>
     <string name="anime">Animés</string>
     <string name="torrent">Torrents</string>
-
     <string name="source_error">Erreur de la source</string>
     <string name="remote_error">Erreur distante</string>
     <string name="render_error">Erreur d\'affichage</string>
     <string name="unexpected_error">Erreur innatendue du lecteur</string>
     <string name="storage_error">Erreur du téléchargement, vérifier l\'autorisation du stockage</string>
-
     <string name="episode_action_chomecast_episode">Episode Chromecast</string>
     <string name="episode_action_chomecast_mirror">Miroir Chromecast</string>
     <string name="episode_action_play_in_app">Lecture dans l\'application</string>
@@ -189,15 +167,39 @@
     <string name="episode_action_auto_download">Téléchargement Automatique</string>
     <string name="episode_action_download_mirror">Télécharger depuis le miroir</string>
     <string name="episode_action_reload_links">Recharger les liens</string>
-
     <string name="no_update_found">Pas de mise-à-jour trouvés</string>
     <string name="check_for_update">Vérifier les mise-à-jour</string>
-
     <string name="video_lock">Verouiller</string>
     <string name="video_aspect_ratio_resize">Redimensionner</string>
     <string name="video_source">Source</string>
     <string name="video_skip_op">Passer l\'OP</string>
-
     <string name="dont_show_again">Ne pas afficher à nouveau</string>
     <string name="update">Mettre à jour</string>
+    <string name="dns_pref_summary">Utile pour contourner les bloquages des FAI</string>
+    <string name="new_update_format" formatted="true">Nouvelle mise à jour trouvée !
+\n%s -&gt; %s</string>
+    <string name="filler_format" formatted="true">(Épisode spécial) %s</string>
+    <string name="watch_quality_pref">Qualité de visionnage préférée</string>
+    <string name="resize_fill">Étendre</string>
+    <string name="legal_notice">Non-responsabilité</string>
+    <string name="primary_color_settings">Couleur principale</string>
+    <string name="app_theme_settings">Thème de l\'application</string>
+    <string name="player_speed_text_format" formatted="true">Vitesse (%.2fx)</string>
+    <string name="use_system_brightness_settings">Utiliser la luminosité du système</string>
+    <string name="general">Général</string>
+    <string name="dns_pref">DNS avec HTTPS</string>
+    <string name="display_subbed_dubbed_settings">Afficher les animés en Anglais (Dub) / sous-titrés</string>
+    <string name="phone_layout">Disposition en mode téléphone</string>
+    <string name="app_dub_sub_episode_text_format">%s Ep %d</string>
+    <string name="rated_format" formatted="true">Note : %.1f</string>
+    <string name="subs_font_size">Taille de la police</string>
+    <string name="use_system_brightness_settings_des">Utiliser la luminosité du système dans le lecteur de l\'application au lieu d\'un écran noir</string>
+    <string name="show_fillers_settings">Afficher les épisodes spéciaux pour les animés</string>
+    <string name="resize_zoom">Zoom</string>
+    <string name="resize_fit">Adapter à l\'écran</string>
+    <string name="app_layout">Disposition de l\'application</string>
+    <string name="tv_layout">Disposition TV</string>
+    <string name="provider_lang_settings">Language des fournisseurs</string>
+    <string name="preferred_media_settings">Médias préfères</string>
+    <string name="automatic">Auto</string>
 </resources>
