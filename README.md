@@ -69,6 +69,5 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [sflix.to](https://sflix.to) 
 - [zoro.to](https://zoro.to) 
 - [trailers.to](https://trailers.to) 
-- [thenos.org](https://www.thenos.org) 
 - [asiaflix.app](https://asiaflix.app) 
 <!--SITE LIST END-->
