@@ -347,8 +347,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 settingsManager.edit()
                     .putInt(getString(R.string.preferred_media_settings), prefValues[it])
                     .apply()
-                val apiRandom = AppUtils.filterProviderByPreferredMedia(apis, prefValues[it]).random()
-                context?.setKey(HOMEPAGE_API, apiRandom.name)
+                val apilist = AppUtils.filterProviderByPreferredMedia(apis, prefValues[it])
+                val apiRandom = if (apilist?.size > 0) { apilist.random().name } else { "" }
+                context?.setKey(HOMEPAGE_API, apiRandom)
                 context?.initRequestClient()
             }
             return@setOnPreferenceClickListener true
