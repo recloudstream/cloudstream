@@ -11,7 +11,7 @@ class ProviderTests {
     private fun getAllProviders(): List<MainAPI> {
         val allApis = APIHolder.apis
         allApis.addAll(APIHolder.restrictedApis)
-        return allApis
+        return allApis.filter { !it.usesWebView }
     }
 
     private fun loadLinks(api: MainAPI, url: String?): Boolean {
@@ -80,13 +80,14 @@ class ProviderTests {
                 when (load) {
                     is AnimeLoadResponse -> {
                         val gotNoEpisodes =
-                            load.dubEpisodes.isNullOrEmpty() && load.subEpisodes.isNullOrEmpty()
+                            load.episodes.keys.isEmpty() || load.episodes.keys.any { load.episodes[it].isNullOrEmpty() }
+
                         if (gotNoEpisodes) {
                             println("Api ${api.name} got no episodes on ${load.url}")
                             continue
                         }
 
-                        val url = (load.dubEpisodes ?: load.subEpisodes)?.first()?.url
+                        val url = (load.episodes[load.episodes.keys.first()])?.first()?.url
                         validResults = loadLinks(api, url)
                         if (!validResults) continue
                     }
@@ -176,6 +177,7 @@ class ProviderTests {
 
     @Test
     fun providerCorrect() {
+        val invalidProvider = ArrayList<Pair<MainAPI,Exception?>>()
         val providers = getAllProviders()
         providers.pmap { api ->
             try {
@@ -184,10 +186,17 @@ class ProviderTests {
                     println("Success $api")
                 } else {
                     System.err.println("Error $api")
+                    invalidProvider.add(Pair(api, null))
                 }
             } catch (e: Exception) {
                 logError(e)
+                invalidProvider.add(Pair(api,e))
             }
+        }
+
+        println("Invalid providers are: ")
+        for (provider in invalidProvider) {
+            println("${provider.first}")
         }
     }
 }

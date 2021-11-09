@@ -108,7 +108,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         //homeViewModel =
-       //     ViewModelProvider(this).get(HomeViewModel::class.java)
+        //     ViewModelProvider(this).get(HomeViewModel::class.java)
 
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -123,10 +123,14 @@ class HomeFragment : Fragment() {
     private fun chooseRandomMainPage() {
         val home = currentHomePage
         if (home != null && home.items.isNotEmpty()) {
-            val randomItems = home.items.shuffled().flatMap { it.list }.distinctBy { it.url }.toList().shuffled()
-            if (randomItems.isNullOrEmpty()) {
+            val currentList =
+                home.items.shuffled().filter { !it.list.isNullOrEmpty() }.flatMap { it.list }.distinctBy { it.url }
+                    .toList()
+
+            if (currentList.isNullOrEmpty()) {
                 toggleMainVisibility(false)
             } else {
+                val randomItems = currentList.shuffled()
                 val randomSize = randomItems.size
                 home_main_poster_recyclerview.adapter =
                     HomeChildItemAdapter(randomItems, R.layout.home_result_big_grid) { callback ->
@@ -141,7 +145,7 @@ class HomeFragment : Fragment() {
                             manager.snap { dx ->
                                 home_main_poster_recyclerview?.post {
                                     // this is the best I can do, fuck android for not including instant scroll
-                                    home_main_poster_recyclerview?.smoothScrollBy(dx,0)
+                                    home_main_poster_recyclerview?.smoothScrollBy(dx, 0)
                                 }
                             }
                         }
@@ -429,7 +433,7 @@ class HomeFragment : Fragment() {
             for (syncApi in OAuth2Interface.OAuth2Apis) {
                 val login = syncApi.loginInfo(ctx)
                 val pic = login?.profilePicture
-                if(pic != null) {
+                if (pic != null) {
                     home_profile_picture.setImage(pic)
                     home_profile_picture_holder.isVisible = true
                     break

@@ -129,6 +129,7 @@ object SingleSelectionHelper {
         )
     }
 
+    /** Only for a low amount of items */
     fun Context.showBottomDialog(
         items: List<String>,
         selectedIndex: Int,
@@ -149,7 +150,7 @@ object SingleSelectionHelper {
             name,
             showApply,
             false,
-            { callback.invoke(it.first()) },
+            { if(it.isNotEmpty()) callback.invoke(it.first()) },
             dismissCallback
         )
     }

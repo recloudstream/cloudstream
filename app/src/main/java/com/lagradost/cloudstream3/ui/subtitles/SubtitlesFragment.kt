@@ -25,7 +25,6 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -224,7 +223,8 @@ class SubtitlesFragment : Fragment() {
                 Pair(40, "40"),
             )
 
-            textView.context.showBottomDialog(
+            //showBottomDialog
+            textView.context.showDialog(
                 elevationTypes.map { it.second },
                 elevationTypes.map { it.first }.indexOf(state.elevation),
                 (textView as TextView).text.toString(),
@@ -254,7 +254,8 @@ class SubtitlesFragment : Fragment() {
                 Pair(CaptionStyleCompat.EDGE_TYPE_RAISED, "Raised"),
             )
 
-            textView.context.showBottomDialog(
+            //showBottomDialog
+            textView.context.showDialog(
                 edgeTypes.map { it.second },
                 edgeTypes.map { it.first }.indexOf(state.edgeType),
                 (textView as TextView).text.toString(),
@@ -304,7 +305,8 @@ class SubtitlesFragment : Fragment() {
                 Pair(60f,"60$suffix"),
             )
 
-            textView.context.showBottomDialog(
+            //showBottomDialog
+            textView.context.showDialog(
                 fontSizes.map { it.second },
                 fontSizes.map { it.first }.indexOf(state.fixedTextSize),
                 (textView as TextView).text.toString(),
@@ -341,7 +343,8 @@ class SubtitlesFragment : Fragment() {
                 Pair(R.font.poppins_regular, "Poppins"),
             )
 
-            textView.context.showBottomDialog(
+            //showBottomDialog
+            textView.context.showDialog(
                 fontTypes.map { it.second },
                 fontTypes.map { it.first }.indexOf(state.typeface),
                 (textView as TextView).text.toString(),

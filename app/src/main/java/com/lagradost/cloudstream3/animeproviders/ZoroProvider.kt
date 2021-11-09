@@ -33,6 +33,9 @@ class ZoroProvider : MainAPI() {
     override val hasDownloadSupport: Boolean
         get() = true
 
+    override val usesWebView: Boolean
+        get() = true
+
     override val supportedTypes: Set<TvType>
         get() = setOf(
             TvType.Anime,

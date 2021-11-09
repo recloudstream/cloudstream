@@ -55,8 +55,8 @@ object APIHolder {
 
     val restrictedApis = arrayListOf(
         TrailersToProvider(), // be aware that this is fuckery
-        //NyaaProvider(), //torrents in cs3 is wack
-        ThenosProvider(),
+        // NyaaProvider(), // torrents in cs3 is wack
+        // ThenosProvider(), // ddos protection and wacked links
         AsiaFlixProvider(),
     )
 
@@ -163,8 +163,11 @@ abstract class MainAPI {
     /**Set false if links require referer or for some reason cant be played on a chromecast*/
     open val hasChromecastSupport = true
 
-    /**If all links are m3u8 then set this to false*/
+    /**If all links are encrypted then set this to false*/
     open val hasDownloadSupport = true
+
+    /**Used for testing and can be used to disable the providers if WebView is not available*/
+    open val usesWebView = false
 
     open val hasMainPage = false
     open val hasQuickSearch = false
