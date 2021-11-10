@@ -1719,6 +1719,7 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        MainActivity.playerEventListener = null
         /*  val lp = activity?.window?.attributes
 
 

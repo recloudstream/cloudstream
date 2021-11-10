@@ -149,4 +149,7 @@ dependencies {
 
     // Util to skip the URI file fuckery 🙏
     implementation "com.github.tachiyomiorg:unifile:17bec43"
+
+    // debugImplementation because LeakCanary should only run in debug builds.
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }

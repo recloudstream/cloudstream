@@ -57,7 +57,10 @@ class DownloadFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
+        if(downloadDeleteEventListener != null) {
+            VideoDownloadManager.downloadDeleteEvent -= downloadDeleteEventListener!!
+            downloadDeleteEventListener = null
+        }
         super.onDestroy()
     }
 
