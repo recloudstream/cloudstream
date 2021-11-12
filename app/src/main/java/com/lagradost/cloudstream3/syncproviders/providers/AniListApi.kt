@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.syncproviders
+package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.content.Context
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -6,12 +6,16 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.appString
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.maxStale
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.unixTime
+import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.maxStale
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.unixTime
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -21,9 +25,8 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import java.net.URL
 import java.util.*
-import java.util.concurrent.TimeUnit
 
-class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
+class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override val name: String
         get() = "AniList"
     override val key: String
@@ -32,11 +35,19 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
         get() = "anilistlogin"
     override val idPrefix: String
         get() = "anilist"
+    override val mainUrl: String
+        get() = "https://anilist.co"
+    override val icon: Int
+        get() = R.drawable.ic_anilist_icon
 
-    override fun loginInfo(context: Context): OAuth2Interface.LoginInfo? {
+    override fun loginInfo(context: Context): OAuth2API.LoginInfo? {
         // context.getUser(true)?.
         context.getKey<AniListUser>(accountId, ANILIST_USER_KEY)?.let { user ->
-            return OAuth2Interface.LoginInfo(profilePicture = user.picture, name = user.name, accountIndex = accountIndex)
+            return OAuth2API.LoginInfo(
+                profilePicture = user.picture,
+                name = user.name,
+                accountIndex = accountIndex
+            )
         }
         return null
     }
@@ -71,7 +82,60 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
         }
     }
 
+    override fun search(context: Context, name: String): List<SyncAPI.SyncSearchResult>? {
+        val data = searchShows(name) ?: return null
+        return data.data.Page.media.map {
+            SyncAPI.SyncSearchResult(
+                it.title.romaji,
+                this.name,
+                it.id.toString(),
+                "$mainUrl/anime/${it.id}",
+                it.bannerImage
+            )
+        }
+    }
+
+    override fun getResult(context: Context, id: String): SyncAPI.SyncResult? {
+        val internalId = id.toIntOrNull() ?: return null
+        val season = getSeason(internalId)?.data?.Media ?: return null
+
+        return SyncAPI.SyncResult(
+            season.id.toString(),
+            nextAiring = season.nextAiringEpisode?.let {
+                SyncAPI.SyncNextAiring(
+                    it.episode,
+                    it.timeUntilAiring + unixTime
+                )
+            },
+            //TODO REST
+        )
+    }
+
+    override fun getStatus(context: Context, id: String): SyncAPI.SyncStatus? {
+        val internalId = id.toIntOrNull() ?: return null
+        val data = context.getDataAboutId(internalId) ?: return null
+
+        return SyncAPI.SyncStatus(
+            score = data.score,
+            watchedEpisodes = data.episodes,
+            status = data.type.value,
+            isFavorite = data.isFavourite,
+        )
+    }
+
+    override fun score(context: Context, id: String, status: SyncAPI.SyncStatus): Boolean {
+        return context.postDataAboutId(
+            id.toIntOrNull() ?: return false,
+            fromIntToAnimeStatus(status.status),
+            status.score,
+            status.watchedEpisodes
+        )
+    }
+
     companion object {
+        private val mapper = JsonMapper.builder().addModule(KotlinModule())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
+
         private val aniListStatusString = arrayOf("CURRENT", "COMPLETED", "PAUSED", "DROPPED", "PLANNING", "REPEATING")
 
         const val ANILIST_UNIXTIME_KEY: String = "anilist_unixtime" // When token expires
@@ -79,89 +143,14 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
         const val ANILIST_USER_KEY: String = "anilist_user" // user data like profile
         const val ANILIST_CACHED_LIST: String = "anilist_cached_list"
         const val ANILIST_SHOULD_UPDATE_LIST: String = "anilist_should_update_list"
-    }
 
-
-    private val mapper = JsonMapper.builder().addModule(KotlinModule())
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
-
-
-    // Changing names of these will show up in UI
-    enum class AniListStatusType(var value: Int) {
-        Watching(0),
-        Completed(1),
-        Paused(2),
-        Dropped(3),
-        Planning(4),
-        Rewatching(5),
-        None(-1)
-    }
-
-    fun fromIntToAnimeStatus(inp: Int): AniListStatusType {//= AniListStatusType.values().first { it.value == inp }
-        return when (inp) {
-            -1 -> AniListStatusType.None
-            0 -> AniListStatusType.Watching
-            1 -> AniListStatusType.Completed
-            2 -> AniListStatusType.Paused
-            3 -> AniListStatusType.Dropped
-            4 -> AniListStatusType.Planning
-            5 -> AniListStatusType.Rewatching
-            else -> AniListStatusType.None
+        private fun fixName(name: String): String {
+            return name.toLowerCase(Locale.ROOT).replace(" ", "").replace("[^a-zA-Z0-9]".toRegex(), "")
         }
-    }
 
-    fun convertAnilistStringToStatus(string: String): AniListStatusType {
-        return fromIntToAnimeStatus(aniListStatusString.indexOf(string))
-    }
-
-    fun Context.initGetUser() {
-        if (getKey<String>(accountId, ANILIST_TOKEN_KEY, null) == null) return
-        ioSafe {
-            getUser()
-        }
-    }
-
-    private fun Context.checkToken(): Boolean {
-        if (unixTime > getKey(accountId,
-                ANILIST_UNIXTIME_KEY, 0L
-            )!!
-        ) {
-            /*getCurrentActivity()?.runOnUiThread {
-                val alertDialog: AlertDialog? = activity?.let {
-                    val builder = AlertDialog.Builder(it, R.style.AlertDialogCustom)
-                    builder.apply {
-                        setPositiveButton(
-                            "Login"
-                        ) { dialog, id ->
-                            authenticateAniList()
-                        }
-                        setNegativeButton(
-                            "Cancel"
-                        ) { dialog, id ->
-                            // User cancelled the dialog
-                        }
-                    }
-                    // Set other dialog properties
-                    builder.setTitle("AniList token has expired")
-
-                    // Create the AlertDialog
-                    builder.create()
-                }
-                alertDialog?.show()
-            }*/
-            return true
-        } else {
-            return false
-        }
-    }
-
-    private fun fixName(name: String): String {
-        return name.toLowerCase(Locale.ROOT).replace(" ", "").replace("[^a-zA-Z0-9]".toRegex(), "")
-    }
-
-    private fun searchShows(name: String): GetSearchRoot? {
-        try {
-            val query = """
+        private fun searchShows(name: String): GetSearchRoot? {
+            try {
+                val query = """
                 query (${"$"}id: Int, ${"$"}page: Int, ${"$"}search: String, ${"$"}type: MediaType) {
                     Page (page: ${"$"}page, perPage: 10) {
                         media (id: ${"$"}id, search: ${"$"}search, type: ${"$"}type) {
@@ -216,91 +205,180 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
                     }
                 }
                 """
-            val data =
-                mapOf("query" to query, "variables" to mapper.writeValueAsString(mapOf("search" to name, "page" to 1, "type" to "ANIME")) )
-
-            val res = post(
-                "https://graphql.anilist.co/",
-                //headers = mapOf(),
-                data = data,//(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
-                timeout = 5000 // REASONABLE TIMEOUT
-            ).text.replace("\\", "")
-            return res.toKotlinObject()
-        } catch (e: Exception) {
-            logError(e)
-        }
-        return null
-    }
-
-    // Should use https://gist.github.com/purplepinapples/5dc60f15f2837bf1cea71b089cfeaa0a
-    fun getShowId(malId: String?, name: String, year: Int?): GetSearchMedia? {
-        // Strips these from the name
-        val blackList = listOf(
-            "TV Dubbed",
-            "(Dub)",
-            "Subbed",
-            "(TV)",
-            "(Uncensored)",
-            "(Censored)",
-            "(\\d+)" // year
-        )
-        val blackListRegex =
-            Regex(""" (${blackList.joinToString(separator = "|").replace("(", "\\(").replace(")", "\\)")})""")
-        //println("NAME $name NEW NAME ${name.replace(blackListRegex, "")}")
-        val shows = searchShows(name.replace(blackListRegex, ""))
-
-        shows?.data?.Page?.media?.find {
-            malId ?: "NONE" == it.idMal.toString()
-        }?.let { return it }
-
-        val filtered =
-            shows?.data?.Page?.media?.filter {
-                (
-                        it.startDate.year ?: year.toString() == year.toString()
-                                || year == null
+                val data =
+                    mapOf(
+                        "query" to query,
+                        "variables" to mapper.writeValueAsString(
+                            mapOf(
+                                "search" to name,
+                                "page" to 1,
+                                "type" to "ANIME"
+                            )
                         )
-            }
-        filtered?.forEach {
-            if (fixName(it.title.romaji) == fixName(name)) return it
-        }
+                    )
 
-        return filtered?.firstOrNull()
-    }
-
-    private fun Context.postApi(url: String, q: String, cache: Boolean = false): String {
-        return try {
-            if (!checkToken()) {
-                // println("VARS_ " + vars)
-                post(
+                val res = post(
                     "https://graphql.anilist.co/",
-                    headers = mapOf(
-                        "Authorization" to "Bearer " + getKey(
-                            accountId,
-                            ANILIST_TOKEN_KEY,
-                            ""
-                        )!!,
-                        if (cache) "Cache-Control" to "max-stale=$maxStale" else "Cache-Control" to "no-cache"
-                    ),
-                    cacheTime = 0,
-                    data = mapOf("query" to q),//(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
-                    timeout = 5 // REASONABLE TIMEOUT
-                ).text.replace("\\/", "/")
-            } else {
-                ""
+                    //headers = mapOf(),
+                    data = data,//(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
+                    timeout = 5000 // REASONABLE TIMEOUT
+                ).text.replace("\\", "")
+                return res.toKotlinObject()
+            } catch (e: Exception) {
+                logError(e)
             }
-        } catch (e: Exception) {
-            logError(e)
-            ""
+            return null
+        }
+
+        // Should use https://gist.github.com/purplepinapples/5dc60f15f2837bf1cea71b089cfeaa0a
+        fun getShowId(malId: String?, name: String, year: Int?): GetSearchMedia? {
+            // Strips these from the name
+            val blackList = listOf(
+                "TV Dubbed",
+                "(Dub)",
+                "Subbed",
+                "(TV)",
+                "(Uncensored)",
+                "(Censored)",
+                "(\\d+)" // year
+            )
+            val blackListRegex =
+                Regex(""" (${blackList.joinToString(separator = "|").replace("(", "\\(").replace(")", "\\)")})""")
+            //println("NAME $name NEW NAME ${name.replace(blackListRegex, "")}")
+            val shows = searchShows(name.replace(blackListRegex, ""))
+
+            shows?.data?.Page?.media?.find {
+                malId ?: "NONE" == it.idMal.toString()
+            }?.let { return it }
+
+            val filtered =
+                shows?.data?.Page?.media?.filter {
+                    (
+                            it.startDate.year ?: year.toString() == year.toString()
+                                    || year == null
+                            )
+                }
+            filtered?.forEach {
+                if (fixName(it.title.romaji) == fixName(name)) return it
+            }
+
+            return filtered?.firstOrNull()
+        }
+
+        // Changing names of these will show up in UI
+        enum class AniListStatusType(var value: Int) {
+            Watching(0),
+            Completed(1),
+            Paused(2),
+            Dropped(3),
+            Planning(4),
+            Rewatching(5),
+            None(-1)
+        }
+
+        fun fromIntToAnimeStatus(inp: Int): AniListStatusType {//= AniListStatusType.values().first { it.value == inp }
+            return when (inp) {
+                -1 -> AniListStatusType.None
+                0 -> AniListStatusType.Watching
+                1 -> AniListStatusType.Completed
+                2 -> AniListStatusType.Paused
+                3 -> AniListStatusType.Dropped
+                4 -> AniListStatusType.Planning
+                5 -> AniListStatusType.Rewatching
+                else -> AniListStatusType.None
+            }
+        }
+
+        fun convertAnilistStringToStatus(string: String): AniListStatusType {
+            return fromIntToAnimeStatus(aniListStatusString.indexOf(string))
+        }
+
+
+        private fun getSeason(id: Int): SeasonResponse? {
+            val q: String = """
+               query (${'$'}id: Int = $id) {
+                   Media (id: ${'$'}id, type: ANIME) {
+                       id
+                       idMal
+                       relations {
+                            edges {
+                                 id
+                                 relationType(version: 2)
+                                 node {
+                                      id
+                                      format
+                                      nextAiringEpisode {
+                                           timeUntilAiring
+                                           episode
+                                      }
+                                 }
+                            }
+                       }
+                       nextAiringEpisode {
+                            timeUntilAiring
+                            episode
+                       }
+                       format
+                   }
+               }
+        """
+
+            val data = post(
+                "https://graphql.anilist.co",
+                data = mapOf("query" to q),
+                cacheTime = 0,
+            ).text
+            if (data == "") return null
+            return try {
+                mapper.readValue(data)
+            } catch (e: Exception) {
+                logError(e)
+                null
+            }
         }
     }
 
-    data class MediaRecommendation(
-        @JsonProperty("id") val id: Int,
-        @JsonProperty("title") val title: Title,
-        @JsonProperty("idMal") val idMal: Int?,
-        @JsonProperty("coverImage") val coverImage: CoverImage,
-        @JsonProperty("averageScore") val averageScore: Int?
-    )
+    fun Context.initGetUser() {
+        if (getKey<String>(accountId, ANILIST_TOKEN_KEY, null) == null) return
+        ioSafe {
+            getUser()
+        }
+    }
+
+    private fun Context.checkToken(): Boolean {
+        if (unixTime > getKey(
+                accountId,
+                ANILIST_UNIXTIME_KEY, 0L
+            )!!
+        ) {
+            /*getCurrentActivity()?.runOnUiThread {
+                val alertDialog: AlertDialog? = activity?.let {
+                    val builder = AlertDialog.Builder(it, R.style.AlertDialogCustom)
+                    builder.apply {
+                        setPositiveButton(
+                            "Login"
+                        ) { dialog, id ->
+                            authenticateAniList()
+                        }
+                        setNegativeButton(
+                            "Cancel"
+                        ) { dialog, id ->
+                            // User cancelled the dialog
+                        }
+                    }
+                    // Set other dialog properties
+                    builder.setTitle("AniList token has expired")
+
+                    // Create the AlertDialog
+                    builder.create()
+                }
+                alertDialog?.show()
+            }*/
+            return true
+        } else {
+            return false
+        }
+    }
 
     fun Context.getDataAboutId(id: Int): AniListTitleHolder? {
         val q =
@@ -360,6 +438,41 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
             return null
         }
     }
+
+    private fun Context.postApi(url: String, q: String, cache: Boolean = false): String {
+        return try {
+            if (!checkToken()) {
+                // println("VARS_ " + vars)
+                post(
+                    "https://graphql.anilist.co/",
+                    headers = mapOf(
+                        "Authorization" to "Bearer " + getKey(
+                            accountId,
+                            ANILIST_TOKEN_KEY,
+                            ""
+                        )!!,
+                        if (cache) "Cache-Control" to "max-stale=$maxStale" else "Cache-Control" to "no-cache"
+                    ),
+                    cacheTime = 0,
+                    data = mapOf("query" to q),//(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
+                    timeout = 5 // REASONABLE TIMEOUT
+                ).text.replace("\\/", "/")
+            } else {
+                ""
+            }
+        } catch (e: Exception) {
+            logError(e)
+            ""
+        }
+    }
+
+    data class MediaRecommendation(
+        @JsonProperty("id") val id: Int,
+        @JsonProperty("title") val title: Title,
+        @JsonProperty("idMal") val idMal: Int?,
+        @JsonProperty("coverImage") val coverImage: CoverImage,
+        @JsonProperty("averageScore") val averageScore: Int?
+    )
 
     data class FullAnilistList(
         @JsonProperty("data") val data: Data
@@ -530,7 +643,7 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
         return data != ""
     }
 
-    fun Context.postDataAboutId(id: Int, type: AniListStatusType, score: Int, progress: Int): Boolean {
+    private fun Context.postDataAboutId(id: Int, type: AniListStatusType, score: Int?, progress: Int?): Boolean {
         try {
             val q =
                 """mutation (${'$'}id: Int = $id, ${'$'}status: MediaListStatus = ${
@@ -538,7 +651,7 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
                         0,
                         type.value
                     )]
-                }, ${'$'}scoreRaw: Int = ${score * 10}, ${'$'}progress: Int = $progress) {
+                }, ${if (score != null) "${'$'}scoreRaw: Int = ${score * 10}" else ""} , ${if (progress != null) "${'$'}progress: Int = $progress" else ""}) {
                 SaveMediaListEntry (mediaId: ${'$'}id, status: ${'$'}status, scoreRaw: ${'$'}scoreRaw, progress: ${'$'}progress) {
                     id
                     status
@@ -597,49 +710,6 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
         }
     }
 
-    private fun getSeason(id: Int): SeasonResponse? {
-        val q: String = """
-               query (${'$'}id: Int = $id) {
-                   Media (id: ${'$'}id, type: ANIME) {
-                       id
-                       idMal
-                       relations {
-                            edges {
-                                 id
-                                 relationType(version: 2)
-                                 node {
-                                      id
-                                      format
-                                      nextAiringEpisode {
-                                           timeUntilAiring
-                                           episode
-                                      }
-                                 }
-                            }
-                       }
-                       nextAiringEpisode {
-                            timeUntilAiring
-                            episode
-                       }
-                       format
-                   }
-               }
-        """
-
-        val data = post(
-            "https://graphql.anilist.co",
-            data = mapOf("query" to q),
-            cacheTime = 0,
-        ).text
-        if (data == "") return null
-        return try {
-            mapper.readValue(data)
-        } catch (e: Exception) {
-            logError(e)
-            null
-        }
-    }
-
     fun getAllSeasons(id: Int): List<SeasonResponse?> {
         val seasons = mutableListOf<SeasonResponse?>()
         fun getSeasonRecursive(id: Int) {
@@ -661,27 +731,6 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
         getSeasonRecursive(id)
         return seasons.toList()
     }
-
-    fun secondsToReadable(seconds: Int, completedValue: String): String {
-        var secondsLong = seconds.toLong()
-        val days = TimeUnit.SECONDS
-            .toDays(secondsLong)
-        secondsLong -= TimeUnit.DAYS.toSeconds(days)
-
-        val hours = TimeUnit.SECONDS
-            .toHours(secondsLong)
-        secondsLong -= TimeUnit.HOURS.toSeconds(hours)
-
-        val minutes = TimeUnit.SECONDS
-            .toMinutes(secondsLong)
-        secondsLong -= TimeUnit.MINUTES.toSeconds(minutes)
-        if (minutes < 0) {
-            return completedValue
-        }
-        //println("$days $hours $minutes")
-        return "${if (days != 0L) "$days" + "d " else ""}${if (hours != 0L) "$hours" + "h " else ""}${minutes}m"
-    }
-
 
     data class SeasonResponse(
         @JsonProperty("data") val data: SeasonData,
@@ -725,9 +774,9 @@ class AniListApi(index : Int) : OAuth2Interface.AccountManager(index) {
     data class SeasonNode(
         @JsonProperty("id") val id: Int,
         @JsonProperty("format") val format: String?,
-        @JsonProperty("title") val title: AniListApi.Title,
+        @JsonProperty("title") val title: Title,
         @JsonProperty("idMal") val idMal: Int?,
-        @JsonProperty("coverImage") val coverImage: AniListApi.CoverImage,
+        @JsonProperty("coverImage") val coverImage: CoverImage,
         @JsonProperty("averageScore") val averageScore: Int?
 //        @JsonProperty("nextAiringEpisode") val nextAiringEpisode: SeasonNextAiringEpisode?,
     )

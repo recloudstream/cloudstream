@@ -28,9 +28,9 @@ import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initRequestClient
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.OAuth2Apis
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.OAuth2accountApis
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.appString
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.OAuth2Apis
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.OAuth2accountApis
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
+import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
@@ -447,6 +448,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         nav_view.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            this.hideKeyboard()
             // nav_view.hideKeyboard()
             /*if (destination.id != R.id.navigation_player) {
                 requestedOrientation = if (settingsManager?.getBoolean("force_landscape", false) == true) {

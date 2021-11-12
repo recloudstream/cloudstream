@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.syncproviders
+package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.content.Context
 import android.util.Base64
@@ -7,14 +7,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.network.put
 import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.appString
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.secondsToReadable
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.unixTime
+import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.secondsToReadable
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.unixTime
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -27,7 +31,10 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MALApi(index : Int) : OAuth2Interface.AccountManager(index) {
+/** max 100 via https://myanimelist.net/apiconfig/references/api/v2#tag/anime */
+const val MAL_MAX_SEARCH_LIMIT = 25
+
+class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override val name: String
         get() = "MAL"
     override val key: String
@@ -36,17 +43,68 @@ class MALApi(index : Int) : OAuth2Interface.AccountManager(index) {
         get() = "mallogin"
     override val idPrefix: String
         get() = "mal"
+    override val mainUrl: String
+        get() = "https://myanimelist.net"
+    override val icon: Int
+        get() = R.drawable.mal_logo
 
     override fun logOut(context: Context) {
         context.removeAccountKeys()
     }
 
-    override fun loginInfo(context: Context): OAuth2Interface.LoginInfo? {
+    override fun loginInfo(context: Context): OAuth2API.LoginInfo? {
         //context.getMalUser(true)?
         context.getKey<MalUser>(accountId, MAL_USER_KEY)?.let { user ->
-            return OAuth2Interface.LoginInfo(profilePicture = user.picture, name = user.name, accountIndex = accountIndex)
+            return OAuth2API.LoginInfo(profilePicture = user.picture, name = user.name, accountIndex = accountIndex)
         }
         return null
+    }
+
+    override fun search(context: Context, name: String): List<SyncAPI.SyncSearchResult> {
+        val url = "https://api.myanimelist.net/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
+        val res = get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer " + context.getKey<String>(
+                    accountId,
+                    MAL_TOKEN_KEY
+                )!!,
+            ), cacheTime = 0
+        ).text
+        return mapper.readValue<MalSearch>(res).data.map {
+            SyncAPI.SyncSearchResult(
+                it.title,
+                this.name,
+                it.id.toString(),
+                "$mainUrl/anime/${it.id}/",
+                it.main_picture?.large ?: it.main_picture?.medium
+            )
+        }
+    }
+
+    override fun score(context: Context, id: String, status : SyncAPI.SyncStatus): Boolean {
+        return context.setScoreRequest(
+            id.toIntOrNull() ?: return false,
+            fromIntToAnimeStatus(status.status),
+            status.score,
+            status.watchedEpisodes
+        )
+    }
+
+    override fun getResult(context: Context, id: String): SyncAPI.SyncResult? {
+        val internalId = id.toIntOrNull() ?: return null
+        TODO("Not yet implemented")
+    }
+
+    override fun getStatus(context: Context, id: String): SyncAPI.SyncStatus? {
+        val internalId = id.toIntOrNull() ?: return null
+
+        val data = context.getDataAboutMalId(internalId)?.my_list_status ?: return null
+        return SyncAPI.SyncStatus(
+            score = data.score,
+            status = malStatusAsString.indexOf(data.status),
+            isFavorite = null,
+            watchedEpisodes = data.num_episodes_watched,
+        )
     }
 
     companion object {
@@ -60,7 +118,7 @@ class MALApi(index : Int) : OAuth2Interface.AccountManager(index) {
         const val MAL_TOKEN_KEY: String = "mal_token" // anilist token for api
     }
 
-    override fun handleRedirect(context: Context,url: String) {
+    override fun handleRedirect(context: Context, url: String) {
         try {
             val sanitizer =
                 splitQuery(URL(url.replace(appString, "https").replace("/#", "?"))) // FIX ERROR
@@ -293,7 +351,7 @@ class MALApi(index : Int) : OAuth2Interface.AccountManager(index) {
         }
     }
 
-    fun Context.getDataAboutMalId(id: Int): MalAnime? {
+    private fun Context.getDataAboutMalId(id: Int): MalAnime? {
         return try {
             // https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get
             val url = "https://api.myanimelist.net/v2/anime/$id?fields=id,title,num_episodes,my_list_status"
@@ -419,7 +477,7 @@ class MALApi(index : Int) : OAuth2Interface.AccountManager(index) {
         None(-1)
     }
 
-    fun fromIntToAnimeStatus(inp: Int): MalStatusType {//= AniListStatusType.values().first { it.value == inp }
+    private fun fromIntToAnimeStatus(inp: Int): MalStatusType {//= AniListStatusType.values().first { it.value == inp }
         return when (inp) {
             -1 -> MalStatusType.None
             0 -> MalStatusType.Watching
@@ -534,12 +592,23 @@ class MALApi(index : Int) : OAuth2Interface.AccountManager(index) {
         @JsonProperty("picture") val picture: String,
     )
 
+    data class MalMainPicture(
+        @JsonProperty("large") val large: String?,
+        @JsonProperty("medium") val medium: String?,
+    )
+
     // Used for getDataAboutId()
     data class MalAnime(
         @JsonProperty("id") val id: Int,
         @JsonProperty("title") val title: String,
         @JsonProperty("num_episodes") val num_episodes: Int,
-        @JsonProperty("my_list_status") val my_list_status: MalStatus?
+        @JsonProperty("my_list_status") val my_list_status: MalStatus?,
+        @JsonProperty("main_picture") val main_picture: MalMainPicture?,
+    )
+
+    data class MalSearch(
+        @JsonProperty("data") val data: List<MalAnime>,
+        //paging
     )
 
     data class MalTitleHolder(

@@ -30,9 +30,10 @@ import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initRequestClient
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.aniListApi
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface.Companion.malApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppUtils
@@ -120,7 +121,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("🇹🇷", "Turkish", "tr")
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
-    private fun showAccountSwitch(context: Context, api: OAuth2Interface.AccountManager) {
+    private fun showAccountSwitch(context: Context, api: AccountManager) {
         val builder =
             AlertDialog.Builder(context, R.style.AlertDialogCustom).setView(R.layout.account_switch)
         val dialog = builder.show()
@@ -132,7 +133,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val ogIndex = api.accountIndex
 
-        val items = ArrayList<OAuth2Interface.LoginInfo>()
+        val items = ArrayList<OAuth2API.LoginInfo>()
 
         for (index in accounts) {
             api.accountIndex = index
@@ -150,7 +151,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         list?.adapter = adapter
     }
 
-    private fun showLoginInfo(context: Context, api: OAuth2Interface.AccountManager, info: OAuth2Interface.LoginInfo) {
+    private fun showLoginInfo(context: Context, api: AccountManager, info: OAuth2API.LoginInfo) {
         val builder =
             AlertDialog.Builder(context, R.style.AlertDialogCustom).setView(R.layout.account_managment)
         val dialog = builder.show()

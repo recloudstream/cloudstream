@@ -54,7 +54,7 @@ object APIHolder {
     )
 
     val restrictedApis = arrayListOf(
-        TrailersToProvider(), // be aware that this is fuckery
+        // TrailersToProvider(), // be aware that this is fuckery
         // NyaaProvider(), // torrents in cs3 is wack
         // ThenosProvider(), // ddos protection and wacked links
         AsiaFlixProvider(),
@@ -314,7 +314,7 @@ interface SearchResponse {
     val name: String
     val url: String
     val apiName: String
-    val type: TvType
+    val type: TvType?
     val posterUrl: String?
     val id: Int?
 }

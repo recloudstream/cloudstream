@@ -8,13 +8,13 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface
+import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
-class AccountClickCallback(val action: Int, val view : View, val card: OAuth2Interface.LoginInfo)
+class AccountClickCallback(val action: Int, val view : View, val card: OAuth2API.LoginInfo)
 
 class AccountAdapter(
-    val cardList: List<OAuth2Interface.LoginInfo>,
+    val cardList: List<OAuth2API.LoginInfo>,
     val layout: Int = R.layout.account_single,
     private val clickCallback: (AccountClickCallback) -> Unit
 ) :
@@ -48,7 +48,7 @@ class AccountAdapter(
         private val pfp: ImageView = itemView.findViewById(R.id.account_profile_picture)!!
         private val accountName: TextView = itemView.findViewById(R.id.account_name)!!
 
-        fun bind(card: OAuth2Interface.LoginInfo) {
+        fun bind(card: OAuth2API.LoginInfo) {
             // just in case name is null account index will show, should never happened
             accountName.text = card.name ?: "%s %d".format(accountName.context.getString(R.string.account), card.accountIndex)
             if(card.profilePicture.isNullOrEmpty()) {

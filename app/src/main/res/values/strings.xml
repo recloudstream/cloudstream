@@ -84,6 +84,7 @@
     <string name="type_dropped">Dropped</string>
     <string name="type_plan_to_watch">Plan to Watch</string>
     <string name="type_none">None</string>
+    <string name="type_re_watching">ReWatching</string>
 
     <string name="play_movie_button">Play Movie</string>
     <string name="play_torrent_button">Stream Torrent</string>

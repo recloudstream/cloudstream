@@ -1,9 +1,10 @@
-package com.lagradost.cloudstream3.syncproviders
+package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.content.Context
+import com.lagradost.cloudstream3.syncproviders.OAuth2API
 
 //TODO dropbox sync
-class Dropbox : OAuth2Interface {
+class Dropbox : OAuth2API {
     override val name: String
         get() = "Dropbox"
     override val key: String
@@ -23,7 +24,7 @@ class Dropbox : OAuth2Interface {
         TODO("Not yet implemented")
     }
 
-    override fun loginInfo(context: Context): OAuth2Interface.LoginInfo? {
+    override fun loginInfo(context: Context): OAuth2API.LoginInfo? {
         TODO("Not yet implemented")
     }
 }

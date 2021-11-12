@@ -26,7 +26,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.syncproviders.OAuth2Interface
+import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -430,7 +430,7 @@ class HomeFragment : Fragment() {
         // nice profile pic on homepage
         home_profile_picture_holder?.isVisible = false
         context?.let { ctx ->
-            for (syncApi in OAuth2Interface.OAuth2Apis) {
+            for (syncApi in OAuth2API.OAuth2Apis) {
                 val login = syncApi.loginInfo(ctx)
                 val pic = login?.profilePicture
                 if (pic != null) {

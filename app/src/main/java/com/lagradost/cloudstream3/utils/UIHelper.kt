@@ -67,10 +67,15 @@ object UIHelper {
 
     fun Fragment.hideKeyboard() {
         activity?.window?.decorView?.clearFocus()
-        view.let {
-            if (it != null) {
-                hideKeyboard(it)
-            }
+        view?.let {
+            hideKeyboard(it)
+        }
+    }
+
+    fun Activity.hideKeyboard() {
+        window?.decorView?.clearFocus()
+        this.findViewById<View>(android.R.id.content)?.rootView?.let {
+            hideKeyboard(it)
         }
     }
 
