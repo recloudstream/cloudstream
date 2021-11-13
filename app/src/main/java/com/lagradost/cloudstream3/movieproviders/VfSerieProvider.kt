@@ -84,7 +84,8 @@ class VfSerieProvider : MainAPI() {
         val response = get(data).text
         val document = Jsoup.parse(response)
         val players = document.select("ul.TPlayerNv > li")
-        var number_player = Regex(".*trembed=(.*?)&").find(document.html())?.groupValues?.get(1)!!.toInt()  // the starting trembed number of the first player website, some start at 0 other at 1
+        val trembed_url = document.selectFirst("div.TPlayerTb > iframe").attr("src")
+        var number_player = Regex(".*trembed=(.*?)&").find(trembed_url)?.groupValues?.get(1)!!.toInt()  // the starting trembed number of the first player website, some start at 0 other at 1
         var found = false
         for (player in players) {
             if (player.selectFirst("> span").text() == "Vudeo") {
