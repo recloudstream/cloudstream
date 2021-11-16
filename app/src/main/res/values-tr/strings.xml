@@ -24,8 +24,13 @@
     <string name="show_fillers_key" translatable="false">show_fillers_key</string>
     <string name="provider_lang_key" translatable="false">provider_lang_key</string>
     <string name="dns_key" translatable="false">dns_key</string>
+    <string name="download_path_key" translatable="false">download_path_key</string>
+    <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
+    <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
+    <string name="app_theme_key" translatable="false">app_theme_key</string>
+
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
@@ -39,16 +44,16 @@
     <string name="app_dub_sub_episode_text_format">%s Ep %d</string>
 
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
-    <string name="result_poster_img_des">Poster</string>
+    <string name="result_poster_img_des">Afiş</string>
     <string name="search_poster_img_des">@string/result_poster_img_des</string>
-    <string name="episode_poster_img_des">Episode Poster</string>
-    <string name="home_main_poster_img_des">Main Poster</string>
-    <string name="home_next_random_img_des">Next Random</string>
+    <string name="episode_poster_img_des">Bölüm Afişi</string>
+    <string name="home_main_poster_img_des">Ana Afiş</string>
+    <string name="home_next_random_img_des">Sonraki Rastgele</string>
     <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
-    <string name="go_back_img_des">Go back</string>
+    <string name="go_back_img_des">Geri git</string>
     <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
-    <string name="home_change_provider_img_des">Change Provider</string>
-    <string name="preview_background_img_des">Preview Background</string>
+    <string name="home_change_provider_img_des">Sağlayıcıyı Değiştir</string>
+    <string name="preview_background_img_des">Arkaplanı Önizle</string>
 
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Hız (%.2fx)</string>
@@ -133,8 +138,8 @@
     <string name="search_provider_text_providers">Sağlayıcıları kullanarak ara</string>
     <string name="search_provider_text_types">Türleri kullanarak ara</string>
 
-    <string name="benene_count_text">Geliştiricilere %d Benene verildi</string>
-    <string name="benene_count_text_none">Hiçbir Benene verilmedi</string>
+    <string name="benene_count_text">Geliştiricilere %d muz verildi</string>
+    <string name="benene_count_text_none">Hiç muz verilmedi</string>
 
     <string name="subs_auto_select_language">Dili Otomatik Seç</string>
     <string name="subs_download_languages">Dilleri İndir</string>
@@ -184,7 +189,7 @@
     <string name="anim">Aynı geliştiricilerden Anime uygulaması</string>
     <string name="discord">Discord\'a gelin</string>
     <string name="benene">Geliştiricilere muz ver</string>
-    <string name="benene_des">Verilen benene</string>
+    <string name="benene_des">Verilen muz</string>
 
     <string name="app_language">Uygulama Dili</string>
 
@@ -259,7 +264,9 @@
     <string name="update">Güncelleme</string>
     <string name="watch_quality_pref">Tercih edilen izleme kalitesi</string>
     <string name="dns_pref">HTTPS üzerinden DNS</string>
-    <string name="dns_pref_summary">ISS\'in engellemelerini geçmek için kullanışlı</string>
+    <string name="dns_pref_summary">İSS\'nin engellemelerini geçmek için kullanışlı</string>
+    
+    <string name="download_path_pref">İndirme yolu</string>
 
 
     <string name="display_subbed_dubbed_settings">Seslendirilmiş/Altyazılı Anime\'yi göster</string>
@@ -269,12 +276,34 @@
     <string name="resize_zoom">Yakınlaştır</string>
 
     <string name="general">Genel</string>
-    <string name="provider_lang_settings">Sağlayıcı Dilleri</string>
+    <string name="provider_lang_settings">Sağlayıcı Dili</string>
     <string name="app_layout">Uygulama Düzeni</string>
+    <string name="preferred_media_settings">Tercih Edilen Medya</string>    
 
     <string name="automatic">Otomatik</string>
     <string name="tv_layout">Tv Düzeni</string>
     <string name="phone_layout">Telefon Düzeni</string>
 
     <string name="primary_color_settings">Ana Renk</string>
+    <string name="app_theme_settings">Uygulama Teması</string>
+
+    <!-- account stuff -->
+    <string name="anilist_key" translatable="false">anilist_key</string>
+    <string name="mal_key" translatable="false">mal_key</string>
+    <!--
+    <string name="mal_account_settings" translatable="false">MAL</string>
+    <string name="anilist_account_settings" translatable="false">AniList</string>
+    <string name="tmdb_account_settings" translatable="false">TMDB</string>
+    <string name="imdb_account_settings" translatable="false">IMDB</string>
+    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
+    <string name="trakt_account_settings" translatable="false">Trakt</string>
+    -->
+    <string name="login_format">%s %s</string>
+    <string name="account">hesap</string>
+    <string name="logout">Çıkış yap</string>
+    <string name="login">Giriş yap</string>
+    <string name="switch_account">Hesap değiştir</string>
+    <string name="add_account">Hesap ekle</string>
+    <!-- ============ -->
+
 </resources>
