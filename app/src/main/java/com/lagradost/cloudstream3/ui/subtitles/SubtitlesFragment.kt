@@ -192,6 +192,7 @@ class SubtitlesFragment : Fragment() {
                 activity?.let {
                     ColorPickerDialog.newBuilder()
                         .setDialogId(id)
+                        .setShowAlphaSlider(true)
                         .setColor(getColor(id))
                         .show(it)
                 }
