@@ -61,7 +61,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [hdm.to](https://hdm.to) 
 - [vmovee.watch](https://www.vmovee.watch) 
 - [wcostream.com](https://www.wcostream.com) 
-- [allmoviesforyou.co](https://allmoviesforyou.co) 
+- [allmoviesforyou.net](https://allmoviesforyou.net) 
 - [vidembed.cc](https://vidembed.cc) 
 - [vf-film.me](https://vf-film.me) 
 - [vf-serie.org](https://vf-serie.org) 
