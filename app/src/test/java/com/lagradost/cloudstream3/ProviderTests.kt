@@ -170,10 +170,10 @@ class ProviderTests {
         }
     }
 
-    @Test
-    fun testSingleProvider() {
-        testSingleProviderApi(ThenosProvider())
-    }
+//    @Test
+//    fun testSingleProvider() {
+//        testSingleProviderApi(ThenosProvider())
+//    }
 
     @Test
     fun providerCorrect() {

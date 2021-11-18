@@ -22,8 +22,9 @@ class AllMoviesForYouProvider : MainAPI() {
         }
     }
 
+    // Fetching movies will not work if this link is outdated.
     override val mainUrl: String
-        get() = "https://allmoviesforyou.co"
+        get() = "https://allmoviesforyou.net"
     override val name: String
         get() = "AllMoviesForYou"
     override val supportedTypes: Set<TvType>
