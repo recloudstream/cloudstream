@@ -330,6 +330,7 @@ class SubtitlesFragment : Fragment() {
             val fontTypes = listOf(
                 Pair(null, "Normal"),
                 Pair(R.font.trebuchet_ms, "Trebuchet MS"),
+                Pair(R.font.netflix_sans, "Netflix Sans"),
                 Pair(R.font.google_sans, "Google Sans"),
                 Pair(R.font.open_sans, "Open Sans"),
                 Pair(R.font.futura, "Futura"),
