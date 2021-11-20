@@ -10,7 +10,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -53,15 +53,13 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private lateinit var searchViewModel: SearchViewModel
+    private val searchViewModel: SearchViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        searchViewModel =
-            ViewModelProvider(this).get(SearchViewModel::class.java)
         activity?.window?.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
         )
@@ -299,7 +297,10 @@ class SearchFragment : Fragment() {
 
         main_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                searchViewModel.searchAndCancel(query)
+                context?.let { ctx ->
+                    searchViewModel.searchAndCancel(query = query, context = ctx)
+                }
+
                 main_search?.let {
                     hideKeyboard(it)
                 }
@@ -366,7 +367,7 @@ class SearchFragment : Fragment() {
             typesActive = it.getApiTypeSettings()
         }
 
-        main_search.setOnQueryTextFocusChangeListener { searchView, b ->
+        main_search.setOnQueryTextFocusChangeListener { _, b ->
             if (b) {
                 // https://stackoverflow.com/questions/12022715/unable-to-show-keyboard-automatically-in-the-searchview
                 showInputMethod(view.findFocus())

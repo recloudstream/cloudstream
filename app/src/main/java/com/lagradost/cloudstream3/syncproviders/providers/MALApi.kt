@@ -62,7 +62,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
 
     override fun search(context: Context, name: String): List<SyncAPI.SyncSearchResult> {
         val url = "https://api.myanimelist.net/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
-        val res = get(
+        var res = get(
             url, headers = mapOf(
                 "Authorization" to "Bearer " + context.getKey<String>(
                     accountId,
@@ -71,12 +71,13 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             ), cacheTime = 0
         ).text
         return mapper.readValue<MalSearch>(res).data.map {
+            val node = it.node
             SyncAPI.SyncSearchResult(
-                it.title,
+                node.title,
                 this.name,
-                it.id.toString(),
-                "$mainUrl/anime/${it.id}/",
-                it.main_picture?.large ?: it.main_picture?.medium
+                node.id.toString(),
+                "$mainUrl/anime/${node.id}/",
+                node.main_picture?.large ?: node.main_picture?.medium
             )
         }
     }
@@ -225,26 +226,26 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("id") val id: Int,
         @JsonProperty("title") val title: String,
         @JsonProperty("main_picture") val main_picture: MainPicture?,
-        @JsonProperty("alternative_titles") val alternative_titles: AlternativeTitles,
-        @JsonProperty("media_type") val media_type: String,
-        @JsonProperty("num_episodes") val num_episodes: Int,
-        @JsonProperty("status") val status: String,
+        @JsonProperty("alternative_titles") val alternative_titles: AlternativeTitles?,
+        @JsonProperty("media_type") val media_type: String?,
+        @JsonProperty("num_episodes") val num_episodes: Int?,
+        @JsonProperty("status") val status: String?,
         @JsonProperty("start_date") val start_date: String?,
         @JsonProperty("end_date") val end_date: String?,
-        @JsonProperty("average_episode_duration") val average_episode_duration: Int,
-        @JsonProperty("synopsis") val synopsis: String,
-        @JsonProperty("mean") val mean: Double,
+        @JsonProperty("average_episode_duration") val average_episode_duration: Int?,
+        @JsonProperty("synopsis") val synopsis: String?,
+        @JsonProperty("mean") val mean: Double?,
         @JsonProperty("genres") val genres: List<Genres>?,
-        @JsonProperty("rank") val rank: Int,
-        @JsonProperty("popularity") val popularity: Int,
-        @JsonProperty("num_list_users") val num_list_users: Int,
-        @JsonProperty("num_favorites") val num_favorites: Int,
-        @JsonProperty("num_scoring_users") val num_scoring_users: Int,
+        @JsonProperty("rank") val rank: Int?,
+        @JsonProperty("popularity") val popularity: Int?,
+        @JsonProperty("num_list_users") val num_list_users: Int?,
+        @JsonProperty("num_favorites") val num_favorites: Int?,
+        @JsonProperty("num_scoring_users") val num_scoring_users: Int?,
         @JsonProperty("start_season") val start_season: StartSeason?,
         @JsonProperty("broadcast") val broadcast: Broadcast?,
-        @JsonProperty("nsfw") val nsfw: String,
-        @JsonProperty("created_at") val created_at: String,
-        @JsonProperty("updated_at") val updated_at: String
+        @JsonProperty("nsfw") val nsfw: String?,
+        @JsonProperty("created_at") val created_at: String?,
+        @JsonProperty("updated_at") val updated_at: String?
     )
 
     data class ListStatus(
@@ -600,14 +601,18 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     // Used for getDataAboutId()
     data class MalAnime(
         @JsonProperty("id") val id: Int,
-        @JsonProperty("title") val title: String,
+        @JsonProperty("title") val title: String?,
         @JsonProperty("num_episodes") val num_episodes: Int,
         @JsonProperty("my_list_status") val my_list_status: MalStatus?,
         @JsonProperty("main_picture") val main_picture: MalMainPicture?,
     )
 
+    data class MalSearchNode(
+        @JsonProperty("node") val node: Node,
+    )
+
     data class MalSearch(
-        @JsonProperty("data") val data: List<MalAnime>,
+        @JsonProperty("data") val data: List<MalSearchNode>,
         //paging
     )
 

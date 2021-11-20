@@ -47,6 +47,7 @@ import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownload
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
+import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getDownloadSubsLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
@@ -942,6 +943,10 @@ class ResultFragment : Fragment() {
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
+                        }
+
+                        result_search?.setOnClickListener {
+                            QuickSearchFragment.push(activity,true, d.name)
                         }
 
                         result_share?.setOnClickListener {

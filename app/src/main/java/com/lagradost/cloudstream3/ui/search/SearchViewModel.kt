@@ -1,13 +1,19 @@
 package com.lagradost.cloudstream3.ui.search
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.SyncApis
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.providersActive
 import kotlinx.coroutines.Dispatchers
@@ -28,18 +34,39 @@ class SearchViewModel : ViewModel() {
     val currentSearch: LiveData<ArrayList<OnGoingSearch>> get() = _currentSearch
 
     private val repos = apis.map { APIRepository(it) }
+    private val syncApis = SyncApis
 
     private fun clearSearch() {
         _searchResponse.postValue(Resource.Success(ArrayList()))
     }
 
     var onGoingSearch: Job? = null
-    fun searchAndCancel(query: String) {
+    fun searchAndCancel(query: String, isMainApis : Boolean = true, ignoreSettings : Boolean = false, context: Context) {
         onGoingSearch?.cancel()
-        onGoingSearch = search(query)
+        onGoingSearch = search(query, isMainApis, ignoreSettings, context)
     }
 
-    private fun search(query: String) = viewModelScope.launch {
+    data class SyncSearchResultSearchResponse(
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override val type: TvType?,
+        override val posterUrl: String?,
+        override val id: Int?,
+    ) : SearchResponse
+
+    private fun SyncAPI.SyncSearchResult.toSearchResponse(): SyncSearchResultSearchResponse {
+        return SyncSearchResultSearchResponse(
+            this.name,
+            this.url,
+            this.syncApiName,
+            null,
+            this.posterUrl,
+            null, //this.id.hashCode()
+        )
+    }
+
+    private fun search(query: String, isMainApis : Boolean = true, ignoreSettings : Boolean = false, context: Context) = viewModelScope.launch {
         if (query.length <= 1) {
             clearSearch()
             return@launch
@@ -52,16 +79,25 @@ class SearchViewModel : ViewModel() {
         _currentSearch.postValue(ArrayList())
 
         withContext(Dispatchers.IO) { // This interrupts UI otherwise
-            repos.filter { a ->
-                (providersActive.size == 0 || providersActive.contains(a.name))
-            }.apmap { a -> // Parallel
-                val search = a.search(query)
-                currentList.add(OnGoingSearch(a.name,search ))
-                _currentSearch.postValue(currentList)
+            if (isMainApis) {
+                repos.filter { a ->
+                    ignoreSettings || (providersActive.size == 0 || providersActive.contains(a.name))
+                }.apmap { a -> // Parallel
+                    val search = a.search(query)
+                    currentList.add(OnGoingSearch(a.name, search))
+                    _currentSearch.postValue(currentList)
+                }
+            } else {
+                syncApis.apmap { a ->
+                    val search = safeApiCall {
+                        a.search(context, query)?.map { it.toSearchResponse() } ?: throw ErrorLoadingException()
+                    }
+
+                    currentList.add(OnGoingSearch(a.name, search))
+                }
             }
         }
         _currentSearch.postValue(currentList)
-
 
         val list = ArrayList<SearchResponse>()
         val nestedList =

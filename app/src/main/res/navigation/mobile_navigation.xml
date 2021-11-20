@@ -81,6 +81,25 @@
         />
     </action>
 
+    <action android:id="@+id/global_to_navigation_quick_search"
+            app:destination="@id/navigation_quick_search"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim">
+        <argument
+                android:name="mainapi"
+                app:argType="boolean"
+                android:defaultValue="true"
+
+        />
+        <argument
+        android:name="autosearch"
+        app:argType="string"
+        android:defaultValue="@null"
+        />
+    </action>
+
     <action android:id="@+id/global_to_navigation_settings"
             app:destination="@id/navigation_settings"
             app:enterAnim="@anim/enter_anim"
@@ -148,6 +167,12 @@
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment"
             android:label="@string/subtitles_settings"/>
+
+    <fragment
+            android:id="@+id/navigation_quick_search"
+            android:layout_height="match_parent"
+            android:name="com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment"
+            android:label="@string/search"/>
 
     <fragment
             android:id="@+id/navigation_download_child"
