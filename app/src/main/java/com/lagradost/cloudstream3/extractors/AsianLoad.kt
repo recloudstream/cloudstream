@@ -10,7 +10,7 @@ class AsianLoad : ExtractorApi() {
     override val name: String
         get() = "AsianLoad"
     override val mainUrl: String
-        get() = "https://asianload1.com"
+        get() = "https://asianembed.io"
     override val requiresReferer: Boolean
         get() = true
 
