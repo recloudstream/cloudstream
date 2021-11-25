@@ -51,6 +51,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.cast_mini_controller_holder
+import kotlinx.android.synthetic.main.activity_main_tv.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import java.util.*
 import kotlin.concurrent.thread
@@ -445,8 +447,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             .setPopExitAnim(R.anim.nav_pop_exit)
             .setPopUpTo(navController.graph.startDestination, false)
             .build()*/
-        nav_view.setupWithNavController(navController)
-
+        nav_view?.setupWithNavController(navController)
+        nav_rail_view?.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             this.hideKeyboard()
             // nav_view.hideKeyboard()
@@ -462,13 +464,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             cast_mini_controller_holder?.isVisible =
                 !listOf(R.id.navigation_results, R.id.navigation_player).contains(destination.id)
 
-            nav_view.isVisible = listOf(
+            val isNavVisible = listOf(
                 R.id.navigation_home,
                 R.id.navigation_search,
                 R.id.navigation_downloads,
                 R.id.navigation_settings,
                 R.id.navigation_download_child
             ).contains(destination.id)
+
+            nav_view?.isVisible = isNavVisible
+            nav_rail_view?.isVisible = isNavVisible
         }
 
         /*nav_view.setOnNavigationItemSelectedListener { item ->
@@ -489,7 +494,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             true
         }*/
 
-        nav_view.itemRippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
+        val rippleColor =  ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
+        nav_view?.itemRippleColor = rippleColor
+        nav_rail_view?.itemRippleColor = rippleColor
 
         if (!checkWrite()) {
             requestRW()

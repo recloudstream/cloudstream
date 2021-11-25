@@ -29,6 +29,7 @@ import com.lagradost.cloudstream3.ui.APIRepository.Companion.typesActive
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.SEARCH_PROVIDER_TOGGLE
@@ -293,6 +294,11 @@ class SearchFragment : Fragment() {
                 builder.setNegativeButton("Ok") { _, _ -> }
                 builder.show()*/
             }
+        }
+
+        if(context?.isTvSettings() == true) {
+            search_filter.isFocusable = true
+            search_filter.isFocusableInTouchMode = true
         }
 
         main_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

@@ -18,7 +18,7 @@ class HomeChildItemAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return CardViewHolder(
-            LayoutInflater.from(parent.context).inflate(layout, parent, false), clickCallback
+            LayoutInflater.from(parent.context).inflate(layout, parent, false), clickCallback, itemCount
         )
     }
 
@@ -39,11 +39,19 @@ class HomeChildItemAdapter(
     }
 
     class CardViewHolder
-    constructor(itemView: View, private val clickCallback: (SearchClickCallback) -> Unit) :
+    constructor(itemView: View, private val clickCallback: (SearchClickCallback) -> Unit, val itemCount: Int) :
         RecyclerView.ViewHolder(itemView) {
 
         fun bind(card: SearchResponse, index: Int) {
-            SearchResultBuilder.bind(clickCallback, card, itemView)
+
+            // TV focus fixing
+            val nextFocusBehavior = when(index){
+                0 -> true
+                itemCount - 1 -> false
+                else -> null
+            }
+
+            SearchResultBuilder.bind(clickCallback, card, itemView, nextFocusBehavior)
             itemView.tag = index
             //val ani = ScaleAnimation(0.9f, 1.0f, 0.9f, 1f)
             //ani.fillAfter = true

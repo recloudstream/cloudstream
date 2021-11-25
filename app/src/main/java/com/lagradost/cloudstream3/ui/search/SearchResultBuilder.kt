@@ -6,6 +6,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
@@ -13,10 +14,15 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.home_result_grid.view.*
 
 object SearchResultBuilder {
+    /**
+     * @param nextFocusBehavior True if first, False if last, Null if between.
+     * Used to prevent escaping the adapter horizontally (focus wise).
+     */
     fun bind(
         clickCallback: (SearchClickCallback) -> Unit,
         card: SearchResponse,
-        itemView: View
+        itemView: View,
+        nextFocusBehavior: Boolean? = null
     ) {
         val cardView: ImageView = itemView.imageView
         val cardText: TextView? = itemView.imageText
@@ -49,6 +55,21 @@ object SearchResultBuilder {
                     card
                 )
             )
+        }
+
+        when (nextFocusBehavior) {
+            true -> bg.nextFocusLeftId = bg.id
+            false -> bg.nextFocusRightId = bg.id
+            null -> {
+                bg.nextFocusRightId = -1
+                bg.nextFocusLeftId = -1
+            }
+        }
+
+        if (bg.context.isTvSettings()) {
+            bg.isFocusable = true
+            bg.isFocusableInTouchMode = true
+            bg.touchscreenBlocksFocus = false
         }
 
         bg.setOnLongClickListener {

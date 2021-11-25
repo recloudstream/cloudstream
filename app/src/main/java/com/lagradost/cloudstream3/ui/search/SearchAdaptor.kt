@@ -69,7 +69,7 @@ class SearchAdapter(
                 }
             }
 
-            SearchResultBuilder.bind(clickCallback, card,  itemView)
+            SearchResultBuilder.bind(clickCallback, card,  itemView,)
         }
     }
 }

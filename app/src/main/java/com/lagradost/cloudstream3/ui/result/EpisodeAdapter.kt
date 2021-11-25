@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonViewHolder
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
@@ -181,6 +182,12 @@ class EpisodeAdapter(
 
             episodeHolder.setOnClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
+            }
+
+            if (episodeHolder.context.isTvSettings()) {
+                episodeHolder.isFocusable = true
+                episodeHolder.isFocusableInTouchMode = true
+                episodeHolder.touchscreenBlocksFocus = false
             }
 
             episodeHolder.setOnLongClickListener {

@@ -302,7 +302,6 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:descendantFocusability="afterDescendants"
-
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:id="@+id/home_watch_child_recyclerview"
                         android:orientation="horizontal"
