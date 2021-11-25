@@ -10,7 +10,7 @@ class AsianLoadProvider : VidstreamProviderTemplate() {
         get() = "AsianLoad"
 
     override val mainUrl: String
-        get() = "https://asianload.cc"
+        get() = "https://asianembed.io"
 
     override val homePageUrlList = listOf(
         mainUrl,
