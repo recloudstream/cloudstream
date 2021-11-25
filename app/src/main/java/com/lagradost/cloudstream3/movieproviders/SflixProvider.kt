@@ -13,11 +13,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
 
-class SflixProvider : MainAPI() {
+class SflixProvider(private val providerUrl: String, private val providerName: String) : MainAPI() {
     override val mainUrl: String
-        get() = "https://sflix.to"
+        get() = providerUrl
     override val name: String
-        get() = "Sflix"
+        get() = providerName
 
     override val hasQuickSearch: Boolean
         get() = false

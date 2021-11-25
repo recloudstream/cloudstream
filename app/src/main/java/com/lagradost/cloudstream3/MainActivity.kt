@@ -21,6 +21,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
+import com.google.android.material.navigationrail.NavigationRailView
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
@@ -51,8 +52,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.cast_mini_controller_holder
-import kotlinx.android.synthetic.main.activity_main_tv.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import java.util.*
 import kotlin.concurrent.thread
@@ -84,7 +83,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         updateLocale() // android fucks me by chaining lang when rotating the phone
     }
 
-    private var mCastSession: CastSession? = null
+    //private var mCastSession: CastSession? = null
     lateinit var mSessionManager: SessionManager
     private val mSessionManagerListener: SessionManagerListener<Session> by lazy { SessionManagerListenerImpl() }
 
@@ -123,7 +122,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         super.onResume()
         try {
             if (isCastApiAvailable()) {
-                mCastSession = mSessionManager.currentCastSession
+                //mCastSession = mSessionManager.currentCastSession
                 mSessionManager.addSessionManagerListener(mSessionManagerListener)
             }
         } catch (e: Exception) {
@@ -136,7 +135,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         try {
             if (isCastApiAvailable()) {
                 mSessionManager.removeSessionManagerListener(mSessionManagerListener)
-                mCastSession = null
+                //mCastSession = null
             }
         } catch (e: Exception) {
             logError(e)
@@ -448,7 +447,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             .setPopUpTo(navController.graph.startDestination, false)
             .build()*/
         nav_view?.setupWithNavController(navController)
-        nav_rail_view?.setupWithNavController(navController)
+        val navRail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
+        navRail?.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             this.hideKeyboard()
             // nav_view.hideKeyboard()
@@ -473,7 +473,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             ).contains(destination.id)
 
             nav_view?.isVisible = isNavVisible
-            nav_rail_view?.isVisible = isNavVisible
+            navRail?.isVisible = isNavVisible
         }
 
         /*nav_view.setOnNavigationItemSelectedListener { item ->
@@ -496,7 +496,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         val rippleColor =  ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
         nav_view?.itemRippleColor = rippleColor
-        nav_rail_view?.itemRippleColor = rippleColor
+        navRail?.itemRippleColor = rippleColor
 
         if (!checkWrite()) {
             requestRW()

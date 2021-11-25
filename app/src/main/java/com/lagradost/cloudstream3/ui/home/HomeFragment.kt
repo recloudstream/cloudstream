@@ -119,46 +119,6 @@ class HomeFragment : Fragment() {
         home_main_holder.isVisible = visible
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun chooseRandomMainPage() {
-        val home = currentHomePage
-        if (home != null && home.items.isNotEmpty()) {
-            val currentList =
-                home.items.shuffled().filter { !it.list.isNullOrEmpty() }.flatMap { it.list }.distinctBy { it.url }
-                    .toList()
-
-            if (currentList.isNullOrEmpty()) {
-                toggleMainVisibility(false)
-            } else {
-                val randomItems = currentList.shuffled()
-                val randomSize = randomItems.size
-                home_main_poster_recyclerview.adapter =
-                    HomeChildItemAdapter(randomItems, R.layout.home_result_big_grid) { callback ->
-                        handleSearchClickCallback(activity, callback)
-                    }
-                home_main_poster_recyclerview.post {
-                    (home_main_poster_recyclerview.layoutManager as CenterZoomLayoutManager?)?.let { manager ->
-
-                        manager.updateSize(forceUpdate = true)
-                        if (randomSize > 2) {
-                            manager.scrollToPosition(randomSize / 2)
-                            manager.snap { dx ->
-                                home_main_poster_recyclerview?.post {
-                                    // this is the best I can do, fuck android for not including instant scroll
-                                    home_main_poster_recyclerview?.smoothScrollBy(dx, 0)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                toggleMainVisibility(true)
-            }
-        } else {
-            toggleMainVisibility(false)
-        }
-    }
-
     private fun fixGrid() {
         val compactView = activity?.getGridIsCompact() ?: false
         val spanCountLandscape = if (compactView) 2 else 6
@@ -239,6 +199,40 @@ class HomeFragment : Fragment() {
             }
         }
 
+        observe(homeViewModel.randomItems) { items ->
+            if (items.isNullOrEmpty()) {
+                toggleMainVisibility(false)
+            } else {
+                val tempAdapter = home_main_poster_recyclerview.adapter as HomeChildItemAdapter?
+                // no need to reload if it has the same data
+                if (tempAdapter != null && tempAdapter.cardList == items) {
+                    toggleMainVisibility(true)
+                    return@observe
+                }
+
+                val randomSize = items.size
+                home_main_poster_recyclerview.adapter =
+                    HomeChildItemAdapter(items, R.layout.home_result_big_grid) { callback ->
+                        handleSearchClickCallback(activity, callback)
+                    }
+                home_main_poster_recyclerview.post {
+                    (home_main_poster_recyclerview.layoutManager as CenterZoomLayoutManager?)?.let { manager ->
+                        manager.updateSize(forceUpdate = true)
+                        if (randomSize > 2) {
+                            manager.scrollToPosition(randomSize / 2)
+                            manager.snap { dx ->
+                                home_main_poster_recyclerview?.post {
+                                    // this is the best I can do, fuck android for not including instant scroll
+                                    home_main_poster_recyclerview?.smoothScrollBy(dx, 0)
+                                }
+                            }
+                        }
+                    }
+                }
+                toggleMainVisibility(true)
+            }
+        }
+
         observe(homeViewModel.page) { data ->
             when (data) {
                 is Resource.Success -> {
@@ -256,7 +250,6 @@ class HomeFragment : Fragment() {
                         }
 
                     home_master_recycler?.adapter?.notifyDataSetChanged()
-                    chooseRandomMainPage()
 
                     home_loading.visibility = View.GONE
                     home_loading_error.visibility = View.GONE

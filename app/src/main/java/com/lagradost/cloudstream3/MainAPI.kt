@@ -49,7 +49,9 @@ object APIHolder {
         VfSerieProvider(),
         AsianLoadProvider(),
 
-        SflixProvider(),
+        SflixProvider("https://sflix.to","Sflix"),
+        SflixProvider("https://dopebox.to","Dopebox"),
+
         ZoroProvider()
     )
 

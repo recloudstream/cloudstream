@@ -39,6 +39,9 @@ class HomeViewModel : ViewModel() {
     private val _page = MutableLiveData<Resource<HomePageResponse>>()
     val page: LiveData<Resource<HomePageResponse>> = _page
 
+    private val _randomItems = MutableLiveData<List<SearchResponse>?>(null)
+    val randomItems: LiveData<List<SearchResponse>?> = _randomItems
+
     private fun autoloadRepo(): APIRepository {
         return APIRepository(apis.first { it.hasMainPage })
     }
@@ -142,7 +145,29 @@ class HomeViewModel : ViewModel() {
         _apiName.postValue(repo?.name)
         if (repo?.hasMainPage == true) {
             _page.postValue(Resource.Loading())
-            _page.postValue(repo?.getMainPage())
+            _randomItems.postValue(null)
+
+            val data = repo?.getMainPage()
+            when (data) {
+                is Resource.Success -> {
+                    val home = data.value
+                    if (home.items.isNotEmpty()) {
+                        val currentList =
+                            home.items.shuffled().filter { !it.list.isNullOrEmpty() }.flatMap { it.list }
+                                .distinctBy { it.url }
+                                .toList()
+
+                        if (!currentList.isNullOrEmpty()) {
+                            val randomItems = currentList.shuffled()
+
+                            _randomItems.postValue(randomItems)
+                        }
+                    }
+                }
+                else -> {
+                }
+            }
+            _page.postValue(data)
         } else {
             _page.postValue(Resource.Success(HomePageResponse(emptyList())))
         }
@@ -152,8 +177,8 @@ class HomeViewModel : ViewModel() {
         val api = getApiFromNameNull(preferredApiName)
         if (preferredApiName == noneApi.name)
             loadAndCancel(noneApi)
-        else if(preferredApiName == randomApi.name || api == null) {
-            var validAPIs = AppUtils.filterProviderByPreferredMedia(apis, currentPrefMedia)
+        else if (preferredApiName == randomApi.name || api == null) {
+            val validAPIs = AppUtils.filterProviderByPreferredMedia(apis, currentPrefMedia)
             val apiRandom = validAPIs.random()
             loadAndCancel(apiRandom)
             context?.setKey(HOMEPAGE_API, apiRandom.name)

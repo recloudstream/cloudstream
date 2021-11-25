@@ -32,6 +32,9 @@
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+            android:paddingHorizontal="5dp"
+            android:clipToPadding="false"
+
             android:descendantFocusability="afterDescendants"
 
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

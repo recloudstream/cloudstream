@@ -85,6 +85,5 @@ class AcraApplication : Application() {
             private set(value) {
                 _context = WeakReference(value)
             }
-
     }
 }

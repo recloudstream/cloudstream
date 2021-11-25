@@ -114,7 +114,7 @@ dependencies {
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    implementation "androidx.leanback:leanback-paging:1.1.0-alpha09"
+    // implementation "androidx.leanback:leanback-paging:1.1.0-alpha09"
 
     // Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.15.1'
@@ -153,5 +153,5 @@ dependencies {
     implementation "com.github.tachiyomiorg:unifile:17bec43"
 
     // debugImplementation because LeakCanary should only run in debug builds.
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }
