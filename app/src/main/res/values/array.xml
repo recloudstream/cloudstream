@@ -115,11 +115,13 @@
 
     <string-array name="themes_names">
         <item>Normal</item>
+        <item>Dark</item>
         <item>Amoled</item>
         <item>Flashbang</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>Black</item>
+        <item>AmoledLight</item>
         <item>Amoled</item>
         <item>Light</item>
     </string-array>

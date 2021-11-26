@@ -36,7 +36,6 @@ import com.lagradost.cloudstream3.utils.SEARCH_PROVIDER_TOGGLE
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.concurrent.locks.ReentrantLock
 
@@ -373,12 +372,12 @@ class SearchFragment : Fragment() {
             typesActive = it.getApiTypeSettings()
         }
 
-        main_search.setOnQueryTextFocusChangeListener { _, b ->
+        /*main_search.setOnQueryTextFocusChangeListener { _, b ->
             if (b) {
                 // https://stackoverflow.com/questions/12022715/unable-to-show-keyboard-automatically-in-the-searchview
                 showInputMethod(view.findFocus())
             }
-        }
+        }*/
         //main_search.onActionViewExpanded()*/
 
         val masterAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = ParentItemAdapter(listOf(), { callback ->

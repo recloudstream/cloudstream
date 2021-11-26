@@ -22,6 +22,8 @@
     <color name="black">#000</color>
 
     <color name="dubColor">#3d50fa</color> <!--3b65f5 f18c82 8294F1-->
+    <color name="amoledModeLight">#121213</color>
+
     <color name="dubColorBg">#803B65F5</color>
     <color name="subColor">#F54A3B</color> <!--F53B66 FA3D79-->
     <color name="subColorBg">#80F53B66</color>

@@ -159,12 +159,12 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
         quick_search_master_recycler.adapter = masterAdapter
         quick_search_master_recycler.layoutManager = GridLayoutManager(context, 1)
 
-        quick_search.setOnQueryTextFocusChangeListener { _, b ->
-            if (b) {
-                // https://stackoverflow.com/questions/12022715/unable-to-show-keyboard-automatically-in-the-searchview
-                UIHelper.showInputMethod(view.findFocus())
-            }
-        }
+        //quick_search.setOnQueryTextFocusChangeListener { _, b ->
+        //    if (b) {
+        //        // https://stackoverflow.com/questions/12022715/unable-to-show-keyboard-automatically-in-the-searchview
+        //        UIHelper.showInputMethod(view.findFocus())
+        //    }
+        //}
 
         quick_search_back.setOnClickListener {
             activity?.popCurrentPage()

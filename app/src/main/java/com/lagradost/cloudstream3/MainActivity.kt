@@ -12,10 +12,12 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.view.KeyEvent.ACTION_DOWN
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -50,6 +52,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
+import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result.*
@@ -142,6 +145,33 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+        event?.keyCode?.let { keyCode ->
+            when (event.action) {
+                ACTION_DOWN -> {
+                    when (keyCode) {
+                        KeyEvent.KEYCODE_DPAD_CENTER -> {
+                            println("DPAD PRESSED $currentFocus")
+                            if (currentFocus is SearchView || currentFocus is SearchView.SearchAutoComplete) {
+                                println("current PRESSED")
+                                showInputMethod(currentFocus?.findFocus())
+                            }
+                        }
+                    }
+
+                    //println("Keycode: $keyCode")
+                    //showToast(
+                    //    this,
+                    //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
+                    //    Toast.LENGTH_LONG
+                    //)
+                }
+            }
+        }
+
+        return super.dispatchKeyEvent(event)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         //println("Keycode: $keyCode")
         //showToast(
@@ -206,7 +236,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         //when (keyCode) {
         //    KeyEvent.KEYCODE_DPAD_CENTER -> {
-        //        println("DPAD PRESSED ${this.isKeyboardOpen()}")
+        //        println("DPAD PRESSED")
         //    }
         //}
 
@@ -385,6 +415,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             "Black" -> R.style.AppTheme
             "Light" -> R.style.LightMode
             "Amoled" -> R.style.AmoledMode
+            "AmoledLight" -> R.style.AmoledModeLight
             else -> R.style.AppTheme
         }
 
@@ -494,7 +525,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             true
         }*/
 
-        val rippleColor =  ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
+        val rippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
         nav_view?.itemRippleColor = rippleColor
         navRail?.itemRippleColor = rippleColor
 

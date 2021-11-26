@@ -300,7 +300,8 @@ object UIHelper {
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    fun showInputMethod(view: View) {
+    fun showInputMethod(view: View?) {
+        if(view == null) return
         val inputMethodManager = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
         inputMethodManager?.showSoftInput(view, 0)
     }

@@ -12,7 +12,7 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent">
         <com.google.android.material.navigationrail.NavigationRailView
-                android:layout_width="wrap_content"
+                android:layout_width="62dp"
                 android:layout_height="match_parent"
                 android:id="@+id/nav_rail_view"
                 android:background="?attr/primaryGrayBackground"

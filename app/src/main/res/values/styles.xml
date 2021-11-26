@@ -57,13 +57,9 @@
         <item name="white">#FFF</item>
     </style>
 
-    <!--   <style name="PreferencesTheme" parent="@style/Base.Theme.AppCompat">
-         <item name="android:textColorPrimary">?attr/textColor</item>
-         <item name="android:textColorSecondary">?attr/grayTextColor</item>
-         <item name="android:colorAccent">?attr/colorAccent</item>
-         <item name="android:colorControlHighlight">@color/colorPrimary</item>
-       <item name="android:tint">?attr/textColor</item>
-    </style>-->
+    <style name="AmoledModeLight" parent="AmoledMode">
+        <item name="primaryGrayBackground">@color/amoledModeLight</item>
+    </style>
 
     <style name="AmoledMode">
         <item name="primaryGrayBackground">@color/black</item>
