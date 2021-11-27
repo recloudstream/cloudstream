@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="2dp"
             android:elevation="10dp"
-            app:cardCornerRadius="@dimen/roundedImageRadius"
+            app:cardCornerRadius="@dimen/rounded_image_radius"
             android:id="@+id/backgroundCard"
             app:cardBackgroundColor="?attr/primaryGrayBackground"
     >

@@ -490,315 +490,66 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                 >
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.button.MaterialButton
                             android:nextFocusLeft="@id/skip_episode"
                             android:nextFocusRight="@id/resize_player"
-
                             android:id="@+id/lock_player"
-                            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="20dp"
-                            card_view:cardCornerRadius="@dimen/card_corner_radius"
-                            card_view:cardBackgroundColor="@color/transparent"
+                            app:iconSize="30dp"
+                            android:text="@string/video_lock"
+                            app:icon="@drawable/video_locked"
 
-                            android:foreground="@drawable/video_bottom_button"
-                            card_view:cardElevation="0dp"
-                            tools:visibility="visible"
-                    >
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal"
-                                android:paddingStart="10dp"
-                                android:paddingEnd="10dp"
-                        >
-                            <ImageView
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:id="@+id/video_locked_img"
-                                    android:src="@drawable/video_locked"
-                                    app:tint="@android:color/white"
-                                    android:layout_gravity="center">
-
-                            </ImageView>
-                            <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:text="@string/video_lock"
-                                    android:gravity="center"
-                                    android:paddingStart="10dp"
-                                    android:paddingEnd="10dp"
-                                    android:textSize="10sp"
-                                    android:textStyle="bold"
-                                    android:layout_gravity="center"
-                                    android:id="@+id/video_locked_text"
-                                    android:textColor="@android:color/white"
-                            >
-                            </TextView>
-
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                            style="@style/VideoButton"/>
                     <LinearLayout
                             android:id="@+id/lock_holder"
                             android:orientation="horizontal"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent">
-                        <androidx.cardview.widget.CardView
+
+                        <com.google.android.material.button.MaterialButton
                                 android:nextFocusLeft="@id/lock_player"
                                 android:nextFocusRight="@id/playback_speed_btt"
-
                                 android:id="@+id/resize_player"
-                                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                card_view:cardCornerRadius="@dimen/card_corner_radius"
-                                card_view:cardBackgroundColor="@color/transparent"
-                                android:foreground="@drawable/video_bottom_button"
-                                card_view:cardElevation="0dp"
-                                tools:visibility="visible"
-                        >
-                            <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:orientation="horizontal"
-                                    android:paddingStart="10dp"
-                                    android:paddingEnd="10dp"
-                            >
-                                <ImageView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:src="@drawable/ic_baseline_aspect_ratio_24"
-                                        app:tint="@android:color/white"
-                                        android:layout_gravity="center">
 
-                                </ImageView>
-                                <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:text="@string/video_aspect_ratio_resize"
-                                        android:gravity="center"
-                                        android:paddingStart="10dp"
-                                        android:paddingEnd="10dp"
-                                        android:textSize="10sp"
-                                        android:textStyle="bold"
-                                        android:layout_gravity="center"
-                                        android:textColor="@android:color/white"
-                                >
-                                </TextView>
-
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-                        <androidx.cardview.widget.CardView
+                                android:text="@string/video_aspect_ratio_resize"
+                                app:icon="@drawable/ic_baseline_aspect_ratio_24"
+                                style="@style/VideoButton"/>
+                        <com.google.android.material.button.MaterialButton
                                 android:nextFocusLeft="@id/resize_player"
                                 android:nextFocusRight="@id/sources_btt"
-
                                 android:id="@+id/playback_speed_btt"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                app:cardCornerRadius="@dimen/card_corner_radius"
-                                app:cardBackgroundColor="@color/transparent"
-                                android:foreground="@drawable/video_bottom_button"
-                                app:cardElevation="0dp"
 
-                        >
-                            <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:orientation="horizontal"
-                                    android:paddingStart="10dp"
-                                    android:paddingEnd="10dp"
-                            >
-                                <ImageView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:src="@drawable/ic_baseline_speed_24"
-                                        app:tint="@android:color/white"
-                                >
-
-                                </ImageView>
-                                <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:text="Speed"
-                                        android:gravity="center"
-                                        android:paddingStart="10dp"
-                                        android:paddingEnd="10dp"
-                                        android:id="@+id/player_speed_text"
-                                        android:layout_gravity="center"
-
-                                        android:textSize="10sp"
-                                        android:textStyle="bold"
-                                        android:textColor="@android:color/white"
-                                >
-                                </TextView>
-
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-                        <androidx.cardview.widget.CardView
+                                tools:text="Speed"
+                                app:icon="@drawable/ic_baseline_speed_24"
+                                style="@style/VideoButton"/>
+                        <com.google.android.material.button.MaterialButton
                                 android:nextFocusLeft="@id/playback_speed_btt"
                                 android:nextFocusRight="@id/skip_op"
-
                                 android:id="@+id/sources_btt"
 
-                                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                card_view:cardCornerRadius="@dimen/card_corner_radius"
-                                card_view:cardBackgroundColor="@color/transparent"
-                                android:foreground="@drawable/video_bottom_button"
-                                card_view:cardElevation="0dp"
-
-                        >
-                            <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:orientation="horizontal"
-                                    android:paddingStart="10dp"
-                                    android:paddingEnd="10dp"
-                            >
-                                <ImageView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:src="@drawable/ic_baseline_playlist_play_24"
-                                        app:tint="@android:color/white"
-                                        android:layout_gravity="center">
-
-                                </ImageView>
-                                <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:text="@string/video_source"
-                                        android:gravity="center"
-                                        android:paddingStart="10dp"
-
-                                        android:textSize="10sp"
-                                        android:textStyle="bold"
-                                        android:paddingEnd="10dp"
-                                        android:layout_gravity="center"
-                                        android:textColor="@android:color/white"
-                                >
-                                </TextView>
-
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-                        <androidx.cardview.widget.CardView
+                                android:text="@string/video_source"
+                                app:icon="@drawable/ic_baseline_playlist_play_24"
+                                style="@style/VideoButton"/>
+                        <com.google.android.material.button.MaterialButton
                                 android:nextFocusLeft="@id/sources_btt"
                                 android:nextFocusRight="@id/skip_episode"
                                 android:id="@+id/skip_op"
 
-                                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                card_view:cardCornerRadius="@dimen/card_corner_radius"
-                                card_view:cardBackgroundColor="@color/transparent"
-                                android:foreground="@drawable/video_bottom_button"
-                                card_view:cardElevation="0dp"
-
-                        >
-                            <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:orientation="horizontal"
-                                    android:paddingStart="10dp"
-                                    android:paddingEnd="10dp"
-                            >
-                                <ImageView
-                                        android:layout_width="24dp"
-                                        android:layout_height="match_parent"
-                                        android:src="@drawable/exo_controls_fastforward"
-                                        app:tint="@android:color/white"
-                                        android:layout_gravity="center">
-                                </ImageView>
-                                <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:text="@string/video_skip_op"
-                                        android:gravity="start|center"
-                                        android:paddingStart="10dp"
-
-                                        android:textSize="10sp"
-                                        android:textStyle="bold"
-                                        android:paddingEnd="10dp"
-                                        android:layout_gravity="center"
-                                        android:textColor="@android:color/white"
-                                >
-                                </TextView>
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-                        <androidx.cardview.widget.CardView
+                                android:text="@string/video_skip_op"
+                                app:icon="@drawable/ic_baseline_fast_forward_24"
+                                style="@style/VideoButton"/>
+                        <com.google.android.material.button.MaterialButton
                                 android:nextFocusLeft="@id/skip_op"
                                 android:nextFocusRight="@id/lock_player"
-
                                 android:id="@+id/skip_episode"
 
-                                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                card_view:cardCornerRadius="@dimen/card_corner_radius"
-                                card_view:cardBackgroundColor="@color/transparent"
-                                android:foreground="@drawable/video_bottom_button"
-                                card_view:cardElevation="0dp"
-                        >
-                            <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:orientation="horizontal"
-                                    android:paddingStart="10dp"
-                                    android:paddingEnd="10dp"
-                            >
-                                <ImageView
-                                        android:layout_width="24dp"
-                                        android:layout_height="match_parent"
-                                        android:src="@drawable/ic_baseline_skip_next_24"
-                                        app:tint="@android:color/white"
-                                        android:layout_gravity="center">
-                                </ImageView>
-                                <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:text="@string/next_episode"
-
-                                        android:gravity="start|center"
-                                        android:paddingStart="10dp"
-
-                                        android:textSize="10sp"
-                                        android:textStyle="bold"
-                                        android:paddingEnd="10dp"
-                                        android:layout_gravity="center"
-                                        android:textColor="@android:color/white"
-                                >
-                                </TextView>
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
+                                android:text="@string/next_episode"
+                                app:icon="@drawable/ic_baseline_skip_next_24"
+                                style="@style/VideoButton"
+                        />
                     </LinearLayout>
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
     <View
 

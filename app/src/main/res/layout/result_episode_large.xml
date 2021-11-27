@@ -10,7 +10,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/roundedImageRadius"
+        app:cardCornerRadius="@dimen/rounded_image_radius"
         app:cardBackgroundColor="?attr/boxItemBackground"
 
         android:foreground="@drawable/outline_drawable"

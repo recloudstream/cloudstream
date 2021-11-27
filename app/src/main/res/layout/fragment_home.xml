@@ -162,6 +162,9 @@
 
                 <ImageView
                         android:nextFocusDown="@id/home_main_poster_recyclerview"
+                        android:nextFocusUp="@id/nav_rail_view"
+                        android:nextFocusLeft="@id/nav_rail_view"
+
                         android:id="@+id/home_change_api"
                         android:layout_margin="10dp"
                         android:layout_gravity="center|end"
@@ -229,7 +232,7 @@
                         android:layout_height="wrap_content">
 
                     <com.google.android.material.button.MaterialButton
-                            android:nextFocusLeft="@id/home_main_info"
+                            android:nextFocusLeft="@id/nav_rail_view"
                             android:nextFocusUp="@id/home_main_poster_recyclerview"
                             android:nextFocusRight="@id/home_main_info"
                             android:nextFocusDown="@id/home_watch_child_more_info"
@@ -247,7 +250,7 @@
                     <com.google.android.material.button.MaterialButton
                             android:nextFocusLeft="@id/home_main_play"
                             android:nextFocusUp="@id/home_main_poster_recyclerview"
-                            android:nextFocusRight="@id/home_main_play"
+                            android:nextFocusRight="@id/home_change_api"
                             android:nextFocusDown="@id/home_watch_child_more_info"
 
                             style="@style/BlackButton"
@@ -275,6 +278,7 @@
                     android:layout_height="wrap_content">
 
                 <FrameLayout
+                        android:nextFocusLeft="@id/nav_rail_view"
                         android:nextFocusUp="@id/home_main_info"
                         android:nextFocusDown="@id/home_watch_child_recyclerview"
 
@@ -322,6 +326,7 @@
                     android:layout_height="wrap_content">
 
                 <FrameLayout
+                        android:nextFocusLeft="@id/nav_rail_view"
                         android:nextFocusUp="@id/home_watch_child_recyclerview"
                         android:nextFocusForward="@id/home_bookmarked_child_recyclerview"
 
@@ -331,6 +336,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                     <ImageView
+                            android:nextFocusLeft="@id/nav_rail_view"
                             android:background="?android:attr/selectableItemBackgroundBorderless"
 
                             android:tint="?attr/textColor"
@@ -374,6 +380,7 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
+                    android:nextFocusLeft="@id/nav_rail_view"
                     android:descendantFocusability="afterDescendants"
                     android:id="@+id/home_master_recycler"
                     android:layout_width="match_parent"

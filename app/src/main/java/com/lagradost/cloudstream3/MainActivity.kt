@@ -169,6 +169,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
         }
 
+        if(keyEventListener?.invoke(event) == true) {
+            return true
+        }
         return super.dispatchKeyEvent(event)
     }
 
@@ -257,6 +260,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val onDialogDismissedEvent = Event<Int>()
 
         var playerEventListener: ((PlayerEventType) -> Unit)? = null
+        var keyEventListener: ((KeyEvent?) -> Boolean)? = null
+
 
         var currentToast: Toast? = null
 
@@ -411,7 +416,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val currentTheme = when (settingsManager.getString(getString(R.string.app_theme_key), "Black")) {
+        val currentTheme = when (settingsManager.getString(getString(R.string.app_theme_key), "AmoledLight")) {
             "Black" -> R.style.AppTheme
             "Light" -> R.style.LightMode
             "Amoled" -> R.style.AmoledMode
