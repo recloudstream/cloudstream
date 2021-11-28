@@ -118,7 +118,7 @@
 
                     <androidx.cardview.widget.CardView
                             android:id="@+id/result_poster_holder"
-                            app:cardCornerRadius="@dimen/roundedImageRadius"
+                            app:cardCornerRadius="@dimen/rounded_image_radius"
                             android:layout_width="100dp"
                             android:layout_height="140dp">
                         <ImageView

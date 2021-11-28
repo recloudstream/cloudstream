@@ -110,6 +110,7 @@
     </com.google.android.material.appbar.AppBarLayout>
     
     <androidx.recyclerview.widget.RecyclerView
+            android:nextFocusLeft="@id/nav_rail_view"
             android:descendantFocusability="afterDescendants"
 
             android:background="?attr/primaryBlackBackground"

@@ -15,14 +15,14 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="10dp"
             android:elevation="0dp"
-            app:cardCornerRadius="@dimen/roundedImageRadius"
+            app:cardCornerRadius="@dimen/rounded_image_radius"
             app:cardBackgroundColor="?attr/boxItemBackground"
             android:clickable="true"
             android:focusable="true"
     >
         <!-- USING CROP RATIO (182/268), centerCrop for fill -->
         <androidx.cardview.widget.CardView
-                app:cardCornerRadius="@dimen/roundedImageRadius"
+                app:cardCornerRadius="@dimen/rounded_image_radius"
                 android:layout_width="35dp"
                 android:elevation="0dp"
                 android:layout_height="match_parent">

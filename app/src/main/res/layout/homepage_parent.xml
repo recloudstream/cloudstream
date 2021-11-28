@@ -8,8 +8,6 @@
         android:layout_height="wrap_content">
 
     <FrameLayout
-            android:nextFocusDown="@id/home_child_recyclerview"
-
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:id="@+id/home_child_more_info"
             android:padding="12dp"
@@ -32,6 +30,7 @@
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+            android:nextFocusUp="@id/home_child_more_info"
             android:paddingHorizontal="5dp"
             android:clipToPadding="false"
 

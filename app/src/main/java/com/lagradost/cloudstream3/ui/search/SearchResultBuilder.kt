@@ -22,7 +22,9 @@ object SearchResultBuilder {
         clickCallback: (SearchClickCallback) -> Unit,
         card: SearchResponse,
         itemView: View,
-        nextFocusBehavior: Boolean? = null
+        nextFocusBehavior: Boolean? = null,
+        nextFocusUp: Int? = null,
+        nextFocusDown: Int? = null,
     ) {
         val cardView: ImageView = itemView.imageView
         val cardText: TextView? = itemView.imageText
@@ -55,6 +57,14 @@ object SearchResultBuilder {
                     card
                 )
             )
+        }
+
+        if(nextFocusUp != null) {
+            bg.nextFocusUpId = nextFocusUp
+        }
+        
+        if(nextFocusDown != null) {
+            bg.nextFocusDownId = nextFocusDown
         }
 
         when (nextFocusBehavior) {

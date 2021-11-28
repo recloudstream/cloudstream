@@ -19,14 +19,14 @@
             android:layout_marginBottom="2dp"
             android:elevation="0dp"
 
-            app:cardCornerRadius="@dimen/roundedImageRadius"
+            app:cardCornerRadius="@dimen/rounded_image_radius"
             app:cardBackgroundColor="?attr/boxItemBackground"
             android:clickable="true"
             android:focusable="true"
     >
         <androidx.cardview.widget.CardView
                 android:elevation="0dp"
-                app:cardCornerRadius="@dimen/roundedImageRadius"
+                app:cardCornerRadius="@dimen/rounded_image_radius"
                 android:layout_width="54dp"
                 android:layout_height="match_parent">
             <ImageView

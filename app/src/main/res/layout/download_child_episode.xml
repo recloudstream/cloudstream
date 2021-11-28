@@ -5,12 +5,12 @@
         xmlns:tools="http://schemas.android.com/tools"
 
         android:nextFocusRight="@id/download_child_episode_download"
-        android:nextFocusLeft="@id/download_child_episode_download"
+        android:nextFocusLeft="@id/nav_rail_view"
 
         android:id="@+id/download_child_episode_holder"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:cardCornerRadius="@dimen/roundedImageRadius"
+        app:cardCornerRadius="@dimen/rounded_image_radius"
         app:cardBackgroundColor="@color/transparent"
         app:cardElevation="0dp"
         android:foreground="@drawable/outline_drawable"

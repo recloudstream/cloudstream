@@ -30,7 +30,9 @@
     <color name="typeColor">#3BF585</color>
     <color name="typeColorBg">#803BF585</color>
 
-    <color name="video_ripple">#73FFFFFF</color>
+    <color name="video_ripple">#80FFFFFF</color>
+    <color name="video_button_ripple">#32FFFFFF</color>
+
     <color name="black_overlay">#66000000</color>
     <color name="darkBarTransparent">#C0121212</color>
     <color name="darkBar">#121212</color>

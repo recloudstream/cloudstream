@@ -9,7 +9,7 @@
         tools:context=".ui.search.SearchFragment"
         android:orientation="vertical"
         android:background="?attr/primaryGrayBackground"
-        android:layout_marginTop="@dimen/navbarHeight">
+        android:layout_marginTop="@dimen/navbar_height">
     <FrameLayout
             android:visibility="visible"
             android:layout_margin="10dp"
@@ -23,8 +23,9 @@
                 android:layout_marginEnd="30dp"
                 android:layout_height="30dp">
             <androidx.appcompat.widget.SearchView
+                    android:nextFocusUp="@id/nav_rail_view"
                     android:nextFocusRight="@id/search_filter"
-                    android:nextFocusLeft="@id/search_filter"
+                    android:nextFocusLeft="@id/nav_rail_view"
                     android:nextFocusDown="@id/cardSpace"
 
                     android:imeOptions="actionSearch"
@@ -42,6 +43,7 @@
                     android:layout_gravity="center_vertical"
                     app:iconifiedByDefault="false"
                     tools:ignore="RtlSymmetry">
+                <requestFocus/>
 
                 <androidx.core.widget.ContentLoadingProgressBar
                         android:id="@+id/search_loading_bar"
@@ -60,6 +62,7 @@
             </androidx.appcompat.widget.SearchView>
         </FrameLayout>
         <ImageView
+                android:nextFocusUp="@id/nav_rail_view"
                 android:nextFocusRight="@id/main_search"
                 android:nextFocusLeft="@id/main_search"
                 android:nextFocusDown="@id/cardSpace"
@@ -73,11 +76,11 @@
                 android:layout_gravity="end|center_vertical"
                 app:tint="?attr/textColor"
                 android:contentDescription="@string/change_providers_img_des">
-            <requestFocus/>
         </ImageView>
     </FrameLayout>
 
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+            android:nextFocusLeft="@id/nav_rail_view"
             android:descendantFocusability="afterDescendants"
 
             android:background="?attr/primaryBlackBackground"
@@ -93,6 +96,7 @@
             android:orientation="vertical"
     />
     <androidx.recyclerview.widget.RecyclerView
+            android:nextFocusLeft="@id/nav_rail_view"
             android:descendantFocusability="afterDescendants"
 
             android:background="?attr/primaryBlackBackground"

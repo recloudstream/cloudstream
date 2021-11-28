@@ -9,6 +9,7 @@ import android.app.RemoteAction
 import android.content.*
 import android.content.Context.AUDIO_SERVICE
 import android.content.pm.ActivityInfo
+import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.database.ContentObserver
 import android.graphics.Color
@@ -19,11 +20,8 @@ import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.View.*
-import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AlphaAnimation
@@ -32,6 +30,9 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -119,8 +120,8 @@ const val PLAYBACK_SPEED = "playback_speed"
 const val RESIZE_MODE_KEY = "resize_mode" // Last used resize mode
 const val PLAYBACK_SPEED_KEY = "playback_speed" // Last used playback speed
 
-const val OPENING_PRECENTAGE = 50
-const val AUTOLOAD_NEXT_EPISODE_PRECENTAGE = 80
+const val OPENING_PERCENTAGE = 50
+const val AUTOLOAD_NEXT_EPISODE_PERCENTAGE = 80
 
 enum class PlayerEventType(val value: Int) {
     Stop(-1),
@@ -266,8 +267,8 @@ class PlayerFragment : Fragment() {
     private var simpleCache: SimpleCache? = null
 
     /** Layout */
-    private var width = Resources.getSystem().displayMetrics.heightPixels
-    private var height = Resources.getSystem().displayMetrics.widthPixels
+    private var width = Resources.getSystem().displayMetrics.widthPixels
+    private var height = Resources.getSystem().displayMetrics.heightPixels
     private var statusBarHeight by Delegates.notNull<Int>()
     private var navigationBarHeight by Delegates.notNull<Int>()
 
@@ -670,7 +671,7 @@ class PlayerFragment : Fragment() {
             val percentage = ((position ?: exoPlayer.currentPosition) * 100 / exoPlayer.contentDuration).toInt()
             val hasNext = hasNextEpisode()
 
-            if (percentage >= AUTOLOAD_NEXT_EPISODE_PRECENTAGE && hasNext) {
+            if (percentage >= AUTOLOAD_NEXT_EPISODE_PERCENTAGE && hasNext) {
                 val ep =
                     episodes[playerData.episodeIndex + 1]
 
@@ -680,7 +681,7 @@ class PlayerFragment : Fragment() {
                     }
                 }
             }
-            val nextEp = percentage >= OPENING_PRECENTAGE
+            val nextEp = percentage >= OPENING_PERCENTAGE
             val isAnime =
                 data.isAnimeBased()//(data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.ONA))
 
@@ -868,13 +869,21 @@ class PlayerFragment : Fragment() {
     }
 
     private fun updateLock() {
-        video_locked_img?.setImageResource(if (isLocked) R.drawable.video_locked else R.drawable.video_unlocked)
-        val color = if (isLocked) context?.colorFromAttribute(R.attr.colorPrimary)
+        lock_player?.setIconResource(if (isLocked) R.drawable.video_locked else R.drawable.video_unlocked)
+        var color = if (isLocked) context?.colorFromAttribute(R.attr.colorPrimary)
         else Color.WHITE
-
         if (color != null) {
-            video_locked_text?.setTextColor(color)
-            video_locked_img?.setColorFilter(color)
+            lock_player?.setTextColor(color)
+            lock_player?.iconTint = ColorStateList.valueOf(color)
+            color = Color.argb(50, color.red, color.green, color.blue)
+            lock_player?.rippleColor = ColorStateList.valueOf(color)
+            //if(isLocked) {
+            //    lock_player?.iconTint = ContextCompat.getColorStateList(lock_player.context, R.color.white)
+//
+            //} else {
+            //    lock_player?.iconTint = context?.colorFromAttribute(R.attr.colorPrimary)
+            //}
+            //lock_player?.setColorFilter(color)
         }
 
         val isClick = !isLocked
@@ -1007,6 +1016,56 @@ class PlayerFragment : Fragment() {
         handlePlayerEvent(event.value)
     }
 
+    private fun handleKeyEvent(event: KeyEvent): Boolean {
+        event.keyCode.let { keyCode ->
+            when (keyCode) {
+                // don't allow dpad move when hidden
+                KeyEvent.KEYCODE_DPAD_LEFT,
+                KeyEvent.KEYCODE_DPAD_DOWN,
+                KeyEvent.KEYCODE_DPAD_UP,
+                KeyEvent.KEYCODE_DPAD_RIGHT,
+                KeyEvent.KEYCODE_DPAD_DOWN_LEFT,
+                KeyEvent.KEYCODE_DPAD_DOWN_RIGHT,
+                KeyEvent.KEYCODE_DPAD_UP_LEFT,
+                KeyEvent.KEYCODE_DPAD_UP_RIGHT -> {
+                    if (!isShowing) {
+                        return true
+                    }
+                }
+
+                // netflix capture back and hide ~monke
+                KeyEvent.KEYCODE_BACK -> {
+                    if (isShowing) {
+                        onClickChange()
+                        return true
+                    }
+                }
+            }
+
+            when (event.action) {
+                KeyEvent.ACTION_DOWN -> {
+                    when (keyCode) {
+                        KeyEvent.KEYCODE_DPAD_CENTER -> {
+                            if (!isShowing) {
+                                onClickChange()
+                                return true
+                            }
+                        }
+                    }
+
+                    //println("Keycode: $keyCode")
+                    //showToast(
+                    //    this,
+                    //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
+                    //    Toast.LENGTH_LONG
+                    //)
+                }
+            }
+        }
+
+        return false
+    }
+
     var lastMuteVolume = 0f
 
     private fun handlePlayerEvent(event: Int) {
@@ -1069,7 +1128,7 @@ class PlayerFragment : Fragment() {
                             requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
                             val param = PlaybackParameters(playbackSpeed)
                             exoPlayer.playbackParameters = param
-                            player_speed_text?.text =
+                            playback_speed_btt?.text =
                                 getString(R.string.player_speed_text_format).format(playbackSpeed).replace(".0x", "x")
                         }
                     }
@@ -1720,6 +1779,7 @@ class PlayerFragment : Fragment() {
 
     override fun onDestroy() {
         MainActivity.playerEventListener = null
+        MainActivity.keyEventListener = null
         /*  val lp = activity?.window?.attributes
 
 
@@ -1845,7 +1905,7 @@ class PlayerFragment : Fragment() {
 
         player_torrent_info?.isVisible = false
         //player_torrent_info?.alpha = 0f
-        println("LOADED: ${uri} or ${currentUrl}")
+        println("LOADED: $uri or $currentUrl")
         isCurrentlyPlaying = true
         hasUsedFirstRender = false
 
@@ -1993,7 +2053,7 @@ class PlayerFragment : Fragment() {
             player_view?.player = exoPlayer
             // Sets the speed
             exoPlayer.playbackParameters = PlaybackParameters(playbackSpeed)
-            player_speed_text?.text =
+            playback_speed_btt?.text =
                 getString(R.string.player_speed_text_format).format(playbackSpeed).replace(".0x", "x")
 
             var hName: String? = null
@@ -2058,19 +2118,27 @@ class PlayerFragment : Fragment() {
                 handlePlayerEvent(eventType)
             }
 
+            MainActivity.keyEventListener = { keyEvent ->
+                if (keyEvent != null) {
+                    handleKeyEvent(keyEvent)
+                } else {
+                    false
+                }
+            }
+
             exoPlayer.addListener(object : Player.Listener {
                 override fun onRenderedFirstFrame() {
                     super.onRenderedFirstFrame()
                     isCurrentlySkippingEp = false
 
-                    val height = exoPlayer.videoFormat?.height
-                    val width = exoPlayer.videoFormat?.width
+                    val playerHeight = exoPlayer.videoFormat?.height
+                    val playerWidth = exoPlayer.videoFormat?.width
 
                     video_title_rez?.text =
-                        if (height == null || width == null) currentUrl?.name
+                        if (playerHeight == null || playerWidth == null) currentUrl?.name
                             ?: "" else
                         // if (isTorrent) "${width}x${height}" else
-                            if (isDownloadedFile || currentUrl?.name == null) "${width}x${height}" else "${currentUrl.name} - ${width}x${height}"
+                            if (isDownloadedFile || currentUrl?.name == null) "${playerWidth}x${playerHeight}" else "${currentUrl.name} - ${playerWidth}x${playerHeight}"
 
                     if (!hasUsedFirstRender) { // DON'T WANT TO SET MULTIPLE MESSAGES
                         //&& !isTorrent
@@ -2084,7 +2152,7 @@ class PlayerFragment : Fragment() {
                                 changeSkip()
                             }
                             .setLooper(Looper.getMainLooper())
-                            .setPosition( /* positionMs= */exoPlayer.contentDuration * OPENING_PRECENTAGE / 100)
+                            .setPosition( /* positionMs= */exoPlayer.contentDuration * OPENING_PERCENTAGE / 100)
                             //   .setPayload(customPayloadData)
                             .setDeleteAfterDelivery(false)
                             .send()
@@ -2093,7 +2161,7 @@ class PlayerFragment : Fragment() {
                                 changeSkip()
                             }
                             .setLooper(Looper.getMainLooper())
-                            .setPosition( /* positionMs= */exoPlayer.contentDuration * AUTOLOAD_NEXT_EPISODE_PRECENTAGE / 100)
+                            .setPosition( /* positionMs= */exoPlayer.contentDuration * AUTOLOAD_NEXT_EPISODE_PERCENTAGE / 100)
                             //   .setPayload(customPayloadData)
                             .setDeleteAfterDelivery(false)
 

@@ -17,6 +17,8 @@ class HDMProvider : MainAPI() {
         get() = setOf(
             TvType.Movie,
         )
+    override val hasMainPage: Boolean
+        get() = true
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/$query"
@@ -73,5 +75,50 @@ class HDMProvider : MainAPI() {
             title, url, this.name, TvType.Movie,
                 "$mainUrl/src/player/?v=$data", poster, year, descript, null
         )
+    }
+
+    override fun getMainPage(): HomePageResponse {
+        val html = get("$mainUrl", timeout = 25).text
+        val document = Jsoup.parse(html)
+        val all = ArrayList<HomePageList>()
+
+        val mainbody = document.getElementsByTag("body")
+            ?.select("div.homeContentOuter > section > div.container > div")
+        // Fetch row title
+        val inner = mainbody?.select("div.col-md-2.col-sm-2.mrgb")
+        val title = mainbody?.select("div > div")?.firstOrNull()?.select("div.title.titleBar")?.text() ?: "Unnamed Row"
+        // Fetch list of items and map
+        if (inner != null) {
+            val elements: List<SearchResponse> = inner.map {
+
+                val aa = it.select("a").firstOrNull()
+                val item = aa?.select("div.item")
+                val href = aa?.attr("href")
+                val link = when (href != null) {
+                    true -> fixUrl(href)
+                    false -> ""
+                }
+                val name = item?.select("div.movie-details")?.text() ?: "<No Title>"
+                var image = item?.select("img")?.get(1)?.attr("src") ?: ""
+                val year = null
+
+                MovieSearchResponse(
+                    name,
+                    link,
+                    this.name,
+                    TvType.Movie,
+                    image,
+                    year,
+                    null,
+                )
+            }
+
+            all.add(
+                HomePageList(
+                    title, elements
+                )
+            )
+        }
+        return HomePageResponse(all)
     }
 }

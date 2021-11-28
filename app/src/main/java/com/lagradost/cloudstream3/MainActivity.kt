@@ -145,20 +145,84 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    enum class FocusDirection {
+        Left,
+        Right,
+        Up,
+        Down,
+    }
+
+    private fun getNextFocus(view: View?, direction: FocusDirection, depth: Int = 0): Int? {
+        if (view == null || depth >= 10) {
+            return null
+        }
+
+        val nextId = when (direction) {
+            FocusDirection.Left -> {
+                view.nextFocusLeftId
+            }
+            FocusDirection.Up -> {
+                view.nextFocusUpId
+            }
+            FocusDirection.Right -> {
+                view.nextFocusRightId
+            }
+            FocusDirection.Down -> {
+                view.nextFocusDownId
+            }
+        }
+
+        return if (nextId != -1) {
+            val next = findViewById<View?>(nextId)
+            //println("NAME: ${next.accessibilityClassName} | ${next?.isShown}" )
+
+            if (next?.isShown == false) {
+                getNextFocus(next, direction, depth + 1)
+            } else {
+                if (depth == 0) {
+                    null
+                } else {
+                    nextId
+                }
+            }
+        } else {
+            null
+        }
+    }
+
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         event?.keyCode?.let { keyCode ->
             when (event.action) {
                 ACTION_DOWN -> {
-                    when (keyCode) {
-                        KeyEvent.KEYCODE_DPAD_CENTER -> {
-                            println("DPAD PRESSED $currentFocus")
-                            if (currentFocus is SearchView || currentFocus is SearchView.SearchAutoComplete) {
-                                println("current PRESSED")
-                                showInputMethod(currentFocus?.findFocus())
+                    if (currentFocus != null) {
+                        val next = when (keyCode) {
+                            KeyEvent.KEYCODE_DPAD_LEFT -> getNextFocus(currentFocus, FocusDirection.Left)
+                            KeyEvent.KEYCODE_DPAD_RIGHT -> getNextFocus(currentFocus, FocusDirection.Right)
+                            KeyEvent.KEYCODE_DPAD_UP -> getNextFocus(currentFocus, FocusDirection.Up)
+                            KeyEvent.KEYCODE_DPAD_DOWN -> getNextFocus(currentFocus, FocusDirection.Down)
+
+                            else -> null
+                        }
+
+                        if (next != null && next != -1) {
+                            val nextView = findViewById<View?>(next)
+                            if(nextView != null) {
+                                nextView.requestFocus()
+                                return true
+                            }
+                        }
+
+                        when (keyCode) {
+
+                            KeyEvent.KEYCODE_DPAD_CENTER -> {
+                                println("DPAD PRESSED $currentFocus")
+                                if (currentFocus is SearchView || currentFocus is SearchView.SearchAutoComplete) {
+                                    println("current PRESSED")
+                                    showInputMethod(currentFocus?.findFocus())
+                                }
                             }
                         }
                     }
-
                     //println("Keycode: $keyCode")
                     //showToast(
                     //    this,
@@ -169,6 +233,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
         }
 
+        if (keyEventListener?.invoke(event) == true) {
+            return true
+        }
         return super.dispatchKeyEvent(event)
     }
 
@@ -257,6 +324,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val onDialogDismissedEvent = Event<Int>()
 
         var playerEventListener: ((PlayerEventType) -> Unit)? = null
+        var keyEventListener: ((KeyEvent?) -> Boolean)? = null
+
 
         var currentToast: Toast? = null
 
@@ -411,7 +480,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val currentTheme = when (settingsManager.getString(getString(R.string.app_theme_key), "Black")) {
+        val currentTheme = when (settingsManager.getString(getString(R.string.app_theme_key), "AmoledLight")) {
             "Black" -> R.style.AppTheme
             "Light" -> R.style.LightMode
             "Amoled" -> R.style.AmoledMode

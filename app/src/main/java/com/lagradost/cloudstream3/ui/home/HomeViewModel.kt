@@ -143,9 +143,10 @@ class HomeViewModel : ViewModel() {
         }
 
         _apiName.postValue(repo?.name)
+        _randomItems.postValue(listOf())
+
         if (repo?.hasMainPage == true) {
             _page.postValue(Resource.Loading())
-            _randomItems.postValue(null)
 
             val data = repo?.getMainPage()
             when (data) {

@@ -311,6 +311,28 @@
         <item name="android:layout_width">wrap_content</item>
     </style>
 
+    <style name="VideoButton">
+        <item name="android:stateListAnimator">@null</item>
+        <item name="strokeColor">@color/transparent</item>
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="rippleColor">@color/video_button_ripple</item>
+        <item name="android:shadowColor">@color/transparent</item>
+
+        <item name="cornerRadius">3dp</item>
+        <item name="iconTint">@color/white</item>
+        <item name="textColor">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+    </style>
+
     <!--@color/white ?attr/colorPrimary-->
     <!--CHECK ?attr/darkBackground ?attr/colorPrimary-->
     <!-- CHROMECAST -->
