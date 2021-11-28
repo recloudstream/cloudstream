@@ -142,8 +142,8 @@ dependencies {
     //implementation 'com.github.TorrentStream:TorrentStream-Android:2.7.0'
 
     // Downloading
-    implementation "androidx.work:work-runtime:2.7.0"
-    implementation "androidx.work:work-runtime-ktx:2.7.0"
+    implementation "androidx.work:work-runtime:2.7.1"
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
 
     // Networking
     implementation "com.squareup.okhttp3:okhttp:4.9.1"
@@ -151,6 +151,10 @@ dependencies {
 
     // Util to skip the URI file fuckery 🙏
     implementation "com.github.tachiyomiorg:unifile:17bec43"
+
+    // API because cba maintaining it myself
+    implementation "com.uwetrottmann.tmdb2:tmdb-java:2.6.0"
+
 
     // debugImplementation because LeakCanary should only run in debug builds.
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'

@@ -51,7 +51,10 @@ object AppUtils {
         intent.data = Uri.parse(url)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            startActivity(Intent.createChooser(intent, null).putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components))
+            startActivity(
+                Intent.createChooser(intent, null)
+                    .putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components)
+            )
         else
             startActivity(intent)
     }
@@ -66,6 +69,11 @@ object AppUtils {
                 URLDecoder.decode(pair.substring(idx + 1), "UTF-8")
         }
         return queryPairs
+    }
+
+    /** Any object as json string */
+    fun Any.toJson(): String {
+        return mapper.writeValueAsString(this)
     }
 
     /**| S1:E2 Hello World
@@ -103,7 +111,12 @@ object AppUtils {
 
     //private val viewModel: ResultViewModel by activityViewModels()
 
-    fun AppCompatActivity.loadResult(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0) {
+    fun AppCompatActivity.loadResult(
+        url: String,
+        apiName: String,
+        startAction: Int = 0,
+        startValue: Int = 0
+    ) {
         this.runOnUiThread {
             // viewModelStore.clear()
             this.navigate(
@@ -113,7 +126,11 @@ object AppUtils {
         }
     }
 
-    fun Activity?.loadSearchResult(card: SearchResponse, startAction: Int = 0, startValue: Int = 0) {
+    fun Activity?.loadSearchResult(
+        card: SearchResponse,
+        startAction: Int = 0,
+        startValue: Int = 0
+    ) {
         (this as AppCompatActivity?)?.loadResult(card.url, card.apiName, startAction, startValue)
     }
 
@@ -179,7 +196,8 @@ object AppUtils {
         val conManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = conManager.allNetworks
         return networkInfo.any {
-            conManager.getNetworkCapabilities(it)?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
+            conManager.getNetworkCapabilities(it)
+                ?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
         }
     }
 
@@ -216,7 +234,10 @@ object AppUtils {
         return currentAudioFocusRequest
     }
 
-    fun filterProviderByPreferredMedia(apis: ArrayList<MainAPI>, currentPrefMedia: Int): List<MainAPI> {
+    fun filterProviderByPreferredMedia(
+        apis: ArrayList<MainAPI>,
+        currentPrefMedia: Int
+    ): List<MainAPI> {
         val allApis = apis.filter { api -> api.hasMainPage }
         return if (currentPrefMedia < 1) {
             allApis
@@ -226,7 +247,8 @@ object AppUtils {
             val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon)
             val mediaTypeList = if (currentPrefMedia == 1) listEnumMovieTv else listEnumAnime
 
-            val filteredAPI = allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }
+            val filteredAPI =
+                allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }
             filteredAPI
         }
     }
