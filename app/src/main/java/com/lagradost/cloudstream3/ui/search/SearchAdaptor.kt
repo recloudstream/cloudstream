@@ -38,7 +38,7 @@ class SearchAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is CardViewHolder -> {
-                holder.bind(cardList[position])
+                holder.bind(cardList[position], position)
             }
         }
     }
@@ -59,7 +59,7 @@ class SearchAdapter(
         private val compactView = itemView.context.getGridIsCompact()
         private val coverHeight: Int = if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
 
-        fun bind(card: SearchResponse) {
+        fun bind(card: SearchResponse, position: Int) {
             if (!compactView) {
                 cardView.apply {
                     layoutParams = FrameLayout.LayoutParams(
@@ -69,7 +69,7 @@ class SearchAdapter(
                 }
             }
 
-            SearchResultBuilder.bind(clickCallback, card,  itemView,)
+            SearchResultBuilder.bind(clickCallback, card, itemView)
         }
     }
 }

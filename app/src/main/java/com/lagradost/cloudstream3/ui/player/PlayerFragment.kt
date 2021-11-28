@@ -1018,7 +1018,7 @@ class PlayerFragment : Fragment() {
 
     private fun handleKeyEvent(event: KeyEvent): Boolean {
         event.keyCode.let { keyCode ->
-            when (event.action) {
+            when (keyCode) {
                 // don't allow dpad move when hidden
                 KeyEvent.KEYCODE_DPAD_LEFT,
                 KeyEvent.KEYCODE_DPAD_DOWN,
@@ -1032,6 +1032,17 @@ class PlayerFragment : Fragment() {
                         return true
                     }
                 }
+
+                // netflix capture back and hide ~monke
+                KeyEvent.KEYCODE_BACK -> {
+                    if (isShowing) {
+                        onClickChange()
+                        return true
+                    }
+                }
+            }
+
+            when (event.action) {
                 KeyEvent.ACTION_DOWN -> {
                     when (keyCode) {
                         KeyEvent.KEYCODE_DPAD_CENTER -> {

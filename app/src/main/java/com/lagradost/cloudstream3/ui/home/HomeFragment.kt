@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -212,7 +213,12 @@ class HomeFragment : Fragment() {
 
                 val randomSize = items.size
                 home_main_poster_recyclerview.adapter =
-                    HomeChildItemAdapter(items, R.layout.home_result_big_grid) { callback ->
+                    HomeChildItemAdapter(
+                        items,
+                        R.layout.home_result_big_grid,
+                        nextFocusUp = home_main_poster_recyclerview.nextFocusUpId,
+                        nextFocusDown = home_main_poster_recyclerview.nextFocusDownId
+                    ) { callback ->
                         handleSearchClickCallback(activity, callback)
                     }
                 home_main_poster_recyclerview.post {
@@ -339,7 +345,11 @@ class HomeFragment : Fragment() {
             }
         }
 
-        home_bookmarked_child_recyclerview.adapter = HomeChildItemAdapter(ArrayList()) { callback ->
+        home_bookmarked_child_recyclerview.adapter = HomeChildItemAdapter(
+            ArrayList(),
+            nextFocusUp = home_bookmarked_child_recyclerview?.nextFocusUpId,
+            nextFocusDown = home_bookmarked_child_recyclerview?.nextFocusDownId
+        ) { callback ->
             if (callback.action == SEARCH_ACTION_SHOW_METADATA) {
                 val id = callback.card.id
                 if (id != null) {
@@ -355,7 +365,11 @@ class HomeFragment : Fragment() {
             }
         }
 
-        home_watch_child_recyclerview.adapter = HomeChildItemAdapter(ArrayList()) { callback ->
+        home_watch_child_recyclerview.adapter = HomeChildItemAdapter(
+            ArrayList(),
+            nextFocusUp = home_watch_child_recyclerview?.nextFocusUpId,
+            nextFocusDown = home_watch_child_recyclerview?.nextFocusDownId
+        ) { callback ->
             if (callback.action == SEARCH_ACTION_SHOW_METADATA) {
                 val id = callback.card.id
                 if (id != null) {
@@ -423,6 +437,16 @@ class HomeFragment : Fragment() {
         // nice profile pic on homepage
         home_profile_picture_holder?.isVisible = false
         context?.let { ctx ->
+            // just in case
+            if (ctx.isTvSettings()) {
+                home_change_api_loading?.isFocusable = true
+                home_change_api_loading?.isFocusableInTouchMode = true
+                home_change_api?.isFocusable = true
+                home_change_api?.isFocusableInTouchMode = true
+                home_bookmark_select?.isFocusable = true
+                home_bookmark_select?.isFocusableInTouchMode = true
+            }
+
             for (syncApi in OAuth2API.OAuth2Apis) {
                 val login = syncApi.loginInfo(ctx)
                 val pic = login?.profilePicture
@@ -433,5 +457,7 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+
     }
 }
