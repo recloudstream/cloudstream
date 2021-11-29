@@ -42,6 +42,7 @@ jobs:
         SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
         SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+        TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
     - name: Create pre-release
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
