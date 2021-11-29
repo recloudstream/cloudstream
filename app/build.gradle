@@ -30,19 +30,22 @@ android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
+    def Properties properties = new Properties()
+    properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
     defaultConfig {
         applicationId "com.lagradost.cloudstream3"
         minSdkVersion 21
         targetSdkVersion 31
 
         versionCode 34
-        versionName "2.2.3"
+        versionName "2.3.3"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
 
         buildConfigField("String", "BUILDDATE", "new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm\").format(new java.util.Date(" + System.currentTimeMillis() + "L));")
-        buildConfigField("String", "TMDB_API_KEY", "\"" + System.getenv("TMDB_API_KEY") + "\"")
+        buildConfigField("String", "TMDB_API_KEY", "\"" + properties.getProperty("TMDB_API_KEY", "") + "\"")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
