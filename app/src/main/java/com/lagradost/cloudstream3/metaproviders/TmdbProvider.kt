@@ -2,20 +2,37 @@ package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.secondsToReadable
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.*
 import java.util.*
+import kotlin.math.roundToInt
+
+/**
+ * episode and season starting from 1
+ * they are null if movie
+ * */
+data class TmdbLink(
+    @JsonProperty("imdbID") val imdbID: String?,
+    @JsonProperty("tmdbID") val tmdbID: Int?,
+    @JsonProperty("episode") val episode: Int?,
+    @JsonProperty("season") val season: Int?
+)
 
 open class TmdbProvider : MainAPI() {
 
+    // Use the LoadResponse from the metadata provider
     open val useMetaLoadResponse = false
     open val apiName = "TMDB"
 
-    override val hasMainPage: Boolean
-        get() = true
+    // As some sites doesn't support s0
+    open val disableSeasonZero = true
 
-    val tmdb = Tmdb("TMDB_KEY_HERE")
+    override val hasMainPage = true
+    override val providerType = ProviderType.MetaProvider
+
+    val tmdb = Tmdb(BuildConfig.TMDB_API_KEY)
 
     private fun getImageUrl(link: String?): String? {
         if (link == null) return null
@@ -26,18 +43,6 @@ open class TmdbProvider : MainAPI() {
         return if (tvShow) "https://www.themoviedb.org/tv/${id ?: -1}"
         else "https://www.themoviedb.org/movie/${id ?: -1}"
     }
-
-    /**
-     * episode and season starting from 1
-     * they are null if movie
-     * */
-    data class TmdbLink(
-        @JsonProperty("imdbID") val imdbID: String?,
-        @JsonProperty("tmdbID") val tmdbID: Int?,
-        @JsonProperty("episode") val episode: Int?,
-        @JsonProperty("season") val season: Int?
-    )
-
 
     private fun BaseTvShow.toSearchResponse(): TvSeriesSearchResponse {
         return TvSeriesSearchResponse(
@@ -73,32 +78,39 @@ open class TmdbProvider : MainAPI() {
     }
 
     private fun TvShow.toLoadResponse(): TvSeriesLoadResponse {
-        val episodes = this.seasons?.mapNotNull {
-            it.episodes?.map {
-                TvSeriesEpisode(
-                    it.name,
-                    it.season_number,
-                    it.episode_number,
-                    TmdbLink(
-                        it.external_ids?.imdb_id,
-                        it.id,
-                        it.episode_number,
+        val episodes = this.seasons?.filter { !disableSeasonZero || (it.season_number ?: 0) != 0 }
+            ?.mapNotNull {
+                it.episodes?.map {
+                    TvSeriesEpisode(
+                        it.name,
                         it.season_number,
-                    ).toJson(),
-                    getImageUrl(it.still_path),
-                    it.air_date?.toString(),
-                    it.rating,
-                    it.overview,
-                )
-            } ?: (1..(it.episode_count ?: 1)).map { episodeNum ->
-                TvSeriesEpisode(
-                    episode = episodeNum,
-                    data = episodeNum.toString(),
-                    season = it.season_number
-                )
-            }
-        }?.flatten() ?: listOf()
+                        it.episode_number,
+                        TmdbLink(
+                            it.external_ids?.imdb_id ?: this.external_ids?.imdb_id,
+                            this.id,
+                            it.episode_number,
+                            it.season_number,
+                        ).toJson(),
+                        getImageUrl(it.still_path),
+                        it.air_date?.toString(),
+                        it.rating,
+                        it.overview,
+                    )
+                } ?: (1..(it.episode_count ?: 1)).map { episodeNum ->
+                    TvSeriesEpisode(
+                        episode = episodeNum,
+                        data = TmdbLink(
+                            this.external_ids?.imdb_id,
+                            this.id,
+                            episodeNum,
+                            it.season_number,
+                        ).toJson(),
+                        season = it.season_number
+                    )
+                }
+            }?.flatten() ?: listOf()
 
+//        println("STATUS ${this.status}")
         return TvSeriesLoadResponse(
             this.name ?: this.original_name,
             getUrl(id, true),
@@ -112,18 +124,17 @@ open class TmdbProvider : MainAPI() {
                 }.get(Calendar.YEAR)
             },
             this.overview,
-            null,//this.status
-            null, // possible to get
+            null, // this.status
+            this.external_ids?.imdb_id,
             this.rating,
             this.genres?.mapNotNull { it.name },
-            null, //this.episode_run_time.average()
+            this.episode_run_time?.average()?.times(60)?.toInt()?.let { secondsToReadable(it, "") },
             null,
             this.recommendations?.results?.map { it.toSearchResponse() }
         )
     }
 
     private fun Movie.toLoadResponse(): MovieLoadResponse {
-        println("EXTERNAL IDS ${this.toJson()}")
         return MovieLoadResponse(
             this.title ?: this.original_title,
             getUrl(id, true),
@@ -145,7 +156,7 @@ open class TmdbProvider : MainAPI() {
             null,//this.status
             this.rating,
             this.genres?.mapNotNull { it.name },
-            null, //this.episode_run_time.average()
+            this.runtime?.times(60)?.let { secondsToReadable(it, "") },
             null,
             this.recommendations?.results?.map { it.toSearchResponse() }
         )

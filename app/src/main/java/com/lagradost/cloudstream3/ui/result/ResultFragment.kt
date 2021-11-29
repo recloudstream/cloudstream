@@ -927,6 +927,12 @@ class ResultFragment : Fragment() {
                         }
                         result_vpn?.visibility = if (api.vpnStatus == VPNStatus.None) GONE else VISIBLE
 
+                        result_info?.text = when (api.providerType){
+                            ProviderType.MetaProvider -> getString(R.string.provider_info_meta)
+                            else -> ""
+                        }
+                        result_info?.isVisible = api.providerType == ProviderType.MetaProvider
+
                         //result_bookmark_button.text = getString(R.string.type_watching)
 
                         currentHeaderName = d.name

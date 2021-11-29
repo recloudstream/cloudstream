@@ -2,8 +2,11 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.lagradost.cloudstream3.ProviderType
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mapper
+import com.lagradost.cloudstream3.metaproviders.TmdbLink
 import com.lagradost.cloudstream3.metaproviders.TmdbProvider
 import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
@@ -30,6 +33,15 @@ class TrailersTwoProvider : TmdbProvider() {
     override val instantLinkLoading: Boolean
         get() = true
 
+    override val supportedTypes: Set<TvType>
+        get() = setOf(
+            TvType.Movie,
+            TvType.TvSeries,
+            TvType.AnimeMovie,
+            TvType.Anime,
+            TvType.Cartoon
+        )
+
     override fun loadLinks(
         data: String,
         isCasting: Boolean,
@@ -37,8 +49,10 @@ class TrailersTwoProvider : TmdbProvider() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val mappedData = mapper.readValue<TmdbLink>(data)
-        println("MAPPED $mappedData")
-        if (mappedData.imdbID == null) return false
+        val (id, site) = if (mappedData.imdbID != null) listOf(
+            mappedData.imdbID,
+            "imdb"
+        ) else listOf(mappedData.tmdbID.toString(), "tmdb")
 
         val isMovie = mappedData.episode == null && mappedData.season == null
         val subtitleUrl = if (isMovie) {
@@ -46,25 +60,25 @@ class TrailersTwoProvider : TmdbProvider() {
                 ExtractorLink(
                     this.name,
                     this.name,
-                    "https://trailers.to/video/$user/imdb/${mappedData.imdbID}",
+                    "https://trailers.to/video/$user/$site/$id",
                     "https://trailers.to",
                     Qualities.Unknown.value,
                     false,
                 )
             )
-            "https://trailers.to/subtitles/$user/imdb/${mappedData.imdbID}"
+            "https://trailers.to/subtitles/$user/$site/$id"
         } else {
             callback.invoke(
                 ExtractorLink(
                     this.name,
                     this.name,
-                    "https://trailers.to/video/$user/imdb/${mappedData.imdbID}/S${mappedData.season ?: 1}E${mappedData.episode ?: 1}",
+                    "https://trailers.to/video/$user/$site/$id/S${mappedData.season ?: 1}E${mappedData.episode ?: 1}",
                     "https://trailers.to",
                     Qualities.Unknown.value,
                     false,
                 )
             )
-            "https://trailers.to/subtitles/$user/imdb/${mappedData.imdbID}/S${mappedData.season ?: 1}E${mappedData.episode ?: 1}"
+            "https://trailers.to/subtitles/$user/$site/$id/S${mappedData.season ?: 1}E${mappedData.episode ?: 1}"
         }
 
         val subtitles =
@@ -73,9 +87,9 @@ class TrailersTwoProvider : TmdbProvider() {
         subtitlesMapped.forEach {
             subtitleCallback.invoke(
                 SubtitleFile(
-                    it.LanguageCode ?: "en",
+                    SubtitleHelper.fromTwoLettersToLanguage(it.LanguageCode ?: "en") ?: "English",
                     "https://trailers.to/subtitles/${it.ContentHash ?: return@forEach}/${it.LanguageCode ?: return@forEach}.vtt" // ${it.MetaInfo?.SubFormat ?: "srt"}"
-                ).also { println(it) }
+                )
             )
         }
         return true

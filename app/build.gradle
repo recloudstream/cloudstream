@@ -40,7 +40,9 @@ android {
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
+
         buildConfigField("String", "BUILDDATE", "new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm\").format(new java.util.Date(" + System.currentTimeMillis() + "L));")
+        buildConfigField("String", "TMDB_API_KEY", "\"" + System.getenv("TMDB_API_KEY") + "\"")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
