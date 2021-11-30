@@ -32,7 +32,9 @@ open class TmdbProvider : MainAPI() {
     override val hasMainPage = true
     override val providerType = ProviderType.MetaProvider
 
-    val tmdb = Tmdb(BuildConfig.TMDB_API_KEY)
+    // Fuck it, public private api key because github actions won't co-operate.
+    // Please no stealy.
+    val tmdb = Tmdb("e6333b32409e02a4a6eba6fb7ff866bb")
 
     private fun getImageUrl(link: String?): String? {
         if (link == null) return null

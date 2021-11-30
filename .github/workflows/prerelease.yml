@@ -36,10 +36,6 @@ jobs:
         TMP_KEYSTORE_FILE_PATH="${RUNNER_TEMP}"/keystore
         mkdir -p "${TMP_KEYSTORE_FILE_PATH}"
         echo $ENCODED_STRING | base64 -di > "${TMP_KEYSTORE_FILE_PATH}"/prerelease_keystore.keystore
-    - name: Create Local Properties File
-      run: touch local.properties
-    - name: Add TMDB API Key
-      run: echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" >> local.properties
     - name: Run Gradle
       run: ./gradlew app:assemblePrerelease
       env:
