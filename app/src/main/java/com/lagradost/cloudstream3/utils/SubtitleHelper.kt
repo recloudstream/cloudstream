@@ -1,8 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.cloudstream3.network.get
-import com.lagradost.cloudstream3.network.text
-import org.jsoup.Jsoup
 import java.util.*
 
 object SubtitleHelper {
@@ -52,16 +49,22 @@ object SubtitleHelper {
         return null
     }
 
+    private var ISO_639_1Map : HashMap<String, String> = hashMapOf()
+    private fun initISO6391Map() {
+        for (lang in languages) {
+            ISO_639_1Map[lang.ISO_639_1] = lang.languageName
+        }
+    }
+
     /** ISO_639_1 -> lang*/
     fun fromTwoLettersToLanguage(input: String): String? {
         if (input.length != 2) return null
-        val comparison = input.toLowerCase(Locale.ROOT)
-        for (lang in languages) {
-            if (lang.ISO_639_1 == comparison) {
-                return lang.languageName
-            }
+        if(ISO_639_1Map.isEmpty()) {
+            initISO6391Map()
         }
-        return null
+        val comparison = input.toLowerCase(Locale.ROOT)
+
+        return ISO_639_1Map[comparison]
     }
 
     /**ISO_639_2_B or ISO_639_2_T or ISO_639_3-> lang*/

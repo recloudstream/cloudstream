@@ -216,12 +216,19 @@ class SubtitlesFragment : Fragment() {
         }
 
         subs_subtitle_elevation.setOnClickListener { textView ->
+            val suffix = "dp"
             val elevationTypes = listOf(
-                Pair(0, "None"),
-                Pair(10, "10"),
-                Pair(20, "20"),
-                Pair(30, "30"),
-                Pair(40, "40"),
+                Pair(0, textView.context.getString(R.string.none)),
+                Pair(10, "10$suffix"),
+                Pair(20, "20$suffix"),
+                Pair(30, "30$suffix"),
+                Pair(40, "40$suffix"),
+                Pair(50, "50$suffix"),
+                Pair(60, "60$suffix"),
+                Pair(70, "70$suffix"),
+                Pair(80, "80$suffix"),
+                Pair(90, "90$suffix"),
+                Pair(100, "100$suffix"),
             )
 
             //showBottomDialog
@@ -248,11 +255,11 @@ class SubtitlesFragment : Fragment() {
 
         subs_edge_type.setOnClickListener { textView ->
             val edgeTypes = listOf(
-                Pair(CaptionStyleCompat.EDGE_TYPE_NONE, "None"),
-                Pair(CaptionStyleCompat.EDGE_TYPE_OUTLINE, "Outline"),
-                Pair(CaptionStyleCompat.EDGE_TYPE_DEPRESSED, "Depressed"),
-                Pair(CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW, "Shadow"),
-                Pair(CaptionStyleCompat.EDGE_TYPE_RAISED, "Raised"),
+                Pair(CaptionStyleCompat.EDGE_TYPE_NONE, textView.context.getString(R.string.subtitles_none)),
+                Pair(CaptionStyleCompat.EDGE_TYPE_OUTLINE, textView.context.getString(R.string.subtitles_outline)),
+                Pair(CaptionStyleCompat.EDGE_TYPE_DEPRESSED, textView.context.getString(R.string.subtitles_depressed)),
+                Pair(CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW, textView.context.getString(R.string.subtitles_shadow)),
+                Pair(CaptionStyleCompat.EDGE_TYPE_RAISED, textView.context.getString(R.string.subtitles_raised)),
             )
 
             //showBottomDialog
@@ -278,32 +285,32 @@ class SubtitlesFragment : Fragment() {
         subs_font_size.setOnClickListener { textView ->
             val suffix = "sp"
             val fontSizes = listOf(
-                Pair(null, "Normal"),
-                Pair(6f,"6$suffix"),
-                Pair(8f,"8$suffix"),
-                Pair(9f,"9$suffix"),
-                Pair(10f,"10$suffix"),
-                Pair(11f,"11$suffix"),
-                Pair(12f,"12$suffix"),
-                Pair(14f,"14$suffix"),
-                Pair(16f,"16$suffix"),
-                Pair(18f,"18$suffix"),
-                Pair(19f,"19$suffix"),
-                Pair(21f,"21$suffix"),
-                Pair(23f,"23$suffix"),
-                Pair(24f,"24$suffix"),
-                Pair(26f,"26$suffix"),
-                Pair(28f,"28$suffix"),
-                Pair(30f,"30$suffix"),
-                Pair(32f,"32$suffix"),
-                Pair(34f,"34$suffix"),
-                Pair(36f,"36$suffix"),
-                Pair(38f,"38$suffix"),
-                Pair(40f,"40$suffix"),
-                Pair(42f,"42$suffix"),
-                Pair(44f,"44$suffix"),
-                Pair(48f,"48$suffix"),
-                Pair(60f,"60$suffix"),
+                Pair(null, textView.context.getString(R.string.normal)),
+                Pair(6f, "6$suffix"),
+                Pair(8f, "8$suffix"),
+                Pair(9f, "9$suffix"),
+                Pair(10f, "10$suffix"),
+                Pair(11f, "11$suffix"),
+                Pair(12f, "12$suffix"),
+                Pair(14f, "14$suffix"),
+                Pair(16f, "16$suffix"),
+                Pair(18f, "18$suffix"),
+                Pair(19f, "19$suffix"),
+                Pair(21f, "21$suffix"),
+                Pair(23f, "23$suffix"),
+                Pair(24f, "24$suffix"),
+                Pair(26f, "26$suffix"),
+                Pair(28f, "28$suffix"),
+                Pair(30f, "30$suffix"),
+                Pair(32f, "32$suffix"),
+                Pair(34f, "34$suffix"),
+                Pair(36f, "36$suffix"),
+                Pair(38f, "38$suffix"),
+                Pair(40f, "40$suffix"),
+                Pair(42f, "42$suffix"),
+                Pair(44f, "44$suffix"),
+                Pair(48f, "48$suffix"),
+                Pair(60f, "60$suffix"),
             )
 
             //showBottomDialog
@@ -328,7 +335,7 @@ class SubtitlesFragment : Fragment() {
 
         subs_font.setOnClickListener { textView ->
             val fontTypes = listOf(
-                Pair(null, "Normal"),
+                Pair(null, textView.context.getString(R.string.normal)),
                 Pair(R.font.trebuchet_ms, "Trebuchet MS"),
                 Pair(R.font.netflix_sans, "Netflix Sans"),
                 Pair(R.font.google_sans, "Google Sans"),
@@ -430,7 +437,7 @@ class SubtitlesFragment : Fragment() {
                         getPixels(TypedValue.COMPLEX_UNIT_SP, 25.0f).toFloat(),
                         Cue.TEXT_SIZE_TYPE_ABSOLUTE
                     )
-                    .setText("The quick brown fox jumps over the lazy dog").build()
+                    .setText(subtitle_text.context.getString(R.string.subtitles_example_text)).build()
             )
         )
     }

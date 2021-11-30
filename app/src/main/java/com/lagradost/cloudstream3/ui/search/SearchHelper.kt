@@ -41,7 +41,10 @@ object SearchHelper {
                         activity.loadSearchResult(card, START_ACTION_LOAD_EP, card.id!!)
                     }
                 } else {
-                    handleSearchClickCallback(activity, SearchClickCallback(SEARCH_ACTION_LOAD,callback.view,callback.card))
+                    handleSearchClickCallback(
+                        activity,
+                        SearchClickCallback(SEARCH_ACTION_LOAD, callback.view, callback.card)
+                    )
                 }
             }
             SEARCH_ACTION_SHOW_METADATA -> {

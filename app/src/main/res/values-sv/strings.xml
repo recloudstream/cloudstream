@@ -213,4 +213,26 @@
     <string name="source_error">Källfel</string>
     <string name="remote_error">Fjärrfel</string>
     <string name="render_error">Renderingsfel</string>
+    <string name="subtitles_example_text">Flygande bäckasiner söka hwila på mjuka tuvor</string>
+    <string name="subtitles_shadow">Skugga</string>
+    <string name="subtitles_outline">Kontur</string>
+    <string name="subtitles_depressed">Nedsänkt</string>
+    <string name="subtitles_raised">Upphöjd</string>
+    <string name="none">Ingen</string>
+    <string name="normal">Normal</string>
+    <string name="all">Allt</string>
+    <string name="max">Min</string>
+    <string name="min">Max</string>
+    <string name="add_account">Lägg till konto</string>
+    <string name="switch_account">Byt konto</string>
+    <string name="login">Logga in</string>
+    <string name="logout">Logga ut</string>
+    <string name="account">konto</string>
+    <string name="download_path_pref">Nerladdningsplats</string>
+    <string name="type_re_watching">Kollar om</string>
+    <string name="automatic">Automatisk</string>
+    <string name="dns_pref">DNS över HTTPS</string>
+    <string name="dns_pref_summary">" "</string>
+    <string name="app_theme_settings">Appens tema</string>
+    <string name="app_dub_sub_episode_text_format">%s A%d</string>
 </resources>

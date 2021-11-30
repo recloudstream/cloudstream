@@ -12,9 +12,8 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.DataStore.setKey
-import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
@@ -25,9 +24,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.getFillerEpisodes
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -133,7 +130,7 @@ class ResultViewModel : ViewModel() {
         val seasons = seasonTypes.toList().map { it.first }.sortedBy { it }
         seasonSelections.postValue(seasons)
         if (seasons.isEmpty()) { // WHAT THE FUCK DID YOU DO????? HOW DID YOU DO THIS
-            _publicEpisodes.postValue(Resource.Success(ArrayList()))
+            _publicEpisodes.postValue(Resource.Success(emptyList()))
             return
         }
 
@@ -415,18 +412,18 @@ class ResultViewModel : ViewModel() {
         }
     }
 
-    private val _allEpisodes: MutableLiveData<HashMap<Int, ArrayList<ExtractorLink>>> =
+    private val _allEpisodes: MutableLiveData<HashMap<Int, List<ExtractorLink>>> =
         MutableLiveData(HashMap()) // LOOKUP BY ID
-    private val _allEpisodesSubs: MutableLiveData<HashMap<Int, ArrayList<SubtitleFile>>> =
+    private val _allEpisodesSubs: MutableLiveData<HashMap<Int, HashMap<String, SubtitleFile>>> =
         MutableLiveData(HashMap()) // LOOKUP BY ID
 
-    val allEpisodes: LiveData<HashMap<Int, ArrayList<ExtractorLink>>> get() = _allEpisodes
-    val allEpisodesSubs: LiveData<HashMap<Int, ArrayList<SubtitleFile>>> get() = _allEpisodesSubs
+    val allEpisodes: LiveData<HashMap<Int, List<ExtractorLink>>> get() = _allEpisodes
+    val allEpisodesSubs: LiveData<HashMap<Int, HashMap<String, SubtitleFile>>> get() = _allEpisodesSubs
 
     private var _apiName: MutableLiveData<String> = MutableLiveData()
     val apiName: LiveData<String> get() = _apiName
 
-    data class EpisodeData(val links: ArrayList<ExtractorLink>, val subs: ArrayList<SubtitleFile>)
+    data class EpisodeData(val links: List<ExtractorLink>, val subs: HashMap<String, SubtitleFile>)
 
     fun loadEpisode(
         episode: ResultEpisode,
@@ -452,11 +449,35 @@ class ResultViewModel : ViewModel() {
             _allEpisodes.value?.remove(id)
         }
         val links = ArrayList<ExtractorLink>()
-        val subs = ArrayList<SubtitleFile>()
+        val subs = HashMap<String, SubtitleFile>()
         return safeApiCall {
             repo?.loadLinks(data, isCasting, { subtitleFile ->
-                if (!subs.any { it.url == subtitleFile.url }) {
-                    subs.add(subtitleFile)
+                if (!subs.values.any { it.url == subtitleFile.url }) {
+                    val langTrimmed = subtitleFile.lang.trimEnd()
+
+                    val langId = if (langTrimmed.length == 2) {
+                        SubtitleHelper.fromTwoLettersToLanguage(langTrimmed) ?: langTrimmed
+                    } else {
+                        langTrimmed
+                    }
+
+                    var title: String
+                    var count = 0
+                    while (true) {
+                        title = "$langId${if (count == 0) "" else " ${count+1}"}"
+                        count++
+                        if(!subs.containsKey(title)) {
+                            break
+                        }
+                    }
+
+                    val file =
+                        subtitleFile.copy(
+                            lang = title
+                        )
+
+                    subs[title] = file
+
                     _allEpisodesSubs.value?.set(id, subs)
                     _allEpisodesSubs.postValue(_allEpisodesSubs.value)
                 }
