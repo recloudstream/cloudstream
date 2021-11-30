@@ -30,9 +30,6 @@ android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
-    def Properties properties = new Properties()
-    properties.load(project.rootProject.file("local.properties").newDataInputStream())
-
     defaultConfig {
         applicationId "com.lagradost.cloudstream3"
         minSdkVersion 21
