@@ -154,4 +154,17 @@
     <string name="dont_show_again">फिरसे ना दिखाए</string>
     <string name="update">अपडेट</string>
     <string name="watch_quality_pref">पसंदीदा देखने की क्वालिटी</string>
+    <string name="dns_pref_summary">ISP ब्लॉक से छुटकारा पाएं</string>
+    <string name="provider_lang_settings">सूत्र की भाषाएं</string>
+    <string name="app_layout">ऐप का लेआउट</string>
+    <string name="preferred_media_settings">पसंदीदा मीडिया </string>
+    
+    <string name="download_path_pref"> डाउनलोड करने का मार्ग</string>
+    <string name="display_subbed_dubbed_settings">Dubbed या Subbed Anime दिखाये</string>
+    
+    <string name="tv_layout">टीवी लेआउट</string>
+    <string name="phone_layout">फ़ोन लेआउट</string>
+
+    <string name="primary_color_settings">मुख्य रंग</string>
+    <string name="app_theme_settings">ऐप का रंग</string>
 </resources>
