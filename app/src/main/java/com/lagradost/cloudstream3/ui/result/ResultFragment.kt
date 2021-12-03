@@ -528,7 +528,7 @@ class ResultFragment : Fragment() {
                     val downloadList = ctx.getDownloadSubsLanguageISO639_1()
                     main {
                         subs?.let { subsList ->
-                            subsList.filter { downloadList.contains(SubtitleHelper.fromLanguageToTwoLetters(it.lang)) }
+                            subsList.filter { downloadList.contains(SubtitleHelper.fromLanguageToTwoLetters(it.lang, true)) }
                                 .map { ExtractorSubtitleLink(it.lang, it.url, "") }
                                 .forEach { link ->
                                     val epName = meta.name ?: "${context?.getString(R.string.episode)} ${meta.episode}"
