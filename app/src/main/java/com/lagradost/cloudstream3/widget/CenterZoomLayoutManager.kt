@@ -81,7 +81,6 @@ class CenterZoomLayoutManager : LinearLayoutManager {
         if(waitForSnap != null) {
             this.getChildAt(snapChild ?: 1)?.let { view ->
                 LinearSnapHelper().calculateDistanceToFinalSnap(this,view)?.get(0)?.let { dx ->
-                    println("DX: $dx")
                     waitForSnap?.invoke(dx)
                     waitForSnap = null
                 }

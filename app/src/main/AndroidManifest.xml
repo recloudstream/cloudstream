@@ -49,6 +49,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
 
                 <data android:scheme="https" android:host="gogoanime.vc" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="allanime.site" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="animeflick.net" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="kawaiifu.com" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="tenshi.moe" android:pathPrefix="/"/>
@@ -57,11 +58,16 @@
                 <data android:scheme="https" android:host="hdm.to" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="www.vmovee.watch" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="www.wcostream.com" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="allmoviesforyou.co" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="asiaflix.app" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="www.thenos.org" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="allmoviesforyou.net" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="vidembed.cc" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="vf-film.me" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="vf-serie.org" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="asianembed.io" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="sflix.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="dopebox.to" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="trailers.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="zoro.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="asiaflix.app" android:pathPrefix="/"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

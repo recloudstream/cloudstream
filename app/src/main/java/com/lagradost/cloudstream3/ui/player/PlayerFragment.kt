@@ -119,6 +119,7 @@ const val EXTRA_CONTROL_TYPE = "control_type"
 const val PLAYBACK_SPEED = "playback_speed"
 const val RESIZE_MODE_KEY = "resize_mode" // Last used resize mode
 const val PLAYBACK_SPEED_KEY = "playback_speed" // Last used playback speed
+const val PREFERRED_SUBS_KEY = "preferred_subtitles" // Last used resize mode
 
 const val OPENING_PERCENTAGE = 50
 const val AUTOLOAD_NEXT_EPISODE_PERCENTAGE = 80
@@ -1428,6 +1429,10 @@ class PlayerFragment : Fragment() {
             playbackPosition = it
         }
 
+        arguments?.getString(PREFERRED_SUBS_KEY)?.let {
+            setPreferredSubLanguage(it)
+        }
+
         sources_btt.visibility =
             if (isDownloadedFile)
                 if (context?.getSubs()?.isNullOrEmpty() != false)
@@ -1443,11 +1448,17 @@ class PlayerFragment : Fragment() {
             isFullscreen = savedInstanceState.getBoolean(STATE_PLAYER_FULLSCREEN)
             isPlayerPlaying = savedInstanceState.getBoolean(STATE_PLAYER_PLAYING)
             resizeMode = savedInstanceState.getInt(RESIZE_MODE_KEY)
+            savedInstanceState.getString(PREFERRED_SUBS_KEY)?.let {
+                setPreferredSubLanguage(it)
+            }
+            savedInstanceState.getString("data")?.let {
+                playerData = mapper.readValue(it)
+            }
             playbackSpeed = savedInstanceState.getFloat(PLAYBACK_SPEED)
         }
 
-        resizeMode = requireContext().getKey(RESIZE_MODE_KEY, 0)!!
-        playbackSpeed = requireContext().getKey(PLAYBACK_SPEED_KEY, 1f)!!
+        resizeMode = context?.getKey(RESIZE_MODE_KEY, 0) ?: 0
+        playbackSpeed = context?.getKey(PLAYBACK_SPEED_KEY, 1f) ?: 1f
 
         activity?.let {
             it.contentResolver?.registerContentObserver(
@@ -1666,7 +1677,7 @@ class PlayerFragment : Fragment() {
 
         changeSkip()
 
-        // initPlayer()
+        initPlayer()
     }
 
     private fun getCurrentUrl(): ExtractorLink? {
@@ -1741,7 +1752,7 @@ class PlayerFragment : Fragment() {
                 if (item.getId() == id) {
                     if (sorted.size > i + 1) {
                         setMirrorId(sorted[i + 1].getId())
-                        initPlayer()
+                        initPlayer(getCurrentUrl())
                     }
                 }
             }
@@ -1769,7 +1780,13 @@ class PlayerFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         if (!isCurrentlyPlaying) {
-            initPlayer()
+            if (isDownloadedFile) {
+                initPlayer(null, uriData.uri)
+            } else {
+                getCurrentUrl()?.let {
+                    initPlayer(it)
+                }
+            }
         }
         if (player_view != null) player_view?.onResume()
     }
@@ -1790,7 +1807,13 @@ class PlayerFragment : Fragment() {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         if (Util.SDK_INT <= 23) {
             if (!isCurrentlyPlaying) {
-                initPlayer()
+                if (isDownloadedFile) {
+                    initPlayer(null, uriData.uri)
+                } else {
+                    getCurrentUrl()?.let {
+                        initPlayer(it)
+                    }
+                }
             }
             if (player_view != null) player_view?.onResume()
         }
@@ -1864,6 +1887,7 @@ class PlayerFragment : Fragment() {
         arguments?.putBoolean(STATE_PLAYER_FULLSCREEN, isFullscreen)
         arguments?.putBoolean(STATE_PLAYER_PLAYING, isPlayerPlaying)
         arguments?.putInt(RESIZE_MODE_KEY, resizeMode)
+        arguments?.putString(PREFERRED_SUBS_KEY, preferredSubtitles)
         arguments?.putFloat(PLAYBACK_SPEED, playbackSpeed)
         if (!isDownloadedFile && this::playerData.isInitialized) {
             arguments?.putString("data", mapper.writeValueAsString(playerData))
@@ -1880,6 +1904,7 @@ class PlayerFragment : Fragment() {
         outState.putBoolean(STATE_PLAYER_FULLSCREEN, isFullscreen)
         outState.putBoolean(STATE_PLAYER_PLAYING, isPlayerPlaying)
         outState.putInt(RESIZE_MODE_KEY, resizeMode)
+        outState.putString(PREFERRED_SUBS_KEY, preferredSubtitles)
         outState.putFloat(PLAYBACK_SPEED, playbackSpeed)
         if (!isDownloadedFile && this::playerData.isInitialized) {
             outState.putString("data", mapper.writeValueAsString(playerData))
