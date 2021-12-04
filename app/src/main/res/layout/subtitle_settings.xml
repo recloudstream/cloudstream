@@ -45,8 +45,9 @@
         <TextView
                 android:id="@+id/subs_font"
                 android:text="@string/subs_font"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem">
+                <requestFocus/>
+        </TextView>
         <TextView
                 android:id="@+id/subs_font_size"
                 android:text="@string/subs_font_size"

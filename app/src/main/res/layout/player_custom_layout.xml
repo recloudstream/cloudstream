@@ -278,7 +278,8 @@
                         android:layout_gravity="center"
                         android:padding="10dp"
                         android:background="@drawable/video_tap_button_skip"
-                        android:src="@drawable/netflix_skip_back"
+                        android:src="@drawable/netflix_skip_forward"
+                        android:scaleX="-1"
                         android:scaleType="fitCenter"
                         android:tintMode="src_in"
                 />
