@@ -5,6 +5,7 @@ import android.net.http.SslError
 import android.webkit.*
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -98,15 +99,15 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
 
                             webViewUrl.contains("recaptcha") -> super.shouldInterceptRequest(view, request)
 
-                            request.method == "GET" -> get(
+                            request.method == "GET" -> app.get(
                                 webViewUrl,
                                 headers = request.requestHeaders
-                            ).toWebResourceResponse()
+                            ).response.toWebResourceResponse()
 
-                            request.method == "POST" -> post(
+                            request.method == "POST" -> app.post(
                                 webViewUrl,
                                 headers = request.requestHeaders
-                            ).toWebResourceResponse()
+                            ).response.toWebResourceResponse()
                             else -> return super.shouldInterceptRequest(view, request)
                         }
                     } catch (e: Exception) {
@@ -144,7 +145,7 @@ class WebViewResolver(val interceptUrl: Regex) : Interceptor {
         // 1. contentType. 2. charset
         val typeRegex = Regex("""(.*);(?:.*charset=(.*)(?:|;)|)""")
         return if (contentTypeValue != null) {
-            val found = typeRegex.find(contentTypeValue ?: "")
+            val found = typeRegex.find(contentTypeValue)
             val contentType = found?.groupValues?.getOrNull(1)?.ifBlank { null } ?: contentTypeValue
             val charset = found?.groupValues?.getOrNull(2)?.ifBlank { null }
             WebResourceResponse(contentType, charset, this.body?.byteStream())

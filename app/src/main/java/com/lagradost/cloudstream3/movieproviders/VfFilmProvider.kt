@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -33,7 +32,7 @@ class VfFilmProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
         val items = document.select("ul.MovieList > li > article > a")
         if (items.isNullOrEmpty()) return ArrayList()
@@ -42,7 +41,8 @@ class VfFilmProvider : MainAPI() {
         for (item in items) {
             val href = item.attr("href")
 
-            val poster = item.selectFirst("> div.Image > figure > img").attr("src").replace("//image", "https://image")
+            val poster = item.selectFirst("> div.Image > figure > img").attr("src")
+                .replace("//image", "https://image")
 
             val name = item.selectFirst("> h3.Title").text()
 
@@ -76,22 +76,23 @@ class VfFilmProvider : MainAPI() {
 
 
     private fun getDirect(original: String): String {  // original data, https://vf-film.org/?trembed=1&trid=55313&trtype=1 for example
-        val response = get(original).text
-        val url = "iframe .*src=\"(.*?)\"".toRegex().find(response)?.groupValues?.get(1).toString()  // https://vudeo.net/embed-uweno86lzx8f.html for example
-        val vudoResponse = get(url).text
+        val response = app.get(original).text
+        val url = "iframe .*src=\"(.*?)\"".toRegex().find(response)?.groupValues?.get(1)
+            .toString()  // https://vudeo.net/embed-uweno86lzx8f.html for example
+        val vudoResponse = app.get(url).text
         val document = Jsoup.parse(vudoResponse)
-        val vudoUrl = Regex("sources: \\[\"(.*?)\"]").find(document.html())?.groupValues?.get(1).toString()  // direct mp4 link, https://m11.vudeo.net/2vp3ukyw2avjdohilpebtzuct42q5jwvpmpsez3xjs6d7fbs65dpuey2rbra/v.mp4 for exemple
+        val vudoUrl = Regex("sources: \\[\"(.*?)\"]").find(document.html())?.groupValues?.get(1)
+            .toString()  // direct mp4 link, https://m11.vudeo.net/2vp3ukyw2avjdohilpebtzuct42q5jwvpmpsez3xjs6d7fbs65dpuey2rbra/v.mp4 for exemple
         return vudoUrl
     }
 
 
-
     override fun load(url: String): LoadResponse {
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
         val title = document?.selectFirst("div.SubTitle")?.text()
             ?: throw ErrorLoadingException("Service might be unavailable")
-        
+
 
         val year = document.select("span.Date").text()?.toIntOrNull()
 
@@ -99,7 +100,8 @@ class VfFilmProvider : MainAPI() {
 
         val duration = document.select("span.Time").text()?.toIntOrNull()
 
-        val poster = document.selectFirst("div.Image > figure > img").attr("src").replace("//image", "https://image")
+        val poster = document.selectFirst("div.Image > figure > img").attr("src")
+            .replace("//image", "https://image")
 
         val descript = document.selectFirst("div.Description > p").text()
 

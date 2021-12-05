@@ -27,7 +27,7 @@ class AnimePaheProvider : MainAPI() {
         fun generateSession(): Boolean {
             if (cookies.isNotEmpty()) return true
             return try {
-                val response = get("$MAIN_URL/")
+                val response = app.get("$MAIN_URL/")
                 cookies = response.cookies
                 true
             } catch (e: Exception) {
@@ -84,7 +84,7 @@ class AnimePaheProvider : MainAPI() {
         val items = ArrayList<HomePageList>()
         for (i in urls) {
             try {
-                val response = get(i.first).text
+                val response = app.get(i.first).text
                 val episodes = mapper.readValue<AnimePaheLatestReleases>(response).data.map {
 
                     AnimeSearchResponse(
@@ -134,7 +134,7 @@ class AnimePaheProvider : MainAPI() {
         val url = "$mainUrl/api?m=search&l=8&q=$title"
         val headers = mapOf("referer" to "$mainUrl/")
 
-        val req = get(url, headers = headers).text
+        val req = app.get(url, headers = headers).text
         val data = req.let { mapper.readValue<AnimePaheSearch>(it) }
         for (anime in data.data) {
             if (anime.id == animeId) {
@@ -149,7 +149,7 @@ class AnimePaheProvider : MainAPI() {
         val url = "$mainUrl/api?m=search&l=8&q=$query"
         val headers = mapOf("referer" to "$mainUrl/")
 
-        val req = get(url, headers = headers).text
+        val req = app.get(url, headers = headers).text
         val data = req.let { mapper.readValue<AnimePaheSearch>(it) }
 
         return ArrayList(data.data.map {
@@ -200,7 +200,7 @@ class AnimePaheProvider : MainAPI() {
             val uri = "$mainUrl/api?m=release&id=$id&sort=episode_asc&page=1"
             val headers = mapOf("referer" to "$mainUrl/")
 
-            val req = get(uri, headers = headers).text
+            val req = app.get(uri, headers = headers).text
             val data = req.let { mapper.readValue<AnimePaheAnimeData>(it) }
 
             val lastPage = data.lastPage
@@ -255,7 +255,7 @@ class AnimePaheProvider : MainAPI() {
             val (animeId, animeTitle) = regex.find(url)!!.destructured
             val link = getAnimeByIdAndTitle(animeTitle, animeId.toInt())!!
 
-            val html = get(link).text
+            val html = app.get(link).text
             val doc = Jsoup.parse(html)
 
             val japTitle = doc.selectFirst("h2.japanese")?.text()
@@ -270,14 +270,16 @@ class AnimePaheProvider : MainAPI() {
             }
 
             val episodes = generateListOfEpisodes(url)
-            val year = """<strong>Aired:</strong>[^,]*, (\d+)""".toRegex().find(html)!!.destructured.component1()
+            val year = """<strong>Aired:</strong>[^,]*, (\d+)""".toRegex()
+                .find(html)!!.destructured.component1()
                 .toIntOrNull()
-            val status = when ("""<strong>Status:</strong>[^a]*a href=["']/anime/(.*?)["']""".toRegex()
-                .find(html)!!.destructured.component1()) {
-                "airing" -> ShowStatus.Ongoing
-                "completed" -> ShowStatus.Completed
-                else -> null
-            }
+            val status =
+                when ("""<strong>Status:</strong>[^a]*a href=["']/anime/(.*?)["']""".toRegex()
+                    .find(html)!!.destructured.component1()) {
+                    "airing" -> ShowStatus.Ongoing
+                    "completed" -> ShowStatus.Completed
+                    else -> null
+                }
             val synopsis = doc.selectFirst(".anime-synopsis").text()
 
             var anilistId: Int? = null
@@ -446,12 +448,12 @@ class AnimePaheProvider : MainAPI() {
         }
 
         var responseCode = 302
-        var adflyContent: Response? = null
+        var adflyContent: AppResponse? = null
         var tries = 0
 
         while (responseCode != 200 && tries < 20) {
-            adflyContent = get(
-                get(adflyUri, cookies = cookies, allowRedirects = false).url,
+            adflyContent = app.get(
+                app.get(adflyUri, cookies = cookies, allowRedirects = false).url,
                 cookies = cookies,
                 allowRedirects = false
             )
@@ -467,20 +469,24 @@ class AnimePaheProvider : MainAPI() {
 
     private fun getStreamUrlFromKwik(adflyUri: String): String {
         val fContent =
-            get(bypassAdfly(adflyUri), headers = mapOf("referer" to "https://kwik.cx/"), cookies = cookies)
+            app.get(
+                bypassAdfly(adflyUri),
+                headers = mapOf("referer" to "https://kwik.cx/"),
+                cookies = cookies
+            )
         cookies = cookies + fContent.cookies
 
         val (fullString, key, v1, v2) = KWIK_PARAMS_RE.find(fContent.text)!!.destructured
         val decrypted = decrypt(fullString, key, v1.toInt(), v2.toInt())
         val uri = KWIK_D_URL.find(decrypted)!!.destructured.component1()
         val tok = KWIK_D_TOKEN.find(decrypted)!!.destructured.component1()
-        var content: Response? = null
+        var content: AppResponse? = null
 
         var code = 419
         var tries = 0
 
         while (code != 302 && tries < 20) {
-            content = post(
+            content = app.post(
                 uri,
                 allowRedirects = false,
                 data = mapOf("_token" to tok),
@@ -508,7 +514,7 @@ class AnimePaheProvider : MainAPI() {
             link = link.replace(regex, "")
 
 
-            val req = get(link, headers = headers).text
+            val req = app.get(link, headers = headers).text
             val jsonResponse = req.let { mapper.readValue<AnimePaheAnimeData>(it) }
             val ep = ((jsonResponse.data.map {
                 if (it.episode == episodeNum) {
@@ -519,7 +525,7 @@ class AnimePaheProvider : MainAPI() {
             }).filterNotNull())[0]
             link = "$mainUrl/api?m=links&id=${ep.animeId}&session=${ep.session}&p=kwik"
         }
-        val req = get(link, headers = headers).text
+        val req = app.get(link, headers = headers).text
         val data = mapper.readValue<AnimePaheEpisodeLoadLinks>(req)
 
         val qualities = ArrayList<ExtractorLink>()

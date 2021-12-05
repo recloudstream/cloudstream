@@ -3,8 +3,6 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.get
-import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -25,7 +23,7 @@ class VMoveeProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
         val searchItems = document.select("div.search-page > div.result-item > article")
         if (searchItems.size == 0) return ArrayList()
@@ -79,7 +77,7 @@ class VMoveeProvider : MainAPI() {
 
         val url = "$mainUrl/dashboard/admin-ajax.php"
         val post =
-            post(
+            app.post(
                 url,
                 headers = mapOf("referer" to url),
                 data = mapOf("action" to "doo_player_ajax", "post" to data, "nume" to "2", "type" to "movie")
@@ -91,11 +89,11 @@ class VMoveeProvider : MainAPI() {
             realUrl = "https:$realUrl"
         }
 
-        val request = get(realUrl)
+        val request = app.get(realUrl)
         val prefix = "https://reeoov.tube/v/"
         if (request.url.startsWith(prefix)) {
             val apiUrl = "https://reeoov.tube/api/source/${request.url.removePrefix(prefix)}"
-            val apiResponse = post(apiUrl,headers = mapOf("Referer" to request.url),data = mapOf("r" to "https://www.vmovee.watch/", "d" to "reeoov.tube")).text
+            val apiResponse = app.post(apiUrl,headers = mapOf("Referer" to request.url),data = mapOf("r" to "https://www.vmovee.watch/", "d" to "reeoov.tube")).text
             val apiData = mapper.readValue<ReeoovAPI>(apiResponse)
             for (d in apiData.data) {
                 callback.invoke(
@@ -115,7 +113,7 @@ class VMoveeProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
 
         val sheader = document.selectFirst("div.sheader")

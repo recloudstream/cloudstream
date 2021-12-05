@@ -3,8 +3,6 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.get
-import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -32,7 +30,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
         val url = "https://www.wcostream.com/search"
 
         var response =
-            post(
+            app.post(
                 url,
                 headers = mapOf("Referer" to url),
                 data = mapOf("catara" to query, "konuara" to "series")
@@ -71,7 +69,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
 
         // "episodes-search", is used for finding movies, anime episodes should be filtered out
         response =
-            post(
+            app.post(
                 url,
                 headers = mapOf("Referer" to url),
                 data = mapOf("catara" to query, "konuara" to "episodes")
@@ -105,7 +103,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
 
     override fun load(url: String): LoadResponse {
         val isMovie = !url.contains("/anime/")
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
 
         return if (!isMovie) {
@@ -195,7 +193,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val response = get(data).text
+        val response = app.get(data).text
         /*val embedUrl = fixUrl(
             Regex("itemprop=\"embedURL\" content=\"(.*?)\"").find(response.text)?.groupValues?.get(1) ?: return false
         )*/
@@ -223,7 +221,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
         val jsEval = scope.get("returnValue", scope) ?: return false
         val src = fixUrl(Regex("src=\"(.*?)\"").find(jsEval as String)?.groupValues?.get(1) ?: return false)
 
-        val embedResponse = get(
+        val embedResponse = app.get(
             (src),
             headers = mapOf("Referer" to data)
         )
@@ -231,7 +229,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
         val getVidLink = fixUrl(
             Regex("get\\(\"(.*?)\"").find(embedResponse.text)?.groupValues?.get(1) ?: return false
         )
-        val linkResponse = get(
+        val linkResponse = app.get(
             getVidLink, headers = mapOf(
                 "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
                 "sec-ch-ua-mobile" to "?0",

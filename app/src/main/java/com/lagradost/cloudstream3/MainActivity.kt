@@ -29,7 +29,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.initRequestClient
+import com.lagradost.cloudstream3.network.Requests
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.OAuth2accountApis
@@ -71,6 +71,9 @@ const val VLC_FROM_PROGRESS = -2
 const val VLC_EXTRA_POSITION_OUT = "extra_position"
 const val VLC_EXTRA_DURATION_OUT = "extra_duration"
 const val VLC_LAST_ID_KEY = "vlc_last_open_id"
+// Short name for requests client to make it nicer to use
+var app = Requests()
+
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onColorSelected(dialogId: Int, color: Int) {
@@ -509,7 +512,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
 
         updateLocale()
-        initRequestClient()
+        app.initClient(this)
         super.onCreate(savedInstanceState)
         try {
             if (isCastApiAvailable()) {

@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.*
@@ -17,7 +17,7 @@ class AsianLoad : ExtractorApi() {
     private val sourceRegex = Regex("""sources:[\W\w]*?file:\s*?["'](.*?)["']""")
     override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
-        with(get(url, referer = referer)) {
+        with(app.get(url, referer = referer)) {
             sourceRegex.findAll(this.text).forEach { sourceMatch ->
                 val extractedUrl = sourceMatch.groupValues[1]
                 // Trusting this isn't mp4, may fuck up stuff

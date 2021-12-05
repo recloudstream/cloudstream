@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -82,7 +82,7 @@ class M3u8Helper {
     fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean): List<M3u8Stream> {
         val generate = sequence {
             val m3u8Parent = getParentLink(m3u8.streamUrl)
-            val response = get(m3u8.streamUrl, headers = m3u8.headers).text
+            val response = app.get(m3u8.streamUrl, headers = m3u8.headers).text
 
             for (match in QUALITY_REGEX.findAll(response)) {
                 var (quality, m3u8Link, m3u8Link2) = match.destructured
@@ -146,7 +146,7 @@ class M3u8Helper {
 
         val secondSelection = selectBest(streams.ifEmpty { listOf(selected) })
         if (secondSelection != null) {
-            val m3u8Response = get(secondSelection.streamUrl, headers = headers).text
+            val m3u8Response = app.get(secondSelection.streamUrl, headers = headers).text
 
             var encryptionUri: String?
             var encryptionIv = byteArrayOf()
@@ -164,7 +164,7 @@ class M3u8Helper {
                 }
 
                 encryptionIv = match.component3().toByteArray()
-                val encryptionKeyResponse = get(encryptionUri, headers = headers)
+                val encryptionKeyResponse = app.get(encryptionUri, headers = headers)
                 encryptionData = encryptionKeyResponse.body?.bytes() ?: byteArrayOf()
             }
 
@@ -187,7 +187,7 @@ class M3u8Helper {
 
                     while (lastYield != c) {
                         try {
-                            val tsResponse = get(url, headers = headers)
+                            val tsResponse = app.get(url, headers = headers)
                             var tsData = tsResponse.body?.bytes() ?: byteArrayOf()
 
                             if (encryptionState) {

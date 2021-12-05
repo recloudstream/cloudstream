@@ -2,9 +2,9 @@ package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.mapper
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 
 class WcoStream : ExtractorApi() {
@@ -16,14 +16,14 @@ class WcoStream : ExtractorApi() {
     override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val baseUrl = url.split("/e/")[0]
 
-        val html = get(url, headers = mapOf("Referer" to "https://wcostream.cc/")).text
+        val html = app.get(url, headers = mapOf("Referer" to "https://wcostream.cc/")).text
         val (Id) = "/e/(.*?)?domain".toRegex().find(url)!!.destructured
         val (skey) = """skey\s=\s['"](.*?)['"];""".toRegex().find(html)!!.destructured
 
         val apiLink = "$baseUrl/info/$Id?domain=wcostream.cc&skey=$skey"
         val referrer = "$baseUrl/e/$Id?domain=wcostream.cc"
 
-        val response = get(apiLink, headers = mapOf("Referer" to referrer)).text
+        val response = app.get(apiLink, headers = mapOf("Referer" to referrer)).text
 
         data class Sources(
             @JsonProperty("file") val file: String,

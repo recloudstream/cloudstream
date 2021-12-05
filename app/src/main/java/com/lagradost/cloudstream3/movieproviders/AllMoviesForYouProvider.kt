@@ -2,9 +2,6 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.get
-import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.*
 import okio.Buffer
 import org.jsoup.Jsoup
@@ -35,7 +32,7 @@ class AllMoviesForYouProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
 
         val items = document.select("ul.MovieList > li > article > a")
@@ -75,7 +72,7 @@ class AllMoviesForYouProvider : MainAPI() {
     override fun load(url: String): LoadResponse {
         val type = getType(url)
 
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
 
         val title = document.selectFirst("h1.Title").text()
@@ -101,7 +98,7 @@ class AllMoviesForYouProvider : MainAPI() {
             val episodeList = ArrayList<TvSeriesEpisode>()
 
             for (season in list) {
-                val seasonResponse = get(season.second).text
+                val seasonResponse = app.get(season.second).text
                 val seasonDocument = Jsoup.parse(seasonResponse)
                 val episodes = seasonDocument.select("table > tbody > tr")
                 if (episodes.isNotEmpty()) {
@@ -166,7 +163,7 @@ class AllMoviesForYouProvider : MainAPI() {
     ): Boolean {
         if (data == "about:blank") return false
         if (data.startsWith("$mainUrl/episode/")) {
-            val response = get(data).text
+            val response = app.get(data).text
             getLink(Jsoup.parse(response))?.let { links ->
                 for (link in links) {
                     if (link == data) continue
@@ -178,7 +175,7 @@ class AllMoviesForYouProvider : MainAPI() {
         } else if (data.startsWith(mainUrl) && data != mainUrl) {
             val realDataUrl = URLDecoder.decode(data, "UTF-8")
             if (data.contains("trdownload")) {
-                val request = get(data)
+                val request = app.get(data)
                 val requestUrl = request.url
                 if (requestUrl.startsWith("https://streamhub.to/d/")) {
                     val buffer = Buffer()
@@ -213,7 +210,7 @@ class AllMoviesForYouProvider : MainAPI() {
                 }
                 return true
             }
-            val response = get(realDataUrl).text
+            val response = app.get(realDataUrl).text
             Regex("<iframe.*?src=\"(.*?)\"").find(response)?.groupValues?.get(1)?.let { url ->
                 loadExtractor(url.trimStart(), realDataUrl, callback)
             }

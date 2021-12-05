@@ -2,9 +2,9 @@ package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import java.util.concurrent.TimeUnit
 
@@ -16,7 +16,7 @@ object SyncUtil {
             //Gogoanime, Twistmoe and 9anime
             val url =
                 "https://raw.githubusercontent.com/MALSync/MAL-Sync-Backup/master/data/pages/$site/$slug.json"
-            val response = get(url, cacheTime = 1, cacheUnit = TimeUnit.DAYS).text
+            val response = app.get(url, cacheTime = 1, cacheUnit = TimeUnit.DAYS).text
             val mapped = mapper.readValue<MalSyncPage?>(response)
 
             val overrideMal = mapped?.malId ?: mapped?.Mal?.id ?: mapped?.Anilist?.malId

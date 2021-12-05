@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.pmap
@@ -41,7 +41,7 @@ class Vidstream(val mainUrl: String) {
             normalSafeApiCall {
                 val link = getDownloadUrl(id)
                 println("Generated vidstream download link: $link")
-                val page = get(link, referer = extractorUrl)
+                val page = app.get(link, referer = extractorUrl)
 
                 val pageDoc = Jsoup.parse(page.text)
                 val qualityRegex = Regex("(\\d+)P")
@@ -64,7 +64,7 @@ class Vidstream(val mainUrl: String) {
                 }
             }
 
-            with(get(extractorUrl)) {
+            with(app.get(extractorUrl)) {
                 val document = Jsoup.parse(this.text)
                 val primaryLinks = document.select("ul.list-server-items > li.linkserver")
                 //val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()

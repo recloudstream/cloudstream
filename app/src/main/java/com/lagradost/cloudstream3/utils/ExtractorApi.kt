@@ -1,9 +1,9 @@
 package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.*
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.network.text
 import org.jsoup.Jsoup
 
@@ -126,7 +126,7 @@ fun getPostForm(requestUrl : String, html : String) : String? {
     }
     Thread.sleep(5000) // ye this is needed, wont work with 0 delay
 
-    val postResponse = post(
+    val postResponse = app.post(
         requestUrl,
         headers = mapOf(
             "content-type" to "application/x-www-form-urlencoded",

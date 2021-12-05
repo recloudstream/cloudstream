@@ -7,9 +7,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.post
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
@@ -217,7 +216,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                         )
                     )
 
-                val res = post(
+                val res = app.post(
                     "https://graphql.anilist.co/",
                     //headers = mapOf(),
                     data = data,//(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
@@ -323,7 +322,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                }
         """
 
-            val data = post(
+            val data = app.post(
                 "https://graphql.anilist.co",
                 data = mapOf("query" to q),
                 cacheTime = 0,
@@ -346,38 +345,10 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     private fun Context.checkToken(): Boolean {
-        if (unixTime > getKey(
-                accountId,
-                ANILIST_UNIXTIME_KEY, 0L
-            )!!
-        ) {
-            /*getCurrentActivity()?.runOnUiThread {
-                val alertDialog: AlertDialog? = activity?.let {
-                    val builder = AlertDialog.Builder(it, R.style.AlertDialogCustom)
-                    builder.apply {
-                        setPositiveButton(
-                            "Login"
-                        ) { dialog, id ->
-                            authenticateAniList()
-                        }
-                        setNegativeButton(
-                            "Cancel"
-                        ) { dialog, id ->
-                            // User cancelled the dialog
-                        }
-                    }
-                    // Set other dialog properties
-                    builder.setTitle("AniList token has expired")
-
-                    // Create the AlertDialog
-                    builder.create()
-                }
-                alertDialog?.show()
-            }*/
-            return true
-        } else {
-            return false
-        }
+        return unixTime > getKey(
+            accountId,
+            ANILIST_UNIXTIME_KEY, 0L
+        )!!
     }
 
     fun Context.getDataAboutId(id: Int): AniListTitleHolder? {
@@ -443,7 +414,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         return try {
             if (!checkToken()) {
                 // println("VARS_ " + vars)
-                post(
+                app.post(
                     "https://graphql.anilist.co/",
                     headers = mapOf(
                         "Authorization" to "Bearer " + getKey(

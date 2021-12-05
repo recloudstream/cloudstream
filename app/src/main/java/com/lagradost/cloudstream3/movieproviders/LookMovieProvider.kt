@@ -6,7 +6,6 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.extractors.M3u8Manifest
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -73,11 +72,11 @@ class LookMovieProvider : MainAPI() {
 
     override fun quickSearch(query: String): List<SearchResponse> {
         val movieUrl = "$mainUrl/api/v1/movies/search/?q=$query"
-        val movieResponse = get(movieUrl).text
+        val movieResponse = app.get(movieUrl).text
         val movies = mapper.readValue<LookMovieSearchResultRoot>(movieResponse).result
 
         val showsUrl = "$mainUrl/api/v1/shows/search/?q=$query"
-        val showsResponse = get(showsUrl).text
+        val showsResponse = app.get(showsUrl).text
         val shows = mapper.readValue<LookMovieSearchResultRoot>(showsResponse).result
 
         val returnValue = ArrayList<SearchResponse>()
@@ -119,7 +118,7 @@ class LookMovieProvider : MainAPI() {
     override fun search(query: String): List<SearchResponse> {
         fun search(query: String, isMovie: Boolean): ArrayList<SearchResponse> {
             val url = "$mainUrl/${if (isMovie) "movies" else "shows"}/search/?q=$query"
-            val response = get(url).text
+            val response = app.get(url).text
             val document = Jsoup.parse(response)
 
             val items = document.select("div.flex-wrap-movielist > div.movie-item-style-1")
@@ -163,7 +162,7 @@ class LookMovieProvider : MainAPI() {
     }
 
     private fun loadCurrentLinks(url: String, callback: (ExtractorLink) -> Unit) {
-        val response = get(url.replace("\$unixtime", unixTime.toString())).text
+        val response = app.get(url.replace("\$unixtime", unixTime.toString())).text
         M3u8Manifest.extractLinks(response).forEach {
             callback.invoke(
                 ExtractorLink(
@@ -187,7 +186,7 @@ class LookMovieProvider : MainAPI() {
         val localData: LookMovieLinkLoad = mapper.readValue(data)
 
         if (localData.isMovie) {
-            val tokenResponse = get(localData.url).text
+            val tokenResponse = app.get(localData.url).text
             val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse)
             val accessToken = root.data?.accessToken ?: return false
             addSubtitles(root.data.subtitles, subtitleCallback)
@@ -195,7 +194,7 @@ class LookMovieProvider : MainAPI() {
             return true
         } else {
             loadCurrentLinks(localData.url, callback)
-            val subResponse = get(localData.extraUrl).text
+            val subResponse = app.get(localData.extraUrl).text
             val subs = mapper.readValue<List<LookMovieTokenSubtitle>>(subResponse)
             addSubtitles(subs, subtitleCallback)
         }
@@ -203,7 +202,7 @@ class LookMovieProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse? {
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
         val isMovie = url.contains("/movies/")
 
@@ -245,7 +244,7 @@ class LookMovieProvider : MainAPI() {
                 rating
             )
         } else {
-            val tokenResponse = get(realUrl).text
+            val tokenResponse = app.get(realUrl).text
             val root = mapper.readValue<LookMovieTokenRoot>(tokenResponse)
             val accessToken = root.data?.accessToken ?: return null
 

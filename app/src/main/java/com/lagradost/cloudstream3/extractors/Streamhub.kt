@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -21,7 +21,7 @@ class Streamhub : ExtractorApi() {
     }
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        val response = get(url).text
+        val response = app.get(url).text
         Regex("eval((.|\\n)*?)</script>").find(response)?.groupValues?.get(1)?.let { jsEval ->
             JsUnpacker("eval$jsEval" ).unpack()?.let { unPacked ->
                 Regex("sources:\\[\\{src:\"(.*?)\"").find(unPacked)?.groupValues?.get(1)?.let { link ->

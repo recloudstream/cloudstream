@@ -28,8 +28,8 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity.Companion.setLocale
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.initRequestClient
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
@@ -350,9 +350,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .putInt(getString(R.string.preferred_media_settings), prefValues[it])
                     .apply()
                 val apilist = AppUtils.filterProviderByPreferredMedia(apis, prefValues[it])
-                val apiRandom = if (apilist?.size > 0) { apilist.random().name } else { "" }
+                val apiRandom = if (apilist.size > 0) { apilist.random().name } else { "" }
                 context?.setKey(HOMEPAGE_API, apiRandom)
-                context?.initRequestClient()
+                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
         }
@@ -465,7 +465,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true,
                 {}) {
                 settingsManager.edit().putInt(getString(R.string.dns_pref), prefValues[it]).apply()
-                context?.initRequestClient()
+                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
         }

@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -24,7 +23,7 @@ class KawaiifuProvider : MainAPI() {
 
     override fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
-        val resp = get(mainUrl).text
+        val resp = app.get(mainUrl).text
 
         val soup = Jsoup.parse(resp)
 
@@ -68,7 +67,7 @@ class KawaiifuProvider : MainAPI() {
 
     override fun search(query: String): ArrayList<SearchResponse> {
         val link = "$mainUrl/search-movie?keyword=${query}"
-        val html = get(link).text
+        val html = app.get(link).text
         val soup = Jsoup.parse(html)
 
         return ArrayList(soup.select(".item").map {
@@ -89,7 +88,7 @@ class KawaiifuProvider : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val html = get(url).text
+        val html = app.get(url).text
         val soup = Jsoup.parse(html)
 
         val title = soup.selectFirst(".title").text()
@@ -98,7 +97,7 @@ class KawaiifuProvider : MainAPI() {
             .filter { it.select("strong").isEmpty() && it.select("iframe").isEmpty() }.joinToString("\n") { it.text() }
         val year = url.split("/").filter { it.contains("-") }[0].split("-")[1].toIntOrNull()
         val episodes = Jsoup.parse(
-            get(
+            app.get(
                 soup.selectFirst("a[href*=\".html-episode\"]").attr("href")
             ).text
         ).selectFirst(".list-ep").select("li").map {
@@ -124,7 +123,7 @@ class KawaiifuProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val htmlSource = get(data).text
+        val htmlSource = app.get(data).text
         val soupa = Jsoup.parse(htmlSource)
 
         val episodeNum = if (data.contains("ep=")) data.split("ep=")[1].split("&")[0].toIntOrNull() else null
@@ -144,7 +143,7 @@ class KawaiifuProvider : MainAPI() {
                     .map { source -> Pair(source.attr("src"), source.attr("data-quality")) }
                 Triple(it.first, sources, it.second.second)
             } else {
-                val html = get(it.second.first).text
+                val html = app.get(it.second.first).text
                 val soup = Jsoup.parse(html)
 
                 val sources = soup.select("video > source")

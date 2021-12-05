@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -72,12 +71,12 @@ class GogoanimeProvider : MainAPI() {
         for (i in urls) {
             try {
                 val params = mapOf("page" to "1", "type" to i.first)
-                val html = get(
+                val html = app.get(
                     "https://ajax.gogo-load.com/ajax/page-recent-release.html",
                     headers = headers,
                     params = params
-                ).text
-                items.add(HomePageList(i.second, (parseRegex.findAll(html).map {
+                )
+                items.add(HomePageList(i.second, (parseRegex.findAll(html.text).map {
                     val (link, epNum, title, poster) = it.destructured
                     val isSub = listOf(1, 3).contains(i.first.toInt())
                     AnimeSearchResponse(
@@ -105,7 +104,7 @@ class GogoanimeProvider : MainAPI() {
 
     override fun search(query: String): ArrayList<SearchResponse> {
         val link = "$mainUrl/search.html?keyword=$query"
-        val html = get(link).text
+        val html = app.get(link).text
         val doc = Jsoup.parse(html)
 
         val episodes = doc.select(""".last_episodes li""").map {
@@ -137,7 +136,7 @@ class GogoanimeProvider : MainAPI() {
     override fun load(url: String): LoadResponse {
         val link = getProperAnimeLink(url)
         val episodeloadApi = "https://ajax.gogo-load.com/ajax/load-list-episode"
-        val html = get(link).text
+        val html = app.get(link).text
         val doc = Jsoup.parse(html)
 
         val animeBody = doc.selectFirst(".anime_info_body_bg")
@@ -177,7 +176,7 @@ class GogoanimeProvider : MainAPI() {
 
         val animeId = doc.selectFirst("#movie_id").attr("value")
         val params = mapOf("ep_start" to "0", "ep_end" to "2000", "id" to animeId)
-        val responseHTML = get(episodeloadApi, params = params).text
+        val responseHTML = app.get(episodeloadApi, params = params).text
         val epiDoc = Jsoup.parse(responseHTML)
         val episodes = epiDoc.select("a").map {
             AnimeEpisode(
@@ -200,13 +199,13 @@ class GogoanimeProvider : MainAPI() {
     }
 
     private fun extractVideos(uri: String): List<ExtractorLink> {
-        val html = get(uri).text
+        val html = app.get(uri).text
         val doc = Jsoup.parse(html)
 
         val iframe = "https:" + doc.selectFirst("div.play-video > iframe").attr("src")
         val link = iframe.replace("streaming.php", "download")
 
-        val page = get(link, headers = mapOf("Referer" to iframe))
+        val page = app.get(link, headers = mapOf("Referer" to iframe))
         val pageDoc = Jsoup.parse(page.text)
 
         return pageDoc.select(".dowload > a").pmap {

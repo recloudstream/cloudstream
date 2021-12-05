@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
@@ -95,9 +94,9 @@ class AllAnimeProvider : MainAPI() {
     override fun search(query: String): ArrayList<SearchResponse> {
         val link =
             """$mainUrl/graphql?variables=%7B%22search%22%3A%7B%22allowAdult%22%3Afalse%2C%22query%22%3A%22$query%22%7D%2C%22limit%22%3A26%2C%22page%22%3A1%2C%22translationType%22%3A%22sub%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%229343797cc3d9e3f444e2d3b7db9a84d759b816a4d84512ea72d079f85bb96e98%22%7D%7D"""
-        var res = get(link).text
+        var res = app.get(link).text
         if (res.contains("PERSISTED_QUERY_NOT_FOUND")) {
-            res = get(link).text
+            res = app.get(link).text
             if (res.contains("PERSISTED_QUERY_NOT_FOUND")) return ArrayList()
         }
         val response = mapper.readValue<AllAnimeQuery>(res)
@@ -136,7 +135,7 @@ class AllAnimeProvider : MainAPI() {
         rhino.optimizationLevel = -1
         val scope: Scriptable = rhino.initStandardObjects()
 
-        val html = get(url).text
+        val html = app.get(url).text
         val soup = Jsoup.parse(html)
 
         val script = soup.select("script").firstOrNull {
@@ -251,10 +250,10 @@ class AllAnimeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        var apiEndPoint = mapper.readValue<ApiEndPoint>(get("$mainUrl/getVersion").text).episodeIframeHead
+        var apiEndPoint = mapper.readValue<ApiEndPoint>(app.get("$mainUrl/getVersion").text).episodeIframeHead
         if (apiEndPoint.endsWith("/")) apiEndPoint = apiEndPoint.slice(0 until apiEndPoint.length - 1)
 
-        val html = get(data).text
+        val html = app.get(data).text
 
         val sources = Regex("""sourceUrl[:=]"(.+?)"""").findAll(html).toList()
             .map { URLDecoder.decode(it.destructured.component1().sanitize(), "UTF-8") }
@@ -283,7 +282,7 @@ class AllAnimeProvider : MainAPI() {
                 }
             } else {
                 link = apiEndPoint + URI(link).path + ".json?" + URI(link).query
-                val response = get(link)
+                val response = app.get(link)
 
                 if (response.code < 400) {
                     val links = mapper.readValue<AllAnimeVideoApiResponse>(response.text).links

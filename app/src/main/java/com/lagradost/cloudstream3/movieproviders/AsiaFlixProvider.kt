@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider.Companion.getStatus
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -122,7 +121,7 @@ class AsiaFlixProvider : MainAPI() {
 
     override fun getMainPage(): HomePageResponse {
         val headers = mapOf("X-Requested-By" to "asiaflix-web")
-        val response = get("$apiUrl/dashboard", headers = headers).text
+        val response = app.get("$apiUrl/dashboard", headers = headers).text
 
         val customMapper = mapper.copy().configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
         // Hack, because it can either be object or a list
@@ -154,7 +153,7 @@ class AsiaFlixProvider : MainAPI() {
     ): Boolean {
         if (isCasting) return false
         val headers = mapOf("X-Requested-By" to "asiaflix-web")
-        get("$apiUrl/utility/get-stream-links?url=$data", headers = headers).text.toKotlinObject<Link>().url?.let {
+        app.get("$apiUrl/utility/get-stream-links?url=$data", headers = headers).text.toKotlinObject<Link>().url?.let {
 //            val fixedUrl = "https://api.asiaflix.app/api/v2/utility/cors-proxy/playlist/${URLEncoder.encode(it, StandardCharsets.UTF_8.toString())}"
             callback.invoke(
                 ExtractorLink(
@@ -173,14 +172,14 @@ class AsiaFlixProvider : MainAPI() {
     override fun search(query: String): List<SearchResponse>? {
         val headers = mapOf("X-Requested-By" to "asiaflix-web")
         val url = "$apiUrl/drama/search?q=$query"
-        val response = get(url, headers = headers).text
+        val response = app.get(url, headers = headers).text
         return mapper.readValue<List<Data>?>(response)?.map { it.toSearchResponse() }
     }
 
     override fun load(url: String): LoadResponse {
         val headers = mapOf("X-Requested-By" to "asiaflix-web")
         val requestUrl = "$apiUrl/drama?id=${url.split("/").lastOrNull()}"
-        val response = get(requestUrl, headers = headers).text
+        val response = app.get(requestUrl, headers = headers).text
         val dramaPage = response.toKotlinObject<DramaPage>()
         return dramaPage.toLoadResponse()
     }

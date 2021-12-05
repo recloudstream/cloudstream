@@ -1,9 +1,8 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.get
-import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -20,7 +19,7 @@ class SBPlay : ExtractorApi() {
         get() = false
 
     override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
-        val response = get(url, referer = referer).text
+        val response = app.get(url, referer = referer).text
         val document = Jsoup.parse(response)
 
         val links = ArrayList<ExtractorLink>()
@@ -35,8 +34,8 @@ class SBPlay : ExtractorApi() {
                     val mode = it.groupValues[2]
                     val hash = it.groupValues[3]
                     val href = "https://sbplay.one/dl?op=download_orig&id=$id&mode=$mode&hash=$hash"
-                    val hrefResponse = get(href).text
-                    post("https://sbplay.one/?op=notifications&open=&_=$unixTimeMS", referer = href)
+                    val hrefResponse = app.get(href).text
+                    app.post("https://sbplay.one/?op=notifications&open=&_=$unixTimeMS", referer = href)
                     val hrefDocument = Jsoup.parse(hrefResponse)
                     val hrefSpan = hrefDocument.selectFirst("span > a")
                     if (hrefSpan == null) {

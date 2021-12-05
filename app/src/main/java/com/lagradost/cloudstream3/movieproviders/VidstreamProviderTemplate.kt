@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.Vidstream
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -52,7 +51,7 @@ open class VidstreamProviderTemplate : MainAPI() {
         // Simply looking at devtools network is enough to spot a request like:
         // https://vidembed.cc/search.html?keyword=neverland where neverland is the query, can be written as below.
         val link = "$mainUrl/search.html?keyword=$query"
-        val html = get(link).text
+        val html = app.get(link).text
         val soup = Jsoup.parse(html)
 
         return ArrayList(soup.select(".listing.items > .video-block").map { li ->
@@ -83,7 +82,7 @@ open class VidstreamProviderTemplate : MainAPI() {
     // Like search you should return either of: AnimeLoadResponse, MovieLoadResponse, TorrentLoadResponse, TvSeriesLoadResponse.
     override fun load(url: String): LoadResponse? {
         // Gets the url returned from searching.
-        val html = get(url).text
+        val html = app.get(url).text
         val soup = Jsoup.parse(html)
 
         var title = soup.selectFirst("h1,h2,h3").text()
@@ -164,7 +163,7 @@ open class VidstreamProviderTemplate : MainAPI() {
         val homePageList = ArrayList<HomePageList>()
         // .pmap {} is used to fetch the different pages in parallel
         urls.pmap { url ->
-            val response = get(url, timeout = 20).text
+            val response = app.get(url, timeout = 20).text
             val document = Jsoup.parse(response)
             document.select("div.main-inner")?.forEach { inner ->
                 // Always trim your text unless you want the risk of spaces at the start or end.
@@ -221,7 +220,7 @@ open class VidstreamProviderTemplate : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         // "?: return" is a very useful statement which returns if the iframe link isn't found.
-        val iframeLink = Jsoup.parse(get(data).text).selectFirst("iframe")?.attr("src") ?: return false
+        val iframeLink = Jsoup.parse(app.get(data).text).selectFirst("iframe")?.attr("src") ?: return false
 
         // In this case the video player is a vidstream clone and can be handled by the vidstream extractor.
         // This case is a both unorthodox and you normally do not call extractors as they detect the url returned and does the rest.
@@ -233,7 +232,7 @@ open class VidstreamProviderTemplate : MainAPI() {
             vidstreamObject.getUrl(id, isCasting, callback)
         }
 
-        val html = get(fixUrl(iframeLink)).text
+        val html = app.get(fixUrl(iframeLink)).text
         val soup = Jsoup.parse(html)
 
         val servers = soup.select(".list-server-items > .linkserver").mapNotNull { li ->
@@ -253,7 +252,7 @@ open class VidstreamProviderTemplate : MainAPI() {
 
                 // Having a referer is often required. It's a basic security check most providers have.
                 // Try to replicate what your browser does.
-                val serverHtml = get(it.second, headers = mapOf("referer" to iframeLink)).text
+                val serverHtml = app.get(it.second, headers = mapOf("referer" to iframeLink)).text
                 sourceRegex.findAll(serverHtml).forEach { match ->
                     callback.invoke(
                         ExtractorLink(

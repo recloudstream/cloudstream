@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.network.text
 import org.jsoup.Jsoup
 import java.util.*
@@ -18,7 +18,7 @@ object FillerEpisodeCheck {
     private fun getFillerList(): Boolean {
         if (list != null) return true
         try {
-            val result = get("$MAIN_URL/shows").text
+            val result = app.get("$MAIN_URL/shows").text
             val documented = Jsoup.parse(result)
             val localHTMLList = documented.select("div#ShowList > div.Group > ul > li > a")
             val localList = HashMap<String, String>()
@@ -73,7 +73,7 @@ object FillerEpisodeCheck {
             val realQuery = fixName(query.replace(blackListRegex, "")).replace("shippuuden", "shippuden")
             if (!localList.containsKey(realQuery)) return null
             val href = localList[realQuery]?.replace(MAIN_URL, "") ?: return null // JUST IN CASE
-            val result = get("$MAIN_URL$href").text
+            val result = app.get("$MAIN_URL$href").text
             val documented = Jsoup.parse(result) ?: return null
             val hashMap = HashMap<Int, Boolean>()
             documented.select("table.EpisodeList > tbody > tr").forEach {

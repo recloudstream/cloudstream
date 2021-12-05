@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.network.get
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -32,12 +32,12 @@ open class DoodLaExtractor : ExtractorApi() {
     override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val id = url.removePrefix("$mainUrl/e/").removePrefix("$mainUrl/d/")
         val trueUrl = getExtractorUrl(id)
-        val response = get(trueUrl).text
+        val response = app.get(trueUrl).text
         Regex("href=\".*/download/(.*?)\"").find(response)?.groupValues?.get(1)?.let { link ->
             if (link.isEmpty()) return null
             sleep(5000) // might need this to not trigger anti bot
             val downloadLink = "$mainUrl/download/$link"
-            val downloadResponse = get(downloadLink).text
+            val downloadResponse = app.get(downloadLink).text
             Regex("onclick=\"window\\.open\\((['\"])(.*?)(['\"])").find(downloadResponse)?.groupValues?.get(2)
                 ?.let { trueLink ->
                     return listOf(

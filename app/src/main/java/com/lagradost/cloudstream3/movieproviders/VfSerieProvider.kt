@@ -2,10 +2,7 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.get
-import com.lagradost.cloudstream3.network.post
 import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import okio.Buffer
@@ -37,7 +34,7 @@ class VfSerieProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
         val items = document.select("ul.MovieList > li > article > a")
         if (items.isNullOrEmpty()) return ArrayList()
@@ -65,9 +62,9 @@ class VfSerieProvider : MainAPI() {
 
 
     private fun getDirect(original: String): String {  // original data, https://vf-serie.org/?trembed=1&trid=80467&trtype=2 for example
-        val response = get(original).text
+        val response = app.get(original).text
         val url = "iframe .*src=\\\"(.*?)\\\"".toRegex().find(response)?.groupValues?.get(1).toString()  // https://vudeo.net/embed-7jdb1t5b2mvo.html for example
-        val vudoResponse = get(url).text
+        val vudoResponse = app.get(url).text
         val document = Jsoup.parse(vudoResponse)
         val vudoUrl = Regex("sources: \\[\"(.*?)\"\\]").find(document.html())?.groupValues?.get(1).toString()  // direct mp4 link, https://m5.vudeo.net/2vp3xgpw2avjdohilpfbtyuxzzrqzuh4z5yxvztral5k3rjnba6f4byj3saa/v.mp4 for exemple
         return vudoUrl
@@ -81,7 +78,7 @@ class VfSerieProvider : MainAPI() {
     ): Boolean {
         if (data == "") return false
 
-        val response = get(data).text
+        val response = app.get(data).text
         val document = Jsoup.parse(response)
         val players = document.select("ul.TPlayerNv > li")
         val trembed_url = document.selectFirst("div.TPlayerTb > iframe").attr("src")
@@ -117,7 +114,7 @@ class VfSerieProvider : MainAPI() {
 
 
     override fun load(url: String): LoadResponse {
-        val response = get(url).text
+        val response = app.get(url).text
         val document = Jsoup.parse(response)
         val title = document?.selectFirst(".Title")?.text()?.replace("Regarder Serie ","")?.replace(" En Streaming", "")
             ?: throw ErrorLoadingException("Service might be unavailable")

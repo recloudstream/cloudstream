@@ -8,11 +8,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.get
-import com.lagradost.cloudstream3.network.post
-import com.lagradost.cloudstream3.network.put
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
@@ -62,7 +59,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
 
     override fun search(context: Context, name: String): List<SyncAPI.SyncSearchResult> {
         val url = "https://api.myanimelist.net/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
-        var res = get(
+        var res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer " + context.getKey<String>(
                     accountId,
@@ -130,7 +127,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                     var res = ""
                     try {
                         //println("cc::::: " + codeVerifier)
-                        res = post(
+                        res = app.post(
                             "https://myanimelist.net/v1/oauth2/token",
                             data = mapOf(
                                 "client_id" to key,
@@ -193,7 +190,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
 
     private fun Context.refreshToken() {
         try {
-            val res = post(
+            val res = app.post(
                 "https://myanimelist.net/v1/oauth2/token",
                 data = mapOf(
                     "client_id" to key,
@@ -337,7 +334,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             // https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_id_animelist_get
             val url =
                 "https://api.myanimelist.net/v2/users/$user/animelist?fields=list_status,num_episodes,media_type,status,start_date,end_date,synopsis,alternative_titles,mean,genres,rank,num_list_users,nsfw,average_episode_duration,num_favorites,popularity,num_scoring_users,start_season,favorites_info,broadcast,created_at,updated_at&nsfw=1&limit=100&offset=$offset"
-            val res = get(
+            val res = app.get(
                 url, headers = mapOf(
                     "Authorization" to "Bearer " + getKey<String>(
                         accountId,
@@ -356,7 +353,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return try {
             // https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get
             val url = "https://api.myanimelist.net/v2/anime/$id?fields=id,title,num_episodes,my_list_status"
-            val res = get(
+            val res = app.get(
                 url, headers = mapOf(
                     "Authorization" to "Bearer " + getKey<String>(
                         accountId,
@@ -377,7 +374,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         allTitles.clear()
         checkMalToken()
         while (!isDone) {
-            val res = get(
+            val res = app.get(
                 "https://api.myanimelist.net/v2/users/$user/animelist?fields=list_status&limit=1000&offset=${index * 1000}",
                 headers = mapOf(
                     "Authorization" to "Bearer " + getKey<String>(
@@ -447,7 +444,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     private fun Context.getMalUser(setSettings: Boolean = true): MalUser? {
         checkMalToken()
         return try {
-            val res = get(
+            val res = app.get(
                 "https://api.myanimelist.net/v2/users/@me",
                 headers = mapOf(
                     "Authorization" to "Bearer " + getKey<String>(
@@ -529,7 +526,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         num_watched_episodes: Int? = null,
     ): String {
         return try {
-            put(
+            app.put(
                 "https://api.myanimelist.net/v2/anime/$id/my_list_status",
                 headers = mapOf(
                     "Authorization" to "Bearer " + getKey<String>(

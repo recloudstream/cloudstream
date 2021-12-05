@@ -2,13 +2,9 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.lagradost.cloudstream3.ProviderType
-import com.lagradost.cloudstream3.SubtitleFile
-import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.mapper
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.metaproviders.TmdbLink
 import com.lagradost.cloudstream3.metaproviders.TmdbProvider
-import com.lagradost.cloudstream3.network.get
 import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -82,7 +78,7 @@ class TrailersTwoProvider : TmdbProvider() {
         }
 
         val subtitles =
-            get(subtitleUrl).text
+            app.get(subtitleUrl).text
         val subtitlesMapped = mapper.readValue<List<TrailersSubtitleFile>>(subtitles)
         subtitlesMapped.forEach {
             subtitleCallback.invoke(
