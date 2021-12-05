@@ -118,7 +118,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("\uD83C\uDDF3\uD83C\uDDF4", "Norsk", "no"),
         Triple("\ud83c\udde9\ud83c\uddea", "German", "de"),
         Triple("🇱🇧", "Arabic", "ar"),
-        Triple("🇹🇷", "Turkish", "tr")
+        Triple("🇹🇷", "Turkish", "tr"),
+        Triple("\ud83c\uddf2\ud83c\uddf0", "Macedonian", "mk")
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
     private fun showAccountSwitch(context: Context, api: AccountManager) {

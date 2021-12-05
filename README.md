@@ -30,6 +30,7 @@ https://github.com/LagradOst/CloudStream-3/releases
 * 🇳🇴 Norsk
 * 🇩🇪 German
 * 🇹🇷 Turkish
+* 🇲🇰 Macedonian
 
 ***SCREENSHOTS:***
 
@@ -51,22 +52,22 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 ***Sites used:***
 <!-- Do not remove those two comments -->
 <!--SITE LIST START-->
-- [gogoanime.vc](https://gogoanime.vc) 
-- [allanime.site](https://allanime.site) 
-- [animeflick.net](https://animeflick.net) 
-- [kawaiifu.com](https://kawaiifu.com) 
-- [tenshi.moe](https://tenshi.moe) 
-- [wcostream.cc](https://wcostream.cc) 
-- [bestdubbedanime.com](https://bestdubbedanime.com) 
-- [hdm.to](https://hdm.to) 
-- [vmovee.watch](https://www.vmovee.watch) 
-- [wcostream.com](https://www.wcostream.com) 
-- [allmoviesforyou.net](https://allmoviesforyou.net) 
-- [vidembed.cc](https://vidembed.cc) 
-- [vf-film.me](https://vf-film.me) 
-- [vf-serie.org](https://vf-serie.org) 
-- [asianembed.io](https://asianembed.io) 
-- [trailers.to](https://trailers.to) 
-- [zoro.to](https://zoro.to) 
-- [asiaflix.app](https://asiaflix.app) 
+- [gogoanime.vc](https://gogoanime.vc)
+- [allanime.site](https://allanime.site)
+- [animeflick.net](https://animeflick.net)
+- [kawaiifu.com](https://kawaiifu.com)
+- [tenshi.moe](https://tenshi.moe)
+- [wcostream.cc](https://wcostream.cc)
+- [bestdubbedanime.com](https://bestdubbedanime.com)
+- [hdm.to](https://hdm.to)
+- [vmovee.watch](https://www.vmovee.watch)
+- [wcostream.com](https://www.wcostream.com)
+- [allmoviesforyou.net](https://allmoviesforyou.net)
+- [vidembed.cc](https://vidembed.cc)
+- [vf-film.me](https://vf-film.me)
+- [vf-serie.org](https://vf-serie.org)
+- [asianembed.io](https://asianembed.io)
+- [trailers.to](https://trailers.to)
+- [zoro.to](https://zoro.to)
+- [asiaflix.app](https://asiaflix.app)
 <!--SITE LIST END-->
