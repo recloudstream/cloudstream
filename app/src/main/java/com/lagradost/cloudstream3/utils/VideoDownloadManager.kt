@@ -1153,7 +1153,7 @@ object VideoDownloadManager {
                         Triple(
                             id,
                             bytesDownloaded,
-                            (bytesDownloaded / tsProgress) * totalTs
+                            (bytesDownloaded * (totalTs / tsProgress.toFloat())).toLong(),
                         )
                     )
                 } catch (e: Exception) {
@@ -1165,7 +1165,7 @@ object VideoDownloadManager {
                 CreateNotificationMetadata(
                     type,
                     bytesDownloaded,
-                    (bytesDownloaded / tsProgress) * totalTs
+                    (bytesDownloaded * (totalTs / tsProgress.toFloat())).toLong(),
                 )
             )
         }
@@ -1253,7 +1253,6 @@ object VideoDownloadManager {
             deleteFile()
             updateNotification()
             closeAll()
-
         }
 
         for (ts in tsIterator) {
