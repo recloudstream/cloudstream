@@ -120,8 +120,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("\ud83c\udde6\ud83c\uddf7", "Arabic", "ar"),// originally flag_lb \ud83c\uddf1\ud83c\udde7
         Triple("\ud83c\uddf9\ud83c\uddf7", "Turkish", "tr"),
         Triple("\ud83c\uddf2\ud83c\uddf0", "Macedonian", "mk"),
-		Triple("\ud83c\udde7\ud83c\uddf7", "Portuguese (Brazil)", "pt"),
-		Triple("\ud83c\uddf7\ud83c\uddf4", "Romanian", "ro"),
+        Triple("\ud83c\udde7\ud83c\uddf7", "Portuguese (Brazil)", "pt"),
+        Triple("\ud83c\uddf7\ud83c\uddf4", "Romanian", "ro"),
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
     private fun showAccountSwitch(context: Context, api: AccountManager) {
