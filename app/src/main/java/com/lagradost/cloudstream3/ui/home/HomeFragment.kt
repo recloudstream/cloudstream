@@ -191,6 +191,7 @@ class HomeFragment : Fragment() {
                 val typeChoices = listOf(
                     Pair(R.string.movies, listOf(TvType.Movie)),
                     Pair(R.string.tv_series, listOf(TvType.TvSeries)),
+                    Pair(R.string.documentaries, listOf(TvType.Documentary)),
                     Pair(R.string.cartoons, listOf(TvType.Cartoon)),
                     Pair(R.string.anime, listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie)),
                     Pair(R.string.torrent, listOf(TvType.Torrent)),

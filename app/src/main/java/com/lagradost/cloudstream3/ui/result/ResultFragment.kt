@@ -463,7 +463,6 @@ class ResultFragment : Fragment() {
                     if (isMovie) null else episodeClick.data.episode
                 )
 
-
                 val folder = when (currentType) {
                     TvType.Anime -> "Anime/$titleName"
                     TvType.Movie -> "Movies"
@@ -472,7 +471,8 @@ class ResultFragment : Fragment() {
                     TvType.ONA -> "ONA"
                     TvType.Cartoon -> "Cartoons/$titleName"
                     TvType.Torrent -> "Torrent"
-                    else -> null
+                    TvType.Documentary -> "Documentaries"
+                    null -> null
                 }
 
                 context?.let { ctx ->

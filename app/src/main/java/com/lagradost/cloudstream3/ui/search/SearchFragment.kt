@@ -140,7 +140,7 @@ class SearchFragment : Fragment() {
 
                 val typeChoices = listOf(
                     Pair(R.string.movies, listOf(TvType.Movie)),
-                    Pair(R.string.tv_series, listOf(TvType.TvSeries)),
+                    Pair(R.string.tv_series, listOf(TvType.TvSeries, TvType.Documentary)),
                     Pair(R.string.cartoons, listOf(TvType.Cartoon)),
                     Pair(R.string.anime, listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie)),
                     Pair(R.string.torrent, listOf(TvType.Torrent)),
