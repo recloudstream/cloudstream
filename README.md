@@ -57,7 +57,6 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [gogoanime.vc](https://gogoanime.vc) 
 - [allanime.site](https://allanime.site) 
 - [animeflick.net](https://animeflick.net) 
-- [kawaiifu.com](https://kawaiifu.com) 
 - [tenshi.moe](https://tenshi.moe) 
 - [wcostream.cc](https://wcostream.cc) 
 - [bestdubbedanime.com](https://bestdubbedanime.com) 
