@@ -1,14 +1,13 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 
 class StreamTape : ExtractorApi() {
-    override val name: String = "StreamTape"
-    override val mainUrl: String = "https://streamtape.com"
+    override val name = "StreamTape"
+    override val mainUrl = "https://streamtape.com"
     override val requiresReferer = false
 
     private val linkRegex =

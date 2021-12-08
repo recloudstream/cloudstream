@@ -5,27 +5,21 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 import java.util.*
 
 class DubbedAnimeProvider : MainAPI() {
-    override val mainUrl: String
-        get() = "https://bestdubbedanime.com"
-    override val name: String
-        get() = "DubbedAnime"
-    override val hasQuickSearch: Boolean
-        get() = true
-    override val hasMainPage: Boolean
-        get() = true
+    override val mainUrl = "https://bestdubbedanime.com"
+    override val name = "DubbedAnime"
+    override val hasQuickSearch = true
+    override val hasMainPage = true
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.AnimeMovie,
-            TvType.Anime,
-        )
+    override val supportedTypes = setOf(
+        TvType.AnimeMovie,
+        TvType.Anime,
+    )
 
     data class QueryEpisodeResultRoot(
         @JsonProperty("result")

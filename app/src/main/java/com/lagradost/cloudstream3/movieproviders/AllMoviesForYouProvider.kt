@@ -20,15 +20,12 @@ class AllMoviesForYouProvider : MainAPI() {
     }
 
     // Fetching movies will not work if this link is outdated.
-    override val mainUrl: String
-        get() = "https://allmoviesforyou.net"
-    override val name: String
-        get() = "AllMoviesForYou"
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.Movie,
-            TvType.TvSeries
-        )
+    override val mainUrl = "https://allmoviesforyou.net"
+    override val name = "AllMoviesForYou"
+    override val supportedTypes = setOf(
+        TvType.Movie,
+        TvType.TvSeries
+    )
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"

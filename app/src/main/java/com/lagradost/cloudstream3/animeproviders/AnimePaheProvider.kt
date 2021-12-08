@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.network.*
+import com.lagradost.cloudstream3.network.AppResponse
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
-import okhttp3.Response
 import org.jsoup.Jsoup
 import java.util.*
 import kotlin.math.pow
@@ -44,21 +43,16 @@ class AnimePaheProvider : MainAPI() {
             Regex("""(^(?:https?:)?(?://)?(?:www\.)?(?:youtu\.be/|youtube(?:-nocookie)?\.(?:[A-Za-z]{2,4}|[A-Za-z]{2,3}\.[A-Za-z]{2})/)(?:watch|embed/|vi?/)*(?:\?[\w=&]*vi?=)?[^#&?/]{11}.*${'$'})""")
     }
 
-    override val mainUrl: String
-        get() = MAIN_URL
-    override val name: String
-        get() = "AnimePahe"
-    override val hasQuickSearch: Boolean
-        get() = false
-    override val hasMainPage: Boolean
-        get() = true
+    override val mainUrl = MAIN_URL
+    override val name = "AnimePahe"
+    override val hasQuickSearch = false
+    override val hasMainPage = true
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.AnimeMovie,
-            TvType.Anime,
-            TvType.ONA
-        )
+    override val supportedTypes = setOf(
+        TvType.AnimeMovie,
+        TvType.Anime,
+        TvType.ONA
+    )
 
     override fun getMainPage(): HomePageResponse {
         data class Data(

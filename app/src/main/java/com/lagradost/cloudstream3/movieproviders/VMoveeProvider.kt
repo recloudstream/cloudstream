@@ -3,23 +3,15 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
-import java.util.ArrayList
 
 class VMoveeProvider : MainAPI() {
-    override val name: String
-        get() = "VMovee"
-    override val mainUrl: String
-        get() = "https://www.vmovee.watch"
+    override val name = "VMovee"
+    override val mainUrl = "https://www.vmovee.watch"
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.Movie,
-        )
+    override val supportedTypes = setOf(TvType.Movie)
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
@@ -34,7 +26,7 @@ class VMoveeProvider : MainAPI() {
             // val href = imgHolder.attr("href")
             val poster = imgHolder.selectFirst("> img").attr("data-lazy-src")
             val isTV = imgHolder.selectFirst("> span").text() == "TV"
-            if(isTV) continue // no TV support yet
+            if (isTV) continue // no TV support yet
 
             val titleHolder = details.selectFirst("> div.title > a")
             val title = titleHolder.text()
@@ -93,7 +85,11 @@ class VMoveeProvider : MainAPI() {
         val prefix = "https://reeoov.tube/v/"
         if (request.url.startsWith(prefix)) {
             val apiUrl = "https://reeoov.tube/api/source/${request.url.removePrefix(prefix)}"
-            val apiResponse = app.post(apiUrl,headers = mapOf("Referer" to request.url),data = mapOf("r" to "https://www.vmovee.watch/", "d" to "reeoov.tube")).text
+            val apiResponse = app.post(
+                apiUrl,
+                headers = mapOf("Referer" to request.url),
+                data = mapOf("r" to "https://www.vmovee.watch/", "d" to "reeoov.tube")
+            ).text
             val apiData = mapper.readValue<ReeoovAPI>(apiResponse)
             for (d in apiData.data) {
                 callback.invoke(

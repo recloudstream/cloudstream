@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.movieproviders.SflixProvider
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.toExtractorLink
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.toSubtitleFile
 import com.lagradost.cloudstream3.network.WebViewResolver
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -15,32 +14,19 @@ import java.net.URI
 import java.util.*
 
 class ZoroProvider : MainAPI() {
-    override val mainUrl: String
-        get() = "https://zoro.to"
-    override val name: String
-        get() = "Zoro"
+    override val mainUrl = "https://zoro.to"
+    override val name = "Zoro"
+    override val hasQuickSearch = false
+    override val hasMainPage = true
+    override val hasChromecastSupport = true
+    override val hasDownloadSupport = true
+    override val usesWebView = true
 
-    override val hasQuickSearch: Boolean
-        get() = false
-
-    override val hasMainPage: Boolean
-        get() = true
-
-    override val hasChromecastSupport: Boolean
-        get() = true
-
-    override val hasDownloadSupport: Boolean
-        get() = true
-
-    override val usesWebView: Boolean
-        get() = true
-
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.Anime,
-            TvType.AnimeMovie,
-            TvType.ONA
-        )
+    override val supportedTypes = setOf(
+        TvType.Anime,
+        TvType.AnimeMovie,
+        TvType.ONA
+    )
 
     companion object {
         fun getType(t: String): TvType {

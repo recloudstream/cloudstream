@@ -2,41 +2,31 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.metaproviders.TmdbLink
 import com.lagradost.cloudstream3.metaproviders.TmdbProvider
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 
 class TrailersTwoProvider : TmdbProvider() {
-
     val user = "cloudstream"
+    override val apiName = "Trailers.to"
+    override val name = "Trailers.to"
+    override val mainUrl = "https://trailers.to"
+    override val useMetaLoadResponse = true
+    override val instantLinkLoading = true
 
-    override val apiName: String
-        get() = "Trailers.to"
-
-    override val name: String
-        get() = "Trailers.to"
-
-    override val mainUrl: String
-        get() = "https://trailers.to"
-
-    override val useMetaLoadResponse: Boolean
-        get() = true
-
-    override val instantLinkLoading: Boolean
-        get() = true
-
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.Movie,
-            TvType.TvSeries,
-            TvType.AnimeMovie,
-            TvType.Anime,
-            TvType.Cartoon
-        )
+    override val supportedTypes = setOf(
+        TvType.Movie,
+        TvType.TvSeries,
+        TvType.AnimeMovie,
+        TvType.Anime,
+        TvType.Cartoon
+    )
 
     override fun loadLinks(
         data: String,

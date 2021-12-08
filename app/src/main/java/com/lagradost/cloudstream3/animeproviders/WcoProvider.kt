@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.WcoStream
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -19,21 +18,16 @@ class WcoProvider : MainAPI() {
         }
     }
 
-    override val mainUrl: String
-        get() = "https://wcostream.cc"
-    override val name: String
-        get() = "WCO Stream"
-    override val hasQuickSearch: Boolean
-        get() = true
-    override val hasMainPage: Boolean
-        get() = true
+    override val mainUrl = "https://wcostream.cc"
+    override val name = "WCO Stream"
+    override val hasQuickSearch = true
+    override val hasMainPage = true
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.AnimeMovie,
-            TvType.Anime,
-            TvType.ONA
-        )
+    override val supportedTypes = setOf(
+        TvType.AnimeMovie,
+        TvType.Anime,
+        TvType.ONA
+    )
 
     override fun getMainPage(): HomePageResponse {
         val urls = listOf(
@@ -46,9 +40,11 @@ class WcoProvider : MainAPI() {
         val items = ArrayList<HomePageList>()
         for (i in urls) {
             try {
-                val response = JSONObject(app.get(
-                    i.first,
-                ).text).getString("html") // I won't make a dataclass for this shit
+                val response = JSONObject(
+                    app.get(
+                        i.first,
+                    ).text
+                ).getString("html") // I won't make a dataclass for this shit
                 val document = Jsoup.parse(response)
                 val results = document.select("div.flw-item").map {
                     val filmPoster = it.selectFirst("> div.film-poster")
@@ -61,14 +57,14 @@ class WcoProvider : MainAPI() {
                     val poster = filmPoster.selectFirst("> img").attr("data-src")
                     val set: EnumSet<DubStatus> =
                         EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed)
-                    AnimeSearchResponse(title, href, this.name, TvType.Anime, poster,null, set)
+                    AnimeSearchResponse(title, href, this.name, TvType.Anime, poster, null, set)
                 }
                 items.add(HomePageList(i.second, results))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-        if(items.size <= 0) throw ErrorLoadingException()
+        if (items.size <= 0) throw ErrorLoadingException()
         return HomePageResponse(items)
     }
 
@@ -105,7 +101,7 @@ class WcoProvider : MainAPI() {
                         img,
                         year,
                         EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed),
-                        )
+                    )
                 }
             )
         }
@@ -135,10 +131,12 @@ class WcoProvider : MainAPI() {
     override fun quickSearch(query: String): List<SearchResponse> {
         val returnValue: ArrayList<SearchResponse> = ArrayList()
 
-        val response = JSONObject(app.post(
-            "https://wcostream.cc/ajax/search",
-            data = mapOf("keyword" to query)
-        ).text).getString("html") // I won't make a dataclass for this shit
+        val response = JSONObject(
+            app.post(
+                "https://wcostream.cc/ajax/search",
+                data = mapOf("keyword" to query)
+            ).text
+        ).getString("html") // I won't make a dataclass for this shit
         val document = Jsoup.parse(response)
 
         document.select("a.nav-item").forEach {
@@ -188,7 +186,7 @@ class WcoProvider : MainAPI() {
         val episodes = ArrayList(episodeNodes?.map {
             AnimeEpisode(it.attr("href"))
         } ?: ArrayList())
-        
+
         val statusElem = document.selectFirst("div.elements div.row > div:nth-child(1) > div.row-line:nth-child(2)")
         val status = when (statusElem?.text()?.replace("Status:", "")?.trim()) {
             "Ongoing" -> ShowStatus.Ongoing
@@ -206,12 +204,12 @@ class WcoProvider : MainAPI() {
         val genre = document.select("div.elements div.row > div:nth-child(1) > div.row-line:nth-child(5) > a")
             .map { it?.text()?.trim().toString() }
 
-        return newAnimeLoadResponse(canonicalTitle,url,getType(type ?: "")) {
+        return newAnimeLoadResponse(canonicalTitle, url, getType(type ?: "")) {
             japName = japaneseTitle
             engName = canonicalTitle
             posterUrl = poster
             this.year = year
-            addEpisodes(if(isDubbed) DubStatus.Dubbed else DubStatus.Subbed,episodes)
+            addEpisodes(if (isDubbed) DubStatus.Dubbed else DubStatus.Subbed, episodes)
             showStatus = status
             plot = synopsis
             tags = genre

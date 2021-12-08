@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.APIHolder.getApiFromName
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
@@ -269,7 +269,11 @@ class ResultViewModel : ViewModel() {
         _publicEpisodes.postValue(Resource.Loading())
 
         _apiName.postValue(apiName)
-        val api = getApiFromName(apiName)
+        val api = getApiFromNameNull(apiName)
+        if (api == null) {
+            _resultResponse.postValue(Resource.Failure(false, null, null, "This provider does not exist"))
+            return@launch
+        }
         repo = APIRepository(api)
 
         val data = repo?.load(url)
@@ -464,9 +468,9 @@ class ResultViewModel : ViewModel() {
                     var title: String
                     var count = 0
                     while (true) {
-                        title = "$langId${if (count == 0) "" else " ${count+1}"}"
+                        title = "$langId${if (count == 0) "" else " ${count + 1}"}"
                         count++
-                        if(!subs.containsKey(title)) {
+                        if (!subs.containsKey(title)) {
                             break
                         }
                     }

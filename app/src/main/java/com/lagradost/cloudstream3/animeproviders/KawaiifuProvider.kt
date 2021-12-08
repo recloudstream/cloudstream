@@ -1,25 +1,18 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 import java.util.*
 
 class KawaiifuProvider : MainAPI() {
-    override val mainUrl: String
-        get() = "https://kawaiifu.com"
-    override val name: String
-        get() = "Kawaiifu"
-    override val hasQuickSearch: Boolean
-        get() = false
-    override val hasMainPage: Boolean
-        get() = true
+    override val mainUrl = "https://kawaiifu.com"
+    override val name = "Kawaiifu"
+    override val hasQuickSearch = false
+    override val hasMainPage = true
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
-
+    override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
 
     override fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
@@ -96,10 +89,10 @@ class KawaiifuProvider : MainAPI() {
         val description = soup.select(".sub-desc p")
             .filter { it.select("strong").isEmpty() && it.select("iframe").isEmpty() }.joinToString("\n") { it.text() }
         val year = url.split("/").filter { it.contains("-") }[0].split("-")[1].toIntOrNull()
+
+        val episodesLink = soup.selectFirst("a[href*=\".html-episode\"]").attr("href") ?: throw ErrorLoadingException("Error getting episode list")
         val episodes = Jsoup.parse(
-            app.get(
-                soup.selectFirst("a[href*=\".html-episode\"]").attr("href")
-            ).text
+            app.get(episodesLink).text
         ).selectFirst(".list-ep").select("li").map {
             AnimeEpisode(
                 it.selectFirst("a").attr("href"),

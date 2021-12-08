@@ -26,18 +26,12 @@ import java.net.URL
 import java.util.*
 
 class AniListApi(index: Int) : AccountManager(index), SyncAPI {
-    override val name: String
-        get() = "AniList"
-    override val key: String
-        get() = "6871"
-    override val redirectUrl: String
-        get() = "anilistlogin"
-    override val idPrefix: String
-        get() = "anilist"
-    override val mainUrl: String
-        get() = "https://anilist.co"
-    override val icon: Int
-        get() = R.drawable.ic_anilist_icon
+    override val name = "AniList"
+    override val key = "6871"
+    override val redirectUrl = "anilistlogin"
+    override val idPrefix = "anilist"
+    override val mainUrl = "https://anilist.co"
+    override val icon = R.drawable.ic_anilist_icon
 
     override fun loginInfo(context: Context): OAuth2API.LoginInfo? {
         // context.getUser(true)?.
@@ -144,7 +138,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         const val ANILIST_SHOULD_UPDATE_LIST: String = "anilist_should_update_list"
 
         private fun fixName(name: String): String {
-            return name.toLowerCase(Locale.ROOT).replace(" ", "").replace("[^a-zA-Z0-9]".toRegex(), "")
+            return name.lowercase(Locale.ROOT).replace(" ", "").replace("[^a-zA-Z0-9]".toRegex(), "")
         }
 
         private fun searchShows(name: String): GetSearchRoot? {

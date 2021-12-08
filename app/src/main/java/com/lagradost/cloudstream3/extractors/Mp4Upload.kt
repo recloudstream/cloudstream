@@ -1,12 +1,14 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.getAndUnpack
 
 class Mp4Upload : ExtractorApi() {
-    override val name: String = "Mp4Upload"
-    override val mainUrl: String = "https://www.mp4upload.com"
+    override val name = "Mp4Upload"
+    override val mainUrl = "https://www.mp4upload.com"
     private val srcRegex = Regex("""player\.src\("(.*?)"""")
     override val requiresReferer = true
 

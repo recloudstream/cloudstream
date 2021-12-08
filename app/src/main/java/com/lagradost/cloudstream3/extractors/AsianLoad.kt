@@ -1,18 +1,13 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.*
 import java.net.URI
 
 class AsianLoad : ExtractorApi() {
-    override val name: String
-        get() = "AsianLoad"
-    override val mainUrl: String
-        get() = "https://asianembed.io"
-    override val requiresReferer: Boolean
-        get() = true
+    override val name = "AsianLoad"
+    override val mainUrl = "https://asianembed.io"
+    override val requiresReferer = true
 
     private val sourceRegex = Regex("""sources:[\W\w]*?file:\s*?["'](.*?)["']""")
     override fun getUrl(url: String, referer: String?): List<ExtractorLink> {

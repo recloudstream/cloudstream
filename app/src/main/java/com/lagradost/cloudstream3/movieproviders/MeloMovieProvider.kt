@@ -3,24 +3,17 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.Session
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 class MeloMovieProvider : MainAPI() {
-    override val name: String
-        get() = "MeloMovie"
-    override val mainUrl: String
-        get() = "https://melomovie.com"
-    override val instantLinkLoading: Boolean
-        get() = true
-    override val hasQuickSearch: Boolean
-        get() = true
-    override val hasChromecastSupport: Boolean
-        get() = false // MKV FILES CANT BE PLAYED ON A CHROMECAST
+    override val name = "MeloMovie"
+    override val mainUrl = "https://melomovie.com"
+    override val instantLinkLoading = true
+    override val hasQuickSearch = true
+    override val hasChromecastSupport = false // MKV FILES CANT BE PLAYED ON A CHROMECAST
 
     data class MeloMovieSearchResult(
         @JsonProperty("id") val id: Int,

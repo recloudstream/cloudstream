@@ -4,28 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.extractors.M3u8Manifest
-import com.lagradost.cloudstream3.network.text
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 
 //BE AWARE THAT weboas.is is a clone of lookmovie
 class LookMovieProvider : MainAPI() {
-    override val hasQuickSearch: Boolean
-        get() = true
+    override val hasQuickSearch = true
+    override val name = "LookMovie"
+    override val mainUrl = "https://lookmovie.io"
 
-    override val name: String
-        get() = "LookMovie"
-
-    override val mainUrl: String
-        get() = "https://lookmovie.io"
-
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.Movie,
-            TvType.TvSeries,
-        )
+    override val supportedTypes = setOf(
+        TvType.Movie,
+        TvType.TvSeries,
+    )
 
     data class LookMovieSearchResult(
         @JsonProperty("backdrop") val backdrop: String?,

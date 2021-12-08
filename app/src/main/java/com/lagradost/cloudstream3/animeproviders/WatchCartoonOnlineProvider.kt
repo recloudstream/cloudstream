@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
@@ -13,18 +12,15 @@ import java.util.*
 
 
 class WatchCartoonOnlineProvider : MainAPI() {
-    override val name: String
-        get() = "WatchCartoonOnline"
-    override val mainUrl: String
-        get() = "https://www.wcostream.com"
+    override val name = "WatchCartoonOnline"
+    override val mainUrl = "https://www.wcostream.com"
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.Cartoon,
-            TvType.Anime,
-            TvType.AnimeMovie,
-            TvType.TvSeries
-        )
+    override val supportedTypes = setOf(
+        TvType.Cartoon,
+        TvType.Anime,
+        TvType.AnimeMovie,
+        TvType.TvSeries
+    )
 
     override fun search(query: String): List<SearchResponse> {
         val url = "https://www.wcostream.com/search"
@@ -75,8 +71,8 @@ class WatchCartoonOnlineProvider : MainAPI() {
                 data = mapOf("catara" to query, "konuara" to "episodes")
             ).text
         document = Jsoup.parse(response)
-        items = document.select("#catlist-listview2 > ul > li").filter { it?.text() != null && !it.text().toString().contains("Episode") }
-
+        items = document.select("#catlist-listview2 > ul > li")
+            .filter { it?.text() != null && !it.text().toString().contains("Episode") }
 
         for (item in items) {
             val titleHeader = item.selectFirst("a")

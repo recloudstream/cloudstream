@@ -3,34 +3,21 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import java.util.concurrent.TimeUnit
 
 class ThenosProvider : MainAPI() {
-    override val mainUrl: String
-        get() = "https://www.thenos.org"
-    override val name: String
-        get() = "Thenos"
+    override val mainUrl = "https://www.thenos.org"
+    override val name = "Thenos"
+    override val hasQuickSearch = true
+    override val hasMainPage = true
+    override val hasChromecastSupport = false
 
-    override val hasQuickSearch: Boolean
-        get() = true
-
-    override val hasMainPage: Boolean
-        get() = true
-
-    override val hasChromecastSupport: Boolean
-        get() = false
-
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.Movie,
-            TvType.TvSeries,
-        )
-
-    override val vpnStatus: VPNStatus
-        get() = VPNStatus.None
+    override val supportedTypes = setOf(
+        TvType.Movie,
+        TvType.TvSeries,
+    )
 
     override fun getMainPage(): HomePageResponse {
         val map = mapOf(

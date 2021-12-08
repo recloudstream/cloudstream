@@ -1,26 +1,20 @@
 package com.lagradost.cloudstream3.torrentproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
 
 class NyaaProvider : MainAPI() {
-    override val name: String
-        get() = "Nyaa"
-    override val hasChromecastSupport: Boolean
-        get() = false
-   // override val hasDownloadSupport: Boolean
+    override val name = "Nyaa"
+    override val hasChromecastSupport = false
+
+    // override val hasDownloadSupport: Boolean
     //    get() = false
-    override val mainUrl: String
-        get() = "https://nyaa.si"
-    override val supportedTypes: Set<TvType>
-        get() = setOf(TvType.Torrent)
-    override val vpnStatus: VPNStatus
-        get() = VPNStatus.Torrent
-    override val instantLinkLoading: Boolean
-        get() = true
+    override val mainUrl = "https://nyaa.si"
+    override val supportedTypes = setOf(TvType.Torrent)
+    override val vpnStatus = VPNStatus.Torrent
+    override val instantLinkLoading = true
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?f=0&c=0_0&q=$query&s=seeders&o=desc"
@@ -28,10 +22,10 @@ class NyaaProvider : MainAPI() {
         val document = Jsoup.parse(response)
 
         val returnValues = ArrayList<SearchResponse>()
-                val elements = document.select("table > tbody > tr")
+        val elements = document.select("table > tbody > tr")
         for (element in elements) {
             val tds = element.select("> td")
-            if(tds.size < 2) continue
+            if (tds.size < 2) continue
             val type = tds[0].select("> a").attr("title")
             val titleHeader = tds[1].select("> a").last()
             val href = titleHeader.attr("href")
@@ -52,7 +46,7 @@ class NyaaProvider : MainAPI() {
         val magnet = downloadLinks[1].attr("href")
         val torrent = downloadLinks[0].attr("href")
 
-        return TorrentLoadResponse(title, url, this.name, magnet, fixUrl(torrent) , description)
+        return TorrentLoadResponse(title, url, this.name, magnet, fixUrl(torrent), description)
     }
 
     override fun loadLinks(

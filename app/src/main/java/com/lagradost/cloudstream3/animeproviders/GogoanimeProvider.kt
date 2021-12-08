@@ -1,8 +1,6 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
-import com.lagradost.cloudstream3.network.url
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -28,21 +26,16 @@ class GogoanimeProvider : MainAPI() {
         val qualityRegex = Regex("(\\d+)P")
     }
 
-    override val mainUrl: String
-        get() = "https://gogoanime.vc"
-    override val name: String
-        get() = "GogoAnime"
-    override val hasQuickSearch: Boolean
-        get() = false
-    override val hasMainPage: Boolean
-        get() = true
+    override val mainUrl = "https://gogoanime.vc"
+    override val name = "GogoAnime"
+    override val hasQuickSearch = false
+    override val hasMainPage = true
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.AnimeMovie,
-            TvType.Anime,
-            TvType.ONA
-        )
+    override val supportedTypes = setOf(
+        TvType.AnimeMovie,
+        TvType.Anime,
+        TvType.ONA
+    )
 
     override fun getMainPage(): HomePageResponse {
         val headers = mapOf(

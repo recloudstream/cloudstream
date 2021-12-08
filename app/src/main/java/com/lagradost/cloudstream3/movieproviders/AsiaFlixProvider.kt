@@ -5,25 +5,18 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider.Companion.getStatus
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import java.net.URI
 
 class AsiaFlixProvider : MainAPI() {
-    override val mainUrl: String
-        get() = "https://asiaflix.app"
-    override val name: String
-        get() = "AsiaFlix"
-    override val hasQuickSearch: Boolean
-        get() = false
-    override val hasMainPage: Boolean
-        get() = true
-    override val hasChromecastSupport: Boolean
-        get() = false
-    override val supportedTypes: Set<TvType>
-        get() = setOf(TvType.TvSeries)
+    override val mainUrl = "https://asiaflix.app"
+    override val name = "AsiaFlix"
+    override val hasQuickSearch = false
+    override val hasMainPage = true
+    override val hasChromecastSupport = false
+    override val supportedTypes = setOf(TvType.TvSeries)
 
     private val apiUrl = "https://api.asiaflix.app/api/v2"
 

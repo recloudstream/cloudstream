@@ -1,34 +1,20 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
 
 // referer = https://vf-film.org, USERAGENT ALSO REQUIRED
 class VfFilmProvider : MainAPI() {
-    override val mainUrl: String
-        get() = "https://vf-film.me"
-    override val name: String
-        get() = "vf-film.me"
+    override val mainUrl = "https://vf-film.me"
+    override val name = "vf-film.me"
+    override val lang = "fr"
+    override val hasQuickSearch = false
+    override val hasMainPage = false
+    override val hasChromecastSupport = false
 
-    override val lang: String = "fr"
-
-    override val hasQuickSearch: Boolean
-        get() = false
-
-    override val hasMainPage: Boolean
-        get() = false
-
-    override val hasChromecastSupport: Boolean
-        get() = false
-
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.Movie,
-        )
-
+    override val supportedTypes = setOf(TvType.Movie)
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
@@ -53,7 +39,6 @@ class VfFilmProvider : MainAPI() {
         return returnValue
     }
 
-
     override fun loadLinks(
         data: String,
         isCasting: Boolean,
@@ -74,7 +59,6 @@ class VfFilmProvider : MainAPI() {
         return true
     }
 
-
     private fun getDirect(original: String): String {  // original data, https://vf-film.org/?trembed=1&trid=55313&trtype=1 for example
         val response = app.get(original).text
         val url = "iframe .*src=\"(.*?)\"".toRegex().find(response)?.groupValues?.get(1)
@@ -85,7 +69,6 @@ class VfFilmProvider : MainAPI() {
             .toString()  // direct mp4 link, https://m11.vudeo.net/2vp3ukyw2avjdohilpebtzuct42q5jwvpmpsez3xjs6d7fbs65dpuey2rbra/v.mp4 for exemple
         return vudoUrl
     }
-
 
     override fun load(url: String): LoadResponse {
         val response = app.get(url).text

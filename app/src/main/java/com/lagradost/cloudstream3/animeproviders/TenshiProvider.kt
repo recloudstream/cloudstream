@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -24,18 +23,13 @@ class TenshiProvider : MainAPI() {
         }
     }
 
-    override val mainUrl: String
-        get() = "https://tenshi.moe"
-    override val name: String
-        get() = "Tenshi.moe"
-    override val hasQuickSearch: Boolean
-        get() = false
-    override val hasMainPage: Boolean
-        get() = true
+    override val mainUrl = "https://tenshi.moe"
+    override val name = "Tenshi.moe"
+    override val hasQuickSearch = false
+    override val hasMainPage = true
 
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
+    override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
 
     /*private fun loadToken(): Boolean {
         return try {
@@ -56,7 +50,11 @@ class TenshiProvider : MainAPI() {
             try {
                 if (section.attr("id") == "toplist-tabs") {
                     for (top in section.select(".tab-content > [role=\"tabpanel\"]")) {
-                        val title = "Top - " + top.attr("id").split("-")[1].capitalize(Locale.UK)
+                        val title = "Top - " + top.attr("id").split("-")[1].replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.UK
+                            ) else it.toString()
+                        }
                         val anime = top.select("li > a").map {
                             AnimeSearchResponse(
                                 it.selectFirst(".thumb-title").text(),
@@ -133,7 +131,7 @@ class TenshiProvider : MainAPI() {
 
     @SuppressLint("SimpleDateFormat")
     private fun dateParser(dateString: String?): String? {
-        if(dateString == null) return null
+        if (dateString == null) return null
         try {
             val format = SimpleDateFormat("dd 'of' MMM',' yyyy")
             val newFormat = SimpleDateFormat("dd-MM-yyyy")
@@ -228,8 +226,8 @@ class TenshiProvider : MainAPI() {
 
         val episodeNodes = document.select("li[class*=\"episode\"] > a").toMutableList()
         val totalEpisodePages = if (document.select(".pagination").size > 0)
-                document.select(".pagination .page-item a.page-link:not([rel])").last().text().toIntOrNull()
-            else 1
+            document.select(".pagination .page-item a.page-link:not([rel])").last().text().toIntOrNull()
+        else 1
 
         if (totalEpisodePages != null && totalEpisodePages > 1) {
             for (pageNum in 2..totalEpisodePages) {
@@ -267,14 +265,14 @@ class TenshiProvider : MainAPI() {
         val synonyms =
             document.select("li.synonym.meta-data > div.info-box > span.value").map { it?.text()?.trim().toString() }
 
-        return newAnimeLoadResponse(canonicalTitle,url,getType(type ?: "")) {
+        return newAnimeLoadResponse(canonicalTitle, url, getType(type ?: "")) {
             engName = englishTitle
             japName = japaneseTitle
 
             posterUrl = poster
             this.year = year.toIntOrNull()
 
-            addEpisodes(DubStatus.Subbed,episodes)
+            addEpisodes(DubStatus.Subbed, episodes)
             showStatus = status
             tags = genre
             this.synonyms = synonyms

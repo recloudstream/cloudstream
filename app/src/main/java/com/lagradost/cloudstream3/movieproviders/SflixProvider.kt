@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.network.WebViewResolver
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -12,29 +11,16 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
 
-class SflixProvider(private val providerUrl: String, private val providerName: String) : MainAPI() {
-    override val mainUrl: String
-        get() = providerUrl
-    override val name: String
-        get() = providerName
+class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
+    override val mainUrl = providerUrl
+    override val name = providerName
 
-    override val hasQuickSearch: Boolean
-        get() = false
-
-    override val hasMainPage: Boolean
-        get() = true
-
-    override val hasChromecastSupport: Boolean
-        get() = true
-
-    override val hasDownloadSupport: Boolean
-        get() = true
-
-    override val usesWebView: Boolean
-        get() = true
-
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
+    override val hasQuickSearch = false
+    override val hasMainPage = true
+    override val hasChromecastSupport = true
+    override val hasDownloadSupport = true
+    override val usesWebView = true
+    override val supportedTypes = setOf(
             TvType.Movie,
             TvType.TvSeries,
         )

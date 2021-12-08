@@ -32,7 +32,6 @@ object APIHolder {
         //ShiroProvider(), // v2 fucked me
         //AnimePaheProvider(), //ddos guard
         AnimeFlickProvider(),
-        KawaiifuProvider(),
 
         TenshiProvider(),
         WcoProvider(),
@@ -49,10 +48,10 @@ object APIHolder {
         VfSerieProvider(),
         AsianLoadProvider(),
 
-        SflixProvider("https://sflix.to","Sflix"),
-        SflixProvider("https://dopebox.to","Dopebox"),
+        SflixProvider("https://sflix.to", "Sflix"),
+        SflixProvider("https://dopebox.to", "Dopebox"),
 
-//        TmdbProvider(),
+        //TmdbProvider(),
 
         TrailersTwoProvider(),
 
@@ -66,16 +65,25 @@ object APIHolder {
         AsiaFlixProvider(),
     )
 
+    private val backwardsCompatibleProviders = arrayListOf(
+        KawaiifuProvider(), // removed due to cloudflare
+    )
+
     fun getApiFromName(apiName: String?): MainAPI {
+        return getApiFromNameNull(apiName) ?: apis[defProvider]
+    }
+
+    fun getApiFromNameNull(apiName: String?): MainAPI? {
+        if (apiName == null) return null
         for (api in apis) {
             if (apiName == api.name)
                 return api
         }
-        return apis[defProvider]
-    }
-
-    fun getApiFromNameNull(apiName: String?): MainAPI? {
-        for (api in apis) {
+        for (api in restrictedApis) {
+            if (apiName == api.name)
+                return api
+        }
+        for (api in backwardsCompatibleProviders) {
             if (apiName == api.name)
                 return api
         }
@@ -278,6 +286,7 @@ fun imdbUrlToIdNullable(url: String?): String? {
 enum class ProviderType {
     // When data is fetched from a 3rd party site like imdb
     MetaProvider,
+
     // When all data is from the site
     DirectProvider,
 }
@@ -460,8 +469,8 @@ data class AnimeLoadResponse(
     override var recommendations: List<SearchResponse>? = null,
 ) : LoadResponse
 
-fun AnimeLoadResponse.addEpisodes(status : DubStatus, episodes : List<AnimeEpisode>?) {
-    if(episodes == null) return
+fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<AnimeEpisode>?) {
+    if (episodes == null) return
     this.episodes[status] = episodes
 }
 

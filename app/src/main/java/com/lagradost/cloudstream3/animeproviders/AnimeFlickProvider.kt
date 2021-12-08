@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.extractorApis
@@ -17,22 +16,16 @@ class AnimeFlickProvider : MainAPI() {
         }
     }
 
-    override val mainUrl: String
-        get() = "https://animeflick.net"
-    override val name: String
-        get() = "AnimeFlick"
-    override val hasQuickSearch: Boolean
-        get() = false
-    override val hasMainPage: Boolean
-        get() = false
+    override val mainUrl = "https://animeflick.net"
+    override val name = "AnimeFlick"
+    override val hasQuickSearch = false
+    override val hasMainPage = false
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.AnimeMovie,
-            TvType.Anime,
-            TvType.ONA
-        )
-
+    override val supportedTypes = setOf(
+        TvType.AnimeMovie,
+        TvType.Anime,
+        TvType.ONA
+    )
 
     override fun search(query: String): ArrayList<SearchResponse> {
         val link = "https://animeflick.net/search.php?search=$query"

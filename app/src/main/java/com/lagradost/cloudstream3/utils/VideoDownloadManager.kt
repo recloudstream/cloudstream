@@ -529,9 +529,7 @@ object VideoDownloadManager {
         }
     }
 
-    val isScopedStorage: Boolean
-        get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-
+    val isScopedStorage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
     data class CreateNotificationMetadata(
         val type: DownloadType,

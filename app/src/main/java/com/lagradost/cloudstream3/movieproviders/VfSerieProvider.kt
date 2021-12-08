@@ -1,36 +1,21 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
-import okio.Buffer
 import org.jsoup.Jsoup
 
 // referer = https://vf-serie.org, USERAGENT ALSO REQUIRED
 class VfSerieProvider : MainAPI() {
-    override val mainUrl: String
-        get() = "https://vf-serie.org"
-    override val name: String
-        get() = "vf-serie.org"
+    override val mainUrl = "https://vf-serie.org"
+    override val name = "vf-serie.org"
+    override val lang = "fr"
 
-    override val lang: String = "fr"
+    override val hasQuickSearch = false
+    override val hasMainPage = false
+    override val hasChromecastSupport = false
 
-    override val hasQuickSearch: Boolean
-        get() = false
-
-    override val hasMainPage: Boolean
-        get() = false
-
-    override val hasChromecastSupport: Boolean
-        get() = false
-
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.TvSeries,
-        )
-
+    override val supportedTypes = setOf(TvType.TvSeries)
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
@@ -57,17 +42,14 @@ class VfSerieProvider : MainAPI() {
         return returnValue
     }
 
-
-
-
-
     private fun getDirect(original: String): String {  // original data, https://vf-serie.org/?trembed=1&trid=80467&trtype=2 for example
         val response = app.get(original).text
-        val url = "iframe .*src=\\\"(.*?)\\\"".toRegex().find(response)?.groupValues?.get(1).toString()  // https://vudeo.net/embed-7jdb1t5b2mvo.html for example
+        val url = "iframe .*src=\\\"(.*?)\\\"".toRegex().find(response)?.groupValues?.get(1)
+            .toString()  // https://vudeo.net/embed-7jdb1t5b2mvo.html for example
         val vudoResponse = app.get(url).text
         val document = Jsoup.parse(vudoResponse)
-        val vudoUrl = Regex("sources: \\[\"(.*?)\"\\]").find(document.html())?.groupValues?.get(1).toString()  // direct mp4 link, https://m5.vudeo.net/2vp3xgpw2avjdohilpfbtyuxzzrqzuh4z5yxvztral5k3rjnba6f4byj3saa/v.mp4 for exemple
-        return vudoUrl
+        return Regex("sources: \\[\"(.*?)\"\\]").find(document.html())?.groupValues?.get(1)
+            .toString()  // direct mp4 link, https://m5.vudeo.net/2vp3xgpw2avjdohilpfbtyuxzzrqzuh4z5yxvztral5k3rjnba6f4byj3saa/v.mp4 for exemple
     }
 
     override fun loadLinks(
@@ -81,29 +63,30 @@ class VfSerieProvider : MainAPI() {
         val response = app.get(data).text
         val document = Jsoup.parse(response)
         val players = document.select("ul.TPlayerNv > li")
-        val trembed_url = document.selectFirst("div.TPlayerTb > iframe").attr("src")
-        var number_player = Regex(".*trembed=(.*?)&").find(trembed_url)?.groupValues?.get(1)!!.toInt()  // the starting trembed number of the first player website, some start at 0 other at 1
+        val trembedUrl = document.selectFirst("div.TPlayerTb > iframe").attr("src")
+        var numberPlayer = Regex(".*trembed=(.*?)&").find(trembedUrl)?.groupValues?.get(1)!!
+            .toInt()  // the starting trembed number of the first player website, some start at 0 other at 1
         var found = false
         for (player in players) {
             if (player.selectFirst("> span").text() == "Vudeo") {
                 found = true
                 break
             } else {
-                number_player += 1
+                numberPlayer += 1
             }
         }
-        if (found == false) {
-            number_player = 1
+        if (!found) {
+            numberPlayer = 1
         }
-        val i = number_player.toString()
+        val i = numberPlayer.toString()
         val trid = Regex("iframe .*trid=(.*?)&").find(document.html())?.groupValues?.get(1)
 
-        val data = getDirect("$mainUrl/?trembed=$i&trid=$trid&trtype=2")
+        val directData = getDirect("$mainUrl/?trembed=$i&trid=$trid&trtype=2")
         callback.invoke(
             ExtractorLink(
                 this.name,
                 this.name,
-                data,
+                directData,
                 "",
                 Qualities.P720.value,
                 false
@@ -112,25 +95,23 @@ class VfSerieProvider : MainAPI() {
         return true
     }
 
-
     override fun load(url: String): LoadResponse {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
-        val title = document?.selectFirst(".Title")?.text()?.replace("Regarder Serie ","")?.replace(" En Streaming", "")
-            ?: throw ErrorLoadingException("Service might be unavailable")
+        val title =
+            document?.selectFirst(".Title")?.text()?.replace("Regarder Serie ", "")?.replace(" En Streaming", "")
+                ?: throw ErrorLoadingException("Service might be unavailable")
 
 
         val year = document.select("span.Date").text()?.toIntOrNull()
-
         val rating = document.select("span.AAIco-star").text()?.toIntOrNull()
 
-        val duration = document.select("span.Time").text()?.toIntOrNull()
+        //val duration = document.select("span.Time").text()?.toIntOrNull()
 
-        val backgroundPoster = document.selectFirst("div.Image > figure > img").attr("src").replace("//image", "https://image")
+        val backgroundPoster =
+            document.selectFirst("div.Image > figure > img").attr("src").replace("//image", "https://image")
 
         val descript = document.selectFirst("div.Description > p").text()
-
-
 
         val list = ArrayList<Int>()
 
@@ -150,7 +131,8 @@ class VfSerieProvider : MainAPI() {
             if (episodes.isNotEmpty()) {
                 episodes.forEach { episode ->
                     val epNum = episode.selectFirst("> span.Num")?.text()?.toIntOrNull()
-                    val poster = episode.selectFirst("> td.MvTbImg > a > img")?.attr("src")?.replace("//image", "https://image")
+                    val poster =
+                        episode.selectFirst("> td.MvTbImg > a > img")?.attr("src")?.replace("//image", "https://image")
                     val aName = episode.selectFirst("> td.MvTbTtl > a")
                     val date = episode.selectFirst("> td.MvTbTtl > span")?.text()?.toString()
                     val name = aName.text()
@@ -181,8 +163,5 @@ class VfSerieProvider : MainAPI() {
             null,
             rating
         )
-
-
-
     }
 }

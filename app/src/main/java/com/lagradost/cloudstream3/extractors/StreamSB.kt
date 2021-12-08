@@ -1,15 +1,14 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getAndUnpack
 import com.lagradost.cloudstream3.utils.getQualityFromName
 
 class StreamSB : ExtractorApi() {
-    override val name: String = "StreamSB"
-    override val mainUrl: String = "https://sbplay.org"
+    override val name = "StreamSB"
+    override val mainUrl = "https://sbplay.org"
     private val sourceRegex = Regex("""sources:[\W\w]*?file:\s*"(.*?)"""")
 
     //private val m3u8Regex = Regex(""".*?(\d*).m3u8""")

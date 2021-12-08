@@ -32,16 +32,11 @@ import java.util.*
 const val MAL_MAX_SEARCH_LIMIT = 25
 
 class MALApi(index: Int) : AccountManager(index), SyncAPI {
-    override val name: String
-        get() = "MAL"
-    override val key: String
-        get() = "1714d6f2f4f7cc19644384f8c4629910"
-    override val redirectUrl: String
-        get() = "mallogin"
-    override val idPrefix: String
-        get() = "mal"
-    override val mainUrl: String
-        get() = "https://myanimelist.net"
+    override val name = "MAL"
+    override val key = "1714d6f2f4f7cc19644384f8c4629910"
+    override val redirectUrl = "mallogin"
+    override val idPrefix = "mal"
+    override val mainUrl = "https://myanimelist.net"
     override val icon: Int
         get() = R.drawable.mal_logo
 

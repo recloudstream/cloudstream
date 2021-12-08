@@ -1,23 +1,18 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
 
 class HDMProvider : MainAPI() {
-    override val name: String
-        get() = "HD Movies"
-    override val mainUrl: String
-        get() = "https://hdm.to"
+    override val name = "HD Movies"
+    override val mainUrl = "https://hdm.to"
+    override val hasMainPage = true
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(
-            TvType.Movie,
-        )
-    override val hasMainPage: Boolean
-        get() = true
+    override val supportedTypes = setOf(
+        TvType.Movie,
+    )
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/$query"
@@ -72,7 +67,7 @@ class HDMProvider : MainAPI() {
 
         return MovieLoadResponse(
             title, url, this.name, TvType.Movie,
-                "$mainUrl/src/player/?v=$data", poster, year, descript, null
+            "$mainUrl/src/player/?v=$data", poster, year, descript, null
         )
     }
 

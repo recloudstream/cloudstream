@@ -1,10 +1,8 @@
 package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.network.text
 import org.jsoup.Jsoup
 import java.util.*
-import kotlin.collections.HashMap
 
 object FillerEpisodeCheck {
     private const val MAIN_URL = "https://www.animefillerlist.com"
@@ -12,7 +10,7 @@ object FillerEpisodeCheck {
     var list: HashMap<String, String>? = null
 
     private fun fixName(name: String): String {
-        return name.toLowerCase(Locale.ROOT)/*.replace(" ", "")*/.replace("-", " ").replace("[^a-zA-Z0-9 ]".toRegex(), "")
+        return name.lowercase(Locale.ROOT)/*.replace(" ", "")*/.replace("-", " ").replace("[^a-zA-Z0-9 ]".toRegex(), "")
     }
 
     private fun getFillerList(): Boolean {
@@ -25,7 +23,7 @@ object FillerEpisodeCheck {
             for (i in localHTMLList) {
                 val name = i.text()
 
-                if (name.toLowerCase(Locale.ROOT).contains("manga only")) continue
+                if (name.lowercase(Locale.ROOT).contains("manga only")) continue
 
                 val href = i.attr("href")
                 if (name.isNullOrEmpty() || href.isNullOrEmpty()) {

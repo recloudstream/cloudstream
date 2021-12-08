@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.Vidstream
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -27,12 +26,10 @@ open class VidstreamProviderTemplate : MainAPI() {
     // gives results on the site instead of bringing you to another page.
     // if hasQuickSearch is true and quickSearch() hasn't been overridden you will get errors.
     // VidEmbed actually has quick search on their site, but the function wasn't implemented.
-    override val hasQuickSearch: Boolean
-        get() = false
+    override val hasQuickSearch = false
 
     // If getMainPage() is functional, used to display the homepage in app, an optional, but highly encouraged endevour.
-    override val hasMainPage: Boolean
-        get() = true
+    override val hasMainPage = true
 
     // Sometimes on sites the urls can be something like "/movie.html" which translates to "*full site url*/movie.html" in the browser
     private fun fixUrl(url: String): String {

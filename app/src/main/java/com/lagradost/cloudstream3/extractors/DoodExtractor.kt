@@ -1,29 +1,23 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import java.lang.Thread.sleep
 
 class DoodToExtractor : DoodLaExtractor() {
-    override val mainUrl: String
-        get() = "https://dood.to"
+    override val mainUrl = "https://dood.to"
 }
 
 class DoodSoExtractor : DoodLaExtractor() {
-    override val mainUrl: String
-        get() = "https://dood.so"
+    override val mainUrl = "https://dood.so"
 }
 
 open class DoodLaExtractor : ExtractorApi() {
-    override val name: String
-        get() = "DoodStream"
-    override val mainUrl: String
-        get() = "https://dood.la"
-    override val requiresReferer: Boolean
-        get() = false
+    override val name = "DoodStream"
+    override val mainUrl = "https://dood.la"
+    override val requiresReferer = false
 
     override fun getExtractorUrl(id: String): String {
         return "$mainUrl/d/$id"

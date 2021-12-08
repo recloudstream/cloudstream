@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -16,14 +15,10 @@ import java.util.*
 
 
 class AllAnimeProvider : MainAPI() {
-    override val mainUrl: String
-        get() = "https://allanime.site"
-    override val name: String
-        get() = "AllAnime"
-    override val hasQuickSearch: Boolean
-        get() = false
-    override val hasMainPage: Boolean
-        get() = false
+    override val mainUrl = "https://allanime.site"
+    override val name = "AllAnime"
+    override val hasQuickSearch = false
+    override val hasMainPage = false
 
     private val hlsHelper = M3u8Helper()
 
@@ -35,8 +30,7 @@ class AllAnimeProvider : MainAPI() {
         }
     }
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(TvType.Anime, TvType.AnimeMovie)
+    override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie)
 
     private data class Data(
         @JsonProperty("shows") val shows: Shows
