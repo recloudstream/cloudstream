@@ -77,6 +77,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     StreamSB(),
     Streamhub(),
     SBPlay(),
+    FEmbed(),
 
     // dood extractors
     DoodToExtractor(),
