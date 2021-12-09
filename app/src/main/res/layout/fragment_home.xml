@@ -332,28 +332,68 @@
 
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:id="@+id/home_bookmarked_child_more_info"
-                        android:padding="12dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                    <ImageView
-                            android:nextFocusLeft="@id/nav_rail_view"
-                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                    <HorizontalScrollView
+                            android:fadingEdge="horizontal"
+                            android:requiresFadingEdge="horizontal"
+                            android:layout_marginEnd="50dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                        <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                            <com.google.android.material.button.MaterialButton
+                                    android:nextFocusLeft="@id/nav_rail_view"
+                                    android:nextFocusRight="@id/home_plan_to_watch_btt"
+                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
+                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
 
-                            android:tint="?attr/textColor"
+                                    android:id="@+id/home_type_watching_btt"
+                                    android:text="@string/type_watching"
+                                    style="@style/RoundedSelectableButton"/>
+                            <com.google.android.material.button.MaterialButton
+                                    android:nextFocusLeft="@id/home_type_watching_btt"
+                                    android:nextFocusRight="@id/home_type_on_hold_btt"
+                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
+                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
 
-                            android:id="@+id/home_bookmark_select"
-                            android:src="@drawable/ic_baseline_filter_list_24"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:contentDescription="@string/filter_bookmarks">
-                    </ImageView>
-                    <TextView
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginStart="40dp"
-                            android:id="@+id/home_bookmarked_parent_item_title"
-                            style="@style/WatchHeaderText"
-                            tools:text="Bookmarked"
-                    />
+                                    android:id="@+id/home_plan_to_watch_btt"
+                                    android:text="@string/type_plan_to_watch"
+                                    style="@style/RoundedSelectableButton"/>
+                            <com.google.android.material.button.MaterialButton
+                                    android:nextFocusLeft="@id/home_plan_to_watch_btt"
+                                    android:nextFocusRight="@id/home_type_dropped_btt"
+                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
+                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
+
+                                    android:id="@+id/home_type_on_hold_btt"
+                                    android:text="@string/type_on_hold"
+                                    style="@style/RoundedSelectableButton"/>
+                            <com.google.android.material.button.MaterialButton
+                                    android:nextFocusLeft="@id/home_type_on_hold_btt"
+                                    android:nextFocusRight="@id/home_type_completed_btt"
+                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
+                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
+
+                                    android:id="@+id/home_type_dropped_btt"
+                                    android:text="@string/type_dropped"
+                                    style="@style/RoundedSelectableButton"/>
+                            <com.google.android.material.button.MaterialButton
+                                    android:nextFocusLeft="@id/home_type_dropped_btt"
+                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
+                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
+
+                                    android:id="@+id/home_type_completed_btt"
+                                    android:text="@string/type_completed"
+                                    style="@style/RoundedSelectableButton"/>
+                        </LinearLayout>
+                    </HorizontalScrollView>
                     <ImageView
                             android:tint="?attr/textColor"
                             android:layout_marginEnd="5dp"

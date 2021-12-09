@@ -53,8 +53,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.widget.CenterZoomLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
+import java.util.*
 
-const val HOME_BOOKMARK_VALUE = "home_bookmarked_last"
+const val HOME_BOOKMARK_VALUE_LIST = "home_bookmarked_last_list"
 
 class HomeFragment : Fragment() {
     companion object {
@@ -164,7 +165,11 @@ class HomeFragment : Fragment() {
     private fun reloadStored() {
         context?.let { ctx ->
             homeViewModel.loadResumeWatching(ctx)
-            homeViewModel.loadStoredData(ctx, WatchType.fromInternalId(ctx.getKey(HOME_BOOKMARK_VALUE)))
+            val list = EnumSet.noneOf(WatchType::class.java)
+            ctx.getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
+                list.addAll(it)
+            }
+            homeViewModel.loadStoredData(ctx, list)
         }
     }
 
@@ -301,9 +306,46 @@ class HomeFragment : Fragment() {
             activity?.loadHomepageList(item)
         })
 
+        val toggleList = listOf(
+            Pair(home_type_watching_btt, WatchType.WATCHING),
+            Pair(home_type_completed_btt, WatchType.COMPLETED),
+            Pair(home_type_dropped_btt, WatchType.DROPPED),
+            Pair(home_type_on_hold_btt, WatchType.ONHOLD),
+            Pair(home_plan_to_watch_btt, WatchType.PLANTOWATCH),
+        )
+
+        for (item in toggleList) {
+            val watch = item.second
+            item.first?.setOnClickListener { itemView ->
+                val list = EnumSet.noneOf(WatchType::class.java)
+                itemView.context.getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
+                    list.addAll(it)
+                }
+
+                if (list.contains(watch)) {
+                    list.remove(watch)
+                } else {
+                    list.add(watch)
+                }
+                homeViewModel.loadStoredData(itemView.context, list)
+            }
+        }
+
         observe(homeViewModel.availableWatchStatusTypes) { availableWatchStatusTypes ->
-            context?.setKey(HOME_BOOKMARK_VALUE, availableWatchStatusTypes.first.internalId)
-            home_bookmark_select?.setOnClickListener {
+            context?.setKey(
+                HOME_BOOKMARK_VALUE_LIST,
+                availableWatchStatusTypes.first.map { it.internalId }.toIntArray()
+            )
+
+            for (item in toggleList) {
+                val watch = item.second
+                item.first?.apply {
+                    isVisible = availableWatchStatusTypes.second.contains(watch)
+                    isSelected = availableWatchStatusTypes.first.contains(watch)
+                }
+            }
+
+            /*home_bookmark_select?.setOnClickListener {
                 it.popupMenuNoIcons(availableWatchStatusTypes.second.map { type ->
                     Pair(
                         type.internalId,
@@ -313,18 +355,20 @@ class HomeFragment : Fragment() {
                     homeViewModel.loadStoredData(it.context, WatchType.fromInternalId(this.itemId))
                 }
             }
-            home_bookmarked_parent_item_title?.text = getString(availableWatchStatusTypes.first.stringRes)
+            home_bookmarked_parent_item_title?.text = getString(availableWatchStatusTypes.first.stringRes)*/
         }
 
-        observe(homeViewModel.bookmarks) { bookmarks ->
-            home_bookmarked_holder.isVisible = bookmarks.isNotEmpty()
+        observe(homeViewModel.bookmarks) { pair ->
+            home_bookmarked_holder.isVisible = pair.first
+
+            val bookmarks = pair.second
             (home_bookmarked_child_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList = bookmarks
             home_bookmarked_child_recyclerview?.adapter?.notifyDataSetChanged()
 
-            home_bookmarked_child_more_info.setOnClickListener {
+            home_bookmarked_child_more_info?.setOnClickListener {
                 activity?.loadHomepageList(
                     HomePageList(
-                        home_bookmarked_parent_item_title?.text?.toString() ?: getString(R.string.error_bookmarks_text),
+                        getString(R.string.error_bookmarks_text), //home_bookmarked_parent_item_title?.text?.toString() ?: getString(R.string.error_bookmarks_text),
                         bookmarks
                     )
                 )
@@ -444,8 +488,8 @@ class HomeFragment : Fragment() {
                 home_change_api_loading?.isFocusableInTouchMode = true
                 home_change_api?.isFocusable = true
                 home_change_api?.isFocusableInTouchMode = true
-                home_bookmark_select?.isFocusable = true
-                home_bookmark_select?.isFocusableInTouchMode = true
+                // home_bookmark_select?.isFocusable = true
+                // home_bookmark_select?.isFocusableInTouchMode = true
             }
 
             for (syncApi in OAuth2API.OAuth2Apis) {
@@ -458,7 +502,5 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
-
     }
 }

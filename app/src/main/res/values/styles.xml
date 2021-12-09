@@ -305,6 +305,22 @@
         <item name="android:textColor">?attr/textColor</item>
         <item name="rippleColor">?attr/textColor</item>
     </style>
+    
+    <style name="RoundedSelectableButton">
+        <item name="backgroundTint">@color/toggle_button</item>
+        <item name="rippleColor">@color/textColor</item>
+        <item name="android:textColor">@color/toggle_button_text</item>
+        <item name="cornerRadius">100dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/toggle_button_outline</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:padding">0dp</item>
+        <!--<item name="android:layout_marginStart">10dp</item>-->
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">13sp</item>
+    </style>
 
     <style name="MultiSelectButton" parent="BlackButton">
         <item name="android:layout_height">40dp</item>

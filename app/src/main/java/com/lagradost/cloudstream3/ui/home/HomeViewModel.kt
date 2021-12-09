@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class HomeViewModel : ViewModel() {
     private var repo: APIRepository? = null
@@ -46,10 +47,10 @@ class HomeViewModel : ViewModel() {
         return APIRepository(apis.first { it.hasMainPage })
     }
 
-    private val _availableWatchStatusTypes = MutableLiveData<Pair<WatchType, List<WatchType>>>()
-    val availableWatchStatusTypes: LiveData<Pair<WatchType, List<WatchType>>> = _availableWatchStatusTypes
-    private val _bookmarks = MutableLiveData<List<SearchResponse>>()
-    val bookmarks: LiveData<List<SearchResponse>> = _bookmarks
+    private val _availableWatchStatusTypes = MutableLiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>>()
+    val availableWatchStatusTypes: LiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>> = _availableWatchStatusTypes
+    private val _bookmarks = MutableLiveData<Pair<Boolean, List<SearchResponse>>>()
+    val bookmarks: LiveData<Pair<Boolean, List<SearchResponse>>> = _bookmarks
 
     private val _resumeWatching = MutableLiveData<List<SearchResponse>>()
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
@@ -89,14 +90,14 @@ class HomeViewModel : ViewModel() {
         _resumeWatching.postValue(resumeWatchingResult)
     }
 
-    fun loadStoredData(context: Context, preferredWatchStatus: WatchType?) = viewModelScope.launch {
+    fun loadStoredData(context: Context, preferredWatchStatus: EnumSet<WatchType>?) = viewModelScope.launch {
         val watchStatusIds = withContext(Dispatchers.IO) {
             context.getAllWatchStateIds().map { id ->
                 Pair(id, context.getResultWatchState(id))
             }
         }.distinctBy { it.first }
         val length = WatchType.values().size
-        val currentWatchTypes = HashSet<WatchType>()
+        val currentWatchTypes = EnumSet.noneOf(WatchType::class.java)
 
         for (watch in watchStatusIds) {
             currentWatchTypes.add(watch.second)
@@ -108,25 +109,26 @@ class HomeViewModel : ViewModel() {
         currentWatchTypes.remove(WatchType.NONE)
 
         if (currentWatchTypes.size <= 0) {
-            _bookmarks.postValue(ArrayList())
+            _bookmarks.postValue(Pair(false, ArrayList()))
             return@launch
         }
 
-        val watchPrefNotNull = preferredWatchStatus ?: currentWatchTypes.first()
-        val watchStatus =
-            if (currentWatchTypes.contains(watchPrefNotNull)) watchPrefNotNull else currentWatchTypes.first()
+        val watchPrefNotNull = preferredWatchStatus ?: EnumSet.of(currentWatchTypes.first())
+        //if (currentWatchTypes.any { watchPrefNotNull.contains(it) }) watchPrefNotNull else listOf(currentWatchTypes.first())
+
         _availableWatchStatusTypes.postValue(
             Pair(
-                watchStatus,
-                currentWatchTypes.sortedBy { it.internalId }.toList()
+                watchPrefNotNull,
+                currentWatchTypes,
             )
         )
+
         val list = withContext(Dispatchers.IO) {
-            watchStatusIds.filter { it.second == watchStatus }
+            watchStatusIds.filter { watchPrefNotNull.contains(it.second) }
                 .mapNotNull { context.getBookmarkedData(it.first) }
                 .sortedBy { -it.latestUpdatedTime }
         }
-        _bookmarks.postValue(list)
+        _bookmarks.postValue(Pair(true,list))
     }
 
     private var onGoingLoad: Job? = null
