@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.Intent.*
 import android.net.Uri
 import android.os.Bundle
-import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -17,9 +16,8 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.FileProvider
-import androidx.core.text.color
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
@@ -61,7 +59,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -69,6 +66,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +74,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.io.File
 
-const val MAX_SYNO_LENGH = 300
+const val MAX_SYNO_LENGH = 1000
 
 const val START_ACTION_NORMAL = 0
 const val START_ACTION_RESUME_LATEST = 1
@@ -96,7 +94,7 @@ data class ResultEpisode(
     val position: Long, // time in MS
     val duration: Long, // duration in MS
     val rating: Int?,
-    val descript: String?,
+    val description: String?,
     val isFiller: Boolean?,
 )
 
@@ -179,8 +177,8 @@ class ResultFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-       // viewModel =
-       //     ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
+        // viewModel =
+        //     ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
         return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
@@ -277,14 +275,14 @@ class ResultFragment : Fragment() {
         activity?.fixPaddingStatusbar(result_scroll)
         //activity?.fixPaddingStatusbar(result_barstatus)
 
-        val backParameter = result_back.layoutParams as CoordinatorLayout.LayoutParams
-        backParameter.setMargins(
-            backParameter.leftMargin,
-            backParameter.topMargin + requireContext().getStatusBarHeight(),
-            backParameter.rightMargin,
-            backParameter.bottomMargin
-        )
-        result_back.layoutParams = backParameter
+        /* val backParameter = result_back.layoutParams as FrameLayout.LayoutParams
+         backParameter.setMargins(
+             backParameter.leftMargin,
+             backParameter.topMargin + requireContext().getStatusBarHeight(),
+             backParameter.rightMargin,
+             backParameter.bottomMargin
+         )
+         result_back.layoutParams = backParameter*/
 
         // activity?.fixPaddingStatusbar(result_toolbar)
 
@@ -328,14 +326,14 @@ class ResultFragment : Fragment() {
         }
         result_scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
             if (result_poster_blur == null) return@OnScrollChangeListener
-            result_poster_blur.alpha = maxOf(0f, (0.7f - scrollY / 1000f))
+            //result_poster_blur.alpha = maxOf(0f, (0.7f - scrollY / 1000f))
             val setAlpha = 1f - scrollY / 200f
-            result_back.alpha = setAlpha
+            // result_back.alpha = setAlpha
             result_poster_blur_holder.translationY = -scrollY.toFloat()
             // result_back.translationY = -scrollY.toFloat()
             //result_barstatus.alpha = scrollY / 200f
             //result_barstatus.visibility = if (scrollY > 0) View.VISIBLE else View.GONE§
-            result_back.visibility = if (setAlpha > 0) VISIBLE else GONE
+            //result_back.visibility = if (setAlpha > 0) VISIBLE else GONE
         })
 
         //  result_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
@@ -509,7 +507,7 @@ class ResultFragment : Fragment() {
                             epData.id,
                             parentId,
                             epData.rating,
-                            epData.descript,
+                            epData.description,
                             System.currentTimeMillis(),
                         )
                     )
@@ -528,7 +526,14 @@ class ResultFragment : Fragment() {
                     val downloadList = ctx.getDownloadSubsLanguageISO639_1()
                     main {
                         subs?.let { subsList ->
-                            subsList.filter { downloadList.contains(SubtitleHelper.fromLanguageToTwoLetters(it.lang, true)) }
+                            subsList.filter {
+                                downloadList.contains(
+                                    SubtitleHelper.fromLanguageToTwoLetters(
+                                        it.lang,
+                                        true
+                                    )
+                                )
+                            }
                                 .map { ExtractorSubtitleLink(it.lang, it.url, "") }
                                 .forEach { link ->
                                     val epName = meta.name ?: "${context?.getString(R.string.episode)} ${meta.episode}"
@@ -927,7 +932,7 @@ class ResultFragment : Fragment() {
                         }
                         result_vpn?.visibility = if (api.vpnStatus == VPNStatus.None) GONE else VISIBLE
 
-                        result_info?.text = when (api.providerType){
+                        result_info?.text = when (api.providerType) {
                             ProviderType.MetaProvider -> getString(R.string.provider_info_meta)
                             else -> ""
                         }
@@ -952,7 +957,7 @@ class ResultFragment : Fragment() {
                         }
 
                         result_search?.setOnClickListener {
-                            QuickSearchFragment.push(activity,true, d.name)
+                            QuickSearchFragment.push(activity, true, d.name)
                         }
 
                         result_share?.setOnClickListener {
@@ -974,45 +979,36 @@ class ResultFragment : Fragment() {
                                 metadataInfoArray.add(Pair(R.string.status, getString(status)))
                             }
                         }
-                        if (d.year != null) metadataInfoArray.add(Pair(R.string.year, d.year.toString()))
-                        val rating = d.rating
-                        if (rating != null) metadataInfoArray.add(
-                            Pair(
-                                R.string.rating,
-                                "%.1f/10.0".format(rating.toFloat() / 10f).replace(",", ".")
-                            )
-                        )
-                        val duration = d.duration
-                        if (duration != null) metadataInfoArray.add(Pair(R.string.duration, duration))
 
-                        metadataInfoArray.add(Pair(R.string.site, d.apiName))
-
-                        context?.let { ctx ->
-                            if (metadataInfoArray.size > 0) {
-                                result_metadata.visibility = VISIBLE
-                                val text = SpannableStringBuilder()
-                                val grayColor =
-                                    ctx.colorFromAttribute(R.attr.grayTextColor) //ContextCompat.getColor(requireContext(), R.color.grayTextColor)
-                                val textColor =
-                                    ctx.colorFromAttribute(R.attr.textColor) //ContextCompat.getColor(requireContext(), R.color.textColor)
-                                for (meta in metadataInfoArray) {
-                                    text.color(grayColor) { append(getString(meta.first) + ": ") }
-                                        .color(textColor) { append("${meta.second}\n") }
-                                }
-                                result_metadata.text = text
-                            } else {
-                                result_metadata.visibility = GONE
-                            }
+                        result_meta_year?.isGone = d.year == null
+                        result_meta_year?.text = d.year?.toString() ?: ""
+                        if (d.rating == null) {
+                            result_meta_rating?.isVisible = false
+                        } else {
+                            result_meta_rating?.isVisible = true
+                            result_meta_rating?.text = "%.1f/10.0".format(d.rating!!.toFloat() / 10f).replace(",", ".")
                         }
 
+                        val duration = d.duration
+                        if (duration.isNullOrEmpty()) {
+                            result_meta_duration?.isVisible = false
+                        } else {
+                            result_meta_duration?.isVisible = true
+                            result_meta_duration?.text =
+                                if (duration.endsWith("min") || duration.endsWith("h")) duration else "${duration}min"
+                        }
+
+                        result_meta_site?.text = d.apiName
 
                         result_poster?.setImage(d.posterUrl)
+                        result_poster_blur?.setImageBlur(d.posterUrl, 10, 3)
+
                         result_poster_holder?.visibility = if (d.posterUrl.isNullOrBlank()) GONE else VISIBLE
 
                         result_play_movie?.text =
                             if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(R.string.play_movie_button)
-                        result_plot_header?.text =
-                            if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
+                        //result_plot_header?.text =
+                        //    if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
                         if (!d.plot.isNullOrEmpty()) {
                             var syno = d.plot!!
                             if (syno.length > MAX_SYNO_LENGH) {
@@ -1031,14 +1027,14 @@ class ResultFragment : Fragment() {
                         }
 
                         result_tag?.removeAllViews()
-                        result_tag_holder?.visibility = GONE
+                        //result_tag_holder?.visibility = GONE
                         // result_status.visibility = GONE
 
                         val tags = d.tags
                         if (tags.isNullOrEmpty()) {
-                            result_tag_holder?.visibility = GONE
+                            //result_tag_holder?.visibility = GONE
                         } else {
-                            result_tag_holder?.visibility = VISIBLE
+                            //result_tag_holder?.visibility = VISIBLE
 
                             for ((index, tag) in tags.withIndex()) {
                                 val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
@@ -1167,7 +1163,17 @@ class ResultFragment : Fragment() {
                     viewModel.load(it.context, tempUrl, apiName, showFillers)
                 }
 
-                result_reload_connection_open_in_browser.setOnClickListener {
+                result_reload_connection_open_in_browser?.setOnClickListener {
+                    val i = Intent(ACTION_VIEW)
+                    i.data = Uri.parse(tempUrl)
+                    try {
+                        startActivity(i)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
+                result_meta_site?.setOnClickListener {
                     val i = Intent(ACTION_VIEW)
                     i.data = Uri.parse(tempUrl)
                     try {

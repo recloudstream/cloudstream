@@ -164,9 +164,9 @@ class EpisodeAdapter(
                 episodeRating?.text = ""
             }
 
-            if (card.descript != null) {
+            if (card.description != null) {
                 episodeDescript?.visibility = View.VISIBLE
-                episodeDescript?.text = card.descript
+                episodeDescript?.text = card.description
             } else {
                 episodeDescript?.visibility = View.GONE
             }
@@ -216,7 +216,7 @@ class EpisodeAdapter(
                         card.id,
                         0,
                         card.rating,
-                        card.descript,
+                        card.description,
                         System.currentTimeMillis(),
                     )
                 ) {

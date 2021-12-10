@@ -4,33 +4,24 @@ import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.DoodLaExtractor
 import com.lagradost.cloudstream3.extractors.FEmbed
 import com.lagradost.cloudstream3.extractors.MixDrop
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.mapper
+import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
 
 class PinoyMoviePedia : MainAPI() {
-    override val name: String
-        get() = "Pinoy Moviepedia"
+    override val name = "Pinoy Moviepedia"
+    override val mainUrl = "https://pinoymoviepedia.ru"
+    override val lang = "tl"
 
-    override val mainUrl: String
-        get() = "https://pinoymoviepedia.ru"
+    override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries)
 
-    override val supportedTypes: Set<TvType>
-        get() = setOf(TvType.Movie, TvType.TvSeries)
-
-    override val hasDownloadSupport: Boolean
-        get() = false
-
-    override val hasMainPage: Boolean
-        get() = true
-
-    override val hasQuickSearch: Boolean
-        get() = false
+    override val hasDownloadSupport = false
+    override val hasMainPage = true
+    override val hasQuickSearch = false
 
     private data class JsonVoeLinks(
         @JsonProperty("hls") val url: String?,

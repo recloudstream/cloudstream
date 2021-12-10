@@ -37,6 +37,8 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.GlideOptions.bitmapTransform
+import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlin.math.roundToInt
 
 
@@ -106,6 +108,17 @@ object UIHelper {
         try {
             GlideApp.with(this.context)
                 .load(GlideUrl(url))
+                .into(this)
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
+    fun ImageView?.setImageBlur(url: String?, radius : Int, sample : Int = 3) {
+        if (this == null || url.isNullOrBlank()) return
+        try {
+            GlideApp.with(this.context)
+                .load(GlideUrl(url)).apply(bitmapTransform(BlurTransformation(radius, sample)))
                 .into(this)
         } catch (e: Exception) {
             logError(e)
