@@ -6,4 +6,10 @@
     <dimen name="navbar_height">0dp</dimen>
     <dimen name="card_corner_radius">2dp</dimen>
     <dimen name="result_padding">15dp</dimen>
+
+    <dimen name="loading_line_height">15dp</dimen>
+    <dimen name="loading_radius">3dp</dimen>
+    <dimen name="loading_margin">15dp</dimen>
+
+    <integer name="loading_time">2000</integer>
 </resources>

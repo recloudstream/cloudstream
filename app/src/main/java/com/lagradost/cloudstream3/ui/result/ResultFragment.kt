@@ -801,7 +801,7 @@ class ResultFragment : Fragment() {
                     WatchType.values().map { fab.context.getString(it.stringRes) }.toList(),
                     watchType.ordinal,
                     fab.context.getString(R.string.action_add_to_bookmarks),
-                    showApply = true,
+                    showApply = false,
                     {}) {
                     viewModel.updateWatchStatus(fab.context, WatchType.values()[it])
                 }
