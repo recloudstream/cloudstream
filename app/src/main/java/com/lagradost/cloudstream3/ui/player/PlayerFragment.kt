@@ -46,7 +46,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.TIME_UNSET
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
@@ -255,7 +255,7 @@ class PlayerFragment : Fragment() {
     private lateinit var uriData: UriData
     private var isDownloadedFile = false
     private var isShowing = true
-    private lateinit var exoPlayer: SimpleExoPlayer
+    private lateinit var exoPlayer: ExoPlayer
 
     //private var currentPercentage = 0
     // private var hasNextEpisode = true
@@ -429,7 +429,9 @@ class PlayerFragment : Fragment() {
         val rmin = min % 60
         val h = ceil((min - rmin) / 60.0).toInt()
         //int rh = h;// h % 24;
-        return (if (h > 0) forceLetters(h) + ":" else "") + (if (rmin >= 0 || h >= 0) forceLetters(rmin) + ":" else "") + forceLetters(
+        return (if (h > 0) forceLetters(h) + ":" else "") + (if (rmin >= 0 || h >= 0) forceLetters(
+            rmin
+        ) + ":" else "") + forceLetters(
             rsec
         )
     }
@@ -439,9 +441,12 @@ class PlayerFragment : Fragment() {
     }
 
     private var swipeEnabled = true //<settingsManager!!.getBoolean("swipe_enabled", true)
-    private var swipeVerticalEnabled = true//settingsManager.getBoolean("swipe_vertical_enabled", true)
-    private var playBackSpeedEnabled = true//settingsManager!!.getBoolean("playback_speed_enabled", false)
-    private var playerResizeEnabled = true//settingsManager!!.getBoolean("player_resize_enabled", false)
+    private var swipeVerticalEnabled =
+        true//settingsManager.getBoolean("swipe_vertical_enabled", true)
+    private var playBackSpeedEnabled =
+        true//settingsManager!!.getBoolean("playback_speed_enabled", false)
+    private var playerResizeEnabled =
+        true//settingsManager!!.getBoolean("player_resize_enabled", false)
     private var doubleTapEnabled = false
     private var useSystemBrightness = false
     private var useTrueSystemBrightness = false
@@ -555,8 +560,10 @@ class PlayerFragment : Fragment() {
                     if (hasPassedVerticalSwipeThreshold) {
                         if (currentX > width * 0.5) {
                             if (audioManager != null && progressBarLeftHolder != null) {
-                                val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-                                val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                                val currentVolume =
+                                    audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                                val maxVolume =
+                                    audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
                                 if (progressBarLeftHolder?.alpha ?: 0f <= 0f) {
                                     cachedVolume = currentVolume.toFloat() / maxVolume.toFloat()
@@ -583,7 +590,11 @@ class PlayerFragment : Fragment() {
                                         val newVolumeAdjusted =
                                             if (desiredVol < currentVolume) AudioManager.ADJUST_LOWER else AudioManager.ADJUST_RAISE
 
-                                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, newVolumeAdjusted, 0)
+                                        audioManager.adjustStreamVolume(
+                                            AudioManager.STREAM_MUSIC,
+                                            newVolumeAdjusted,
+                                            0
+                                        )
                                     }
                                     //audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
                                 }
@@ -609,7 +620,8 @@ class PlayerFragment : Fragment() {
                     }
                     prevDiffX = diffX
 
-                    skipTime = ((exoPlayer.duration * (diffX * diffX) / 10) * (if (diffX < 0) -1 else 1)).toLong()
+                    skipTime =
+                        ((exoPlayer.duration * (diffX * diffX) / 10) * (if (diffX < 0) -1 else 1)).toLong()
                     if (isMovingStartTime + skipTime < 0) {
                         skipTime = -isMovingStartTime
                     } else if (isMovingStartTime + skipTime > exoPlayer.duration) {
@@ -618,7 +630,12 @@ class PlayerFragment : Fragment() {
                     if ((abs(skipTime) > 3000 || hasPassedSkipLimit) && !preventHorizontalSwipe) {
                         hasPassedSkipLimit = true
                         val timeString =
-                            "${convertTimeToString((isMovingStartTime + skipTime) / 1000.0)} [${(if (abs(skipTime) < 1000) "" else (if (skipTime > 0) "+" else "-"))}${
+                            "${convertTimeToString((isMovingStartTime + skipTime) / 1000.0)} [${
+                                (if (abs(
+                                        skipTime
+                                    ) < 1000
+                                ) "" else (if (skipTime > 0) "+" else "-"))
+                            }${
                                 convertTimeToString(abs(skipTime / 1000.0))
                             }]"
                         timeText.alpha = 1f
@@ -669,7 +686,8 @@ class PlayerFragment : Fragment() {
         val data = localData
 
         if (this::exoPlayer.isInitialized && exoPlayer.currentPosition >= 0) {
-            val percentage = ((position ?: exoPlayer.currentPosition) * 100 / exoPlayer.contentDuration).toInt()
+            val percentage =
+                ((position ?: exoPlayer.currentPosition) * 100 / exoPlayer.contentDuration).toInt()
             val hasNext = hasNextEpisode()
 
             if (percentage >= AUTOLOAD_NEXT_EPISODE_PERCENTAGE && hasNext) {
@@ -745,7 +763,8 @@ class PlayerFragment : Fragment() {
         safeReleasePlayer()
     }
 
-    private class SettingsContentObserver(handler: Handler?, val activity: Activity) : ContentObserver(handler) {
+    private class SettingsContentObserver(handler: Handler?, val activity: Activity) :
+        ContentObserver(handler) {
         private val audioManager = activity.getSystemService(AUDIO_SERVICE) as? AudioManager
         override fun onChange(selfChange: Boolean) {
             val currentVolume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC)
@@ -809,7 +828,13 @@ class PlayerFragment : Fragment() {
                     }*/
 
                     if (isDownloadedFile) {
-                        ctx.setLastWatched(uriData.parentId, uriData.id, uriData.episode, uriData.season, true)
+                        ctx.setLastWatched(
+                            uriData.parentId,
+                            uriData.id,
+                            uriData.episode,
+                            uriData.season,
+                            true
+                        )
                     } else
                         viewModel.reloadEpisodes(ctx)
                 }
@@ -972,11 +997,25 @@ class PlayerFragment : Fragment() {
         if (exoPlayer.isPlaying) {
             actions.add(getRemoteAction(R.drawable.netflix_pause, "Pause", PlayerEventType.Pause))
         } else {
-            actions.add(getRemoteAction(R.drawable.ic_baseline_play_arrow_24, "Play", PlayerEventType.Play))
+            actions.add(
+                getRemoteAction(
+                    R.drawable.ic_baseline_play_arrow_24,
+                    "Play",
+                    PlayerEventType.Play
+                )
+            )
         }
 
-        actions.add(getRemoteAction(R.drawable.go_forward_30, "Go Forward", PlayerEventType.SeekForward))
-        activity?.setPictureInPictureParams(PictureInPictureParams.Builder().setActions(actions).build())
+        actions.add(
+            getRemoteAction(
+                R.drawable.go_forward_30,
+                "Go Forward",
+                PlayerEventType.SeekForward
+            )
+        )
+        activity?.setPictureInPictureParams(
+            PictureInPictureParams.Builder().setActions(actions).build()
+        )
     }
 
     private var receiver: BroadcastReceiver? = null
@@ -1117,20 +1156,38 @@ class PlayerFragment : Fragment() {
                 }
                 PlayerEventType.ShowSpeed.value -> {
                     val speedsText =
-                        listOf("0.5x", "0.75x", "0.85x", "1x", "1.15x", "1.25x", "1.4x", "1.5x", "1.75x", "2x")
-                    val speedsNumbers = listOf(0.5f, 0.75f, 0.85f, 1f, 1.15f, 1.25f, 1.4f, 1.5f, 1.75f, 2f)
+                        listOf(
+                            "0.5x",
+                            "0.75x",
+                            "0.85x",
+                            "1x",
+                            "1.15x",
+                            "1.25x",
+                            "1.4x",
+                            "1.5x",
+                            "1.75x",
+                            "2x"
+                        )
+                    val speedsNumbers =
+                        listOf(0.5f, 0.75f, 0.85f, 1f, 1.15f, 1.25f, 1.4f, 1.5f, 1.75f, 2f)
                     val speedIndex = speedsNumbers.indexOf(playbackSpeed)
 
                     context?.let { ctx ->
-                        ctx.showDialog(speedsText, speedIndex, ctx.getString(R.string.player_speed), false, {
-                            activity?.hideSystemUI()
-                        }) { index ->
+                        ctx.showDialog(
+                            speedsText,
+                            speedIndex,
+                            ctx.getString(R.string.player_speed),
+                            false,
+                            {
+                                activity?.hideSystemUI()
+                            }) { index ->
                             playbackSpeed = speedsNumbers[index]
                             requireContext().setKey(PLAYBACK_SPEED_KEY, playbackSpeed)
                             val param = PlaybackParameters(playbackSpeed)
                             exoPlayer.playbackParameters = param
                             playback_speed_btt?.text =
-                                getString(R.string.player_speed_text_format).format(playbackSpeed).replace(".0x", "x")
+                                getString(R.string.player_speed_text_format).format(playbackSpeed)
+                                    .replace(".0x", "x")
                         }
                     }
                 }
@@ -1139,7 +1196,8 @@ class PlayerFragment : Fragment() {
                     context?.let { ctx ->
                         //val isPlaying = exoPlayer.isPlaying
                         exoPlayer.pause()
-                        val currentSubtitles = context?.getSubs()?.map { it.lang } ?: activeSubtitles
+                        val currentSubtitles =
+                            context?.getSubs()?.map { it.lang } ?: activeSubtitles
 
                         val sourceBuilder = AlertDialog.Builder(ctx, R.style.AlertDialogCustomBlack)
                             .setView(R.layout.player_select_source_and_subs)
@@ -1147,10 +1205,14 @@ class PlayerFragment : Fragment() {
                         val sourceDialog = sourceBuilder.create()
                         sourceDialog.show()
                         //  bottomSheetDialog.setContentView(R.layout.sort_bottom_sheet)
-                        val providerList = sourceDialog.findViewById<ListView>(R.id.sort_providers)!!
-                        val subtitleList = sourceDialog.findViewById<ListView>(R.id.sort_subtitles)!!
-                        val applyButton = sourceDialog.findViewById<MaterialButton>(R.id.apply_btt)!!
-                        val cancelButton = sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
+                        val providerList =
+                            sourceDialog.findViewById<ListView>(R.id.sort_providers)!!
+                        val subtitleList =
+                            sourceDialog.findViewById<ListView>(R.id.sort_subtitles)!!
+                        val applyButton =
+                            sourceDialog.findViewById<MaterialButton>(R.id.apply_btt)!!
+                        val cancelButton =
+                            sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
                         val subsSettings = sourceDialog.findViewById<View>(R.id.subs_settings)!!
 
                         subsSettings.setOnClickListener {
@@ -1164,7 +1226,8 @@ class PlayerFragment : Fragment() {
 
                         val nonSortedUrls = getUrls()
                         if (nonSortedUrls.isNullOrEmpty()) {
-                            sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.visibility = GONE
+                            sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.visibility =
+                                GONE
                         } else {
                             sources = sortUrls(nonSortedUrls)
                             startSource = sources.indexOf(getCurrentUrl())
@@ -1195,7 +1258,8 @@ class PlayerFragment : Fragment() {
                         var subtitleIndex = startIndexFromMap
 
                         if (currentSubtitles.isEmpty()) {
-                            sourceDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility = GONE
+                            sourceDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility =
+                                GONE
                         } else {
                             val subsArrayAdapter =
                                 ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
@@ -1219,7 +1283,8 @@ class PlayerFragment : Fragment() {
                         }
 
                         applyButton.setOnClickListener {
-                            if (this::exoPlayer.isInitialized) playbackPosition = exoPlayer.currentPosition
+                            if (this::exoPlayer.isInitialized) playbackPosition =
+                                exoPlayer.currentPosition
 
                             var init = false
                             if (sourceIndex != startSource) {
@@ -1270,7 +1335,8 @@ class PlayerFragment : Fragment() {
         //val textRendererIndex = getRendererIndex(C.TRACK_TYPE_TEXT) ?: return@setOnClickListener
         val realLang = if (lang.isNullOrBlank()) "" else lang.trimEnd()
         preferredSubtitles =
-            if (realLang.length == 2) SubtitleHelper.fromTwoLettersToLanguage(realLang) ?: realLang else realLang
+            if (realLang.length == 2) SubtitleHelper.fromTwoLettersToLanguage(realLang)
+                ?: realLang else realLang
 
         if (!this::exoPlayer.isInitialized) return
         (exoPlayer.trackSelector as DefaultTrackSelector?)?.let { trackSelector ->
@@ -1310,12 +1376,20 @@ class PlayerFragment : Fragment() {
 
         settingsManager = PreferenceManager.getDefaultSharedPreferences(activity)
         context?.let { ctx ->
-            swipeEnabled = settingsManager.getBoolean(ctx.getString(R.string.swipe_enabled_key), true)
-            swipeVerticalEnabled = settingsManager.getBoolean(ctx.getString(R.string.swipe_vertical_enabled_key), true)
-            playBackSpeedEnabled = settingsManager.getBoolean(ctx.getString(R.string.playback_speed_enabled_key), false)
-            playerResizeEnabled = settingsManager.getBoolean(ctx.getString(R.string.player_resize_enabled_key), true)
-            doubleTapEnabled = settingsManager.getBoolean(ctx.getString(R.string.double_tap_enabled_key), false)
-            useSystemBrightness = settingsManager.getBoolean(ctx.getString(R.string.use_system_brightness_key), false)
+            swipeEnabled =
+                settingsManager.getBoolean(ctx.getString(R.string.swipe_enabled_key), true)
+            swipeVerticalEnabled =
+                settingsManager.getBoolean(ctx.getString(R.string.swipe_vertical_enabled_key), true)
+            playBackSpeedEnabled = settingsManager.getBoolean(
+                ctx.getString(R.string.playback_speed_enabled_key),
+                false
+            )
+            playerResizeEnabled =
+                settingsManager.getBoolean(ctx.getString(R.string.player_resize_enabled_key), true)
+            doubleTapEnabled =
+                settingsManager.getBoolean(ctx.getString(R.string.double_tap_enabled_key), false)
+            useSystemBrightness =
+                settingsManager.getBoolean(ctx.getString(R.string.use_system_brightness_key), false)
         }
 
         if (swipeVerticalEnabled)
@@ -1342,7 +1416,8 @@ class PlayerFragment : Fragment() {
                         VISIBLE
                     castContext.addCastStateListener { state ->
                         if (player_media_route_button != null) {
-                            player_media_route_button?.isVisible = state != CastState.NO_DEVICES_AVAILABLE
+                            player_media_route_button?.isVisible =
+                                state != CastState.NO_DEVICES_AVAILABLE
 
                             if (state == CastState.CONNECTED) {
                                 if (!this::exoPlayer.isInitialized) return@addCastStateListener
@@ -1358,7 +1433,8 @@ class PlayerFragment : Fragment() {
                                     epData.index,
                                     episodes,
                                     links,
-                                    context?.getSubs(supportsDownloadedFiles = false) ?: emptyList(),
+                                    context?.getSubs(supportsDownloadedFiles = false)
+                                        ?: emptyList(),
                                     index,
                                     exoPlayer.currentPosition
                                 )
@@ -1534,7 +1610,8 @@ class PlayerFragment : Fragment() {
                 }
             }
         }
-        val fastForwardTime = settingsManager.getInt(getString(R.string.fast_forward_button_time_key), 10)
+        val fastForwardTime =
+            settingsManager.getInt(getString(R.string.fast_forward_button_time_key), 10)
         exo_rew_text?.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
         exo_ffwd_text?.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
         fun rewind() {
@@ -1551,7 +1628,8 @@ class PlayerFragment : Fragment() {
 
                 override fun onAnimationEnd(animation: Animation?) {
                     exo_rew_text?.post {
-                        exo_rew_text?.text = getString(R.string.rew_text_regular_format).format(fastForwardTime)
+                        exo_rew_text?.text =
+                            getString(R.string.rew_text_regular_format).format(fastForwardTime)
                         player_rew_holder?.alpha = if (isShowing) 1f else 0f
                     }
                 }
@@ -1578,7 +1656,8 @@ class PlayerFragment : Fragment() {
 
                 override fun onAnimationEnd(animation: Animation?) {
                     exo_ffwd_text?.post {
-                        exo_ffwd_text?.text = getString(R.string.ffw_text_regular_format).format(fastForwardTime)
+                        exo_ffwd_text?.text =
+                            getString(R.string.ffw_text_regular_format).format(fastForwardTime)
                         player_ffwd_holder?.alpha = if (isShowing) 1f else 0f
                     }
                 }
@@ -1704,21 +1783,22 @@ class PlayerFragment : Fragment() {
             if (isDownloadedFile) {
                 if (!supportsDownloadedFiles) return null
                 val list = ArrayList<SubtitleFile>()
-                VideoDownloadManager.getFolder(this, uriData.relativePath, uriData.basePath)?.forEach { file ->
-                    val name = uriData.displayName.removeSuffix(".mp4")
-                    if (file.first != uriData.displayName && file.first.startsWith(name)) {
-                        val realName = file.first.removePrefix(name)
-                            .removeSuffix(".vtt")
-                            .removeSuffix(".srt")
-                            .removeSuffix(".txt")
-                        list.add(
-                            SubtitleFile(
-                                realName.ifBlank { getString(R.string.default_subtitles) },
-                                file.second.toString()
+                VideoDownloadManager.getFolder(this, uriData.relativePath, uriData.basePath)
+                    ?.forEach { file ->
+                        val name = uriData.displayName.removeSuffix(".mp4")
+                        if (file.first != uriData.displayName && file.first.startsWith(name)) {
+                            val realName = file.first.removePrefix(name)
+                                .removeSuffix(".vtt")
+                                .removeSuffix(".srt")
+                                .removeSuffix(".txt")
+                            list.add(
+                                SubtitleFile(
+                                    realName.ifBlank { getString(R.string.default_subtitles) },
+                                    file.second.toString()
+                                )
                             )
-                        )
+                        }
                     }
-                }
                 return list
             } else {
                 allEpisodesSubs[getEpisode()?.id]?.values?.toList()?.sortedBy { it.lang }
@@ -1965,7 +2045,9 @@ class PlayerFragment : Fragment() {
                 exoPlayer.release()
             }
             val isOnline =
-                currentUrl != null && (currentUrl.url.startsWith("https://") || currentUrl.url.startsWith("http://"))
+                currentUrl != null && (currentUrl.url.startsWith("https://") || currentUrl.url.startsWith(
+                    "http://"
+                ))
 
             if (settingsManager.getBoolean("ignore_ssl", true) && !isDownloadedFile) {
                 // Disables ssl check
@@ -1998,24 +2080,25 @@ class PlayerFragment : Fragment() {
             }
 
             val subs = context?.getSubs() ?: emptyList()
-            val subItems = ArrayList<MediaItem.Subtitle>()
+            val subItems = ArrayList<MediaItem.SubtitleConfiguration>()
             val subItemsId = ArrayList<String>()
 
             for (sub in sortSubs(subs)) {
-                val langId = sub.lang.trimEnd() //SubtitleHelper.fromLanguageToTwoLetters(it.lang) ?: it.lang
+                val langId =
+                    sub.lang.trimEnd() //SubtitleHelper.fromLanguageToTwoLetters(it.lang) ?: it.lang
                 subItemsId.add(langId)
                 subItems.add(
-                    MediaItem.Subtitle(
-                        Uri.parse(sub.url),
-                        sub.url.toSubtitleMimeType(),
-                        "_$langId",
-                        C.SELECTION_FLAG_DEFAULT
-                    )
+                    MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.url))
+                        .setMimeType(sub.url.toSubtitleMimeType())
+                        .setLanguage("_$langId")
+                        .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+                        .build()
                 )
+
             }
 
             activeSubtitles = subItemsId
-            mediaItemBuilder.setSubtitles(subItems)
+            mediaItemBuilder.setSubtitleConfigurations(subItems)
 
             //might add https://github.com/ed828a/Aihua/blob/1896f46888b5a954b367e83f40b845ce174a2328/app/src/main/java/com/dew/aihua/player/playerUI/VideoPlayer.kt#L287 toggle caps
 
@@ -2055,11 +2138,11 @@ class PlayerFragment : Fragment() {
             }
 
             normalSafeApiCall {
-                val databaseProvider = ExoDatabaseProvider(requireContext())
-                simpleCache = SimpleCache(
+                val databaseProvider = StandaloneDatabaseProvider(requireContext())
+                simpleCache = simpleCache ?: SimpleCache(
                     File(
                         requireContext().filesDir, "exoplayer"
-                    ),
+                    ).also { it.deleteOnExit() }, // Ensures always fresh file
                     LeastRecentlyUsedCacheEvictor(cacheSize),
                     databaseProvider
                 )
@@ -2071,7 +2154,7 @@ class PlayerFragment : Fragment() {
             }
 
             val _exoPlayer =
-                SimpleExoPlayer.Builder(requireContext())
+                ExoPlayer.Builder(requireContext())
                     .setTrackSelector(trackSelector)
 
             exoPlayer = _exoPlayer.build().apply {
@@ -2105,7 +2188,8 @@ class PlayerFragment : Fragment() {
             // Sets the speed
             exoPlayer.playbackParameters = PlaybackParameters(playbackSpeed)
             playback_speed_btt?.text =
-                getString(R.string.player_speed_text_format).format(playbackSpeed).replace(".0x", "x")
+                getString(R.string.player_speed_text_format).format(playbackSpeed)
+                    .replace(".0x", "x")
 
             var hName: String? = null
             var epEpisode: Int? = null
@@ -2311,7 +2395,10 @@ class PlayerFragment : Fragment() {
         var currentQuality = Qualities.values().last().value
         context?.let { ctx ->
             if (this::settingsManager.isInitialized)
-                currentQuality = settingsManager.getInt(ctx.getString(R.string.watch_quality_pref), currentQuality)
+                currentQuality = settingsManager.getInt(
+                    ctx.getString(R.string.watch_quality_pref),
+                    currentQuality
+                )
         }
 
         var currentId = sortedUrls.first().getId() // lowest quality
@@ -2358,7 +2445,11 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_player, container, false)
     }
 }
