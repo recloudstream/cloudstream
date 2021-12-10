@@ -329,6 +329,11 @@ class HomeFragment : Fragment() {
                 }
                 homeViewModel.loadStoredData(itemView.context, list)
             }
+
+            item.first?.setOnLongClickListener { itemView ->
+                homeViewModel.loadStoredData(itemView.context, EnumSet.of(watch))
+                return@setOnLongClickListener true
+            }
         }
 
         observe(homeViewModel.availableWatchStatusTypes) { availableWatchStatusTypes ->

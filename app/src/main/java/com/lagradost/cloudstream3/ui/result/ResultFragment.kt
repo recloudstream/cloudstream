@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.content.Intent.*
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -46,6 +47,7 @@ import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getDownloadSubsLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
@@ -56,6 +58,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -210,22 +213,28 @@ class ResultFragment : Fragment() {
     private fun updateVisStatus(state: Int) {
         when (state) {
             0 -> {
-                result_loading.visibility = VISIBLE
-                result_finish_loading.visibility = GONE
-                result_loading_error.visibility = GONE
+                result_bookmark_fab?.isGone = true
+                result_loading?.isVisible = true
+                result_finish_loading?.isVisible = false
+                result_loading_error?.isVisible = false
             }
             1 -> {
-                result_loading.visibility = GONE
-                result_finish_loading.visibility = GONE
-                result_loading_error.visibility = VISIBLE
-                result_reload_connection_open_in_browser.visibility = if (url == null) GONE else VISIBLE
+                result_bookmark_fab?.isGone = true
+                result_loading?.isVisible = false
+                result_finish_loading?.isVisible = false
+                result_loading_error?.isVisible = true
+                result_reload_connection_open_in_browser?.isVisible = url != null
             }
             2 -> {
-                result_loading.visibility = GONE
-                result_finish_loading.visibility = VISIBLE
-                result_loading_error.visibility = GONE
+                result_bookmark_fab?.isGone = result_bookmark_fab?.context?.isTvSettings() == true
+                result_bookmark_fab?.extend()
+                if (result_bookmark_button?.context?.isTvSettings() == true) {
+                    result_bookmark_button?.requestFocus()
+                }
 
-                result_bookmark_button.requestFocus()
+                result_loading?.isVisible = false
+                result_finish_loading?.isVisible = true
+                result_loading_error?.isVisible = false
             }
         }
     }
@@ -324,22 +333,16 @@ class ResultFragment : Fragment() {
                 }
             }
         }
-        result_scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
-            if (result_poster_blur == null) return@OnScrollChangeListener
-            //result_poster_blur.alpha = maxOf(0f, (0.7f - scrollY / 1000f))
-            val setAlpha = 1f - scrollY / 200f
-            // result_back.alpha = setAlpha
-            result_poster_blur_holder.translationY = -scrollY.toFloat()
-            // result_back.translationY = -scrollY.toFloat()
-            //result_barstatus.alpha = scrollY / 200f
-            //result_barstatus.visibility = if (scrollY > 0) View.VISIBLE else View.GONE§
-            //result_back.visibility = if (setAlpha > 0) VISIBLE else GONE
-        })
 
-        //  result_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-        // result_toolbar.setNavigationOnClickListener {
-        //     activity?.onBackPressed()
-        // }
+        result_scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+            val dy = scrollY - oldScrollY
+            if (dy > 0) { //check for scroll down
+                result_bookmark_fab?.shrink()
+            } else if (dy < -5) {
+                result_bookmark_fab?.extend()
+            }
+            result_poster_blur_holder?.translationY = -scrollY.toFloat()
+        })
 
         result_back.setOnClickListener {
             activity?.popCurrentPage()
@@ -364,7 +367,7 @@ class ResultFragment : Fragment() {
                     if (allEpisodes.containsKey(episodeClick.data.id)) allEpisodes[episodeClick.data.id] else null
                 val currentSubsTemp =
                     if (allEpisodesSubs.containsKey(episodeClick.data.id)) allEpisodesSubs[episodeClick.data.id] else null
-                if (currentLinksTemp != null && currentLinksTemp.size > 0) {
+                if (currentLinksTemp != null && currentLinksTemp.isNotEmpty()) {
                     currentLinks = currentLinksTemp
                     currentSubs = currentSubsTemp
                     return true
@@ -779,9 +782,30 @@ class ResultFragment : Fragment() {
             }
         }
 
-        observe(viewModel.watchStatus) {
-            //result_bookmark_button.setIconResource(it.iconRes)
-            result_bookmark_button.text = getString(it.stringRes)
+        observe(viewModel.watchStatus) { watchType ->
+            result_bookmark_button?.text = getString(watchType.stringRes)
+            result_bookmark_fab?.text = getString(watchType.stringRes)
+
+            if(watchType == WatchType.NONE) {
+                result_bookmark_fab?.context?.colorFromAttribute(R.attr.white)
+            } else {
+                result_bookmark_fab?.context?.colorFromAttribute(R.attr.colorPrimary)
+            }?.let {
+                val colorState = ColorStateList.valueOf(it)
+                result_bookmark_fab?.iconTint = colorState
+                result_bookmark_fab?.setTextColor(colorState)
+            }
+
+            result_bookmark_fab?.setOnClickListener { fab ->
+                fab.context.showBottomDialog(
+                    WatchType.values().map { fab.context.getString(it.stringRes) }.toList(),
+                    watchType.ordinal,
+                    fab.context.getString(R.string.action_add_to_bookmarks),
+                    showApply = true,
+                    {}) {
+                    viewModel.updateWatchStatus(fab.context, WatchType.values()[it])
+                }
+            }
         }
 
         observe(viewModel.episodes) { episodeList ->
@@ -1154,6 +1178,8 @@ class ResultFragment : Fragment() {
         }
 
         context?.let { ctx ->
+            result_bookmark_button?.isVisible = ctx.isTvSettings()
+
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
             val showFillers = settingsManager.getBoolean(ctx.getString(R.string.show_fillers_key), true)
 

@@ -143,7 +143,7 @@
                         <ImageView
                                 android:nextFocusUp="@id/result_back"
                                 android:nextFocusDown="@id/result_descript"
-                                android:nextFocusLeft="@id/result_bookmark_button"
+                                android:nextFocusLeft="@id/result_back"
                                 android:nextFocusRight="@id/result_openinbrower"
 
                                 android:id="@+id/result_share"
@@ -299,8 +299,8 @@
                                         android:foreground="@drawable/outline_drawable"
                                         android:paddingTop="5dp"
                                         android:paddingBottom="5dp"
-                                        android:nextFocusUp="@id/result_bookmark_button"
-                                        android:nextFocusDown="@id/result_play_movie"
+                                        android:nextFocusUp="@id/result_back"
+                                        android:nextFocusDown="@id/result_bookmark_button"
 
                                         android:id="@+id/result_descript"
                                         android:textSize="15sp"
@@ -327,10 +327,10 @@
                             app:icon="@drawable/ic_baseline_bookmark_24"
                             android:backgroundTint="?attr/primaryBlackBackground"
 
-                            android:nextFocusLeft="@id/result_openinbrower"
-                            android:nextFocusDown="@id/result_descript"
-                            android:nextFocusUp="@id/result_back"
-                            android:nextFocusRight="@id/result_share"
+                            android:nextFocusLeft="@id/result_back"
+                            android:nextFocusDown="@id/result_play_movie"
+                            android:nextFocusUp="@id/result_descript"
+                            android:nextFocusRight="@id/result_search"
 
                             android:layout_gravity="center_vertical"
                             app:cornerRadius="4dp"
@@ -383,7 +383,7 @@
                             android:layout_height="wrap_content">
                         <com.google.android.material.button.MaterialButton
                                 android:layout_marginBottom="10dp"
-                                android:nextFocusUp="@id/result_descript"
+                                android:nextFocusUp="@id/result_bookmark_button"
                                 android:nextFocusDown="@id/result_download_movie"
 
                                 android:id="@+id/result_play_movie"
@@ -598,5 +598,21 @@
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/search_poster_descript"/>
     </androidx.cardview.widget.CardView>-->
-
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:elevation="0dp"
+            android:textStyle="bold"
+            app:backgroundTint="?attr/primaryGrayBackground"
+            app:tint="?attr/colorPrimary"
+            android:textColor="?attr/colorPrimary"
+            app:iconTint="?attr/colorPrimary"
+            android:layout_margin="16dp"
+            android:id="@+id/result_bookmark_fab"
+            android:layout_gravity="end|bottom"
+            app:icon="@drawable/ic_baseline_bookmark_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="ContentDescription">
+    </com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton>
 </FrameLayout>
