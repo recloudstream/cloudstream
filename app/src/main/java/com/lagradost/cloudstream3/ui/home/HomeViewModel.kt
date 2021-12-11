@@ -37,8 +37,8 @@ class HomeViewModel : ViewModel() {
     private val _apiName = MutableLiveData<String>()
     val apiName: LiveData<String> = _apiName
 
-    private val _page = MutableLiveData<Resource<HomePageResponse>>()
-    val page: LiveData<Resource<HomePageResponse>> = _page
+    private val _page = MutableLiveData<Resource<HomePageResponse?>>()
+    val page: LiveData<Resource<HomePageResponse?>> = _page
 
     private val _randomItems = MutableLiveData<List<SearchResponse>?>(null)
     val randomItems: LiveData<List<SearchResponse>?> = _randomItems
@@ -154,7 +154,7 @@ class HomeViewModel : ViewModel() {
             when (data) {
                 is Resource.Success -> {
                     val home = data.value
-                    if (home.items.isNotEmpty()) {
+                    if (home?.items?.isNullOrEmpty() == false) {
                         val currentList =
                             home.items.shuffled().filter { !it.list.isNullOrEmpty() }.flatMap { it.list }
                                 .distinctBy { it.url }

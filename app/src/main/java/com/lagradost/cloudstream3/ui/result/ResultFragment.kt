@@ -357,7 +357,7 @@ class ResultFragment : Fragment() {
             var currentSubs: HashMap<String, SubtitleFile>? = null
 
             val showTitle =
-                episodeClick.data.name ?: getString(R.string.episode_name_format).format(
+                episodeClick.data.name ?: context?.getString(R.string.episode_name_format)?.format(
                     getString(R.string.episode),
                     episodeClick.data.episode
                 )

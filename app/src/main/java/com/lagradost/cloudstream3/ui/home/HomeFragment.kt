@@ -254,14 +254,14 @@ class HomeFragment : Fragment() {
 
                     currentHomePage = d
                     (home_master_recycler?.adapter as ParentItemAdapter?)?.items =
-                        d.items.mapNotNull {
+                        d?.items?.mapNotNull {
                             try {
                                 HomePageList(it.name, it.list.filterSearchResponse())
                             } catch (e: Exception) {
                                 logError(e)
                                 null
                             }
-                        }
+                        } ?: listOf()
 
                     home_master_recycler?.adapter?.notifyDataSetChanged()
 
