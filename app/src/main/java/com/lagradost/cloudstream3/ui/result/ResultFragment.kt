@@ -357,7 +357,7 @@ class ResultFragment : Fragment() {
             var currentSubs: HashMap<String, SubtitleFile>? = null
 
             val showTitle =
-                episodeClick.data.name ?: getString(R.string.episode_name_format).format(
+                episodeClick.data.name ?: context?.getString(R.string.episode_name_format)?.format(
                     getString(R.string.episode),
                     episodeClick.data.episode
                 )
@@ -801,7 +801,7 @@ class ResultFragment : Fragment() {
                     WatchType.values().map { fab.context.getString(it.stringRes) }.toList(),
                     watchType.ordinal,
                     fab.context.getString(R.string.action_add_to_bookmarks),
-                    showApply = true,
+                    showApply = false,
                     {}) {
                     viewModel.updateWatchStatus(fab.context, WatchType.values()[it])
                 }

@@ -135,11 +135,38 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
+    <!--
     <ProgressBar
             android:visibility="visible"
             tools:visibility="gone"
             android:id="@+id/download_loading"
             android:layout_gravity="center"
             android:layout_width="50dp" android:layout_height="50dp">
-    </ProgressBar>
+    </ProgressBar>-->
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/download_loading"
+            app:shimmer_base_alpha="0.2"
+            app:shimmer_highlight_alpha="0.3"
+            app:shimmer_duration="@integer/loading_time"
+            app:shimmer_auto_start="true"
+            android:paddingTop="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+        <LinearLayout
+                android:layout_marginStart="@dimen/loading_margin"
+                android:layout_marginEnd="@dimen/loading_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <include layout="@layout/loading_downloads"/>
+            <include layout="@layout/loading_downloads"/>
+            <include layout="@layout/loading_downloads"/>
+            <include layout="@layout/loading_downloads"/>
+            <include layout="@layout/loading_downloads"/>
+            <include layout="@layout/loading_downloads"/>
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

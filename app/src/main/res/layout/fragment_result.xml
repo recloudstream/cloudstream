@@ -10,13 +10,59 @@
         android:focusable="true"
 >
 
-    <ProgressBar
+    <com.facebook.shimmer.ShimmerFrameLayout
+            tools:visibility="gone"
+            app:shimmer_base_alpha="0.2"
+            app:shimmer_highlight_alpha="0.3"
+            app:shimmer_duration="@integer/loading_time"
+            app:shimmer_auto_start="true"
+            android:paddingTop="40dp"
+            android:id="@+id/result_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:layout_margin="@dimen/result_padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <LinearLayout
+                    android:layout_marginBottom="@dimen/loading_margin"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <include layout="@layout/loading_poster"/>
+                <LinearLayout
+                        android:layout_marginStart="@dimen/loading_margin"
+                        android:layout_marginEnd="@dimen/loading_margin"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    <include layout="@layout/loading_line"/>
+                    <include layout="@layout/loading_line"/>
+                    <include layout="@layout/loading_line"/>
+                    <include layout="@layout/loading_line"/>
+                    <include layout="@layout/loading_line_short"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView android:layout_width="match_parent" android:layout_height="20dp"
+                       tools:ignore="ContentDescription"/>
+            <include layout="@layout/loading_episode"/>
+            <include layout="@layout/loading_episode"/>
+            <include layout="@layout/loading_episode"/>
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+    <!--<ProgressBar
             android:visibility="visible"
             tools:visibility="gone"
             android:id="@+id/result_loading"
             android:layout_gravity="center"
             android:layout_width="50dp" android:layout_height="50dp">
-    </ProgressBar>
+    </ProgressBar>-->
     <LinearLayout
             android:id="@+id/result_loading_error"
 
@@ -201,9 +247,10 @@
                     </LinearLayout>
                 </FrameLayout>
                 <LinearLayout
+                        android:clipToPadding="false"
                         android:orientation="vertical"
-                        android:layout_marginStart="@dimen/result_padding"
-                        android:layout_marginEnd="@dimen/result_padding"
+                        android:paddingStart="@dimen/result_padding"
+                        android:paddingEnd="@dimen/result_padding"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     <LinearLayout
@@ -550,9 +597,8 @@
                     </androidx.core.widget.ContentLoadingProgressBar>
                     <androidx.recyclerview.widget.RecyclerView
                             android:descendantFocusability="afterDescendants"
-
                             android:id="@+id/result_episodes"
-
+                            android:clipToPadding="false"
                             android:layout_marginTop="0dp"
                             android:paddingBottom="100dp"
                             tools:listitem="@layout/result_episode"
@@ -565,7 +611,28 @@
         <LinearLayout
                 android:layout_gravity="bottom"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+        >
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:elevation="0dp"
+                    android:textStyle="bold"
+                    app:backgroundTint="?attr/primaryGrayBackground"
+                    app:tint="?attr/colorPrimary"
+                    android:textColor="?attr/colorPrimary"
+                    app:iconTint="?attr/colorPrimary"
+                    android:layout_margin="16dp"
+                    android:id="@+id/result_bookmark_fab"
+                    android:layout_gravity="end|bottom"
+                    app:icon="@drawable/ic_baseline_bookmark_24"
+                    android:textAllCaps="false"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="ContentDescription">
+            </com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton>
             <fragment
                     app:customCastBackgroundColor="?attr/primaryBlackBackground"
                     app:castControlButtons="@array/cast_mini_controller_control_buttons"
@@ -598,21 +665,5 @@
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/search_poster_descript"/>
     </androidx.cardview.widget.CardView>-->
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:visibility="gone"
-            tools:visibility="visible"
-            app:elevation="0dp"
-            android:textStyle="bold"
-            app:backgroundTint="?attr/primaryGrayBackground"
-            app:tint="?attr/colorPrimary"
-            android:textColor="?attr/colorPrimary"
-            app:iconTint="?attr/colorPrimary"
-            android:layout_margin="16dp"
-            android:id="@+id/result_bookmark_fab"
-            android:layout_gravity="end|bottom"
-            app:icon="@drawable/ic_baseline_bookmark_24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="ContentDescription">
-    </com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton>
+
 </FrameLayout>

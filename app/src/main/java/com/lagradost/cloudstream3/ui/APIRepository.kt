@@ -47,7 +47,7 @@ class APIRepository(val api: MainAPI) {
         }
     }
 
-    suspend fun getMainPage(): Resource<HomePageResponse> {
+    suspend fun getMainPage(): Resource<HomePageResponse?> {
         return safeApiCall {
             api.getMainPage() ?: throw ErrorLoadingException()
         }

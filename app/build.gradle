@@ -35,8 +35,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
 
-        versionCode 36
-        versionName "2.4.4"
+        versionCode 37
+        versionName "2.4.5"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
@@ -159,4 +159,7 @@ dependencies {
 
     // debugImplementation because LeakCanary should only run in debug builds.
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+
+    // for shimmer when loading
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 }

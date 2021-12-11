@@ -248,26 +248,30 @@ class HomeFragment : Fragment() {
         observe(homeViewModel.page) { data ->
             when (data) {
                 is Resource.Success -> {
+                    home_loading_shimmer?.stopShimmer()
+
                     val d = data.value
 
                     currentHomePage = d
                     (home_master_recycler?.adapter as ParentItemAdapter?)?.items =
-                        d.items.mapNotNull {
+                        d?.items?.mapNotNull {
                             try {
                                 HomePageList(it.name, it.list.filterSearchResponse())
                             } catch (e: Exception) {
                                 logError(e)
                                 null
                             }
-                        }
+                        } ?: listOf()
 
                     home_master_recycler?.adapter?.notifyDataSetChanged()
 
-                    home_loading.visibility = View.GONE
-                    home_loading_error.visibility = View.GONE
-                    home_loaded.visibility = View.VISIBLE
+                    home_loading?.isVisible = false
+                    home_loading_error?.isVisible = false
+                    home_loaded?.isVisible = true
                 }
                 is Resource.Failure -> {
+                    home_loading_shimmer?.stopShimmer()
+
                     result_error_text.text = data.errorString
 
                     home_reload_connectionerror.setOnClickListener(apiChangeClickListener)
@@ -287,14 +291,15 @@ class HomeFragment : Fragment() {
                         }
                     }
 
-                    home_loading.visibility = View.GONE
-                    home_loading_error.visibility = View.VISIBLE
-                    home_loaded.visibility = View.GONE
+                    home_loading?.isVisible = false
+                    home_loading_error?.isVisible = true
+                    home_loaded?.isVisible = false
                 }
                 is Resource.Loading -> {
-                    home_loading.visibility = View.VISIBLE
-                    home_loading_error.visibility = View.GONE
-                    home_loaded.visibility = View.GONE
+                    home_loading_shimmer?.startShimmer()
+                    home_loading?.isVisible = true
+                    home_loading_error?.isVisible = false
+                    home_loaded?.isVisible = false
                 }
             }
         }
