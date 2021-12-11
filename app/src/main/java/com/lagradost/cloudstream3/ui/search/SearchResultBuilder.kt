@@ -21,6 +21,7 @@ object SearchResultBuilder {
     fun bind(
         clickCallback: (SearchClickCallback) -> Unit,
         card: SearchResponse,
+        position: Int,
         itemView: View,
         nextFocusBehavior: Boolean? = null,
         nextFocusUp: Int? = null,
@@ -54,16 +55,17 @@ object SearchResultBuilder {
                 SearchClickCallback(
                     if (card is DataStoreHelper.ResumeWatchingResult) SEARCH_ACTION_PLAY_FILE else SEARCH_ACTION_LOAD,
                     it,
+                    position,
                     card
                 )
             )
         }
 
-        if(nextFocusUp != null) {
+        if (nextFocusUp != null) {
             bg.nextFocusUpId = nextFocusUp
         }
-        
-        if(nextFocusDown != null) {
+
+        if (nextFocusDown != null) {
             bg.nextFocusDownId = nextFocusDown
         }
 
@@ -83,8 +85,14 @@ object SearchResultBuilder {
         }
 
         bg.setOnLongClickListener {
-            clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_SHOW_METADATA, it, card))
+            clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_SHOW_METADATA, it, position, card))
             return@setOnLongClickListener true
+        }
+
+        bg.setOnFocusChangeListener { view, b ->
+            if (b) {
+                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_FOCUSED, view, position, card))
+            }
         }
 
         when (card) {

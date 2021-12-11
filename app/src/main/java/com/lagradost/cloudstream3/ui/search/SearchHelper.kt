@@ -43,7 +43,7 @@ object SearchHelper {
                 } else {
                     handleSearchClickCallback(
                         activity,
-                        SearchClickCallback(SEARCH_ACTION_LOAD, callback.view, callback.card)
+                        SearchClickCallback(SEARCH_ACTION_LOAD, callback.view, -1, callback.card)
                     )
                 }
             }

@@ -437,7 +437,7 @@ class HomeFragment : Fragment() {
                         if (itemId == 1) {
                             handleSearchClickCallback(
                                 activity,
-                                SearchClickCallback(SEARCH_ACTION_LOAD, callback.view, callback.card)
+                                SearchClickCallback(SEARCH_ACTION_LOAD, callback.view, -1, callback.card)
                             )
                             reloadStored()
                         }

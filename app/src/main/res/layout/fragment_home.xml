@@ -11,7 +11,7 @@
 
     <FrameLayout
             android:visibility="gone"
-            tools:visibility="visible"
+            tools:visibility="gone"
             android:id="@+id/home_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -148,7 +148,7 @@
     </LinearLayout>
     <androidx.core.widget.NestedScrollView
             android:background="?attr/primaryBlackBackground"
-            tools:visibility="gone"
+            tools:visibility="visible"
             android:visibility="gone"
             android:id="@+id/home_loaded"
             android:layout_width="match_parent"
@@ -417,8 +417,6 @@
                             <com.google.android.material.button.MaterialButton
                                     android:nextFocusLeft="@id/nav_rail_view"
                                     android:nextFocusRight="@id/home_plan_to_watch_btt"
-                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
 
                                     android:id="@+id/home_type_watching_btt"
                                     android:text="@string/type_watching"
@@ -426,8 +424,6 @@
                             <com.google.android.material.button.MaterialButton
                                     android:nextFocusLeft="@id/home_type_watching_btt"
                                     android:nextFocusRight="@id/home_type_on_hold_btt"
-                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
 
                                     android:id="@+id/home_plan_to_watch_btt"
                                     android:text="@string/type_plan_to_watch"
@@ -435,8 +431,6 @@
                             <com.google.android.material.button.MaterialButton
                                     android:nextFocusLeft="@id/home_plan_to_watch_btt"
                                     android:nextFocusRight="@id/home_type_dropped_btt"
-                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
 
                                     android:id="@+id/home_type_on_hold_btt"
                                     android:text="@string/type_on_hold"
@@ -444,16 +438,12 @@
                             <com.google.android.material.button.MaterialButton
                                     android:nextFocusLeft="@id/home_type_on_hold_btt"
                                     android:nextFocusRight="@id/home_type_completed_btt"
-                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
 
                                     android:id="@+id/home_type_dropped_btt"
                                     android:text="@string/type_dropped"
                                     style="@style/RoundedSelectableButton"/>
                             <com.google.android.material.button.MaterialButton
                                     android:nextFocusLeft="@id/home_type_dropped_btt"
-                                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-                                    android:nextFocusUp="@id/home_watch_child_recyclerview"
 
                                     android:id="@+id/home_type_completed_btt"
                                     android:text="@string/type_completed"

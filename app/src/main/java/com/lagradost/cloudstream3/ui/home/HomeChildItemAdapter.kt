@@ -52,17 +52,17 @@ class HomeChildItemAdapter(
     ) :
         RecyclerView.ViewHolder(itemView) {
 
-        fun bind(card: SearchResponse, index: Int) {
+        fun bind(card: SearchResponse, position: Int) {
 
             // TV focus fixing
-            val nextFocusBehavior = when (index) {
+            val nextFocusBehavior = when (position) {
                 0 -> true
                 itemCount - 1 -> false
                 else -> null
             }
 
-            SearchResultBuilder.bind(clickCallback, card, itemView, nextFocusBehavior, nextFocusUp, nextFocusDown)
-            itemView.tag = index
+            SearchResultBuilder.bind(clickCallback, card, position, itemView, nextFocusBehavior, nextFocusUp, nextFocusDown)
+            itemView.tag = position
             //val ani = ScaleAnimation(0.9f, 1.0f, 0.9f, 1f)
             //ani.fillAfter = true
             //ani.duration = 200
