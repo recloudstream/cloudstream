@@ -2139,7 +2139,7 @@ class PlayerFragment : Fragment() {
 
             normalSafeApiCall {
                 val databaseProvider = StandaloneDatabaseProvider(requireContext())
-                simpleCache = simpleCache ?: SimpleCache(
+                simpleCache = SimpleCache(
                     File(
                         requireContext().filesDir, "exoplayer"
                     ).also { it.deleteOnExit() }, // Ensures always fresh file
