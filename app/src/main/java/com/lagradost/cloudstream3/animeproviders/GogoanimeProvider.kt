@@ -26,7 +26,7 @@ class GogoanimeProvider : MainAPI() {
         val qualityRegex = Regex("(\\d+)P")
     }
 
-    override val mainUrl = "https://gogoanime.vc"
+    override val mainUrl = "https://gogoanime.wiki"
     override val name = "GogoAnime"
     override val hasQuickSearch = false
     override val hasMainPage = true

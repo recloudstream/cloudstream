@@ -104,9 +104,10 @@ import java.io.File
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
-import kotlin.concurrent.thread
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.properties.Delegates
 
 
@@ -131,6 +132,7 @@ enum class PlayerEventType(val value: Int) {
     Play(1),
     SeekForward(2),
     SeekBack(3),
+
     //SkipCurrentChapter(4),
     NextEpisode(5),
     PrevEpisode(5),
@@ -410,7 +412,7 @@ class PlayerFragment : Fragment() {
 
     private fun onClickChange() {
         isShowing = !isShowing
-        if(isShowing) {
+        if (isShowing) {
             autoHide()
         }
         activity?.hideSystemUI()
@@ -552,7 +554,7 @@ class PlayerFragment : Fragment() {
                 if (swipeVerticalEnabled) {
                     val distanceMultiplierY = 2F
                     val distanceY = (motionEvent.rawY - currentY) * distanceMultiplierY
-                    val diffY = distanceY * 2.0 / height
+                    val diffY = distanceY * 2.0 / min(height, width)
 
                     // Forces 'smooth' moving preventing a bug where you
                     // can make it think it moved half a screen in a frame
@@ -562,7 +564,7 @@ class PlayerFragment : Fragment() {
                         preventHorizontalSwipe = true
                     }
                     if (hasPassedVerticalSwipeThreshold) {
-                        if (currentX > width * 0.5) {
+                        if (currentX > max(height, width) * 0.5) {
                             if (audioManager != null && progressBarLeftHolder != null) {
                                 val currentVolume =
                                     audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
@@ -618,7 +620,7 @@ class PlayerFragment : Fragment() {
                 if (swipeEnabled) {
                     val distanceMultiplierX = 2F
                     val distanceX = (motionEvent.rawX - currentX) * distanceMultiplierX
-                    val diffX = distanceX * 2.0 / width
+                    val diffX = distanceX * 2.0 / max(height, width)
                     if (abs(diffX - prevDiffX) > 0.5) {
                         return
                     }
@@ -1802,7 +1804,7 @@ class PlayerFragment : Fragment() {
                     return i
                 }
             }
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             return null
         }
 
