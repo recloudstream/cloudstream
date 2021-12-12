@@ -55,7 +55,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 ***Sites used:***
 <!-- Do not remove those two comments -->
 <!--SITE LIST START-->
-- [gogoanime.vc](https://gogoanime.vc) 
+- [gogoanime.wiki](https://gogoanime.wiki) 
 - [allanime.site](https://allanime.site) 
 - [animeflick.net](https://animeflick.net) 
 - [tenshi.moe](https://tenshi.moe) 
