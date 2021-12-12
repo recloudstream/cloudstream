@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
@@ -52,6 +53,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.widget.CenterZoomLayoutManager
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.util.*
 
@@ -72,7 +74,7 @@ class HomeFragment : Fragment() {
             val titleHolder = bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
 
             titleHolder.setOnClickListener {
-                bottomSheetDialogBuilder.dismiss()
+                bottomSheetDialogBuilder.dismissSafe(this)
             }
 
             // Span settings
@@ -81,7 +83,7 @@ class HomeFragment : Fragment() {
             recycle.adapter = SearchAdapter(item.list, recycle) { callback ->
                 handleSearchClickCallback(this, callback)
                 if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
-                    bottomSheetDialogBuilder.dismiss()
+                    bottomSheetDialogBuilder.dismissSafe(this)
                 }
             }
 

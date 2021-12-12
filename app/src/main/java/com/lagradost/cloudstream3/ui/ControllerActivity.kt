@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.utils.CastHelper.awaitLinks
 import com.lagradost.cloudstream3.utils.CastHelper.getMediaInfo
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import org.json.JSONObject
 import kotlin.concurrent.thread
 
@@ -156,7 +157,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                         }
                                     }
                             }
-                            bottomSheetDialog.dismiss()
+                            bottomSheetDialog.dismissSafe(activity)
                         }
                     }
 
@@ -220,9 +221,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         }
                         loadMirror(which)
 
-                        bottomSheetDialog.dismiss()
+                        bottomSheetDialog.dismissSafe(activity)
                     }
-
                 }
             }
         }

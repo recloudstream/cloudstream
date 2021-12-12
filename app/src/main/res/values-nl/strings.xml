@@ -140,7 +140,7 @@
     <string name="delete">Verwijderen</string>
     <string name="pause">Pauze</string>
     <string name="resume">Hervat</string>
-    <string name="delete_message">Dit wordt zeker permanent verwijderd %a\Weet u het zeker?</string>
+    <string name="delete_message">Dit wordt zeker permanent verwijderd %s\nWeet u het zeker?</string>
 
     <string name="status_ongoing">Lopend</string>
     <string name="status_completed">Voltooid</string>

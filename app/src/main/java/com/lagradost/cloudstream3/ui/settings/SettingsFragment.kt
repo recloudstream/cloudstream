@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
@@ -147,7 +148,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         api.accountIndex = ogIndex
         val adapter = AccountAdapter(items, R.layout.account_single) {
-            dialog?.dismiss()
+            dialog?.dismissSafe(activity)
             api.changeAccount(it.view.context, it.card.accountIndex)
         }
         val list = dialog.findViewById<RecyclerView>(R.id.account_list)
@@ -163,14 +164,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         dialog.findViewById<TextView>(R.id.account_logout)?.setOnClickListener {
             it.context?.let { ctx ->
                 api.logOut(ctx)
-                dialog.dismiss()
+                dialog.dismissSafe(activity)
             }
         }
 
         dialog.findViewById<TextView>(R.id.account_name)?.text = info.name ?: context.getString(R.string.no_data)
         dialog.findViewById<TextView>(R.id.account_site)?.text = api.name
         dialog.findViewById<TextView>(R.id.account_switch_account)?.setOnClickListener {
-            dialog.dismiss()
+            dialog.dismissSafe(activity)
             showAccountSwitch(it.context, api)
         }
     }
@@ -178,6 +179,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings, rootKey)
+
         val updatePreference = findPreference<Preference>(getString(R.string.manual_check_update_key))!!
         val localePreference = findPreference<Preference>(getString(R.string.locale_key))!!
         val benenePreference = findPreference<Preference>(getString(R.string.benene_count))!!
@@ -191,6 +193,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val colorPrimaryPreference = findPreference<Preference>(getString(R.string.primary_color_key))!!
         val preferedMediaTypePreference = findPreference<Preference>(getString(R.string.prefer_media_type_key))!!
         val appThemePreference = findPreference<Preference>(getString(R.string.app_theme_key))!!
+        val subPreference = findPreference<Preference>(getString(R.string.subtitle_settings_key))!!
+
+        subPreference.setOnPreferenceClickListener {
+            SubtitlesFragment.push(activity, false)
+            return@setOnPreferenceClickListener true
+        }
 
         val syncApis = listOf(Pair(R.string.mal_key, malApi), Pair(R.string.anilist_key, aniListApi))
         for (sync in syncApis) {
@@ -233,7 +241,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     currentList.add(dublist.indexOf(i))
                 }
 
-                context?.showMultiDialog(
+                activity?.showMultiDialog(
                     names,
                     currentList,
                     getString(R.string.display_subbed_dubbed_settings),
@@ -276,7 +284,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     Pair(it, fullName)
                 }
 
-                context?.showMultiDialog(
+                activity?.showMultiDialog(
                     names.map { it.second },
                     currentList,
                     getString(R.string.provider_lang_settings),
@@ -299,12 +307,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
             // DOES NOT WORK ON SCOPED STORAGE.
             val secondaryDir = if (isScopedStorage) null else Environment.getExternalStorageDirectory().absolutePath +
                     File.separator + resources.getString(R.string.app_name_download_path)
+            val first = listOf(defaultDir, secondaryDir)
+            return (try {
+                val currentDir = context?.getBasePath()?.let { it.first?.filePath ?: it.second }
 
-            val currentDir = context?.getBasePath()?.let { it.first?.filePath ?: it.second }
-
-            return (listOf(defaultDir, secondaryDir) +
-                    requireContext().getExternalFilesDirs("").mapNotNull { it.path } +
-                    currentDir).filterNotNull().distinct()
+                (first +
+                        requireContext().getExternalFilesDirs("").mapNotNull { it.path } +
+                        currentDir)
+            } catch (e: Exception) {
+                first
+            }).filterNotNull().distinct()
         }
 
         downloadPathPreference.setOnPreferenceClickListener {
@@ -314,7 +326,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val currentDir =
                 settingsManager.getString(getString(R.string.download_path_pref), null) ?: getDownloadDir().toString()
 
-            context?.showBottomDialog(
+            activity?.showBottomDialog(
                 dirs + listOf("Custom"),
                 dirs.indexOf(currentDir),
                 getString(R.string.download_path_pref),
@@ -342,7 +354,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val currentPrefMedia =
                 settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
 
-            context?.showBottomDialog(
+            activity?.showBottomDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentPrefMedia),
                 getString(R.string.preferred_media_settings),
@@ -352,7 +364,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .putInt(getString(R.string.preferred_media_settings), prefValues[it])
                     .apply()
                 val apilist = AppUtils.filterProviderByPreferredMedia(apis, prefValues[it])
-                val apiRandom = if (apilist.size > 0) { apilist.random().name } else { "" }
+                val apiRandom = if (apilist.size > 0) {
+                    apilist.random().name
+                } else {
+                    ""
+                }
                 context?.setKey(HOMEPAGE_API, apiRandom)
                 (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
@@ -366,7 +382,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             val currentLayout =
                 settingsManager.getInt(getString(R.string.app_layout_key), -1)
-            context?.showBottomDialog(
+
+            activity?.showBottomDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentLayout),
                 getString(R.string.app_layout),
@@ -390,7 +407,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             val currentLayout =
                 settingsManager.getString(getString(R.string.primary_color_key), prefValues.first())
-            context?.showBottomDialog(
+
+            activity?.showBottomDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentLayout),
                 getString(R.string.primary_color_settings),
@@ -414,7 +432,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             val currentLayout =
                 settingsManager.getString(getString(R.string.app_theme_key), prefValues.first())
-            context?.showBottomDialog(
+
+            activity?.showBottomDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentLayout),
                 getString(R.string.app_theme_settings),
@@ -441,7 +460,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     getString(R.string.watch_quality_pref),
                     Qualities.values().last().value
                 )
-            context?.showBottomDialog(
+
+            activity?.showBottomDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentQuality),
                 getString(R.string.watch_quality_pref),
@@ -460,7 +480,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             val currentDns =
                 settingsManager.getInt(getString(R.string.dns_pref), 0)
-            context?.showBottomDialog(
+
+            activity?.showBottomDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentDns),
                 getString(R.string.dns_pref),
@@ -481,6 +502,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 if (beneneCount <= 0) getString(R.string.benene_count_text_none) else getString(R.string.benene_count_text).format(
                     beneneCount
                 )
+
             benenePreference.setOnPreferenceClickListener {
                 try {
                     beneneCount++
@@ -516,7 +538,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val languageCodes = tempLangs.map { it.third }
             val languageNames = tempLangs.map { "${it.first}  ${it.second}" }
             val index = languageCodes.indexOf(current)
-            pref?.context?.showDialog(
+
+            activity?.showDialog(
                 languageNames, index, getString(R.string.app_language), true, { }
             ) { languageIndex ->
                 try {
@@ -539,14 +562,5 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // val dm = res.displayMetrics
         val conf = res.configuration
         return conf?.locale?.language ?: "en"
-    }
-
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        if (preference != null) {
-            if (preference.key == getString(R.string.subtitle_settings_key)) {
-                SubtitlesFragment.push(activity, false)
-            }
-        }
-        return super.onPreferenceTreeClick(preference)
     }
 }

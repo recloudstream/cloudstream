@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSet
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.SEARCH_PROVIDER_TOGGLE
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -255,11 +256,11 @@ class SearchFragment : Fragment() {
                     providersActive = activeApis
                     typesActive = activeTypes
 
-                    dialog.dismiss()
+                    dialog.dismissSafe(activity)
                 }
 
                 cancelButton.setOnClickListener {
-                    dialog.dismiss()
+                    dialog.dismissSafe(activity)
                 }
 
                 //listView.setSelection(selectedIndex)

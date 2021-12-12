@@ -232,7 +232,7 @@ class SubtitlesFragment : Fragment() {
             )
 
             //showBottomDialog
-            textView.context.showDialog(
+            activity?.showDialog(
                 elevationTypes.map { it.second },
                 elevationTypes.map { it.first }.indexOf(state.elevation),
                 (textView as TextView).text.toString(),
@@ -263,7 +263,7 @@ class SubtitlesFragment : Fragment() {
             )
 
             //showBottomDialog
-            textView.context.showDialog(
+            activity?.showDialog(
                 edgeTypes.map { it.second },
                 edgeTypes.map { it.first }.indexOf(state.edgeType),
                 (textView as TextView).text.toString(),
@@ -314,7 +314,7 @@ class SubtitlesFragment : Fragment() {
             )
 
             //showBottomDialog
-            textView.context.showDialog(
+            activity?.showDialog(
                 fontSizes.map { it.second },
                 fontSizes.map { it.first }.indexOf(state.fixedTextSize),
                 (textView as TextView).text.toString(),
@@ -353,7 +353,7 @@ class SubtitlesFragment : Fragment() {
             )
 
             //showBottomDialog
-            textView.context.showDialog(
+            activity?.showDialog(
                 fontTypes.map { it.second },
                 fontTypes.map { it.first }.indexOf(state.typeface),
                 (textView as TextView).text.toString(),
@@ -379,7 +379,7 @@ class SubtitlesFragment : Fragment() {
             langMap.addAll(SubtitleHelper.languages)
 
             val lang639_1 = langMap.map { it.ISO_639_1 }
-            textView.context.showDialog(
+            activity?.showDialog(
                 langMap.map { it.languageName },
                 lang639_1.indexOf(textView.context.getAutoSelectLanguageISO639_1()),
                 (textView as TextView).text.toString(),
@@ -402,7 +402,7 @@ class SubtitlesFragment : Fragment() {
             val keys = textView.context.getDownloadSubsLanguageISO639_1()
             val keyMap = keys.map { lang639_1.indexOf(it) }.filter { it >= 0 }
 
-            textView.context.showMultiDialog(
+            activity?.showMultiDialog(
                 langMap.map { it.languageName },
                 keyMap,
                 (textView as TextView).text.toString(),

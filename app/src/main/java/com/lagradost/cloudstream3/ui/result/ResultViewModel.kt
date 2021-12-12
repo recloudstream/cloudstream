@@ -449,6 +449,7 @@ class ResultViewModel : ViewModel() {
         data: String,
         isCasting: Boolean,
     ): Resource<EpisodeData> {
+        println("LOAD EPISODE FFS")
         if (_allEpisodes.value?.contains(id) == true) {
             _allEpisodes.value?.remove(id)
         }

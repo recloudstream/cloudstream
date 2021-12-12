@@ -19,6 +19,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
@@ -87,6 +88,38 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         updateLocale() // android fucks me by chaining lang when rotating the phone
+        findNavController(R.id.nav_host_fragment).currentDestination?.let { updateNavBar(it) }
+    }
+
+    private fun updateNavBar(destination : NavDestination) {
+        this.hideKeyboard()
+
+        // Fucks up anime info layout since that has its own layout
+        cast_mini_controller_holder?.isVisible =
+            !listOf(R.id.navigation_results, R.id.navigation_player).contains(destination.id)
+
+        val isNavVisible = listOf(
+            R.id.navigation_home,
+            R.id.navigation_search,
+            R.id.navigation_downloads,
+            R.id.navigation_settings,
+            R.id.navigation_download_child
+        ).contains(destination.id)
+
+        val landscape = when(resources.configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                true
+            }
+            Configuration.ORIENTATION_PORTRAIT -> {
+                false
+            }
+            else -> {
+                false
+            }
+        }
+
+        nav_view?.isVisible = isNavVisible && !landscape
+        nav_rail_view?.isVisible = isNavVisible && landscape
     }
 
     //private var mCastSession: CastSession? = null
@@ -553,30 +586,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val navRail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
         navRail?.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            this.hideKeyboard()
-            // nav_view.hideKeyboard()
-            /*if (destination.id != R.id.navigation_player) {
-                requestedOrientation = if (settingsManager?.getBoolean("force_landscape", false) == true) {
-                    ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-                } else {
-                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                }
-            }*/
-
-            // Fucks up anime info layout since that has its own layout
-            cast_mini_controller_holder?.isVisible =
-                !listOf(R.id.navigation_results, R.id.navigation_player).contains(destination.id)
-
-            val isNavVisible = listOf(
-                R.id.navigation_home,
-                R.id.navigation_search,
-                R.id.navigation_downloads,
-                R.id.navigation_settings,
-                R.id.navigation_download_child
-            ).contains(destination.id)
-
-            nav_view?.isVisible = isNavVisible
-            navRail?.isVisible = isNavVisible
+            updateNavBar(destination)
         }
 
         /*nav_view.setOnNavigationItemSelectedListener { item ->

@@ -88,6 +88,7 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -125,12 +126,12 @@ const val OPENING_PERCENTAGE = 50
 const val AUTOLOAD_NEXT_EPISODE_PERCENTAGE = 80
 
 enum class PlayerEventType(val value: Int) {
-    Stop(-1),
+    //Stop(-1),
     Pause(0),
     Play(1),
     SeekForward(2),
     SeekBack(3),
-    SkipCurrentChapter(4),
+    //SkipCurrentChapter(4),
     NextEpisode(5),
     PrevEpisode(5),
     PlayPauseToggle(7),
@@ -1189,11 +1190,11 @@ class PlayerFragment : Fragment() {
                         listOf(0.5f, 0.75f, 0.85f, 1f, 1.15f, 1.25f, 1.4f, 1.5f, 1.75f, 2f)
                     val speedIndex = speedsNumbers.indexOf(playbackSpeed)
 
-                    context?.let { ctx ->
-                        ctx.showDialog(
+                    activity?.let { act ->
+                        act.showDialog(
                             speedsText,
                             speedIndex,
-                            ctx.getString(R.string.player_speed),
+                            act.getString(R.string.player_speed),
                             false,
                             {
                                 activity?.hideSystemUI()
@@ -1236,7 +1237,7 @@ class PlayerFragment : Fragment() {
                             autoHide()
                             saveArguments()
                             SubtitlesFragment.push(activity)
-                            sourceDialog.dismiss()
+                            sourceDialog.dismissSafe(activity)
                         }
                         var sourceIndex = 0
                         var startSource = 0
@@ -1297,7 +1298,7 @@ class PlayerFragment : Fragment() {
                         }
 
                         cancelButton.setOnClickListener {
-                            sourceDialog.dismiss()
+                            sourceDialog.dismissSafe(activity)
                         }
 
                         applyButton.setOnClickListener {
@@ -1324,7 +1325,7 @@ class PlayerFragment : Fragment() {
                             if (init) {
                                 initPlayer(getCurrentUrl())
                             }
-                            sourceDialog.dismiss()
+                            sourceDialog.dismissSafe(activity)
                         }
                     }
                 }
@@ -1796,11 +1797,15 @@ class PlayerFragment : Fragment() {
     }
 
     private fun getCurrentUrl(): ExtractorLink? {
-        val urls = getUrls() ?: return null
-        for (i in urls) {
-            if (i.getId() == playerData.mirrorId) {
-                return i
+        try {
+            val urls = getUrls() ?: return null
+            for (i in urls) {
+                if (i.getId() == playerData.mirrorId) {
+                    return i
+                }
             }
+        } catch (e : Exception) {
+            return null
         }
 
         return null
@@ -2189,11 +2194,11 @@ class PlayerFragment : Fragment() {
                 setUpstreamDataSourceFactory(getDataSourceFactory())
             }
 
-            val _exoPlayer =
+            val exoPlayerBuilder =
                 ExoPlayer.Builder(requireContext())
                     .setTrackSelector(trackSelector)
 
-            exoPlayer = _exoPlayer.build().apply {
+            exoPlayer = exoPlayerBuilder.build().apply {
                 playWhenReady = isPlayerPlaying
                 seekTo(currentWindow, playbackPosition)
                 setMediaSource(

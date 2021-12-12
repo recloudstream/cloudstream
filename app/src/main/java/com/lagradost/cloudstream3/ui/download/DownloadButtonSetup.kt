@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.ui.player.UriData
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
@@ -34,19 +35,24 @@ object DownloadButtonSetup {
                             }
                         }
 
-                    builder.setTitle(R.string.delete_file)
-                        .setMessage(
-                            ctx.getString(R.string.delete_message).format(
-                                ctx.getNameFull(
-                                    click.data.name,
-                                    click.data.episode,
-                                    click.data.season
+                    try {
+                        builder.setTitle(R.string.delete_file)
+                            .setMessage(
+                                ctx.getString(R.string.delete_message).format(
+                                    ctx.getNameFull(
+                                        click.data.name,
+                                        click.data.episode,
+                                        click.data.season
+                                    )
                                 )
                             )
-                        )
-                        .setPositiveButton(R.string.delete, dialogClickListener)
-                        .setNegativeButton(R.string.cancel, dialogClickListener)
-                        .show()
+                            .setPositiveButton(R.string.delete, dialogClickListener)
+                            .setNegativeButton(R.string.cancel, dialogClickListener)
+                            .show()
+                    } catch (e : Exception) {
+                        logError(e)
+                        // ye you somehow fucked up formatting did you?
+                    }
                 }
             }
             DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {

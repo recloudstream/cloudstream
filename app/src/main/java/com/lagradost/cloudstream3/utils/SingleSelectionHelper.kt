@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
+import android.app.Activity
 import android.app.Dialog
-import android.content.Context
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
@@ -10,9 +10,10 @@ import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 
 object SingleSelectionHelper {
-    fun Context.showDialog(
+    fun Activity.showDialog(
         dialog: Dialog,
         items: List<String>,
         selectedIndex: List<Int>,
@@ -70,7 +71,7 @@ object SingleSelectionHelper {
                 }
             } else {
                 callback.invoke(listOf(which))
-                dialog.dismiss()
+                dialog.dismissSafe(this)
             }
         }
         if (realShowApply) {
@@ -81,15 +82,15 @@ object SingleSelectionHelper {
                         list.add(index)
                 }
                 callback.invoke(list)
-                dialog.dismiss()
+                dialog.dismissSafe(this)
             }
             cancelButton.setOnClickListener {
-                dialog.dismiss()
+                dialog.dismissSafe(this)
             }
         }
     }
 
-    fun Context.showMultiDialog(
+    fun Activity.showMultiDialog(
         items: List<String>,
         selectedIndex: List<Int>,
         name: String,
@@ -104,7 +105,7 @@ object SingleSelectionHelper {
         showDialog(dialog, items, selectedIndex, name, true, true, callback, dismissCallback)
     }
 
-    fun Context.showDialog(
+    fun Activity.showDialog(
         items: List<String>,
         selectedIndex: Int,
         name: String,
@@ -130,7 +131,7 @@ object SingleSelectionHelper {
     }
 
     /** Only for a low amount of items */
-    fun Context.showBottomDialog(
+    fun Activity.showBottomDialog(
         items: List<String>,
         selectedIndex: Int,
         name: String,

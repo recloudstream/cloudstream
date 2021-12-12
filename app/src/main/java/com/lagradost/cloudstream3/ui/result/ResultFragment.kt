@@ -61,6 +61,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -393,7 +394,7 @@ class ResultFragment : Fragment() {
 
                 val data = viewModel.loadEpisode(episodeClick.data, isCasting)
                 if (currentLoadingCount != currentLoad) return false
-                loadingDialog?.dismiss()
+                loadingDialog?.dismissSafe(activity)
 
                 when (data) {
                     is Resource.Success -> {
@@ -627,7 +628,7 @@ class ResultFragment : Fragment() {
                             verifiedOptions.toTypedArray()
                         ) { _, which ->
                             handleAction(EpisodeClickEvent(verifiedOptionsValues[which], episodeClick.data))
-                            dialog?.dismiss()
+                            dialog?.dismissSafe(activity)
                         }
 
                         dialog = builder.create()
@@ -636,13 +637,18 @@ class ResultFragment : Fragment() {
                 }
                 ACTION_COPY_LINK -> {
                     activity?.let { act ->
-                        acquireSingeExtractorLink(act.getString(R.string.episode_action_copy_link)) { link ->
-                            val serviceClipboard =
-                                (act.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?)
-                                    ?: return@acquireSingeExtractorLink
-                            val clip = ClipData.newPlainText(link.name, link.url)
-                            serviceClipboard.setPrimaryClip(clip)
-                            showToast(act, R.string.copy_link_toast, Toast.LENGTH_SHORT)
+                        try {
+                            acquireSingeExtractorLink(act.getString(R.string.episode_action_copy_link)) { link ->
+                                val serviceClipboard =
+                                    (act.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?)
+                                        ?: return@acquireSingeExtractorLink
+                                val clip = ClipData.newPlainText(link.name, link.url)
+                                serviceClipboard.setPrimaryClip(clip)
+                                showToast(act, R.string.copy_link_toast, Toast.LENGTH_SHORT)
+                            }
+                        } catch (e: Exception) {
+                            showToast(act, e.toString(), Toast.LENGTH_LONG)
+                            logError(e)
                         }
                     }
                 }
@@ -668,58 +674,63 @@ class ResultFragment : Fragment() {
 
                 ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> {
                     activity?.let { act ->
-                        if (!act.checkWrite()) {
-                            act.requestRW()
-                            if (act.checkWrite()) return@main
-                        }
-                        val data = currentLinks ?: return@main
-                        val subs = currentSubs
-
-                        val outputDir = act.cacheDir
-                        val outputFile = withContext(Dispatchers.IO) {
-                            File.createTempFile("mirrorlist", ".m3u8", outputDir)
-                        }
-                        var text = "#EXTM3U"
-                        if (subs != null) {
-                            for (sub in subs.values) {
-                                text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.lang}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.lang}\",URI=\"${sub.url}\""
+                        try {
+                            if (!act.checkWrite()) {
+                                act.requestRW()
+                                if (act.checkWrite()) return@main
                             }
+                            val data = currentLinks ?: return@main
+                            val subs = currentSubs
+
+                            val outputDir = act.cacheDir
+                            val outputFile = withContext(Dispatchers.IO) {
+                                File.createTempFile("mirrorlist", ".m3u8", outputDir)
+                            }
+                            var text = "#EXTM3U"
+                            if (subs != null) {
+                                for (sub in subs.values) {
+                                    text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.lang}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.lang}\",URI=\"${sub.url}\""
+                                }
+                            }
+                            for (link in data.sortedBy { -it.quality }) {
+                                text += "\n#EXTINF:, ${link.name}\n${link.url}"
+                            }
+                            outputFile.writeText(text)
+
+                            val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
+
+                            vlcIntent.setPackage(VLC_PACKAGE)
+                            vlcIntent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                            vlcIntent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION)
+                            vlcIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+                            vlcIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
+
+                            vlcIntent.setDataAndType(
+                                FileProvider.getUriForFile(
+                                    act,
+                                    act.applicationContext.packageName + ".provider",
+                                    outputFile
+                                ), "video/*"
+                            )
+
+                            val startId = VLC_FROM_PROGRESS
+
+                            var position = startId
+                            if (startId == VLC_FROM_START) {
+                                position = 1
+                            } else if (startId == VLC_FROM_PROGRESS) {
+                                position = 0
+                            }
+
+                            vlcIntent.putExtra("position", position)
+
+                            vlcIntent.component = VLC_COMPONENT
+                            act.setKey(VLC_LAST_ID_KEY, episodeClick.data.id)
+                            act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
+                        } catch (e: Exception) {
+                            logError(e)
+                            showToast(act, e.toString(), Toast.LENGTH_LONG)
                         }
-                        for (link in data.sortedBy { -it.quality }) {
-                            text += "\n#EXTINF:, ${link.name}\n${link.url}"
-                        }
-                        outputFile.writeText(text)
-
-                        val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
-
-                        vlcIntent.setPackage(VLC_PACKAGE)
-                        vlcIntent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-                        vlcIntent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION)
-                        vlcIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
-                        vlcIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
-
-                        vlcIntent.setDataAndType(
-                            FileProvider.getUriForFile(
-                                act,
-                                act.applicationContext.packageName + ".provider",
-                                outputFile
-                            ), "video/*"
-                        )
-
-                        val startId = VLC_FROM_PROGRESS
-
-                        var position = startId
-                        if (startId == VLC_FROM_START) {
-                            position = 1
-                        } else if (startId == VLC_FROM_PROGRESS) {
-                            position = 0
-                        }
-
-                        vlcIntent.putExtra("position", position)
-
-                        vlcIntent.component = VLC_COMPONENT
-                        act.setKey(VLC_LAST_ID_KEY, episodeClick.data.id)
-                        act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
                     }
                 }
 
@@ -786,7 +797,7 @@ class ResultFragment : Fragment() {
             result_bookmark_button?.text = getString(watchType.stringRes)
             result_bookmark_fab?.text = getString(watchType.stringRes)
 
-            if(watchType == WatchType.NONE) {
+            if (watchType == WatchType.NONE) {
                 result_bookmark_fab?.context?.colorFromAttribute(R.attr.white)
             } else {
                 result_bookmark_fab?.context?.colorFromAttribute(R.attr.colorPrimary)
@@ -797,7 +808,7 @@ class ResultFragment : Fragment() {
             }
 
             result_bookmark_fab?.setOnClickListener { fab ->
-                fab.context.showBottomDialog(
+                activity?.showBottomDialog(
                     WatchType.values().map { fab.context.getString(it.stringRes) }.toList(),
                     watchType.ordinal,
                     fab.context.getString(R.string.action_add_to_bookmarks),
