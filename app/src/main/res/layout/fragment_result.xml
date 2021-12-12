@@ -156,7 +156,7 @@
                         android:layout_height="wrap_content">
                     <ImageView
                             android:nextFocusDown="@id/result_bookmark_button"
-                            android:nextFocusRight="@id/result_bookmark_button"
+                            android:nextFocusRight="@id/result_share"
                             android:background="?android:attr/selectableItemBackgroundBorderless"
 
                             android:id="@+id/result_back"

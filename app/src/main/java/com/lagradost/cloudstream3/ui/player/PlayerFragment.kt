@@ -409,6 +409,9 @@ class PlayerFragment : Fragment() {
 
     private fun onClickChange() {
         isShowing = !isShowing
+        if(isShowing) {
+            autoHide()
+        }
         activity?.hideSystemUI()
         updateClick()
     }
@@ -1016,6 +1019,18 @@ class PlayerFragment : Fragment() {
         )
     }
 
+    var currentTapIndex = 0
+
+    private fun autoHide() {
+        currentTapIndex++
+        val index = currentTapIndex
+        player_holder?.postDelayed({
+            if (isShowing && index == currentTapIndex && this::exoPlayer.isInitialized && exoPlayer.isPlaying) {
+                onClickChange()
+            }
+        }, 2000)
+    }
+
     private var receiver: BroadcastReceiver? = null
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
         isInPIPMode = isInPictureInPictureMode
@@ -1056,34 +1071,10 @@ class PlayerFragment : Fragment() {
 
     private fun handleKeyEvent(event: KeyEvent): Boolean {
         event.keyCode.let { keyCode ->
-            when (keyCode) {
-                // don't allow dpad move when hidden
-                KeyEvent.KEYCODE_DPAD_LEFT,
-                KeyEvent.KEYCODE_DPAD_DOWN,
-                KeyEvent.KEYCODE_DPAD_UP,
-                KeyEvent.KEYCODE_DPAD_RIGHT,
-                KeyEvent.KEYCODE_DPAD_DOWN_LEFT,
-                KeyEvent.KEYCODE_DPAD_DOWN_RIGHT,
-                KeyEvent.KEYCODE_DPAD_UP_LEFT,
-                KeyEvent.KEYCODE_DPAD_UP_RIGHT -> {
-                    if (!isShowing) {
-                        return true
-                    }
-                }
-
-                // netflix capture back and hide ~monke
-                KeyEvent.KEYCODE_BACK -> {
-                    if (isShowing) {
-                        onClickChange()
-                        return true
-                    }
-                }
-            }
-
             when (event.action) {
                 KeyEvent.ACTION_DOWN -> {
                     when (keyCode) {
-                        KeyEvent.KEYCODE_DPAD_CENTER -> {
+                        KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_DPAD_UP -> {
                             if (!isShowing) {
                                 onClickChange()
                                 return true
@@ -1097,6 +1088,32 @@ class PlayerFragment : Fragment() {
                     //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
                     //    Toast.LENGTH_LONG
                     //)
+                }
+            }
+
+            when (keyCode) {
+                // don't allow dpad move when hidden
+                KeyEvent.KEYCODE_DPAD_LEFT,
+                KeyEvent.KEYCODE_DPAD_DOWN,
+                KeyEvent.KEYCODE_DPAD_UP,
+                KeyEvent.KEYCODE_DPAD_RIGHT,
+                KeyEvent.KEYCODE_DPAD_DOWN_LEFT,
+                KeyEvent.KEYCODE_DPAD_DOWN_RIGHT,
+                KeyEvent.KEYCODE_DPAD_UP_LEFT,
+                KeyEvent.KEYCODE_DPAD_UP_RIGHT -> {
+                    if (!isShowing) {
+                        return true
+                    } else {
+                        autoHide()
+                    }
+                }
+
+                // netflix capture back and hide ~monke
+                KeyEvent.KEYCODE_BACK -> {
+                    if (isShowing) {
+                        onClickChange()
+                        return true
+                    }
                 }
             }
         }
@@ -1214,6 +1231,7 @@ class PlayerFragment : Fragment() {
                         val subsSettings = sourceDialog.findViewById<View>(R.id.subs_settings)!!
 
                         subsSettings.setOnClickListener {
+                            autoHide()
                             saveArguments()
                             SubtitlesFragment.push(activity)
                             sourceDialog.dismiss()
@@ -1358,6 +1376,17 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         updateLock()
+
+        exo_pause?.setOnClickListener {
+            autoHide()
+            handlePlayerEvent(PlayerEventType.Pause)
+        }
+
+        exo_play?.setOnClickListener {
+            autoHide()
+            handlePlayerEvent(PlayerEventType.Play)
+        }
+
         context?.let { ctx ->
             setPreferredSubLanguage(ctx.getAutoSelectLanguageISO639_1())
         }
@@ -1638,6 +1667,7 @@ class PlayerFragment : Fragment() {
         }
 
         exo_rew?.setOnClickListener {
+            autoHide()
             rewind()
         }
 
@@ -1666,6 +1696,7 @@ class PlayerFragment : Fragment() {
         }
 
         exo_ffwd?.setOnClickListener {
+            autoHide()
             fastForward()
         }
 
@@ -1707,7 +1738,7 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        player_holder.setOnTouchListener(
+        player_holder?.setOnTouchListener(
             Listener()
         )
 
@@ -1727,10 +1758,12 @@ class PlayerFragment : Fragment() {
 
         playback_speed_btt?.isVisible = playBackSpeedEnabled
         playback_speed_btt?.setOnClickListener {
+            autoHide()
             handlePlayerEvent(PlayerEventType.ShowSpeed)
         }
 
         sources_btt.setOnClickListener {
+            autoHide()
             handlePlayerEvent(PlayerEventType.ShowMirrors)
         }
 
@@ -1738,6 +1771,7 @@ class PlayerFragment : Fragment() {
         if (playerResizeEnabled) {
             resize_player?.visibility = VISIBLE
             resize_player?.setOnClickListener {
+                autoHide()
                 handlePlayerEvent(PlayerEventType.Resize)
             }
         } else {
@@ -1745,10 +1779,12 @@ class PlayerFragment : Fragment() {
         }
 
         skip_op?.setOnClickListener {
+            autoHide()
             skipOP()
         }
 
         skip_episode?.setOnClickListener {
+            autoHide()
             handlePlayerEvent(PlayerEventType.NextEpisode)
         }
 

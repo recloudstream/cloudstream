@@ -17,8 +17,9 @@ import kotlin.math.roundToInt
 const val SEARCH_ACTION_LOAD = 0
 const val SEARCH_ACTION_SHOW_METADATA = 1
 const val SEARCH_ACTION_PLAY_FILE = 2
+const val SEARCH_ACTION_FOCUSED = 4
 
-class SearchClickCallback(val action: Int, val view: View, val card: SearchResponse)
+class SearchClickCallback(val action: Int, val view: View, val position : Int, val card: SearchResponse)
 
 class SearchAdapter(
     var cardList: List<SearchResponse>,
@@ -69,7 +70,7 @@ class SearchAdapter(
                 }
             }
 
-            SearchResultBuilder.bind(clickCallback, card, itemView)
+            SearchResultBuilder.bind(clickCallback, card, position, itemView)
         }
     }
 }
