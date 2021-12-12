@@ -745,9 +745,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun safeReleasePlayer() {
-        thread {
-            simpleCache?.release()
-        }
+        simpleCache?.release()
         if (this::exoPlayer.isInitialized) {
             exoPlayer.release()
         }
@@ -1969,7 +1967,6 @@ class PlayerFragment : Fragment() {
         // torrentStream?.stopStream()
         // torrentStream = null
 
-        super.onDestroy()
         canEnterPipMode = false
 
         savePositionInPlayer()
@@ -1979,6 +1976,7 @@ class PlayerFragment : Fragment() {
 
         activity?.showSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+        super.onDestroy()
     }
 
     override fun onPause() {

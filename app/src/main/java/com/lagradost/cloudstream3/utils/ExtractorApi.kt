@@ -58,13 +58,17 @@ fun getAndUnpack(string: String): String {
     return JsUnpacker(packedText).unpack() ?: string
 }
 
-fun loadExtractor(url: String, referer: String?, callback: (ExtractorLink) -> Unit) {
+/**
+ * Tries to load the appropriate extractor based on link, returns true if any extractor is loaded.
+ * */
+fun loadExtractor(url: String, referer: String?, callback: (ExtractorLink) -> Unit) : Boolean {
     for (extractor in extractorApis) {
         if (url.startsWith(extractor.mainUrl)) {
             extractor.getSafeUrl(url, referer)?.forEach(callback)
-            return
+            return true
         }
     }
+    return false
 }
 
 val extractorApis: Array<ExtractorApi> = arrayOf(
@@ -78,6 +82,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     Streamhub(),
     SBPlay(),
     FEmbed(),
+    WatchSB(),
 
     // dood extractors
     DoodToExtractor(),
