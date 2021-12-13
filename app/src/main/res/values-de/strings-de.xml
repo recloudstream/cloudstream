@@ -181,7 +181,7 @@
     <string name="video_source">Quelle</string>
     <string name="video_skip_op">Intro überspringen</string>
     <string name="dont_show_again">Nicht mehr anzeigen</string>
-    <string name="update">Update</string>
+    <string name="update">Aktualisieren</string>
     <string name="watch_quality_pref">Bevorzugte Videoqualität</string>
     <string name="dns_pref">DNS über HTTPS</string>
     <string name="dns_pref_summary">Nützlich zur Umgehung von ISP-Sperren</string>
@@ -198,4 +198,18 @@
     <string name="phone_layout">Handy-Layout</string>
     <string name="primary_color_settings">Primärfarbe</string>
     <string name="app_theme_settings">App-Thema</string>
+    <string name="download_path_pref">Downloadpfad</string>
+    <string name="account">Konto</string>
+    <string name="logout">Abmelden</string>
+    <string name="login">Anmelden</string>
+    <string name="switch_account">Konto wechseln</string>
+    <string name="add_account">Konto hinzufügen</string>
+    <string name="none">Keine</string>
+    <string name="normal">Normal</string>
+    <string name="all">Alle</string>
+    <string name="subtitles_outline">Umrandung</string>
+    <string name="subtitles_depressed">Gesenkt</string>
+    <string name="subtitles_shadow">Schatten</string>
+    <string name="subtitles_raised">Erhöht</string>
+    <string name="subtitles_example_text">Kaufen Sie jede Woche vier gute bequeme Pelze</string>
 </resources>
