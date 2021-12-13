@@ -9,6 +9,7 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
@@ -27,6 +28,7 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.providersActive
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.typesActive
 import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.currentSpan
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -35,7 +37,7 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.SEARCH_PROVIDER_TOGGLE
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
+import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.concurrent.locks.ReentrantLock
@@ -68,18 +70,11 @@ class SearchFragment : Fragment() {
     }
 
     private fun fixGrid() {
-        val compactView = activity?.getGridIsCompact() ?: false
-        val spanCountLandscape = if (compactView) 2 else 6
-        val spanCountPortrait = if (compactView) 1 else 3
-        val orientation = resources.configuration.orientation
-
-        val currentSpan = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCountLandscape
-        } else {
-            spanCountPortrait
+        activity?.getSpanCount()?.let {
+            currentSpan = it
         }
-        cardSpace.spanCount = currentSpan
-        HomeFragment.currentSpan = currentSpan
+        search_autofit_results.spanCount = currentSpan
+        currentSpan = currentSpan
         HomeFragment.configEvent.invoke(currentSpan)
     }
 
@@ -102,13 +97,13 @@ class SearchFragment : Fragment() {
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let {
             SearchAdapter(
                 ArrayList(),
-                cardSpace,
+                search_autofit_results,
             ) { callback ->
                 SearchHelper.handleSearchClickCallback(activity, callback)
             }
         }
 
-        cardSpace.adapter = adapter
+        search_autofit_results.adapter = adapter
         search_loading_bar.alpha = 0f
 
         val searchExitIcon = main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
@@ -325,7 +320,7 @@ class SearchFragment : Fragment() {
                 is Resource.Success -> {
                     it.value.let { data ->
                         if (data.isNotEmpty()) {
-                            (cardSpace?.adapter as SearchAdapter?)?.apply {
+                            (search_autofit_results?.adapter as SearchAdapter?)?.apply {
                                 cardList = data.toList()
                                 notifyDataSetChanged()
                             }
@@ -393,8 +388,8 @@ class SearchFragment : Fragment() {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
         val isAdvancedSearch = settingsManager.getBoolean("advanced_search", true)
 
-        search_master_recycler.visibility = if (isAdvancedSearch) View.VISIBLE else View.GONE
-        cardSpace.visibility = if (!isAdvancedSearch) View.VISIBLE else View.GONE
+        search_master_recycler.isVisible = isAdvancedSearch
+        search_autofit_results.isVisible = !isAdvancedSearch
 
         // SubtitlesFragment.push(activity)
         //searchViewModel.search("iron man")

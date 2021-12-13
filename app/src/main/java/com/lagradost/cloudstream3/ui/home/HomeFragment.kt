@@ -48,12 +48,11 @@ import com.lagradost.cloudstream3.utils.HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
-import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
+import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.widget.CenterZoomLayoutManager
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.util.*
 
@@ -124,15 +123,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun fixGrid() {
-        val compactView = activity?.getGridIsCompact() ?: false
-        val spanCountLandscape = if (compactView) 2 else 6
-        val spanCountPortrait = if (compactView) 1 else 3
-        val orientation = resources.configuration.orientation
-
-        currentSpan = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCountLandscape
-        } else {
-            spanCountPortrait
+        activity?.getSpanCount()?.let {
+            currentSpan = it
         }
         configEvent.invoke(currentSpan)
     }

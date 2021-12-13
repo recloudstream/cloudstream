@@ -2,12 +2,10 @@ package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.secondsToReadable
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.*
 import java.util.*
-import kotlin.math.roundToInt
 
 /**
  * episode and season starting from 1
@@ -34,7 +32,7 @@ open class TmdbProvider : MainAPI() {
 
     // Fuck it, public private api key because github actions won't co-operate.
     // Please no stealy.
-    val tmdb = Tmdb("e6333b32409e02a4a6eba6fb7ff866bb")
+    private val tmdb = Tmdb("e6333b32409e02a4a6eba6fb7ff866bb")
 
     private fun getImageUrl(link: String?): String? {
         if (link == null) return null
@@ -81,38 +79,37 @@ open class TmdbProvider : MainAPI() {
 
     private fun TvShow.toLoadResponse(): TvSeriesLoadResponse {
         val episodes = this.seasons?.filter { !disableSeasonZero || (it.season_number ?: 0) != 0 }
-            ?.mapNotNull {
-                it.episodes?.map {
+            ?.mapNotNull { season ->
+                season.episodes?.map { episode ->
                     TvSeriesEpisode(
-                        it.name,
-                        it.season_number,
-                        it.episode_number,
+                        episode.name,
+                        episode.season_number,
+                        episode.episode_number,
                         TmdbLink(
-                            it.external_ids?.imdb_id ?: this.external_ids?.imdb_id,
+                            episode.external_ids?.imdb_id ?: this.external_ids?.imdb_id,
                             this.id,
-                            it.episode_number,
-                            it.season_number,
+                            episode.episode_number,
+                            episode.season_number,
                         ).toJson(),
-                        getImageUrl(it.still_path),
-                        it.air_date?.toString(),
-                        it.rating,
-                        it.overview,
+                        getImageUrl(episode.still_path),
+                        episode.air_date?.toString(),
+                        episode.rating,
+                        episode.overview,
                     )
-                } ?: (1..(it.episode_count ?: 1)).map { episodeNum ->
+                } ?: (1..(season.episode_count ?: 1)).map { episodeNum ->
                     TvSeriesEpisode(
                         episode = episodeNum,
                         data = TmdbLink(
                             this.external_ids?.imdb_id,
                             this.id,
                             episodeNum,
-                            it.season_number,
+                            season.season_number,
                         ).toJson(),
-                        season = it.season_number
+                        season = season.season_number
                     )
                 }
             }?.flatten() ?: listOf()
 
-//        println("STATUS ${this.status}")
         return TvSeriesLoadResponse(
             this.name ?: this.original_name,
             getUrl(id, true),
@@ -130,7 +127,7 @@ open class TmdbProvider : MainAPI() {
             this.external_ids?.imdb_id,
             this.rating,
             this.genres?.mapNotNull { it.name },
-            this.episode_run_time?.average()?.times(60)?.toInt()?.let { secondsToReadable(it, "") },
+            this.episode_run_time?.average()?.toInt(),
             null,
             this.recommendations?.results?.map { it.toSearchResponse() }
         )
@@ -158,7 +155,7 @@ open class TmdbProvider : MainAPI() {
             null,//this.status
             this.rating,
             this.genres?.mapNotNull { it.name },
-            this.runtime?.times(60)?.let { secondsToReadable(it, "") },
+            this.runtime,
             null,
             this.recommendations?.results?.map { it.toSearchResponse() }
         )

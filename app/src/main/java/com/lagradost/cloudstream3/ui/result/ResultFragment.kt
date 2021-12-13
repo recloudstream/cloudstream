@@ -8,6 +8,7 @@ import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.content.Intent.*
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,7 +16,9 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
@@ -39,6 +42,8 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.SyncApis
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -47,6 +52,8 @@ import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.player.PlayerData
 import com.lagradost.cloudstream3.ui.player.PlayerFragment
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.search.SearchAdapter
+import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getDownloadSubsLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
@@ -57,12 +64,15 @@ import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper.addSync
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getSync
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -256,7 +266,65 @@ class ResultFragment : Fragment() {
     }
 
     var startAction: Int? = null
-    var startValue: Int? = null
+    private var startValue: Int? = null
+
+    private fun updateSync(id: Int) {
+        val syncList = context?.getSync(id, SyncApis.map { it.idPrefix }) ?: return
+        val list = ArrayList<Pair<SyncAPI, String>>()
+        for (i in 0 until SyncApis.count()) {
+            val res = syncList[i] ?: continue
+            list.add(Pair(SyncApis[i], res))
+        }
+        viewModel.updateSync(context, list)
+    }
+
+    private fun setFormatText(textView: TextView?, @StringRes format: Int, arg: Any?) {
+        if (arg == null) {
+            textView?.isVisible = false
+        } else {
+            val text = context?.getString(format)?.format(arg)
+            if (text == null) {
+                textView?.isVisible = false
+            } else {
+                textView?.isVisible = true
+                textView?.text = text
+            }
+        }
+    }
+
+    private fun setDuration(duration: Int?) {
+        setFormatText(result_meta_duration, R.string.duration_format, duration)
+    }
+
+    private fun setYear(year: Int?) {
+        setFormatText(result_meta_year, R.string.year_format, year)
+    }
+
+    private fun setRating(rating: Int?) {
+        setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000))
+    }
+
+    private fun setRecommendations(rec: List<SearchResponse>?) {
+        return
+        result_recommendations?.isGone = rec.isNullOrEmpty()
+        rec?.let { list ->
+            (result_recommendations?.adapter as SearchAdapter?)?.apply {
+                cardList = list
+                notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun fixGrid() {
+        activity?.getSpanCount()?.let { count ->
+            result_recommendations?.spanCount = count
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        fixGrid()
+    }
 
     private fun lateFixDownloadButton(show: Boolean) {
         if (!show || currentType?.isMovieType() == false) {
@@ -273,6 +341,7 @@ class ResultFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fixGrid()
 
         val restart = arguments?.getBoolean("restart") ?: false
         if (restart) {
@@ -949,6 +1018,20 @@ class ResultFragment : Fragment() {
             currentId = it
         }
 
+        observe(viewModel.sync) { sync ->
+            for (s in sync) {
+                when (s) {
+                    is Resource.Success -> {
+                        val d = s.value ?: continue
+                        setDuration(d.duration)
+                        setRating(d.publicScore)
+                    }
+                    else -> {
+                    }
+                }
+            }
+        }
+
         observe(viewModel.resultResponse) { data ->
             when (data) {
                 is Resource.Success -> {
@@ -965,15 +1048,13 @@ class ResultFragment : Fragment() {
                             VPNStatus.Torrent -> getString(R.string.vpn_torrent)
                             else -> ""
                         }
-                        result_vpn?.visibility = if (api.vpnStatus == VPNStatus.None) GONE else VISIBLE
+                        result_vpn?.isGone = api.vpnStatus == VPNStatus.None
 
                         result_info?.text = when (api.providerType) {
                             ProviderType.MetaProvider -> getString(R.string.provider_info_meta)
                             else -> ""
                         }
                         result_info?.isVisible = api.providerType == ProviderType.MetaProvider
-
-                        //result_bookmark_button.text = getString(R.string.type_watching)
 
                         currentHeaderName = d.name
                         currentType = d.type
@@ -992,7 +1073,7 @@ class ResultFragment : Fragment() {
                         }
 
                         result_search?.setOnClickListener {
-                            QuickSearchFragment.push(activity, true, d.name)
+                            QuickSearchFragment.pushSearch(activity, d.name)
                         }
 
                         result_share?.setOnClickListener {
@@ -1001,6 +1082,20 @@ class ResultFragment : Fragment() {
                             i.putExtra(EXTRA_SUBJECT, d.name)
                             i.putExtra(EXTRA_TEXT, d.url)
                             startActivity(createChooser(i, d.name))
+                        }
+
+                        updateSync(d.getId())
+                        result_add_sync?.setOnClickListener {
+                            QuickSearchFragment.pushSync(activity, d.name) { click ->
+                                context?.addSync(d.getId(), click.card.apiName, click.card.url)?.let {
+                                    showToast(
+                                        activity,
+                                        context?.getString(R.string.added_sync_format)?.format(click.card.name),
+                                        Toast.LENGTH_SHORT
+                                    )
+                                }
+                                updateSync(d.getId())
+                            }
                         }
 
                         val metadataInfoArray = ArrayList<Pair<Int, String>>()
@@ -1015,23 +1110,10 @@ class ResultFragment : Fragment() {
                             }
                         }
 
-                        result_meta_year?.isGone = d.year == null
-                        result_meta_year?.text = d.year?.toString() ?: ""
-                        if (d.rating == null) {
-                            result_meta_rating?.isVisible = false
-                        } else {
-                            result_meta_rating?.isVisible = true
-                            result_meta_rating?.text = "%.1f/10.0".format(d.rating!!.toFloat() / 10f).replace(",", ".")
-                        }
-
-                        val duration = d.duration
-                        if (duration.isNullOrEmpty()) {
-                            result_meta_duration?.isVisible = false
-                        } else {
-                            result_meta_duration?.isVisible = true
-                            result_meta_duration?.text =
-                                if (duration.endsWith("min") || duration.endsWith("h")) duration else "${duration}min"
-                        }
+                        setDuration(d.duration)
+                        setYear(d.year)
+                        setRating(d.rating)
+                        setRecommendations(d.recommendations)
 
                         result_meta_site?.text = d.apiName
 
@@ -1187,6 +1269,17 @@ class ResultFragment : Fragment() {
                 }
             }
         }
+
+        val recAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = activity?.let {
+            SearchAdapter(
+                ArrayList(),
+                result_recommendations,
+            ) { callback ->
+                SearchHelper.handleSearchClickCallback(activity, callback)
+            }
+        }
+
+        result_recommendations.adapter = recAdapter
 
         context?.let { ctx ->
             result_bookmark_button?.isVisible = ctx.isTvSettings()

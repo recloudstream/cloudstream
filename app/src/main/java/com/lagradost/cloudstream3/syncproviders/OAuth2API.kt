@@ -10,6 +10,9 @@ interface OAuth2API {
     val name: String
     val redirectUrl: String
 
+    // don't change this as all keys depend on it
+    val idPrefix : String
+
     fun handleRedirect(context: Context, url: String)
     fun authenticate(context: Context)
 

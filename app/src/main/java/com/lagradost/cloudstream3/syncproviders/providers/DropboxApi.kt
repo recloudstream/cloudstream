@@ -5,11 +5,10 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API
 
 //TODO dropbox sync
 class Dropbox : OAuth2API {
+    override val idPrefix = "dropbox"
     override val name = "Dropbox"
-    override val key: String
-        get() = "zlqsamadlwydvb2"
-    override val redirectUrl: String
-        get() = "dropboxlogin"
+    override val key = "zlqsamadlwydvb2"
+    override val redirectUrl = "dropboxlogin"
 
     override fun authenticate(context: Context) {
         TODO("Not yet implemented")

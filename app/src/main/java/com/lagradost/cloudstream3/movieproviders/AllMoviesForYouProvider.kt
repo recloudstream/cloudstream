@@ -136,19 +136,13 @@ class AllMoviesForYouProvider : MainAPI() {
             val data = getLink(document)
                 ?: throw ErrorLoadingException("No Links Found")
 
-            return MovieLoadResponse(
-                title,
-                url,
-                this.name,
-                type,
-                mapper.writeValueAsString(data.filter { it != "about:blank" }),
-                backgroundPoster,
-                year?.toIntOrNull(),
-                descipt,
-                null,
-                rating,
-                duration = duration
-            )
+            return newMovieLoadResponse(title,url,type,mapper.writeValueAsString(data.filter { it != "about:blank" })) {
+               posterUrl = backgroundPoster
+                this.year = year?.toIntOrNull()
+                this.plot = descipt
+                this.rating = rating
+                setDuration(duration)
+            }
         }
     }
 

@@ -21,9 +21,9 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
     override val hasDownloadSupport = true
     override val usesWebView = true
     override val supportedTypes = setOf(
-            TvType.Movie,
-            TvType.TvSeries,
-        )
+        TvType.Movie,
+        TvType.TvSeries,
+    )
 
     private fun Element.toSearchResult(): SearchResponse {
         val img = this.select("img")
@@ -162,22 +162,12 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
             val webViewUrl = "$url${sourceId?.let { ".$it" } ?: ""}".replace("/movie/", "/watch-movie/")
 
-            return MovieLoadResponse(
-                title,
-                url,
-                this.name,
-                TvType.Movie,
-                webViewUrl,
-                posterUrl,
-                year,
-                plot,
-                null,
-                null,
-                null,
-                duration,
-                null,
-                null
-            )
+            return newMovieLoadResponse(title, url, TvType.Movie, webViewUrl) {
+                this.year = year
+                this.posterUrl = posterUrl
+                this.plot = plot
+                setDuration(duration)
+            }
         } else {
             val seasonsHtml = app.get("$mainUrl/ajax/v2/tv/seasons/$id").text
             val seasonsDocument = Jsoup.parse(seasonsHtml)
@@ -212,23 +202,12 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                     }
 
             }
-            return TvSeriesLoadResponse(
-                title,
-                url,
-                this.name,
-                TvType.TvSeries,
-                episodes,
-                posterUrl,
-                year,
-                plot,
-                null,
-                null,
-                null,
-                null,
-                duration,
-                null,
-                null
-            )
+            return newTvSeriesLoadResponse(title,url,TvType.TvSeries,episodes) {
+                this.posterUrl = posterUrl
+                this.year = year
+                this.plot = plot
+                setDuration(duration)
+            }
         }
     }
 

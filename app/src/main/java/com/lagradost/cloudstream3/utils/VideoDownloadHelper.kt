@@ -12,7 +12,7 @@ object VideoDownloadHelper {
         override val id: Int,
         val parentId: Int,
         val rating: Int?,
-        val descript: String?,
+        val description: String?,
         val cacheTime: Long,
     ) : EasyDownloadButton.IMinimumData
 

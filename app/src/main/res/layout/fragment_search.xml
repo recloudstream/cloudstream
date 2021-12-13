@@ -26,7 +26,7 @@
                     android:nextFocusUp="@id/nav_rail_view"
                     android:nextFocusRight="@id/search_filter"
                     android:nextFocusLeft="@id/nav_rail_view"
-                    android:nextFocusDown="@id/cardSpace"
+                    android:nextFocusDown="@id/search_autofit_results"
 
                     android:imeOptions="actionSearch"
                     android:inputType="text"
@@ -65,7 +65,7 @@
                 android:nextFocusUp="@id/nav_rail_view"
                 android:nextFocusRight="@id/main_search"
                 android:nextFocusLeft="@id/main_search"
-                android:nextFocusDown="@id/cardSpace"
+                android:nextFocusDown="@id/search_autofit_results"
 
                 android:id="@+id/search_filter"
                 android:background="?selectableItemBackgroundBorderless"
@@ -91,7 +91,7 @@
             android:paddingTop="5dp"
             app:spanCount="3"
             android:paddingEnd="8dp"
-            android:id="@+id/cardSpace"
+            android:id="@+id/search_autofit_results"
             tools:listitem="@layout/search_result_grid"
             android:orientation="vertical"
     />

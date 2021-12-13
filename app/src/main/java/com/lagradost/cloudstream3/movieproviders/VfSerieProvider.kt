@@ -44,11 +44,11 @@ class VfSerieProvider : MainAPI() {
 
     private fun getDirect(original: String): String {  // original data, https://vf-serie.org/?trembed=1&trid=80467&trtype=2 for example
         val response = app.get(original).text
-        val url = "iframe .*src=\\\"(.*?)\\\"".toRegex().find(response)?.groupValues?.get(1)
+        val url = "iframe .*src=\"(.*?)\"".toRegex().find(response)?.groupValues?.get(1)
             .toString()  // https://vudeo.net/embed-7jdb1t5b2mvo.html for example
         val vudoResponse = app.get(url).text
         val document = Jsoup.parse(vudoResponse)
-        return Regex("sources: \\[\"(.*?)\"\\]").find(document.html())?.groupValues?.get(1)
+        return Regex("sources: \\[\"(.*?)\"]").find(document.html())?.groupValues?.get(1)
             .toString()  // direct mp4 link, https://m5.vudeo.net/2vp3xgpw2avjdohilpfbtyuxzzrqzuh4z5yxvztral5k3rjnba6f4byj3saa/v.mp4 for exemple
     }
 

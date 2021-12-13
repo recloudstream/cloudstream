@@ -222,6 +222,28 @@ class ZoroProvider : MainAPI() {
             )
         }
 
+        val recommendations =
+            document.select("#main-content > section > .tab-content > div > .film_list-wrap > .flw-item")
+                .mapNotNull { head ->
+                    val filmPoster = head?.selectFirst(".film-poster")
+                    val epPoster = filmPoster?.selectFirst("img")?.attr("data-src")
+                    val a = head?.selectFirst(".film-detail > .film-name > a")
+                    val epHref = a?.attr("href")
+                    val epTitle = a?.attr("title")
+                    if (epHref == null || epTitle == null || epPoster == null) {
+                        null
+                    } else {
+                        AnimeSearchResponse(
+                            epTitle,
+                            fixUrl(epHref),
+                            this.name,
+                            TvType.Anime,
+                            epPoster,
+                            dubStatus = null
+                        )
+                    }
+                }
+
         return newAnimeLoadResponse(title, url, TvType.Anime) {
             japName = japaneseTitle
             engName = title
@@ -231,6 +253,7 @@ class ZoroProvider : MainAPI() {
             showStatus = status
             plot = description
             this.tags = tags
+            this.recommendations = recommendations
         }
     }
 

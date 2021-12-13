@@ -19,11 +19,8 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
-import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
-import com.lagradost.cloudstream3.ui.search.SearchAdapter
+import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
-import com.lagradost.cloudstream3.ui.search.SearchHelper
-import com.lagradost.cloudstream3.ui.search.SearchViewModel
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -34,12 +31,22 @@ import java.util.concurrent.locks.ReentrantLock
 
 class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
     companion object {
-        fun push(activity: Activity?, mainApi: Boolean = true, autoSearch: String? = null) {
+        fun pushSearch(activity: Activity?, autoSearch: String? = null) {
             activity.navigate(R.id.global_to_navigation_quick_search, Bundle().apply {
-                putBoolean("mainapi", mainApi)
+                putBoolean("mainapi", true)
                 putString("autosearch", autoSearch)
             })
         }
+
+        fun pushSync(activity: Activity?, autoSearch: String? = null, callback : (SearchClickCallback) -> Unit) {
+            clickCallback = callback
+            activity.navigate(R.id.global_to_navigation_quick_search, Bundle().apply {
+                putBoolean("mainapi", false)
+                putString("autosearch", autoSearch)
+            })
+        }
+
+        var clickCallback : ((SearchClickCallback) -> Unit)? = null
     }
 
     private val searchViewModel: SearchViewModel by activityViewModels()
@@ -54,6 +61,11 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
         )
 
         return inflater.inflate(R.layout.quick_search, container, false)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        clickCallback = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,7 +108,7 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
 
                         SearchHelper.handleSearchClickCallback(activity, callback)
                     } else {
-                        //TODO MAL RESPONSE
+                        clickCallback?.invoke(callback)
                     }
                 }
                 else -> SearchHelper.handleSearchClickCallback(activity, callback)
@@ -135,7 +147,7 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
                 is Resource.Success -> {
                     it.value.let { data ->
                         if (data.isNotEmpty()) {
-                            (cardSpace?.adapter as SearchAdapter?)?.apply {
+                            (search_autofit_results?.adapter as SearchAdapter?)?.apply {
                                 cardList = data.toList()
                                 notifyDataSetChanged()
                             }

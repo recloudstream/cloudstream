@@ -370,8 +370,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             showToast(act, act.getString(message), duration)
         }
 
-        fun showToast(act: Activity?, message: String, duration: Int) {
-            if (act == null) return
+        fun showToast(act: Activity?, message: String?, duration: Int? = null) {
+            if (act == null || message == null) return
             try {
                 currentToast?.cancel()
             } catch (e: Exception) {
@@ -390,7 +390,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
                 val toast = Toast(act)
                 toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
-                toast.duration = duration
+                toast.duration = duration ?: Toast.LENGTH_SHORT
                 toast.view = layout
                 toast.show()
                 currentToast = toast

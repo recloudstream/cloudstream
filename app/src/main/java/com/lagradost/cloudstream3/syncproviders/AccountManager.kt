@@ -6,12 +6,6 @@ import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 
 abstract class AccountManager(private val defIndex: Int) : OAuth2API {
-    // don't change this as all keys depend on it
-    open val idPrefix: String
-        get() {
-            throw(NotImplementedError())
-        }
-
     var accountIndex = defIndex
     protected val accountId get() = "${idPrefix}_account_$accountIndex"
     private val accountActiveKey get() = "${idPrefix}_active"

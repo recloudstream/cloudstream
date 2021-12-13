@@ -41,7 +41,9 @@
     <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
     <string name="ffw_text_regular_format" translatable="false" formatted="true">%d</string>
     <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="app_dub_sub_episode_text_format">%s Ep %d</string>
+    <string name="rating_format" translatable="false" formatted="true">%.1f/10.0</string>
+    <string name="year_format" translatable="false" formatted="true">%d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
 
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -60,6 +62,7 @@
     <string name="rated_format" formatted="true">Rated: %.1f</string>
     <string name="new_update_format" formatted="true">New update found!\n%s -> %s</string>
     <string name="filler_format" formatted="true">(Filler) %s</string>
+    <string name="duration_format" formatted="true">%d min</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Home</string>
@@ -223,7 +226,7 @@
     <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
-    <string name="delete_message">This will permanently delete %s\nAre you sure?</string>
+    <string name="delete_message" formatted="true">This will permanently delete %s\nAre you sure?</string>
 
     <string name="status_ongoing">Ongoing</string>
     <string name="status_completed">Completed</string>
@@ -337,12 +340,14 @@
     <string name="kitsu_account_settings" translatable="false">Kitsu</string>
     <string name="trakt_account_settings" translatable="false">Trakt</string>
     -->
-    <string name="login_format">%s %s</string>
+    <string name="login_format" formatted="true">%s %s</string>
     <string name="account">account</string>
     <string name="logout">Logout</string>
     <string name="login">Login</string>
     <string name="switch_account">Switch account</string>
     <string name="add_account">Add account</string>
+    <string name="add_sync">Add tracking</string>
+    <string name="added_sync_format" formatted="true">Added %s</string>
     <!-- ============ -->
     <string name="none">None</string>
     <string name="normal">Normal</string>
@@ -361,4 +366,6 @@
 	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
     -->
     <string name="subtitles_example_text">The quick brown fox jumps over the lazy dog</string>
+
+    <string name="tab_recommended">Recommended</string>
 </resources>

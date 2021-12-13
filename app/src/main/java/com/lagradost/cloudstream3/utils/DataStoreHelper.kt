@@ -118,7 +118,7 @@ object DataStoreHelper {
 
     fun Context.setViewPos(id: Int?, pos: Long, dur: Long) {
         if (id == null) return
-        if(dur < 10_000) return // too short
+        if (dur < 10_000) return // too short
         setKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), PosDur(pos, dur))
     }
 
@@ -146,6 +146,16 @@ object DataStoreHelper {
     }
 
     fun Context.setResultSeason(id: Int, value: Int?) {
-        return setKey("$currentAccount/$RESULT_SEASON", id.toString(), value)
+        setKey("$currentAccount/$RESULT_SEASON", id.toString(), value)
+    }
+
+    fun Context.addSync(id: Int, idPrefix: String, url: String) {
+        setKey("${idPrefix}_sync", id.toString(), url)
+    }
+
+    fun Context.getSync(id : Int, idPrefixes : List<String>) : List<String?> {
+        return idPrefixes.map { idPrefix ->
+            getKey("${idPrefix}_sync", id.toString())
+        }
     }
 }
