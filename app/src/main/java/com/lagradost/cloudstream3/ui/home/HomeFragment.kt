@@ -14,7 +14,6 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -22,7 +21,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
@@ -36,7 +38,6 @@ import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -130,14 +131,12 @@ class HomeFragment : Fragment() {
     }
 
     private val apiChangeClickListener = View.OnClickListener { view ->
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-        val currentPrefMedia = settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
-        val validAPIs = AppUtils.filterProviderByPreferredMedia(apis, currentPrefMedia).toMutableList()
+        val validAPIs = view.context?.filterProviderByPreferredMedia()?.toMutableList() ?: mutableListOf()
 
         validAPIs.add(0, randomApi)
         validAPIs.add(0, noneApi)
         view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api -> Pair(index, api.name) }) {
-            homeViewModel.loadAndCancel(validAPIs[itemId].name, currentPrefMedia)
+            homeViewModel.loadAndCancel(validAPIs[itemId].name)
         }
     }
 
@@ -157,14 +156,12 @@ class HomeFragment : Fragment() {
     }*/
 
     private fun reloadStored() {
-        context?.let { ctx ->
-            homeViewModel.loadResumeWatching(ctx)
-            val list = EnumSet.noneOf(WatchType::class.java)
-            ctx.getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
-                list.addAll(it)
-            }
-            homeViewModel.loadStoredData(ctx, list)
+        homeViewModel.loadResumeWatching()
+        val list = EnumSet.noneOf(WatchType::class.java)
+        getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
+            list.addAll(it)
         }
+        homeViewModel.loadStoredData(list)
     }
 
     /*private fun handleBack(poppedFragment: Boolean) {
@@ -182,7 +179,7 @@ class HomeFragment : Fragment() {
         home_change_api_loading.setOnClickListener(apiChangeClickListener)
 
         observe(homeViewModel.apiName) { apiName ->
-            context?.setKey(HOMEPAGE_API, apiName)
+            setKey(HOMEPAGE_API, apiName)
             home_provider_name?.text = apiName
             home_provider_meta_info?.isVisible = false
 
@@ -326,11 +323,11 @@ class HomeFragment : Fragment() {
                 } else {
                     list.add(watch)
                 }
-                homeViewModel.loadStoredData(itemView.context, list)
+                homeViewModel.loadStoredData(list)
             }
 
-            item.first?.setOnLongClickListener { itemView ->
-                homeViewModel.loadStoredData(itemView.context, EnumSet.of(watch))
+            item.first?.setOnLongClickListener {
+                homeViewModel.loadStoredData(EnumSet.of(watch))
                 return@setOnLongClickListener true
             }
         }
@@ -404,7 +401,7 @@ class HomeFragment : Fragment() {
                 if (id != null) {
                     callback.view.popupMenuNoIcons(listOf(Pair(0, R.string.action_remove_from_bookmarks))) {
                         if (itemId == 0) {
-                            activity?.setResultWatchState(id, WatchType.NONE.internalId)
+                            setResultWatchState(id, WatchType.NONE.internalId)
                             reloadStored()
                         }
                     }
@@ -438,7 +435,7 @@ class HomeFragment : Fragment() {
                         if (itemId == 0) {
                             val card = callback.card
                             if (card is DataStoreHelper.ResumeWatchingResult) {
-                                context?.removeLastWatched(card.parentId)
+                                removeLastWatched(card.parentId)
                                 reloadStored()
                             }
                         }
@@ -476,11 +473,9 @@ class HomeFragment : Fragment() {
 
         reloadStored()
         val apiName = context?.getKey<String>(HOMEPAGE_API)
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-        val currentPrefMedia = settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
         if (homeViewModel.apiName.value != apiName || apiName == null) {
             //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
-            homeViewModel.loadAndCancel(apiName, currentPrefMedia)
+            homeViewModel.loadAndCancel(apiName)
         }
 
         // nice profile pic on homepage
@@ -497,7 +492,7 @@ class HomeFragment : Fragment() {
             }
 
             for (syncApi in OAuth2API.OAuth2Apis) {
-                val login = syncApi.loginInfo(ctx)
+                val login = syncApi.loginInfo()
                 val pic = login?.profilePicture
                 if (pic != null) {
                     home_profile_picture.setImage(pic)

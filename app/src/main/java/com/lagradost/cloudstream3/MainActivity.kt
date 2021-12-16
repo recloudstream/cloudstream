@@ -490,7 +490,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (str.contains(appString)) {
                 for (api in OAuth2Apis) {
                     if (str.contains("/${api.redirectUrl}")) {
-                        api.handleRedirect(this, str)
+                        api.handleRedirect(str)
                     }
                 }
             } else {
@@ -511,7 +511,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         // init accounts
         for (api in OAuth2accountApis) {
-            api.init(this)
+            api.init()
         }
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)

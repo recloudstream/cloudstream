@@ -106,7 +106,7 @@ class DownloadChildAdapter(
             localCard = card
             val d = card.data
 
-            val posDur = itemView.context.getViewPos(d.id)
+            val posDur = getViewPos(d.id)
             if (posDur != null) {
                 val visualPos = posDur.fixVisual()
                 progressBar.max = (visualPos.duration / 1000).toInt()

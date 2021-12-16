@@ -1,9 +1,8 @@
 package com.lagradost.cloudstream3.syncproviders
 
-import android.content.Context
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKeys
-import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 
 abstract class AccountManager(private val defIndex: Int) : OAuth2API {
     var accountIndex = defIndex
@@ -13,44 +12,44 @@ abstract class AccountManager(private val defIndex: Int) : OAuth2API {
     // int array of all accounts indexes
     private val accountsKey get() = "${idPrefix}_accounts"
 
-    protected fun Context.removeAccountKeys() {
-        this.removeKeys(accountId)
-        val accounts = getAccounts(this).toMutableList()
+    protected fun removeAccountKeys() {
+        removeKeys(accountId)
+        val accounts = getAccounts()?.toMutableList() ?: mutableListOf()
         accounts.remove(accountIndex)
-        this.setKey(accountsKey, accounts.toIntArray())
+        setKey(accountsKey, accounts.toIntArray())
 
-        init(this)
+        init()
     }
 
-    fun getAccounts(context: Context): IntArray {
-        return context.getKey(accountsKey, intArrayOf())!!
+    fun getAccounts(): IntArray? {
+        return getKey(accountsKey, intArrayOf())
     }
 
-    fun init(context: Context) {
-        accountIndex = context.getKey(accountActiveKey, defIndex)!!
-        val accounts = getAccounts(context)
-        if (accounts.isNotEmpty() && this.loginInfo(context) == null) {
+    fun init() {
+        accountIndex = getKey(accountActiveKey, defIndex)!!
+        val accounts = getAccounts()
+        if (accounts?.isNotEmpty() == true && this.loginInfo() == null) {
             accountIndex = accounts.first()
         }
     }
 
-    protected fun Context.switchToNewAccount() {
-        val accounts = getAccounts(this)
-        accountIndex = (accounts.maxOrNull() ?: 0) + 1
+    protected fun switchToNewAccount() {
+        val accounts = getAccounts()
+        accountIndex = (accounts?.maxOrNull() ?: 0) + 1
     }
 
-    protected fun Context.registerAccount() {
-        this.setKey(accountActiveKey, accountIndex)
-        val accounts = getAccounts(this).toMutableList()
+    protected fun registerAccount() {
+        setKey(accountActiveKey, accountIndex)
+        val accounts = getAccounts()?.toMutableList() ?: mutableListOf()
         if (!accounts.contains(accountIndex)) {
             accounts.add(accountIndex)
         }
 
-        this.setKey(accountsKey, accounts.toIntArray())
+        setKey(accountsKey, accounts.toIntArray())
     }
 
-    fun changeAccount(context: Context, index: Int) {
+    fun changeAccount(index: Int) {
         accountIndex = index
-        context.setKey(accountActiveKey, index)
+        setKey(accountActiveKey, index)
     }
 }

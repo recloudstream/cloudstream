@@ -818,7 +818,6 @@ class PlayerFragment : Fragment() {
                 context?.let { ctx ->
                     //if (this::viewModel.isInitialized) {
                     viewModel.setViewPos(
-                        ctx,
                         if (isDownloadedFile) uriData.id else getEpisode()?.id,
                         exoPlayer.currentPosition,
                         exoPlayer.duration
@@ -832,7 +831,7 @@ class PlayerFragment : Fragment() {
                     }*/
 
                     if (isDownloadedFile) {
-                        ctx.setLastWatched(
+                        setLastWatched(
                             uriData.parentId,
                             uriData.id,
                             uriData.episode,
@@ -840,7 +839,7 @@ class PlayerFragment : Fragment() {
                             true
                         )
                     } else
-                        viewModel.reloadEpisodes(ctx)
+                        viewModel.reloadEpisodes()
                 }
             }
         }
@@ -1390,9 +1389,7 @@ class PlayerFragment : Fragment() {
             handlePlayerEvent(PlayerEventType.Play)
         }
 
-        context?.let { ctx ->
-            setPreferredSubLanguage(ctx.getAutoSelectLanguageISO639_1())
-        }
+        setPreferredSubLanguage(getAutoSelectLanguageISO639_1())
 
         subView = player_view?.findViewById(R.id.exo_subtitles)
         subView?.let { sView ->
@@ -1400,7 +1397,7 @@ class PlayerFragment : Fragment() {
             subtitle_holder.addView(sView)
         }
 
-        subStyle = context?.getCurrentSavedStyle()!!
+        subStyle = getCurrentSavedStyle()
         onSubStyleChanged(subStyle)
         SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 

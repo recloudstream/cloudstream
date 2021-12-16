@@ -8,23 +8,24 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getId
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
-import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.getFillerEpisodes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,6 +50,7 @@ class ResultViewModel : ViewModel() {
         id.value = null
         selectedSeason.value = -2
         _dubSubEpisodes.value = null
+        _sync.value = null
     }
 
     private var repo: APIRepository? = null
@@ -89,17 +91,17 @@ class ResultViewModel : ViewModel() {
     private val _sync: MutableLiveData<List<Resource<SyncAPI.SyncResult?>>> = MutableLiveData()
     val sync: LiveData<List<Resource<SyncAPI.SyncResult?>>> get() = _sync
 
-    fun updateWatchStatus(context: Context, status: WatchType) = viewModelScope.launch {
+    fun updateWatchStatus(status: WatchType) = viewModelScope.launch {
         val currentId = id.value ?: return@launch
         _watchStatus.postValue(status)
         val resultPage = page.value
 
         withContext(Dispatchers.IO) {
-            context.setResultWatchState(currentId, status.internalId)
+            setResultWatchState(currentId, status.internalId)
             if (resultPage != null) {
-                val current = context.getBookmarkedData(currentId)
+                val current = getBookmarkedData(currentId)
                 val currentTime = System.currentTimeMillis()
-                context.setBookmarkedData(
+                setBookmarkedData(
                     currentId,
                     DataStoreHelper.BookmarkedData(
                         currentId,
@@ -117,13 +119,13 @@ class ResultViewModel : ViewModel() {
         }
     }
 
-    private fun loadWatchStatus(context: Context, localId: Int? = null) {
+    private fun loadWatchStatus(localId: Int? = null) {
         val currentId = localId ?: id.value ?: return
-        val currentWatch = context.getResultWatchState(currentId)
+        val currentWatch = getResultWatchState(currentId)
         _watchStatus.postValue(currentWatch)
     }
 
-    private fun filterEpisodes(context: Context, list: List<ResultEpisode>?, selection: Int?, range: Int?) {
+    private fun filterEpisodes(list: List<ResultEpisode>?, selection: Int?, range: Int?) {
         if (list == null) return
         val seasonTypes = HashMap<Int?, Boolean>()
         for (i in list) {
@@ -141,7 +143,7 @@ class ResultViewModel : ViewModel() {
         val realSelection = if (!seasonTypes.containsKey(selection)) seasons.first() else selection
         val internalId = id.value
 
-        if (internalId != null) context.setResultSeason(internalId, realSelection)
+        if (internalId != null) setResultSeason(internalId, realSelection)
 
         selectedSeason.postValue(realSelection ?: -2)
 
@@ -187,33 +189,38 @@ class ResultViewModel : ViewModel() {
         _publicEpisodes.postValue(Resource.Success(currentList))
     }
 
-    fun changeSeason(context: Context, selection: Int?) {
-        filterEpisodes(context, _episodes.value, selection, null)
+    fun changeSeason(selection: Int?) {
+        filterEpisodes(_episodes.value, selection, null)
     }
 
-    fun changeRange(context: Context, range: Int?) {
-        filterEpisodes(context, _episodes.value, null, range)
+    fun changeRange(range: Int?) {
+        filterEpisodes(_episodes.value, null, range)
     }
 
-    fun changeDubStatus(context: Context, status: DubStatus?) {
+    fun changeDubStatus(status: DubStatus?) {
         dubSubEpisodes.value?.get(status)?.let { episodes ->
+            id.value?.let {
+                if (status != null) {
+                    setDub(it, status)
+                }
+            }
             _dubStatus.postValue(status)
-            updateEpisodes(context, null, episodes, null)
+            updateEpisodes(null, episodes, null)
         }
     }
 
     fun updateSync(context: Context?, sync: List<Pair<SyncAPI, String>>) = viewModelScope.launch {
-        if(context == null) return@launch
+        if (context == null) return@launch
 
         val list = ArrayList<Resource<SyncAPI.SyncResult?>>()
         for (s in sync) {
-            val result = safeApiCall { s.first.getResult(context, s.second) }
+            val result = safeApiCall { s.first.getResult(s.second) }
             list.add(result)
             _sync.postValue(list)
         }
     }
 
-    private fun updateEpisodes(context: Context, localId: Int?, list: List<ResultEpisode>, selection: Int?) {
+    private fun updateEpisodes(localId: Int?, list: List<ResultEpisode>, selection: Int?) {
         _episodes.postValue(list)
         val set = HashMap<Int, Int>()
 
@@ -221,25 +228,23 @@ class ResultViewModel : ViewModel() {
         episodeById.postValue(set)
 
         filterEpisodes(
-            context,
             list,
-            if (selection == -1) context.getResultSeason(localId ?: id.value ?: return) else selection, null
+            if (selection == -1) getResultSeason(localId ?: id.value ?: return) else selection, null
         )
     }
 
-    fun reloadEpisodes(context: Context) {
+    fun reloadEpisodes() {
         val current = _episodes.value ?: return
         val copy = current.map {
-            val posDur = context.getViewPos(it.id)
+            val posDur = getViewPos(it.id)
             it.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
         }
-        updateEpisodes(context, null, copy, selectedSeason.value)
+        updateEpisodes(null, copy, selectedSeason.value)
     }
 
-    fun setViewPos(context: Context?, episodeId: Int?, pos: Long, dur: Long) {
+    fun setViewPos(episodeId: Int?, pos: Long, dur: Long) {
         try {
-            if (context == null || episodeId == null) return
-            context.setViewPos(episodeId, pos, dur)
+            DataStoreHelper.setViewPos(episodeId, pos, dur)
             var index = episodeById.value?.get(episodeId) ?: return
 
             var startPos = pos
@@ -251,7 +256,7 @@ class ResultViewModel : ViewModel() {
                 if (startDur > 0L && (startPos * 100 / startDur) > 95) {
                     index++
                     if (episodeList.size <= index) { // last episode
-                        context.removeLastWatched(parentId)
+                        removeLastWatched(parentId)
                         return
                     }
                     episode = episodeList[index]
@@ -261,7 +266,7 @@ class ResultViewModel : ViewModel() {
 
                     continue
                 } else {
-                    context.setLastWatched(parentId, episode.id, episode.episode, episode.season)
+                    setLastWatched(parentId, episode.id, episode.episode, episode.season)
                     return
                 }
             }
@@ -279,7 +284,7 @@ class ResultViewModel : ViewModel() {
         return name
     }
 
-    fun load(context: Context, url: String, apiName: String, showFillers: Boolean) = viewModelScope.launch {
+    fun load(url: String, apiName: String, showFillers: Boolean) = viewModelScope.launch {
         _resultResponse.postValue(Resource.Loading(url))
         _publicEpisodes.postValue(Resource.Loading())
 
@@ -301,9 +306,9 @@ class ResultViewModel : ViewModel() {
                 page.postValue(d)
                 val mainId = d.getId()
                 id.postValue(mainId)
-                loadWatchStatus(context, mainId)
+                loadWatchStatus(mainId)
 
-                context.setKey(
+                setKey(
                     DOWNLOAD_HEADER_CACHE,
                     mainId.toString(),
                     VideoDownloadHelper.DownloadHeaderCached(
@@ -319,11 +324,14 @@ class ResultViewModel : ViewModel() {
 
                 when (d) {
                     is AnimeLoadResponse -> {
-                        //TODO context.getKey<>() isdub
+                        if (d.episodes.isEmpty()) {
+                            _dubSubEpisodes.postValue(emptyMap())
+                            return@launch
+                        }
 
-                        val isDub =
-                            d.episodes.containsKey(DubStatus.Dubbed) && !d.episodes[DubStatus.Dubbed].isNullOrEmpty()
-                        val dubStatus = if (isDub) DubStatus.Dubbed else DubStatus.Subbed
+                        val status = getDub(mainId)
+                        val statuses = d.episodes.map { it.key }
+                        val dubStatus = if (statuses.contains(status)) status else statuses.first()
                         _dubStatus.postValue(dubStatus)
 
                         _dubSubSelections.postValue(d.episodes.keys)
@@ -335,23 +343,21 @@ class ResultViewModel : ViewModel() {
                             for ((index, i) in ep.value.withIndex()) {
 
                                 val episode = i.episode ?: (index + 1)
-                                episodes.add(
-                                    context.buildResultEpisode(
-                                        filterName(i.name),
-                                        i.posterUrl,
-                                        episode,
-                                        null, // TODO FIX SEASON
-                                        i.url,
-                                        apiName,
-                                        mainId + index + 1 + idIndex * 100000,
-                                        index,
-                                        i.rating,
-                                        i.description,
-                                        if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
-                                            it.contains(episode) && it[episode] == true
-                                        } ?: false else false,
-                                    )
-                                )
+                                episodes.add(buildResultEpisode(
+                                    filterName(i.name),
+                                    i.posterUrl,
+                                    episode,
+                                    null, // TODO FIX SEASON
+                                    i.url,
+                                    apiName,
+                                    mainId + index + 1 + idIndex * 100000,
+                                    index,
+                                    i.rating,
+                                    i.description,
+                                    if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
+                                        it.contains(episode) && it[episode] == true
+                                    } ?: false else false,
+                                ))
                             }
                             idIndex++
 
@@ -360,7 +366,7 @@ class ResultViewModel : ViewModel() {
 
                         _dubSubEpisodes.postValue(res)
                         res[dubStatus]?.let { episodes ->
-                            updateEpisodes(context, mainId, episodes, -1)
+                            updateEpisodes(mainId, episodes, -1)
                         }
                     }
 
@@ -368,7 +374,7 @@ class ResultViewModel : ViewModel() {
                         val episodes = ArrayList<ResultEpisode>()
                         for ((index, i) in d.episodes.withIndex()) {
                             episodes.add(
-                                context.buildResultEpisode(
+                                buildResultEpisode(
                                     filterName(i.name),
                                     i.posterUrl,
                                     i.episode ?: (index + 1),
@@ -382,32 +388,31 @@ class ResultViewModel : ViewModel() {
                                     null,
                                 )
                             )
+
                         }
-                        updateEpisodes(context, mainId, episodes, -1)
+                        updateEpisodes(mainId, episodes, -1)
                     }
                     is MovieLoadResponse -> {
-                        updateEpisodes(
-                            context, mainId, arrayListOf(
-                                context.buildResultEpisode(
-                                    d.name,
-                                    null,
-                                    0,
-                                    null,
-                                    d.dataUrl,
-                                    d.apiName,
-                                    (mainId), // HAS SAME ID
-                                    0,
-                                    null,
-                                    null,
-                                    null,
-                                )
-                            ), -1
-                        )
+                        buildResultEpisode(
+                            d.name,
+                            null,
+                            0,
+                            null,
+                            d.dataUrl,
+                            d.apiName,
+                            (mainId), // HAS SAME ID
+                            0,
+                            null,
+                            null,
+                            null,
+                        ).let {
+                            updateEpisodes(mainId, listOf(it), -1)
+                        }
                     }
                     is TorrentLoadResponse -> {
                         updateEpisodes(
-                            context, mainId, arrayListOf(
-                                context.buildResultEpisode(
+                            mainId, listOf(
+                                buildResultEpisode(
                                     d.name,
                                     null,
                                     0,

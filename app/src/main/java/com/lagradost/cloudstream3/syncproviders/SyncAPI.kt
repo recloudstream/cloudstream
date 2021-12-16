@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.syncproviders
 
-import android.content.Context
 import com.lagradost.cloudstream3.ShowStatus
 
 interface SyncAPI : OAuth2API {
@@ -67,7 +66,7 @@ interface SyncAPI : OAuth2API {
     val icon: Int
 
     val mainUrl: String
-    fun search(context: Context, name: String): List<SyncSearchResult>?
+    fun search(name: String): List<SyncSearchResult>?
 
     /**
     -1 -> None
@@ -78,9 +77,9 @@ interface SyncAPI : OAuth2API {
     4 -> PlanToWatch
     5 -> ReWatching
      */
-    fun score(context: Context, id: String, status: SyncStatus): Boolean
+    fun score(id: String, status: SyncStatus): Boolean
 
-    fun getStatus(context: Context, id: String): SyncStatus?
+    fun getStatus(id: String): SyncStatus?
 
-    fun getResult(context: Context, id: String): SyncResult?
+    fun getResult(id: String): SyncResult?
 }

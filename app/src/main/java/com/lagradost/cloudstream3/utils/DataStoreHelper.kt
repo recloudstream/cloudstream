@@ -1,19 +1,20 @@
 package com.lagradost.cloudstream3.utils
 
-import android.content.Context
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.getKeys
-import com.lagradost.cloudstream3.utils.DataStore.removeKey
-import com.lagradost.cloudstream3.utils.DataStore.setKey
 
 const val VIDEO_POS_DUR = "video_pos_dur"
 const val RESULT_WATCH_STATE = "result_watch_state"
 const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
 const val RESULT_RESUME_WATCHING = "result_resume_watching"
 const val RESULT_SEASON = "result_season"
+const val RESULT_DUB = "result_dub"
 
 object DataStoreHelper {
     data class PosDur(val position: Long, val duration: Long)
@@ -57,21 +58,21 @@ object DataStoreHelper {
 
     var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
 
-    fun Context.getAllWatchStateIds(): List<Int> {
+    fun getAllWatchStateIds(): List<Int>? {
         val folder = "$currentAccount/$RESULT_WATCH_STATE"
-        return getKeys(folder).mapNotNull {
+        return getKeys(folder)?.mapNotNull {
             it.removePrefix("$folder/").toIntOrNull()
         }
     }
 
-    fun Context.getAllResumeStateIds(): List<Int> {
+    fun getAllResumeStateIds(): List<Int>? {
         val folder = "$currentAccount/$RESULT_RESUME_WATCHING"
-        return getKeys(folder).mapNotNull {
+        return getKeys(folder)?.mapNotNull {
             it.removePrefix("$folder/").toIntOrNull()
         }
     }
 
-    fun Context.setLastWatched(
+    fun setLastWatched(
         parentId: Int?,
         episodeId: Int?,
         episode: Int?,
@@ -93,12 +94,12 @@ object DataStoreHelper {
         )
     }
 
-    fun Context.removeLastWatched(parentId: Int?) {
+    fun removeLastWatched(parentId: Int?) {
         if (parentId == null) return
         removeKey("$currentAccount/$RESULT_RESUME_WATCHING", parentId.toString())
     }
 
-    fun Context.getLastWatched(id: Int?): VideoDownloadHelper.ResumeWatching? {
+    fun getLastWatched(id: Int?): VideoDownloadHelper.ResumeWatching? {
         if (id == null) return null
         return getKey(
             "$currentAccount/$RESULT_RESUME_WATCHING",
@@ -106,27 +107,35 @@ object DataStoreHelper {
         )
     }
 
-    fun Context.setBookmarkedData(id: Int?, data: BookmarkedData) {
+    fun setBookmarkedData(id: Int?, data: BookmarkedData) {
         if (id == null) return
         setKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString(), data)
     }
 
-    fun Context.getBookmarkedData(id: Int?): BookmarkedData? {
+    fun getBookmarkedData(id: Int?): BookmarkedData? {
         if (id == null) return null
         return getKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
     }
 
-    fun Context.setViewPos(id: Int?, pos: Long, dur: Long) {
+    fun setViewPos(id: Int?, pos: Long, dur: Long) {
         if (id == null) return
         if (dur < 10_000) return // too short
         setKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), PosDur(pos, dur))
     }
 
-    fun Context.getViewPos(id: Int): PosDur? {
+    fun getViewPos(id: Int): PosDur? {
         return getKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), null)
     }
 
-    fun Context.setResultWatchState(id: Int?, status: Int) {
+    fun getDub(id: Int): DubStatus {
+        return DubStatus.values()[getKey("$currentAccount/$RESULT_DUB", id.toString()) ?: 0]
+    }
+
+    fun setDub(id: Int, status: DubStatus) {
+        setKey("$currentAccount/$RESULT_DUB", id.toString(), status.ordinal)
+    }
+
+    fun setResultWatchState(id: Int?, status: Int) {
         if (id == null) return
         val folder = "$currentAccount/$RESULT_WATCH_STATE"
         if (status == WatchType.NONE.internalId) {
@@ -137,23 +146,23 @@ object DataStoreHelper {
         }
     }
 
-    fun Context.getResultWatchState(id: Int): WatchType {
+    fun getResultWatchState(id: Int): WatchType {
         return WatchType.fromInternalId(getKey<Int>("$currentAccount/$RESULT_WATCH_STATE", id.toString(), null))
     }
 
-    fun Context.getResultSeason(id: Int): Int {
-        return getKey("$currentAccount/$RESULT_SEASON", id.toString(), -1)!!
+    fun getResultSeason(id: Int): Int {
+        return getKey("$currentAccount/$RESULT_SEASON", id.toString()) ?: -1
     }
 
-    fun Context.setResultSeason(id: Int, value: Int?) {
+    fun setResultSeason(id: Int, value: Int?) {
         setKey("$currentAccount/$RESULT_SEASON", id.toString(), value)
     }
 
-    fun Context.addSync(id: Int, idPrefix: String, url: String) {
+    fun addSync(id: Int, idPrefix: String, url: String) {
         setKey("${idPrefix}_sync", id.toString(), url)
     }
 
-    fun Context.getSync(id : Int, idPrefixes : List<String>) : List<String?> {
+    fun getSync(id: Int, idPrefixes: List<String>): List<String?> {
         return idPrefixes.map { idPrefix ->
             getKey("${idPrefix}_sync", id.toString())
         }

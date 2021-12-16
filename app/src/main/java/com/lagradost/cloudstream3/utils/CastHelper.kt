@@ -40,7 +40,9 @@ object CastHelper {
                 (epData.name ?: "Episode ${epData.episode}") + " - ${link.name}"
         )
 
-        movieMetadata.putString(MediaMetadata.KEY_TITLE, holder.title)
+        holder.title?.let {
+            movieMetadata.putString(MediaMetadata.KEY_TITLE, it)
+        }
 
         val srcPoster = epData.poster ?: holder.poster
         if (srcPoster != null) {
@@ -58,7 +60,7 @@ object CastHelper {
 
         val builder = MediaInfo.Builder(link.url)
             .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-            .setContentType(MimeTypes.VIDEO_UNKNOWN)
+            .setContentType(if (link.isM3u8) MimeTypes.APPLICATION_M3U8 else MimeTypes.VIDEO_MP4)
             .setMetadata(movieMetadata)
             .setMediaTracks(tracks)
         data?.let {
@@ -95,8 +97,8 @@ object CastHelper {
         subtitles: List<SubtitleFile>,
         startIndex: Int? = null,
         startTime: Long? = null,
-    ) : Boolean {
-        if(this == null) return false
+    ): Boolean {
+        if (this == null) return false
         if (episodes.isEmpty()) return false
         if (currentLinks.size <= currentEpisodeIndex) return false
 
@@ -105,13 +107,15 @@ object CastHelper {
         val holder =
             MetadataHolder(apiName, isMovie, title, poster, currentEpisodeIndex, episodes, currentLinks, subtitles)
 
-        val index = if(startIndex == null || startIndex < 0) 0 else startIndex
+        val index = if (startIndex == null || startIndex < 0) 0 else startIndex
 
         val mediaItem =
             getMediaInfo(epData, holder, index, JSONObject(mapper.writeValueAsString(holder)), subtitles)
 
         awaitLinks(
-            this.remoteMediaClient?.load(MediaLoadRequestData.Builder().setMediaInfo(mediaItem).setCurrentTime(startTime ?: 0L).build() )
+            this.remoteMediaClient?.load(
+                MediaLoadRequestData.Builder().setMediaInfo(mediaItem).setCurrentTime(startTime ?: 0L).build()
+            )
         ) {
             if (currentLinks.size > index + 1)
                 startCast(

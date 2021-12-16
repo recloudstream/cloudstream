@@ -1,12 +1,14 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
-import android.content.Context
 import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
@@ -16,11 +18,8 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.secondsToReadable
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.unixTime
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
-import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import java.net.URL
 import java.security.SecureRandom
@@ -40,26 +39,27 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override val icon: Int
         get() = R.drawable.mal_logo
 
-    override fun logOut(context: Context) {
-        context.removeAccountKeys()
+    override fun logOut() {
+        removeAccountKeys()
     }
 
-    override fun loginInfo(context: Context): OAuth2API.LoginInfo? {
-        //context.getMalUser(true)?
-        context.getKey<MalUser>(accountId, MAL_USER_KEY)?.let { user ->
+    override fun loginInfo(): OAuth2API.LoginInfo? {
+        //getMalUser(true)?
+        getKey<MalUser>(accountId, MAL_USER_KEY)?.let { user ->
             return OAuth2API.LoginInfo(profilePicture = user.picture, name = user.name, accountIndex = accountIndex)
         }
         return null
     }
 
-    override fun search(context: Context, name: String): List<SyncAPI.SyncSearchResult> {
+    override fun search(name: String): List<SyncAPI.SyncSearchResult> {
         val url = "https://api.myanimelist.net/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
-        var res = app.get(
+        val auth = getKey<String>(
+            accountId,
+            MAL_TOKEN_KEY
+        ) ?: return emptyList()
+        val res = app.get(
             url, headers = mapOf(
-                "Authorization" to "Bearer " + context.getKey<String>(
-                    accountId,
-                    MAL_TOKEN_KEY
-                )!!,
+                "Authorization" to "Bearer " + auth,
             ), cacheTime = 0
         ).text
         return mapper.readValue<MalSearch>(res).data.map {
@@ -74,8 +74,8 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override fun score(context: Context, id: String, status : SyncAPI.SyncStatus): Boolean {
-        return context.setScoreRequest(
+    override fun score(id: String, status : SyncAPI.SyncStatus): Boolean {
+        return setScoreRequest(
             id.toIntOrNull() ?: return false,
             fromIntToAnimeStatus(status.status),
             status.score,
@@ -83,15 +83,15 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override fun getResult(context: Context, id: String): SyncAPI.SyncResult? {
+    override fun getResult(id: String): SyncAPI.SyncResult? {
         val internalId = id.toIntOrNull() ?: return null
         TODO("Not yet implemented")
     }
 
-    override fun getStatus(context: Context, id: String): SyncAPI.SyncStatus? {
+    override fun getStatus(id: String): SyncAPI.SyncStatus? {
         val internalId = id.toIntOrNull() ?: return null
 
-        val data = context.getDataAboutMalId(internalId)?.my_list_status ?: return null
+        val data = getDataAboutMalId(internalId)?.my_list_status ?: return null
         return SyncAPI.SyncStatus(
             score = data.score,
             status = malStatusAsString.indexOf(data.status),
@@ -111,7 +111,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         const val MAL_TOKEN_KEY: String = "mal_token" // anilist token for api
     }
 
-    override fun handleRedirect(context: Context, url: String) {
+    override fun handleRedirect(url: String) {
         try {
             val sanitizer =
                 splitQuery(URL(url.replace(appString, "https").replace("/#", "?"))) // FIX ERROR
@@ -136,10 +136,10 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                     }
 
                     if (res != "") {
-                        context.switchToNewAccount()
-                        context.storeToken(res)
-                        context.getMalUser()
-                        context.setKey(MAL_SHOULD_UPDATE_LIST, true)
+                        switchToNewAccount()
+                        storeToken(res)
+                        getMalUser()
+                        setKey(MAL_SHOULD_UPDATE_LIST, true)
                     }
                 }
             }
@@ -148,7 +148,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override fun authenticate(context: Context) {
+    override fun authenticate() {
         // It is recommended to use a URL-safe string as code_verifier.
         // See section 4 of RFC 7636 for more details.
 
@@ -161,7 +161,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         val codeChallenge = codeVerifier
         val request =
             "https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=$key&code_challenge=$codeChallenge&state=RequestID$requestId"
-        context.openBrowser(request)
+        openBrowser(request)
     }
 
     private val mapper = JsonMapper.builder().addModule(KotlinModule())
@@ -170,7 +170,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     private var requestId = 0
     private var codeVerifier = ""
 
-    private fun Context.storeToken(response: String) {
+    private fun storeToken(response: String) {
         try {
             if (response != "") {
                 val token = mapper.readValue<ResponseToken>(response)
@@ -183,7 +183,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun Context.refreshToken() {
+    private fun refreshToken() {
         try {
             val res = app.post(
                 "https://myanimelist.net/v1/oauth2/token",
@@ -278,11 +278,11 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("start_time") val start_time: String?
     )
 
-    fun Context.getMalAnimeListCached(): Array<Data>? {
+    fun getMalAnimeListCached(): Array<Data>? {
         return getKey(MAL_CACHED_LIST) as? Array<Data>
     }
 
-    fun Context.getMalAnimeListSmart(): Array<Data>? {
+    fun getMalAnimeListSmart(): Array<Data>? {
         if (getKey<String>(
                 accountId,
                 MAL_TOKEN_KEY
@@ -300,7 +300,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun Context.getMalAnimeList(): Array<Data>? {
+    private fun getMalAnimeList(): Array<Data>? {
         return try {
             checkMalToken()
             var offset = 0
@@ -322,8 +322,12 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return fromIntToAnimeStatus(malStatusAsString.indexOf(string))
     }
 
-    private fun Context.getMalAnimeListSlice(offset: Int = 0): MalList? {
+    private fun getMalAnimeListSlice(offset: Int = 0): MalList? {
         val user = "@me"
+        val auth = getKey<String>(
+            accountId,
+            MAL_TOKEN_KEY
+        ) ?: return null
         return try {
             // Very lackluster docs
             // https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_id_animelist_get
@@ -331,10 +335,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 "https://api.myanimelist.net/v2/users/$user/animelist?fields=list_status,num_episodes,media_type,status,start_date,end_date,synopsis,alternative_titles,mean,genres,rank,num_list_users,nsfw,average_episode_duration,num_favorites,popularity,num_scoring_users,start_season,favorites_info,broadcast,created_at,updated_at&nsfw=1&limit=100&offset=$offset"
             val res = app.get(
                 url, headers = mapOf(
-                    "Authorization" to "Bearer " + getKey<String>(
-                        accountId,
-                        MAL_TOKEN_KEY
-                    )!!,
+                    "Authorization" to "Bearer $auth",
                 ), cacheTime = 0
             ).text
             res.toKotlinObject()
@@ -344,7 +345,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun Context.getDataAboutMalId(id: Int): MalAnime? {
+    private fun getDataAboutMalId(id: Int): MalAnime? {
         return try {
             // https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get
             val url = "https://api.myanimelist.net/v2/anime/$id?fields=id,title,num_episodes,my_list_status"
@@ -362,7 +363,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    fun Context.setAllMalData() {
+    fun setAllMalData() {
         val user = "@me"
         var isDone = false
         var index = 0
@@ -426,7 +427,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return null
     }
 
-    private fun Context.checkMalToken() {
+    private fun checkMalToken() {
         if (unixTime > getKey(
                 accountId,
                 MAL_UNIXTIME_KEY
@@ -436,7 +437,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun Context.getMalUser(setSettings: Boolean = true): MalUser? {
+    private fun getMalUser(setSettings: Boolean = true): MalUser? {
         checkMalToken()
         return try {
             val res = app.get(
@@ -483,7 +484,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    fun Context.setScoreRequest(
+    fun setScoreRequest(
         id: Int,
         status: MalStatusType? = null,
         score: Int? = null,
@@ -514,7 +515,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun Context.setScoreRequest(
+    private fun setScoreRequest(
         id: Int,
         status: String? = null,
         score: Int? = null,

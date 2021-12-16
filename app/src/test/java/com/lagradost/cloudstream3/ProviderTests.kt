@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3
 
-import com.lagradost.cloudstream3.movieproviders.ThenosProvider
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper

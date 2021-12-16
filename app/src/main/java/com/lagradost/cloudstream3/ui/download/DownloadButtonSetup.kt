@@ -113,7 +113,7 @@ object DownloadButtonSetup {
                                 if (click.data.episode <= 0) null else click.data.episode,
                                 click.data.season
                             ),
-                            act.getViewPos(click.data.id)?.position ?: 0
+                            getViewPos(click.data.id)?.position ?: 0
                         )
                     )
                 }

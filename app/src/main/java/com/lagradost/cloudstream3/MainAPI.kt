@@ -164,6 +164,25 @@ object APIHolder {
 
         return realSet
     }
+
+    fun Context.filterProviderByPreferredMedia(): List<MainAPI> {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val currentPrefMedia = settingsManager.getInt(this.getString(R.string.prefer_media_type_key), 0)
+        val langs = this.getApiProviderLangSettings()
+        val allApis = apis.filter { langs.contains(it.lang) }.filter { api -> api.hasMainPage }
+        return if (currentPrefMedia < 1) {
+            allApis
+        } else {
+            // Filter API depending on preferred media type
+            val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
+            val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon)
+            val mediaTypeList = if (currentPrefMedia == 1) listEnumMovieTv else listEnumAnime
+
+            val filteredAPI =
+                allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }
+            filteredAPI
+        }
+    }
 }
 
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
@@ -525,25 +544,27 @@ fun MainAPI.newMovieLoadResponse(
     name: String,
     url: String,
     type: TvType,
-    dataUrl : String,
+    dataUrl: String,
     initializer: MovieLoadResponse.() -> Unit = { }
 ): MovieLoadResponse {
-    val builder = MovieLoadResponse(name = name, url = url, apiName = this.name, type = type,dataUrl = dataUrl)
+    val builder = MovieLoadResponse(name = name, url = url, apiName = this.name, type = type, dataUrl = dataUrl)
     builder.initializer()
     return builder
 }
 
-fun LoadResponse.setDuration(input : String?) {
+fun LoadResponse.setDuration(input: String?) {
     if (input == null) return
     Regex("([0-9]*)h.*?([0-9]*)m").matchEntire(input)?.groupValues?.let { values ->
-        if(values.size == 3) {
+        if (values.size == 3) {
             val hours = values[1].toIntOrNull()
             val minutes = values[2].toIntOrNull()
-            this.duration = if(minutes != null && hours != null) { hours * 60 + minutes } else null
+            this.duration = if (minutes != null && hours != null) {
+                hours * 60 + minutes
+            } else null
         }
     }
     Regex("([0-9]*)m").matchEntire(input)?.groupValues?.let { values ->
-        if(values.size == 2) {
+        if (values.size == 2) {
             this.duration = values[1].toIntOrNull()
         }
     }
@@ -584,7 +605,7 @@ fun MainAPI.newTvSeriesLoadResponse(
     name: String,
     url: String,
     type: TvType,
-    episodes : List<TvSeriesEpisode>,
+    episodes: List<TvSeriesEpisode>,
     initializer: TvSeriesLoadResponse.() -> Unit = { }
 ): TvSeriesLoadResponse {
     val builder = TvSeriesLoadResponse(name = name, url = url, apiName = this.name, type = type, episodes = episodes)

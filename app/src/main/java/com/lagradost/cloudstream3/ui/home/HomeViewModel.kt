@@ -1,13 +1,15 @@
 package com.lagradost.cloudstream3.ui.home
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.SearchResponse
@@ -16,15 +18,16 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -55,22 +58,22 @@ class HomeViewModel : ViewModel() {
     private val _resumeWatching = MutableLiveData<List<SearchResponse>>()
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
 
-    fun loadResumeWatching(context: Context) = viewModelScope.launch {
+    fun loadResumeWatching() = viewModelScope.launch {
         val resumeWatching = withContext(Dispatchers.IO) {
-            context.getAllResumeStateIds().mapNotNull { id ->
-                context.getLastWatched(id)
-            }.sortedBy { -it.updateTime }
+            getAllResumeStateIds()?.mapNotNull { id ->
+                getLastWatched(id)
+            }?.sortedBy { -it.updateTime }
         }
 
         // val resumeWatchingResult = ArrayList<DataStoreHelper.ResumeWatchingResult>()
 
         val resumeWatchingResult = withContext(Dispatchers.IO) {
-            resumeWatching.map { resume ->
-                val data = context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
+            resumeWatching?.map { resume ->
+                val data = getKey<VideoDownloadHelper.DownloadHeaderCached>(
                     DOWNLOAD_HEADER_CACHE,
                     resume.parentId.toString()
                 ) ?: return@map null
-                val watchPos = context.getViewPos(resume.episodeId)
+                val watchPos = getViewPos(resume.episodeId)
                 DataStoreHelper.ResumeWatchingResult(
                     data.name,
                     data.url,
@@ -84,18 +87,19 @@ class HomeViewModel : ViewModel() {
                     resume.season,
                     resume.isFromDownload
                 )
-            }.filterNotNull()
+            }?.filterNotNull()
         }
 
         _resumeWatching.postValue(resumeWatchingResult)
     }
 
-    fun loadStoredData(context: Context, preferredWatchStatus: EnumSet<WatchType>?) = viewModelScope.launch {
+    fun loadStoredData(preferredWatchStatus: EnumSet<WatchType>?) = viewModelScope.launch {
         val watchStatusIds = withContext(Dispatchers.IO) {
-            context.getAllWatchStateIds().map { id ->
-                Pair(id, context.getResultWatchState(id))
+            getAllWatchStateIds()?.map { id ->
+                Pair(id, getResultWatchState(id))
             }
-        }.distinctBy { it.first }
+        }?.distinctBy { it.first } ?: return@launch
+
         val length = WatchType.values().size
         val currentWatchTypes = EnumSet.noneOf(WatchType::class.java)
 
@@ -125,10 +129,10 @@ class HomeViewModel : ViewModel() {
 
         val list = withContext(Dispatchers.IO) {
             watchStatusIds.filter { watchPrefNotNull.contains(it.second) }
-                .mapNotNull { context.getBookmarkedData(it.first) }
+                .mapNotNull { getBookmarkedData(it.first) }
                 .sortedBy { -it.latestUpdatedTime }
         }
-        _bookmarks.postValue(Pair(true,list))
+        _bookmarks.postValue(Pair(true, list))
     }
 
     private var onGoingLoad: Job? = null
@@ -176,15 +180,19 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadAndCancel(preferredApiName: String?, currentPrefMedia: Int) = viewModelScope.launch {
+    fun loadAndCancel(preferredApiName: String?) = viewModelScope.launch {
         val api = getApiFromNameNull(preferredApiName)
         if (preferredApiName == noneApi.name)
             loadAndCancel(noneApi)
         else if (preferredApiName == randomApi.name || api == null) {
-            val validAPIs = AppUtils.filterProviderByPreferredMedia(apis, currentPrefMedia)
-            val apiRandom = validAPIs.random()
-            loadAndCancel(apiRandom)
-            context?.setKey(HOMEPAGE_API, apiRandom.name)
+            val validAPIs = context?.filterProviderByPreferredMedia()
+            if(validAPIs.isNullOrEmpty()) {
+                loadAndCancel(noneApi)
+            } else {
+                val apiRandom = validAPIs.random()
+                loadAndCancel(apiRandom)
+                setKey(HOMEPAGE_API, apiRandom.name)
+            }
         } else {
             loadAndCancel(api)
         }

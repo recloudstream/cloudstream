@@ -22,6 +22,8 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.hippo.unifile.UniFile
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -30,7 +32,6 @@ import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
-import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -150,16 +151,16 @@ object VideoDownloadManager {
     private const val SUCCESS_DOWNLOAD_DONE = 1
     private const val SUCCESS_STREAM = 3
     private const val SUCCESS_STOPPED = 2
-    private const val ERROR_DELETING_FILE =
-        3 // will not download the next one, but is still classified as an error
+    // will not download the next one, but is still classified as an error
+    private const val ERROR_DELETING_FILE = 3
     private const val ERROR_CREATE_FILE = -2
     private const val ERROR_UNKNOWN = -10
-    private const val ERROR_OPEN_FILE = -3
+    //private const val ERROR_OPEN_FILE = -3
     private const val ERROR_TOO_SMALL_CONNECTION = -4
-    private const val ERROR_WRONG_CONTENT = -5
+    //private const val ERROR_WRONG_CONTENT = -5
     private const val ERROR_CONNECTION_ERROR = -6
-    private const val ERROR_MEDIA_STORE_URI_CANT_BE_CREATED = -7
-    private const val ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM = -8
+    //private const val ERROR_MEDIA_STORE_URI_CANT_BE_CREATED = -7
+    //private const val ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM = -8
     private const val ERROR_CONTENT_RESOLVER_NOT_FOUND = -9
 
     private const val KEY_RESUME_PACKAGES = "download_resume"
@@ -460,7 +461,7 @@ object VideoDownloadManager {
         val base = basePathToFile(context, basePath)
         val folder = base?.gotoDir(relativePath, false)
 
-        if (isScopedStorage && base.isDownloadDir()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && base.isDownloadDir()) {
             return context.contentResolver?.getExistingFolderStartName(relativePath)
         } else {
 //            val normalPath =
@@ -529,8 +530,6 @@ object VideoDownloadManager {
         }
     }
 
-    val isScopedStorage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-
     data class CreateNotificationMetadata(
         val type: DownloadType,
         val bytesDownloaded: Long,
@@ -561,7 +560,7 @@ object VideoDownloadManager {
         var resume = tryResume
         val baseFile = context.getBasePath()
 
-        if (isScopedStorage && baseFile.first?.isDownloadDir() == true) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && baseFile.first?.isDownloadDir() == true) {
             val cr = context.contentResolver ?: return StreamData(ERROR_CONTENT_RESOLVER_NOT_FOUND)
 
             val currentExistingFile =
@@ -658,7 +657,7 @@ object VideoDownloadManager {
 
         val displayName = getDisplayName(name, extension)
         val relativePath =
-            if (isScopedStorage && basePath.first.isDownloadDir()) getRelativePath(folder) else folder
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && basePath.first.isDownloadDir()) getRelativePath(folder) else folder
 
         fun deleteFile(): Int {
             return delete(context, name, relativePath, extension, parentId, basePath.first)
@@ -720,7 +719,7 @@ object VideoDownloadManager {
         if (extension == "mp4" && bytesTotal < 5000000) return ERROR_TOO_SMALL_CONNECTION // DATA IS LESS THAN 5MB, SOMETHING IS WRONG
 
         parentId?.let {
-            context.setKey(
+            setKey(
                 KEY_DOWNLOAD_INFO,
                 it.toString(),
                 DownloadedFileInfo(
@@ -798,8 +797,8 @@ object VideoDownloadManager {
                     }
                     DownloadActionType.Stop -> {
                         isStopped = true; updateNotification()
-                        context.removeKey(KEY_RESUME_PACKAGES, event.first.toString())
-                        saveQueue(context)
+                        removeKey(KEY_RESUME_PACKAGES, event.first.toString())
+                        saveQueue()
                     }
                     DownloadActionType.Resume -> {
                         isPaused = false; updateNotification()
@@ -1025,7 +1024,7 @@ object VideoDownloadManager {
         val displayName = getDisplayName(name, extension)
 
         // If scoped storage and using download dir (not accessible with UniFile)
-        if (isScopedStorage && basePath.isDownloadDir()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && basePath.isDownloadDir()) {
             val relativePath = getRelativePath(folder)
             val lastContent =
                 context.contentResolver.getExistingDownloadUriOrNullQ(relativePath, displayName)
@@ -1081,7 +1080,7 @@ object VideoDownloadManager {
         val basePath = context.getBasePath()
 
         val relativePath =
-            if (isScopedStorage && basePath.first.isDownloadDir()) getRelativePath(folder) else folder
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && basePath.first.isDownloadDir()) getRelativePath(folder) else folder
 
         val stream = setupStream(context, name, relativePath, extension, realIndex > 0)
         if (stream.errorCode != SUCCESS_STREAM) return stream.errorCode
@@ -1119,7 +1118,7 @@ object VideoDownloadManager {
 
         fun updateInfo() {
             parentId?.let {
-                context.setKey(
+                setKey(
                     KEY_DOWNLOAD_INFO,
                     it.toString(),
                     DownloadedFileInfo(
@@ -1364,7 +1363,7 @@ object VideoDownloadManager {
                         val link = item.links[index]
                         val resume = pkg.linkIndex == index
 
-                        context.setKey(
+                        setKey(
                             KEY_RESUME_PACKAGES,
                             id.toString(),
                             DownloadResumePackage(item, index)
@@ -1383,7 +1382,7 @@ object VideoDownloadManager {
                             }
                         }
                         if (connectionResult != null && connectionResult > 0) { // SUCCESS
-                            context.removeKey(KEY_RESUME_PACKAGES, id.toString())
+                            removeKey(KEY_RESUME_PACKAGES, id.toString())
                             break
                         }
                     }
@@ -1410,7 +1409,7 @@ object VideoDownloadManager {
             context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return null
         val base = basePathToFile(context, info.basePath)
 
-        if (isScopedStorage && base.isDownloadDir()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && base.isDownloadDir()) {
             val cr = context.contentResolver ?: return null
             val fileUri =
                 cr.getExistingDownloadUriOrNullQ(info.relativePath, info.displayName) ?: return null
@@ -1457,7 +1456,7 @@ object VideoDownloadManager {
         downloadStatusEvent.invoke(Pair(id, DownloadType.IsStopped))
         downloadDeleteEvent.invoke(id)
         val base = basePathToFile(context, info.basePath)
-        if (isScopedStorage && base.isDownloadDir()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && base.isDownloadDir()) {
             val cr = context.contentResolver ?: return false
             val fileUri =
                 cr.getExistingDownloadUriOrNullQ(info.relativePath, info.displayName)
@@ -1505,7 +1504,7 @@ object VideoDownloadManager {
 //            }
             downloadQueue.addLast(pkg)
             downloadCheck(context, notificationCallback)
-            if (setKey) saveQueue(context)
+            if (setKey) saveQueue()
         } else {
             downloadEvent.invoke(
                 Pair(pkg.item.ep.id, DownloadActionType.Resume)
@@ -1513,12 +1512,12 @@ object VideoDownloadManager {
         }
     }
 
-    private fun saveQueue(context: Context) {
+    private fun saveQueue() {
         val dQueue =
             downloadQueue.toList()
                 .mapIndexed { index, any -> DownloadQueueResumePackage(index, any) }
                 .toTypedArray()
-        context.setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
+        setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
     }
 
     /*fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
@@ -1576,7 +1575,7 @@ object VideoDownloadManager {
         pkg: DownloadResumePackage,
     ) {
         val key = pkg.item.ep.id.toString()
-        context.setKey(WORK_KEY_PACKAGE, key, pkg)
+        setKey(WORK_KEY_PACKAGE, key, pkg)
         startWork(context, key)
     }
 
@@ -1596,7 +1595,7 @@ object VideoDownloadManager {
         )
 
         val key = info.ep.id.toString()
-        context.setKey(WORK_KEY_INFO, key, info)
+        setKey(WORK_KEY_INFO, key, info)
         startWork(context, key)
     }
 

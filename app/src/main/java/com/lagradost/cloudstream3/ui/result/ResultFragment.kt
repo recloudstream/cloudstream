@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.ui.result
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.content.Intent.*
@@ -60,6 +59,7 @@ import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
+import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
@@ -128,7 +128,7 @@ fun ResultEpisode.getDisplayPosition(): Long {
     return position
 }
 
-fun Context.buildResultEpisode(
+fun buildResultEpisode(
     name: String?,
     poster: String?,
     episode: Int,
@@ -269,7 +269,7 @@ class ResultFragment : Fragment() {
     private var startValue: Int? = null
 
     private fun updateSync(id: Int) {
-        val syncList = context?.getSync(id, SyncApis.map { it.idPrefix }) ?: return
+        val syncList = getSync(id, SyncApis.map { it.idPrefix }) ?: return
         val list = ArrayList<Pair<SyncAPI, String>>()
         for (i in 0 until SyncApis.count()) {
             val res = syncList[i] ?: continue
@@ -596,7 +596,7 @@ class ResultFragment : Fragment() {
                     // 1. Checks if the lang should be downloaded
                     // 2. Makes it into the download format
                     // 3. Downloads it as a .vtt file
-                    val downloadList = ctx.getDownloadSubsLanguageISO639_1()
+                    val downloadList = getDownloadSubsLanguageISO639_1()
                     main {
                         subs?.let { subsList ->
                             subsList.filter {
@@ -857,7 +857,7 @@ class ResultFragment : Fragment() {
                 //.map { watchType -> Triple(watchType.internalId, watchType.iconRes, watchType.stringRes) },
             ) {
                 context?.let { localContext ->
-                    viewModel.updateWatchStatus(localContext, WatchType.fromInternalId(this.itemId))
+                    viewModel.updateWatchStatus(WatchType.fromInternalId(this.itemId))
                 }
             }
         }
@@ -883,7 +883,7 @@ class ResultFragment : Fragment() {
                     fab.context.getString(R.string.action_add_to_bookmarks),
                     showApply = false,
                     {}) {
-                    viewModel.updateWatchStatus(fab.context, WatchType.values()[it])
+                    viewModel.updateWatchStatus(WatchType.values()[it])
                 }
             }
         }
@@ -938,9 +938,8 @@ class ResultFragment : Fragment() {
                         .map { Pair(it ?: -2, fromIndexToSeasonText(it)) },
                 ) {
                     val id = this.itemId
-                    context?.let {
-                        viewModel.changeSeason(it, if (id == -2) null else id)
-                    }
+
+                    viewModel.changeSeason(if (id == -2) null else id)
                 }
             }
         }
@@ -981,7 +980,7 @@ class ResultFragment : Fragment() {
             if (ranges != null) {
                 it.popupMenuNoIconsAndNoStringRes(ranges.map { status -> Pair(status.ordinal, status.toString()) }
                     .toList()) {
-                    viewModel.changeDubStatus(requireContext(), DubStatus.values()[itemId])
+                    viewModel.changeDubStatus(DubStatus.values()[itemId])
                 }
             }
         }
@@ -999,7 +998,7 @@ class ResultFragment : Fragment() {
             val ranges = episodeRanges
             if (ranges != null) {
                 it.popupMenuNoIconsAndNoStringRes(ranges.mapIndexed { index, s -> Pair(index, s) }.toList()) {
-                    viewModel.changeRange(requireContext(), itemId)
+                    viewModel.changeRange(itemId)
                 }
             }
         }
@@ -1087,13 +1086,14 @@ class ResultFragment : Fragment() {
                         updateSync(d.getId())
                         result_add_sync?.setOnClickListener {
                             QuickSearchFragment.pushSync(activity, d.name) { click ->
-                                context?.addSync(d.getId(), click.card.apiName, click.card.url)?.let {
-                                    showToast(
-                                        activity,
-                                        context?.getString(R.string.added_sync_format)?.format(click.card.name),
-                                        Toast.LENGTH_SHORT
-                                    )
-                                }
+                                addSync(d.getId(), click.card.apiName, click.card.url)
+
+                                showToast(
+                                    activity,
+                                    context?.getString(R.string.added_sync_format)?.format(click.card.name),
+                                    Toast.LENGTH_SHORT
+                                )
+
                                 updateSync(d.getId())
                             }
                         }
@@ -1290,7 +1290,7 @@ class ResultFragment : Fragment() {
             val tempUrl = url
             if (tempUrl != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(it.context, tempUrl, apiName, showFillers)
+                    viewModel.load(tempUrl, apiName, showFillers)
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
@@ -1304,18 +1304,12 @@ class ResultFragment : Fragment() {
                 }
 
                 result_meta_site?.setOnClickListener {
-                    val i = Intent(ACTION_VIEW)
-                    i.data = Uri.parse(tempUrl)
-                    try {
-                        startActivity(i)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    it.context?.openBrowser(tempUrl)
                 }
 
                 if (restart || viewModel.resultResponse.value == null) {
                     viewModel.clear()
-                    viewModel.load(ctx, tempUrl, apiName, showFillers)
+                    viewModel.load(tempUrl, apiName, showFillers)
                 }
             }
         }

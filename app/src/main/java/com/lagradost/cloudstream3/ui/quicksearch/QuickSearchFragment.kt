@@ -38,7 +38,7 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
             })
         }
 
-        fun pushSync(activity: Activity?, autoSearch: String? = null, callback : (SearchClickCallback) -> Unit) {
+        fun pushSync(activity: Activity?, autoSearch: String? = null, callback: (SearchClickCallback) -> Unit) {
             clickCallback = callback
             activity.navigate(R.id.global_to_navigation_quick_search, Bundle().apply {
                 putBoolean("mainapi", false)
@@ -46,7 +46,7 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
             })
         }
 
-        var clickCallback : ((SearchClickCallback) -> Unit)? = null
+        var clickCallback: ((SearchClickCallback) -> Unit)? = null
     }
 
     private val searchViewModel: SearchViewModel by activityViewModels()
@@ -124,10 +124,7 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
         searchMagIcon.scaleY = 0.65f
         quick_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                context?.let { ctx ->
-                    searchViewModel.searchAndCancel(query = query, context = ctx, isMainApis = isMainApis, ignoreSettings = true)
-                }
-
+                searchViewModel.searchAndCancel(query = query, isMainApis = isMainApis, ignoreSettings = true)
                 quick_search?.let {
                     UIHelper.hideKeyboard(it)
                 }

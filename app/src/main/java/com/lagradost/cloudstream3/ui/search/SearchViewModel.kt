@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.search
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,9 +40,9 @@ class SearchViewModel : ViewModel() {
     }
 
     var onGoingSearch: Job? = null
-    fun searchAndCancel(query: String, isMainApis : Boolean = true, ignoreSettings : Boolean = false, context: Context) {
+    fun searchAndCancel(query: String, isMainApis: Boolean = true, ignoreSettings: Boolean = false) {
         onGoingSearch?.cancel()
-        onGoingSearch = search(query, isMainApis, ignoreSettings, context)
+        onGoingSearch = search(query, isMainApis, ignoreSettings)
     }
 
     data class SyncSearchResultSearchResponse(
@@ -66,57 +65,59 @@ class SearchViewModel : ViewModel() {
         )
     }
 
-    private fun search(query: String, isMainApis : Boolean = true, ignoreSettings : Boolean = false, context: Context) = viewModelScope.launch {
-        if (query.length <= 1) {
-            clearSearch()
-            return@launch
-        }
+    private fun search(query: String, isMainApis: Boolean = true, ignoreSettings: Boolean = false) =
+        viewModelScope.launch {
+            if (query.length <= 1) {
+                clearSearch()
+                return@launch
+            }
 
-        _searchResponse.postValue(Resource.Loading())
+            _searchResponse.postValue(Resource.Loading())
 
-        val currentList = ArrayList<OnGoingSearch>()
+            val currentList = ArrayList<OnGoingSearch>()
 
-        _currentSearch.postValue(ArrayList())
+            _currentSearch.postValue(ArrayList())
 
-        withContext(Dispatchers.IO) { // This interrupts UI otherwise
-            if (isMainApis) {
-                repos.filter { a ->
-                    ignoreSettings || (providersActive.size == 0 || providersActive.contains(a.name))
-                }.apmap { a -> // Parallel
-                    val search = a.search(query)
-                    currentList.add(OnGoingSearch(a.name, search))
-                    _currentSearch.postValue(currentList)
-                }
-            } else {
-                syncApis.apmap { a ->
-                    val search = safeApiCall {
-                        a.search(context, query)?.map { it.toSearchResponse() } ?: throw ErrorLoadingException()
+            withContext(Dispatchers.IO) { // This interrupts UI otherwise
+                if (isMainApis) {
+                    repos.filter { a ->
+                        ignoreSettings || (providersActive.size == 0 || providersActive.contains(a.name))
+                    }.apmap { a -> // Parallel
+                        val search = a.search(query)
+                        currentList.add(OnGoingSearch(a.name, search))
+                        _currentSearch.postValue(currentList)
                     }
+                } else {
+                    syncApis.apmap { a ->
+                        val search = safeApiCall {
+                            a.search(query)?.map { it.toSearchResponse() }
+                                ?: throw ErrorLoadingException()
+                        }
 
-                    currentList.add(OnGoingSearch(a.name, search))
+                        currentList.add(OnGoingSearch(a.name, search))
+                    }
                 }
             }
-        }
-        _currentSearch.postValue(currentList)
+            _currentSearch.postValue(currentList)
 
-        val list = ArrayList<SearchResponse>()
-        val nestedList =
-            currentList.map { it.data }.filterIsInstance<Resource.Success<List<SearchResponse>>>().map { it.value }
+            val list = ArrayList<SearchResponse>()
+            val nestedList =
+                currentList.map { it.data }.filterIsInstance<Resource.Success<List<SearchResponse>>>().map { it.value }
 
-        // I do it this way to move the relevant search results to the top
-        var index = 0
-        while (true) {
-            var added = 0
-            for (sublist in nestedList) {
-                if (sublist.size > index) {
-                    list.add(sublist[index])
-                    added++
+            // I do it this way to move the relevant search results to the top
+            var index = 0
+            while (true) {
+                var added = 0
+                for (sublist in nestedList) {
+                    if (sublist.size > index) {
+                        list.add(sublist[index])
+                        added++
+                    }
                 }
+                if (added == 0) break
+                index++
             }
-            if (added == 0) break
-            index++
-        }
 
-        _searchResponse.postValue(Resource.Success(list))
-    }
+            _searchResponse.postValue(Resource.Success(list))
+        }
 }

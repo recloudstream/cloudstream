@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.widget.ImageView
@@ -24,6 +25,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity.Companion.setLocale
 import com.lagradost.cloudstream3.MainActivity.Companion.showToast
@@ -36,8 +38,6 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
-import com.lagradost.cloudstream3.utils.AppUtils
-import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.Qualities
@@ -50,7 +50,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadDir
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.isScopedStorage
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -126,13 +125,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
     private fun showAccountSwitch(context: Context, api: AccountManager) {
+        val accounts = api.getAccounts() ?: return
+
         val builder =
             AlertDialog.Builder(context, R.style.AlertDialogCustom).setView(R.layout.account_switch)
         val dialog = builder.show()
 
-        val accounts = api.getAccounts(context)
         dialog.findViewById<TextView>(R.id.account_add)?.setOnClickListener {
-            api.authenticate(it.context)
+            api.authenticate()
         }
 
         val ogIndex = api.accountIndex
@@ -141,7 +141,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         for (index in accounts) {
             api.accountIndex = index
-            val accountInfo = api.loginInfo(context)
+            val accountInfo = api.loginInfo()
             if (accountInfo != null) {
                 items.add(accountInfo)
             }
@@ -149,26 +149,26 @@ class SettingsFragment : PreferenceFragmentCompat() {
         api.accountIndex = ogIndex
         val adapter = AccountAdapter(items, R.layout.account_single) {
             dialog?.dismissSafe(activity)
-            api.changeAccount(it.view.context, it.card.accountIndex)
+            api.changeAccount(it.card.accountIndex)
         }
         val list = dialog.findViewById<RecyclerView>(R.id.account_list)
         list?.adapter = adapter
     }
 
-    private fun showLoginInfo(context: Context, api: AccountManager, info: OAuth2API.LoginInfo) {
+    private fun showLoginInfo(api: AccountManager, info: OAuth2API.LoginInfo) {
         val builder =
-            AlertDialog.Builder(context, R.style.AlertDialogCustom).setView(R.layout.account_managment)
+            AlertDialog.Builder(context ?: return, R.style.AlertDialogCustom).setView(R.layout.account_managment)
         val dialog = builder.show()
 
         dialog.findViewById<ImageView>(R.id.account_profile_picture)?.setImage(info.profilePicture)
         dialog.findViewById<TextView>(R.id.account_logout)?.setOnClickListener {
-            it.context?.let { ctx ->
-                api.logOut(ctx)
-                dialog.dismissSafe(activity)
-            }
+            api.logOut()
+            dialog.dismissSafe(activity)
         }
 
-        dialog.findViewById<TextView>(R.id.account_name)?.text = info.name ?: context.getString(R.string.no_data)
+        (info.name ?: context?.getString(R.string.no_data))?.let {
+            dialog.findViewById<TextView>(R.id.account_name)?.text = it
+        }
         dialog.findViewById<TextView>(R.id.account_site)?.text = api.name
         dialog.findViewById<TextView>(R.id.account_switch_account)?.setOnClickListener {
             dialog.dismissSafe(activity)
@@ -208,11 +208,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 title = getString(R.string.login_format).format(api.name, getString(R.string.account))
                 setOnPreferenceClickListener { pref ->
                     pref.context?.let { ctx ->
-                        val info = api.loginInfo(ctx)
+                        val info = api.loginInfo()
                         if (info != null) {
-                            showLoginInfo(ctx, api, info)
+                            showLoginInfo(api, info)
                         } else {
-                            api.authenticate(ctx)
+                            api.authenticate()
                         }
                     }
 
@@ -305,7 +305,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             // app_name_download_path = Cloudstream and does not change depending on release.
             // DOES NOT WORK ON SCOPED STORAGE.
-            val secondaryDir = if (isScopedStorage) null else Environment.getExternalStorageDirectory().absolutePath +
+            val secondaryDir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) null else Environment.getExternalStorageDirectory().absolutePath +
                     File.separator + resources.getString(R.string.app_name_download_path)
             val first = listOf(defaultDir, secondaryDir)
             return (try {
@@ -352,7 +352,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             val currentPrefMedia =
-                settingsManager.getInt(getString(R.string.preferred_media_settings), 0)
+                settingsManager.getInt(getString(R.string.prefer_media_type_key), 0)
 
             activity?.showBottomDialog(
                 prefNames.toList(),
@@ -361,15 +361,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true,
                 {}) {
                 settingsManager.edit()
-                    .putInt(getString(R.string.preferred_media_settings), prefValues[it])
+                    .putInt(getString(R.string.prefer_media_type_key), prefValues[it])
                     .apply()
-                val apilist = AppUtils.filterProviderByPreferredMedia(apis, prefValues[it])
-                val apiRandom = if (apilist.size > 0) {
-                    apilist.random().name
-                } else {
-                    ""
-                }
-                context?.setKey(HOMEPAGE_API, apiRandom)
+
+                removeKey(HOMEPAGE_API)
                 (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true

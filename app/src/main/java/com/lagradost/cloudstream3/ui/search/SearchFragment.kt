@@ -48,7 +48,9 @@ class SearchFragment : Fragment() {
         fun List<SearchResponse>.filterSearchResponse(): List<SearchResponse> {
             return this.filter { response ->
                 if (response is AnimeSearchResponse) {
-                    (response.dubStatus.isNullOrEmpty()) || (response.dubStatus.any { APIRepository.dubStatusActive.contains(it) })
+                    (response.dubStatus.isNullOrEmpty()) || (response.dubStatus.any {
+                        APIRepository.dubStatusActive.contains(it)
+                    })
                 } else {
                     true
                 }
@@ -291,16 +293,14 @@ class SearchFragment : Fragment() {
             }
         }
 
-        if(context?.isTvSettings() == true) {
+        if (context?.isTvSettings() == true) {
             search_filter.isFocusable = true
             search_filter.isFocusableInTouchMode = true
         }
 
         main_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                context?.let { ctx ->
-                    searchViewModel.searchAndCancel(query = query, context = ctx)
-                }
+                searchViewModel.searchAndCancel(query = query)
 
                 main_search?.let {
                     hideKeyboard(it)

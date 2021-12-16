@@ -5,10 +5,10 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.WORK_KEY_INFO
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.WORK_KEY_PACKAGE
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadCheck
@@ -62,8 +62,8 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
     }
 
     private fun removeKeys(key: String) {
-        applicationContext.removeKey(WORK_KEY_INFO, key)
-        applicationContext.removeKey(WORK_KEY_PACKAGE, key)
+        removeKey(WORK_KEY_INFO, key)
+        removeKey(WORK_KEY_PACKAGE, key)
     }
 
     private suspend fun awaitDownload(id: Int) {

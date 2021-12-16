@@ -21,6 +21,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import java.net.URL
@@ -46,17 +47,21 @@ object AppUtils {
     }
 
     fun Context.openBrowser(url: String) {
-        val components = arrayOf(ComponentName(applicationContext, MainActivity::class.java))
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(url)
+        try {
+            val components = arrayOf(ComponentName(applicationContext, MainActivity::class.java))
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            startActivity(
-                Intent.createChooser(intent, null)
-                    .putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components)
-            )
-        else
-            startActivity(intent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                startActivity(
+                    Intent.createChooser(intent, null)
+                        .putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components)
+                )
+            else
+                startActivity(intent)
+        } catch (e : Exception) {
+            logError(e)
+        }
     }
 
     fun splitQuery(url: URL): Map<String, String> {
@@ -232,24 +237,5 @@ object AppUtils {
             null
         }
         return currentAudioFocusRequest
-    }
-
-    fun filterProviderByPreferredMedia(
-        apis: ArrayList<MainAPI>,
-        currentPrefMedia: Int
-    ): List<MainAPI> {
-        val allApis = apis.filter { api -> api.hasMainPage }
-        return if (currentPrefMedia < 1) {
-            allApis
-        } else {
-            // Filter API depending on preferred media type
-            val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
-            val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon)
-            val mediaTypeList = if (currentPrefMedia == 1) listEnumMovieTv else listEnumAnime
-
-            val filteredAPI =
-                allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }
-            filteredAPI
-        }
     }
 }
