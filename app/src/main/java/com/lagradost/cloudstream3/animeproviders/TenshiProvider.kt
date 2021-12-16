@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document
 import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 class TenshiProvider : MainAPI() {
     companion object {
@@ -30,8 +31,14 @@ class TenshiProvider : MainAPI() {
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
+    private var ddosGuardKiller: DdosGuardKiller? = null
 
-    private val ddosGuardKiller = DdosGuardKiller(true)
+    // Because otherwise Network on main thread when just initializing the provider
+    init {
+        thread {
+            ddosGuardKiller = DdosGuardKiller(true)
+        }
+    }
 
     /*private fun loadToken(): Boolean {
         return try {
@@ -345,7 +352,7 @@ class TenshiProvider : MainAPI() {
                         headers = getHeaders(
                             mapOf(),
                             null,
-                            ddosGuardKiller.savedCookiesMap[URI(this.mainUrl).host] ?: mapOf()
+                            ddosGuardKiller?.savedCookiesMap?.get(URI(this.mainUrl).host) ?: mapOf()
                         ).toMap()
                     )
                 })
