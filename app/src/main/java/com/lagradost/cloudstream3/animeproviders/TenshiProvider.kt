@@ -31,14 +31,7 @@ class TenshiProvider : MainAPI() {
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
-    private var ddosGuardKiller: DdosGuardKiller? = null
-
-    // Because otherwise Network on main thread when just initializing the provider
-    init {
-        thread {
-            ddosGuardKiller = DdosGuardKiller(true)
-        }
-    }
+    private var ddosGuardKiller = DdosGuardKiller(true)
 
     /*private fun loadToken(): Boolean {
         return try {
