@@ -128,7 +128,7 @@ private fun getCache(cacheTime: Int, cacheUnit: TimeUnit): CacheControl {
 /**
  * Referer > Set headers > Set cookies > Default headers > Default Cookies
  */
-private fun getHeaders(
+fun getHeaders(
     headers: Map<String, String>,
     referer: String?,
     cookie: Map<String, String>
@@ -137,12 +137,10 @@ private fun getHeaders(
     val cookieHeaders = (DEFAULT_COOKIES + cookie)
     val cookieMap =
         if (cookieHeaders.isNotEmpty()) mapOf(
-            "Cookie" to cookieHeaders.entries.joinToString(
-                separator = "; "
-            ) {
+            "Cookie" to cookieHeaders.entries.joinToString() {
                 "${it.key}=${it.value};"
             }) else mapOf()
-    val tempHeaders = (DEFAULT_HEADERS + cookieMap + headers + refererMap)
+    val tempHeaders = (DEFAULT_HEADERS + headers + cookieMap + refererMap)
     return tempHeaders.toHeaders()
 }
 
