@@ -166,7 +166,12 @@ fun ResultEpisode.getWatchProgress(): Float {
 
 class ResultFragment : Fragment() {
     companion object {
-        fun newInstance(url: String, apiName: String, startAction: Int = 0, startValue: Int = 0): Bundle {
+        fun newInstance(
+            url: String,
+            apiName: String,
+            startAction: Int = 0,
+            startValue: Int = 0
+        ): Bundle {
             return Bundle().apply {
                 putString("url", url)
                 putString("apiName", apiName)
@@ -177,7 +182,8 @@ class ResultFragment : Fragment() {
         }
     }
 
-    private var currentLoadingCount = 0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
+    private var currentLoadingCount =
+        0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
     private val viewModel: ResultViewModel by activityViewModels()
     private var allEpisodes: HashMap<Int, List<ExtractorLink>> = HashMap()
     private var allEpisodesSubs: HashMap<Int, HashMap<String, SubtitleFile>> = HashMap()
@@ -279,15 +285,19 @@ class ResultFragment : Fragment() {
     }
 
     private fun setFormatText(textView: TextView?, @StringRes format: Int, arg: Any?) {
-        if (arg == null) {
-            textView?.isVisible = false
-        } else {
-            val text = context?.getString(format)?.format(arg)
-            if (text == null) {
+        // java.util.IllegalFormatConversionException: f != java.lang.Integer
+        // This can fail with malformed formatting
+        normalSafeApiCall {
+            if (arg == null) {
                 textView?.isVisible = false
             } else {
-                textView?.isVisible = true
-                textView?.text = text
+                val text = context?.getString(format)?.format(arg)
+                if (text == null) {
+                    textView?.isVisible = false
+                } else {
+                    textView?.isVisible = true
+                    textView?.text = text
+                }
             }
         }
     }
@@ -301,7 +311,7 @@ class ResultFragment : Fragment() {
     }
 
     private fun setRating(rating: Int?) {
-        setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000))
+        setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000f))
     }
 
     private fun setRecommendations(rec: List<SearchResponse>?) {
@@ -392,8 +402,10 @@ class ResultFragment : Fragment() {
                             VISIBLE
                         castContext.addCastStateListener { state ->
                             if (media_route_button != null) {
-                                if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility = GONE else {
-                                    if (media_route_button.visibility == GONE) media_route_button.visibility = VISIBLE
+                                if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility =
+                                    GONE else {
+                                    if (media_route_button.visibility == GONE) media_route_button.visibility =
+                                        VISIBLE
                                 }
                             }
                         }
@@ -449,7 +461,8 @@ class ResultFragment : Fragment() {
                 val currentLoad = currentLoadingCount
 
                 if (!skipLoading) {
-                    val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
+                    val builder =
+                        AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
                     val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
                     builder.setView(customLayout)
 
@@ -609,7 +622,8 @@ class ResultFragment : Fragment() {
                             }
                                 .map { ExtractorSubtitleLink(it.lang, it.url, "") }
                                 .forEach { link ->
-                                    val epName = meta.name ?: "${context?.getString(R.string.episode)} ${meta.episode}"
+                                    val epName = meta.name
+                                        ?: "${context?.getString(R.string.episode)} ${meta.episode}"
                                     val fileName =
                                         sanitizeFilename(epName + if (downloadList.size > 1) " ${link.name}" else "")
                                     val topFolder = "$folder"
@@ -653,9 +667,19 @@ class ResultFragment : Fragment() {
                 ACTION_CLICK_DEFAULT -> {
                     context?.let { ctx ->
                         if (ctx.isConnectedToChromecast()) {
-                            handleAction(EpisodeClickEvent(ACTION_CHROME_CAST_EPISODE, episodeClick.data))
+                            handleAction(
+                                EpisodeClickEvent(
+                                    ACTION_CHROME_CAST_EPISODE,
+                                    episodeClick.data
+                                )
+                            )
                         } else {
-                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, episodeClick.data))
+                            handleAction(
+                                EpisodeClickEvent(
+                                    ACTION_PLAY_EPISODE_IN_PLAYER,
+                                    episodeClick.data
+                                )
+                            )
                         }
                     }
                 }
@@ -665,7 +689,8 @@ class ResultFragment : Fragment() {
                         val builder = AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
                         var dialog: AlertDialog? = null
                         builder.setTitle(showTitle)
-                        val options = requireContext().resources.getStringArray(R.array.episode_long_click_options)
+                        val options =
+                            requireContext().resources.getStringArray(R.array.episode_long_click_options)
                         val optionsValues =
                             requireContext().resources.getIntArray(R.array.episode_long_click_options_values)
 
@@ -684,7 +709,9 @@ class ResultFragment : Fragment() {
                                 ACTION_CHROME_CAST_MIRROR -> isConnected
                                 ACTION_DOWNLOAD_EPISODE -> hasDownloadSupport
                                 ACTION_DOWNLOAD_MIRROR -> hasDownloadSupport
-                                ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> context?.isAppInstalled(VLC_PACKAGE) ?: false
+                                ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> context?.isAppInstalled(
+                                    VLC_PACKAGE
+                                ) ?: false
                                 else -> true
                             }
                             if (add) {
@@ -696,7 +723,12 @@ class ResultFragment : Fragment() {
                         builder.setItems(
                             verifiedOptions.toTypedArray()
                         ) { _, which ->
-                            handleAction(EpisodeClickEvent(verifiedOptionsValues[which], episodeClick.data))
+                            handleAction(
+                                EpisodeClickEvent(
+                                    verifiedOptionsValues[which],
+                                    episodeClick.data
+                                )
+                            )
                             dialog?.dismissSafe(activity)
                         }
 
@@ -819,7 +851,10 @@ class ResultFragment : Fragment() {
                 }
 
                 ACTION_DOWNLOAD_EPISODE -> {
-                    startDownload(currentLinks ?: return@main, currentSubs?.values?.toList() ?: emptyList())
+                    startDownload(
+                        currentLinks ?: return@main,
+                        currentSubs?.values?.toList() ?: emptyList()
+                    )
                 }
 
                 ACTION_DOWNLOAD_MIRROR -> {
@@ -828,7 +863,10 @@ class ResultFragment : Fragment() {
                             links,//(currentLinks ?: return@main).filter { !it.isM3u8 },
                             getString(R.string.episode_action_download_mirror)
                         ) { link ->
-                            startDownload(listOf(link), currentSubs?.values?.toList() ?: emptyList())
+                            startDownload(
+                                listOf(link),
+                                currentSubs?.values?.toList() ?: emptyList()
+                            )
                         }
                     }
                 }
@@ -978,7 +1016,12 @@ class ResultFragment : Fragment() {
         result_dub_select.setOnClickListener {
             val ranges = dubRange
             if (ranges != null) {
-                it.popupMenuNoIconsAndNoStringRes(ranges.map { status -> Pair(status.ordinal, status.toString()) }
+                it.popupMenuNoIconsAndNoStringRes(ranges.map { status ->
+                    Pair(
+                        status.ordinal,
+                        status.toString()
+                    )
+                }
                     .toList()) {
                     viewModel.changeDubStatus(DubStatus.values()[itemId])
                 }
@@ -997,7 +1040,8 @@ class ResultFragment : Fragment() {
         result_episode_select.setOnClickListener {
             val ranges = episodeRanges
             if (ranges != null) {
-                it.popupMenuNoIconsAndNoStringRes(ranges.mapIndexed { index, s -> Pair(index, s) }.toList()) {
+                it.popupMenuNoIconsAndNoStringRes(ranges.mapIndexed { index, s -> Pair(index, s) }
+                    .toList()) {
                     viewModel.changeRange(itemId)
                 }
             }
@@ -1090,7 +1134,8 @@ class ResultFragment : Fragment() {
 
                                 showToast(
                                     activity,
-                                    context?.getString(R.string.added_sync_format)?.format(click.card.name),
+                                    context?.getString(R.string.added_sync_format)
+                                        ?.format(click.card.name),
                                     Toast.LENGTH_SHORT
                                 )
 
@@ -1120,10 +1165,13 @@ class ResultFragment : Fragment() {
                         result_poster?.setImage(d.posterUrl)
                         result_poster_blur?.setImageBlur(d.posterUrl, 10, 3)
 
-                        result_poster_holder?.visibility = if (d.posterUrl.isNullOrBlank()) GONE else VISIBLE
+                        result_poster_holder?.visibility =
+                            if (d.posterUrl.isNullOrBlank()) GONE else VISIBLE
 
                         result_play_movie?.text =
-                            if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(R.string.play_movie_button)
+                            if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(
+                                R.string.play_movie_button
+                            )
                         //result_plot_header?.text =
                         //    if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
                         if (!d.plot.isNullOrEmpty()) {
@@ -1132,7 +1180,8 @@ class ResultFragment : Fragment() {
                                 syno = syno.substring(0, MAX_SYNO_LENGH) + "..."
                             }
                             result_descript.setOnClickListener {
-                                val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                                val builder: AlertDialog.Builder =
+                                    AlertDialog.Builder(requireContext())
                                 builder.setMessage(d.plot)
                                     .setTitle(if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
                                     .show()
@@ -1140,7 +1189,9 @@ class ResultFragment : Fragment() {
                             result_descript.text = syno
                         } else {
                             result_descript.text =
-                                if (d.type == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(R.string.normal_no_plot)
+                                if (d.type == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(
+                                    R.string.normal_no_plot
+                                )
                         }
 
                         result_tag?.removeAllViews()
@@ -1167,18 +1218,21 @@ class ResultFragment : Fragment() {
                             lateFixDownloadButton(true)
 
                             result_play_movie?.setOnClickListener {
-                                val card = currentEpisodes?.firstOrNull() ?: return@setOnClickListener
+                                val card =
+                                    currentEpisodes?.firstOrNull() ?: return@setOnClickListener
                                 handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                             }
 
                             result_play_movie?.setOnLongClickListener {
-                                val card = currentEpisodes?.firstOrNull() ?: return@setOnLongClickListener true
+                                val card = currentEpisodes?.firstOrNull()
+                                    ?: return@setOnLongClickListener true
                                 handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
                                 return@setOnLongClickListener true
                             }
 
                             result_download_movie?.setOnLongClickListener {
-                                val card = currentEpisodes?.firstOrNull() ?: return@setOnLongClickListener true
+                                val card = currentEpisodes?.firstOrNull()
+                                    ?: return@setOnLongClickListener true
                                 handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
                                 return@setOnLongClickListener true
                             }
@@ -1188,11 +1242,15 @@ class ResultFragment : Fragment() {
 //                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
 //                            }
 
-                            result_download_movie?.visibility = if (hasDownloadSupport) VISIBLE else GONE
+                            result_download_movie?.visibility =
+                                if (hasDownloadSupport) VISIBLE else GONE
                             if (hasDownloadSupport) {
                                 val localId = d.getId()
                                 val file =
-                                    VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(requireContext(), localId)
+                                    VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
+                                        requireContext(),
+                                        localId
+                                    )
                                 downloadButton?.dispose()
                                 downloadButton = EasyDownloadButton()
                                 downloadButton?.setUpMaterialButton(
@@ -1237,7 +1295,11 @@ class ResultFragment : Fragment() {
                                             )
                                         }
                                     } else {
-                                        handleDownloadClick(activity, currentHeaderName, downloadClickEvent)
+                                        handleDownloadClick(
+                                            activity,
+                                            currentHeaderName,
+                                            downloadClickEvent
+                                        )
                                     }
                                 }
                             }
@@ -1285,7 +1347,8 @@ class ResultFragment : Fragment() {
             result_bookmark_button?.isVisible = ctx.isTvSettings()
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            val showFillers = settingsManager.getBoolean(ctx.getString(R.string.show_fillers_key), true)
+            val showFillers =
+                settingsManager.getBoolean(ctx.getString(R.string.show_fillers_key), true)
 
             val tempUrl = url
             if (tempUrl != null) {
