@@ -12,7 +12,7 @@ import org.jsoup.nodes.Document
 import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.concurrent.thread
+import kotlin.collections.ArrayList
 
 class TenshiProvider : MainAPI() {
     companion object {
@@ -101,34 +101,28 @@ class TenshiProvider : MainAPI() {
         return movies.contains(aniId)
     }
 
-    private fun parseSearchPage(soup: Document): ArrayList<SearchResponse> {
+    private fun parseSearchPage(soup: Document): List<SearchResponse> {
         val items = soup.select("ul.thumb > li > a")
-        if (items.isEmpty()) return ArrayList()
-        val returnValue = ArrayList<SearchResponse>()
-        for (i in items) {
-            val href = fixUrl(i.attr("href"))
-            val img = fixUrl(i.selectFirst("img").attr("src"))
-            val title = i.attr("title")
-
-            returnValue.add(
-                if (getIsMovie(href, true)) {
-                    MovieSearchResponse(
-                        title, href, this.name, TvType.Movie, img, null
-                    )
-                } else {
-                    AnimeSearchResponse(
-                        title,
-                        href,
-                        this.name,
-                        TvType.Anime,
-                        img,
-                        null,
-                        EnumSet.of(DubStatus.Subbed),
-                    )
-                }
-            )
+        return items.map {
+            val href = fixUrl(it.attr("href"))
+            val img = fixUrl(it.selectFirst("img").attr("src"))
+            val title = it.attr("title")
+            if (getIsMovie(href, true)) {
+                MovieSearchResponse(
+                    title, href, this.name, TvType.Movie, img, null
+                )
+            } else {
+                AnimeSearchResponse(
+                    title,
+                    href,
+                    this.name,
+                    TvType.Anime,
+                    img,
+                    null,
+                    EnumSet.of(DubStatus.Subbed),
+                )
+            }
         }
-        return returnValue
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -207,7 +201,7 @@ class TenshiProvider : MainAPI() {
             interceptor = ddosGuardKiller
         ).document
 
-        val returnValue = parseSearchPage(document)
+        val returnValue = parseSearchPage(document).toMutableList()
 
         while (!document.select("""a.page-link[rel="next"]""").isEmpty()) {
             val link = document.select("""a.page-link[rel="next"]""")
@@ -223,7 +217,7 @@ class TenshiProvider : MainAPI() {
             }
         }
 
-        return returnValue
+        return ArrayList(returnValue)
     }
 
     override fun load(url: String): LoadResponse {
@@ -233,12 +227,7 @@ class TenshiProvider : MainAPI() {
             interceptor = ddosGuardKiller
         ).document
 
-        val englishTitle =
-            document.selectFirst("span.value > span[title=\"English\"]")?.parent()?.text()?.trim()
-        val japaneseTitle =
-            document.selectFirst("span.value > span[title=\"Japanese\"]")?.parent()?.text()?.trim()
         val canonicalTitle = document.selectFirst("header.entry-header > h1.mb-3").text().trim()
-
         val episodeNodes = document.select("li[class*=\"episode\"] > a").toMutableList()
         val totalEpisodePages = if (document.select(".pagination").size > 0)
             document.select(".pagination .page-item a.page-link:not([rel])").last().text()
@@ -266,38 +255,39 @@ class TenshiProvider : MainAPI() {
                 it.attr("data-content").trim(),
             )
         })
-        val status = when (document.selectFirst("li.status > .value")?.text()?.trim()) {
-            "Ongoing" -> ShowStatus.Ongoing
-            "Completed" -> ShowStatus.Completed
-            else -> null
-        }
-        val yearText = document.selectFirst("li.release-date .value").text()
-        val pattern = "(\\d{4})".toRegex()
-        val (year) = pattern.find(yearText)!!.destructured
 
-        val poster = document.selectFirst("img.cover-image")?.attr("src")
+
         val type = document.selectFirst("a[href*=\"$mainUrl/type/\"]")?.text()?.trim()
 
-        val synopsis = document.selectFirst(".entry-description > .card-body")?.text()?.trim()
-        val genre =
-            document.select("li.genre.meta-data > span.value").map { it?.text()?.trim().toString() }
-
-        val synonyms =
-            document.select("li.synonym.meta-data > div.info-box > span.value")
-                .map { it?.text()?.trim().toString() }
-
         return newAnimeLoadResponse(canonicalTitle, url, getType(type ?: "")) {
-            engName = englishTitle
-            japName = japaneseTitle
+            posterUrl = document.selectFirst("img.cover-image")?.attr("src")
+            plot = document.selectFirst(".entry-description > .card-body")?.text()?.trim()
+            tags =
+                document.select("li.genre.meta-data > span.value")
+                    .map { it?.text()?.trim().toString() }
 
-            posterUrl = poster
-            this.year = year.toIntOrNull()
+            synonyms =
+                document.select("li.synonym.meta-data > div.info-box > span.value")
+                    .map { it?.text()?.trim().toString() }
+
+            engName =
+                document.selectFirst("span.value > span[title=\"English\"]")?.parent()?.text()
+                    ?.trim()
+            japName =
+                document.selectFirst("span.value > span[title=\"Japanese\"]")?.parent()?.text()
+                    ?.trim()
+
+            val pattern = "(\\d{4})".toRegex()
+            val yearText = document.selectFirst("li.release-date .value").text()
+            year = pattern.find(yearText)?.groupValues?.get(1)?.toIntOrNull()
 
             addEpisodes(DubStatus.Subbed, episodes)
-            showStatus = status
-            tags = genre
-            this.synonyms = synonyms
-            plot = synopsis
+
+            showStatus = when (document.selectFirst("li.status > .value")?.text()?.trim()) {
+                "Ongoing" -> ShowStatus.Ongoing
+                "Completed" -> ShowStatus.Completed
+                else -> null
+            }
         }
     }
 

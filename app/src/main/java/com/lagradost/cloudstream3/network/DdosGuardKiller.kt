@@ -42,7 +42,7 @@ class DdosGuardKiller(private val alwaysBypass: Boolean) : Interceptor {
                     app.get(it, cacheTime = 0).cookies.also { cookies ->
                         savedCookiesMap[request.url.host] = cookies
                     }
-                }
+                } + request.cookies
 
         val headers = getHeaders(request.headers.toMap(), null, cookies)
         return app.baseClient.newCall(
