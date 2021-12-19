@@ -147,7 +147,7 @@ fun getHeaders(
     val cookieHeaders = (DEFAULT_COOKIES + cookie)
     val cookieMap =
         if (cookieHeaders.isNotEmpty()) mapOf(
-            "Cookie" to cookieHeaders.entries.joinToString("") {
+            "Cookie" to cookieHeaders.entries.joinToString(" ") {
                 "${it.key}=${it.value};"
             }) else mapOf()
     val tempHeaders = (DEFAULT_HEADERS + headers + cookieMap + refererMap)
