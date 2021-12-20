@@ -267,7 +267,7 @@ class PlayerFragment : Fragment() {
     //  val formatter = Formatter(formatBuilder, Locale.getDefault())
 
     /** Cache */
-    private val cacheSize = 100L * 1024L * 1024L // 100 mb
+    private val cacheSize = 500L * 1024L * 1024L // 500 mb
     private var simpleCache: SimpleCache? = null
 
     /** Layout */

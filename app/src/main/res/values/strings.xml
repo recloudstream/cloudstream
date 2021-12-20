@@ -159,7 +159,7 @@
     <string name="vpn_might_be_needed">A VPN might be needed for this provider to work correctly</string>
     <string name="vpn_torrent">This provider is a torrent, a VPN is recommended</string>
 
-    <string name="provider_info_meta">Metadata is not provided by site, video loading might fail.</string>
+    <string name="provider_info_meta">Metadata is not provided by site, video loading will fail if it does not exist on site.</string>
 
     <string name="torrent_plot">Description</string>
     <string name="normal_no_plot">No Plot Found</string>
