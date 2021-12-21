@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import javax.net.ssl.SSLHandshakeException
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
     liveData.observe(this) { it?.let { t -> action(t) } }
@@ -50,6 +51,15 @@ fun <T> normalSafeApiCall(apiCall: () -> T): T? {
     }
 }
 
+fun <T> safeFail(throwable: Throwable): Resource<T> {
+    val stackTraceMsg = (throwable.localizedMessage ?: "") + "\n\n" + throwable.stackTrace.joinToString(
+        separator = "\n"
+    ) {
+        "${it.fileName} ${it.lineNumber}"
+    }
+    return Resource.Failure(false, null, null, stackTraceMsg)
+}
+
 suspend fun <T> safeApiCall(
     apiCall: suspend () -> T,
 ): Resource<T> {
@@ -59,11 +69,24 @@ suspend fun <T> safeApiCall(
         } catch (throwable: Throwable) {
             logError(throwable)
             when (throwable) {
+                is NullPointerException -> {
+                    for (line in throwable.stackTrace) {
+                        if (line.fileName.endsWith("provider.kt", ignoreCase = true)) {
+                            return@withContext Resource.Failure(
+                                false,
+                                null,
+                                null,
+                                "NullPointerException at ${line.fileName} ${line.lineNumber}\nSite might have updated or added Cloudflare/DDOS protection"
+                            )
+                        }
+                    }
+                    safeFail(throwable)
+                }
                 is SocketTimeoutException -> {
-                    Resource.Failure(true, null, null, "Please try again later.")
+                    Resource.Failure(true, null, null, "Connection Timeout\nPlease try again later.")
                 }
                 is HttpException -> {
-                    Resource.Failure(false, throwable.statusCode, null, throwable.localizedMessage ?: "")
+                    Resource.Failure(false, throwable.statusCode, null, throwable.message ?: "HttpException")
                 }
                 is UnknownHostException -> {
                     Resource.Failure(true, null, null, "Cannot connect to server, try again later.")
@@ -74,14 +97,15 @@ suspend fun <T> safeApiCall(
                 is NotImplementedError -> {
                     Resource.Failure(false, null, null, "This operation is not implemented.")
                 }
-                else -> {
-                    val stackTraceMsg = (throwable.localizedMessage ?: "") + "\n\n" + throwable.stackTrace.joinToString(
-                        separator = "\n"
-                    ) {
-                        "${it.fileName} ${it.lineNumber}"
-                    }
-                    Resource.Failure(false, null, null, stackTraceMsg) //
+                is SSLHandshakeException -> {
+                    Resource.Failure(
+                        true,
+                        null,
+                        null,
+                        (throwable.message ?: "SSLHandshakeException") + "\nTry again later."
+                    )
                 }
+                else -> safeFail(throwable)
             }
         }
     }

@@ -533,13 +533,12 @@ class PlayerFragment : Fragment() {
         // https://exoplayer.dev/doc/reference/constant-values.html
         if (isLocked || exoPlayer.duration == TIME_UNSET || (!swipeEnabled && !swipeVerticalEnabled)) return
 
-
         val audioManager = activity?.getSystemService(AUDIO_SERVICE) as? AudioManager
 
         when (motionEvent.action) {
             MotionEvent.ACTION_DOWN -> {
                 // SO YOU CAN PULL DOWN STATUSBAR OR NAVBAR
-                if (motionEvent.rawY > statusBarHeight && motionEvent.rawX < width - navigationBarHeight) {
+                if (motionEvent.rawY > statusBarHeight && motionEvent.rawX < max(width, height) - navigationBarHeight) {
                     currentX = motionEvent.rawX
                     currentY = motionEvent.rawY
                     isValidTouch = true

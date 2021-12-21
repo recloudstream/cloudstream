@@ -35,8 +35,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
 
-        versionCode 37
-        versionName "2.4.5"
+        versionCode 38
+        versionName "2.4.6"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
@@ -91,8 +91,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.0-beta02'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.4.0-beta02'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.0-rc01'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.0-rc01'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
     testImplementation 'junit:junit:4.13.2'
