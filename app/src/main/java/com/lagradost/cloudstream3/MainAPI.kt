@@ -56,6 +56,8 @@ object APIHolder {
 
         TrailersTwoProvider(),
 
+        FilmanProvider(),
+
         ZoroProvider(),
         PinoyMoviePedia()
     )
