@@ -70,7 +70,6 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [vf-film.me](https://vf-film.me) 
 - [vf-serie.org](https://vf-serie.org) 
 - [asianembed.io](https://asianembed.io) 
-- [trailers.to](https://trailers.to) 
 - [filman.cc](https://filman.cc) 
 - [zoro.to](https://zoro.to) 
 - [pinoymoviepedia.ru](https://pinoymoviepedia.ru) 
