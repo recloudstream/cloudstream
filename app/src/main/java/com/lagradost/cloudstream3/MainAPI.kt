@@ -54,7 +54,7 @@ object APIHolder {
 
         //TmdbProvider(),
 
-        TrailersTwoProvider(),
+
 
         FilmanProvider(),
 
@@ -73,6 +73,7 @@ object APIHolder {
 
     private val backwardsCompatibleProviders = arrayListOf(
         KawaiifuProvider(), // removed due to cloudflare
+        TrailersTwoProvider(), // removed due to no videos working
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
