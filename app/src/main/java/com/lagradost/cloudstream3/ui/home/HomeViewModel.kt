@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
@@ -157,18 +158,23 @@ class HomeViewModel : ViewModel() {
             val data = repo?.getMainPage()
             when (data) {
                 is Resource.Success -> {
-                    val home = data.value
-                    if (home?.items?.isNullOrEmpty() == false) {
-                        val currentList =
-                            home.items.shuffled().filter { !it.list.isNullOrEmpty() }.flatMap { it.list }
-                                .distinctBy { it.url }
-                                .toList()
+                    try {
+                        val home = data.value
+                        if (home?.items?.isNullOrEmpty() == false) {
+                            val currentList =
+                                home.items.shuffled().filter { !it.list.isNullOrEmpty() }.flatMap { it.list }
+                                    .distinctBy { it.url }
+                                    .toList()
 
-                        if (!currentList.isNullOrEmpty()) {
-                            val randomItems = currentList.shuffled()
+                            if (!currentList.isNullOrEmpty()) {
+                                val randomItems = currentList.shuffled()
 
-                            _randomItems.postValue(randomItems)
+                                _randomItems.postValue(randomItems)
+                            }
                         }
+                    } catch (e : Exception) {
+                        _randomItems.postValue(emptyList())
+                        logError(e)
                     }
                 }
                 else -> {

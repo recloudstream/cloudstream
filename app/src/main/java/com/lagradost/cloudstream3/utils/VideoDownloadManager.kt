@@ -151,14 +151,18 @@ object VideoDownloadManager {
     private const val SUCCESS_DOWNLOAD_DONE = 1
     private const val SUCCESS_STREAM = 3
     private const val SUCCESS_STOPPED = 2
+
     // will not download the next one, but is still classified as an error
     private const val ERROR_DELETING_FILE = 3
     private const val ERROR_CREATE_FILE = -2
     private const val ERROR_UNKNOWN = -10
+
     //private const val ERROR_OPEN_FILE = -3
     private const val ERROR_TOO_SMALL_CONNECTION = -4
+
     //private const val ERROR_WRONG_CONTENT = -5
     private const val ERROR_CONNECTION_ERROR = -6
+
     //private const val ERROR_MEDIA_STORE_URI_CANT_BE_CREATED = -7
     //private const val ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM = -8
     private const val ERROR_CONTENT_RESOLVER_NOT_FOUND = -9
@@ -235,73 +239,88 @@ object VideoDownloadManager {
         notificationCallback: (Int, Notification) -> Unit
 
     ): Notification? {
-        if (total <= 0) return null// crash, invalid data
+        try {
+            if (total <= 0) return null// crash, invalid data
 
 //        main { // DON'T WANT TO SLOW IT DOWN
-        val builder = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
-            .setAutoCancel(true)
-            .setColorized(true)
-            .setOnlyAlertOnce(true)
-            .setShowWhen(false)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setColor(context.colorFromAttribute(R.attr.colorPrimary))
-            .setContentTitle(ep.mainName)
-            .setSmallIcon(
-                when (state) {
-                    DownloadType.IsDone -> imgDone
-                    DownloadType.IsDownloading -> imgDownloading
-                    DownloadType.IsPaused -> imgPaused
-                    DownloadType.IsFailed -> imgError
-                    DownloadType.IsStopped -> imgStopped
-                }
-            )
+            val builder = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
+                .setAutoCancel(true)
+                .setColorized(true)
+                .setOnlyAlertOnce(true)
+                .setShowWhen(false)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setColor(context.colorFromAttribute(R.attr.colorPrimary))
+                .setContentTitle(ep.mainName)
+                .setSmallIcon(
+                    when (state) {
+                        DownloadType.IsDone -> imgDone
+                        DownloadType.IsDownloading -> imgDownloading
+                        DownloadType.IsPaused -> imgPaused
+                        DownloadType.IsFailed -> imgError
+                        DownloadType.IsStopped -> imgStopped
+                    }
+                )
 
-        if (ep.sourceApiName != null) {
-            builder.setSubText(ep.sourceApiName)
-        }
-
-        if (source != null) {
-            val intent = Intent(context, MainActivity::class.java).apply {
-                data = source.toUri()
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            if (ep.sourceApiName != null) {
+                builder.setSubText(ep.sourceApiName)
             }
-            val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+            if (source != null) {
+                val intent = Intent(context, MainActivity::class.java).apply {
+                    data = source.toUri()
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                } else {
+                    PendingIntent.getActivity(context, 0, intent, 0)
+                }
+                builder.setContentIntent(pendingIntent)
+            }
+
+            if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
+                builder.setProgress((total / 1000).toInt(), (progress / 1000).toInt(), false)
+            }
+
+            val rowTwoExtra = if (ep.name != null) " - ${ep.name}\n" else ""
+            val rowTwo = if (ep.season != null && ep.episode != null) {
+                "${context.getString(R.string.season_short)}${ep.season}:${context.getString(R.string.episode_short)}${ep.episode}" + rowTwoExtra
+            } else if (ep.episode != null) {
+                "${context.getString(R.string.episode)} ${ep.episode}" + rowTwoExtra
             } else {
-                PendingIntent.getActivity(context, 0, intent, 0)
+                (ep.name ?: "") + ""
             }
-            builder.setContentIntent(pendingIntent)
-        }
+            val downloadFormat = context.getString(R.string.download_format)
 
-        if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
-            builder.setProgress((total / 1000).toInt(), (progress / 1000).toInt(), false)
-        }
-
-        val rowTwoExtra = if (ep.name != null) " - ${ep.name}\n" else ""
-        val rowTwo = if (ep.season != null && ep.episode != null) {
-            "${context.getString(R.string.season_short)}${ep.season}:${context.getString(R.string.episode_short)}${ep.episode}" + rowTwoExtra
-        } else if (ep.episode != null) {
-            "${context.getString(R.string.episode)} ${ep.episode}" + rowTwoExtra
-        } else {
-            (ep.name ?: "") + ""
-        }
-        val downloadFormat = context.getString(R.string.download_format)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (ep.poster != null) {
-                val poster = withContext(Dispatchers.IO) {
-                    context.getImageBitmapFromUrl(ep.poster)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (ep.poster != null) {
+                    val poster = withContext(Dispatchers.IO) {
+                        context.getImageBitmapFromUrl(ep.poster)
+                    }
+                    if (poster != null)
+                        builder.setLargeIcon(poster)
                 }
-                if (poster != null)
-                    builder.setLargeIcon(poster)
-            }
 
-            val progressPercentage = progress * 100 / total
-            val progressMbString = "%.1f".format(progress / 1000000f)
-            val totalMbString = "%.1f".format(total / 1000000f)
-            val bigText =
-                if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
-                    (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString MB/$totalMbString MB)"
+                val progressPercentage = progress * 100 / total
+                val progressMbString = "%.1f".format(progress / 1000000f)
+                val totalMbString = "%.1f".format(total / 1000000f)
+                val bigText =
+                    if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
+                        (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString MB/$totalMbString MB)"
+                    } else if (state == DownloadType.IsFailed) {
+                        downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
+                    } else if (state == DownloadType.IsDone) {
+                        downloadFormat.format(context.getString(R.string.download_done), rowTwo)
+                    } else {
+                        downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
+                    }
+
+                val bodyStyle = NotificationCompat.BigTextStyle()
+                bodyStyle.bigText(bigText)
+                builder.setStyle(bodyStyle)
+            } else {
+                val txt = if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
+                    rowTwo
                 } else if (state == DownloadType.IsFailed) {
                     downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
                 } else if (state == DownloadType.IsDone) {
@@ -310,86 +329,74 @@ object VideoDownloadManager {
                     downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
                 }
 
-            val bodyStyle = NotificationCompat.BigTextStyle()
-            bodyStyle.bigText(bigText)
-            builder.setStyle(bodyStyle)
-        } else {
-            val txt = if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
-                rowTwo
-            } else if (state == DownloadType.IsFailed) {
-                downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
-            } else if (state == DownloadType.IsDone) {
-                downloadFormat.format(context.getString(R.string.download_done), rowTwo)
-            } else {
-                downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
+                builder.setContentText(txt)
             }
 
-            builder.setContentText(txt)
-        }
+            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val actionTypes: MutableList<DownloadActionType> = ArrayList()
+                // INIT
+                if (state == DownloadType.IsDownloading) {
+                    actionTypes.add(DownloadActionType.Pause)
+                    actionTypes.add(DownloadActionType.Stop)
+                }
 
-        if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val actionTypes: MutableList<DownloadActionType> = ArrayList()
-            // INIT
-            if (state == DownloadType.IsDownloading) {
-                actionTypes.add(DownloadActionType.Pause)
-                actionTypes.add(DownloadActionType.Stop)
-            }
+                if (state == DownloadType.IsPaused) {
+                    actionTypes.add(DownloadActionType.Resume)
+                    actionTypes.add(DownloadActionType.Stop)
+                }
 
-            if (state == DownloadType.IsPaused) {
-                actionTypes.add(DownloadActionType.Resume)
-                actionTypes.add(DownloadActionType.Stop)
-            }
+                // ADD ACTIONS
+                for ((index, i) in actionTypes.withIndex()) {
+                    val actionResultIntent = Intent(context, VideoDownloadService::class.java)
 
-            // ADD ACTIONS
-            for ((index, i) in actionTypes.withIndex()) {
-                val actionResultIntent = Intent(context, VideoDownloadService::class.java)
-
-                actionResultIntent.putExtra(
-                    "type", when (i) {
-                        DownloadActionType.Resume -> "resume"
-                        DownloadActionType.Pause -> "pause"
-                        DownloadActionType.Stop -> "stop"
-                    }
-                )
-
-                actionResultIntent.putExtra("id", ep.id)
-
-                val pending: PendingIntent = PendingIntent.getService(
-                    // BECAUSE episodes lying near will have the same id +1, index will give the same requested as the previous episode, *100000 fixes this
-                    context, (4337 + index * 1000000 + ep.id),
-                    actionResultIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-
-                builder.addAction(
-                    NotificationCompat.Action(
-                        when (i) {
-                            DownloadActionType.Resume -> pressToResumeIcon
-                            DownloadActionType.Pause -> pressToPauseIcon
-                            DownloadActionType.Stop -> pressToStopIcon
-                        }, when (i) {
-                            DownloadActionType.Resume -> context.getString(R.string.resume)
-                            DownloadActionType.Pause -> context.getString(R.string.pause)
-                            DownloadActionType.Stop -> context.getString(R.string.cancel)
-                        }, pending
+                    actionResultIntent.putExtra(
+                        "type", when (i) {
+                            DownloadActionType.Resume -> "resume"
+                            DownloadActionType.Pause -> "pause"
+                            DownloadActionType.Stop -> "stop"
+                        }
                     )
-                )
+
+                    actionResultIntent.putExtra("id", ep.id)
+
+                    val pending: PendingIntent = PendingIntent.getService(
+                        // BECAUSE episodes lying near will have the same id +1, index will give the same requested as the previous episode, *100000 fixes this
+                        context, (4337 + index * 1000000 + ep.id),
+                        actionResultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+
+                    builder.addAction(
+                        NotificationCompat.Action(
+                            when (i) {
+                                DownloadActionType.Resume -> pressToResumeIcon
+                                DownloadActionType.Pause -> pressToPauseIcon
+                                DownloadActionType.Stop -> pressToStopIcon
+                            }, when (i) {
+                                DownloadActionType.Resume -> context.getString(R.string.resume)
+                                DownloadActionType.Pause -> context.getString(R.string.pause)
+                                DownloadActionType.Stop -> context.getString(R.string.cancel)
+                            }, pending
+                        )
+                    )
+                }
             }
-        }
 
-        if (!hasCreatedNotChanel) {
-            context.createNotificationChannel()
-        }
+            if (!hasCreatedNotChanel) {
+                context.createNotificationChannel()
+            }
 
-        val notification = builder.build()
-        notificationCallback(ep.id, notification)
-        with(NotificationManagerCompat.from(context)) {
-            // notificationId is a unique int for each notification that you must define
-            notify(ep.id, notification)
+            val notification = builder.build()
+            notificationCallback(ep.id, notification)
+            with(NotificationManagerCompat.from(context)) {
+                // notificationId is a unique int for each notification that you must define
+                notify(ep.id, notification)
+            }
+            return notification
+        } catch (e: Exception) {
+            logError(e)
+            return null
         }
-        return notification
-
-//        }
     }
 
     private const val reservedChars = "|\\?*<\":>+[]/\'"

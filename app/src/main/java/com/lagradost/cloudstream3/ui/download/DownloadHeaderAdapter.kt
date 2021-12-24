@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.android.synthetic.main.download_header_episode.view.*
@@ -100,6 +102,7 @@ class DownloadHeaderAdapter(
         private val normalImage: ImageView = itemView.download_header_goto_child
         private var localCard: VisualDownloadHeaderCached? = null
 
+        @SuppressLint("SetTextI18n")
         fun bind(card: VisualDownloadHeaderCached) {
             localCard = card
             val d = card.data
@@ -135,14 +138,21 @@ class DownloadHeaderAdapter(
                 downloadImage.visibility = View.GONE
                 normalImage.visibility = View.VISIBLE
 
-                extraInfo.text =
-                    extraInfo.context.getString(R.string.extra_info_format).format(
-                        card.totalDownloads,
-                        if (card.totalDownloads == 1) extraInfo.context.getString(R.string.episode) else extraInfo.context.getString(
-                            R.string.episodes
-                        ),
-                        mbString
-                    )
+                try {
+                    extraInfo.text =
+                        extraInfo.context.getString(R.string.extra_info_format).format(
+                            card.totalDownloads,
+                            if (card.totalDownloads == 1) extraInfo.context.getString(R.string.episode) else extraInfo.context.getString(
+                                R.string.episodes
+                            ),
+                            mbString
+                        )
+                } catch (e : Exception) {
+                    // you probably formatted incorrectly
+                    extraInfo.text = "Error"
+                    logError(e)
+                }
+
 
                 holder.setOnClickListener {
                     clickCallback.invoke(DownloadHeaderClickEvent(0, d))
