@@ -4,7 +4,6 @@ import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.*
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.network.text
 import org.jsoup.Jsoup
 
 data class ExtractorLink(
@@ -80,7 +79,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     XStreamCdn(),
     StreamSB(),
     Streamhub(),
-    SBPlay(),
+
     FEmbed(),
     WatchSB(),
     VoeExtractor(),
@@ -91,7 +90,10 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     DoodSoExtractor(),
     DoodLaExtractor(),
 
-    AsianLoad()
+    AsianLoad(),
+
+    SBPlay(),
+    SBPlay2(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {
