@@ -366,7 +366,7 @@
                                         android:textColor="?attr/textColor"
                                         android:foreground="@drawable/outline_drawable"
                                         android:paddingTop="5dp"
-                                        android:paddingBottom="5dp"
+                                        android:paddingBottom="0dp"
                                         android:nextFocusUp="@id/result_back"
                                         android:nextFocusDown="@id/result_bookmark_button"
 
@@ -442,7 +442,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
 
-
                     <LinearLayout
                             android:layout_marginTop="5dp"
                             android:orientation="vertical"
@@ -495,44 +494,6 @@
                                 android:progress="0"
                                 android:visibility="gone"
                                 tools:visibility="visible"/>
-                        <!--
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                                android:orientation="horizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp">
-                            <androidx.core.widget.ContentLoadingProgressBar
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintEnd_toStartOf="@+id/result_movie_download"
-                                    android:layout_width="match_parent"
-                                    android:paddingEnd="40dp"
-                                    android:layout_height="40dp"
-                                    tools:progress="50"
-                                    android:id="@+id/result_movie_progress_downloaded"
-                                    android:indeterminate="false"
-                                    style="?android:attr/progressBarStyleHorizontal"
-                                    android:max="100"
-                                    android:layout_gravity="end|center_vertical"
-                                    android:progress="0"
-                                    android:visibility="visible"
-                                    tools:visibility="gone"
-                                    tools:ignore="RtlSymmetry"/>
-                            <ImageView
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:visibility="visible"
-                                    android:layout_height="40dp"
-                                    android:layout_width="40dp"
-                                    android:layout_columnWeight="1"
-                                    android:layout_gravity="end|center_vertical"
-                                    android:padding="2dp"
-                                    android:id="@+id/result_movie_download"
-                                    android:background="?selectableItemBackgroundBorderless"
-                                    android:src="@drawable/ic_baseline_play_arrow_24"
-                                    android:contentDescription="@string/download_descript"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintEnd_toEndOf="parent"/>
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                        -->
                         <TextView
                                 android:id="@+id/result_movie_text_progress"
                                 android:layout_gravity="center_vertical"
@@ -543,14 +504,43 @@
                                 android:layout_height="match_parent">
                         </TextView>
                     </LinearLayout>
+                    <!--<TextView
+                            android:visibility="gone"
+                            android:drawableLeft="@drawable/ic_baseline_play_arrow_24"
+                            android:gravity="center_vertical"
+                            android:textSize="20sp"
+                            android:textColor="?attr/textColor"
+                            android:text="More like this"
+                            android:layout_width="wrap_content" android:layout_height="60dp">
+                    </TextView>
                     <com.google.android.material.tabs.TabLayout
                             android:visibility="gone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            app:tabTextColor="?attr/textColor"
+                            android:foreground="@color/transparent"
+                            android:backgroundTint="@color/transparent"
+                            app:tabIndicatorGravity="top"
+                            android:textAllCaps="false"
+
+                            app:tabIconTint="?attr/textColor"
+                            app:tabIndicatorColor="?attr/textColor"
                             android:id="@+id/result_tabs"
-                            app:tabGravity="start"
-                            android:elevation="0dp">
-                    </com.google.android.material.tabs.TabLayout>
+                            app:tabGravity="start">
+                        <com.google.android.material.tabs.TabItem
+                                android:text="Episodes"
+                                android:icon="@null"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                        </com.google.android.material.tabs.TabItem>
+                        <com.google.android.material.tabs.TabItem
+                                android:text="Sync"
+                                android:icon="@null"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                        </com.google.android.material.tabs.TabItem>
+                    </com.google.android.material.tabs.TabLayout>-->
 
                     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
                             android:visibility="gone"

@@ -305,7 +305,7 @@ class PlayerFragment : Fragment() {
                 fingerLeftScreen = false
 
                 if ((SystemClock.elapsedRealtime() - timestampLastClick) < doubleClickQualificationSpanInMillis) {
-                    if (event.rawX >= ctx.width / 2) {
+                    if (event.rawX >= max(ctx.width, ctx.height) / 2) {
                         clicksRight++
                         if (!ctx.isLocked && ctx.doubleTapEnabled) onDoubleClickRight(clicksRight)
                         //if (!ctx.isShowing) onSingleClick()
