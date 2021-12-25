@@ -228,6 +228,9 @@ object VideoDownloadManager {
         }
     }
 
+    /**
+     * @param hlsProgress will together with hlsTotal display another notification if used, to lessen the confusion about estimated size.
+     * */
     private suspend fun createNotification(
         context: Context,
         source: String?,
@@ -236,9 +239,11 @@ object VideoDownloadManager {
         state: DownloadType,
         progress: Long,
         total: Long,
-        notificationCallback: (Int, Notification) -> Unit
+        notificationCallback: (Int, Notification) -> Unit,
+        hlsProgress: Long? = null,
+        hlsTotal: Long? = null,
 
-    ): Notification? {
+        ): Notification? {
         try {
             if (total <= 0) return null// crash, invalid data
 
@@ -270,11 +275,12 @@ object VideoDownloadManager {
                     data = source.toUri()
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
-                val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                } else {
-                    PendingIntent.getActivity(context, 0, intent, 0)
-                }
+                val pendingIntent: PendingIntent =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                    } else {
+                        PendingIntent.getActivity(context, 0, intent, 0)
+                    }
                 builder.setContentIntent(pendingIntent)
             }
 
@@ -301,12 +307,26 @@ object VideoDownloadManager {
                         builder.setLargeIcon(poster)
                 }
 
-                val progressPercentage = progress * 100 / total
-                val progressMbString = "%.1f".format(progress / 1000000f)
-                val totalMbString = "%.1f".format(total / 1000000f)
+                val progressPercentage: Long
+                val progressMbString: String
+                val totalMbString: String
+                val suffix: String
+
+                if (hlsProgress != null && hlsTotal != null) {
+                    progressPercentage = hlsProgress.toLong() * 100 / hlsTotal
+                    progressMbString = hlsProgress.toString()
+                    totalMbString = hlsTotal.toString()
+                    suffix = " - %.1f MB".format(progress / 1000000f)
+                } else {
+                    progressPercentage = progress * 100 / total
+                    progressMbString = "%.1f MB".format(progress / 1000000f)
+                    totalMbString = "%.1f MB".format(total / 1000000f)
+                    suffix = ""
+                }
+
                 val bigText =
                     if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
-                        (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString MB/$totalMbString MB)"
+                        (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix"
                     } else if (state == DownloadType.IsFailed) {
                         downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
                     } else if (state == DownloadType.IsDone) {
@@ -319,15 +339,16 @@ object VideoDownloadManager {
                 bodyStyle.bigText(bigText)
                 builder.setStyle(bodyStyle)
             } else {
-                val txt = if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
-                    rowTwo
-                } else if (state == DownloadType.IsFailed) {
-                    downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
-                } else if (state == DownloadType.IsDone) {
-                    downloadFormat.format(context.getString(R.string.download_done), rowTwo)
-                } else {
-                    downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
-                }
+                val txt =
+                    if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
+                        rowTwo
+                    } else if (state == DownloadType.IsFailed) {
+                        downloadFormat.format(context.getString(R.string.download_failed), rowTwo)
+                    } else if (state == DownloadType.IsDone) {
+                        downloadFormat.format(context.getString(R.string.download_done), rowTwo)
+                    } else {
+                        downloadFormat.format(context.getString(R.string.download_canceled), rowTwo)
+                    }
 
                 builder.setContentText(txt)
             }
@@ -541,6 +562,8 @@ object VideoDownloadManager {
         val type: DownloadType,
         val bytesDownloaded: Long,
         val bytesTotal: Long,
+        val hlsProgress: Long? = null,
+        val hlsTotal: Long? = null,
     )
 
     data class StreamData(
@@ -664,7 +687,9 @@ object VideoDownloadManager {
 
         val displayName = getDisplayName(name, extension)
         val relativePath =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && basePath.first.isDownloadDir()) getRelativePath(folder) else folder
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && basePath.first.isDownloadDir()) getRelativePath(
+                folder
+            ) else folder
 
         fun deleteFile(): Int {
             return delete(context, name, relativePath, extension, parentId, basePath.first)
@@ -1087,7 +1112,9 @@ object VideoDownloadManager {
         val basePath = context.getBasePath()
 
         val relativePath =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && basePath.first.isDownloadDir()) getRelativePath(folder) else folder
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && basePath.first.isDownloadDir()) getRelativePath(
+                folder
+            ) else folder
 
         val stream = setupStream(context, name, relativePath, extension, realIndex > 0)
         if (stream.errorCode != SUCCESS_STREAM) return stream.errorCode
@@ -1170,6 +1197,8 @@ object VideoDownloadManager {
                     type,
                     bytesDownloaded,
                     (bytesDownloaded * (totalTs / tsProgress.toFloat())).toLong(),
+                    tsProgress,
+                    totalTs
                 )
             )
         }
@@ -1325,7 +1354,9 @@ object VideoDownloadManager {
                         meta.type,
                         meta.bytesDownloaded,
                         meta.bytesTotal,
-                        notificationCallback
+                        notificationCallback,
+                        meta.hlsProgress,
+                        meta.hlsTotal
                     )
                 }
             }
