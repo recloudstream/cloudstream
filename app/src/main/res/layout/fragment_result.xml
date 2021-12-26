@@ -654,20 +654,9 @@
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                     android:visibility="gone"
                     tools:visibility="visible"
-                    app:elevation="0dp"
-                    android:textStyle="bold"
-                    app:backgroundTint="?attr/primaryGrayBackground"
-                    app:tint="?attr/colorPrimary"
-                    android:textColor="?attr/colorPrimary"
-                    app:iconTint="?attr/colorPrimary"
-                    android:layout_margin="16dp"
                     android:id="@+id/result_bookmark_fab"
-                    android:layout_gravity="end|bottom"
                     app:icon="@drawable/ic_baseline_bookmark_24"
-                    android:textAllCaps="false"
-                    android:gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/ExtendedFloatingActionButton"
                     tools:ignore="ContentDescription">
             </com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton>
             <fragment

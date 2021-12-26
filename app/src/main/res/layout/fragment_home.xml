@@ -369,17 +369,17 @@
                 </FrameLayout>
 
 
-                    <androidx.recyclerview.widget.RecyclerView
-                            android:paddingHorizontal="5dp"
-                            android:clipToPadding="false"
-                            android:descendantFocusability="afterDescendants"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            android:id="@+id/home_watch_child_recyclerview"
-                            android:orientation="horizontal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            tools:listitem="@layout/home_result_grid"
-                    />
+                <androidx.recyclerview.widget.RecyclerView
+                        android:paddingHorizontal="5dp"
+                        android:clipToPadding="false"
+                        android:descendantFocusability="afterDescendants"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:id="@+id/home_watch_child_recyclerview"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/home_result_grid"
+                />
 
             </LinearLayout>
 
@@ -484,4 +484,12 @@
             />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:id="@+id/home_api_fab"
+            app:icon="@drawable/ic_baseline_filter_list_24"
+            style="@style/ExtendedFloatingActionButton"
+            tools:ignore="ContentDescription">
+    </com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton>
 </FrameLayout>

@@ -22,6 +22,11 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="searchViewStyle">@style/AppSearchViewStyle</item>
         <item name="tabStyle">@style/Theme.Widget.Tabs</item>
+        <item name="android:divider">@color/transparent</item>
+        <item name="divider">@color/transparent</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="showDividers">none</item>
+        <item name="android:listViewStyle">@style/ListViewStyle</item>
 
         <item name="castExpandedControllerStyle">
             @style/CustomCastExpandedController
@@ -55,6 +60,10 @@
         <item name="boxItemBackground">@color/boxItemBackground</item>
         <item name="iconColor">@color/iconColor</item>
         <item name="white">#FFF</item>
+    </style>
+
+    <style name="ListViewStyle" parent="Widget.AppCompat.ListView">
+        <item name="android:divider">@null</item>
     </style>
 
     <style name="AmoledModeLight" parent="AmoledMode">
@@ -160,6 +169,7 @@
         <item name="android:navigationBarColor">?attr/primaryGrayBackground</item>
         <item name="android:windowBackground">?attr/primaryBlackBackground</item>
     </style>
+
     <style name="AppSearchViewStyle"
            parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:searchIcon">@drawable/search_icon</item>
@@ -167,17 +177,24 @@
         <item name="android:background">@color/transparent</item>
         <item name="android:fontFamily">@font/google_sans</item>
     </style>
-    <style name="AppBottomSheetDialogTheme"
-           parent="Theme.Design.Light.BottomSheetDialog">
+
+    <style name="AppBottomSheetDialogTheme">
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
-    <style name="AppModalStyle"
-           parent="Widget.Design.BottomSheet.Modal">
+    <style name="AppModalStyle">
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="behavior_hideable">true</item>
+        <item name="behavior_skipCollapsed">true</item>
+        <item name="shapeAppearance">@null</item>
+        <item name="shapeAppearanceOverlay">@null</item>
+        <item name="backgroundTint">?android:attr/colorBackground</item>
         <item name="android:background">@drawable/rounded_dialog</item>
         <item name="behavior_peekHeight">512dp</item>
     </style>
-
 
     <style name="PreferenceTheme" parent="@style/AppTheme">
     </style>
@@ -305,7 +322,31 @@
         <item name="android:textColor">?attr/textColor</item>
         <item name="rippleColor">?attr/textColor</item>
     </style>
-    
+
+    <style name="RoundedSelectableButtonIcon" parent="RoundedSelectableButton">
+        <item name="minWidth">0dp</item>
+        <item name="iconTint">?attr/textColor</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:layout_width">35dp</item>
+        <!--<item name="android:layout_height">35dp</item>-->
+    </style>
+
+    <style name="ExtendedFloatingActionButton">
+        <item name="elevation">0dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="backgroundTint">?attr/primaryGrayBackground</item>
+        <item name="tint">?attr/colorPrimary</item>
+        <item name="textColor">?attr/colorPrimary</item>
+        <item name="iconTint">?attr/textColor</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:layout_gravity">end|bottom</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="RoundedSelectableButton">
         <item name="backgroundTint">@color/toggle_button</item>
         <item name="rippleColor">@color/textColor</item>

@@ -14,13 +14,16 @@ class APIRepository(val api: MainAPI) {
 
         val noneApi = object : MainAPI() {
             override val name = "None"
+            override val supportedTypes = emptySet<TvType>()
         }
         val randomApi = object : MainAPI() {
             override val name = "Random"
+            override val supportedTypes = emptySet<TvType>()
         }
 
         val noneRepo = APIRepository(noneApi)
     }
+
     val hasMainPage: Boolean get() = api.hasMainPage
     val name: String get() = api.name
     val mainUrl: String get() = api.mainUrl

@@ -31,17 +31,6 @@ open class VidstreamProviderTemplate : MainAPI() {
     // If getMainPage() is functional, used to display the homepage in app, an optional, but highly encouraged endevour.
     override val hasMainPage = true
 
-    // Sometimes on sites the urls can be something like "/movie.html" which translates to "*full site url*/movie.html" in the browser
-    private fun fixUrl(url: String): String {
-        return if (url.startsWith("//")) {
-            "https:$url"
-        } else if (url.startsWith("/")) {
-            "$mainUrl$url"
-        } else {
-            url
-        }
-    }
-
     // Searching returns a SearchResponse, which can be one of the following: AnimeSearchResponse, MovieSearchResponse, TorrentSearchResponse, TvSeriesSearchResponse
     // Each of the classes requires some different data, but always has some critical things like name, poster and url.
     override fun search(query: String): ArrayList<SearchResponse> {

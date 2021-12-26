@@ -118,7 +118,7 @@ class SearchFragment : Fragment() {
             if (apiNamesSetting != null && langs != null) {
                 val apiNames = apis.filter { langs.contains(it.lang) }.map { it.name }
                 val builder =
-                    AlertDialog.Builder(searchView.context, R.style.AlertDialogCustom).setView(R.layout.provider_list)
+                    AlertDialog.Builder(searchView.context).setView(R.layout.provider_list)
 
                 val dialog = builder.create()
                 dialog.show()

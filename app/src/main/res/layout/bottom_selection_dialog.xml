@@ -4,7 +4,6 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:background="?attr/primaryBlackBackground"
         android:layout_height="match_parent">
 
     <TextView
@@ -26,9 +25,9 @@
             android:nextFocusLeft="@id/apply_btt"
 
             android:id="@+id/listview1"
-            android:layout_marginTop="-10dp"
             android:layout_marginBottom="60dp"
             android:paddingTop="10dp"
+            android:requiresFadingEdge="vertical"
             tools:listitem="@layout/sort_bottom_single_choice"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

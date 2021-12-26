@@ -268,6 +268,10 @@ fun parseRating(ratingString: String?): Int? {
     return (floatRating * 10).toInt()
 }
 
+fun MainAPI.fixUrlNull(url : String?) : String? {
+    return fixUrl(url ?: return null)
+}
+
 fun MainAPI.fixUrl(url: String): String {
     if (url.startsWith("http")) {
         return url

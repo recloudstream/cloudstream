@@ -345,6 +345,12 @@ object UIHelper {
         }
     }
 
+    fun Dialog?.dismissSafe() {
+        if (this?.isShowing == true) {
+            this.dismiss()
+        }
+    }
+
     /**id, stringRes */
     @SuppressLint("RestrictedApi")
     fun View.popupMenuNoIcons(
