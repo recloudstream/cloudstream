@@ -27,6 +27,7 @@ object APIHolder {
     private const val defProvider = 0
 
     val apis = arrayListOf(
+        PelisplusProvider(),
         GogoanimeProvider(),
         AllAnimeProvider(),
         //ShiroProvider(), // v2 fucked me

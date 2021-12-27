@@ -14,6 +14,11 @@ class DoodSoExtractor : DoodLaExtractor() {
     override val mainUrl = "https://dood.so"
 }
 
+class DoodWsExtractor : DoodLaExtractor() {
+    override val mainUrl = "https://dood.ws"
+}
+
+
 open class DoodLaExtractor : ExtractorApi() {
     override val name = "DoodStream"
     override val mainUrl = "https://dood.la"

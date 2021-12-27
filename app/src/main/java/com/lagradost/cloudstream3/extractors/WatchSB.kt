@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
 
-class WatchSB : ExtractorApi() {
+open class WatchSB : ExtractorApi() {
     override val name: String
         get() = "WatchSB"
     override val mainUrl: String
@@ -22,7 +22,7 @@ class WatchSB : ExtractorApi() {
             )
         )
 
-        val extractedLinksList = M3u8Helper().m3u8Generation(
+        return M3u8Helper().m3u8Generation(
             M3u8Helper.M3u8Stream(
                 response.url,
                 headers = response.headers.toMap()
@@ -39,7 +39,5 @@ class WatchSB : ExtractorApi() {
                     true
                 )
             }
-
-        return extractedLinksList
     }
 }
