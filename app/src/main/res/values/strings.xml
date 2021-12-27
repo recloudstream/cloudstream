@@ -368,4 +368,6 @@
     <string name="subtitles_example_text">The quick brown fox jumps over the lazy dog</string>
 
     <string name="tab_recommended">Recommended</string>
+    <string name="player_loaded_subtitles">Loaded %s</string>
+    <string name="player_load_subtitles">Load from file</string>
 </resources>

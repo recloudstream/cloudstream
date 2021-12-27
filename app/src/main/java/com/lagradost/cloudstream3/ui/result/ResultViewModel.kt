@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -57,7 +58,8 @@ class ResultViewModel : ViewModel() {
 
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
     private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
-    private val episodeById: MutableLiveData<HashMap<Int, Int>> = MutableLiveData() // lookup by ID to get Index
+    private val episodeById: MutableLiveData<HashMap<Int, Int>> =
+        MutableLiveData() // lookup by ID to get Index
 
     private val _publicEpisodes: MutableLiveData<Resource<List<ResultEpisode>>> = MutableLiveData()
     private val _publicEpisodesCount: MutableLiveData<Int> = MutableLiveData() // before the sorting
@@ -83,7 +85,8 @@ class ResultViewModel : ViewModel() {
     private val _dubSubSelections: MutableLiveData<Set<DubStatus>> = MutableLiveData()
 
     val dubSubEpisodes: LiveData<Map<DubStatus, List<ResultEpisode>>?> get() = _dubSubEpisodes
-    private val _dubSubEpisodes: MutableLiveData<Map<DubStatus, List<ResultEpisode>>?> = MutableLiveData()
+    private val _dubSubEpisodes: MutableLiveData<Map<DubStatus, List<ResultEpisode>>?> =
+        MutableLiveData()
 
     private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData()
     val watchStatus: LiveData<WatchType> get() = _watchStatus
@@ -291,7 +294,14 @@ class ResultViewModel : ViewModel() {
         _apiName.postValue(apiName)
         val api = getApiFromNameNull(apiName)
         if (api == null) {
-            _resultResponse.postValue(Resource.Failure(false, null, null, "This provider does not exist"))
+            _resultResponse.postValue(
+                Resource.Failure(
+                    false,
+                    null,
+                    null,
+                    "This provider does not exist"
+                )
+            )
             return@launch
         }
         repo = APIRepository(api)
@@ -335,7 +345,8 @@ class ResultViewModel : ViewModel() {
                         _dubStatus.postValue(dubStatus)
 
                         _dubSubSelections.postValue(d.episodes.keys)
-                        val fillerEpisodes = if (showFillers) safeApiCall { getFillerEpisodes(d.name) } else null
+                        val fillerEpisodes =
+                            if (showFillers) safeApiCall { getFillerEpisodes(d.name) } else null
 
                         var idIndex = 0
                         val res = d.episodes.map { ep ->
@@ -462,6 +473,20 @@ class ResultViewModel : ViewModel() {
         isCasting: Boolean,
     ): Resource<EpisodeData> {
         return loadEpisode(episode.id, episode.data, isCasting)
+    }
+
+    fun loadSubtitleFile(uri: Uri, name: String, id: Int?) {
+        if (id == null) return
+        val hashMap: HashMap<String, SubtitleFile> = _allEpisodesSubs.value?.get(id) ?: hashMapOf()
+        hashMap[name] = SubtitleFile(
+            name,
+            uri.toString()
+        )
+        _allEpisodesSubs.value.apply {
+            this?.set(id, hashMap)
+        }?.let {
+            _allEpisodesSubs.postValue(it)
+        }
     }
 
     private suspend fun loadEpisode(

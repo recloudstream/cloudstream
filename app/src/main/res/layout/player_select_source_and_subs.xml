@@ -1,137 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:background="@null"
-        android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@null"
+    android:orientation="vertical">
+
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_marginBottom="60dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:baselineAligned="false">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <LinearLayout
-                android:id="@+id/sort_sources_holder"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="50">
+            android:id="@+id/sort_sources_holder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:orientation="vertical">
+
             <TextView
-                    android:layout_marginTop="10dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_marginTop="10dp"
+                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingTop="10dp"
+                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                android:paddingBottom="10dp"
+                android:text="@string/pick_source"
+                android:textColor="?attr/textColor"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/sort_providers"
+                android:layout_width="match_parent"
+
+                android:layout_height="match_parent"
+                android:layout_rowWeight="1"
+                android:background="?attr/primaryBlackBackground"
+                android:nextFocusLeft="@id/sort_subtitles"
+                android:nextFocusRight="@id/apply_btt"
+                tools:listitem="@layout/sort_bottom_single_choice" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sort_subtitles_holder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/subs_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_rowWeight="1"
+
+                    android:layout_weight="1"
+                    android:nextFocusRight="@id/sort_providers"
+
+                    android:nextFocusDown="@id/sort_subtitles"
                     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
                     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-                    android:textStyle="bold"
-                    android:text="@string/pick_source"
-                    android:textSize="20sp"
+                    android:text="@string/pick_subtitle"
                     android:textColor="?attr/textColor"
-                    android:layout_width="match_parent"
-                    android:layout_rowWeight="1"
-                    android:layout_height="wrap_content">
-            </TextView>
-            <ListView
-                    android:nextFocusRight="@id/apply_btt"
-                    android:nextFocusLeft="@id/sort_subtitles"
-
-                    android:id="@+id/sort_providers"
-                    android:background="?attr/primaryBlackBackground"
-                    android:requiresFadingEdge="vertical"
-                    tools:listitem="@layout/sort_bottom_single_choice"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_rowWeight="1"
-            />
-        </LinearLayout>
-        <LinearLayout
-                android:id="@+id/sort_subtitles_holder"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="50">
-            <FrameLayout
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:id="@+id/subs_settings"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="10dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                <TextView
-                        android:nextFocusRight="@id/sort_providers"
-                        android:nextFocusDown="@id/sort_subtitles"
-
-                        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-                        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-
-                        android:textStyle="bold"
-                        android:text="@string/pick_subtitle"
-                        android:textSize="20sp"
-                        android:textColor="?attr/textColor"
-                        android:layout_rowWeight="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                </TextView>
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <ImageView
-                        android:visibility="gone"
-                        android:layout_marginTop="0dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_gravity="end|center_vertical"
+                    android:layout_width="25dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="10dp"
 
-                        android:src="@drawable/ic_outline_settings_24"
-                        android:layout_width="25dp"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/home_change_provider_img_des">
-                </ImageView>
-            </FrameLayout>
+                    android:contentDescription="@string/home_change_provider_img_des"
+                    android:src="@drawable/ic_outline_settings_24"
+                    android:visibility="gone" />
+            </LinearLayout>
 
             <ListView
-                    android:nextFocusRight="@id/cancel_btt"
-                    android:nextFocusLeft="@id/sort_providers"
+                android:id="@+id/sort_subtitles"
+                android:layout_width="match_parent"
 
-                    android:id="@+id/sort_subtitles"
-                    android:background="?attr/primaryBlackBackground"
-                    android:requiresFadingEdge="vertical"
-                    tools:listitem="@layout/sort_bottom_single_choice"
-                    android:layout_width="match_parent"
-                    android:layout_rowWeight="1"
-                    android:layout_height="match_parent">
-            </ListView>
+                android:layout_height="match_parent"
+                android:layout_rowWeight="1"
+                android:background="?attr/primaryBlackBackground"
+                android:nextFocusLeft="@id/sort_providers"
+                android:nextFocusRight="@id/cancel_btt"
+                tools:listitem="@layout/sort_bottom_single_choice" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_gravity="bottom"
-            android:gravity="bottom|end"
-            android:layout_marginTop="-60dp"
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="-60dp"
+        android:orientation="horizontal">
 
-        <com.google.android.material.button.MaterialButton
-                android:nextFocusRight="@id/cancel_btt"
-                android:nextFocusLeft="@id/cancel_btt"
+<!--        Kinda hack because the gravity won't behave correctly-->
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|start">
 
-                android:id="@+id/apply_btt"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/load_btt"
+                app:icon="@drawable/ic_baseline_subtitles_24"
                 style="@style/WhiteButton"
-                android:layout_gravity="center_vertical|end"
-                android:text="@string/sort_apply"
                 android:layout_width="wrap_content"
-        />
-        <com.google.android.material.button.MaterialButton
+                android:nextFocusLeft="@id/cancel_btt"
                 android:nextFocusRight="@id/apply_btt"
-                android:nextFocusLeft="@id/apply_btt"
+                android:text="@string/player_load_subtitles" />
+        </LinearLayout>
 
-                android:id="@+id/cancel_btt"
-                style="@style/BlackButton"
-                android:layout_gravity="center_vertical|end"
-                android:text="@string/sort_cancel"
-                android:layout_width="wrap_content"
-        />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apply_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:nextFocusLeft="@id/cancel_btt"
+            android:nextFocusRight="@id/cancel_btt"
+            android:text="@string/sort_apply" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/apply_btt"
+            android:text="@string/sort_cancel" />
     </LinearLayout>
 </LinearLayout>

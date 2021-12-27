@@ -29,6 +29,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import android.widget.Toast.LENGTH_SHORT
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
@@ -47,7 +48,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.TIME_UNSET
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
+import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.SubtitleView
@@ -63,6 +64,7 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.button.MaterialButton
+import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.MainActivity.Companion.canEnterPipMode
 import com.lagradost.cloudstream3.MainActivity.Companion.getCastSession
@@ -100,6 +102,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager.getId
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.coroutines.*
+import okhttp3.internal.format
 import java.io.File
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
@@ -766,6 +769,32 @@ class PlayerFragment : Fragment() {
         safeReleasePlayer()
     }
 
+    // Open file picker
+    private val subsPathPicker =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            // It lies, it can be null if file manager quits.
+            if (uri == null) return@registerForActivityResult
+            val context = context ?: AcraApplication.context ?: return@registerForActivityResult
+            // RW perms for the path
+            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+
+            context.contentResolver.takePersistableUriPermission(uri, flags)
+
+            val file = UniFile.fromUri(context, uri)
+            println("Selected URI path: $uri - Full path: ${file.filePath}")
+            // DO NOT REMOVE THE FILE EXTENSION FROM NAME, IT'S NEEDED FOR MIME TYPES
+            val name = file.name ?: uri.toString()
+
+            viewModel.loadSubtitleFile(uri, name, getEpisode()?.id)
+            setPreferredSubLanguage(name)
+            showToast(
+                activity,
+                format(context.getString(R.string.player_loaded_subtitles), name),
+                1000
+            )
+        }
+
     private class SettingsContentObserver(handler: Handler?, val activity: Activity) :
         ContentObserver(handler) {
         private val audioManager = activity.getSystemService(AUDIO_SERVICE) as? AudioManager
@@ -1231,12 +1260,30 @@ class PlayerFragment : Fragment() {
                             sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
                         val subsSettings = sourceDialog.findViewById<View>(R.id.subs_settings)!!
 
+                        val subtitleLoadButton =
+                            sourceDialog.findViewById<MaterialButton>(R.id.load_btt)!!
+
+                        subtitleLoadButton.setOnClickListener {
+//                            "vtt" -> "text/vtt"
+//                            "srt" -> "application/x-subrip"// "text/plain"
+                            subsPathPicker.launch(
+                                arrayOf(
+                                    "text/vtt",
+                                    "application/x-subrip",
+                                    "text/plain",
+                                    "text/str",
+                                    "application/octet-stream"
+                                )
+                            )
+                        }
+
                         subsSettings.setOnClickListener {
                             autoHide()
                             saveArguments()
                             SubtitlesFragment.push(activity)
                             sourceDialog.dismissSafe(activity)
                         }
+
                         var sourceIndex = 0
                         var startSource = 0
                         var sources: List<ExtractorLink> = emptyList()
@@ -2116,40 +2163,7 @@ class PlayerFragment : Fragment() {
                 mediaItemBuilder.setUri(uriPrimary)
             }
 
-            val subs = context?.getSubs() ?: emptyList()
-            val subItems = ArrayList<MediaItem.SubtitleConfiguration>()
-            val subItemsId = ArrayList<String>()
-
-            for (sub in sortSubs(subs)) {
-                val langId =
-                    sub.lang.trimEnd() //SubtitleHelper.fromLanguageToTwoLetters(it.lang) ?: it.lang
-                subItemsId.add(langId)
-                subItems.add(
-                    MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.url))
-                        .setMimeType(sub.url.toSubtitleMimeType())
-                        .setLanguage("_$langId")
-                        .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
-                        .build()
-                )
-
-            }
-
-            activeSubtitles = subItemsId
-            mediaItemBuilder.setSubtitleConfigurations(subItems)
-
-            //might add https://github.com/ed828a/Aihua/blob/1896f46888b5a954b367e83f40b845ce174a2328/app/src/main/java/com/dew/aihua/player/playerUI/VideoPlayer.kt#L287 toggle caps
-
-            val mediaItem = mediaItemBuilder.build()
-            val trackSelector = DefaultTrackSelector(requireContext())
-            // Disable subtitles
-            trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(requireContext())
-                // .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
-                .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
-                .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
-                .clearSelectionOverrides()
-                .build()
-
-            fun getDataSourceFactory(): DataSource.Factory {
+            fun getDataSourceFactory(isOnline: Boolean): DataSource.Factory {
                 return if (isOnline) {
                     DefaultHttpDataSource.Factory().apply {
                         setUserAgent(USER_AGENT)
@@ -2174,6 +2188,41 @@ class PlayerFragment : Fragment() {
                 }
             }
 
+            val subs = context?.getSubs() ?: emptyList()
+            val subItemsId = ArrayList<String>()
+
+            val subSources = sortSubs(subs).map { sub ->
+                // The url can look like .../document/4294 when the name is EnglishSDH.srt
+                val subtitleMimeType =
+                    if (sub.url.startsWith("content")) sub.lang.toSubtitleMimeType() else sub.url.toSubtitleMimeType()
+
+                val langId =
+                    sub.lang.trimEnd() //SubtitleHelper.fromLanguageToTwoLetters(it.lang) ?: it.lang
+                subItemsId.add(langId)
+                val subConfig = MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.url))
+                    .setMimeType(subtitleMimeType)
+                    .setLanguage("_$langId")
+                    .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+                    .build()
+                SingleSampleMediaSource.Factory(getDataSourceFactory(!sub.url.startsWith("content")))
+                    .createMediaSource(subConfig, TIME_UNSET)
+            }
+
+            activeSubtitles = subItemsId
+//            mediaItemBuilder.setSubtitleConfigurations(subItems)
+
+            //might add https://github.com/ed828a/Aihua/blob/1896f46888b5a954b367e83f40b845ce174a2328/app/src/main/java/com/dew/aihua/player/playerUI/VideoPlayer.kt#L287 toggle caps
+
+            val mediaItem = mediaItemBuilder.build()
+            val trackSelector = DefaultTrackSelector(requireContext())
+            // Disable subtitles
+            trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(requireContext())
+                // .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
+                .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
+                .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
+                .clearSelectionOverrides()
+                .build()
+
             normalSafeApiCall {
                 val databaseProvider = StandaloneDatabaseProvider(requireContext())
                 simpleCache = SimpleCache(
@@ -2187,18 +2236,23 @@ class PlayerFragment : Fragment() {
 
             val cacheFactory = CacheDataSource.Factory().apply {
                 simpleCache?.let { setCache(it) }
-                setUpstreamDataSourceFactory(getDataSourceFactory())
+                setUpstreamDataSourceFactory(getDataSourceFactory(isOnline))
             }
 
             val exoPlayerBuilder =
                 ExoPlayer.Builder(requireContext())
                     .setTrackSelector(trackSelector)
 
+            val videoMediaSource =
+                DefaultMediaSourceFactory(cacheFactory).createMediaSource(mediaItem)
+
             exoPlayer = exoPlayerBuilder.build().apply {
                 playWhenReady = isPlayerPlaying
                 seekTo(currentWindow, playbackPosition)
                 setMediaSource(
-                    DefaultMediaSourceFactory(cacheFactory).createMediaSource(mediaItem),
+                    MergingMediaSource(
+                        videoMediaSource, *subSources.toTypedArray()
+                    ),
                     playbackPosition
                 )
                 prepare()
