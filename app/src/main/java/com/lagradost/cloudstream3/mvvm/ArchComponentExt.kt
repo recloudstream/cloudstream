@@ -71,7 +71,7 @@ suspend fun <T> safeApiCall(
             when (throwable) {
                 is NullPointerException -> {
                     for (line in throwable.stackTrace) {
-                        if (line.fileName.endsWith("provider.kt", ignoreCase = true)) {
+                        if (line?.fileName?.endsWith("provider.kt", ignoreCase = true) == true) {
                             return@withContext Resource.Failure(
                                 false,
                                 null,
