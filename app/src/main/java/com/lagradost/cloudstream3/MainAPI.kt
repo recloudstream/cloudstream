@@ -47,6 +47,8 @@ object APIHolder {
         VidEmbedProvider(),
         VfFilmProvider(),
         VfSerieProvider(),
+        FrenchStreamProvider(),
+
         AsianLoadProvider(),
 
         SflixProvider("https://sflix.to", "Sflix"),
