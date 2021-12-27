@@ -75,5 +75,6 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [zoro.to](https://zoro.to) 
 - [pinoymoviepedia.ru](https://pinoymoviepedia.ru) 
 - [pinoy-hd.xyz](https://www.pinoy-hd.xyz) 
+- [trailers.to](https://trailers.to) 
 - [asiaflix.app](https://asiaflix.app) 
 <!--SITE LIST END-->
