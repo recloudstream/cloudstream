@@ -182,6 +182,13 @@ class PlayerFragment : Fragment() {
     //private var torrentStream: TorrentStream? = null
     private var lastTorrentUrl = ""
 
+    /**
+     * Tracks reported to be used by exoplayer, since sometimes it has a mind of it's own when selecting subs.
+     * String = lowercase language as set by .setLanguage("_$langId")
+     * Boolean = if it's active
+     * */
+    var exoPlayerSelectedTracks = listOf<Pair<String, Boolean>>()
+
     //private val isTorrent: Boolean get() = torrentStream != null
     private fun initTorrentStream(torrentUrl: String) {
         if (lastTorrentUrl == torrentUrl) return
@@ -541,7 +548,11 @@ class PlayerFragment : Fragment() {
         when (motionEvent.action) {
             MotionEvent.ACTION_DOWN -> {
                 // SO YOU CAN PULL DOWN STATUSBAR OR NAVBAR
-                if (motionEvent.rawY > statusBarHeight && motionEvent.rawX < max(width, height) - navigationBarHeight) {
+                if (motionEvent.rawY > statusBarHeight && motionEvent.rawX < max(
+                        width,
+                        height
+                    ) - navigationBarHeight
+                ) {
                     currentX = motionEvent.rawX
                     currentY = motionEvent.rawY
                     isValidTouch = true
@@ -772,27 +783,42 @@ class PlayerFragment : Fragment() {
     // Open file picker
     private val subsPathPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            // It lies, it can be null if file manager quits.
-            if (uri == null) return@registerForActivityResult
-            val context = context ?: AcraApplication.context ?: return@registerForActivityResult
-            // RW perms for the path
-            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            normalSafeApiCall {
+                // It lies, it can be null if file manager quits.
+                if (uri == null) return@normalSafeApiCall
+                val context = context ?: AcraApplication.context ?: return@normalSafeApiCall
+                // RW perms for the path
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 
-            context.contentResolver.takePersistableUriPermission(uri, flags)
+                context.contentResolver.takePersistableUriPermission(uri, flags)
 
-            val file = UniFile.fromUri(context, uri)
-            println("Selected URI path: $uri - Full path: ${file.filePath}")
-            // DO NOT REMOVE THE FILE EXTENSION FROM NAME, IT'S NEEDED FOR MIME TYPES
-            val name = file.name ?: uri.toString()
+                val file = UniFile.fromUri(context, uri)
+                println("Loaded subtitle file. Selected URI path: $uri - Name: ${file.name}")
+                // DO NOT REMOVE THE FILE EXTENSION FROM NAME, IT'S NEEDED FOR MIME TYPES
+                val name = file.name ?: uri.toString()
 
-            viewModel.loadSubtitleFile(uri, name, getEpisode()?.id)
-            setPreferredSubLanguage(name)
-            showToast(
-                activity,
-                format(context.getString(R.string.player_loaded_subtitles), name),
-                1000
-            )
+                // Sets subs manually if downloaded since the viewModel won't exist.
+                if (isDownloadedFile && uriData.id != null)
+                    allEpisodesSubs[uriData.id!!] =
+                        (allEpisodesSubs[uriData.id]
+                            ?: hashMapOf()).apply {
+                            this[name] = SubtitleFile(name, uri.toString())
+                        }
+                else
+                    viewModel.loadSubtitleFile(
+                        uri,
+                        name,
+                        getEpisode()?.id
+                    )
+
+                setPreferredSubLanguage(name)
+                showToast(
+                    activity,
+                    String.format(context.getString(R.string.player_loaded_subtitles), name),
+                    1000
+                )
+            }
         }
 
     private class SettingsContentObserver(handler: Handler?, val activity: Activity) :
@@ -811,6 +837,13 @@ class PlayerFragment : Fragment() {
     companion object {
         fun String.toSubtitleMimeType(): String {
             return when {
+                // Checks the file name if downloaded.
+                startsWith("content://") -> {
+                    UniFile.fromUri(
+                        AcraApplication.context,
+                        Uri.parse(this)
+                    ).name?.toSubtitleMimeType() ?: MimeTypes.APPLICATION_SUBRIP
+                }
                 endsWith("vtt", true) -> MimeTypes.TEXT_VTT
                 endsWith("srt", true) -> MimeTypes.APPLICATION_SUBRIP
                 endsWith("xml", true) || endsWith("ttml", true) -> MimeTypes.APPLICATION_TTML
@@ -1316,9 +1349,23 @@ class PlayerFragment : Fragment() {
                             }
                         }
 
-                        val startIndexFromMap =
-                            currentSubtitles.map { it.trimEnd() }
-                                .indexOf(preferredSubtitles.trimEnd()) + 1
+                        /**
+                         * This will get the actual real track played by exoplayer.
+                         * */
+                        val currentSubtitle = currentSubtitles.firstOrNull { sub ->
+                            exoPlayerSelectedTracks.any {
+                                // The replace is needed as exoplayer translates _ to -
+                                // Also we prefix the languages with _
+                                it.second && it.first.replace("-", "") .equals(
+                                    sub.replace("-", ""),
+                                    ignoreCase = true
+                                )
+                            }
+                        }
+
+                        val startIndexFromMap = currentSubtitles.indexOf(currentSubtitle) + 1
+//                            currentSubtitles.map { it.trimEnd() }
+//                                .indexOf(preferredSubtitles.trimEnd()) + 1
                         var subtitleIndex = startIndexFromMap
 
                         if (currentSubtitles.isEmpty()) {
@@ -1403,7 +1450,7 @@ class PlayerFragment : Fragment() {
                 ?: realLang else realLang
 
         if (!this::exoPlayer.isInitialized) return
-        (exoPlayer.trackSelector as DefaultTrackSelector?)?.let { trackSelector ->
+        (exoPlayer.trackSelector as? DefaultTrackSelector?)?.let { trackSelector ->
             if (lang.isNullOrBlank()) {
                 trackSelector.setParameters(
                     trackSelector.buildUponParameters()
@@ -1582,11 +1629,11 @@ class PlayerFragment : Fragment() {
             setPreferredSubLanguage(it)
         }
 
-        sources_btt.visibility =
-            if (isDownloadedFile)
-                if (context?.getSubs()?.isNullOrEmpty() != false)
-                    GONE else VISIBLE
-            else VISIBLE
+//        sources_btt.visibility =
+//            if (isDownloadedFile)
+//                if (context?.getSubs()?.isNullOrEmpty() != false)
+//                    GONE else VISIBLE
+//            else VISIBLE
 
         player_media_route_button?.isVisible = !isDownloadedFile
         if (savedInstanceState != null) {
@@ -1867,6 +1914,10 @@ class PlayerFragment : Fragment() {
             if (isDownloadedFile) {
                 if (!supportsDownloadedFiles) return null
                 val list = ArrayList<SubtitleFile>()
+
+                // Adds custom subtitles
+                allEpisodesSubs[uriData.id]?.values?.forEach { list.add(it) }
+
                 VideoDownloadManager.getFolder(this, uriData.relativePath, uriData.basePath)
                     ?.forEach { file ->
                         val name = uriData.displayName.removeSuffix(".mp4")
@@ -2194,17 +2245,18 @@ class PlayerFragment : Fragment() {
             val subSources = sortSubs(subs).map { sub ->
                 // The url can look like .../document/4294 when the name is EnglishSDH.srt
                 val subtitleMimeType =
-                    if (sub.url.startsWith("content")) sub.lang.toSubtitleMimeType() else sub.url.toSubtitleMimeType()
+                    sub.url.toSubtitleMimeType()
 
                 val langId =
                     sub.lang.trimEnd() //SubtitleHelper.fromLanguageToTwoLetters(it.lang) ?: it.lang
+
                 subItemsId.add(langId)
                 val subConfig = MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.url))
                     .setMimeType(subtitleMimeType)
                     .setLanguage("_$langId")
                     .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
                     .build()
-                SingleSampleMediaSource.Factory(getDataSourceFactory(!sub.url.startsWith("content")))
+                SingleSampleMediaSource.Factory(getDataSourceFactory(!sub.url.startsWith("content://")))
                     .createMediaSource(subConfig, TIME_UNSET)
             }
 
@@ -2352,6 +2404,16 @@ class PlayerFragment : Fragment() {
             }
 
             exoPlayer.addListener(object : Player.Listener {
+
+                /**
+                 * Records the current used subtitle/track. Needed as exoplayer seems to have loose track language selection.
+                 * */
+                override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
+                    exoPlayerSelectedTracks =
+                        tracksInfo.trackGroupInfos.mapNotNull { it.trackGroup.getFormat(0).language?.let { lang -> lang to it.isSelected } }
+                    super.onTracksInfoChanged(tracksInfo)
+                }
+
                 override fun onRenderedFirstFrame() {
                     super.onRenderedFirstFrame()
                     isCurrentlySkippingEp = false

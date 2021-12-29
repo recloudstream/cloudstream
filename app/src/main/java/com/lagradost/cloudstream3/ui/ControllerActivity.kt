@@ -117,7 +117,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         bottomSheetDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility = GONE
                     } else {
                         val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
-                        arrayAdapter.add("No Subtitles")
+                        arrayAdapter.add(view.context.getString(R.string.no_subtitles))
                         arrayAdapter.addAll(subTracks.mapNotNull { it.name })
 
                         subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
