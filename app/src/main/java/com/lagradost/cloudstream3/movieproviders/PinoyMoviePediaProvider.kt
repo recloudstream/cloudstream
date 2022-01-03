@@ -116,9 +116,9 @@ class PinoyMoviePediaProvider : MainAPI() {
         val isTvSeries = doc?.select("title")?.text()?.lowercase()?.contains("full episode -") ?: false
 
         // Video details
-        val poster = doc.select("meta[property=og:image]").firstOrNull()?.attr("content")
-        val title = inner?.select("div.data > h1")?.firstOrNull()?.text() ?: "<Untitled>"
-        val descript = body?.select("div#info")?.text()
+        val poster = inner?.select("div.poster > img")?.attr("src")
+        val title = inner?.select("div.data > h1")?.firstOrNull()?.text() ?: ""
+        val descript = body?.select("div#info > div.wp-content")?.text()
         val rex = Regex("\\((\\d+)")
         val yearRes = rex.find(title)?.value ?: ""
         //Log.i(this.name, "Result => (yearRes) ${yearRes}")
@@ -150,7 +150,7 @@ class PinoyMoviePediaProvider : MainAPI() {
                         //Log.i(this.name, "Result => (epLinks href) ${href}")
                         episodeList.add(
                             TvSeriesEpisode(
-                                name,
+                                "Episode $epNum",
                                 null,
                                 epNum,
                                 href,

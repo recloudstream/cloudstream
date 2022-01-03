@@ -90,7 +90,7 @@ class PinoyMoviesEsProvider : MainAPI() {
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=${query}"
         val html = app.get(url, interceptor = DdosGuardKiller(true)).text
-        Log.i(this.name, "Result => (html) ${Jsoup.parse(html).getElementsByTag("body")}")
+        //Log.i(this.name, "Result => (html) ${Jsoup.parse(html).getElementsByTag("body")}")
         val document = Jsoup.parse(html).select("div#archive-content > article")
         if (document != null) {
             return document.map {

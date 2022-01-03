@@ -66,6 +66,7 @@ object APIHolder {
         PinoyHDXyzProvider(),
         PinoyMoviesEsProvider(),
         TrailersTwoProvider(),
+        DramaSeeProvider()
     )
 
     val restrictedApis = arrayListOf(
@@ -272,12 +273,18 @@ fun parseRating(ratingString: String?): Int? {
 }
 
 fun MainAPI.fixUrlNull(url : String?) : String? {
+    if (url.isNullOrEmpty()) {
+        return null
+    }
     return fixUrl(url ?: return null)
 }
 
 fun MainAPI.fixUrl(url: String): String {
     if (url.startsWith("http")) {
         return url
+    }
+    if (url.isEmpty()) {
+        return ""
     }
 
     val startsWithNoHttp = url.startsWith("//")

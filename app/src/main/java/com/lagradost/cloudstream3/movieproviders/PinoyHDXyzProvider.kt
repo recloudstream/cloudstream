@@ -68,9 +68,8 @@ class PinoyHDXyzProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/?q=${query.replace(" ", "+")}"
-        val html = app.get(url).text
-        val document = Jsoup.parse(html).select("div.portfolio-thumb")
-        if (document != null) {
+        val document = app.get(url).document.select("div.portfolio-thumb")
+        if (!document.isNullOrEmpty()) {
             return document.map {
 
                 val link = it?.select("a")?.firstOrNull()?.attr("href") ?: ""
