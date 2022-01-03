@@ -76,5 +76,6 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [pinoymoviepedia.ru](https://pinoymoviepedia.ru) 
 - [pinoy-hd.xyz](https://www.pinoy-hd.xyz) 
 - [trailers.to](https://trailers.to) 
+- [dramasee.net](https://dramasee.net) 
 - [asiaflix.app](https://asiaflix.app) 
 <!--SITE LIST END-->
