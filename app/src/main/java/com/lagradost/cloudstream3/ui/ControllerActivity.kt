@@ -21,10 +21,12 @@ import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.cast.framework.media.uicontroller.UIController
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity
-import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.sortSubs
 import com.lagradost.cloudstream3.sortUrls
+import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
+import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.CastHelper.awaitLinks
 import com.lagradost.cloudstream3.utils.CastHelper.getMediaInfo
@@ -86,10 +88,11 @@ data class MetadataHolder(
     val currentEpisodeIndex: Int,
     val episodes: List<ResultEpisode>,
     val currentLinks: List<ExtractorLink>,
-    val currentSubtitles: List<SubtitleFile>
+    val currentSubtitles: List<SubtitleData>
 )
 
-class SelectSourceController(val view: ImageView, val activity: ControllerActivity) : UIController() {
+class SelectSourceController(val view: ImageView, val activity: ControllerActivity) :
+    UIController() {
     private val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
@@ -106,17 +109,22 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         remoteMediaClient?.mediaInfo?.mediaTracks?.filter { it.type == MediaTrack.TYPE_TEXT }
                             ?: ArrayList()
 
-                    val bottomSheetDialogBuilder = AlertDialog.Builder(view.context, R.style.AlertDialogCustomBlack)
+                    val bottomSheetDialogBuilder =
+                        AlertDialog.Builder(view.context, R.style.AlertDialogCustomBlack)
                     bottomSheetDialogBuilder.setView(R.layout.sort_bottom_sheet)
                     val bottomSheetDialog = bottomSheetDialogBuilder.create()
                     bottomSheetDialog.show()
                     //  bottomSheetDialog.setContentView(R.layout.sort_bottom_sheet)
-                    val providerList = bottomSheetDialog.findViewById<ListView>(R.id.sort_providers)!!
-                    val subtitleList = bottomSheetDialog.findViewById<ListView>(R.id.sort_subtitles)!!
+                    val providerList =
+                        bottomSheetDialog.findViewById<ListView>(R.id.sort_providers)!!
+                    val subtitleList =
+                        bottomSheetDialog.findViewById<ListView>(R.id.sort_subtitles)!!
                     if (subTracks.isEmpty()) {
-                        bottomSheetDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility = GONE
+                        bottomSheetDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility =
+                            GONE
                     } else {
-                        val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
+                        val arrayAdapter =
+                            ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
                         arrayAdapter.add(view.context.getString(R.string.no_subtitles))
                         arrayAdapter.addAll(subTracks.mapNotNull { it.name })
 
@@ -168,7 +176,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     val sortingMethods = items.map { it.name }.toTypedArray()
                     val sotringIndex = items.indexOfFirst { it.url == contentUrl }
 
-                    val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
+                    val arrayAdapter =
+                        ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
                     arrayAdapter.addAll(sortingMethods.toMutableList())
 
                     providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
@@ -196,7 +205,9 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                             try { // THIS IS VERY IMPORTANT BECAUSE WE NEVER WANT TO AUTOLOAD THE NEXT EPISODE
                                 val currentIdIndex = remoteMediaClient?.getItemIndex()
 
-                                val nextId = remoteMediaClient?.mediaQueue?.itemIds?.get(currentIdIndex?.plus(1) ?: 0)
+                                val nextId = remoteMediaClient?.mediaQueue?.itemIds?.get(
+                                    currentIdIndex?.plus(1) ?: 0
+                                )
                                 if (currentIdIndex == null && nextId != null) {
                                     awaitLinks(
                                         remoteMediaClient?.queueInsertAndPlayItem(
@@ -256,26 +267,29 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     thread {
                         val index = meta.currentEpisodeIndex + 1
                         val epData = meta.episodes[index]
-                        val links = ArrayList<ExtractorLink>()
-                        val subs = ArrayList<SubtitleFile>()
+                        val currentLinks = mutableSetOf<ExtractorLink>()
+                        val currentSubs = mutableSetOf<SubtitleData>()
 
-                        val isSuccessful =
-                            APIRepository(getApiFromName(meta.apiName)).loadLinks(epData.data, true, { subtitleFile ->
-                                if (!subs.any { it.url == subtitleFile.url }) {
-                                    subs.add(subtitleFile)
-                                }
-                            }) { link ->
-                                if (!links.any { it.url == link.url }) {
-                                    links.add(link)
-                                }
-                            }
+                        val generator = RepoLinkGenerator(listOf(epData))
 
-                        if (isSuccessful) {
-                            val sorted = sortUrls(links)
-                            if (sorted.isNotEmpty()) {
+                        val isSuccessful = normalSafeApiCall {
+                            generator.generateLinks(false, true,
+                                {
+                                    it.first?.let { link ->
+                                        currentLinks.add(link)
+                                    }
+                                }, {
+                                    currentSubs.add(it)
+                                })
+                        }
+
+                        val sortedLinks = sortUrls(currentLinks)
+                        val sortedSubs = sortSubs(currentSubs)
+                        if (isSuccessful == true) {
+                            if (currentLinks.isNotEmpty()) {
                                 val jsonCopy = meta.copy(
-                                    currentLinks = sorted,
-                                    currentSubtitles = subs,
+                                    currentLinks =  sortedLinks,
+                                    currentSubtitles = sortedSubs,
                                     currentEpisodeIndex = index
                                 )
 
@@ -287,7 +301,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                     jsonCopy,
                                     0,
                                     done,
-                                    subs
+                                    sortedSubs
                                 )
 
                                 /*fun loadIndex(index: Int) {
@@ -367,9 +381,21 @@ class ControllerActivity : ExpandedControllerActivity() {
         val skipBackButton: ImageView = getButtonImageViewAt(1)
         val skipForwardButton: ImageView = getButtonImageViewAt(2)
         val skipOpButton: ImageView = getButtonImageViewAt(3)
-        uiMediaController.bindViewToUIController(sourcesButton, SelectSourceController(sourcesButton, this))
-        uiMediaController.bindViewToUIController(skipBackButton, SkipTimeController(skipBackButton, false))
-        uiMediaController.bindViewToUIController(skipForwardButton, SkipTimeController(skipForwardButton, true))
-        uiMediaController.bindViewToUIController(skipOpButton, SkipNextEpisodeController(skipOpButton))
+        uiMediaController.bindViewToUIController(
+            sourcesButton,
+            SelectSourceController(sourcesButton, this)
+        )
+        uiMediaController.bindViewToUIController(
+            skipBackButton,
+            SkipTimeController(skipBackButton, false)
+        )
+        uiMediaController.bindViewToUIController(
+            skipForwardButton,
+            SkipTimeController(skipForwardButton, true)
+        )
+        uiMediaController.bindViewToUIController(
+            skipOpButton,
+            SkipNextEpisodeController(skipOpButton)
+        )
     }
 }

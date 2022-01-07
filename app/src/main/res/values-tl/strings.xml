@@ -20,7 +20,6 @@
     <string name="player_speed_text_format" formatted="true">Bilis (%.2fx)</string>
     <string name="rated_format" formatted="true">Rated: %.1f</string>
     <string name="new_update_format" formatted="true">Bagong update!\n%s -> %s</string>
-    <string name="filler_format" formatted="true">(Filler) %s</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Home</string>
@@ -50,7 +49,7 @@
     <string name="pick_source">Sources</string>
     <string name="pick_subtitle">Subtitles</string>
     <string name="reload_error">Retry connection…</string>
-    <string name="result_go_back">Go back</string>
+    <string name="go_back">Go back</string>
     <string name="play_episode">I-play ang episode</string>
     <!--<string name="need_storage">Payagan sa Itabi</string>-->
 

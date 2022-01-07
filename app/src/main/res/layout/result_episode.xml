@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
 
@@ -15,8 +14,7 @@
         app:cardBackgroundColor="@color/transparent"
         app:cardElevation="0dp"
         android:foreground="@drawable/outline_drawable"
-        android:layout_marginBottom="5dp"
->
+        android:layout_marginBottom="5dp">
     <!-- IDK BUT THIS DOES NOT SEAM LIKE A GOOD WAY OF DOING IT -->
     <!--<LinearLayout
             android:layout_width="fill_parent"
@@ -48,14 +46,15 @@
             android:layout_width="match_parent"
             tools:progress="50"
             android:layout_gravity="bottom"
-            android:layout_height="5dp">
-    </androidx.core.widget.ContentLoadingProgressBar>
+            android:layout_height="5dp" />
+
     <LinearLayout
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
         <ImageView
-                android:tint="?attr/textColor"
+                app:tint="?attr/textColor"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_gravity="center_vertical"
@@ -63,15 +62,21 @@
                 android:src="@drawable/ic_baseline_play_arrow_24"
                 android:contentDescription="@string/episode_play_img_des"
                 android:layout_height="match_parent"
-                android:layout_width="wrap_content"
-        />
+                android:layout_width="wrap_content" />
         <!--marquee_forever-->
+        <com.google.android.material.button.MaterialButton
+                android:layout_gravity="center"
+                style="@style/SmallBlackButton"
+                android:text="@string/filler"
+                android:id="@+id/episode_filler" />
+
         <TextView
                 android:id="@+id/episode_text"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="50dp"
                 android:layout_gravity="center_vertical"
-                android:gravity="center_vertical" tools:text="Episode 1"
+                android:gravity="center_vertical"
+                tools:text="Episode 1"
                 android:textColor="?attr/textColor"
 
                 android:scrollHorizontally="true"
@@ -81,14 +86,14 @@
                 android:singleLine="true"
 
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-        </TextView>
+                android:layout_height="match_parent" />
     </LinearLayout>
 
     <FrameLayout
             android:layout_gravity="end"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
+
         <androidx.core.widget.ContentLoadingProgressBar
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
@@ -103,13 +108,13 @@
                 android:layout_margin="5dp"
                 android:layout_gravity="end|center_vertical"
                 android:progress="0"
-                android:visibility="visible"
-        />
+                android:visibility="visible" />
+
         <ImageView
                 android:nextFocusLeft="@id/episode_holder"
                 android:nextFocusRight="@id/episode_holder"
 
-                android:tint="?attr/white"
+                app:tint="?attr/white"
 
                 android:id="@+id/result_episode_download"
                 android:visibility="visible"
@@ -121,6 +126,6 @@
                 android:layout_width="30dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_baseline_play_arrow_24"
-                android:contentDescription="@string/download"/>
+                android:contentDescription="@string/download" />
     </FrameLayout>
 </androidx.cardview.widget.CardView>

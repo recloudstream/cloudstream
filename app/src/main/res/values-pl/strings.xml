@@ -32,7 +32,7 @@
     <string name="pick_source">Źródła</string>
     <string name="pick_subtitle">Napisy</string>
     <string name="reload_error">Połącz ponownie…</string>
-    <string name="result_go_back">Wstecz</string>
+    <string name="go_back">Wstecz</string>
     <string name="play_episode">Odtwórz odcinek</string>
     <!--<string name="need_storage">Allow to download episodes</string>-->
 
@@ -223,7 +223,7 @@
     <string name="home_main_poster_img_des">Główny plakat</string>
     <string name="home_next_random_img_des">Następny losowy</string>
     <string name="go_back_img_des">Wstecz</string>
-    <string name="filler_format">(WYpełniacz) %s</string>
+    <string name="filler">WYpełniacz</string>
     <string name="home_change_provider_img_des">Zmień dostawcę</string>
     <string name="preview_background_img_des">Pogląd tła</string>
 </resources>

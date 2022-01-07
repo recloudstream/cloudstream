@@ -26,7 +26,7 @@
     <string name="play_torrent_button">टोरेंट चलाये</string>
     <string name="pick_source">सूत्र</string>
     <string name="reload_error">फिरसे प्रयास करे…</string>
-    <string name="result_go_back">वापिस जाए</string>
+    <string name="go_back">वापिस जाए</string>
     <string name="play_episode">एपिसोड चलाये</string>
     <!--<string name="need_storage">Allow to download episodes</string>-->
 

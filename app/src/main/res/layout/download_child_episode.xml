@@ -111,7 +111,7 @@
                     android:layout_width="30dp"
                     android:background="?selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_baseline_play_arrow_24"
-                    android:tint="?attr/textColor"
+                    app:tint="?attr/textColor"
                     android:contentDescription="@string/download"/>
         </FrameLayout>
     </GridLayout>

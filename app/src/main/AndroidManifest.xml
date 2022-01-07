@@ -24,10 +24,27 @@
             android:usesCleartextTraffic="true"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme" android:fullBackupContent="@xml/backup_descriptor" tools:targetApi="m">
+            android:theme="@style/AppTheme"
+            android:fullBackupContent="@xml/backup_descriptor"
+            tools:targetApi="m">
         <meta-data
                 android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
                 android:value="com.lagradost.cloudstream3.utils.CastOptionsProvider"/>
+
+        <activity android:name=".ui.player.DownloadedPlayerActivity"
+                android:screenOrientation="userLandscape"
+                android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation"
+                android:resizeableActivity="true"
+                android:supportsPictureInPicture="true"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="content"/>
+                <data android:mimeType="video/*"/>
+            </intent-filter>
+        </activity>
+
         <activity
                 android:exported="true"
                 android:name=".MainActivity"

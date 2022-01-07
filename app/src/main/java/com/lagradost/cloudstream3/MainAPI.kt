@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.movieproviders.*
+import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
 
@@ -298,18 +299,12 @@ fun MainAPI.fixUrl(url: String): String {
     }
 }
 
-fun sortUrls(urls: List<ExtractorLink>): List<ExtractorLink> {
+fun sortUrls(urls: Set<ExtractorLink>): List<ExtractorLink> {
     return urls.sortedBy { t -> -t.quality }
 }
 
-fun sortSubs(urls: List<SubtitleFile>): List<SubtitleFile> {
-    val encounteredTimes = HashMap<String, Int>()
-    return urls.sortedBy { t -> t.lang }.map {
-        val times = encounteredTimes[it.lang]?.plus(1) ?: 1
-        encounteredTimes[it.lang] = times
-
-        SubtitleFile("${it.lang} ${if (times > 1) "($times)" else ""}", it.url)
-    }
+fun sortSubs(subs : Set<SubtitleData>) : List<SubtitleData> {
+    return subs.sortedBy { it.name }
 }
 
 fun capitalizeString(str: String): String {
@@ -375,6 +370,11 @@ enum class TvType {
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH
 fun TvType.isMovieType(): Boolean {
     return this == TvType.Movie || this == TvType.AnimeMovie || this == TvType.Torrent
+}
+
+// returns if the type has an anime opening
+fun TvType.isAnimeOp(): Boolean {
+    return this == TvType.Anime || this == TvType.ONA
 }
 
 data class SubtitleFile(val lang: String, val url: String)
@@ -463,12 +463,17 @@ interface LoadResponse {
 
 fun LoadResponse?.isEpisodeBased(): Boolean {
     if (this == null) return false
-    return (this is AnimeLoadResponse || this is TvSeriesLoadResponse) && (this.type == TvType.TvSeries || this.type == TvType.Anime)
+    return (this is AnimeLoadResponse || this is TvSeriesLoadResponse) && this.type.isEpisodeBased()
 }
 
 fun LoadResponse?.isAnimeBased(): Boolean {
     if (this == null) return false
     return (this.type == TvType.Anime || this.type == TvType.ONA) // && (this is AnimeLoadResponse)
+}
+
+fun TvType?.isEpisodeBased() : Boolean {
+    if (this == null) return false
+    return (this == TvType.TvSeries || this == TvType.Anime)
 }
 
 data class AnimeEpisode(

@@ -2,8 +2,8 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import java.util.*
 
@@ -107,8 +107,11 @@ class GogoanimeProvider : MainAPI() {
                 this.name,
                 TvType.Anime,
                 it.selectFirst("img").attr("src"),
-                it.selectFirst(".released")?.text()?.split(":")?.getOrNull(1)?.trim()?.toIntOrNull(),
-                if (it.selectFirst(".name").text().contains("Dub")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(
+                it.selectFirst(".released")?.text()?.split(":")?.getOrNull(1)?.trim()
+                    ?.toIntOrNull(),
+                if (it.selectFirst(".name").text()
+                        .contains("Dub")
+                ) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(
                     DubStatus.Subbed
                 ),
             )
@@ -191,22 +194,20 @@ class GogoanimeProvider : MainAPI() {
         }
     }
 
-    private fun extractVideos(uri: String): List<ExtractorLink> {
-        val html = app.get(uri).text
-        val doc = Jsoup.parse(html)
+    private fun extractVideos(uri: String, callback: (ExtractorLink) -> Unit) {
+        val doc = app.get(uri).document
 
-        val iframe = "https:" + doc.selectFirst("div.play-video > iframe").attr("src")
+        val iframe = fixUrlNull(doc.selectFirst("div.play-video > iframe").attr("src")) ?: return
+
         val link = iframe.replace("streaming.php", "download")
-
         val page = app.get(link, headers = mapOf("Referer" to iframe))
-        val pageDoc = Jsoup.parse(page.text)
 
-        return pageDoc.select(".dowload > a").pmap {
+        page.document.select(".dowload > a").pmap {
             if (it.hasAttr("download")) {
                 val qual = if (it.text()
                         .contains("HDP")
                 ) "1080" else qualityRegex.find(it.text())?.destructured?.component1().toString()
-                listOf(
+                callback(
                     ExtractorLink(
                         "Gogoanime",
                         if (qual == "null") "Gogoanime" else "Gogoanime - " + qual + "p",
@@ -218,16 +219,18 @@ class GogoanimeProvider : MainAPI() {
                 )
             } else {
                 val url = it.attr("href")
-                val extractorLinks = ArrayList<ExtractorLink>()
-                for (api in extractorApis) {
-                    if (url.startsWith(api.mainUrl)) {
-                        extractorLinks.addAll(api.getSafeUrl(url) ?: listOf())
-                        break
-                    }
-                }
-                extractorLinks
+                loadExtractor(url, null, callback)
             }
-        }.flatten()
+        }
+
+        val streamingResponse = app.get(iframe, headers = mapOf("Referer" to iframe))
+        streamingResponse.document.select(".list-server-items > .linkserver")
+            ?.forEach { element ->
+                val status = element.attr("data-status") ?: return@forEach
+                if (status != "1") return@forEach
+                val data = element.attr("data-video") ?: return@forEach
+                loadExtractor(data, streamingResponse.url, callback)
+            }
     }
 
     override fun loadLinks(
@@ -236,9 +239,7 @@ class GogoanimeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        for (source in extractVideos(data)) {
-            callback.invoke(source)
-        }
+        extractVideos(data, callback)
         return true
     }
 }

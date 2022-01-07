@@ -188,5 +188,5 @@
     <fragment
             android:id="@+id/navigation_player"
             android:layout_height="match_parent"
-            android:name="com.lagradost.cloudstream3.ui.player.PlayerFragment"/>
+            android:name="com.lagradost.cloudstream3.ui.player.GeneratorPlayer"/>
 </navigation>

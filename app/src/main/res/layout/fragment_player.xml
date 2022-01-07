@@ -7,6 +7,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="horizontal"
         android:keepScreenOn="true"
+        android:id="@+id/player_background"
         app:backgroundTint="@android:color/black"
         android:background="@android:color/black"
         android:screenOrientation="sensorLandscape"
@@ -37,13 +38,14 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/loading_overlay"
+            android:id="@+id/player_loading_overlay"
             android:background="@android:color/black"
             android:backgroundTint="@android:color/black"
     >
 
         <com.google.android.material.button.MaterialButton
-                android:visibility="visible"
+                tools:visibility="visible"
+                android:visibility="gone"
                 android:layout_marginTop="70dp"
                 android:layout_gravity="center"
                 app:cornerRadius="4dp"
@@ -60,8 +62,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="45dp">
         </com.google.android.material.button.MaterialButton>
-
-
 
         <ProgressBar
                 android:layout_width="50dp"
@@ -88,7 +88,7 @@
             >
             </ImageView>
             <ImageView
-                    android:id="@+id/video_go_back_holder"
+                    android:id="@+id/player_loading_go_back"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
@@ -132,7 +132,7 @@
                 android:textColor="@color/white"
                 android:id="@+id/video_torrent_seeders"
                 tools:text="17 seeders"
-                app:layout_constraintTop_toBottomOf="@+id/video_title">
+                app:layout_constraintTop_toBottomOf="@+id/player_video_title">
         </TextView>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

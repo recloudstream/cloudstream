@@ -29,7 +29,7 @@
     <string name="pick_source">സ്രോതസുകൾ</string>
     <string name="pick_subtitle">സബ്ടൈറ്റിലുകൾ</string>
     <string name="reload_error">വീണ്ടും കണക്ട് ചെയ്യുക…</string>
-    <string name="result_go_back">പിന്നോട്ട് പോകുക</string>
+    <string name="go_back">പിന്നോട്ട് പോകുക</string>
     <string name="play_episode">എപ്പിസോഡ് പ്ലേയ് ചെയ്യുക</string>
 
     <string name="download">ഡൌൺലോഡ്</string>

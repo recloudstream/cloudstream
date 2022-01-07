@@ -11,10 +11,14 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.player.IGenerator
+import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
+import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
@@ -37,24 +41,9 @@ const val EPISODE_RANGE_SIZE = 50
 const val EPISODE_RANGE_OVERLOAD = 60
 
 class ResultViewModel : ViewModel() {
-    fun clear() {
-        repo = null
-        _resultResponse.value = null
-        _episodes.value = null
-        episodeById.value = null
-        _publicEpisodes.value = null
-        _publicEpisodesCount.value = null
-        _rangeOptions.value = null
-        selectedRange.value = null
-        selectedRangeInt.value = null
-        _dubStatus.value = null
-        id.value = null
-        selectedSeason.value = -2
-        _dubSubEpisodes.value = null
-        _sync.value = null
-    }
-
     private var repo: APIRepository? = null
+    private var generator: IGenerator? = null
+
 
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
     private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
@@ -212,6 +201,35 @@ class ResultViewModel : ViewModel() {
         }
     }
 
+    suspend fun loadEpisode(
+        episode: ResultEpisode,
+        isCasting: Boolean,
+        clearCache: Boolean = false
+    ): Resource<Pair<Set<ExtractorLink>, Set<SubtitleData>>> {
+        return safeApiCall {
+            val index = _episodes.value?.indexOf(episode) ?: throw Exception("invalid Index")
+
+            val currentLinks = mutableSetOf<ExtractorLink>()
+            val currentSubs = mutableSetOf<SubtitleData>()
+
+            generator?.goto(index)
+            generator?.generateLinks(clearCache, isCasting, {
+                it.first?.let { link ->
+                    currentLinks.add(link)
+                }
+            }, { sub ->
+                currentSubs.add(sub)
+            })
+
+            return@safeApiCall Pair(currentLinks.toSet(), currentSubs.toSet()) as Pair<Set<ExtractorLink>, Set<SubtitleData>>
+        }
+    }
+
+    fun getGenerator(episodeIndex: Int): IGenerator? {
+        generator?.goto(episodeIndex)
+        return generator
+    }
+
     fun updateSync(context: Context?, sync: List<Pair<SyncAPI, String>>) = viewModelScope.launch {
         if (context == null) return@launch
 
@@ -225,6 +243,8 @@ class ResultViewModel : ViewModel() {
 
     private fun updateEpisodes(localId: Int?, list: List<ResultEpisode>, selection: Int?) {
         _episodes.postValue(list)
+        generator = RepoLinkGenerator(list)
+
         val set = HashMap<Int, Int>()
 
         list.withIndex().forEach { set[it.value.id] = it.index }
@@ -243,39 +263,6 @@ class ResultViewModel : ViewModel() {
             it.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
         }
         updateEpisodes(null, copy, selectedSeason.value)
-    }
-
-    fun setViewPos(episodeId: Int?, pos: Long, dur: Long) {
-        try {
-            DataStoreHelper.setViewPos(episodeId, pos, dur)
-            var index = episodeById.value?.get(episodeId) ?: return
-
-            var startPos = pos
-            var startDur = dur
-            val episodeList = (episodes.value ?: return)
-            var episode = episodeList[index]
-            val parentId = id.value ?: return
-            while (true) {
-                if (startDur > 0L && (startPos * 100 / startDur) > 95) {
-                    index++
-                    if (episodeList.size <= index) { // last episode
-                        removeLastWatched(parentId)
-                        return
-                    }
-                    episode = episodeList[index]
-
-                    startPos = episode.position
-                    startDur = episode.duration
-
-                    continue
-                } else {
-                    setLastWatched(parentId, episode.id, episode.episode, episode.season)
-                    return
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
     private fun filterName(name: String?): String? {
@@ -306,7 +293,7 @@ class ResultViewModel : ViewModel() {
         }
         repo = APIRepository(api)
 
-        val data = repo?.load(url)
+        val data = repo?.load(url) ?: return@launch
 
         _resultResponse.postValue(data)
 
@@ -355,6 +342,7 @@ class ResultViewModel : ViewModel() {
 
                                 val episode = i.episode ?: (index + 1)
                                 episodes.add(buildResultEpisode(
+                                    d.name,
                                     filterName(i.name),
                                     i.posterUrl,
                                     episode,
@@ -368,6 +356,8 @@ class ResultViewModel : ViewModel() {
                                     if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
                                         it.contains(episode) && it[episode] == true
                                     } ?: false else false,
+                                    d.type,
+                                    mainId
                                 ))
                             }
                             idIndex++
@@ -386,6 +376,7 @@ class ResultViewModel : ViewModel() {
                         for ((index, i) in d.episodes.withIndex()) {
                             episodes.add(
                                 buildResultEpisode(
+                                    d.name,
                                     filterName(i.name),
                                     i.posterUrl,
                                     i.episode ?: (index + 1),
@@ -397,6 +388,8 @@ class ResultViewModel : ViewModel() {
                                     i.rating,
                                     i.description,
                                     null,
+                                    d.type,
+                                    mainId
                                 )
                             )
 
@@ -405,6 +398,7 @@ class ResultViewModel : ViewModel() {
                     }
                     is MovieLoadResponse -> {
                         buildResultEpisode(
+                            d.name,
                             d.name,
                             null,
                             0,
@@ -416,6 +410,8 @@ class ResultViewModel : ViewModel() {
                             null,
                             null,
                             null,
+                            d.type,
+                            mainId
                         ).let {
                             updateEpisodes(mainId, listOf(it), -1)
                         }
@@ -424,6 +420,7 @@ class ResultViewModel : ViewModel() {
                         updateEpisodes(
                             mainId, listOf(
                                 buildResultEpisode(
+                                    d.name,
                                     d.name,
                                     null,
                                     0,
@@ -435,121 +432,19 @@ class ResultViewModel : ViewModel() {
                                     null,
                                     null,
                                     null,
+                                    d.type,
+                                    mainId
                                 )
                             ), -1
                         )
                     }
                 }
             }
-            else -> {
-                // nothing
-            }
+            else -> Unit
         }
     }
-
-    private val _allEpisodes: MutableLiveData<HashMap<Int, List<ExtractorLink>>> =
-        MutableLiveData(HashMap()) // LOOKUP BY ID
-    private val _allEpisodesSubs: MutableLiveData<HashMap<Int, HashMap<String, SubtitleFile>>> =
-        MutableLiveData(HashMap()) // LOOKUP BY ID
-
-    val allEpisodes: LiveData<HashMap<Int, List<ExtractorLink>>> get() = _allEpisodes
-    val allEpisodesSubs: LiveData<HashMap<Int, HashMap<String, SubtitleFile>>> get() = _allEpisodesSubs
 
     private var _apiName: MutableLiveData<String> = MutableLiveData()
     val apiName: LiveData<String> get() = _apiName
 
-    data class EpisodeData(val links: List<ExtractorLink>, val subs: HashMap<String, SubtitleFile>)
-
-    fun loadEpisode(
-        episode: ResultEpisode,
-        isCasting: Boolean,
-        callback: (Resource<EpisodeData>) -> Unit,
-    ) {
-        loadEpisode(episode.id, episode.data, isCasting, callback)
-    }
-
-    suspend fun loadEpisode(
-        episode: ResultEpisode,
-        isCasting: Boolean,
-    ): Resource<EpisodeData> {
-        return loadEpisode(episode.id, episode.data, isCasting)
-    }
-
-    fun loadSubtitleFile(uri: Uri, name: String, id: Int?) {
-        if (id == null) return
-        val hashMap: HashMap<String, SubtitleFile> = _allEpisodesSubs.value?.get(id) ?: hashMapOf()
-        hashMap[name] = SubtitleFile(
-            name,
-            uri.toString()
-        )
-        _allEpisodesSubs.value.apply {
-            this?.set(id, hashMap)
-        }?.let {
-            _allEpisodesSubs.postValue(it)
-        }
-    }
-
-    private suspend fun loadEpisode(
-        id: Int,
-        data: String,
-        isCasting: Boolean,
-    ): Resource<EpisodeData> {
-        println("LOAD EPISODE FFS")
-        if (_allEpisodes.value?.contains(id) == true) {
-            _allEpisodes.value?.remove(id)
-        }
-        val links = ArrayList<ExtractorLink>()
-        val subs = HashMap<String, SubtitleFile>()
-        return safeApiCall {
-            repo?.loadLinks(data, isCasting, { subtitleFile ->
-                if (!subs.values.any { it.url == subtitleFile.url }) {
-                    val langTrimmed = subtitleFile.lang.trimEnd()
-
-                    val langId = if (langTrimmed.length == 2) {
-                        SubtitleHelper.fromTwoLettersToLanguage(langTrimmed) ?: langTrimmed
-                    } else {
-                        langTrimmed
-                    }
-
-                    var title: String
-                    var count = 0
-                    while (true) {
-                        title = "$langId${if (count == 0) "" else " ${count + 1}"}"
-                        count++
-                        if (!subs.containsKey(title)) {
-                            break
-                        }
-                    }
-
-                    val file =
-                        subtitleFile.copy(
-                            lang = title
-                        )
-
-                    subs[title] = file
-
-                    _allEpisodesSubs.value?.set(id, subs)
-                    _allEpisodesSubs.postValue(_allEpisodesSubs.value)
-                }
-            }) { link ->
-                if (!links.any { it.url == link.url }) {
-                    links.add(link)
-                    _allEpisodes.value?.set(id, links)
-                    _allEpisodes.postValue(_allEpisodes.value)
-                }
-            }
-            EpisodeData(links, subs)
-        }
-    }
-
-    private fun loadEpisode(
-        id: Int,
-        data: String,
-        isCasting: Boolean,
-        callback: (Resource<EpisodeData>) -> Unit,
-    ) =
-        viewModelScope.launch {
-            val localData = loadEpisode(id, data, isCasting)
-            callback.invoke(localData)
-        }
 }

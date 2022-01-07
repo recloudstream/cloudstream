@@ -123,7 +123,8 @@ object DataStoreHelper {
         setKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), PosDur(pos, dur))
     }
 
-    fun getViewPos(id: Int): PosDur? {
+    fun getViewPos(id: Int?): PosDur? {
+        if(id == null) return null
         return getKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), null)
     }
 

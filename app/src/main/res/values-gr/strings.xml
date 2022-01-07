@@ -31,7 +31,7 @@
     <string name="pick_source">Πηγές</string>
     <string name="pick_subtitle">Υπότιτλοι</string>
     <string name="reload_error">Ξανά φόρτωσε…</string>
-    <string name="result_go_back">Πίσω</string>
+    <string name="go_back">Πίσω</string>
     <string name="episode_poster_img_des">Πόστερ</string>
     <string name="play_episode">Αναπαραγωγή Επισοδείου</string>
     <string name="need_storage">Δώσε άδεια για την λήψη επισοδείου</string>

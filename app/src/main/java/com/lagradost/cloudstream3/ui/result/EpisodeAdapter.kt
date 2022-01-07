@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonViewHolder
@@ -18,9 +20,14 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSet
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import kotlinx.android.synthetic.main.result_episode.view.*
 import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
+import kotlinx.android.synthetic.main.result_episode_large.view.episode_filler
+import kotlinx.android.synthetic.main.result_episode_large.view.episode_progress
+import kotlinx.android.synthetic.main.result_episode_large.view.result_episode_download
+import kotlinx.android.synthetic.main.result_episode_large.view.result_episode_progress_downloaded
 import java.util.*
 
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
@@ -125,6 +132,7 @@ class EpisodeAdapter(
         override var downloadButton = EasyDownloadButton()
 
         private val episodeText: TextView = itemView.episode_text
+        private val episodeFiller: MaterialButton? = itemView.episode_filler
         private val episodeRating: TextView? = itemView.episode_rating
         private val episodeDescript: TextView? = itemView.episode_descript
         private val episodeProgress: ContentLoadingProgressBar? = itemView.episode_progress
@@ -142,7 +150,8 @@ class EpisodeAdapter(
             localCard = card
 
             val name = if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"
-            episodeText.text = if(card.isFiller == true) episodeText.context.getString(R.string.filler_format).format(name) else name
+            episodeFiller?.isVisible = card.isFiller == true
+            episodeText.text = name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
             episodeText.isSelected = true // is needed for text repeating
 
             val displayPos = card.getDisplayPosition()

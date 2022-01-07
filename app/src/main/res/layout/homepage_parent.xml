@@ -19,7 +19,7 @@
                 tools:text="Trending"
         />
         <ImageView
-                android:tint="?attr/textColor"
+                app:tint="?attr/textColor"
                 android:layout_marginEnd="5dp"
                 android:layout_gravity="end|center_vertical"
                 android:src="@drawable/ic_baseline_arrow_forward_24"

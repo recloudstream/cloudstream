@@ -15,7 +15,7 @@
     <string name="player_speed_text_format" formatted="true">Velocidade (%.2fx)</string>
     <string name="rated_format" formatted="true">Classificado: %.1f</string>
     <string name="new_update_format" formatted="true">Nova atualização encontrada!\n%s -> %s</string>
-    <string name="filler_format" formatted="true">(Cheio) %s</string>
+    <string name="filler" formatted="true">Cheio</string>
 	
     <string name="app_name">CloudStream</string>
     <string name="title_home">Início</string>
@@ -46,7 +46,7 @@
     <string name="pick_source">Origems</string>
     <string name="pick_subtitle">Subtítulos</string>
     <string name="reload_error">Reintentar conexão…</string>
-    <string name="result_go_back">Voltar Atrás</string>
+    <string name="go_back">Voltar Atrás</string>
     <string name="play_episode">Assistir Episódio</string>
 	
     <string name="download">Descàrregar</string>

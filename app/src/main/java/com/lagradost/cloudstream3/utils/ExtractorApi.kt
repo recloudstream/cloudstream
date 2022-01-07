@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
+import android.net.Uri
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.*
@@ -15,6 +17,22 @@ data class ExtractorLink(
     val isM3u8: Boolean = false,
     override val headers: Map<String, String> = mapOf()
 ) : VideoDownloadManager.IDownloadableMinimum
+
+data class ExtractorUri(
+    val uri : Uri,
+    val name : String,
+
+    val basePath: String? = null,
+    val relativePath: String? = null,
+    val displayName: String? = null,
+
+    val id : Int? = null,
+    val parentId : Int? = null,
+    val episode : Int? = null,
+    val season : Int? = null,
+    val headerName : String? = null,
+    val tvType: TvType? = null,
+)
 
 data class ExtractorSubtitleLink(
     val name: String,
@@ -133,8 +151,7 @@ fun getPostForm(requestUrl : String, html : String) : String? {
             "id" -> id = value
             "mode" -> mode = value
             "hash" -> hash = value
-            else -> {
-            }
+            else -> Unit
         }
     }
     if (op == null || id == null || mode == null || hash == null) {

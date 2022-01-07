@@ -2,7 +2,7 @@ package com.lagradost.cloudstream3.ui.search
 
 import android.app.Activity
 import android.widget.Toast
-import com.lagradost.cloudstream3.MainActivity.Companion.showToast
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_PLAY_FILE
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent

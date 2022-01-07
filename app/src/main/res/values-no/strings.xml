@@ -13,7 +13,6 @@
     <string name="player_speed_text_format" formatted="true">Avspillingshastighet (%.2fx)</string>
     <string name="rated_format" formatted="true">Vurdert: %.1f</string>
     <string name="new_update_format" formatted="true">Ny oppdatering funnet!\n%s -> %s</string>
-    <string name="filler_format" formatted="true">(Filler) %s</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hjem</string>
@@ -43,7 +42,7 @@
     <string name="pick_source">Kilder</string>
     <string name="pick_subtitle">Undertekster</string>
     <string name="reload_error">Prøv tilkoblingen på nytt…</string>
-    <string name="result_go_back">Gå tilbake</string>
+    <string name="go_back">Gå tilbake</string>
     <string name="play_episode">Spille Episode</string>
     <!--<string name="need_storage">Tillat å laste ned episoder</string>-->
 

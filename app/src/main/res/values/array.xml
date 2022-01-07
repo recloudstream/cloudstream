@@ -101,6 +101,7 @@
         <item>Apple</item>
         <item>Banana</item>
         <item>Party</item>
+        <item>Pink Pain</item>
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
@@ -111,6 +112,7 @@
         <item>GreenApple</item>
         <item>Banana</item>
         <item>Party</item>
+        <item>Pink</item>
     </string-array>
 
     <string-array name="themes_names">

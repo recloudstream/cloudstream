@@ -102,8 +102,6 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
             when (callback.action) {
                 SEARCH_ACTION_LOAD -> {
                     if (isMainApis) {
-                        // this is due to result page only holding 1 thing
-                        activity?.popCurrentPage()
                         activity?.popCurrentPage()
 
                         SearchHelper.handleSearchClickCallback(activity, callback)

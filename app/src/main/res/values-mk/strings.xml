@@ -4,7 +4,7 @@
     <string name="player_speed_text_format" formatted="true">Брзина (%.2fx)</string>
     <string name="rated_format" formatted="true">Оценето: %.1f</string>
     <string name="new_update_format" formatted="true">Пронајдена нова верзија на апликацијата!\n%s -> %s</string>
-    <string name="filler_format" formatted="true">(Филтер) %s</string>
+    <string name="filler" formatted="true">Филтер</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Дома</string>
@@ -35,7 +35,7 @@
     <string name="pick_source">Извори</string>
     <string name="pick_subtitle">Преводи</string>
     <string name="reload_error">Повтори конекција…</string>
-    <string name="result_go_back">Оди назад</string>
+    <string name="go_back">Оди назад</string>
     <string name="play_episode">Пушти епизода</string>
     <!--<string name="need_storage">Allow to download episodes</string>-->
 

@@ -34,7 +34,7 @@
     <string name="pick_source">Källor</string>
     <string name="pick_subtitle">Undertexter</string>
     <string name="reload_error">Försök ansluta igen…</string>
-    <string name="result_go_back">Gå tillbaka</string>
+    <string name="go_back">Gå tillbaka</string>
     <string name="episode_poster_img_des">@string/result_poster_img_des</string>
     <string name="play_episode">Spela Avsnitt</string>
     <string name="download">Ladda ner</string>

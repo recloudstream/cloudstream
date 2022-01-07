@@ -177,8 +177,7 @@ class HomeViewModel : ViewModel() {
                         logError(e)
                     }
                 }
-                else -> {
-                }
+                else -> Unit
             }
             _page.postValue(data)
         } else {

@@ -24,7 +24,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,12 +35,9 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
-import com.lagradost.cloudstream3.MainActivity.Companion.getCastSession
-import com.lagradost.cloudstream3.MainActivity.Companion.showToast
-import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.CommonActivity.getCastSession
+import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.SyncApis
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
@@ -48,8 +45,8 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
-import com.lagradost.cloudstream3.ui.player.PlayerData
-import com.lagradost.cloudstream3.ui.player.PlayerFragment
+import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
+import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
@@ -59,6 +56,7 @@ import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
+import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -97,6 +95,7 @@ const val START_ACTION_LOAD_EP = 2
 const val START_VALUE_NORMAL = 0
 
 data class ResultEpisode(
+    val headerName: String,
     val name: String?,
     val poster: String?,
     val episode: Int,
@@ -110,6 +109,8 @@ data class ResultEpisode(
     val rating: Int?,
     val description: String?,
     val isFiller: Boolean?,
+    val tvType: TvType,
+    val parentId: Int?,
 )
 
 fun ResultEpisode.getRealPosition(): Long {
@@ -129,6 +130,7 @@ fun ResultEpisode.getDisplayPosition(): Long {
 }
 
 fun buildResultEpisode(
+    headerName: String,
     name: String?,
     poster: String?,
     episode: Int,
@@ -140,9 +142,12 @@ fun buildResultEpisode(
     rating: Int?,
     description: String?,
     isFiller: Boolean?,
+    tvType: TvType,
+    parentId: Int?,
 ): ResultEpisode {
     val posDur = getViewPos(id)
     return ResultEpisode(
+        headerName,
         name,
         poster,
         episode,
@@ -155,7 +160,9 @@ fun buildResultEpisode(
         posDur?.duration ?: 0,
         rating,
         description,
-        isFiller
+        isFiller,
+        tvType,
+        parentId,
     )
 }
 
@@ -184,9 +191,7 @@ class ResultFragment : Fragment() {
 
     private var currentLoadingCount =
         0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
-    private val viewModel: ResultViewModel by activityViewModels()
-    private var allEpisodes: HashMap<Int, List<ExtractorLink>> = HashMap()
-    private var allEpisodesSubs: HashMap<Int, HashMap<String, SubtitleFile>> = HashMap()
+    private lateinit var viewModel: ResultViewModel //by activityViewModels()
     private var currentHeaderName: String? = null
     private var currentType: TvType? = null
     private var currentEpisodes: List<ResultEpisode>? = null
@@ -197,8 +202,8 @@ class ResultFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        // viewModel =
-        //     ViewModelProvider(activity ?: this).get(ResultViewModel::class.java)
+        viewModel =
+            ViewModelProvider(this)[ResultViewModel::class.java]
         return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
@@ -360,6 +365,7 @@ class ResultFragment : Fragment() {
 
         activity?.window?.decorView?.clearFocus()
         hideKeyboard()
+        activity?.loadCache()
 
         activity?.fixPaddingStatusbar(result_scroll)
         //activity?.fixPaddingStatusbar(result_barstatus)
@@ -431,74 +437,21 @@ class ResultFragment : Fragment() {
         }
 
         fun handleAction(episodeClick: EpisodeClickEvent): Job = main {
+            var currentLinks: Set<ExtractorLink>? = null
+            var currentSubs: Set<SubtitleData>? = null
+
             //val id = episodeClick.data.id
-            val index = episodeClick.data.index
-            val buildInPlayer = true
             currentLoadingCount++
-            var currentLinks: List<ExtractorLink>? = null
-            var currentSubs: HashMap<String, SubtitleFile>? = null
 
             val showTitle =
-                episodeClick.data.name ?: context?.getString(R.string.episode_name_format)?.format(
-                    getString(R.string.episode),
-                    episodeClick.data.episode
-                )
+                episodeClick.data.name ?: context?.getString(R.string.episode_name_format)
+                    ?.format(
+                        getString(R.string.episode),
+                        episodeClick.data.episode
+                    )
 
-            suspend fun requireLinks(isCasting: Boolean): Boolean {
-                val currentLinksTemp =
-                    if (allEpisodes.containsKey(episodeClick.data.id)) allEpisodes[episodeClick.data.id] else null
-                val currentSubsTemp =
-                    if (allEpisodesSubs.containsKey(episodeClick.data.id)) allEpisodesSubs[episodeClick.data.id] else null
-                if (currentLinksTemp != null && currentLinksTemp.isNotEmpty()) {
-                    currentLinks = currentLinksTemp
-                    currentSubs = currentSubsTemp
-                    return true
-                }
 
-                val skipLoading = getApiFromName(apiName).instantLinkLoading
-
-                var loadingDialog: AlertDialog? = null
-                val currentLoad = currentLoadingCount
-
-                if (!skipLoading) {
-                    val builder =
-                        AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
-                    val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
-                    builder.setView(customLayout)
-
-                    loadingDialog = builder.create()
-
-                    loadingDialog.show()
-                    loadingDialog.setOnDismissListener {
-                        currentLoadingCount++
-                    }
-                }
-
-                val data = viewModel.loadEpisode(episodeClick.data, isCasting)
-                if (currentLoadingCount != currentLoad) return false
-                loadingDialog?.dismissSafe(activity)
-
-                when (data) {
-                    is Resource.Success -> {
-                        currentLinks = data.value.links
-                        currentSubs = data.value.subs
-                        return true
-                    }
-                    is Resource.Failure -> {
-                        showToast(
-                            activity,
-                            R.string.error_loading_links_toast,
-                            Toast.LENGTH_SHORT
-                        )
-                    }
-                    else -> {
-
-                    }
-                }
-                return false
-            }
-
-            fun acquireSingeExtractorLink(
+            fun acquireSingleExtractorLink(
                 links: List<ExtractorLink>,
                 title: String,
                 callback: (ExtractorLink) -> Unit
@@ -514,7 +467,7 @@ class ResultFragment : Fragment() {
             }
 
             fun acquireSingeExtractorLink(title: String, callback: (ExtractorLink) -> Unit) {
-                acquireSingeExtractorLink(currentLinks ?: return, title, callback)
+                acquireSingleExtractorLink(sortUrls(currentLinks ?: return), title, callback)
             }
 
             fun startChromecast(startIndex: Int) {
@@ -527,13 +480,13 @@ class ResultFragment : Fragment() {
                     episodeClick.data.index,
                     eps,
                     sortUrls(currentLinks ?: return),
-                    currentSubs?.values?.toList() ?: emptyList(),
+                    sortSubs(currentSubs ?: return),
                     startTime = episodeClick.data.getRealPosition(),
                     startIndex = startIndex
                 )
             }
 
-            fun startDownload(links: List<ExtractorLink>, subs: List<SubtitleFile>?) {
+            fun startDownload(links: List<ExtractorLink>, subs: List<SubtitleData>?) {
                 val isMovie = currentIsMovie ?: return
                 val titleName = sanitizeFilename(currentHeaderName ?: return)
 
@@ -615,12 +568,12 @@ class ResultFragment : Fragment() {
                             subsList.filter {
                                 downloadList.contains(
                                     SubtitleHelper.fromLanguageToTwoLetters(
-                                        it.lang,
+                                        it.name,
                                         true
                                     )
                                 )
                             }
-                                .map { ExtractorSubtitleLink(it.lang, it.url, "") }
+                                .map { ExtractorSubtitleLink(it.name, it.url, "") }
                                 .forEach { link ->
                                     val epName = meta.name
                                         ?: "${context?.getString(R.string.episode)} ${meta.episode}"
@@ -649,10 +602,56 @@ class ResultFragment : Fragment() {
                 }
             }
 
+            suspend fun requireLinks(isCasting: Boolean, displayLoading: Boolean = true): Boolean {
+                val skipLoading = getApiFromName(apiName).instantLinkLoading
+
+                var loadingDialog: AlertDialog? = null
+                val currentLoad = currentLoadingCount
+
+                if (!skipLoading && displayLoading) {
+                    val builder =
+                        AlertDialog.Builder(requireContext(), R.style.AlertDialogCustomTransparent)
+                    val customLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
+                    builder.setView(customLayout)
+
+                    loadingDialog = builder.create()
+
+                    loadingDialog.show()
+                    loadingDialog.setOnDismissListener {
+                        currentLoadingCount++
+                    }
+                }
+
+                val data = viewModel.loadEpisode(episodeClick.data, isCasting)
+                if (currentLoadingCount != currentLoad) return false
+                loadingDialog?.dismissSafe(activity)
+
+                when (data) {
+                    is Resource.Success -> {
+                        currentLinks = data.value.first
+                        currentSubs = data.value.second
+                        return true
+                    }
+                    is Resource.Failure -> {
+                        showToast(
+                            activity,
+                            R.string.error_loading_links_toast,
+                            Toast.LENGTH_SHORT
+                        )
+                    }
+                    else -> Unit
+                }
+                return false
+            }
+
             val isLoaded = when (episodeClick.action) {
                 ACTION_PLAY_EPISODE_IN_PLAYER -> true
                 ACTION_CLICK_DEFAULT -> true
                 ACTION_SHOW_TOAST -> true
+                ACTION_DOWNLOAD_EPISODE -> {
+                    showToast(activity, R.string.download_started, Toast.LENGTH_SHORT)
+                    requireLinks(false, false)
+                }
                 ACTION_CHROME_CAST_EPISODE -> requireLinks(true)
                 ACTION_CHROME_CAST_MIRROR -> requireLinks(true)
                 else -> requireLinks(false)
@@ -781,17 +780,15 @@ class ResultFragment : Fragment() {
                                 if (act.checkWrite()) return@main
                             }
                             val data = currentLinks ?: return@main
-                            val subs = currentSubs
+                            val subs = currentSubs ?: return@main
 
                             val outputDir = act.cacheDir
                             val outputFile = withContext(Dispatchers.IO) {
                                 File.createTempFile("mirrorlist", ".m3u8", outputDir)
                             }
                             var text = "#EXTM3U"
-                            if (subs != null) {
-                                for (sub in subs.values) {
-                                    text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.lang}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.lang}\",URI=\"${sub.url}\""
-                                }
+                            for (sub in sortSubs(subs)) {
+                                text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.name}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.name}\",URI=\"${sub.url}\""
                             }
                             for (link in data.sortedBy { -it.quality }) {
                                 text += "\n#EXTINF:, ${link.name}\n${link.url}"
@@ -836,13 +833,16 @@ class ResultFragment : Fragment() {
                 }
 
                 ACTION_PLAY_EPISODE_IN_PLAYER -> {
-                    if (buildInPlayer) {
-                        activity.navigate(
-                            R.id.global_to_navigation_player, PlayerFragment.newInstance(
-                                PlayerData(index, null, 0),
-                                episodeClick.data.getRealPosition()
-                            )
-                        )
+                    currentEpisodes?.let { episodes ->
+                        viewModel.getGenerator(episodes.indexOf(episodeClick.data))
+                            ?.let { generator ->
+                                activity?.navigate(
+                                    R.id.global_to_navigation_player,
+                                    GeneratorPlayer.newInstance(
+                                        generator
+                                    )
+                                )
+                            }
                     }
                 }
 
@@ -852,26 +852,28 @@ class ResultFragment : Fragment() {
 
                 ACTION_DOWNLOAD_EPISODE -> {
                     startDownload(
-                        currentLinks ?: return@main,
-                        currentSubs?.values?.toList() ?: emptyList()
+                        sortUrls(currentLinks ?: return@main),
+                        sortSubs(currentSubs ?: return@main)
                     )
                 }
 
                 ACTION_DOWNLOAD_MIRROR -> {
-                    currentLinks?.let { links ->
-                        acquireSingeExtractorLink(
-                            links,//(currentLinks ?: return@main).filter { !it.isM3u8 },
-                            getString(R.string.episode_action_download_mirror)
-                        ) { link ->
-                            startDownload(
-                                listOf(link),
-                                currentSubs?.values?.toList() ?: emptyList()
-                            )
-                        }
+                    acquireSingleExtractorLink(
+                        sortUrls(
+                            currentLinks ?: return@main
+                        ),//(currentLinks ?: return@main).filter { !it.isM3u8 },
+                        getString(R.string.episode_action_download_mirror)
+                    ) { link ->
+                        showToast(activity, R.string.download_started, Toast.LENGTH_SHORT)
+                        startDownload(
+                            listOf(link),
+                            sortSubs(currentSubs ?: return@acquireSingleExtractorLink)
+                        )
                     }
                 }
             }
         }
+
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             EpisodeAdapter(
@@ -947,8 +949,7 @@ class ResultFragment : Fragment() {
                         }
                     }
                 }
-                else -> {
-                }
+                else -> Unit
             }
             arguments?.remove("startValue")
             arguments?.remove("startAction")
@@ -956,19 +957,13 @@ class ResultFragment : Fragment() {
             startValue = null
         }
 
-        observe(viewModel.allEpisodes) {
-            allEpisodes = it
-        }
-
-        observe(viewModel.allEpisodesSubs) {
-            allEpisodesSubs = it
-        }
-
-        observe(viewModel.selectedSeason) { season ->
+        observe(viewModel.selectedSeason)
+        { season ->
             result_season_button?.text = fromIndexToSeasonText(season)
         }
 
-        observe(viewModel.seasonSelections) { seasonList ->
+        observe(viewModel.seasonSelections)
+        { seasonList ->
             result_season_button?.visibility = if (seasonList.size <= 1) GONE else VISIBLE
             result_season_button?.setOnClickListener {
                 result_season_button?.popupMenuNoIconsAndNoStringRes(
@@ -982,7 +977,8 @@ class ResultFragment : Fragment() {
             }
         }
 
-        observe(viewModel.publicEpisodes) { episodes ->
+        observe(viewModel.publicEpisodes)
+        { episodes ->
             when (episodes) {
                 is Resource.Failure -> {
                     result_episode_loading?.isVisible = false
@@ -1004,11 +1000,13 @@ class ResultFragment : Fragment() {
             }
         }
 
-        observe(viewModel.dubStatus) { status ->
+        observe(viewModel.dubStatus)
+        { status ->
             result_dub_select?.text = status.toString()
         }
 
-        observe(viewModel.dubSubSelections) { range ->
+        observe(viewModel.dubSubSelections)
+        { range ->
             dubRange = range
             result_dub_select?.visibility = if (range.size <= 1) GONE else VISIBLE
         }
@@ -1028,7 +1026,8 @@ class ResultFragment : Fragment() {
             }
         }
 
-        observe(viewModel.selectedRange) { range ->
+        observe(viewModel.selectedRange)
+        { range ->
             result_episode_select?.text = range
         }
 
@@ -1069,8 +1068,7 @@ class ResultFragment : Fragment() {
                         setDuration(d.duration)
                         setRating(d.publicScore)
                     }
-                    else -> {
-                    }
+                    else -> Unit
                 }
             }
         }
@@ -1278,6 +1276,7 @@ class ResultFragment : Fragment() {
                                                     ACTION_DOWNLOAD_EPISODE,
                                                     ResultEpisode(
                                                         d.name,
+                                                        d.name,
                                                         null,
                                                         0,
                                                         null,
@@ -1290,6 +1289,8 @@ class ResultFragment : Fragment() {
                                                         null,
                                                         null,
                                                         null,
+                                                        d.type,
+                                                        localId,
                                                     )
                                                 )
                                             )
@@ -1371,7 +1372,7 @@ class ResultFragment : Fragment() {
                 }
 
                 if (restart || viewModel.resultResponse.value == null) {
-                    viewModel.clear()
+                    //viewModel.clear()
                     viewModel.load(tempUrl, apiName, showFillers)
                 }
             }

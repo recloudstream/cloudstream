@@ -31,18 +31,6 @@
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
 
-
-    <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
-    <string name="storage_size_format" translatable="false" formatted="true">%s • %sGB</string>
-    <string name="download_size_format" translatable="false" formatted="true">%sMB / %sMB</string>
-    <string name="episode_name_format" translatable="false" formatted="true">%s %s</string>
-    <string name="ffw_text_format" translatable="false" formatted="true">+%d</string>
-    <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
-    <string name="ffw_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="app_dub_sub_episode_text_format">%s Ep %d</string>
-
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Afiş</string>
     <string name="search_poster_img_des">@string/result_poster_img_des</string>
@@ -59,7 +47,7 @@
     <string name="player_speed_text_format" formatted="true">Hız (%.2fx)</string>
     <string name="rated_format" formatted="true">Puan: %.1f</string>
     <string name="new_update_format" formatted="true">Yeni güncelleme bulundu!\n%s -> %s</string>
-    <string name="filler_format" formatted="true">(Doldurucu) %s</string>
+    <string name="filler" formatted="true">Doldurucu</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">Ana Sayfa</string>
@@ -89,7 +77,7 @@
     <string name="pick_source">Kaynaklar</string>
     <string name="pick_subtitle">Altyazılar</string>
     <string name="reload_error">Yeniden bağlanmayı dene…</string>
-    <string name="result_go_back">Geri Git</string>
+    <string name="go_back">Geri Git</string>
     <string name="play_episode">Bölümü Oynat</string>
     <!--<string name="need_storage">Allow to download episodes</string>-->
 

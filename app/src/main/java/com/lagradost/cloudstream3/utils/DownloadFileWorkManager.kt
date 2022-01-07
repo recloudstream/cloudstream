@@ -74,8 +74,7 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
                     VideoDownloadManager.DownloadType.IsDone, VideoDownloadManager.DownloadType.IsFailed, VideoDownloadManager.DownloadType.IsStopped -> {
                         isDone = true
                     }
-                    else -> {
-                    }
+                    else -> Unit
                 }
             }
         }

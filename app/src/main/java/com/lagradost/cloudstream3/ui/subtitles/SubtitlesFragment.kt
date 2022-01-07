@@ -21,8 +21,9 @@ import com.google.android.exoplayer2.ui.CaptionStyleCompat
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.MainActivity.Companion.showToast
+import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
+import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
@@ -138,8 +139,7 @@ class SubtitlesFragment : Fragment() {
             2 -> state.backgroundColor = realColor
             3 -> state.windowColor = realColor
 
-            else -> {
-            }
+            else -> Unit
         }
         updateState()
     }
@@ -174,14 +174,14 @@ class SubtitlesFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        MainActivity.onColorSelectedEvent -= ::onColorSelected
+        onColorSelectedEvent -= ::onColorSelected
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hide = arguments?.getBoolean("hide") ?: true
-        MainActivity.onColorSelectedEvent += ::onColorSelected
-        MainActivity.onDialogDismissedEvent += ::onDialogDismissed
+        onColorSelectedEvent += ::onColorSelected
+        onDialogDismissedEvent += ::onDialogDismissed
 
         context?.fixPaddingStatusbar(subs_root)
 

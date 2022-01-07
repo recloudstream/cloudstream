@@ -61,12 +61,21 @@
                 app:defaultValue="false"
         />
         <SwitchPreference
+                android:icon="@drawable/netflix_pause"
+                app:key="@string/double_tap_pause_enabled_key"
+                android:title="@string/double_tap_to_pause_settings"
+                android:summary="@string/double_tap_to_pause_settings_des"
+                app:defaultValue="false"
+                />
+        <!--
+        <SwitchPreference
                 android:icon="@drawable/ic_baseline_brightness_7_24"
                 app:key="@string/use_system_brightness_key"
                 android:title="@string/use_system_brightness_settings"
                 android:summary="@string/use_system_brightness_settings_des"
                 app:defaultValue="false"
         />
+        -->
     </PreferenceCategory>
     <PreferenceCategory
             android:key="general"

@@ -19,12 +19,11 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.BuildConfig
-import com.lagradost.cloudstream3.MainActivity.Companion.showToast
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.network.text
 import java.io.File
 import kotlin.concurrent.thread
 

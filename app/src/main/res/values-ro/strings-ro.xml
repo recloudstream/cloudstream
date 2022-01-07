@@ -15,7 +15,7 @@
     <string name="player_speed_text_format" formatted="true">Viteză (%.2fx)</string>
     <string name="rated_format" formatted="true">Evaluat: %.1f</string>
     <string name="new_update_format" formatted="true">Noua actualizare găsită!\n%s -> %s</string>
-    <string name="filler_format" formatted="true">(Umplut) %s</string>
+    <string name="filler" formatted="true">Umplut</string>
 	
     <string name="app_name">CloudStream</string>
     <string name="title_home">Principal</string>
@@ -46,7 +46,7 @@
     <string name="pick_source">Surse</string>
     <string name="pick_subtitle">Subtitrare</string>
     <string name="reload_error">Reîncercarea conexiunii…</string>
-    <string name="result_go_back">Întoarce-te</string>
+    <string name="go_back">Întoarce-te</string>
     <string name="play_episode">Redă episodul</string>
     
 	<string name="download">Descărcare</string>

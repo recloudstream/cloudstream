@@ -165,6 +165,15 @@
         <item name="android:colorAccent">@color/colorPrimaryParty</item>
     </style>
 
+    <style name="OverlayPrimaryColorPink">
+        <item name="colorPrimary">@color/colorPrimaryPink</item>
+        <item name="android:colorPrimary">@color/colorPrimaryPink</item>
+        <item name="colorPrimaryDark">#DD1280</item>
+        <item name="colorAccent">#FF4DAE</item>
+        <item name="colorOnPrimary">#DD1280</item>
+        <item name="android:colorAccent">@color/colorPrimaryPink</item>
+    </style>
+
     <style name="LoadedStyle">
         <item name="android:navigationBarColor">?attr/primaryGrayBackground</item>
         <item name="android:windowBackground">?attr/primaryBlackBackground</item>
@@ -321,6 +330,19 @@
         <item name="iconTint">?attr/textColor</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="rippleColor">?attr/textColor</item>
+    </style>
+
+    <style name="SmallBlackButton" parent="BlackButton">
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
     </style>
 
     <style name="RoundedSelectableButtonIcon" parent="RoundedSelectableButton">

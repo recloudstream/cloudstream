@@ -13,7 +13,6 @@
     <string name="player_speed_text_format" formatted="true">سرعة (%.2fx)</string>
     <string name="rated_format" formatted="true">Rated: %.1f</string>
     <string name="new_update_format" formatted="true">!تم إيجاد تحديث جديد\n%s -> %s</string>
-    <string name="filler_format" formatted="true">(Filler) %s</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">الصفحة الرئيسية</string>
@@ -43,7 +42,7 @@
     <string name="pick_source">المصادر</string>
     <string name="pick_subtitle">الترجمة</string>
     <string name="reload_error">…إعادة محاولة الاتصال</string>
-    <string name="result_go_back">ارجع للخلف</string>
+    <string name="go_back">ارجع للخلف</string>
     <string name="play_episode">تشغيل الحلقة</string>
     <!--<string name="need_storage">السماح بتحميل الحلقات</string>-->
 

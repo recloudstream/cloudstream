@@ -31,7 +31,7 @@
     <string name="pick_source">Bronnen</string>
     <string name="pick_subtitle">Ondertitels</string>
     <string name="reload_error">Probeer verbinding opnieuw…</string>
-    <string name="result_go_back">Ga terug</string>
+    <string name="go_back">Ga terug</string>
     <string name="episode_poster_img_des">Afleveringsposter</string>
     <string name="play_episode">Aflevering afspelen</string>
     <string name="need_storage">Toestaan om afleveringen te downloaden</string>
