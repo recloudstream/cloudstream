@@ -190,11 +190,10 @@ class ResultViewModel : ViewModel() {
     }
 
     fun changeDubStatus(status: DubStatus?) {
+        if(status == null) return
         dubSubEpisodes.value?.get(status)?.let { episodes ->
             id.value?.let {
-                if (status != null) {
-                    setDub(it, status)
-                }
+                setDub(it, status)
             }
             _dubStatus.postValue(status)
             updateEpisodes(null, episodes, null)
@@ -207,7 +206,7 @@ class ResultViewModel : ViewModel() {
         clearCache: Boolean = false
     ): Resource<Pair<Set<ExtractorLink>, Set<SubtitleData>>> {
         return safeApiCall {
-            val index = _episodes.value?.indexOf(episode) ?: throw Exception("invalid Index")
+            val index = _episodes.value?.indexOf(episode) ?: episode.index
 
             val currentLinks = mutableSetOf<ExtractorLink>()
             val currentSubs = mutableSetOf<SubtitleData>()
@@ -225,8 +224,10 @@ class ResultViewModel : ViewModel() {
         }
     }
 
-    fun getGenerator(episodeIndex: Int): IGenerator? {
-        generator?.goto(episodeIndex)
+    fun getGenerator(episode: ResultEpisode): IGenerator? {
+        val index = _episodes.value?.indexOf(episode) ?: episode.index
+
+        generator?.goto(index)
         return generator
     }
 
