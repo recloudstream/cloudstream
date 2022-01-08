@@ -987,6 +987,8 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
                 // useSystemBrightness =
                 //    settingsManager.getBoolean(ctx.getString(R.string.use_system_brightness_key), false)
             }
+
+            playback_speed_btt?.isVisible = playBackSpeedEnabled
         } catch (e: Exception) {
             logError(e)
         }
