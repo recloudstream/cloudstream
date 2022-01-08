@@ -310,19 +310,11 @@ abstract class AbstractPlayerFragment(
     fun resize(resize: PlayerResize, showToast: Boolean) {
         setKey(RESIZE_MODE_KEY, resize.ordinal)
         val type = when (resize) {
-            PlayerResize.Fill -> AspectRatioFrameLayout.RESIZE_MODE_FIT
-            PlayerResize.Fit -> AspectRatioFrameLayout.RESIZE_MODE_FILL
+            PlayerResize.Fill -> AspectRatioFrameLayout.RESIZE_MODE_FILL
+            PlayerResize.Fit -> AspectRatioFrameLayout.RESIZE_MODE_FIT
             PlayerResize.Zoom -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
         }
         player_view?.resizeMode = type
-
-        exo_play?.setOnClickListener {
-            player.handleEvent(CSPlayerEvent.Play)
-        }
-
-        exo_pause?.setOnClickListener {
-            player.handleEvent(CSPlayerEvent.Pause)
-        }
 
         if (showToast)
             showToast(activity, resize.nameRes, Toast.LENGTH_SHORT)

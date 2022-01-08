@@ -29,7 +29,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 
-// TODO Auto select subtitles
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
         private var lastUsedGenerator: IGenerator? = null
