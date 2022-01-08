@@ -287,7 +287,7 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
     private fun rewind() {
         try {
             player_center_menu?.isGone = false
-            player_ffwd_holder?.alpha = 1f
+            player_rew_holder?.alpha = 1f
 
             val rotateLeft = AnimationUtils.loadAnimation(context, R.anim.rotate_left)
             exo_rew?.startAnimation(rotateLeft)
@@ -302,7 +302,7 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
                     exo_rew_text?.post {
                         resetRewindText()
                         player_center_menu?.isGone = !isShowing
-                        player_ffwd_holder?.alpha = if (isShowing) 1f else 0f
+                        player_rew_holder?.alpha = if (isShowing) 1f else 0f
                     }
                 }
             })
@@ -318,6 +318,7 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
         try {
             player_center_menu?.isGone = false
             player_ffwd_holder?.alpha = 1f
+
             val rotateRight = AnimationUtils.loadAnimation(context, R.anim.rotate_right)
             exo_ffwd?.startAnimation(rotateRight)
 
@@ -385,10 +386,10 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
         //TITLE
         player_video_title_rez?.startAnimation(fadeAnimation)
         player_video_title?.startAnimation(fadeAnimation)
-
+        player_top_holder?.startAnimation(fadeAnimation)
         // BOTTOM
         player_lock_holder?.startAnimation(fadeAnimation)
-        player_go_back_holder?.startAnimation(fadeAnimation)
+        //player_go_back_holder?.startAnimation(fadeAnimation)
 
         shadow_overlay?.startAnimation(fadeAnimation)
 
