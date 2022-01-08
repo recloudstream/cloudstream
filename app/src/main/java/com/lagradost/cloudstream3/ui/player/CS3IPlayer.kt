@@ -10,7 +10,6 @@ import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.SingleSampleMediaSource
-import com.google.android.exoplayer2.text.Cue
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.SubtitleView
@@ -152,9 +151,9 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.setAllSubtitles(subtitles)
     }
 
-    var currentSubtitles : SubtitleData? = null
+    var currentSubtitles: SubtitleData? = null
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
-        Log.i(TAG,"setPreferredSubtitles init $subtitle")
+        Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
         return (exoPlayer?.trackSelector as? DefaultTrackSelector?)?.let { trackSelector ->
             val name = subtitle?.name
@@ -166,12 +165,12 @@ class CS3IPlayer : IPlayer {
             } else {
                 when (subtitleHelper.subtitleStatus(subtitle)) {
                     SubtitleStatus.REQUIRES_RELOAD -> {
-                        Log.i(TAG,"setPreferredSubtitles REQUIRES_RELOAD")
+                        Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
                         return@let true
                         // reloadPlayer(context)
                     }
                     SubtitleStatus.IS_ACTIVE -> {
-                        Log.i(TAG,"setPreferredSubtitles IS_ACTIVE")
+                        Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
 
                         trackSelector.setParameters(
                             trackSelector.buildUponParameters()
@@ -180,7 +179,7 @@ class CS3IPlayer : IPlayer {
                     }
                     SubtitleStatus.NOT_FOUND -> {
                         // not found
-                        Log.i(TAG,"setPreferredSubtitles NOT_FOUND")
+                        Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
                         return@let true
                     }
                 }
@@ -194,7 +193,7 @@ class CS3IPlayer : IPlayer {
             exoPlayerSelectedTracks.any {
                 // The replace is needed as exoplayer translates _ to -
                 // Also we prefix the languages with _
-                it.second && it.first.replace("-", "") .equals(
+                it.second && it.first.replace("-", "").equals(
                     sub.name.replace("-", ""),
                     ignoreCase = true
                 )
@@ -509,14 +508,6 @@ class CS3IPlayer : IPlayer {
                     super.onTracksInfoChanged(tracksInfo)
                 }
 
-                override fun onCues(cues: MutableList<Cue>) {
-                    Log.i(TAG, "CUES: ${cues.size}")
-                    if(cues.size > 0) {
-                        Log.i(TAG, "CUES SAY: ${cues.first().text}")
-                    }
-                    super.onCues(cues)
-                }
-
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     exoPlayer?.let { exo ->
                         updateIsPlaying?.invoke(
@@ -641,7 +632,8 @@ class CS3IPlayer : IPlayer {
             )
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
 
-            simpleCache = getCache(context, cacheSize)
+            if (simpleCache == null)
+                simpleCache = getCache(context, cacheSize)
 
             val cacheFactory = CacheDataSource.Factory().apply {
                 simpleCache?.let { setCache(it) }

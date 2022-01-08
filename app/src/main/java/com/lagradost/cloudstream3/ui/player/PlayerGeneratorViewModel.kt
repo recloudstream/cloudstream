@@ -97,7 +97,7 @@ class PlayerGeneratorViewModel : ViewModel() {
                 _currentLinks.postValue(currentLinks)
             }, {
                 currentSubs.add(it)
-                _currentSubs.postValue(currentSubs)
+               // _currentSubs.postValue(currentSubs) // this causes ConcurrentModificationException, so fuck it
             })
         }
 

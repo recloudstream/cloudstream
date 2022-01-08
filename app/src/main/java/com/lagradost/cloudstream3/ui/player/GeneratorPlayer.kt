@@ -21,10 +21,8 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
-import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.ExtractorUri
-import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -51,6 +49,8 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var nextMeta: Any? = null
     private var isActive: Boolean = false
     private var isNextEpisode: Boolean = false // this is used to reset the watch time
+
+    private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
     private fun startLoading() {
         player.release()
@@ -380,6 +380,50 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    private fun autoSelectFromSettings() {
+        // auto select subtitle based of settings
+        val langCode = preferredAutoSelectSubtitles
+        if (!langCode.isNullOrEmpty() && player.getCurrentPreferredSubtitle() == null) {
+            val lang = SubtitleHelper.fromTwoLettersToLanguage(langCode) ?: return
+
+            currentSubs.firstOrNull { sub ->
+                sub.name.startsWith(lang)
+                        || sub.name.trim() == langCode
+            }?.let { sub ->
+                context?.let { ctx ->
+                    if (setSubtitles(sub)) {
+                        player.reloadPlayer(ctx)
+                        player.handleEvent(CSPlayerEvent.Play)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun autoSelectFromDownloads() {
+        if (player.getCurrentPreferredSubtitle() == null) {
+            currentSubs.firstOrNull { sub ->
+                (sub.origin == SubtitleOrigin.DOWNLOADED_FILE || sub.name == context?.getString(
+                    R.string.default_subtitles
+                ))
+            }?.let { sub ->
+                context?.let { ctx ->
+                    if (setSubtitles(sub)) {
+                        player.reloadPlayer(ctx)
+                        player.handleEvent(CSPlayerEvent.Play)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun autoSelectSubtitles() {
+        normalSafeApiCall {
+            autoSelectFromSettings()
+            autoSelectFromDownloads()
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     fun setTitle() {
         var headerName: String? = null
@@ -445,6 +489,8 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        preferredAutoSelectSubtitles = SubtitlesFragment.getAutoSelectLanguageISO639_1()
+
         if (currentSelectedLink == null) {
             viewModel.loadLinks()
         }
@@ -482,9 +528,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             overlay_loading_skip_button?.isVisible = it.isNotEmpty()
         }
 
-        observe(viewModel.currentSubs) {
-            currentSubs = it
-            player.setActiveSubtitles(it)
+        observe(viewModel.currentSubs) { set ->
+            currentSubs = set
+            player.setActiveSubtitles(set)
+
+            autoSelectSubtitles()
         }
     }
 }

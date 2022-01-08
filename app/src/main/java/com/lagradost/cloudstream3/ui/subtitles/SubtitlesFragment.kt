@@ -64,8 +64,15 @@ class SubtitlesFragment : Fragment() {
         fun Context.fromSaveToStyle(data: SaveCaptionStyle): CaptionStyleCompat {
             val typeface = data.typeface
             return CaptionStyleCompat(
-                data.foregroundColor, data.backgroundColor, data.windowColor, data.edgeType, data.edgeColor,
-                if (typeface == null) Typeface.SANS_SERIF else ResourcesCompat.getFont(this, typeface)
+                data.foregroundColor,
+                data.backgroundColor,
+                data.windowColor,
+                data.edgeType,
+                data.edgeColor,
+                if (typeface == null) Typeface.SANS_SERIF else ResourcesCompat.getFont(
+                    this,
+                    typeface
+                )
             )
         }
 
@@ -256,11 +263,26 @@ class SubtitlesFragment : Fragment() {
 
         subs_edge_type.setOnClickListener { textView ->
             val edgeTypes = listOf(
-                Pair(CaptionStyleCompat.EDGE_TYPE_NONE, textView.context.getString(R.string.subtitles_none)),
-                Pair(CaptionStyleCompat.EDGE_TYPE_OUTLINE, textView.context.getString(R.string.subtitles_outline)),
-                Pair(CaptionStyleCompat.EDGE_TYPE_DEPRESSED, textView.context.getString(R.string.subtitles_depressed)),
-                Pair(CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW, textView.context.getString(R.string.subtitles_shadow)),
-                Pair(CaptionStyleCompat.EDGE_TYPE_RAISED, textView.context.getString(R.string.subtitles_raised)),
+                Pair(
+                    CaptionStyleCompat.EDGE_TYPE_NONE,
+                    textView.context.getString(R.string.subtitles_none)
+                ),
+                Pair(
+                    CaptionStyleCompat.EDGE_TYPE_OUTLINE,
+                    textView.context.getString(R.string.subtitles_outline)
+                ),
+                Pair(
+                    CaptionStyleCompat.EDGE_TYPE_DEPRESSED,
+                    textView.context.getString(R.string.subtitles_depressed)
+                ),
+                Pair(
+                    CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW,
+                    textView.context.getString(R.string.subtitles_shadow)
+                ),
+                Pair(
+                    CaptionStyleCompat.EDGE_TYPE_RAISED,
+                    textView.context.getString(R.string.subtitles_raised)
+                ),
             )
 
             //showBottomDialog
@@ -375,7 +397,15 @@ class SubtitlesFragment : Fragment() {
 
         subs_auto_select_language.setOnClickListener { textView ->
             val langMap = arrayListOf(
-                SubtitleHelper.Language639("None", "None", "", "", "", "", ""),
+                SubtitleHelper.Language639(
+                    textView.context.getString(R.string.none),
+                    textView.context.getString(R.string.none),
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ),
             )
             langMap.addAll(SubtitleHelper.languages)
 
@@ -438,7 +468,8 @@ class SubtitlesFragment : Fragment() {
                         getPixels(TypedValue.COMPLEX_UNIT_SP, 25.0f).toFloat(),
                         Cue.TEXT_SIZE_TYPE_ABSOLUTE
                     )
-                    .setText(subtitle_text.context.getString(R.string.subtitles_example_text)).build()
+                    .setText(subtitle_text.context.getString(R.string.subtitles_example_text))
+                    .build()
             )
         )
     }
