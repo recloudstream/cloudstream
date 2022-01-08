@@ -8,12 +8,15 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -71,6 +74,7 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
 
     //private var useSystemBrightness = false
     protected var useTrueSystemBrightness = true
+    private val fullscreenNotch = true //TODO SETTING
 
     protected val displayMetrics: DisplayMetrics = Resources.getSystem().displayMetrics
 
@@ -195,12 +199,27 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
     override fun onResume() {
         activity?.hideSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fullscreenNotch) {
+            val params = activity?.window?.attributes
+            params?.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            activity?.window?.attributes = params
+        }
+
         super.onResume()
     }
 
     override fun onDestroy() {
         activity?.showSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+
+        // simply resets brightness and notch settings that might have been overridden
+        val lp = activity?.window?.attributes
+        lp?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            lp?.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+        }
+        activity?.window?.attributes = lp
         super.onDestroy()
     }
 

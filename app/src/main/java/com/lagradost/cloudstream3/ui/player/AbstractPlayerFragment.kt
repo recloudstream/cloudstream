@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
@@ -280,15 +279,6 @@ abstract class AbstractPlayerFragment(
         playerEventListener = null
         keyEventListener = null
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
-
-        // simply resets brightness and notch settings that might have been overridden
-        val lp = activity?.window?.attributes
-        lp?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            lp?.layoutInDisplayCutoutMode =
-                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
-        }
-        activity?.window?.attributes = lp
 
         super.onDestroy()
     }
