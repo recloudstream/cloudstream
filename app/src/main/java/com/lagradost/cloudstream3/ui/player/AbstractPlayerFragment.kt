@@ -18,6 +18,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
@@ -96,13 +97,27 @@ abstract class AbstractPlayerFragment(
                 player_pause_play?.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
                 val drawable = player_pause_play?.drawable
 
+                var startedAnimation = false
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                     if (drawable is AnimatedImageDrawable) {
                         drawable.start()
+                        startedAnimation = true
                     }
                 }
+
                 if (drawable is AnimatedVectorDrawable) {
                     drawable.start()
+                    startedAnimation = true
+                }
+
+                if (drawable is AnimatedVectorDrawableCompat) {
+                    drawable.start()
+                    startedAnimation = true
+                }
+
+                // somehow the phone is wacked
+                if(!startedAnimation) {
+                    player_pause_play?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
                 }
             } else {
                 player_pause_play?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
@@ -110,7 +125,7 @@ abstract class AbstractPlayerFragment(
         }
 
         canEnterPipMode = isPlayingRightNow
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isInPIPMode) {
             activity?.let { act ->
                 PlayerPipHelper.updatePIPModeActions(act, isPlayingRightNow)
             }
