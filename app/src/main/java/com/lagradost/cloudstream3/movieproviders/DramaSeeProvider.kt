@@ -13,6 +13,7 @@ class DramaSeeProvider : MainAPI() {
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val hasChromecastSupport = false
+    override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)
 
     override fun getMainPage(): HomePageResponse {
