@@ -122,8 +122,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
     }
 
     override fun load(url: String): LoadResponse {
-        val html = app.get(url).text
-        val document = Jsoup.parse(html)
+        val document = app.get(url).document
 
         val details = document.select("div.detail_page-watch")
         val img = details.select("img.film-poster-img")
@@ -138,15 +137,14 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
         val plot = details.select("div.description").text().replace("Overview:", "").trim()
 
-
         val isMovie = url.contains("/movie/")
-
 
         // https://sflix.to/movie/free-never-say-never-again-hd-18317 -> 18317
         val idRegex = Regex(""".*-(\d+)""")
         val dataId = details.attr("data-id")
         val id = if (dataId.isNullOrEmpty())
-            idRegex.find(url)?.groupValues?.get(1) ?: throw RuntimeException("Unable to get id from '$url'")
+            idRegex.find(url)?.groupValues?.get(1)
+                ?: throw RuntimeException("Unable to get id from '$url'")
         else dataId
 
         if (isMovie) {
@@ -160,7 +158,8 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                         || it.select("span").text().trim().equals("Vidcloud", ignoreCase = true)
             }?.attr("data-id")
 
-            val webViewUrl = "$url${sourceId?.let { ".$it" } ?: ""}".replace("/movie/", "/watch-movie/")
+            val webViewUrl =
+                "$url${sourceId?.let { ".$it" } ?: ""}".replace("/movie/", "/watch-movie/")
 
             return newMovieLoadResponse(title, url, TvType.Movie, webViewUrl) {
                 this.year = year
@@ -169,40 +168,43 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 setDuration(duration)
             }
         } else {
-            val seasonsHtml = app.get("$mainUrl/ajax/v2/tv/seasons/$id").text
-            val seasonsDocument = Jsoup.parse(seasonsHtml)
+            val seasonsDocument = app.get("$mainUrl/ajax/v2/tv/seasons/$id").document
             val episodes = arrayListOf<TvSeriesEpisode>()
 
-            seasonsDocument.select("div.dropdown-menu.dropdown-menu-model > a").forEachIndexed { season, element ->
-                val seasonId = element.attr("data-id")
-                if (seasonId.isNullOrBlank()) return@forEachIndexed
+            seasonsDocument.select("div.dropdown-menu.dropdown-menu-model > a")
+                .forEachIndexed { season, element ->
+                    val seasonId = element.attr("data-id")
+                    if (seasonId.isNullOrBlank()) return@forEachIndexed
 
-                val seasonHtml = app.get("$mainUrl/ajax/v2/season/episodes/$seasonId").text
-                val seasonDocument = Jsoup.parse(seasonHtml)
-                seasonDocument.select("div.flw-item.film_single-item.episode-item.eps-item")
-                    .forEachIndexed { _, it ->
-                        val episodeImg = it.select("img")
-                        val episodeTitle = episodeImg.attr("title")
-                        val episodePosterUrl = episodeImg.attr("src")
-                        val episodeData = it.attr("data-id")
+                    var episode = 0
+                    app.get("$mainUrl/ajax/v2/season/episodes/$seasonId").document
+                        .select("div.flw-item.film_single-item.episode-item.eps-item")
+                        .forEach {
+                            val episodeImg = it.select("img") ?: return@forEach
+                            val episodeTitle = episodeImg.attr("title") ?: return@forEach
+                            val episodePosterUrl = episodeImg.attr("src") ?: return@forEach
+                            val episodeData = it.attr("data-id") ?: return@forEach
 
-//                            val episodeNum =
-//                                Regex("""\d+""").find(it.select("div.episode-number").text())?.groupValues?.get(1)
-//                                    ?.toIntOrNull()
+                            episode++
 
-                        episodes.add(
-                            TvSeriesEpisode(
-                                episodeTitle,
-                                season + 1,
-                                null,
-                                "$url:::$episodeData",
-                                fixUrl(episodePosterUrl)
+                            val episodeNum =
+                                (it.select("div.episode-number")?.text() ?: episodeTitle).let { str ->
+                                    Regex("""\d+""").find(str)?.groupValues?.firstOrNull()
+                                        ?.toIntOrNull()
+                                } ?: episode
+
+                            episodes.add(
+                                TvSeriesEpisode(
+                                    episodeTitle.removePrefix("Episode $episodeNum: "),
+                                    season + 1,
+                                    episodeNum,
+                                    "$url:::$episodeData",
+                                    fixUrl(episodePosterUrl)
+                                )
                             )
-                        )
-                    }
-
-            }
-            return newTvSeriesLoadResponse(title,url,TvType.TvSeries,episodes) {
+                        }
+                }
+            return newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = posterUrl
                 this.year = year
                 this.plot = plot
@@ -264,18 +266,19 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         ).text
 
         val mapped = mapper.readValue<SourceObject>(sources)
+
         mapped.tracks?.forEach {
             it?.toSubtitleFile()?.let { subtitleFile ->
                 subtitleCallback.invoke(subtitleFile)
             }
         }
-        val list = listOf(
+
+        listOf(
             mapped.sources to "source 1",
             mapped.sources1 to "source 2",
             mapped.sources2 to "source 3",
             mapped.sourcesBackup to "source backup"
-        )
-        list.forEach { subList ->
+        ).forEach { subList ->
             subList.first?.forEach {
                 it?.toExtractorLink(this, subList.second)?.forEach(callback)
             }
@@ -288,19 +291,24 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
         fun Sources.toExtractorLink(caller: MainAPI, name: String): List<ExtractorLink>? {
             return this.file?.let { file ->
-                val isM3u8 = URI(this.file).path.endsWith(".m3u8") || this.type.equals("hls", ignoreCase = true)
+                val isM3u8 = URI(this.file).path.endsWith(".m3u8") || this.type.equals(
+                    "hls",
+                    ignoreCase = true
+                )
                 if (isM3u8) {
-                    M3u8Helper().m3u8Generation(M3u8Helper.M3u8Stream(this.file, null), true).map { stream ->
-                        val qualityString = if ((stream.quality ?: 0) == 0) label ?: "" else "${stream.quality}p"
-                        ExtractorLink(
-                            caller.name,
-                            "${caller.name} $qualityString $name",
-                            stream.streamUrl,
-                            caller.mainUrl,
-                            getQualityFromName(stream.quality.toString()),
-                            true
-                        )
-                    }
+                    M3u8Helper().m3u8Generation(M3u8Helper.M3u8Stream(this.file, null), true)
+                        .map { stream ->
+                            val qualityString = if ((stream.quality ?: 0) == 0) label
+                                ?: "" else "${stream.quality}p"
+                            ExtractorLink(
+                                caller.name,
+                                "${caller.name} $qualityString $name",
+                                stream.streamUrl,
+                                caller.mainUrl,
+                                getQualityFromName(stream.quality.toString()),
+                                true
+                            )
+                        }
                 } else {
                     listOf(ExtractorLink(
                         caller.name,
@@ -311,7 +319,6 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                         false,
                     ))
                 }
-
             }
         }
 
@@ -323,7 +330,6 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 )
             }
         }
-
     }
 }
 
