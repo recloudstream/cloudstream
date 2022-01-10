@@ -117,7 +117,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Triple("\uD83C\uDDEE\uD83C\uDDF3", "Malayalam", "ml"),
         Triple("\uD83C\uDDF3\uD83C\uDDF4", "Norsk", "no"),
         Triple("\ud83c\udde9\ud83c\uddea", "German", "de"),
-        Triple("\ud83c\udde6\ud83c\uddf7", "Arabic", "ar"),// originally flag_lb \ud83c\uddf1\ud83c\udde7
+        Triple("\ud83c\uddf1\ud83c\udde7", "Arabic", "ar"),
         Triple("\ud83c\uddf9\ud83c\uddf7", "Turkish", "tr"),
         Triple("\ud83c\uddf2\ud83c\uddf0", "Macedonian", "mk"),
         Triple("\ud83c\udde7\ud83c\uddf7", "Portuguese (Brazil)", "pt"),
