@@ -1,25 +1,26 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import android.util.Log
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
-import org.jsoup.Jsoup
+import java.lang.Exception
 
 class PinoyHDXyzProvider : MainAPI() {
     override val name = "Pinoy-HD"
     override val mainUrl = "https://www.pinoy-hd.xyz"
     override val lang = "tl"
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries)
-    override val hasDownloadSupport = false
+    override val hasDownloadSupport = true
     override val hasMainPage = true
     override val hasQuickSearch = false
 
 
     override fun getMainPage(): HomePageResponse {
         val all = ArrayList<HomePageList>()
-        val html = app.get(mainUrl, referer = mainUrl).text
-        val document = Jsoup.parse(html)
+        val document = app.get(mainUrl, referer = mainUrl).document
         val mainbody = document.getElementsByTag("body")
 
         mainbody?.select("div.section-cotent.col-md-12.bordert")?.forEach { row ->
@@ -69,32 +70,28 @@ class PinoyHDXyzProvider : MainAPI() {
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/?q=${query.replace(" ", "+")}"
         val document = app.get(url).document.select("div.portfolio-thumb")
-        if (!document.isNullOrEmpty()) {
-            return document.map {
+        return document?.mapNotNull {
+            if (it == null) {
+                return@mapNotNull null
+            }
+            val link = it.selectFirst("a")?.attr("href") ?: return@mapNotNull null
+            val title = it.text() ?: ""
+            val year = null
+            val image = null // site provides no image on search page
 
-                val link = it?.select("a")?.firstOrNull()?.attr("href") ?: ""
-                val title = it?.text() ?: ""
-                val year = null
-                val image = null // site provides no image on search page
-
-                MovieSearchResponse(
-                    title,
-                    link,
-                    this.name,
-                    TvType.Movie,
-                    image,
-                    year
-                )
-            }.filter { a -> a.url.isNotEmpty() }
-                    .filter { b -> b.name.isNotEmpty() }
-                    .distinctBy { c -> c.url }
-        }
-        return listOf()
+            MovieSearchResponse(
+                title,
+                link,
+                this.name,
+                TvType.Movie,
+                image,
+                year
+            )
+        }?.distinctBy { c -> c.url } ?: listOf()
     }
 
     override fun load(url: String): LoadResponse {
-        val response = app.get(url).text
-        val doc = Jsoup.parse(response)
+        val doc = app.get(url).document
         val body = doc.getElementsByTag("body")
         val inner = body?.select("div.info")
 
@@ -120,32 +117,44 @@ class PinoyHDXyzProvider : MainAPI() {
 
         var descript = body?.select("div.eText")?.text()
         if (!descript.isNullOrEmpty()) {
-            descript = descript.substring(0, descript.indexOf("_x_Polus1"))
-                .replace("_x_Polus1", "")
+            try {
+                descript = descript.substring(0, descript.indexOf("_x_Polus1"))
+                    .replace("_x_Polus1", "")
+            } catch (e: java.lang.Exception) {  }
         }
 
         // Video links
         val listOfLinks: MutableList<String> = mutableListOf()
-        val linkMain = body?.select("div.tabcontent > iframe")?.attr("src")
-        if (!linkMain.isNullOrEmpty()) {
-            listOfLinks.add(linkMain)
-        }
-        var extraLinks = body?.select("div.tabcontent.hide")?.text()
-        if (!extraLinks.isNullOrEmpty()) {
-            extraLinks = extraLinks.substring(extraLinks.indexOf("_x_Polus1"))
-            extraLinks = extraLinks.trim().substring("_x_Polus1".length)
-            extraLinks = extraLinks.substring(0, extraLinks.indexOf("<script>"))
-            val lnks = extraLinks.split("_x_Polus")
-            //Log.i(this.name, "Result => (lnks) ${lnks}")
-            for (item in lnks) {
-                if (item.contains("https://")) {
-                    val lnkurl = item.substring(item.indexOf("https://")).trim()
-                    listOfLinks.add(lnkurl)
-                }
+        body?.select("div.tabcontent > iframe")?.forEach {
+            val linkMain = it?.attr("src")
+            if (!linkMain.isNullOrEmpty()) {
+                listOfLinks.add(linkMain)
+                //Log.i(this.name, "Result => (linkMain) $linkMain")
             }
         }
-        val streamlinks = listOfLinks.toString()
-        //Log.i(this.name, "Result => (streamlinks) ${streamlinks}")
+        body?.select("div.tabcontent.hide > iframe")?.forEach {
+            val linkMain = it?.attr("src")
+            if (!linkMain.isNullOrEmpty()) {
+                listOfLinks.add(linkMain)
+                //Log.i(this.name, "Result => (linkMain hide) $linkMain")
+            }
+        }
+
+        var extraLinks = body?.select("div.tabcontent.hide")?.text()
+        if (!extraLinks.isNullOrEmpty()) {
+            try {
+                extraLinks = extraLinks.substring(extraLinks.indexOf("_x_Polus1"))
+                extraLinks = extraLinks.trim().substring("_x_Polus1".length)
+                extraLinks = extraLinks.substring(0, extraLinks.indexOf("<script>"))
+                extraLinks.split("_x_Polus").forEach { item ->
+                    if (item.contains("https://")) {
+                        val lnkurl = item.substring(item.indexOf("https://")).trim()
+                        listOfLinks.add(lnkurl)
+                        //Log.i(this.name, "Result => (lnkurl) $lnkurl")
+                    }
+                }
+            } catch (e: Exception) { }
+        }
 
         // Parse episodes if series
         if (tvtype == TvType.TvSeries) {
@@ -160,43 +169,40 @@ class PinoyHDXyzProvider : MainAPI() {
                     epListText = epListText.substring(indexStart.length, epListText.indexOf(")"))
                         .trim().trim('\'')
                     //Log.i(this.name, "Result => (epListText) ${epListText}")
-                    val epList = epListText.split(',')
-                    //Log.i(this.name, "Result => (epLinks) ${epLinks}")
-                    if (!epList.isNullOrEmpty()) {
-                        var count = 0
-                        epList.forEach { ep ->
-                            count++
-                            val epTitle = " Episode $count"
-                            //Log.i(this.name, "Result => (epLinks href) ${href}")
-                            episodeList.add(
-                                TvSeriesEpisode(
-                                    name = name + epTitle,
-                                    season = null,
-                                    episode = count,
-                                    data = ep.trim(),
-                                    posterUrl = poster,
-                                    date = null
-                                )
+                    var count = 0
+                    epListText.split(',').forEach { ep ->
+                        count++
+                        val listEpStream = listOf(ep.trim()).toJson()
+                        //Log.i(this.name, "Result => (ep $count) $listEpStream")
+                        episodeList.add(
+                            TvSeriesEpisode(
+                                name = null,
+                                season = null,
+                                episode = count,
+                                data = listEpStream,
+                                posterUrl = poster,
+                                date = null
                             )
-                        }
-                        return TvSeriesLoadResponse(
-                            title,
-                            url,
-                            this.name,
-                            tvtype,
-                            episodeList,
-                            poster,
-                            year,
-                            descript,
-                            null,
-                            null,
-                            null
                         )
                     }
+                    return TvSeriesLoadResponse(
+                        title,
+                        url,
+                        this.name,
+                        tvtype,
+                        episodeList,
+                        poster,
+                        year,
+                        descript,
+                        null,
+                        null,
+                        null
+                    )
                 }
             }
         }
-        return MovieLoadResponse(title, url, this.name, tvtype, streamlinks, poster, year, descript, null, null)
+        val streamLinks = listOfLinks.distinct().toJson()
+        return MovieLoadResponse(title, url, this.name, tvtype, streamLinks, poster, year, descript, null, null)
     }
 
     override fun loadLinks(
@@ -205,19 +211,16 @@ class PinoyHDXyzProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if (data == "about:blank") return false
         if (data.isEmpty()) return false
-        try {
-            data.trim('[').trim(']').split(',').map { item ->
-                if (item.isNotEmpty()) {
-                    val url = item.trim()
-                    loadExtractor(url, url, callback)
-                }
+        if (data == "about:blank") return false
+        if (data == "[]") return false
+
+        mapper.readValue<List<String>>(data).forEach { item ->
+            if (item.isNotEmpty()) {
+                val url = item.trim()
+                loadExtractor(url, mainUrl, callback)
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.i(this.name, "Result => (e) $e")
         }
-        return false
+        return true
     }
 }
