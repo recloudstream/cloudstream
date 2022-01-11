@@ -48,7 +48,11 @@ object SearchResultBuilder {
         cardText?.text = card.name
 
         //imageTextProvider.text = card.apiName
-        cardView.setImage(card.posterUrl)
+        if (!card.posterUrl.isNullOrEmpty()) {
+            cardView.setImage(card.posterUrl)
+        } else {
+            cardView.setImageResource(R.drawable.default_cover)
+        }
 
         bg.setOnClickListener {
             clickCallback.invoke(

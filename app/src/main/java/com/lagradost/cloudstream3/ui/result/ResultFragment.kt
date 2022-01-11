@@ -1095,6 +1095,15 @@ class ResultFragment : Fragment() {
                         }
                         result_info?.isVisible = api.providerType == ProviderType.MetaProvider
 
+                        if (d.type.isEpisodeBased()) {
+                            val ep = d as? TvSeriesLoadResponse
+                            val epCount = ep?.episodes?.size ?: 1
+                            if (epCount < 1) {
+                                result_info?.text = getString(R.string.no_episodes_found)
+                                result_info?.isVisible = true
+                            }
+                        }
+
                         currentHeaderName = d.name
                         currentType = d.type
 
@@ -1158,11 +1167,15 @@ class ResultFragment : Fragment() {
 
                         result_meta_site?.text = d.apiName
 
-                        result_poster?.setImage(d.posterUrl)
-                        result_poster_blur?.setImageBlur(d.posterUrl, 10, 3)
+                        if (!d.posterUrl.isNullOrEmpty()) {
+                            result_poster?.setImage(d.posterUrl)
+                            result_poster_blur?.setImageBlur(d.posterUrl, 10, 3)
+                        } else {
+                            result_poster?.setImageResource(R.drawable.default_cover)
+                            result_poster_blur?.setImageResource(R.drawable.default_cover)
+                        }
 
-                        result_poster_holder?.visibility =
-                            if (d.posterUrl.isNullOrBlank()) GONE else VISIBLE
+                        result_poster_holder?.visibility = VISIBLE
 
                         result_play_movie?.text =
                             if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(
