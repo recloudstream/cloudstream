@@ -11,8 +11,6 @@ import com.google.android.exoplayer2.extractor.ExtractorsFactory
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.source.SingleSampleMediaSource
-import com.google.android.exoplayer2.text.SubtitleDecoderFactory
 import com.google.android.exoplayer2.text.SubtitleExtractor
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelector
@@ -285,7 +283,7 @@ class CS3IPlayer : IPlayer {
             return DefaultDataSourceFactory(this, USER_AGENT)
         }
 
-        private fun getSubSources(
+        /*private fun getSubSources(
             onlineSourceFactory: DataSource.Factory?,
             offlineSourceFactory: DataSource.Factory?,
             subHelper: PlayerSubtitleHelper,
@@ -324,7 +322,7 @@ class CS3IPlayer : IPlayer {
             }
             println("SUBSRC: ${subSources.size} activeSubtitles : ${activeSubtitles.size} of ${subHelper.getAllSubtitles().size} ")
             return Pair(subSources, activeSubtitles)
-        }
+        }*/
 
         private fun getCache(context: Context, cacheSize: Long): SimpleCache? {
             return try {
@@ -587,33 +585,47 @@ class CS3IPlayer : IPlayer {
      * https://github.com/google/ExoPlayer/blob/029a2b27cbdc27cf9d51d4a73ebeb503968849f6/library/core/src/main/java/com/google/android/exoplayer2/source/DefaultMediaSourceFactory.java
      * */
     private fun createProgressiveMediaSources(
-        subSources: List<SingleSampleMediaSource>,
-        factory: DataSource.Factory
-    ): List<ProgressiveMediaSource> {
-        val extractorFactory = ExtractorsFactory {
-            subSources.map {
-                val currentSub = it.mediaItem.localConfiguration?.subtitleConfigurations?.firstOrNull()
-                val format = Format.Builder()
-                    .setSampleMimeType(currentSub?.mimeType)
-                    .setLanguage(currentSub?.language)
-                    .setLabel(currentSub?.label)
-                    .build()
+        subHelper: PlayerSubtitleHelper,
+        offlineSourceFactory: DataSource.Factory?,
+        onlineSourceFactory: DataSource.Factory?,
+    ): Pair<List<SubtitleData>, List<ProgressiveMediaSource>> {
+        val activeSubtitles = ArrayList<SubtitleData>()
 
-                SubtitleExtractor(
-                    CustomSubtitleDecoderFactory().createDecoder(format), format
+        return Pair(activeSubtitles, subHelper.getAllSubtitles().mapNotNull { sub ->
+            val format = Format.Builder()
+                .setSampleMimeType(sub.mimeType)
+                .setLanguage("_${sub.name}")
+                .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+                .build()
+
+            val extractorFactory = ExtractorsFactory {
+                arrayOf(
+                    SubtitleExtractor(
+                        CustomSubtitleDecoderFactory().createDecoder(format), format
+                    )
                 )
-            }.toTypedArray()
-        }
+            }
 
-        return subSources.mapNotNull {
-            val uri = it.mediaItem.localConfiguration?.subtitleConfigurations?.firstOrNull()?.uri ?: return@mapNotNull null
-            if (uri.toString().isBlank()) return@mapNotNull null
+            val factory = when (sub.origin) {
+                SubtitleOrigin.DOWNLOADED_FILE -> {
+                    activeSubtitles.add(sub)
+                    offlineSourceFactory
+                }
+                SubtitleOrigin.URL -> {
+                    activeSubtitles.add(sub)
+                    onlineSourceFactory
+                }
+                SubtitleOrigin.OPEN_SUBTITLES -> {
+                    null
+                }
+            } ?: return@mapNotNull null
 
-            ProgressiveMediaSource.Factory(factory, extractorFactory)
+            return@mapNotNull ProgressiveMediaSource.Factory(factory, extractorFactory)
                 .createMediaSource(
-                    MediaItem.fromUri(uri)
+                    MediaItem.fromUri(sub.url)
                 )
-        }
+        })
+
     }
 
     private fun loadOfflinePlayer(context: Context, data: ExtractorUri) {
@@ -623,14 +635,12 @@ class CS3IPlayer : IPlayer {
 
             val mediaItem = getMediaItem(MimeTypes.VIDEO_MP4, data.uri)
             val offlineSourceFactory = context.createOfflineSource()
-            val (subSources, activeSubtitles) = getSubSources(
-                offlineSourceFactory,
-                offlineSourceFactory,
-                subtitleHelper
-            )
 
-            val progressiveMediaSources =
-                createProgressiveMediaSources(subSources, offlineSourceFactory)
+            val (activeSubtitles, progressiveMediaSources) = createProgressiveMediaSources(
+                subtitleHelper,
+                offlineSourceFactory,
+                offlineSourceFactory,
+            )
 
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
             loadExo(context, mediaItem, progressiveMediaSources)
@@ -666,14 +676,11 @@ class CS3IPlayer : IPlayer {
             val onlineSourceFactory = createOnlineSource(link)
             val offlineSourceFactory = context.createOfflineSource()
 
-            val (subSources, activeSubtitles) = getSubSources(
-                onlineSourceFactory,
+            val (activeSubtitles, progressiveMediaSources) = createProgressiveMediaSources(
+                subtitleHelper,
                 offlineSourceFactory,
-                subtitleHelper
+                onlineSourceFactory,
             )
-
-            val progressiveMediaSources =
-                createProgressiveMediaSources(subSources, onlineSourceFactory)
 
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
 

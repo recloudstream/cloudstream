@@ -2,35 +2,37 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.util.Log
 import com.google.android.exoplayer2.Format
-import com.google.android.exoplayer2.text.*
+import com.google.android.exoplayer2.text.SubtitleDecoder
+import com.google.android.exoplayer2.text.SubtitleDecoderFactory
+import com.google.android.exoplayer2.text.SubtitleInputBuffer
+import com.google.android.exoplayer2.text.SubtitleOutputBuffer
 import com.google.android.exoplayer2.text.ssa.SsaDecoder
 import com.google.android.exoplayer2.text.subrip.SubripDecoder
 import com.google.android.exoplayer2.text.ttml.TtmlDecoder
 import com.google.android.exoplayer2.text.webvtt.WebvttDecoder
 import com.google.android.exoplayer2.util.MimeTypes
-import okio.ByteString.Companion.toByteString
-import java.nio.charset.Charset
 
 
 class CustomDecoder : SubtitleDecoder {
-
     companion object {
         private const val TAG = "CustomDecoder"
     }
 
-    var realDecoder: SimpleSubtitleDecoder? = null
+    var realDecoder: SubtitleDecoder? = null
 
     override fun getName(): String {
         return realDecoder?.name ?: this::class.java.name
     }
 
     override fun dequeueInputBuffer(): SubtitleInputBuffer {
+        Log.i(TAG, "dequeueInputBuffer")
         return realDecoder?.dequeueInputBuffer() ?: SubtitleInputBuffer()
     }
 
     override fun queueInputBuffer(inputBuffer: SubtitleInputBuffer) {
-        println("STARTTT ${inputBuffer.format?.language}")
-        if (realDecoder == null)
+        Log.i(TAG, "queueInputBuffer")
+
+        if (realDecoder == null) {
             inputBuffer.data?.let { data ->
 
                 val pos = data.position()
@@ -51,9 +53,15 @@ class CustomDecoder : SubtitleDecoder {
                     str.startsWith("1") -> SubripDecoder()
                     else -> null
                 }
-            }
 
-        realDecoder?.dequeueInputBuffer().also { println("RETURNED ddddd") }
+                realDecoder?.dequeueInputBuffer()?.let { buff ->
+                    buff.data = data
+                    realDecoder?.queueInputBuffer(buff)
+                }
+            }
+        } else {
+            realDecoder?.dequeueInputBuffer()
+        }
     }
 
     override fun dequeueOutputBuffer(): SubtitleOutputBuffer? {
