@@ -7,9 +7,13 @@ import android.util.Log
 import android.widget.FrameLayout
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
+import com.google.android.exoplayer2.extractor.ExtractorsFactory
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MergingMediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.SingleSampleMediaSource
+import com.google.android.exoplayer2.text.SubtitleDecoderFactory
+import com.google.android.exoplayer2.text.SubtitleExtractor
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.SubtitleView
@@ -367,7 +371,7 @@ class CS3IPlayer : IPlayer {
         private fun buildExoPlayer(
             context: Context,
             mediaItem: MediaItem,
-            subSources: List<SingleSampleMediaSource>,
+            subSources: List<ProgressiveMediaSource>,
             currentWindow: Int,
             playbackPosition: Long,
             playBackSpeed: Float,
@@ -466,7 +470,7 @@ class CS3IPlayer : IPlayer {
     private fun loadExo(
         context: Context,
         mediaItem: MediaItem,
-        subSources: List<SingleSampleMediaSource>,
+        subSources: List<ProgressiveMediaSource>,
         cacheFactory: CacheDataSource.Factory? = null
     ) {
         Log.i(TAG, "loadExo")
@@ -579,6 +583,39 @@ class CS3IPlayer : IPlayer {
         }
     }
 
+    /**
+     * https://github.com/google/ExoPlayer/blob/029a2b27cbdc27cf9d51d4a73ebeb503968849f6/library/core/src/main/java/com/google/android/exoplayer2/source/DefaultMediaSourceFactory.java
+     * */
+    private fun createProgressiveMediaSources(
+        subSources: List<SingleSampleMediaSource>,
+        factory: DataSource.Factory
+    ): List<ProgressiveMediaSource> {
+        val extractorFactory = ExtractorsFactory {
+            subSources.map {
+                val currentSub = it.mediaItem.localConfiguration?.subtitleConfigurations?.firstOrNull()
+                val format = Format.Builder()
+                    .setSampleMimeType(currentSub?.mimeType)
+                    .setLanguage(currentSub?.language)
+                    .setLabel(currentSub?.label)
+                    .build()
+
+                SubtitleExtractor(
+                    CustomSubtitleDecoderFactory().createDecoder(format), format
+                )
+            }.toTypedArray()
+        }
+
+        return subSources.mapNotNull {
+            val uri = it.mediaItem.localConfiguration?.subtitleConfigurations?.firstOrNull()?.uri ?: return@mapNotNull null
+            if (uri.toString().isBlank()) return@mapNotNull null
+
+            ProgressiveMediaSource.Factory(factory, extractorFactory)
+                .createMediaSource(
+                    MediaItem.fromUri(uri)
+                )
+        }
+    }
+
     private fun loadOfflinePlayer(context: Context, data: ExtractorUri) {
         Log.i(TAG, "loadOfflinePlayer")
         try {
@@ -591,8 +628,12 @@ class CS3IPlayer : IPlayer {
                 offlineSourceFactory,
                 subtitleHelper
             )
+
+            val progressiveMediaSources =
+                createProgressiveMediaSources(subSources, offlineSourceFactory)
+
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
-            loadExo(context, mediaItem, subSources)
+            loadExo(context, mediaItem, progressiveMediaSources)
         } catch (e: Exception) {
             Log.e(TAG, "loadOfflinePlayer error", e)
             playerError?.invoke(e)
@@ -630,6 +671,10 @@ class CS3IPlayer : IPlayer {
                 offlineSourceFactory,
                 subtitleHelper
             )
+
+            val progressiveMediaSources =
+                createProgressiveMediaSources(subSources, onlineSourceFactory)
+
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
 
             if (simpleCache == null)
@@ -640,7 +685,7 @@ class CS3IPlayer : IPlayer {
                 setUpstreamDataSourceFactory(onlineSourceFactory)
             }
 
-            loadExo(context, mediaItem, subSources, cacheFactory)
+            loadExo(context, mediaItem, progressiveMediaSources, cacheFactory)
         } catch (e: Exception) {
             Log.e(TAG, "loadOnlinePlayer error", e)
             playerError?.invoke(e)
