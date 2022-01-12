@@ -103,9 +103,9 @@ class GeneratorPlayer : FullScreenPlayer() {
             val (linkData, _) = it
             var quality = linkData?.quality ?: Qualities.Unknown.value
 
-            // we set all qualities above current max as max -1
+            // we set all qualities above current max as reverse
             if (useQualitySettings && quality > currentPrefQuality) {
-                quality = currentPrefQuality - 1
+                quality = currentPrefQuality - quality - 1
             }
             // negative because we want to sort highest quality first
             -(quality)

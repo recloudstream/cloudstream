@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.extractor.ExtractorsFactory
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.text.SubtitleDecoderFactory
 import com.google.android.exoplayer2.text.SubtitleExtractor
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelector
@@ -598,11 +599,26 @@ class CS3IPlayer : IPlayer {
                 .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
                 .build()
 
+            val ownFactory = CustomSubtitleDecoderFactory()
             val extractorFactory = ExtractorsFactory {
                 arrayOf(
-                    SubtitleExtractor(
-                        CustomSubtitleDecoderFactory().createDecoder(format), format
-                    )
+                    if (ownFactory.supportsFormat(format)) {
+                        SubtitleExtractor(
+                            ownFactory.createDecoder(format), format
+                        )
+                    } else {
+                        if (SubtitleDecoderFactory.DEFAULT.supportsFormat(format)) {
+                            SubtitleExtractor(
+                                SubtitleDecoderFactory.DEFAULT.createDecoder(format), format
+                            )
+                        } else {
+                            // ye we guess if not found instead of using UnknownSubtitlesExtractor,
+                            // this way you can hopefully load a .txt file that is an srt and it will work
+                            SubtitleExtractor(
+                                ownFactory.createDecoder(format), format
+                            )
+                        }
+                    }
                 )
             }
 

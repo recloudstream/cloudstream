@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.text.subrip.SubripDecoder
 import com.google.android.exoplayer2.text.ttml.TtmlDecoder
 import com.google.android.exoplayer2.text.webvtt.WebvttDecoder
 import com.google.android.exoplayer2.util.MimeTypes
+import com.lagradost.cloudstream3.mvvm.logError
 
 
 class CustomDecoder : SubtitleDecoder {
@@ -18,7 +19,7 @@ class CustomDecoder : SubtitleDecoder {
         private const val TAG = "CustomDecoder"
     }
 
-    var realDecoder: SubtitleDecoder? = null
+    private var realDecoder: SubtitleDecoder? = null
 
     override fun getName(): String {
         return realDecoder?.name ?: this::class.java.name
@@ -31,36 +32,40 @@ class CustomDecoder : SubtitleDecoder {
 
     override fun queueInputBuffer(inputBuffer: SubtitleInputBuffer) {
         Log.i(TAG, "queueInputBuffer")
+        try {
+            if (realDecoder == null) {
+                inputBuffer.data?.let { data ->
+                    // this way we read the subtitle file and decide what decoder to use instead of relying on mimetype
 
-        if (realDecoder == null) {
-            inputBuffer.data?.let { data ->
+                    val pos = data.position()
+                    data.position(0)
+                    val arr = ByteArray(minOf(data.remaining(), 100))
+                    data.get(arr)
+                    data.position(pos)
 
-                val pos = data.position()
-                data.position(0)
-                val arr = ByteArray(minOf(data.remaining(), 100))
-                data.get(arr)
-                data.position(pos)
+                    val str = arr.decodeToString().trimStart()
+                    Log.i(TAG, "Got data from queueInputBuffer")
+                    Log.i(TAG, "first string is $str")
 
-                val str = arr.decodeToString().trimStart()
-                Log.i(TAG, "Got data from queueInputBuffer")
-                Log.i(TAG, "first string is $str")
+                    //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
+                    realDecoder = when {
+                        str.startsWith("WEBVTT") -> WebvttDecoder()
+                        str.startsWith("<?xml version=\"") -> TtmlDecoder()
+                        str.startsWith("[Script Info]") || str.startsWith("Title:") -> SsaDecoder()
+                        str.startsWith("1") -> SubripDecoder()
+                        else -> null
+                    }
 
-                //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
-                realDecoder = when {
-                    str.startsWith("WEBVTT") -> WebvttDecoder()
-                    str.startsWith("<?xml version=\"") -> TtmlDecoder()
-                    str.startsWith("[Script Info]") || str.startsWith("Title:") -> SsaDecoder()
-                    str.startsWith("1") -> SubripDecoder()
-                    else -> null
+                    realDecoder?.dequeueInputBuffer()?.let { buff ->
+                        buff.data = data
+                        realDecoder?.queueInputBuffer(buff)
+                    }
                 }
-
-                realDecoder?.dequeueInputBuffer()?.let { buff ->
-                    buff.data = data
-                    realDecoder?.queueInputBuffer(buff)
-                }
+            } else {
+                realDecoder?.dequeueInputBuffer()
             }
-        } else {
-            realDecoder?.dequeueInputBuffer()
+        } catch (e: Exception) {
+            logError(e)
         }
     }
 
