@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -195,7 +196,15 @@ class SubtitlesFragment : Fragment() {
         state = getCurrentSavedStyle()
         context?.updateState()
 
+        val isTvSettings = context?.isTvSettings() == true
+
+        fun View.setFocusableInTv() {
+            this.isFocusableInTouchMode = isTvSettings
+        }
+
         fun View.setup(id: Int) {
+            setFocusableInTv()
+
             this.setOnClickListener {
                 activity?.let {
                     ColorPickerDialog.newBuilder()
@@ -223,6 +232,7 @@ class SubtitlesFragment : Fragment() {
                 activity?.hideSystemUI()
         }
 
+        subs_subtitle_elevation.setFocusableInTv()
         subs_subtitle_elevation.setOnClickListener { textView ->
             val suffix = "dp"
             val elevationTypes = listOf(
@@ -261,6 +271,7 @@ class SubtitlesFragment : Fragment() {
             return@setOnLongClickListener true
         }
 
+        subs_edge_type.setFocusableInTv()
         subs_edge_type.setOnClickListener { textView ->
             val edgeTypes = listOf(
                 Pair(
@@ -305,6 +316,7 @@ class SubtitlesFragment : Fragment() {
             return@setOnLongClickListener true
         }
 
+        subs_font_size.setFocusableInTv()
         subs_font_size.setOnClickListener { textView ->
             val suffix = "sp"
             val fontSizes = listOf(
@@ -356,6 +368,7 @@ class SubtitlesFragment : Fragment() {
             return@setOnLongClickListener true
         }
 
+        subs_font.setFocusableInTv()
         subs_font.setOnClickListener { textView ->
             val fontTypes = listOf(
                 Pair(null, textView.context.getString(R.string.normal)),
@@ -395,6 +408,7 @@ class SubtitlesFragment : Fragment() {
             return@setOnLongClickListener true
         }
 
+        subs_auto_select_language.setFocusableInTv()
         subs_auto_select_language.setOnClickListener { textView ->
             val langMap = arrayListOf(
                 SubtitleHelper.Language639(
@@ -427,6 +441,7 @@ class SubtitlesFragment : Fragment() {
             return@setOnLongClickListener true
         }
 
+        subs_download_languages.setFocusableInTv()
         subs_download_languages.setOnClickListener { textView ->
             val langMap = SubtitleHelper.languages
             val lang639_1 = langMap.map { it.ISO_639_1 }
