@@ -17,6 +17,7 @@ import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
@@ -171,111 +172,115 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     var selectSourceDialog: AlertDialog? = null
     override fun showMirrorsDialogue() {
-        currentSelectedSubtitles = player.getCurrentPreferredSubtitle()
-        context?.let { ctx ->
-            val isPlaying = player.getIsPlaying()
-            player.handleEvent(CSPlayerEvent.Pause)
-            val currentSubtitles = sortSubs(currentSubs)
+        try {
+            currentSelectedSubtitles = player.getCurrentPreferredSubtitle()
+            context?.let { ctx ->
+                val isPlaying = player.getIsPlaying()
+                player.handleEvent(CSPlayerEvent.Pause)
+                val currentSubtitles = sortSubs(currentSubs)
 
-            val sourceBuilder = AlertDialog.Builder(ctx, R.style.AlertDialogCustomBlack)
-                .setView(R.layout.player_select_source_and_subs)
+                val sourceBuilder = AlertDialog.Builder(ctx, R.style.AlertDialogCustomBlack)
+                    .setView(R.layout.player_select_source_and_subs)
 
-            val sourceDialog = sourceBuilder.create()
-            selectSourceDialog = sourceDialog
-            sourceDialog.show()
-            val providerList =
-                sourceDialog.findViewById<ListView>(R.id.sort_providers)!!
-            val subtitleList =
-                sourceDialog.findViewById<ListView>(R.id.sort_subtitles)!!
-            val applyButton =
-                sourceDialog.findViewById<MaterialButton>(R.id.apply_btt)!!
-            val cancelButton =
-                sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
+                val sourceDialog = sourceBuilder.create()
+                selectSourceDialog = sourceDialog
+                sourceDialog.show()
+                val providerList =
+                    sourceDialog.findViewById<ListView>(R.id.sort_providers)!!
+                val subtitleList =
+                    sourceDialog.findViewById<ListView>(R.id.sort_subtitles)!!
+                val applyButton =
+                    sourceDialog.findViewById<MaterialButton>(R.id.apply_btt)!!
+                val cancelButton =
+                    sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
 
-            val footer: TextView =
-                layoutInflater.inflate(R.layout.sort_bottom_footer_add_choice, null) as TextView
-            footer.text = ctx.getString(R.string.player_load_subtitles)
-            footer.setOnClickListener {
-                openSubPicker()
-            }
-            subtitleList.addFooterView(footer)
-
-            var sourceIndex = 0
-            var startSource = 0
-
-            val sortedUrls = sortLinks(useQualitySettings = false)
-            if (sortedUrls.isNullOrEmpty()) {
-                sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.isGone = true
-            } else {
-                startSource = sortedUrls.indexOf(currentSelectedLink)
-                sourceIndex = startSource
-
-                val sourcesArrayAdapter =
-                    ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-
-                sourcesArrayAdapter.addAll(sortedUrls.map {
-                    it.first?.name ?: it.second?.name ?: "NULL"
-                })
-
-                providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-                providerList.adapter = sourcesArrayAdapter
-                providerList.setSelection(sourceIndex)
-                providerList.setItemChecked(sourceIndex, true)
-
-                providerList.setOnItemClickListener { _, _, which, _ ->
-                    sourceIndex = which
-                    providerList.setItemChecked(which, true)
+                val footer: TextView =
+                    layoutInflater.inflate(R.layout.sort_bottom_footer_add_choice, null) as TextView
+                footer.text = ctx.getString(R.string.player_load_subtitles)
+                footer.setOnClickListener {
+                    openSubPicker()
                 }
-            }
+                subtitleList.addFooterView(footer)
 
-            sourceDialog.setOnDismissListener {
-                if (isPlaying) {
-                    player.handleEvent(CSPlayerEvent.Play)
-                }
-                activity?.hideSystemUI()
-                selectSourceDialog = null
-            }
+                var sourceIndex = 0
+                var startSource = 0
 
-            val subtitleIndexStart = currentSubtitles.indexOf(currentSelectedSubtitles) + 1
-            var subtitleIndex = subtitleIndexStart
+                val sortedUrls = sortLinks(useQualitySettings = false)
+                if (sortedUrls.isNullOrEmpty()) {
+                    sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.isGone = true
+                } else {
+                    startSource = sortedUrls.indexOf(currentSelectedLink)
+                    sourceIndex = startSource
 
-            val subsArrayAdapter =
-                ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-            subsArrayAdapter.add(getString(R.string.no_subtitles))
-            subsArrayAdapter.addAll(currentSubtitles.map { it.name })
+                    val sourcesArrayAdapter =
+                        ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-            subtitleList.adapter = subsArrayAdapter
-            subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                    sourcesArrayAdapter.addAll(sortedUrls.map {
+                        it.first?.name ?: it.second?.name ?: "NULL"
+                    })
 
-            subtitleList.setSelection(subtitleIndex)
-            subtitleList.setItemChecked(subtitleIndex, true)
+                    providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                    providerList.adapter = sourcesArrayAdapter
+                    providerList.setSelection(sourceIndex)
+                    providerList.setItemChecked(sourceIndex, true)
 
-            subtitleList.setOnItemClickListener { _, _, which, _ ->
-                subtitleIndex = which
-                subtitleList.setItemChecked(which, true)
-            }
-
-            cancelButton.setOnClickListener {
-                sourceDialog.dismissSafe(activity)
-            }
-
-            applyButton.setOnClickListener {
-                var init = false
-                if (sourceIndex != startSource) {
-                    init = true
-                }
-                if (subtitleIndex != subtitleIndexStart) {
-                    init = init || if (subtitleIndex <= 0) {
-                        noSubtitles()
-                    } else {
-                        setSubtitles(currentSubtitles[subtitleIndex - 1])
+                    providerList.setOnItemClickListener { _, _, which, _ ->
+                        sourceIndex = which
+                        providerList.setItemChecked(which, true)
                     }
                 }
-                if (init) {
-                    loadLink(sortedUrls[sourceIndex], true)
+
+                sourceDialog.setOnDismissListener {
+                    if (isPlaying) {
+                        player.handleEvent(CSPlayerEvent.Play)
+                    }
+                    activity?.hideSystemUI()
+                    selectSourceDialog = null
                 }
-                sourceDialog.dismissSafe(activity)
+
+                val subtitleIndexStart = currentSubtitles.indexOf(currentSelectedSubtitles) + 1
+                var subtitleIndex = subtitleIndexStart
+
+                val subsArrayAdapter =
+                    ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+                subsArrayAdapter.add(getString(R.string.no_subtitles))
+                subsArrayAdapter.addAll(currentSubtitles.map { it.name })
+
+                subtitleList.adapter = subsArrayAdapter
+                subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+
+                subtitleList.setSelection(subtitleIndex)
+                subtitleList.setItemChecked(subtitleIndex, true)
+
+                subtitleList.setOnItemClickListener { _, _, which, _ ->
+                    subtitleIndex = which
+                    subtitleList.setItemChecked(which, true)
+                }
+
+                cancelButton.setOnClickListener {
+                    sourceDialog.dismissSafe(activity)
+                }
+
+                applyButton.setOnClickListener {
+                    var init = false
+                    if (sourceIndex != startSource) {
+                        init = true
+                    }
+                    if (subtitleIndex != subtitleIndexStart) {
+                        init = init || if (subtitleIndex <= 0) {
+                            noSubtitles()
+                        } else {
+                            setSubtitles(currentSubtitles[subtitleIndex - 1])
+                        }
+                    }
+                    if (init) {
+                        loadLink(sortedUrls[sourceIndex], true)
+                    }
+                    sourceDialog.dismissSafe(activity)
+                }
             }
+        } catch (e : Exception) {
+            logError(e)
         }
     }
 

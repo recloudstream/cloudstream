@@ -755,9 +755,13 @@ class ResultFragment : Fragment() {
 
                 ACTION_PLAY_EPISODE_IN_BROWSER -> {
                     acquireSingeExtractorLink(getString(R.string.episode_action_play_in_browser)) { link ->
-                        val i = Intent(ACTION_VIEW)
-                        i.data = Uri.parse(link.url)
-                        startActivity(i)
+                        try {
+                            val i = Intent(ACTION_VIEW)
+                            i.data = Uri.parse(link.url)
+                            startActivity(i)
+                        } catch (e : Exception) {
+                            logError(e)
+                        }
                     }
                 }
 
@@ -1125,11 +1129,15 @@ class ResultFragment : Fragment() {
                         }
 
                         result_share?.setOnClickListener {
-                            val i = Intent(ACTION_SEND)
-                            i.type = "text/plain"
-                            i.putExtra(EXTRA_SUBJECT, d.name)
-                            i.putExtra(EXTRA_TEXT, d.url)
-                            startActivity(createChooser(i, d.name))
+                            try {
+                                val i = Intent(ACTION_SEND)
+                                i.type = "text/plain"
+                                i.putExtra(EXTRA_SUBJECT, d.name)
+                                i.putExtra(EXTRA_TEXT, d.url)
+                                startActivity(createChooser(i, d.name))
+                            } catch (e: Exception) {
+                                logError(e)
+                            }
                         }
 
                         updateSync(d.getId())

@@ -32,6 +32,7 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
@@ -301,22 +302,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         fun getDownloadDirs(): List<String> {
-            val defaultDir = getDownloadDir()?.filePath
+            return normalSafeApiCall {
+                val defaultDir = getDownloadDir()?.filePath
 
-            // app_name_download_path = Cloudstream and does not change depending on release.
-            // DOES NOT WORK ON SCOPED STORAGE.
-            val secondaryDir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) null else Environment.getExternalStorageDirectory().absolutePath +
-                    File.separator + resources.getString(R.string.app_name_download_path)
-            val first = listOf(defaultDir, secondaryDir)
-            return (try {
-                val currentDir = context?.getBasePath()?.let { it.first?.filePath ?: it.second }
+                // app_name_download_path = Cloudstream and does not change depending on release.
+                // DOES NOT WORK ON SCOPED STORAGE.
+                val secondaryDir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) null else Environment.getExternalStorageDirectory().absolutePath +
+                        File.separator + resources.getString(R.string.app_name_download_path)
+                val first = listOf(defaultDir, secondaryDir)
+                (try {
+                    val currentDir = context?.getBasePath()?.let { it.first?.filePath ?: it.second }
 
-                (first +
-                        requireContext().getExternalFilesDirs("").mapNotNull { it.path } +
-                        currentDir)
-            } catch (e: Exception) {
-                first
-            }).filterNotNull().distinct()
+                    (first +
+                            requireContext().getExternalFilesDirs("").mapNotNull { it.path } +
+                            currentDir)
+                } catch (e: Exception) {
+                    first
+                }).filterNotNull().distinct()
+            } ?: emptyList()
         }
 
         downloadPathPreference.setOnPreferenceClickListener {

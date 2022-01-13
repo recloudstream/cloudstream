@@ -39,7 +39,6 @@ object APIHolder {
         WcoProvider(),
         // MeloMovieProvider(), // Captcha for links
         DubbedAnimeProvider(),
-        HDMProvider(),
         IHaveNoTvProvider(), // Documentaries provider
         //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
         VMoveeProvider(),
@@ -57,8 +56,6 @@ object APIHolder {
         SflixProvider("https://dopebox.to", "Dopebox"),
 
         //TmdbProvider(),
-
-
 
         FilmanProvider(),
 
@@ -81,6 +78,7 @@ object APIHolder {
 
     private val backwardsCompatibleProviders = arrayListOf(
         KawaiifuProvider(), // removed due to cloudflare
+        HDMProvider(),// removed due to cloudflare
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
@@ -179,7 +177,8 @@ object APIHolder {
 
     fun Context.filterProviderByPreferredMedia(): List<MainAPI> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val currentPrefMedia = settingsManager.getInt(this.getString(R.string.prefer_media_type_key), 0)
+        val currentPrefMedia =
+            settingsManager.getInt(this.getString(R.string.prefer_media_type_key), 0)
         val langs = this.getApiProviderLangSettings()
         val allApis = apis.filter { langs.contains(it.lang) }.filter { api -> api.hasMainPage }
         return if (currentPrefMedia < 1) {
@@ -275,7 +274,7 @@ fun parseRating(ratingString: String?): Int? {
     return (floatRating * 10).toInt()
 }
 
-fun MainAPI.fixUrlNull(url : String?) : String? {
+fun MainAPI.fixUrlNull(url: String?): String? {
     if (url.isNullOrEmpty()) {
         return null
     }
@@ -305,7 +304,7 @@ fun sortUrls(urls: Set<ExtractorLink>): List<ExtractorLink> {
     return urls.sortedBy { t -> -t.quality }
 }
 
-fun sortSubs(subs : Set<SubtitleData>) : List<SubtitleData> {
+fun sortSubs(subs: Set<SubtitleData>): List<SubtitleData> {
     return subs.sortedBy { it.name }
 }
 
@@ -473,7 +472,7 @@ fun LoadResponse?.isAnimeBased(): Boolean {
     return (this.type == TvType.Anime || this.type == TvType.ONA) // && (this is AnimeLoadResponse)
 }
 
-fun TvType?.isEpisodeBased() : Boolean {
+fun TvType?.isEpisodeBased(): Boolean {
     if (this == null) return false
     return (this == TvType.TvSeries || this == TvType.Anime)
 }
@@ -573,7 +572,13 @@ fun MainAPI.newMovieLoadResponse(
     dataUrl: String,
     initializer: MovieLoadResponse.() -> Unit = { }
 ): MovieLoadResponse {
-    val builder = MovieLoadResponse(name = name, url = url, apiName = this.name, type = type, dataUrl = dataUrl)
+    val builder = MovieLoadResponse(
+        name = name,
+        url = url,
+        apiName = this.name,
+        type = type,
+        dataUrl = dataUrl
+    )
     builder.initializer()
     return builder
 }
@@ -634,7 +639,13 @@ fun MainAPI.newTvSeriesLoadResponse(
     episodes: List<TvSeriesEpisode>,
     initializer: TvSeriesLoadResponse.() -> Unit = { }
 ): TvSeriesLoadResponse {
-    val builder = TvSeriesLoadResponse(name = name, url = url, apiName = this.name, type = type, episodes = episodes)
+    val builder = TvSeriesLoadResponse(
+        name = name,
+        url = url,
+        apiName = this.name,
+        type = type,
+        episodes = episodes
+    )
     builder.initializer()
     return builder
 }

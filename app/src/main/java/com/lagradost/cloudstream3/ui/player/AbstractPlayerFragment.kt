@@ -1,26 +1,27 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.media.metrics.PlaybackErrorEvent
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.media.session.MediaSessionCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.media.session.MediaButtonReceiver
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.SubtitleView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -81,9 +82,20 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
+    private fun keepScreenOn(on : Boolean) {
+        if(on) {
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
     private fun updateIsPlaying(playing: Pair<CSPlayerLoading, CSPlayerLoading>) {
         val (wasPlaying, isPlaying) = playing
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
+        val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying
+
+        keepScreenOn(!isPausedRightNow)
 
         isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         if (isBuffering) {
@@ -241,10 +253,47 @@ abstract class AbstractPlayerFragment(
 
     private fun playerUpdated(player: Any?) {
         if (player is ExoPlayer) {
+            context?.let { ctx ->
+                val mediaButtonReceiver = ComponentName(ctx, MediaButtonReceiver::class.java)
+                MediaSessionCompat(ctx, "Player", mediaButtonReceiver, null).let { media ->
+                    //media.setCallback(mMediaSessionCallback)
+                    //media.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+                    val mediaSessionConnector = MediaSessionConnector(media)
+                    mediaSessionConnector.setPlayer(player)
+                    media.isActive = true
+                    mMediaSessionCompat = media
+                }
+            }
+
             player_view?.player = player
             player_view?.performClick()
         }
     }
+
+    private var mediaSessionConnector: MediaSessionConnector? = null
+    private var mMediaSessionCompat: MediaSessionCompat? = null
+
+    // this can be used in the future for players other than exoplayer
+    //private val mMediaSessionCallback: MediaSessionCompat.Callback = object : MediaSessionCompat.Callback() {
+    //    override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
+    //        val keyEvent = mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT) as KeyEvent?
+    //        if (keyEvent != null) {
+    //            if (keyEvent.action == KeyEvent.ACTION_DOWN) { // NO DOUBLE SKIP
+    //                val consumed = when (keyEvent.keyCode) {
+    //                    KeyEvent.KEYCODE_MEDIA_PAUSE -> callOnPause()
+    //                    KeyEvent.KEYCODE_MEDIA_PLAY -> callOnPlay()
+    //                    KeyEvent.KEYCODE_MEDIA_STOP -> callOnStop()
+    //                    KeyEvent.KEYCODE_MEDIA_NEXT -> callOnNext()
+    //                    else -> false
+    //                }
+    //                if (consumed) return true
+    //            }
+    //        }
+    //
+    //        return super.onMediaButtonEvent(mediaButtonEvent)
+    //    }
+    //}
+
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -295,6 +344,7 @@ abstract class AbstractPlayerFragment(
         keyEventListener = null
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
+        keepScreenOn(false)
         super.onDestroy()
     }
 

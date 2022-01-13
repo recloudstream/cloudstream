@@ -130,7 +130,7 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
         if (isShowing) {
             updateUIVisibility()
         } else {
-            player_holder.postDelayed({ updateUIVisibility() }, 200)
+            player_holder?.postDelayed({ updateUIVisibility() }, 200)
         }
 
         val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
