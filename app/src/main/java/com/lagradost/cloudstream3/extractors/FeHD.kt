@@ -10,4 +10,5 @@ import com.lagradost.cloudstream3.mapper
 class FeHD: XStreamCdn() {
     override val name: String = "FeHD"
     override val mainUrl: String = "https://fembed-hd.com"
+    override var domainUrl: String = "fembed-hd.com"
 }

@@ -68,7 +68,8 @@ object APIHolder {
         PinoyMoviesEsProvider(),
         TrailersTwoProvider(),
         DramaSeeProvider(),
-        WatchAsianProvider()
+        WatchAsianProvider(),
+        KdramaHoodProvider()
     )
 
     val restrictedApis = arrayListOf(
@@ -278,7 +279,7 @@ fun MainAPI.fixUrlNull(url : String?) : String? {
     if (url.isNullOrEmpty()) {
         return null
     }
-    return fixUrl(url ?: return null)
+    return fixUrl(url)
 }
 
 fun MainAPI.fixUrl(url: String): String {

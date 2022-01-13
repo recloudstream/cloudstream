@@ -12,7 +12,7 @@ open class XStreamCdn : ExtractorApi() {
     override val name: String = "XStreamCdn"
     override val mainUrl: String = "https://embedsito.com"
     override val requiresReferer = false
-    var domainUrl: String = "embedsito.com"
+    open var domainUrl: String = "embedsito.com"
 
     private data class ResponseData(
         @JsonProperty("file") val file: String,
