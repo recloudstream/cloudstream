@@ -483,12 +483,12 @@
                                 style="@style/VideoButton"
                                 android:nextFocusLeft="@id/player_lock"
 
-                                android:nextFocusRight="@id/playback_speed_btt"
+                                android:nextFocusRight="@id/player_speed_btt"
                                 android:text="@string/video_aspect_ratio_resize"
                                 app:icon="@drawable/ic_baseline_aspect_ratio_24" />
 
                         <com.google.android.material.button.MaterialButton
-                                android:id="@+id/playback_speed_btt"
+                                android:id="@+id/player_speed_btt"
                                 style="@style/VideoButton"
                                 android:nextFocusLeft="@id/player_resize_btt"
 
@@ -499,7 +499,7 @@
                         <com.google.android.material.button.MaterialButton
                                 android:id="@+id/player_sources_btt"
                                 style="@style/VideoButton"
-                                android:nextFocusLeft="@id/playback_speed_btt"
+                                android:nextFocusLeft="@id/player_speed_btt"
 
                                 android:nextFocusRight="@id/player_skip_op"
                                 android:text="@string/video_source"
