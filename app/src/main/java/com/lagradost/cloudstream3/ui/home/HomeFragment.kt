@@ -107,7 +107,6 @@ class HomeFragment : Fragment() {
         }
 
         fun Context.selectHomepage(selectedApiName: String?, callback: (String) -> Unit) {
-            println("CURRENT $selectedApiName")
             val validAPIs = filterProviderByPreferredMedia().toMutableList()
 
             validAPIs.add(0, randomApi)
@@ -303,9 +302,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fixGrid()
 
-        home_change_api.setOnClickListener(apiChangeClickListener)
-        home_change_api_loading.setOnClickListener(apiChangeClickListener)
-        home_api_fab.setOnClickListener(apiChangeClickListener)
+        home_change_api?.setOnClickListener(apiChangeClickListener)
+        home_change_api_loading?.setOnClickListener(apiChangeClickListener)
+        home_api_fab?.setOnClickListener(apiChangeClickListener)
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName

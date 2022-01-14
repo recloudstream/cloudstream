@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.maxStale
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.unixTime
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import java.net.URL
@@ -128,7 +129,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         private val mapper = JsonMapper.builder().addModule(KotlinModule())
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
-        private val aniListStatusString = arrayOf("CURRENT", "COMPLETED", "PAUSED", "DROPPED", "PLANNING", "REPEATING")
+        private val aniListStatusString =
+            arrayOf("CURRENT", "COMPLETED", "PAUSED", "DROPPED", "PLANNING", "REPEATING")
 
         const val ANILIST_UNIXTIME_KEY: String = "anilist_unixtime" // When token expires
         const val ANILIST_TOKEN_KEY: String = "anilist_token" // anilist token for api
@@ -137,7 +139,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         const val ANILIST_SHOULD_UPDATE_LIST: String = "anilist_should_update_list"
 
         private fun fixName(name: String): String {
-            return name.lowercase(Locale.ROOT).replace(" ", "").replace("[^a-zA-Z0-9]".toRegex(), "")
+            return name.lowercase(Locale.ROOT).replace(" ", "")
+                .replace("[^a-zA-Z0-9]".toRegex(), "")
         }
 
         private fun searchShows(name: String): GetSearchRoot? {
@@ -200,13 +203,12 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 val data =
                     mapOf(
                         "query" to query,
-                        "variables" to mapper.writeValueAsString(
-                            mapOf(
-                                "search" to name,
-                                "page" to 1,
-                                "type" to "ANIME"
-                            )
-                        )
+                        "variables" to
+                                mapOf(
+                                    "search" to name,
+                                    "page" to 1,
+                                    "type" to "ANIME"
+                                ).toJson()
                     )
 
                 val res = app.post(
@@ -235,7 +237,12 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 "(\\d+)" // year
             )
             val blackListRegex =
-                Regex(""" (${blackList.joinToString(separator = "|").replace("(", "\\(").replace(")", "\\)")})""")
+                Regex(
+                    """ (${
+                        blackList.joinToString(separator = "|").replace("(", "\\(")
+                            .replace(")", "\\)")
+                    })"""
+                )
             //println("NAME $name NEW NAME ${name.replace(blackListRegex, "")}")
             val shows = searchShows(name.replace(blackListRegex, ""))
 
@@ -607,7 +614,12 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         return data != ""
     }
 
-    private fun postDataAboutId(id: Int, type: AniListStatusType, score: Int?, progress: Int?): Boolean {
+    private fun postDataAboutId(
+        id: Int,
+        type: AniListStatusType,
+        score: Int?,
+        progress: Int?
+    ): Boolean {
         try {
             val q =
                 """mutation (${'$'}id: Int = $id, ${'$'}status: MediaListStatus = ${

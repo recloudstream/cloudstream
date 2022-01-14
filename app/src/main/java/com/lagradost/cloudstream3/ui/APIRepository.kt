@@ -21,21 +21,28 @@ class APIRepository(val api: MainAPI) {
             override val supportedTypes = emptySet<TvType>()
         }
 
-        val noneRepo = APIRepository(noneApi)
+        fun isInvalidData(data : String): Boolean {
+            return data.isEmpty() || data == "[]" || data == "about:blank"
+        }
     }
 
-    val hasMainPage: Boolean get() = api.hasMainPage
-    val name: String get() = api.name
-    val mainUrl: String get() = api.mainUrl
-    val hasQuickSearch: Boolean get() = api.hasQuickSearch
+    val hasMainPage = api.hasMainPage
+    val name = api.name
+    val mainUrl = api.mainUrl
+    val hasQuickSearch = api.hasQuickSearch
 
     suspend fun load(url: String): Resource<LoadResponse> {
+        if(isInvalidData(url)) throw ErrorLoadingException()
+
         return safeApiCall {
             api.load(api.fixUrl(url)) ?: throw ErrorLoadingException()
         }
     }
 
     suspend fun search(query: String): Resource<List<SearchResponse>> {
+        if (query.isEmpty())
+            return Resource.Success(emptyList())
+
         return safeApiCall {
             return@safeApiCall (api.search(query)
                 ?: throw ErrorLoadingException())
@@ -45,6 +52,9 @@ class APIRepository(val api: MainAPI) {
     }
 
     suspend fun quickSearch(query: String): Resource<List<SearchResponse>> {
+        if (query.isEmpty())
+            return Resource.Success(emptyList())
+
         return safeApiCall {
             api.quickSearch(query) ?: throw ErrorLoadingException()
         }
@@ -62,6 +72,9 @@ class APIRepository(val api: MainAPI) {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        return normalSafeApiCall { api.loadLinks(data, isCasting, subtitleCallback, callback) } ?: false
+        if (isInvalidData(data)) return false // this makes providers cleaner
+
+        return normalSafeApiCall { api.loadLinks(data, isCasting, subtitleCallback, callback) }
+            ?: false
     }
 }

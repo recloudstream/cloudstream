@@ -1048,6 +1048,21 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
             return@setOnTouchListener handleMotionEvent(callView, event)
         }
 
+        exo_progress?.setOnTouchListener { _, event ->
+            // this makes the bar not disappear when sliding
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    currentTapIndex++
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    currentTapIndex++
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_BUTTON_RELEASE -> {
+                    autoHide()
+                }
+            }
+            return@setOnTouchListener false
+        }
         // init UI
         try {
             uiReset()

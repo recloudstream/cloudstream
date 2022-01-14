@@ -1,13 +1,11 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import android.util.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.FEmbed
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
-import java.lang.Exception
 
 class PinoyMoviePediaProvider : MainAPI() {
     override val name = "Pinoy Moviepedia"
@@ -179,10 +177,6 @@ class PinoyMoviePediaProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if (data.isEmpty()) return false
-        if (data == "[]") return false
-        if (data == "about:blank") return false
-
         // parse movie servers
         mapper.readValue<List<String>>(data).forEach { link ->
             if (link.contains("fembed.com")) {

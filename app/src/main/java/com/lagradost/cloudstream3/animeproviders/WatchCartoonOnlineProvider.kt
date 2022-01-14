@@ -104,7 +104,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
 
         return if (!isMovie) {
             val title = document.selectFirst("td.vsbaslik > h2").text()
-            val poster = fixUrl(document.selectFirst("div#cat-img-desc > div > img").attr("src"))
+            val poster = fixUrlNull(document.selectFirst("div#cat-img-desc > div > img")?.attr("src"))
             val plot = document.selectFirst("div.iltext").text()
             val genres = document.select("div#cat-genre > div.wcobtn > a").map { it.text() }
             val episodes = document.select("div#catlist-listview > ul > li > a").reversed().map {

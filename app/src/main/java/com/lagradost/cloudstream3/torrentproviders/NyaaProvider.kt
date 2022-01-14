@@ -9,8 +9,6 @@ class NyaaProvider : MainAPI() {
     override val name = "Nyaa"
     override val hasChromecastSupport = false
 
-    // override val hasDownloadSupport: Boolean
-    //    get() = false
     override val mainUrl = "https://nyaa.si"
     override val supportedTypes = setOf(TvType.Torrent)
     override val vpnStatus = VPNStatus.Torrent

@@ -36,8 +36,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override val redirectUrl = "mallogin"
     override val idPrefix = "mal"
     override val mainUrl = "https://myanimelist.net"
-    override val icon: Int
-        get() = R.drawable.mal_logo
+    override val icon = R.drawable.mal_logo
 
     override fun logOut() {
         removeAccountKeys()

@@ -13,6 +13,7 @@ import com.google.android.gms.common.images.WebImage
 import com.lagradost.cloudstream3.ui.MetadataHolder
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -107,7 +108,7 @@ object CastHelper {
         val index = if (startIndex == null || startIndex < 0) 0 else startIndex
 
         val mediaItem =
-            getMediaInfo(epData, holder, index, JSONObject(mapper.writeValueAsString(holder)), subtitles)
+            getMediaInfo(epData, holder, index, JSONObject(holder.toJson()), subtitles)
 
         awaitLinks(
             this.remoteMediaClient?.load(

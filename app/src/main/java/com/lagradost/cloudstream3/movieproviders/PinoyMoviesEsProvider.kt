@@ -2,7 +2,7 @@ package com.lagradost.cloudstream3.movieproviders
 
 import android.util.Log
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.extractors.*
+import com.lagradost.cloudstream3.extractors.FEmbed
 import com.lagradost.cloudstream3.network.DdosGuardKiller
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -191,8 +191,6 @@ class PinoyMoviesEsProvider : MainAPI() {
             subtitleCallback: (SubtitleFile) -> Unit,
             callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if (data == "about:blank") return false
-        if (data.isEmpty()) return false
         val sources = mutableListOf<ExtractorLink>()
         try {
             if (data.contains("playcontainer")) {

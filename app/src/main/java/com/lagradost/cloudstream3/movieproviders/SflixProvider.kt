@@ -24,6 +24,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         TvType.Movie,
         TvType.TvSeries,
     )
+    override val vpnStatus = VPNStatus.None
 
     private fun Element.toSearchResult(): SearchResponse {
         val img = this.select("img")
@@ -82,9 +83,6 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
         return HomePageResponse(all)
     }
-
-    override val vpnStatus: VPNStatus
-        get() = VPNStatus.None
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/${query.replace(" ", "-")}"

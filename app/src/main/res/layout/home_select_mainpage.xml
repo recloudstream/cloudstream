@@ -12,6 +12,7 @@
             android:nextFocusLeft="@id/apply_btt"
 
             android:id="@+id/listview1"
+            android:layout_marginBottom="60dp"
             android:minHeight="0dp"
             android:layout_marginTop="10dp"
             android:requiresFadingEdge="vertical"
@@ -21,6 +22,7 @@
             android:layout_rowWeight="1"
     />
     <HorizontalScrollView
+            android:layout_marginTop="-60dp"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:clipToPadding="true"

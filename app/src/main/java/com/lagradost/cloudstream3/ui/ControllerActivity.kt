@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.sortUrls
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.CastHelper.awaitLinks
 import com.lagradost.cloudstream3.utils.CastHelper.getMediaInfo
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
@@ -294,7 +295,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 )
 
                                 val done =
-                                    JSONObject(mapper.writeValueAsString(jsonCopy))
+                                    JSONObject(jsonCopy.toJson())
 
                                 val mediaInfo = getMediaInfo(
                                     epData,

@@ -186,10 +186,6 @@ class KdramaHoodProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if (data.isEmpty()) return false
-        if (data == "[]") return false
-        if (data == "about:blank") return false
-
         var count = 0
         mapper.readValue<List<String>>(data).forEach { item ->
             if (item.isNotEmpty()) {

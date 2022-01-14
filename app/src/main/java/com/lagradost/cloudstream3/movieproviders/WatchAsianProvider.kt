@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import android.util.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.*
@@ -170,9 +169,6 @@ class WatchAsianProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if (data == "about:blank") return false
-        if (data == "[]") return false
-        if (data.isEmpty()) return false
         val links = if (data.startsWith(mainUrl)) {
             getServerLinks(data)
         } else { data }

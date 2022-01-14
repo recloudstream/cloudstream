@@ -19,6 +19,7 @@ import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
@@ -28,6 +29,7 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mapper
+import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
@@ -90,6 +92,10 @@ object AppUtils {
     /** Any object as json string */
     fun Any.toJson(): String {
         return mapper.writeValueAsString(this)
+    }
+
+    inline fun <reified T> parseJson(value : String): T {
+        return mapper.readValue(value)
     }
 
     /**| S1:E2 Hello World

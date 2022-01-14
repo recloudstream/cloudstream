@@ -1,12 +1,10 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import android.util.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
-import java.lang.Exception
 
 class PinoyHDXyzProvider : MainAPI() {
     override val name = "Pinoy-HD"
@@ -211,10 +209,6 @@ class PinoyHDXyzProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if (data.isEmpty()) return false
-        if (data == "about:blank") return false
-        if (data == "[]") return false
-
         mapper.readValue<List<String>>(data).forEach { item ->
             if (item.isNotEmpty()) {
                 val url = item.trim()

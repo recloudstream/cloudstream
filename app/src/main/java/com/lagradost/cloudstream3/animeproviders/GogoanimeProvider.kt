@@ -172,9 +172,8 @@ class GogoanimeProvider : MainAPI() {
 
         val animeId = doc.selectFirst("#movie_id").attr("value")
         val params = mapOf("ep_start" to "0", "ep_end" to "2000", "id" to animeId)
-        val responseHTML = app.get(episodeloadApi, params = params).text
-        val epiDoc = Jsoup.parse(responseHTML)
-        val episodes = epiDoc.select("a").map {
+
+        val episodes = app.get(episodeloadApi, params = params).document.select("a").map {
             AnimeEpisode(
                 fixUrl(it.attr("href").trim()),
                 "Episode " + it.selectFirst(".name").text().replace("EP", "").trim()

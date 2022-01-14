@@ -7,14 +7,12 @@ import com.lagradost.cloudstream3.TvType
  */ 
 class PelisplusProvider : PelisplusProviderTemplate() {
     // mainUrl is good to have as a holder for the url to make future changes easier.
-    override val mainUrl: String
-        get() = "https://pelisplus.icu"
+    override val mainUrl = "https://pelisplus.icu"
 
     // name is for how the provider will be named which is visible in the UI, no real rules for this.
-    override val name: String
-        get() = "Pelisplus"
+    override val name = "Pelisplus"
 
-    override val homePageUrlList: List<String> = listOf(
+    override val homePageUrlList = listOf(
         mainUrl,
         "$mainUrl/movies",
         "$mainUrl/series",
@@ -24,6 +22,5 @@ class PelisplusProvider : PelisplusProviderTemplate() {
 
     // This is just extra metadata about what type of movies the provider has.
     // Needed for search functionality.
-    override val supportedTypes: Set<TvType>
-        get() = setOf(TvType.TvSeries, TvType.Movie)
+    override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)
 }

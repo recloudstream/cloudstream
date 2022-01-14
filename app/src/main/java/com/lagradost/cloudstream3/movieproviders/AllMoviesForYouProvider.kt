@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import okio.Buffer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -29,8 +30,7 @@ class AllMoviesForYouProvider : MainAPI() {
 
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
-        val response = app.get(url).text
-        val document = Jsoup.parse(response)
+        val document = app.get(url).document
 
         val items = document.select("ul.MovieList > li > article > a")
         val returnValue = ArrayList<SearchResponse>()
@@ -42,7 +42,17 @@ class AllMoviesForYouProvider : MainAPI() {
             if (type == TvType.Movie) {
                 returnValue.add(MovieSearchResponse(title, href, this.name, type, img, null))
             } else if (type == TvType.TvSeries) {
-                returnValue.add(TvSeriesSearchResponse(title, href, this.name, type, img, null, null))
+                returnValue.add(
+                    TvSeriesSearchResponse(
+                        title,
+                        href,
+                        this.name,
+                        type,
+                        img,
+                        null,
+                        null
+                    )
+                )
             }
         }
         return returnValue
@@ -69,16 +79,17 @@ class AllMoviesForYouProvider : MainAPI() {
     override fun load(url: String): LoadResponse {
         val type = getType(url)
 
-        val response = app.get(url).text
-        val document = Jsoup.parse(response)
+        val document = app.get(url).document
 
         val title = document.selectFirst("h1.Title").text()
         val descipt = document.selectFirst("div.Description > p").text()
         val rating =
-            document.selectFirst("div.Vote > div.post-ratings > span")?.text()?.toFloatOrNull()?.times(1000)?.toInt()
+            document.selectFirst("div.Vote > div.post-ratings > span")?.text()?.toFloatOrNull()
+                ?.times(1000)?.toInt()
         val year = document.selectFirst("span.Date")?.text()
         val duration = document.selectFirst("span.Time").text()
-        val backgroundPoster = fixUrl(document.selectFirst("div.Image > figure > img").attr("data-src"))
+        val backgroundPoster =
+            fixUrlNull(document.selectFirst("div.Image > figure > img")?.attr("data-src"))
 
         if (type == TvType.TvSeries) {
             val list = ArrayList<Pair<Int, String>>()
@@ -112,7 +123,7 @@ class AllMoviesForYouProvider : MainAPI() {
                                 season.first,
                                 epNum,
                                 href,
-                                if (poster != null) fixUrl(poster) else null,
+                                fixUrlNull(poster),
                                 date
                             )
                         )
@@ -136,8 +147,13 @@ class AllMoviesForYouProvider : MainAPI() {
             val data = getLink(document)
                 ?: throw ErrorLoadingException("No Links Found")
 
-            return newMovieLoadResponse(title,url,type,mapper.writeValueAsString(data.filter { it != "about:blank" })) {
-               posterUrl = backgroundPoster
+            return newMovieLoadResponse(
+                title,
+                url,
+                type,
+                data.filter { it != "about:blank" }.toJson()
+            ) {
+                posterUrl = backgroundPoster
                 this.year = year?.toIntOrNull()
                 this.plot = descipt
                 this.rating = rating
@@ -152,7 +168,6 @@ class AllMoviesForYouProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if (data == "about:blank") return false
         if (data.startsWith("$mainUrl/episode/")) {
             val response = app.get(data).text
             getLink(Jsoup.parse(response))?.let { links ->
@@ -184,7 +199,15 @@ class AllMoviesForYouProvider : MainAPI() {
                         val postDocument = Jsoup.parse(form)
 
                         postDocument.selectFirst("a.downloadbtn")?.attr("href")?.let { url ->
-                            callback(ExtractorLink(this.name, this.name, url, mainUrl, Qualities.Unknown.value))
+                            callback(
+                                ExtractorLink(
+                                    this.name,
+                                    this.name,
+                                    url,
+                                    mainUrl,
+                                    Qualities.Unknown.value
+                                )
+                            )
                         }
                     }
                 } else if (requestUrl.startsWith("https://dood")) {
@@ -197,7 +220,15 @@ class AllMoviesForYouProvider : MainAPI() {
                         }
                     }
                 } else {
-                    callback(ExtractorLink(this.name, this.name, realDataUrl, mainUrl, Qualities.Unknown.value))
+                    callback(
+                        ExtractorLink(
+                            this.name,
+                            this.name,
+                            realDataUrl,
+                            mainUrl,
+                            Qualities.Unknown.value
+                        )
+                    )
                 }
                 return true
             }

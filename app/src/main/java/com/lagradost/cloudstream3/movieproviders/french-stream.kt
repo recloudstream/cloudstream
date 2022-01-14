@@ -1,10 +1,8 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import org.jsoup.Jsoup
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.extractorApis
 
 
 class FrenchStreamProvider : MainAPI() {
@@ -24,7 +22,11 @@ class FrenchStreamProvider : MainAPI() {
             val poster = li.selectFirst("img")?.attr("src")
             val title = li.selectFirst("> a.short-poster").text().toString().replace(". ", "")
             val year = li.selectFirst(".date")?.text()?.split("-")?.get(0)?.toIntOrNull()
-            if (title.contains("saison", ignoreCase = true)) {  // if saison in title ==> it's a TV serie
+            if (title.contains(
+                    "saison",
+                    ignoreCase = true
+                )
+            ) {  // if saison in title ==> it's a TV serie
                 TvSeriesSearchResponse(
                     title,
                     href,
@@ -47,7 +49,7 @@ class FrenchStreamProvider : MainAPI() {
         })
     }
 
-    override fun load(url: String): LoadResponse? {
+    override fun load(url: String): LoadResponse {
         val soup = app.get(url).document
 
         val title = soup.selectFirst("h1#s-title").text().toString()
@@ -55,7 +57,7 @@ class FrenchStreamProvider : MainAPI() {
         val description =
             soup.selectFirst("div.fdesc").text().toString()
                 .split("streaming", ignoreCase = true)[1].replace(" :  ", "")
-        var poster: String? = soup.selectFirst("div.fposter > img").attr("src").toString()
+        var poster = fixUrlNull(soup.selectFirst("div.fposter > img")?.attr("src"))
         val listEpisode = soup.selectFirst("div.elink")
 
         if (isMovie) {

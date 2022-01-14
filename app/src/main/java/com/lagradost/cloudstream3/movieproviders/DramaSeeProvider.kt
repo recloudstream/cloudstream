@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import android.util.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.*
@@ -156,10 +155,6 @@ class DramaSeeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if (data.isEmpty()) return false
-        if (data == "[]") return false
-        if (data == "about:blank") return false
-
         mapper.readValue<List<String>>(data).forEach { item ->
             if (item.isNotEmpty()) {
                 var url = item.trim()

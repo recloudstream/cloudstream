@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -93,7 +95,7 @@ class MeloMovieProvider : MainAPI() {
                 MeloMovieLink("", "")
             }
         }.filter { it.link != "" && it.name != "" }
-        return mapper.writeValueAsString(parsed)
+        return parsed.toJson()
     }
 
     override fun loadLinks(
@@ -102,7 +104,7 @@ class MeloMovieProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val links = mapper.readValue<List<MeloMovieLink>>(data)
+        val links = parseJson<List<MeloMovieLink>>(data)
         for (link in links) {
             callback.invoke(ExtractorLink(this.name, link.name, link.link, "", getQualityFromName(link.name), false))
         }

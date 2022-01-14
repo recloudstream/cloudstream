@@ -60,7 +60,7 @@ class DubbedAnimeProvider : MainAPI() {
         return document.select("li > a").map {
             val href = fixUrl(it.attr("href"))
             val title = it.selectFirst("> div > div.cittx").text()
-            val poster = fixUrl(it.selectFirst("> div > div.imghddde > img").attr("src"))
+            val poster = fixUrlNull(it.selectFirst("> div > div.imghddde > img")?.attr("src"))
             AnimeSearchResponse(
                 title,
                 href,
@@ -136,7 +136,7 @@ class DubbedAnimeProvider : MainAPI() {
         for (i in items) {
             val href = fixUrl(i.attr("href"))
             val title = i.selectFirst("div.gridtitlek").text()
-            val img = fixUrl(i.selectFirst("img.grid__img").attr("src"))
+            val img = fixUrlNull(i.selectFirst("img.grid__img")?.attr("src"))
             returnValue.add(
                 if (getIsMovie(href)) {
                     MovieSearchResponse(
