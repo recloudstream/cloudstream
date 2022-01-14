@@ -81,5 +81,6 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [dramasee.net](https://dramasee.net) 
 - [watchasian.sh](https://watchasian.sh) 
 - [kdramahood.com](https://kdramahood.com) 
+- [akwam.io](https://akwam.io) 
 - [asiaflix.app](https://asiaflix.app) 
 <!--SITE LIST END-->
