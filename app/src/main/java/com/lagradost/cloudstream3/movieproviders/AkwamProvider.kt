@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.nodes.Element
 
 class AkwamProvider : MainAPI() {
-
     override val lang = "ar"
     override val mainUrl = "https://akwam.io"
     override val name = "Akwam"
@@ -15,8 +14,9 @@ class AkwamProvider : MainAPI() {
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie, TvType.Anime, TvType.Cartoon)
 
-    private fun Element.toSearchResponse(): SearchResponse {
-        val url = select("a.box").attr("href")
+    private fun Element.toSearchResponse(): SearchResponse? {
+        val url = select("a.box")?.attr("href") ?: return null
+        if(url.contains("/games/") || url.contains("/programs/")) return null
         val poster = select("picture > img")
         val title = poster.attr("alt")
         val posterUrl = poster.attr("data-src")
@@ -34,12 +34,16 @@ class AkwamProvider : MainAPI() {
         )
     }
 
-    override fun getMainPage(): HomePageResponse? {
+    override fun getMainPage(): HomePageResponse {
         // Title, Url
-        val moviesUrl = listOf("Movies" to "$mainUrl/movies", "Series" to "$mainUrl/series", "Shows" to "$mainUrl/shows")
+        val moviesUrl = listOf(
+            "Movies" to "$mainUrl/movies",
+            "Series" to "$mainUrl/series",
+            "Shows" to "$mainUrl/shows"
+        )
         val pages = moviesUrl.pmap {
             val doc = app.get(it.second).document
-            val list = doc.select("div.col-lg-auto.col-md-4.col-6.mb-12").map { element ->
+            val list = doc.select("div.col-lg-auto.col-md-4.col-6.mb-12").mapNotNull { element ->
                 element.toSearchResponse()
             }
             HomePageList(it.first, list)
@@ -50,7 +54,7 @@ class AkwamProvider : MainAPI() {
     override fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search?q=$query"
         val doc = app.get(url).document
-        return doc.select("div.col-lg-auto").map {
+        return doc.select("div.col-lg-auto").mapNotNull {
             it.toSearchResponse()
         }
     }
@@ -122,11 +126,8 @@ class AkwamProvider : MainAPI() {
                 rating,
                 tags,
                 duration,
-                null,
-                null
             )
         } else {
-
             val episodes = doc.select("div.bg-primary2.p-4.col-lg-4.col-md-6.col-12").map {
                 it.toTvSeriesEpisode()
             }.let {
@@ -136,23 +137,14 @@ class AkwamProvider : MainAPI() {
                 else it
             }
 
-            TvSeriesLoadResponse(
-                title,
-                url,
-                this@AkwamProvider.name,
-                TvType.Movie,
-                episodes,
-                posterUrl,
-                year,
-                synopsis,
-                null,
-                null,
-                rating,
-                tags,
-                duration,
-                null,
-                null
-            )
+            newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
+                this.duration = duration
+                this.posterUrl = posterUrl
+                this.tags = tags.filterNotNull()
+                this.rating = rating
+                this.year = year
+                this.plot = synopsis
+            }
         }
     }
 

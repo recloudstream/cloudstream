@@ -204,6 +204,7 @@
                                 android:visibility="gone"
                                 app:mediaRouteButtonTint="?attr/textColor" />
 
+                        <!--
                         <ImageView
                                 android:visibility="gone"
                                 android:nextFocusUp="@id/result_back"
@@ -221,7 +222,7 @@
                                 android:src="@drawable/ic_baseline_add_24"
                                 android:layout_gravity="end|center_vertical"
                                 android:contentDescription="@string/add_sync"
-                                app:tint="?attr/textColor" />
+                                app:tint="?attr/textColor" />-->
 
                         <ImageView
                                 android:nextFocusUp="@id/result_back"
@@ -398,6 +399,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
+                            tools:visibility="gone"
                             android:layout_marginTop="0dp"
                             android:paddingTop="0dp"
                             android:layout_marginStart="0dp"
@@ -451,12 +453,135 @@
                             android:textStyle="normal"
                             android:textColor="?attr/textColor" />
 
+                    <LinearLayout
+                            android:visibility="gone"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                        <TextView
+                                android:textStyle="bold"
+                                android:textSize="16sp"
+                                android:text="MyAnimeList"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        <LinearLayout
+                                android:visibility="visible"
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                            <ImageView
+                                    android:padding="10dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                                    android:src="@drawable/ic_baseline_add_24"
+                                    android:layout_gravity="end|center_vertical"
+                                    android:contentDescription="@string/result_share"
+                                    app:tint="?attr/textColor" />
+
+                            <TextView
+                                    android:layout_gravity="center_vertical"
+                                    android:padding="10dp"
+                                    android:textSize="17sp"
+                                    android:textColor="?attr/textColor"
+                                    android:text="24/30"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                            <androidx.core.widget.ContentLoadingProgressBar
+                                    android:layout_width="match_parent"
+                                    android:layout_height="20dp"
+                                    android:progress="50"
+                                    android:indeterminate="false"
+                                    android:progressBackgroundTint="?attr/colorPrimary"
+                                    style="?android:attr/progressBarStyleHorizontal"
+                                    android:max="100"
+                                    android:layout_gravity="end|center_vertical"
+                                    tools:visibility="visible" />
+                        </LinearLayout>
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                            <TextView
+                                    android:layout_gravity="center_vertical"
+                                    android:padding="10dp"
+                                    android:textSize="17sp"
+                                    android:textColor="?attr/textColor"
+                                    android:text="Rated:"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                            <com.google.android.material.button.MaterialButton
+                                    android:layout_height="30dp"
+                                    android:text="7/10"
+                                    android:minWidth="0dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginStart="0dp"
+                                    style="@style/BlackButton" />
+                            <TextView
+                                    android:layout_gravity="center_vertical"
+                                    android:padding="10dp"
+                                    android:textSize="17sp"
+                                    android:textColor="?attr/textColor"
+                                    android:text="Status:"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                            <com.google.android.material.button.MaterialButton
+                                    android:layout_height="30dp"
+                                    android:text="Watching"
+                                    android:minWidth="0dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginStart="0dp"
+                                    style="@style/BlackButton" />
+                        </LinearLayout>
+                        <FrameLayout
+                                android:visibility="gone"
+                                android:paddingTop="12dp"
+                                android:paddingBottom="12dp"
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                            <TextView
+                                    android:id="@+id/home_parent_item_title"
+                                    style="@style/WatchHeaderText"
+                                    tools:text="Recommended"
+                                    />
+                            <ImageView
+                                    app:tint="?attr/textColor"
+                                    android:layout_marginEnd="5dp"
+                                    android:layout_gravity="end|center_vertical"
+                                    android:src="@drawable/ic_baseline_arrow_forward_24"
+                                    android:layout_width="30dp"
+                                    android:layout_height="match_parent"
+                                    android:contentDescription="@string/home_more_info">
+                            </ImageView>
+                        </FrameLayout>
+
+                    </LinearLayout>
+
                     <com.lagradost.cloudstream3.widget.FlowLayout
                             android:id="@+id/result_tag"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
+                    <com.google.android.material.button.MaterialButton
+                            android:visibility="gone"
+                            android:text="@string/add_sync"
+                            android:layout_width="match_parent"
+                            app:icon="@drawable/ic_baseline_add_24"
+                            android:id="@+id/result_add_sync"
+
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginBottom="10dp"
+                            style="@style/WhiteButton" />
                     <LinearLayout
+                            tools:visibility="gone"
                             android:layout_marginTop="5dp"
                             android:orientation="vertical"
                             android:id="@+id/result_movie_parent"
@@ -503,6 +628,7 @@
                                 android:id="@+id/result_movie_progress_downloaded"
                                 android:indeterminate="false"
                                 style="?android:attr/progressBarStyleHorizontal"
+                                android:progressBackgroundTint="?attr/colorPrimary"
                                 android:max="100"
                                 android:layout_gravity="end|center_vertical"
                                 android:progress="0"
@@ -632,8 +758,9 @@
                                     android:id="@+id/result_episodes_text"
                                     tools:text="8 Episodes"
                                     android:textSize="17sp"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_marginBottom="10dp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:layout_gravity="center_vertical"
                                     android:textStyle="normal"
                                     android:textColor="?attr/textColor" />
                         </LinearLayout>
