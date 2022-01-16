@@ -3,7 +3,11 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.app
 
-class Uqload : ExtractorApi() {
+class Uqload1 : Uqload() {
+    override val mainUrl = "https://uqload.com"
+}
+
+open class Uqload : ExtractorApi() {
     override val name: String = "Uqload"
     override val mainUrl: String = "https://www.uqload.com"
     private val srcRegex = Regex("""sources:.\[(.*?)\]""")  // would be possible to use the parse and find src attribute

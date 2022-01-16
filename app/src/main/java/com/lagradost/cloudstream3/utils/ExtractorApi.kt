@@ -103,6 +103,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     Fplayer(),
     WatchSB(),
     Uqload(),
+    Uqload1(),
     Evoload(),
     VoeExtractor(),
     UpstreamExtractor(),
@@ -118,6 +119,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     SBPlay(),
     SBPlay1(),
     SBPlay2(),
+    SBPlay3(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

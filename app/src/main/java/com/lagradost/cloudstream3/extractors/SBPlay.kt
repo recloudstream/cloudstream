@@ -17,6 +17,10 @@ class SBPlay2 : SBPlay() {
     override val mainUrl = "https://sbplay2.com"
 }
 
+class SBPlay3 : SBPlay() {
+    override val mainUrl = "https://pelistop.co"
+}
+
 open class SBPlay : ExtractorApi() {
     override val mainUrl = "https://sbplay.one"
     override val name = "SBPlay"
