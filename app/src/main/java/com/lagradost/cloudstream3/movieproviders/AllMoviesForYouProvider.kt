@@ -28,7 +28,7 @@ class AllMoviesForYouProvider : MainAPI() {
         TvType.TvSeries
     )
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
         val document = app.get(url).document
 
@@ -76,7 +76,7 @@ class AllMoviesForYouProvider : MainAPI() {
         return if (list.isEmpty()) null else list
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val type = getType(url)
 
         val document = app.get(url).document
@@ -162,7 +162,7 @@ class AllMoviesForYouProvider : MainAPI() {
         }
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

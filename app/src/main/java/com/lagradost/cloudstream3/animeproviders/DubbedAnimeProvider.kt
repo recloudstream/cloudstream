@@ -92,7 +92,7 @@ class DubbedAnimeProvider : MainAPI() {
         }
     }
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val trendingUrl = "$mainUrl/xz/trending.php?_=$unixTimeMS"
         val lastEpisodeUrl = "$mainUrl/xz/epgrid.php?p=1&_=$unixTimeMS"
         val recentlyAddedUrl = "$mainUrl/xz/gridgrabrecent.php?p=1&_=$unixTimeMS"
@@ -126,7 +126,7 @@ class DubbedAnimeProvider : MainAPI() {
         return href.replace("$mainUrl/", "")
     }
 
-    override fun quickSearch(query: String): List<SearchResponse> {
+    override suspend fun quickSearch(query: String): List<SearchResponse> {
         val url = "$mainUrl/xz/searchgrid.php?p=1&limit=12&s=$query&_=$unixTime"
         val response = app.get(url).text
         val document = Jsoup.parse(response)
@@ -158,7 +158,7 @@ class DubbedAnimeProvider : MainAPI() {
         return returnValue
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/$query"
         val response = app.get(url).text
         val document = Jsoup.parse(response)
@@ -193,7 +193,7 @@ class DubbedAnimeProvider : MainAPI() {
         return returnValue
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -230,7 +230,7 @@ class DubbedAnimeProvider : MainAPI() {
         return true
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         if (getIsMovie(url)) {
             val realSlug = url.replace("movies/", "")
             val episode = getAnimeEpisode(realSlug, true)

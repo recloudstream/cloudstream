@@ -16,7 +16,7 @@ interface IGenerator {
     fun getCurrent(): Any?     // this is used to get metadata about the current playing, can return null
 
     /* not safe, must use try catch */
-    fun generateLinks(
+    suspend fun generateLinks(
         clearCache: Boolean,
         isCasting: Boolean,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,

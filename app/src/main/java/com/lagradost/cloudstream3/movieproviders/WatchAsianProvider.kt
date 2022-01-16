@@ -16,7 +16,7 @@ class WatchAsianProvider : MainAPI() {
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val headers = mapOf("X-Requested-By" to mainUrl)
         val doc = app.get(mainUrl, headers = headers).document
         val rowPair = mutableListOf<Pair<String, String>>()
@@ -64,7 +64,7 @@ class WatchAsianProvider : MainAPI() {
         )
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search?type=movies&keyword=$query"
         val document = app.get(url).document.getElementsByTag("body")
                 .select("div.block.tab-container > div > ul > li") ?: return listOf()
@@ -89,7 +89,7 @@ class WatchAsianProvider : MainAPI() {
         }.distinctBy { a -> a.url }
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val body = app.get(url).document
         // Declare vars
         val isDramaDetail = url.contains("/drama-detail/")
@@ -163,7 +163,7 @@ class WatchAsianProvider : MainAPI() {
         )
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

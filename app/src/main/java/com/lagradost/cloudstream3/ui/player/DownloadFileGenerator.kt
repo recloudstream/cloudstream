@@ -46,7 +46,7 @@ class DownloadFileGenerator(
         return episodes[currentIndex]
     }
 
-    override fun generateLinks(
+    override suspend fun generateLinks(
         clearCache: Boolean,
         isCasting: Boolean,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,

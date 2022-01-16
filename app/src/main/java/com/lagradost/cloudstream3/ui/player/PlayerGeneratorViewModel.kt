@@ -51,7 +51,7 @@ class PlayerGeneratorViewModel : ViewModel() {
     }
 
     fun preLoadNextLinks() = viewModelScope.launch {
-        normalSafeApiCall {
+        safeApiCall {
             if (generator?.hasCache == true && generator?.hasNext() == true) {
                 generator?.next()
                 generator?.generateLinks(clearCache = false, isCasting = false, {}, {})
@@ -97,7 +97,7 @@ class PlayerGeneratorViewModel : ViewModel() {
                 _currentLinks.postValue(currentLinks)
             }, {
                 currentSubs.add(it)
-               // _currentSubs.postValue(currentSubs) // this causes ConcurrentModificationException, so fuck it
+                // _currentSubs.postValue(currentSubs) // this causes ConcurrentModificationException, so fuck it
             })
         }
 

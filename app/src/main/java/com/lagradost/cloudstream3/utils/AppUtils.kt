@@ -98,6 +98,14 @@ object AppUtils {
         return mapper.readValue(value)
     }
 
+    inline fun <reified T> tryParseJson(value : String): T? {
+        return try {
+            parseJson(value)
+        } catch (_ : Exception) {
+            null
+        }
+    }
+
     /**| S1:E2 Hello World
      * | Episode 2. Hello world
      * | Hello World

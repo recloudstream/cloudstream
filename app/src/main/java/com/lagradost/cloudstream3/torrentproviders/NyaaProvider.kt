@@ -14,7 +14,7 @@ class NyaaProvider : MainAPI() {
     override val vpnStatus = VPNStatus.Torrent
     override val instantLinkLoading = true
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?f=0&c=0_0&q=$query&s=seeders&o=desc"
         val response = app.get(url).text
         val document = Jsoup.parse(response)
@@ -35,7 +35,7 @@ class NyaaProvider : MainAPI() {
         return returnValues
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         val title = document.selectFirst("h3.panel-title").text()
@@ -47,7 +47,7 @@ class NyaaProvider : MainAPI() {
         return TorrentLoadResponse(title, url, this.name, magnet, fixUrl(torrent), description)
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

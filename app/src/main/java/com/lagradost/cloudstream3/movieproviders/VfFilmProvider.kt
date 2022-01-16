@@ -16,7 +16,7 @@ class VfFilmProvider : MainAPI() {
 
     override val supportedTypes = setOf(TvType.Movie)
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
         val response = app.get(url).text
         val document = Jsoup.parse(response)
@@ -39,7 +39,7 @@ class VfFilmProvider : MainAPI() {
         return returnValue
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -70,7 +70,7 @@ class VfFilmProvider : MainAPI() {
         return vudoUrl
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         val title = document?.selectFirst("div.SubTitle")?.text()

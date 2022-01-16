@@ -29,7 +29,7 @@ class WcoProvider : MainAPI() {
         TvType.ONA
     )
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val urls = listOf(
             Pair("$mainUrl/ajax/list/recently_updated?type=tv", "Recently Updated Anime"),
             Pair("$mainUrl/ajax/list/recently_updated?type=movie", "Recently Updated Movies"),
@@ -108,7 +108,7 @@ class WcoProvider : MainAPI() {
         return returnValue
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search"
         val response =
             app.get(url, params = mapOf("keyword" to query))
@@ -128,7 +128,7 @@ class WcoProvider : MainAPI() {
         return returnValue
     }
 
-    override fun quickSearch(query: String): List<SearchResponse> {
+    override suspend fun quickSearch(query: String): List<SearchResponse> {
         val returnValue: ArrayList<SearchResponse> = ArrayList()
 
         val response = JSONObject(
@@ -170,7 +170,7 @@ class WcoProvider : MainAPI() {
         return returnValue
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val response = app.get(url, timeout = 120).text
         val document = Jsoup.parse(response)
 
@@ -216,7 +216,7 @@ class WcoProvider : MainAPI() {
         }
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

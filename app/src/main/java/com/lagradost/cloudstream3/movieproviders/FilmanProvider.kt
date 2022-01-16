@@ -18,7 +18,7 @@ class FilmanProvider : MainAPI() {
         TvType.TvSeries
     )
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val response = app.get(mainUrl).text
         val document = Jsoup.parse(response)
         val lists = document.select(".item-list,.series-list")
@@ -54,7 +54,7 @@ class FilmanProvider : MainAPI() {
         return HomePageResponse(categories)
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/wyszukiwarka?phrase=$query"
         val response = app.get(url).text
         val document = Jsoup.parse(response)
@@ -79,7 +79,7 @@ class FilmanProvider : MainAPI() {
         return getVideos(TvType.Movie, movies) + getVideos(TvType.TvSeries, series)
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         var title = document.select("span[itemprop=title]").text()
@@ -109,7 +109,7 @@ class FilmanProvider : MainAPI() {
         return TvSeriesLoadResponse(title, url, name, TvType.TvSeries, episodes, posterUrl, year, plot)
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

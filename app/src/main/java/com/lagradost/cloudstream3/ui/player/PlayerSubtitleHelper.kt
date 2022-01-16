@@ -57,7 +57,7 @@ class PlayerSubtitleHelper {
                 endsWith("vtt", true) -> MimeTypes.TEXT_VTT
                 endsWith("srt", true) -> MimeTypes.APPLICATION_SUBRIP
                 endsWith("xml", true) || endsWith("ttml", true) -> MimeTypes.APPLICATION_TTML
-                else -> MimeTypes.APPLICATION_SUBRIP // TODO get request to see
+                else -> MimeTypes.APPLICATION_SUBRIP
             }
         }
 

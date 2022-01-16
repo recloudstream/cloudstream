@@ -28,7 +28,7 @@ class TrailersTwoProvider : TmdbProvider() {
         TvType.Cartoon
     )
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

@@ -54,7 +54,7 @@ class AnimePaheProvider : MainAPI() {
         TvType.ONA
     )
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         data class Data(
             @JsonProperty("id") val id: Int,
             @JsonProperty("anime_id") val animeId: Int,
@@ -139,7 +139,7 @@ class AnimePaheProvider : MainAPI() {
     }
 
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/api?m=search&l=8&q=$query"
         val headers = mapOf("referer" to "$mainUrl/")
 
@@ -242,7 +242,7 @@ class AnimePaheProvider : MainAPI() {
         }
     }
 
-    override fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse? {
         return normalSafeApiCall {
 
             val regex = Regex("""a/(\d+)\?slug=(.+)""")
@@ -541,7 +541,7 @@ class AnimePaheProvider : MainAPI() {
         return qualities
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

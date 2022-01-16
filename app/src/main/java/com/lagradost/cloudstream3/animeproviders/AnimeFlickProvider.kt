@@ -27,7 +27,7 @@ class AnimeFlickProvider : MainAPI() {
         TvType.ONA
     )
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): ArrayList<SearchResponse> {
         val link = "https://animeflick.net/search.php?search=$query"
         val html = app.get(link).text
         val doc = Jsoup.parse(html)
@@ -48,7 +48,7 @@ class AnimeFlickProvider : MainAPI() {
         })
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val html = app.get(url).text
         val doc = Jsoup.parse(html)
 
@@ -79,7 +79,7 @@ class AnimeFlickProvider : MainAPI() {
         }
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

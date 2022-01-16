@@ -19,7 +19,7 @@ class PelisplusHDProvider:MainAPI() {
         TvType.TvSeries,
         TvType.Anime,
     )
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
             Pair("$mainUrl/peliculas", "Peliculas"),
@@ -55,7 +55,7 @@ class PelisplusHDProvider:MainAPI() {
         return HomePageResponse(items)
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "https://pelisplushd.net/search?s=${query}"
         val html = app.get(url).text
         val document = Jsoup.parse(html)
@@ -89,7 +89,7 @@ class PelisplusHDProvider:MainAPI() {
         }
     }
 
-    override fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse? {
         val html = app.get(url).text
         val soup = Jsoup.parse(html)
 
@@ -146,7 +146,7 @@ class PelisplusHDProvider:MainAPI() {
             else -> null
         }
     }
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

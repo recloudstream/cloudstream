@@ -85,7 +85,7 @@ class AllAnimeProvider : MainAPI() {
         @JsonProperty("data") val data: Data
     )
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): ArrayList<SearchResponse> {
         val link =
             """$mainUrl/graphql?variables=%7B%22search%22%3A%7B%22allowAdult%22%3Afalse%2C%22query%22%3A%22$query%22%7D%2C%22limit%22%3A26%2C%22page%22%3A1%2C%22translationType%22%3A%22sub%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%229343797cc3d9e3f444e2d3b7db9a84d759b816a4d84512ea72d079f85bb96e98%22%7D%7D"""
         var res = app.get(link).text
@@ -123,7 +123,7 @@ class AllAnimeProvider : MainAPI() {
     )
 
 
-    override fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse? {
         val rhino = Context.enter()
         rhino.initStandardObjects()
         rhino.optimizationLevel = -1
@@ -238,7 +238,7 @@ class AllAnimeProvider : MainAPI() {
         })
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

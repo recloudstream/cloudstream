@@ -112,7 +112,7 @@ class AsiaFlixProvider : MainAPI() {
         )
     }
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val headers = mapOf("X-Requested-By" to "asiaflix-web")
         val response = app.get("$apiUrl/dashboard", headers = headers).text
 
@@ -138,7 +138,7 @@ class AsiaFlixProvider : MainAPI() {
         @JsonProperty("url") val url: String?,
     )
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -162,14 +162,14 @@ class AsiaFlixProvider : MainAPI() {
         return true
     }
 
-    override fun search(query: String): List<SearchResponse>? {
+    override suspend fun search(query: String): List<SearchResponse>? {
         val headers = mapOf("X-Requested-By" to "asiaflix-web")
         val url = "$apiUrl/drama/search?q=$query"
         val response = app.get(url, headers = headers).text
         return mapper.readValue<List<Data>?>(response)?.map { it.toSearchResponse() }
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val headers = mapOf("X-Requested-By" to "asiaflix-web")
         val requestUrl = "$apiUrl/drama?id=${url.split("/").lastOrNull()}"
         val response = app.get(requestUrl, headers = headers).text

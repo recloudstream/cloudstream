@@ -14,7 +14,7 @@ class KawaiifuProvider : MainAPI() {
 
     override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val resp = app.get(mainUrl).text
 
@@ -58,7 +58,7 @@ class KawaiifuProvider : MainAPI() {
     }
 
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): ArrayList<SearchResponse> {
         val link = "$mainUrl/search-movie?keyword=${query}"
         val html = app.get(link).text
         val soup = Jsoup.parse(html)
@@ -80,7 +80,7 @@ class KawaiifuProvider : MainAPI() {
         })
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val html = app.get(url).text
         val soup = Jsoup.parse(html)
 
@@ -110,7 +110,7 @@ class KawaiifuProvider : MainAPI() {
         }
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

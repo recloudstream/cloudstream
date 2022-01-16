@@ -8,14 +8,12 @@ import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import java.net.URI
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.thread
 
 /**
  * When used as Interceptor additionalUrls cannot be returned, use WebViewResolver(...).resolveUsingWebView(...)
@@ -96,7 +94,34 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                     // Suppress image requests as we don't display them anywhere
                     // Less data, low chance of causing issues.
                     // blockNetworkImage also does this job but i will keep it for the future.
-                    val blacklistedFiles = listOf(".jpg", ".png", ".webp", ".jpeg", ".webm", ".mp4")
+                    val blacklistedFiles = listOf(
+                        ".jpg",
+                        ".png",
+                        ".webp",
+                        ".mpg",
+                        ".mpeg",
+                        ".jpeg",
+                        ".webm",
+                        ".mp4",
+                        ".mp3",
+                        ".gifv",
+                        ".flv",
+                        ".asf",
+                        ".mov",
+                        ".mng",
+                        ".mkv",
+                        ".ogg",
+                        ".avi",
+                        ".wav",
+                        ".woff2",
+                        ".woff",
+                        ".ttf",
+                        ".css",
+                        ".vtt",
+                        ".srt",
+                        ".ts",
+                        ".gif",
+                    )
 
                     /** NOTE!  request.requestHeaders is not perfect!
                      *  They don't contain all the headers the browser actually gives.
@@ -105,7 +130,7 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                      * **/
                     return try {
                         when {
-                            blacklistedFiles.any { URI(webViewUrl).path.endsWith(it) } || webViewUrl.endsWith(
+                            blacklistedFiles.any { URI(webViewUrl).path.contains(it) } || webViewUrl.endsWith(
                                 "/favicon.ico"
                             ) -> WebResourceResponse(
                                 "image/png",

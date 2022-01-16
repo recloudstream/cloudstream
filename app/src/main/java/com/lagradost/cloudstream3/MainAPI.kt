@@ -231,24 +231,24 @@ abstract class MainAPI {
     open val vpnStatus = VPNStatus.None
     open val providerType = ProviderType.DirectProvider
 
-    open fun getMainPage(): HomePageResponse? {
+    suspend open fun getMainPage(): HomePageResponse? {
         throw NotImplementedError()
     }
 
-    open fun search(query: String): List<SearchResponse>? {
+    suspend open fun search(query: String): List<SearchResponse>? {
         throw NotImplementedError()
     }
 
-    open fun quickSearch(query: String): List<SearchResponse>? {
+    suspend open fun quickSearch(query: String): List<SearchResponse>? {
         throw NotImplementedError()
     }
 
-    open fun load(url: String): LoadResponse? {
+    suspend open fun load(url: String): LoadResponse? {
         throw NotImplementedError()
     }
 
     /**Callback is fired once a link is found, will return true if method is executed successfully*/
-    open fun loadLinks(
+    suspend open fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

@@ -13,7 +13,7 @@ class FrenchStreamProvider : MainAPI() {
     override val lang = "fr"
     override val supportedTypes = setOf(TvType.AnimeMovie, TvType.TvSeries, TvType.Movie)
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): ArrayList<SearchResponse> {
         val link = "$mainUrl/?do=search&subaction=search&story=$query"
         val soup = app.post(link).document
 
@@ -49,7 +49,7 @@ class FrenchStreamProvider : MainAPI() {
         })
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val soup = app.get(url).document
 
         val title = soup.selectFirst("h1#s-title").text().toString()
@@ -136,7 +136,7 @@ class FrenchStreamProvider : MainAPI() {
         }
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -228,7 +228,7 @@ class FrenchStreamProvider : MainAPI() {
     }
 
 
-    override fun getMainPage(): HomePageResponse? {
+    override suspend fun getMainPage(): HomePageResponse? {
         val document = app.get(mainUrl).document
         val docs = document.select("div.sect")
         val returnList = docs.mapNotNull {

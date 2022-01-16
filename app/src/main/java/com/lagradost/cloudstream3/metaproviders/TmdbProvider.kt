@@ -161,7 +161,7 @@ open class TmdbProvider : MainAPI() {
         )
     }
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
 
         // SAME AS DISCOVER IT SEEMS
 //        val popularSeries = tmdb.tvService().popular(1, "en-US").execute().body()?.results?.map {
@@ -220,7 +220,7 @@ open class TmdbProvider : MainAPI() {
     }
 
     // Possible to add recommendations and such here.
-    override fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse? {
         // https://www.themoviedb.org/movie/7445-brothers
         // https://www.themoviedb.org/tv/71914-the-wheel-of-time
 
@@ -262,7 +262,7 @@ open class TmdbProvider : MainAPI() {
 
     }
 
-    override fun search(query: String): List<SearchResponse>? {
+    override suspend fun search(query: String): List<SearchResponse>? {
         return tmdb.searchService().multi(query, 1, "en-Us", "US", true).execute()
             .body()?.results?.mapNotNull {
                 it.movie?.toSearchResponse() ?: it.tvShow?.toSearchResponse()

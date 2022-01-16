@@ -69,7 +69,7 @@ class ZoroProvider : MainAPI() {
     }
 
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val html = app.get("$mainUrl/home").text
         val document = Jsoup.parse(html)
 
@@ -99,7 +99,7 @@ class ZoroProvider : MainAPI() {
         @JsonProperty("html") val html: String
     )
 
-//    override fun quickSearch(query: String): List<SearchResponse> {
+//    override suspend fun quickSearch(query: String): List<SearchResponse> {
 //        val url = "$mainUrl/ajax/search/suggest?keyword=${query}"
 //        val html = mapper.readValue<Response>(khttp.get(url).text).html
 //        val document = Jsoup.parse(html)
@@ -126,7 +126,7 @@ class ZoroProvider : MainAPI() {
 //        }
 //    }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val link = "$mainUrl/search?keyword=$query"
         val html = app.get(link).text
         val document = Jsoup.parse(html)
@@ -172,7 +172,7 @@ class ZoroProvider : MainAPI() {
         }
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val html = app.get(url).text
         val document = Jsoup.parse(html)
 
@@ -274,7 +274,7 @@ class ZoroProvider : MainAPI() {
         @JsonProperty("link") val link: String
     )
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

@@ -28,11 +28,11 @@ class MeloMovieProvider : MainAPI() {
 
     data class MeloMovieLink(val name: String, val link: String)
 
-    override fun quickSearch(query: String): List<SearchResponse> {
+    override suspend fun quickSearch(query: String): List<SearchResponse> {
         return search(query)
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/movie/search/?name=$query"
         val returnValue: ArrayList<SearchResponse> = ArrayList()
         val response = app.get(url).text
@@ -98,7 +98,7 @@ class MeloMovieProvider : MainAPI() {
         return parsed.toJson()
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -111,7 +111,7 @@ class MeloMovieProvider : MainAPI() {
         return true
     }
 
-    override fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse? {
         val response = app.get(url).text
 
         //backdrop = imgurl

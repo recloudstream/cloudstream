@@ -13,7 +13,7 @@ class VMoveeProvider : MainAPI() {
 
     override val supportedTypes = setOf(TvType.Movie)
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
         val response = app.get(url).text
         val document = Jsoup.parse(response)
@@ -60,7 +60,7 @@ class VMoveeProvider : MainAPI() {
         val data: List<ReeoovAPIData>,
     )
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -108,7 +108,7 @@ class VMoveeProvider : MainAPI() {
         return true
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
 

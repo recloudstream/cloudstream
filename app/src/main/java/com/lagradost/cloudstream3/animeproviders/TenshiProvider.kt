@@ -45,7 +45,7 @@ class TenshiProvider : MainAPI() {
         }
     }*/
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val soup = app.get(mainUrl, interceptor = ddosGuardKiller).document
         for (section in soup.select("#content > section")) {
@@ -152,7 +152,7 @@ class TenshiProvider : MainAPI() {
 //        @JsonProperty("cen") var cen : String
 //    )
 
-//    override fun quickSearch(query: String): ArrayList<SearchResponse>? {
+//    override suspend fun quickSearch(query: String): ArrayList<SearchResponse>? {
 //        if (!autoLoadToken()) return quickSearch(query)
 //        val url = "$mainUrl/anime/search"
 //        val response = khttp.post(
@@ -192,7 +192,7 @@ class TenshiProvider : MainAPI() {
 //        return returnValue
 //    }
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): ArrayList<SearchResponse> {
         val url = "$mainUrl/anime"
         var document = app.get(
             url,
@@ -220,7 +220,7 @@ class TenshiProvider : MainAPI() {
         return ArrayList(returnValue)
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         var document = app.get(
             url,
             cookies = mapOf("loop-view" to "thumb"),
@@ -292,7 +292,7 @@ class TenshiProvider : MainAPI() {
     }
 
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

@@ -14,7 +14,7 @@ class IHaveNoTvProvider : MainAPI() {
 
     override val supportedTypes = setOf(TvType.Documentary)
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         // Uhh, I am too lazy to scrape the "latest documentaries" and "recommended documentaries",
         // so I am just scraping 3 random categories
         val allCategories = listOf(
@@ -67,7 +67,7 @@ class IHaveNoTvProvider : MainAPI() {
         return HomePageResponse(items)
     }
 
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): ArrayList<SearchResponse> {
         val url = """$mainUrl/search/${URLEncoder.encode(query, "UTF-8")}"""
         val response = app.get(url).text
         val soup = Jsoup.parse(response)
@@ -101,7 +101,7 @@ class IHaveNoTvProvider : MainAPI() {
         return ArrayList(searchResults.values)
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val isSeries = url.contains("/series/")
         val html = app.get(url).text
         val soup = Jsoup.parse(html)
@@ -190,7 +190,7 @@ class IHaveNoTvProvider : MainAPI() {
         ) else (episodes?.first() as MovieLoadResponse)
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

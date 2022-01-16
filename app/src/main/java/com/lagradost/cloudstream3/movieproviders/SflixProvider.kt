@@ -1,9 +1,11 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.network.WebViewResolver
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -26,35 +28,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
     )
     override val vpnStatus = VPNStatus.None
 
-    private fun Element.toSearchResult(): SearchResponse {
-        val img = this.select("img")
-        val title = img.attr("title")
-        val posterUrl = img.attr("data-src")
-        val href = fixUrl(this.select("a").attr("href"))
-        val isMovie = href.contains("/movie/")
-        return if (isMovie) {
-            MovieSearchResponse(
-                title,
-                href,
-                this@SflixProvider.name,
-                TvType.Movie,
-                posterUrl,
-                null
-            )
-        } else {
-            TvSeriesSearchResponse(
-                title,
-                href,
-                this@SflixProvider.name,
-                TvType.Movie,
-                posterUrl,
-                null,
-                null
-            )
-        }
-    }
-
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val html = app.get("$mainUrl/home").text
         val document = Jsoup.parse(html)
 
@@ -84,7 +58,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         return HomePageResponse(all)
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/${query.replace(" ", "-")}"
         val html = app.get(url).text
         val document = Jsoup.parse(html)
@@ -119,7 +93,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         }
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
 
         val details = document.select("div.detail_page-watch")
@@ -151,15 +125,16 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
             val episodes = app.get(episodesUrl).text
 
             // Supported streams, they're identical
-            val sourceId = Jsoup.parse(episodes).select("a").firstOrNull {
-                it.select("span").text().trim().equals("RapidStream", ignoreCase = true)
-                        || it.select("span").text().trim().equals("Vidcloud", ignoreCase = true)
-            }?.attr("data-id")
+            val sourceIds = Jsoup.parse(episodes).select("a").mapNotNull { element ->
+                val sourceId = element.attr("data-id") ?: return@mapNotNull null
+                if(element.select("span")?.text()?.trim()?.isValidServer() == true) {
+                    "$url.$sourceId".replace("/movie/", "/watch-movie/")
+                } else {
+                    null
+                }
+            }
 
-            val webViewUrl =
-                "$url${sourceId?.let { ".$it" } ?: ""}".replace("/movie/", "/watch-movie/")
-
-            return newMovieLoadResponse(title, url, TvType.Movie, webViewUrl) {
+            return newMovieLoadResponse(title, url, TvType.Movie, sourceIds.toJson()) {
                 this.year = year
                 this.posterUrl = posterUrl
                 this.plot = plot
@@ -186,7 +161,8 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                             episode++
 
                             val episodeNum =
-                                (it.select("div.episode-number")?.text() ?: episodeTitle).let { str ->
+                                (it.select("div.episode-number")?.text()
+                                    ?: episodeTitle).let { str ->
                                     Regex("""\d+""").find(str)?.groupValues?.firstOrNull()
                                         ?.toIntOrNull()
                                 } ?: episode
@@ -231,64 +207,102 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         @JsonProperty("tracks") val tracks: List<Tracks?>?
     )
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-
-        // To transfer url:::id
-        val split = data.split(":::")
-        // Only used for tv series
-        val url = if (split.size == 2) {
-            val episodesUrl = "$mainUrl/ajax/v2/episode/servers/${split[1]}"
+        val urls = (tryParseJson<Pair<String, String>>(data)?.let { (prefix, server) ->
+            val episodesUrl = "$mainUrl/ajax/v2/episode/servers/$server"
             val episodes = app.get(episodesUrl).text
 
             // Supported streams, they're identical
-            val sourceId = Jsoup.parse(episodes).select("a").firstOrNull {
-                it.select("span").text().trim().equals("RapidStream", ignoreCase = true)
-                        || it.select("span").text().trim().equals("Vidcloud", ignoreCase = true)
-            }?.attr("data-id")
+            Jsoup.parse(episodes).select("a").mapNotNull { element ->
+                val id = element?.attr("data-id") ?: return@mapNotNull null
+                if(element.select("span")?.text()?.trim()?.isValidServer() == true) {
+                    "$prefix.$id".replace("/tv/", "/watch-tv/")
+                } else {
+                    null
+                }
+            }
+        } ?: tryParseJson<List<String>>(data))?.distinct()
 
-            "${split[0]}${sourceId?.let { ".$it" } ?: ""}".replace("/tv/", "/watch-tv/")
-        } else {
-            data
+        urls?.pmap { url ->
+            println("FETCHING URL $url")
+            val sources = app.get(
+                url,
+                interceptor = WebViewResolver(
+                    Regex("""/getSources"""),
+                )
+            ).text
+
+            val mapped = parseJson<SourceObject>(sources)
+
+            mapped.tracks?.forEach {
+                it?.toSubtitleFile()?.let { subtitleFile ->
+                    subtitleCallback.invoke(subtitleFile)
+                }
+            }
+
+            listOf(
+                mapped.sources to "",
+                mapped.sources1 to "source 2",
+                mapped.sources2 to "source 3",
+                mapped.sourcesBackup to "source backup"
+            ).forEach { subList ->
+                subList.first?.forEach {
+                    it?.toExtractorLink(this, subList.second)?.forEach(callback)
+                }
+            }
         }
 
-        val sources = app.get(
-            url,
-            interceptor = WebViewResolver(
-                Regex("""/getSources""")
+        return !urls.isNullOrEmpty()
+    }
+
+    private fun Element.toSearchResult(): SearchResponse {
+        val img = this.select("img")
+        val title = img.attr("title")
+        val posterUrl = img.attr("data-src")
+        val href = fixUrl(this.select("a").attr("href"))
+        val isMovie = href.contains("/movie/")
+        return if (isMovie) {
+            MovieSearchResponse(
+                title,
+                href,
+                this@SflixProvider.name,
+                TvType.Movie,
+                posterUrl,
+                null
             )
-        ).text
-
-        val mapped = mapper.readValue<SourceObject>(sources)
-
-        mapped.tracks?.forEach {
-            it?.toSubtitleFile()?.let { subtitleFile ->
-                subtitleCallback.invoke(subtitleFile)
-            }
+        } else {
+            TvSeriesSearchResponse(
+                title,
+                href,
+                this@SflixProvider.name,
+                TvType.Movie,
+                posterUrl,
+                null,
+                null
+            )
         }
-
-        listOf(
-            mapped.sources to "source 1",
-            mapped.sources1 to "source 2",
-            mapped.sources2 to "source 3",
-            mapped.sourcesBackup to "source backup"
-        ).forEach { subList ->
-            subList.first?.forEach {
-                it?.toExtractorLink(this, subList.second)?.forEach(callback)
-            }
-        }
-        return true
     }
 
     companion object {
-        // For re-use in Zoro
+        fun String?.isValidServer(): Boolean {
+            if (this.isNullOrEmpty()) return false
+            if (this.equals("UpCloud", ignoreCase = true) || this.equals(
+                    "Vidcloud",
+                    ignoreCase = true
+                ) || this.equals("RapidStream", ignoreCase = true)
+            ) return true
+            return true
+        }
 
+        // For re-use in Zoro
         fun Sources.toExtractorLink(caller: MainAPI, name: String): List<ExtractorLink>? {
             return this.file?.let { file ->
+                //println("FILE::: $file")
                 val isM3u8 = URI(this.file).path.endsWith(".m3u8") || this.type.equals(
                     "hls",
                     ignoreCase = true
@@ -296,6 +310,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 if (isM3u8) {
                     M3u8Helper().m3u8Generation(M3u8Helper.M3u8Stream(this.file, null), true)
                         .map { stream ->
+                            //println("stream: ${stream.quality} at ${stream.streamUrl}")
                             val qualityString = if ((stream.quality ?: 0) == 0) label
                                 ?: "" else "${stream.quality}p"
                             ExtractorLink(

@@ -16,7 +16,7 @@ class PinoyMoviePediaProvider : MainAPI() {
     override val hasMainPage = true
     override val hasQuickSearch = false
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val all = ArrayList<HomePageList>()
         val document = app.get(mainUrl).document
         val mainbody = document.getElementsByTag("body")
@@ -72,7 +72,7 @@ class PinoyMoviePediaProvider : MainAPI() {
         return HomePageResponse(all.filter { a -> a.list.isNotEmpty() })
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=${query}"
         val document = app.get(url).document.selectFirst("div.search-page")
             ?.select("div.result-item")
@@ -97,7 +97,7 @@ class PinoyMoviePediaProvider : MainAPI() {
         }?.distinctBy { c -> c.url } ?: listOf()
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
         val body = doc.getElementsByTag("body")
         val inner = body?.select("div.sheader")
@@ -171,7 +171,7 @@ class PinoyMoviePediaProvider : MainAPI() {
         return MovieLoadResponse(title, url, this.name, TvType.Movie, streamlinks, poster, year, descript, null, null)
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

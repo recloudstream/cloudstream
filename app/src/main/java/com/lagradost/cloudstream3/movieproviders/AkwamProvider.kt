@@ -34,7 +34,7 @@ class AkwamProvider : MainAPI() {
         )
     }
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         // Title, Url
         val moviesUrl = listOf(
             "Movies" to "$mainUrl/movies",
@@ -51,7 +51,7 @@ class AkwamProvider : MainAPI() {
         return HomePageResponse(pages)
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search?q=$query"
         val doc = app.get(url).document
         return doc.select("div.col-lg-auto").mapNotNull {
@@ -80,7 +80,7 @@ class AkwamProvider : MainAPI() {
     }
 
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
         val isMovie = url.contains("/movie/")
         val title = doc.select("h1.entry-title").text()
@@ -164,7 +164,7 @@ class AkwamProvider : MainAPI() {
         }
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

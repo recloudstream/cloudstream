@@ -19,7 +19,7 @@ class KdramaHoodProvider : MainAPI() {
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val doc = app.get("$mainUrl/home2").document
         val home = ArrayList<HomePageList>()
 
@@ -59,7 +59,7 @@ class KdramaHoodProvider : MainAPI() {
         return HomePageResponse(home.filter { it.list.isNotEmpty() })
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
         val html = app.get(url).document
         val document = html.getElementsByTag("body")
@@ -87,7 +87,7 @@ class KdramaHoodProvider : MainAPI() {
         }
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
         val inner = doc.selectFirst("div.central")
 
@@ -180,7 +180,7 @@ class KdramaHoodProvider : MainAPI() {
         )
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

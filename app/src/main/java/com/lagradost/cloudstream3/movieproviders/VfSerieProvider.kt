@@ -17,7 +17,7 @@ class VfSerieProvider : MainAPI() {
 
     override val supportedTypes = setOf(TvType.TvSeries)
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
         val response = app.get(url).text
         val document = Jsoup.parse(response)
@@ -52,7 +52,7 @@ class VfSerieProvider : MainAPI() {
             .toString()  // direct mp4 link, https://m5.vudeo.net/2vp3xgpw2avjdohilpfbtyuxzzrqzuh4z5yxvztral5k3rjnba6f4byj3saa/v.mp4 for exemple
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -95,7 +95,7 @@ class VfSerieProvider : MainAPI() {
         return true
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         val title =

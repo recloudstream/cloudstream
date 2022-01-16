@@ -33,7 +33,7 @@ open class VidstreamProviderTemplate : MainAPI() {
 
     // Searching returns a SearchResponse, which can be one of the following: AnimeSearchResponse, MovieSearchResponse, TorrentSearchResponse, TvSeriesSearchResponse
     // Each of the classes requires some different data, but always has some critical things like name, poster and url.
-    override fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): ArrayList<SearchResponse> {
         // Simply looking at devtools network is enough to spot a request like:
         // https://vidembed.cc/search.html?keyword=neverland where neverland is the query, can be written as below.
         val link = "$mainUrl/search.html?keyword=$query"
@@ -66,7 +66,7 @@ open class VidstreamProviderTemplate : MainAPI() {
 
     // Load, like the name suggests loads the info page, where all the episodes and data usually is.
     // Like search you should return either of: AnimeLoadResponse, MovieLoadResponse, TorrentLoadResponse, TvSeriesLoadResponse.
-    override fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse? {
         // Gets the url returned from searching.
         val html = app.get(url).text
         val soup = Jsoup.parse(html)
@@ -144,7 +144,7 @@ open class VidstreamProviderTemplate : MainAPI() {
 
     // This loads the homepage, which is basically a collection of search results with labels.
     // Optional function, but make sure to enable hasMainPage if you program this.
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val urls = homePageUrlList
         val homePageList = ArrayList<HomePageList>()
         // .pmap {} is used to fetch the different pages in parallel
@@ -198,7 +198,7 @@ open class VidstreamProviderTemplate : MainAPI() {
     // loadLinks gets the raw .mp4 or .m3u8 urls from the data parameter in the episodes class generated in load()
     // See TvSeriesEpisode(...) in this provider.
     // The data are usually links, but can be any other string to help aid loading the links.
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         // These callbacks are functions you should call when you get a link to a subtitle file or media file.

@@ -14,7 +14,7 @@ class HDMProvider : MainAPI() {
         TvType.Movie,
     )
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/$query"
         val response = app.get(url).text
         val document = Jsoup.parse(response)
@@ -32,7 +32,7 @@ class HDMProvider : MainAPI() {
         return returnValue
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -55,7 +55,7 @@ class HDMProvider : MainAPI() {
         return true
     }
 
-    override fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse? {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         val title = document.selectFirst("h2.movieTitle")?.text() ?: throw ErrorLoadingException("No Data Found")
@@ -71,7 +71,7 @@ class HDMProvider : MainAPI() {
         )
     }
 
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val html = app.get("$mainUrl", timeout = 25).text
         val document = Jsoup.parse(html)
         val all = ArrayList<HomePageList>()

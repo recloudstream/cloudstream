@@ -46,7 +46,7 @@ class RepoLinkGenerator(private val episodes: List<ResultEpisode>, private var c
     var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })
     var subsCache = Array<Set<SubtitleData>>(size = episodes.size, init = { setOf() })
 
-    override fun generateLinks(
+    override suspend fun generateLinks(
         clearCache: Boolean,
         isCasting: Boolean,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,

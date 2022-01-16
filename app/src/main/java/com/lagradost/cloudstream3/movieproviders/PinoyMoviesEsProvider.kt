@@ -58,7 +58,7 @@ class PinoyMoviesEsProvider : MainAPI() {
         }
         return all
     }
-    override fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(): HomePageResponse {
         val all = ArrayList<HomePageList>()
         val html = app.get(mainUrl).text
         val document = Jsoup.parse(html)
@@ -87,7 +87,7 @@ class PinoyMoviesEsProvider : MainAPI() {
         return HomePageResponse(all)
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=${query}"
         val html = app.get(url, interceptor = DdosGuardKiller(true)).text
         //Log.i(this.name, "Result => (html) ${Jsoup.parse(html).getElementsByTag("body")}")
@@ -115,7 +115,7 @@ class PinoyMoviesEsProvider : MainAPI() {
         return listOf()
     }
 
-    override fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val response = app.get(url).text
         val doc = Jsoup.parse(response)
         val body = doc.getElementsByTag("body")
@@ -185,7 +185,7 @@ class PinoyMoviesEsProvider : MainAPI() {
         return MovieLoadResponse(title, url, this.name, TvType.Movie, streamlinks, poster, year, descript, null, null)
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
             data: String,
             isCasting: Boolean,
             subtitleCallback: (SubtitleFile) -> Unit,

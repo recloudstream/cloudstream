@@ -64,7 +64,7 @@ class LookMovieProvider : MainAPI() {
         @JsonProperty("season") var season: String,
     )
 
-    override fun quickSearch(query: String): List<SearchResponse> {
+    override suspend fun quickSearch(query: String): List<SearchResponse> {
         val movieUrl = "$mainUrl/api/v1/movies/search/?q=$query"
         val movieResponse = app.get(movieUrl).text
         val movies = mapper.readValue<LookMovieSearchResultRoot>(movieResponse).result
@@ -109,7 +109,7 @@ class LookMovieProvider : MainAPI() {
         return returnValue
     }
 
-    override fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         fun search(query: String, isMovie: Boolean): ArrayList<SearchResponse> {
             val url = "$mainUrl/${if (isMovie) "movies" else "shows"}/search/?q=$query"
             val response = app.get(url).text
@@ -174,7 +174,7 @@ class LookMovieProvider : MainAPI() {
         }
     }
 
-    override fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -198,7 +198,7 @@ class LookMovieProvider : MainAPI() {
         return true
     }
 
-    override fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse? {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         val isMovie = url.contains("/movies/")

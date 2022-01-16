@@ -2,7 +2,7 @@ package com.lagradost.cloudstream3.ui
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
 
@@ -66,15 +66,18 @@ class APIRepository(val api: MainAPI) {
         }
     }
 
-    fun loadLinks(
+    suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         if (isInvalidData(data)) return false // this makes providers cleaner
-
-        return normalSafeApiCall { api.loadLinks(data, isCasting, subtitleCallback, callback) }
-            ?: false
+        return try {
+            api.loadLinks(data, isCasting, subtitleCallback, callback)
+        } catch (throwable: Throwable) {
+            logError(throwable)
+            return false
+        }
     }
 }
