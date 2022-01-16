@@ -97,7 +97,7 @@ class AkwamProvider : MainAPI() {
                 it.text().contains("مدة الفيلم")
             }?.text()?.getIntFromText()
 
-        val synopsis = doc.select("div.widget-body p").text()
+        val synopsis = doc.select("div.widget-body p:first-child").text()
 
         val rating = doc.select("span.mx-2").text().split("/").lastOrNull()?.replace(" ", "")
             ?.toDoubleOrNull()
