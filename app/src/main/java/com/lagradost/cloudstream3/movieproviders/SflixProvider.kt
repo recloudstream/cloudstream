@@ -229,7 +229,6 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         } ?: tryParseJson<List<String>>(data))?.distinct()
 
         urls?.pmap { url ->
-            println("FETCHING URL $url")
             val sources = app.get(
                 url,
                 interceptor = WebViewResolver(

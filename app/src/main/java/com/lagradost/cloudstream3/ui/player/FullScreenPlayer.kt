@@ -122,8 +122,9 @@ open class FullScreenPlayer : AbstractPlayerFragment(R.layout.fragment_player) {
     /** Returns false if the touch is on the status bar or navigation bar*/
     private fun isValidTouch(rawX: Float, rawY: Float): Boolean {
         val statusHeight = statusBarHeight ?: 0
-        val navHeight = navigationBarHeight ?: 0
-        return rawY > statusHeight && rawX < screenWidth - navHeight
+        // val navHeight = navigationBarHeight ?: 0
+        // nav height is removed because screenWidth already takes into account that
+        return rawY > statusHeight && rawX < screenWidth //- navHeight
     }
 
     private fun animateLayoutChanges() {
