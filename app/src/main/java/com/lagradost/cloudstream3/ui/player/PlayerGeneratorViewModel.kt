@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorUri
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class PlayerGeneratorViewModel : ViewModel() {
@@ -50,12 +51,13 @@ class PlayerGeneratorViewModel : ViewModel() {
         return generator?.hasNext()
     }
 
-    fun preLoadNextLinks() = viewModelScope.launch {
-        safeApiCall {
+    fun preLoadNextLinks() {
+        currentJob?.cancel()
+        currentJob = viewModelScope.launch {
             if (generator?.hasCache == true && generator?.hasNext() == true) {
-                generator?.next()
-                generator?.generateLinks(clearCache = false, isCasting = false, {}, {})
-                generator?.prev()
+                safeApiCall {
+                    generator?.generateLinks(clearCache = false, isCasting = false, {}, {}, offset = 1)
+                }
             }
         }
     }
@@ -86,24 +88,29 @@ class PlayerGeneratorViewModel : ViewModel() {
         _currentSubs.postValue(subs)
     }
 
-    fun loadLinks(clearCache: Boolean = false, isCasting: Boolean = false) = viewModelScope.launch {
-        val currentLinks = mutableSetOf<Pair<ExtractorLink?, ExtractorUri?>>()
-        val currentSubs = mutableSetOf<SubtitleData>()
+    private var currentJob: Job? = null
 
-        _loadingLinks.postValue(Resource.Loading())
-        val loadingState = safeApiCall {
-            generator?.generateLinks(clearCache = clearCache, isCasting = isCasting, {
-                currentLinks.add(it)
-                _currentLinks.postValue(currentLinks)
-            }, {
-                currentSubs.add(it)
-                // _currentSubs.postValue(currentSubs) // this causes ConcurrentModificationException, so fuck it
-            })
+    fun loadLinks(clearCache: Boolean = false, isCasting: Boolean = false) {
+        currentJob?.cancel()
+        currentJob = viewModelScope.launch {
+            val currentLinks = mutableSetOf<Pair<ExtractorLink?, ExtractorUri?>>()
+            val currentSubs = mutableSetOf<SubtitleData>()
+
+            _loadingLinks.postValue(Resource.Loading())
+            val loadingState = safeApiCall {
+                generator?.generateLinks(clearCache = clearCache, isCasting = isCasting, {
+                    currentLinks.add(it)
+                    _currentLinks.postValue(currentLinks)
+                }, {
+                    currentSubs.add(it)
+                    // _currentSubs.postValue(currentSubs) // this causes ConcurrentModificationException, so fuck it
+                })
+            }
+
+            _loadingLinks.postValue(loadingState)
+
+            _currentLinks.postValue(currentLinks)
+            _currentSubs.postValue(currentSubs)
         }
-
-        _loadingLinks.postValue(loadingState)
-
-        _currentLinks.postValue(currentLinks)
-        _currentSubs.postValue(currentSubs)
     }
 }

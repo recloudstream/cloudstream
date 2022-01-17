@@ -20,6 +20,7 @@ interface IGenerator {
         clearCache: Boolean,
         isCasting: Boolean,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
-        subtitleCallback: (SubtitleData) -> Unit
+        subtitleCallback: (SubtitleData) -> Unit,
+        offset : Int = 0,
     ): Boolean
 }

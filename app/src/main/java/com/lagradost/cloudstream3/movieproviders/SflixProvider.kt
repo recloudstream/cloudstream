@@ -127,7 +127,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
             // Supported streams, they're identical
             val sourceIds = Jsoup.parse(episodes).select("a").mapNotNull { element ->
                 val sourceId = element.attr("data-id") ?: return@mapNotNull null
-                if(element.select("span")?.text()?.trim()?.isValidServer() == true) {
+                if (element.select("span")?.text()?.trim()?.isValidServer() == true) {
                     "$url.$sourceId".replace("/movie/", "/watch-movie/")
                 } else {
                     null
@@ -172,7 +172,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                                     episodeTitle.removePrefix("Episode $episodeNum: "),
                                     season + 1,
                                     episodeNum,
-                                    "$url:::$episodeData",
+                                    Pair(url, episodeData).toJson(),
                                     fixUrl(episodePosterUrl)
                                 )
                             )
@@ -220,7 +220,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
             // Supported streams, they're identical
             Jsoup.parse(episodes).select("a").mapNotNull { element ->
                 val id = element?.attr("data-id") ?: return@mapNotNull null
-                if(element.select("span")?.text()?.trim()?.isValidServer() == true) {
+                if (element.select("span")?.text()?.trim()?.isValidServer() == true) {
                     "$prefix.$id".replace("/tv/", "/watch-tv/")
                 } else {
                     null
@@ -249,9 +249,10 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 mapped.sources1 to "source 2",
                 mapped.sources2 to "source 3",
                 mapped.sourcesBackup to "source backup"
-            ).forEach { subList ->
-                subList.first?.forEach {
-                    it?.toExtractorLink(this, subList.second)?.forEach(callback)
+            ).forEach { (sources, sourceName) ->
+                println("SOURCE:::: $sourceName $sources")
+                sources?.forEach {
+                    it?.toExtractorLink(this, sourceName)?.forEach(callback)
                 }
             }
         }

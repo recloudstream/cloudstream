@@ -50,9 +50,10 @@ class DownloadFileGenerator(
         clearCache: Boolean,
         isCasting: Boolean,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
-        subtitleCallback: (SubtitleData) -> Unit
+        subtitleCallback: (SubtitleData) -> Unit,
+        offset: Int,
     ): Boolean {
-        val meta = episodes[currentIndex]
+        val meta = episodes[currentIndex + offset]
         callback(Pair(null, meta))
 
         context?.let { ctx ->
