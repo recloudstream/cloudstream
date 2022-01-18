@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.OAuth2accoun
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
@@ -219,6 +220,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     setViewPos(id, pos, dur)
                 }
                 removeKey(VLC_LAST_ID_KEY)
+                ResultFragment.updateUI()
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

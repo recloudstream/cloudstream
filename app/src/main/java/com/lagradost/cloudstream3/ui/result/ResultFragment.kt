@@ -187,6 +187,12 @@ class ResultFragment : Fragment() {
                 putBoolean("restart", true)
             }
         }
+
+        fun updateUI() {
+            updateUIListener?.invoke()
+        }
+
+        private var updateUIListener : (() -> Unit)? = null
     }
 
     private var currentLoadingCount =
@@ -215,7 +221,7 @@ class ResultFragment : Fragment() {
     override fun onDestroy() {
         //requireActivity().viewModelStore.clear() // REMEMBER THE CLEAR
         downloadButton?.dispose()
-
+        updateUIListener = null
         super.onDestroy()
         activity?.let {
             it.window?.navigationBarColor =
@@ -353,10 +359,16 @@ class ResultFragment : Fragment() {
         }
     }
 
+    private fun updateUI() {
+        viewModel.reloadEpisodes()
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fixGrid()
+
+        updateUIListener = ::updateUI
 
         val restart = arguments?.getBoolean("restart") ?: false
         if (restart) {

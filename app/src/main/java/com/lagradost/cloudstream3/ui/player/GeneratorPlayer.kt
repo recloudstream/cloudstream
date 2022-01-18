@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.*
@@ -325,6 +326,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         loadLink(links[newIndex], true)
+    }
+
+    override fun onDestroy() {
+        ResultFragment.updateUI()
+        super.onDestroy()
     }
 
     override fun playerPositionChanged(posDur: Pair<Long, Long>) {
