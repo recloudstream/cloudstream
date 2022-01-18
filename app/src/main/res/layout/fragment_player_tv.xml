@@ -44,23 +44,20 @@
     >
 
         <com.google.android.material.button.MaterialButton
+                android:nextFocusUp="@id/player_loading_go_back"
+                android:nextFocusLeft="@id/player_loading_go_back"
+                android:focusableInTouchMode="true"
+
                 tools:visibility="visible"
                 android:visibility="gone"
                 android:layout_marginTop="70dp"
                 android:layout_gravity="center"
-                app:cornerRadius="4dp"
                 android:id="@+id/overlay_loading_skip_button"
                 android:text="@string/skip_loading"
 
-                app:rippleColor="?attr/colorPrimary"
-                android:textColor="?attr/textColor"
-                app:iconTint="?attr/textColor"
-                android:textAllCaps="false"
                 app:icon="@drawable/ic_baseline_skip_next_24"
-                android:backgroundTint="@color/transparent"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="45dp">
+                style="@style/VideoButtonTV"
+                android:layout_width="wrap_content">
         </com.google.android.material.button.MaterialButton>
 
         <ProgressBar
@@ -88,6 +85,10 @@
             >
             </ImageView>
             <ImageView
+                    android:nextFocusRight="@id/overlay_loading_skip_button"
+                    android:nextFocusDown="@id/overlay_loading_skip_button"
+                    android:focusableInTouchMode="true"
+
                     android:id="@+id/player_loading_go_back"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
