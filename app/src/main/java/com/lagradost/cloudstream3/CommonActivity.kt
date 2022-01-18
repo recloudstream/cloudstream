@@ -37,7 +37,7 @@ object CommonActivity {
     val onDialogDismissedEvent = Event<Int>()
 
     var playerEventListener: ((PlayerEventType) -> Unit)? = null
-    var keyEventListener: ((KeyEvent?) -> Boolean)? = null
+    var keyEventListener: ((Pair<KeyEvent?, Boolean>) -> Boolean)? = null
 
 
     var currentToast: Toast? = null
@@ -134,8 +134,8 @@ object CommonActivity {
         }
     }
 
-    fun loadThemes(act: Activity? ) {
-        if(act == null) return
+    fun loadThemes(act: Activity?) {
+        if (act == null) return
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(act)
 
         val currentTheme =
@@ -323,6 +323,7 @@ object CommonActivity {
                             val nextView = act.findViewById<View?>(next)
                             if (nextView != null) {
                                 nextView.requestFocus()
+                                keyEventListener?.invoke(Pair(event, true))
                                 return true
                             }
                         }
@@ -345,7 +346,7 @@ object CommonActivity {
             }
         }
 
-        if (keyEventListener?.invoke(event) == true) {
+        if (keyEventListener?.invoke(Pair(event, false)) == true) {
             return true
         }
         return null

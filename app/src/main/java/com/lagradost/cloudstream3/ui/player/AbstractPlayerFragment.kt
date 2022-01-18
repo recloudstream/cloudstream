@@ -58,13 +58,15 @@ const val PRELOAD_NEXT_EPISODE_PERCENTAGE = 80
 const val NEXT_WATCH_EPISODE_PERCENTAGE = 95
 
 abstract class AbstractPlayerFragment(
-    @LayoutRes val layout: Int,
     val player: IPlayer = CS3IPlayer()
 ) : Fragment() {
     var resizeMode: Int = 0
     var subStyle: SaveCaptionStyle? = null
     var subView: SubtitleView? = null
     var isBuffering = true
+
+    @LayoutRes
+    protected var layout: Int = R.layout.fragment_player
 
     open fun nextEpisode() {
         throw NotImplementedError()
@@ -78,12 +80,12 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    open fun playerDimensionsLoaded(widthHeight : Pair<Int, Int>) {
+    open fun playerDimensionsLoaded(widthHeight: Pair<Int, Int>) {
         throw NotImplementedError()
     }
 
-    private fun keepScreenOn(on : Boolean) {
-        if(on) {
+    private fun keepScreenOn(on: Boolean) {
+        if (on) {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         } else {
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -128,7 +130,7 @@ abstract class AbstractPlayerFragment(
                 }
 
                 // somehow the phone is wacked
-                if(!startedAnimation) {
+                if (!startedAnimation) {
                     player_pause_play?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
                 }
             } else {
