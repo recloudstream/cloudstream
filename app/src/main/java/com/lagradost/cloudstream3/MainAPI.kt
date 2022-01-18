@@ -40,11 +40,14 @@ object APIHolder {
         WcoProvider(),
         // MeloMovieProvider(), // Captcha for links
         DubbedAnimeProvider(),
+        DoramasYTProvider(),
         IHaveNoTvProvider(), // Documentaries provider
         //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
         VMoveeProvider(),
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
+
+        MonoschinosProvider(),
 
         VidEmbedProvider(),
         VfFilmProvider(),
