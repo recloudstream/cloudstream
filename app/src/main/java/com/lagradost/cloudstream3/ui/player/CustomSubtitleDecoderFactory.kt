@@ -43,26 +43,38 @@ class CustomDecoder : SubtitleDecoder {
                     data.get(arr)
                     data.position(pos)
 
-                    val str = arr.decodeToString().trimStart()
+                    //https://emptycharacter.com/
+                    //https://www.fileformat.info/info/unicode/char/200b/index.htm
+                    val str = arr.decodeToString().trimStart().trim('\uFEFF', '\u200B').replace(
+                        Regex("[\u00A0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u205F]"),
+                        " "
+                    )
                     Log.i(TAG, "Got data from queueInputBuffer")
-                    Log.i(TAG, "first string is $str")
-
-                    //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
-                    realDecoder = when {
-                        str.startsWith("WEBVTT") -> WebvttDecoder()
-                        str.startsWith("<?xml version=\"") -> TtmlDecoder()
-                        str.startsWith("[Script Info]") || str.startsWith("Title:") -> SsaDecoder()
-                        str.startsWith("1") -> SubripDecoder()
-                        else -> null
-                    }
-
-                    realDecoder?.dequeueInputBuffer()?.let { buff ->
-                        buff.data = data
-                        realDecoder?.queueInputBuffer(buff)
+                    Log.i(TAG, "first string is >>>$str<<<")
+                    if (str.isNotEmpty()) {
+                        //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
+                        realDecoder = when {
+                            str.startsWith("WEBVTT", ignoreCase = true) -> WebvttDecoder()
+                            str.startsWith("<?xml version=\"", ignoreCase = true) -> TtmlDecoder()
+                            (str.startsWith(
+                                "[Script Info]",
+                                ignoreCase = true
+                            ) || str.startsWith("Title:", ignoreCase = true)) -> SsaDecoder()
+                            str.startsWith("1", ignoreCase = true) -> SubripDecoder()
+                            else -> null
+                        }
+                        Log.i(
+                            TAG,
+                            "Decoder selected: $realDecoder"
+                        )
+                        realDecoder?.dequeueInputBuffer()?.let { buff ->
+                            buff.data = data
+                            realDecoder?.queueInputBuffer(buff)
+                        }
                     }
                 }
             } else {
-                realDecoder?.dequeueInputBuffer()
+                realDecoder?.queueInputBuffer(inputBuffer)
             }
         } catch (e: Exception) {
             logError(e)
