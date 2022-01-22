@@ -77,6 +77,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [zoro.to](https://zoro.to) 
 - [pinoymoviepedia.ru](https://pinoymoviepedia.ru) 
 - [pinoy-hd.xyz](https://www.pinoy-hd.xyz) 
+- [pinoymovies.es](https://pinoymovies.es) 
 - [trailers.to](https://trailers.to) 
 - [dramasee.net](https://dramasee.net) 
 - [watchasian.sh](https://watchasian.sh) 
