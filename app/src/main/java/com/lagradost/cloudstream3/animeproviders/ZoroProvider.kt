@@ -258,7 +258,10 @@ class ZoroProvider : MainAPI() {
     }
 
     private fun getM3u8FromRapidCloud(url: String): String {
-        return app.get(
+        return Regex("""/(embed-\d+)/(.*?)\?z=""").find(url)?.groupValues?.let {
+            val jsonLink = "https://rapid-cloud.ru/ajax/${it[1]}/getSources?id=${it[2]}"
+            app.get(jsonLink).text
+        } ?: app.get(
             "$url&autoPlay=1&oa=0",
             headers = mapOf(
                 "Referer" to "https://zoro.to/",
