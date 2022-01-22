@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.*
+import com.lagradost.cloudstream3.extractors.helper.AsianEmbedHelper
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -139,7 +140,7 @@ class DramaSeeProvider : MainAPI() {
             url,
             this.name,
             TvType.TvSeries,
-            episodeList,
+            episodeList.reversed(),
             poster,
             year,
             descript,
@@ -155,45 +156,32 @@ class DramaSeeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
+        var count = 0
         mapper.readValue<List<String>>(data).forEach { item ->
             if (item.isNotEmpty()) {
+                count++
                 var url = item.trim()
                 if (url.startsWith("//")) {
                     url = "https:$url"
                 }
                 //Log.i(this.name, "Result => (url) ${url}")
-                if (url.startsWith("https://asianembed.io")) {
-                    // Fetch links
-                    val doc = app.get(url).document
-                    val links = doc.select("div#list-server-more > ul > li.linkserver")
-                    if (!links.isNullOrEmpty()) {
-                        links.forEach {
-                            val datavid = it.attr("data-video") ?: ""
-                            //Log.i(this.name, "Result => (datavid) ${datavid}")
-                            if (datavid.isNotEmpty()) {
-                                if (datavid.startsWith("https://fembed-hd.com")) {
-                                    val extractor = XStreamCdn()
-                                    extractor.domainUrl = "fembed-hd.com"
-                                    extractor.getUrl(datavid, url).forEach { link ->
-                                        callback.invoke(link)
-                                    }
-                                } else {
-                                    loadExtractor(datavid, url, callback)
-                                }
-                            }
+                when {
+                    url.startsWith("https://asianembed.io") -> {
+                        AsianEmbedHelper.getUrls(url, callback)
+                    }
+                    url.startsWith("https://embedsito.com") -> {
+                        val extractor = XStreamCdn()
+                        extractor.domainUrl = "embedsito.com"
+                        extractor.getUrl(url).forEach { link ->
+                            callback.invoke(link)
                         }
                     }
-                } else if (url.startsWith("https://embedsito.com")) {
-                    val extractor = XStreamCdn()
-                    extractor.domainUrl = "embedsito.com"
-                    extractor.getUrl(url).forEach { link ->
-                        callback.invoke(link)
+                    else -> {
+                        loadExtractor(url, mainUrl, callback)
                     }
-                } else {
-                    loadExtractor(url, mainUrl, callback)
-                } // end if
+                }
             }
         }
-        return true
+        return count > 0
     }
 }

@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.*
+import com.lagradost.cloudstream3.extractors.helper.AsianEmbedHelper
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -153,7 +154,7 @@ class WatchAsianProvider : MainAPI() {
             url,
             this.name,
             TvType.TvSeries,
-            episodeList,
+            episodeList.reversed(),
             poster,
             year,
             descript,
@@ -172,16 +173,22 @@ class WatchAsianProvider : MainAPI() {
         val links = if (data.startsWith(mainUrl)) {
             getServerLinks(data)
         } else { data }
-        mapper.readValue<List<String>>(links)
-            .forEach { item ->
-                var url = item.trim()
-                if (url.startsWith("//")) {
-                    url = "https:$url"
-                }
-                //Log.i(this.name, "Result => (url) $url")
+        var count = 0
+        mapper.readValue<List<String>>(links).forEach { item ->
+            count++
+            var url = item.trim()
+            if (url.startsWith("//")) {
+                url = "https:$url"
+            }
+            //Log.i(this.name, "Result => (url) $url")
+            if (url.startsWith("https://asianembed.io")) {
+                // Fetch links
+                AsianEmbedHelper.getUrls(url, callback)
+            } else {
                 loadExtractor(url, mainUrl, callback)
             }
-        return true
+        }
+        return count > 0
     }
 
     private fun getServerLinks(url: String) : String {

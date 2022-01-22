@@ -4,6 +4,7 @@ import android.util.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.*
+import com.lagradost.cloudstream3.extractors.helper.AsianEmbedHelper
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -170,7 +171,7 @@ class KdramaHoodProvider : MainAPI() {
             url,
             this.name,
             TvType.TvSeries,
-            episodeList,
+            episodeList.reversed(),
             poster,
             year,
             descript,
@@ -195,28 +196,21 @@ class KdramaHoodProvider : MainAPI() {
                     url = "https:$url"
                 }
                 //Log.i(this.name, "Result => (url) ${url}")
-                if (url.startsWith("https://asianembed.io")) {
-                    // Fetch links
-                    val doc = app.get(url).document
-                    val links = doc.select("div#list-server-more > ul > li.linkserver")
-                    if (!links.isNullOrEmpty()) {
-                        links.forEach {
-                            val datavid = it.attr("data-video") ?: ""
-                            //Log.i(this.name, "Result => (datavid) ${datavid}")
-                            if (datavid.isNotEmpty()) {
-                                loadExtractor(datavid, url, callback)
-                            }
+                when {
+                    url.startsWith("https://asianembed.io") -> {
+                        AsianEmbedHelper.getUrls(url, callback)
+                    }
+                    url.startsWith("https://embedsito.com") -> {
+                        val extractor = XStreamCdn()
+                        extractor.domainUrl = "embedsito.com"
+                        extractor.getUrl(url).forEach { link ->
+                            callback.invoke(link)
                         }
                     }
-                } else if (url.startsWith("https://embedsito.com")) {
-                    val extractor = XStreamCdn()
-                    extractor.domainUrl = "embedsito.com"
-                    extractor.getUrl(url).forEach { link ->
-                        callback.invoke(link)
+                    else -> {
+                        loadExtractor(url, mainUrl, callback)
                     }
-                } else {
-                    loadExtractor(url, mainUrl, callback)
-                } // end if
+                }
             }
         }
         return count > 0

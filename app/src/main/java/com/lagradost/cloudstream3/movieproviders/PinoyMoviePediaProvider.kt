@@ -178,7 +178,9 @@ class PinoyMoviePediaProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         // parse movie servers
+        var count = 0
         mapper.readValue<List<String>>(data).forEach { link ->
+            count++
             if (link.contains("fembed.com")) {
                 val extractor = FEmbed()
                 extractor.domainUrl = "diasfem.com"
@@ -189,6 +191,6 @@ class PinoyMoviePediaProvider : MainAPI() {
                 loadExtractor(link, mainUrl, callback)
             }
         }
-        return true
+        return count > 0
     }
 }
