@@ -55,8 +55,38 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
 import com.lagradost.cloudstream3.widget.CenterZoomLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.home_api_fab
+import kotlinx.android.synthetic.main.fragment_home.home_bookmarked_child_more_info
+import kotlinx.android.synthetic.main.fragment_home.home_bookmarked_child_recyclerview
+import kotlinx.android.synthetic.main.fragment_home.home_bookmarked_holder
+import kotlinx.android.synthetic.main.fragment_home.home_change_api
+import kotlinx.android.synthetic.main.fragment_home.home_change_api_loading
+import kotlinx.android.synthetic.main.fragment_home.home_loaded
+import kotlinx.android.synthetic.main.fragment_home.home_loading
+import kotlinx.android.synthetic.main.fragment_home.home_loading_error
+import kotlinx.android.synthetic.main.fragment_home.home_loading_shimmer
+import kotlinx.android.synthetic.main.fragment_home.home_loading_statusbar
+import kotlinx.android.synthetic.main.fragment_home.home_main_poster_recyclerview
+import kotlinx.android.synthetic.main.fragment_home.home_master_recycler
+import kotlinx.android.synthetic.main.fragment_home.home_plan_to_watch_btt
+import kotlinx.android.synthetic.main.fragment_home.home_provider_meta_info
+import kotlinx.android.synthetic.main.fragment_home.home_provider_name
+import kotlinx.android.synthetic.main.fragment_home.home_reload_connection_open_in_browser
+import kotlinx.android.synthetic.main.fragment_home.home_reload_connectionerror
+import kotlinx.android.synthetic.main.fragment_home.home_statusbar
+import kotlinx.android.synthetic.main.fragment_home.home_type_completed_btt
+import kotlinx.android.synthetic.main.fragment_home.home_type_dropped_btt
+import kotlinx.android.synthetic.main.fragment_home.home_type_on_hold_btt
+import kotlinx.android.synthetic.main.fragment_home.home_type_watching_btt
+import kotlinx.android.synthetic.main.fragment_home.home_watch_child_more_info
+import kotlinx.android.synthetic.main.fragment_home.home_watch_child_recyclerview
+import kotlinx.android.synthetic.main.fragment_home.home_watch_holder
+import kotlinx.android.synthetic.main.fragment_home.home_watch_parent_item_title
+import kotlinx.android.synthetic.main.fragment_home.result_error_text
+import kotlinx.android.synthetic.main.fragment_home_tv.*
 import java.util.*
 
 const val HOME_BOOKMARK_VALUE_LIST = "home_bookmarked_last_list"
@@ -73,8 +103,10 @@ class HomeFragment : Fragment() {
             bottomSheetDialogBuilder.setContentView(R.layout.home_episodes_expanded)
             val title = bottomSheetDialogBuilder.findViewById<TextView>(R.id.home_expanded_text)!!
             title.text = item.name
-            val recycle = bottomSheetDialogBuilder.findViewById<AutofitRecyclerView>(R.id.home_expanded_recycler)!!
-            val titleHolder = bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
+            val recycle =
+                bottomSheetDialogBuilder.findViewById<AutofitRecyclerView>(R.id.home_expanded_recycler)!!
+            val titleHolder =
+                bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
 
             titleHolder.setOnClickListener {
                 bottomSheetDialogBuilder.dismissSafe(this)
@@ -125,7 +157,8 @@ class HomeFragment : Fragment() {
 
                 var currentValidApis: MutableList<MainAPI> = mutableListOf()
                 val preSelectedTypes = this.getKey<List<String>>(HOME_PREF_HOMEPAGE)
-                    ?.mapNotNull { listName -> TvType.values().firstOrNull { it.name == listName } }?.toMutableList()
+                    ?.mapNotNull { listName -> TvType.values().firstOrNull { it.name == listName } }
+                    ?.toMutableList()
                     ?: mutableListOf(TvType.Movie, TvType.TvSeries)
 
                 val anime = dialog.findViewById<MaterialButton>(R.id.home_select_anime)
@@ -190,7 +223,8 @@ class HomeFragment : Fragment() {
                 }
 
                 for ((button, validTypes) in pairList) {
-                    val isValid = validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
+                    val isValid =
+                        validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
                     button?.isVisible = isValid
                     if (isValid) {
                         fun buttonContains(): Boolean {
@@ -235,14 +269,16 @@ class HomeFragment : Fragment() {
     ): View? {
         //homeViewModel =
         //     ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val layout =
+            if (context?.isTvSettings() == true) R.layout.fragment_home_tv else R.layout.fragment_home
+        return inflater.inflate(layout, container, false)
     }
 
     private var currentHomePage: HomePageResponse? = null
 
     private fun toggleMainVisibility(visible: Boolean) {
-        home_main_holder.isVisible = visible
+        home_main_holder?.isVisible = visible
+        home_main_poster_recyclerview?.isVisible = visible
     }
 
     private fun fixGrid() {
@@ -295,7 +331,20 @@ class HomeFragment : Fragment() {
         }
     }*/
 
-    var currentApiName: String? = null
+    private fun focusCallback(card : SearchResponse) {
+        home_focus_text?.text = card.name
+        home_blur_poster?.setImageBlur(card.posterUrl,50)
+    }
+
+    private fun homeHandleSearch(callback : SearchClickCallback) {
+        if(callback.action == SEARCH_ACTION_FOCUSED) {
+            focusCallback(callback.card)
+        } else {
+            handleSearchClickCallback(activity, callback)
+        }
+    }
+
+    private var currentApiName: String? = null
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -321,7 +370,8 @@ class HomeFragment : Fragment() {
                     Pair(R.string.anime, listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie)),
                     Pair(R.string.torrent, listOf(TvType.Torrent)),
                 ).filter { item -> currentApi.supportedTypes.any { type -> item.second.contains(type) } }
-                home_provider_meta_info?.text = typeChoices.joinToString(separator = ", ") { getString(it.first) }
+                home_provider_meta_info?.text =
+                    typeChoices.joinToString(separator = ", ") { getString(it.first) }
                 home_provider_meta_info?.isVisible = true
             }
         }
@@ -338,27 +388,33 @@ class HomeFragment : Fragment() {
                 }
 
                 val randomSize = items.size
-                home_main_poster_recyclerview.adapter =
+                home_main_poster_recyclerview?.adapter =
                     HomeChildItemAdapter(
                         items,
                         R.layout.home_result_big_grid,
                         nextFocusUp = home_main_poster_recyclerview.nextFocusUpId,
                         nextFocusDown = home_main_poster_recyclerview.nextFocusDownId
                     ) { callback ->
-                        handleSearchClickCallback(activity, callback)
+                        homeHandleSearch(callback)
                     }
-                home_main_poster_recyclerview?.post {
-                    (home_main_poster_recyclerview?.layoutManager as CenterZoomLayoutManager?)?.let { manager ->
-                        manager.updateSize(forceUpdate = true)
-                        if (randomSize > 2) {
-                            manager.scrollToPosition(randomSize / 2)
-                            manager.snap { dx ->
-                                home_main_poster_recyclerview?.post {
-                                    // this is the best I can do, fuck android for not including instant scroll
-                                    home_main_poster_recyclerview?.smoothScrollBy(dx, 0)
+                if (context?.isTvSettings() == false) {
+                    home_main_poster_recyclerview?.post {
+                        (home_main_poster_recyclerview?.layoutManager as CenterZoomLayoutManager?)?.let { manager ->
+                            manager.updateSize(forceUpdate = true)
+                            if (randomSize > 2) {
+                                manager.scrollToPosition(randomSize / 2)
+                                manager.snap { dx ->
+                                    home_main_poster_recyclerview?.post {
+                                        // this is the best I can do, fuck android for not including instant scroll
+                                        home_main_poster_recyclerview?.smoothScrollBy(dx, 0)
+                                    }
                                 }
                             }
                         }
+                    }
+                } else {
+                    items.firstOrNull()?.let {
+                        focusCallback(it)
                     }
                 }
                 toggleMainVisibility(true)
@@ -425,11 +481,12 @@ class HomeFragment : Fragment() {
         }
 
 
-        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = ParentItemAdapter(listOf(), { callback ->
-            handleSearchClickCallback(activity, callback)
-        }, { item ->
-            activity?.loadHomepageList(item)
-        })
+        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
+            ParentItemAdapter(listOf(), { callback ->
+                homeHandleSearch(callback)
+            }, { item ->
+                activity?.loadHomepageList(item)
+            })
 
         val toggleList = listOf(
             Pair(home_type_watching_btt, WatchType.WATCHING),
@@ -447,9 +504,10 @@ class HomeFragment : Fragment() {
 
             item.first?.setOnLongClickListener { itemView ->
                 val list = EnumSet.noneOf(WatchType::class.java)
-                itemView.context.getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
-                    list.addAll(it)
-                }
+                itemView.context.getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)
+                    ?.map { WatchType.fromInternalId(it) }?.let {
+                        list.addAll(it)
+                    }
 
                 if (list.contains(watch)) {
                     list.remove(watch)
@@ -492,7 +550,8 @@ class HomeFragment : Fragment() {
             home_bookmarked_holder.isVisible = pair.first
 
             val bookmarks = pair.second
-            (home_bookmarked_child_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList = bookmarks
+            (home_bookmarked_child_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList =
+                bookmarks
             home_bookmarked_child_recyclerview?.adapter?.notifyDataSetChanged()
 
             home_bookmarked_child_more_info?.setOnClickListener {
@@ -507,13 +566,15 @@ class HomeFragment : Fragment() {
 
         observe(homeViewModel.resumeWatching) { resumeWatching ->
             home_watch_holder?.isVisible = resumeWatching.isNotEmpty()
-            (home_watch_child_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList = resumeWatching
+            (home_watch_child_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList =
+                resumeWatching
             home_watch_child_recyclerview?.adapter?.notifyDataSetChanged()
 
             home_watch_child_more_info?.setOnClickListener {
                 activity?.loadHomepageList(
                     HomePageList(
-                        home_watch_parent_item_title?.text?.toString() ?: getString(R.string.continue_watching),
+                        home_watch_parent_item_title?.text?.toString()
+                            ?: getString(R.string.continue_watching),
                         resumeWatching
                     )
                 )
@@ -528,7 +589,14 @@ class HomeFragment : Fragment() {
             if (callback.action == SEARCH_ACTION_SHOW_METADATA) {
                 val id = callback.card.id
                 if (id != null) {
-                    callback.view.popupMenuNoIcons(listOf(Pair(0, R.string.action_remove_from_bookmarks))) {
+                    callback.view.popupMenuNoIcons(
+                        listOf(
+                            Pair(
+                                0,
+                                R.string.action_remove_from_bookmarks
+                            )
+                        )
+                    ) {
                         if (itemId == 0) {
                             setResultWatchState(id, WatchType.NONE.internalId)
                             reloadStored()
@@ -536,11 +604,11 @@ class HomeFragment : Fragment() {
                     }
                 }
             } else {
-                handleSearchClickCallback(activity, callback)
+                homeHandleSearch(callback)
             }
         }
 
-        home_watch_child_recyclerview.adapter = HomeChildItemAdapter(
+        home_watch_child_recyclerview?.adapter = HomeChildItemAdapter(
             ArrayList(),
             nextFocusUp = home_watch_child_recyclerview?.nextFocusUpId,
             nextFocusDown = home_watch_child_recyclerview?.nextFocusDownId
@@ -557,7 +625,12 @@ class HomeFragment : Fragment() {
                         if (itemId == 1) {
                             handleSearchClickCallback(
                                 activity,
-                                SearchClickCallback(SEARCH_ACTION_LOAD, callback.view, -1, callback.card)
+                                SearchClickCallback(
+                                    SEARCH_ACTION_LOAD,
+                                    callback.view,
+                                    -1,
+                                    callback.card
+                                )
                             )
                             reloadStored()
                         }
@@ -571,34 +644,43 @@ class HomeFragment : Fragment() {
                     }
                 }
             } else {
-                handleSearchClickCallback(activity, callback)
+                homeHandleSearch(callback)
             }
         }
 
         context?.fixPaddingStatusbarView(home_statusbar)
         context?.fixPaddingStatusbar(home_loading_statusbar)
 
+
         home_master_recycler.adapter = adapter
         home_master_recycler.layoutManager = GridLayoutManager(context, 1)
 
-        LinearSnapHelper().attachToRecyclerView(home_main_poster_recyclerview) // snap
-        val centerLayoutManager = CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        centerLayoutManager.setOnSizeListener { index ->
-            (home_main_poster_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList?.get(index)?.let { random ->
-                home_main_play.setOnClickListener {
-                    activity.loadSearchResult(random, START_ACTION_RESUME_LATEST)
-                }
-                home_main_info.setOnClickListener {
-                    activity.loadSearchResult(random)
-                }
+        if (context?.isTvSettings() == false) {
+            LinearSnapHelper().attachToRecyclerView(home_main_poster_recyclerview) // snap
+            val centerLayoutManager =
+                CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            centerLayoutManager.setOnSizeListener { index ->
+                (home_main_poster_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList?.get(
+                    index
+                )?.let { random ->
+                    home_main_play?.setOnClickListener {
+                        activity.loadSearchResult(random, START_ACTION_RESUME_LATEST)
+                    }
+                    home_main_info?.setOnClickListener {
+                        activity.loadSearchResult(random)
+                    }
 
-                home_main_text.text =
-                    random.name + if (random is AnimeSearchResponse && !random.dubStatus.isNullOrEmpty()) {
-                        random.dubStatus.joinToString(prefix = " • ", separator = " | ") { it.name }
-                    } else ""
+                    home_main_text?.text =
+                        random.name + if (random is AnimeSearchResponse && !random.dubStatus.isNullOrEmpty()) {
+                            random.dubStatus.joinToString(
+                                prefix = " • ",
+                                separator = " | "
+                            ) { it.name }
+                        } else ""
+                }
             }
+            home_main_poster_recyclerview?.layoutManager = centerLayoutManager  // scale
         }
-        home_main_poster_recyclerview?.layoutManager = centerLayoutManager  // scale
 
         reloadStored()
         val apiName = context?.getKey<String>(HOMEPAGE_API)

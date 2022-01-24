@@ -36,6 +36,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -69,7 +70,7 @@ object UIHelper {
         )
     }
 
-    fun Activity?.getSpanCount() : Int? {
+    fun Activity?.getSpanCount(): Int? {
         val compactView = this?.getGridIsCompact() ?: return null
         val spanCountLandscape = if (compactView) 2 else 6
         val spanCountPortrait = if (compactView) 1 else 3
@@ -122,18 +123,23 @@ object UIHelper {
         if (this == null || url.isNullOrBlank()) return
         try {
             GlideApp.with(this.context)
-                .load(GlideUrl(url))
+                .load(GlideUrl(url)).transition(
+                    DrawableTransitionOptions.withCrossFade()
+                )
                 .into(this)
         } catch (e: Exception) {
             logError(e)
         }
     }
 
-    fun ImageView?.setImageBlur(url: String?, radius : Int, sample : Int = 3) {
+    fun ImageView?.setImageBlur(url: String?, radius: Int, sample: Int = 3) {
         if (this == null || url.isNullOrBlank()) return
         try {
             GlideApp.with(this.context)
                 .load(GlideUrl(url)).apply(bitmapTransform(BlurTransformation(radius, sample)))
+                .transition(
+                    DrawableTransitionOptions.withCrossFade()
+                )
                 .into(this)
         } catch (e: Exception) {
             logError(e)
@@ -236,7 +242,7 @@ object UIHelper {
     }*/
 
     fun Context.getStatusBarHeight(): Int {
-        if(isTvSettings()) {
+        if (isTvSettings()) {
             return 0
         }
 
@@ -249,7 +255,12 @@ object UIHelper {
     }
 
     fun Context.fixPaddingStatusbar(v: View) {
-        v.setPadding(v.paddingLeft, v.paddingTop + getStatusBarHeight(), v.paddingRight, v.paddingBottom)
+        v.setPadding(
+            v.paddingLeft,
+            v.paddingTop + getStatusBarHeight(),
+            v.paddingRight,
+            v.paddingBottom
+        )
     }
 
     fun Context.fixPaddingStatusbarView(v: View) {
@@ -310,8 +321,11 @@ object UIHelper {
     fun Context.shouldShowPIPMode(isInPlayer: Boolean): Boolean {
         return try {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-            settingsManager?.getBoolean(getString(R.string.pip_enabled_key), true) ?: true && isInPlayer
-        } catch (e : Exception) {
+            settingsManager?.getBoolean(
+                getString(R.string.pip_enabled_key),
+                true
+            ) ?: true && isInPlayer
+        } catch (e: Exception) {
             logError(e)
             false
         }
@@ -329,13 +343,15 @@ object UIHelper {
     }
 
     fun hideKeyboard(view: View) {
-        val inputMethodManager = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+        val inputMethodManager =
+            view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     fun showInputMethod(view: View?) {
-        if(view == null) return
-        val inputMethodManager = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+        if (view == null) return
+        val inputMethodManager =
+            view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
         inputMethodManager?.showSoftInput(view, 0)
     }
 

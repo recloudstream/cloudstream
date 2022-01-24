@@ -173,178 +173,136 @@
                     android:layout_width="match_parent" />
 
             <FrameLayout
-                    android:id="@+id/home_settings_bar"
-                    android:background="?attr/primaryGrayBackground"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp">
-
-                <LinearLayout
-                        android:layout_marginEnd="50dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/home_profile_picture_holder"
-                            android:layout_marginEnd="20dp"
-                            app:cardCornerRadius="100dp"
-                            android:layout_gravity="center_vertical"
-                            android:layout_width="35dp"
-                            android:layout_height="35dp">
-
-                        <ImageView
-                                android:id="@+id/home_profile_picture"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                tools:ignore="ContentDescription" />
-                    </androidx.cardview.widget.CardView>
-
-                    <LinearLayout
-                            android:gravity="center"
-
-                            android:orientation="vertical"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                        <TextView
-                                android:gravity="center_vertical"
-                                android:layout_gravity="center"
-                                android:id="@+id/home_provider_name"
-                                android:textColor="?attr/textColor"
-                                android:textSize="20sp"
-                                tools:text="Hello World"
-                                android:layout_width="match_parent"
-
-                                android:layout_height="wrap_content" />
-
-                        <TextView
-                                android:gravity="center_vertical"
-                                android:layout_gravity="center"
-                                android:id="@+id/home_provider_meta_info"
-                                android:textColor="?attr/grayTextColor"
-                                android:textSize="14sp"
-                                tools:text="Hello World"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-                    </LinearLayout>
-                </LinearLayout>
-
-
-                <ImageView
-                        android:nextFocusDown="@id/home_main_poster_recyclerview"
-                        android:nextFocusUp="@id/nav_rail_view"
-                        android:nextFocusLeft="@id/nav_rail_view"
-
-                        android:id="@+id/home_change_api"
-                        android:layout_margin="10dp"
-                        android:layout_gravity="center|end"
-                        android:background="?android:attr/selectableItemBackgroundBorderless"
-
-                        android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:contentDescription="@string/home_change_provider_img_des">
-
-                    <requestFocus />
-                </ImageView>
-            </FrameLayout>
-
-            <LinearLayout
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/home_main_holder"
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                <androidx.recyclerview.widget.RecyclerView
-                        android:descendantFocusability="afterDescendants"
-                        android:nextFocusUp="@id/home_change_api"
-                        android:nextFocusDown="@id/home_main_info"
-
-                        android:clipToPadding="false"
-                        android:paddingStart="148dp"
-                        android:paddingEnd="148dp"
-
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        android:id="@+id/home_main_poster_recyclerview"
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:listitem="@layout/home_result_grid" />
-                <!--<ImageView
-                        android:foreground="@drawable/outline_drawable"
-                        android:id="@+id/home_main_poster"
-                        tools:src="@drawable/example_poster"
-                        android:layout_gravity="center"
+                <ImageView
                         android:scaleType="centerCrop"
-                        android:layout_width="150dp"
-                        android:layout_height="212dp"
-                        android:contentDescription="@string/home_main_poster_img_des">
-                </ImageView>-->
-                <TextView
-                        android:id="@+id/home_main_text"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        tools:text="Perfect Run"
-                        android:textStyle="bold"
-                        android:layout_margin="5dp"
-                        android:textSize="15sp"
-                        android:textColor="?attr/textColor"
+                        tools:src="@drawable/example_poster"
+                        android:id="@+id/home_blur_poster"
                         android:layout_width="match_parent"
-                        android:maxLines="2"
-                        android:ellipsize="end"
-                        android:layout_height="40sp" />
+                        android:layout_height="200dp" />
+
+                <ImageView
+                        android:id="@+id/shadow_overlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:background="@drawable/background_shadow" />
 
                 <LinearLayout
-                        android:padding="5dp"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:orientation="horizontal"
+                        android:layout_marginTop="100dp"
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                    <com.google.android.material.button.MaterialButton
-                            android:nextFocusLeft="@id/nav_rail_view"
-                            android:nextFocusUp="@id/home_main_poster_recyclerview"
-                            android:nextFocusRight="@id/home_main_info"
-                            android:nextFocusDown="@id/home_watch_child_more_info"
+                    <LinearLayout
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp">
 
-                            style="@style/WhiteButton"
-                            android:visibility="visible"
-                            android:layout_gravity="center"
-                            android:id="@+id/home_main_play"
-                            android:text="@string/home_play"
 
-                            app:icon="@drawable/ic_baseline_play_arrow_24"
-                            android:minWidth="120dp"
-                            android:layout_width="wrap_content" />
+                        <!--
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/home_profile_picture_holder"
+                                android:layout_marginEnd="20dp"
+                                app:cardCornerRadius="100dp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp">
 
-                    <com.google.android.material.button.MaterialButton
-                            android:nextFocusLeft="@id/home_main_play"
-                            android:nextFocusUp="@id/home_main_poster_recyclerview"
-                            android:nextFocusRight="@id/home_change_api"
-                            android:nextFocusDown="@id/home_watch_child_more_info"
+                            <ImageView
+                                    android:id="@+id/home_profile_picture"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    tools:ignore="ContentDescription" />
+                        </androidx.cardview.widget.CardView>-->
 
-                            style="@style/BlackButton"
-                            android:visibility="visible"
-                            android:layout_gravity="center"
-                            android:text="@string/home_info"
-                            app:icon="@drawable/ic_outline_info_24"
+                        <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
 
-                            android:id="@+id/home_main_info"
-                            android:clickable="true"
-                            android:focusable="true"
 
-                            android:minWidth="120dp"
-                            android:layout_width="wrap_content" />
+                            <LinearLayout
+                                    android:orientation="horizontal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                <ImageView
+                                        android:nextFocusDown="@id/home_main_poster_recyclerview"
+                                        android:nextFocusUp="@id/nav_rail_view"
+                                        android:nextFocusLeft="@id/nav_rail_view"
+                                        android:layout_gravity="center_vertical"
+
+                                        android:id="@+id/home_change_api"
+                                        android:layout_margin="10dp"
+                                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                                        android:foreground="@drawable/outline_drawable"
+                                        android:src="@drawable/ic_baseline_filter_list_24"
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+                                        android:contentDescription="@string/home_change_provider_img_des">
+
+                                    <requestFocus />
+                                </ImageView>
+
+                                <TextView
+                                        android:maxLines="1"
+                                        android:ellipsize="end"
+                                        android:gravity="center_vertical"
+                                        android:layout_gravity="center_vertical"
+                                        android:textStyle="bold"
+                                        android:textSize="25sp"
+                                        tools:text="The Perfect Run"
+                                        android:id="@+id/home_focus_text"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                    android:layout_marginStart="12dp"
+                                    android:orientation="horizontal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                <TextView
+                                        android:gravity="center_vertical"
+                                        android:id="@+id/home_provider_name"
+                                        android:textColor="?attr/grayTextColor"
+                                        android:textSize="20sp"
+                                        android:paddingEnd="10dp"
+                                        tools:text="Hello World"
+                                        android:layout_width="wrap_content"
+
+                                        android:layout_height="wrap_content" />
+
+                                <TextView
+                                        android:gravity="center_vertical"
+                                        android:id="@+id/home_provider_meta_info"
+                                        android:textColor="?attr/grayTextColor"
+                                        android:textSize="20sp"
+                                        tools:text="Hello World"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                            android:paddingHorizontal="5dp"
+                            android:clipToPadding="false"
+                            android:descendantFocusability="afterDescendants"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            android:id="@+id/home_main_poster_recyclerview"
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:listitem="@layout/home_result_grid" />
                 </LinearLayout>
-            </LinearLayout>
+            </FrameLayout>
+
 
             <LinearLayout
                     android:id="@+id/home_watch_holder"
