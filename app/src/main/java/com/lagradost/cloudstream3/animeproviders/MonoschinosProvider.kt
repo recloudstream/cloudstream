@@ -1,9 +1,10 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
-import java.util.*
 import com.lagradost.cloudstream3.extractors.FEmbed
+import java.util.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.loadExtractor
 import kotlin.collections.ArrayList
 
@@ -108,30 +109,26 @@ class MonoschinosProvider:MainAPI() {
         val doc = app.get(url, timeout = 120).document
         val poster = doc.selectFirst(".chapterpic img").attr("src")
         val title = doc.selectFirst(".chapterdetails h1").text()
-        val type = doc.selectFirst(".activecrumb a").text()
-        val year = doc.selectFirst(".btn2").text().toIntOrNull()
+        val type = doc.selectFirst("div.chapterdetls2").text()
         val description = doc.selectFirst("p.textComplete").text().replace("Ver menos","")
         val genres = doc.select(".breadcrumb-item a").map { it.text() }
-        val status = when (doc.selectFirst("btn1")?.text()) {
+        val status = when (doc.selectFirst("button.btn1")?.text()) {
             "Estreno" -> ShowStatus.Ongoing
             "Finalizado" -> ShowStatus.Completed
             else -> null
         }
-        val rat = doc.select(".chapterpic p").toString().toIntOrNull()
         val episodes = doc.select("div.col-item").map {
             val name = it.selectFirst("p.animetitles").text()
             val link = it.selectFirst("a").attr("href")
-            val epThumb = it.selectFirst("img.animeimghv").attr("data-src")
+            val epThumb = it.selectFirst(".animeimghv").attr("data-src")
             AnimeEpisode(link, name, posterUrl = epThumb)
         }
         return newAnimeLoadResponse(title, url, getType(type)) {
             posterUrl = poster
-            this.year = year
             addEpisodes(DubStatus.Subbed, episodes)
             showStatus = status
             plot = description
             tags = genres
-            rating = rat
         }
     }
 

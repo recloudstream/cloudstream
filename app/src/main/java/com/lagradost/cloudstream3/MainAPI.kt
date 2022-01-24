@@ -30,17 +30,20 @@ object APIHolder {
     val apis = arrayListOf(
         PelisplusProvider(),
         PelisplusHDProvider(),
+        PeliSmartProvider(),
         GogoanimeProvider(),
         AllAnimeProvider(),
         //ShiroProvider(), // v2 fucked me
         //AnimePaheProvider(), //ddos guard
         AnimeFlickProvider(),
+        AnimeflvnetProvider(),
 
         TenshiProvider(),
         WcoProvider(),
         // MeloMovieProvider(), // Captcha for links
         DubbedAnimeProvider(),
         DoramasYTProvider(),
+        CinecalidadProvider(),
         IHaveNoTvProvider(), // Documentaries provider
         //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
         VMoveeProvider(),

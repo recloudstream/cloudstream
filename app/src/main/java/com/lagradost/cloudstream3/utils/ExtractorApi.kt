@@ -105,6 +105,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     Uqload(),
     Uqload1(),
     Evoload(),
+    Evoload1(),
     VoeExtractor(),
     UpstreamExtractor(),
 
