@@ -406,6 +406,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_pause_play?.isGone = isGone
         //player_buffering?.isGone = isGone
         player_top_holder?.isGone = isGone
+        player_video_title?.isGone = isGone
+        player_video_title_rez?.isGone = isGone
         player_center_menu?.isGone = isGone
         player_lock?.isGone = !isShowing
         //player_media_route_button?.isClickable = !isGone

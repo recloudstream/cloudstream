@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="horizontal"
         android:keepScreenOn="true"
         android:id="@+id/player_background"
         app:backgroundTint="@android:color/black"
         android:background="@android:color/black"
         android:screenOrientation="sensorLandscape"
-        app:surface_type="texture_view"
->
+        app:surface_type="texture_view">
     <!--
           app:fastforward_increment="10000"
             app:rewind_increment="10000"-->
@@ -28,8 +26,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:controller_layout_id="@layout/player_custom_layout"
-    />
+            app:controller_layout_id="@layout/player_custom_layout" />
 
     <FrameLayout
             app:layout_constraintBottom_toBottomOf="parent"
@@ -40,8 +37,7 @@
             android:layout_height="match_parent"
             android:id="@+id/player_loading_overlay"
             android:background="@android:color/black"
-            android:backgroundTint="@android:color/black"
-    >
+            android:backgroundTint="@android:color/black">
 
         <com.google.android.material.button.MaterialButton
                 tools:visibility="visible"
@@ -60,16 +56,13 @@
                 android:backgroundTint="@color/transparent"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="45dp">
-        </com.google.android.material.button.MaterialButton>
+                android:layout_height="45dp" />
 
         <ProgressBar
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                android:id="@+id/main_load"
-        >
-        </ProgressBar>
+                android:id="@+id/main_load" />
 
         <FrameLayout
                 android:id="@+id/video_go_back_holder_holder"
@@ -77,16 +70,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-        >
+                android:layout_height="wrap_content">
+
             <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_baseline_arrow_back_24"
                     app:tint="@android:color/white"
-            >
-            </ImageView>
+                    android:contentDescription="@string/go_back_img_des" />
+
             <ImageView
                     android:id="@+id/player_loading_go_back"
                     android:layout_width="70dp"
@@ -94,10 +87,11 @@
                     android:layout_gravity="center"
                     android:focusable="true"
                     android:clickable="true"
-                    android:background="@drawable/video_tap_button_always_white">
-            </ImageView>
+                    android:background="@drawable/video_tap_button_always_white"
+                    android:contentDescription="@string/go_back_img_des"/>
         </FrameLayout>
     </FrameLayout>
+
     <FrameLayout
             android:visibility="gone"
             android:paddingStart="20dp"
@@ -120,9 +114,8 @@
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:id="@+id/video_torrent_progress"
-                tools:text="78% at 18kb/s"
-        >
-        </TextView>
+                tools:text="78% at 18kb/s" />
+
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -132,7 +125,6 @@
                 android:textColor="@color/white"
                 android:id="@+id/video_torrent_seeders"
                 tools:text="17 seeders"
-                app:layout_constraintTop_toBottomOf="@+id/player_video_title">
-        </TextView>
+                app:layout_constraintTop_toBottomOf="@+id/player_video_title" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
