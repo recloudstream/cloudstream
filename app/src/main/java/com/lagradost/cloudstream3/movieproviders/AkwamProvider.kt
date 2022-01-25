@@ -174,7 +174,7 @@ class AkwamProvider : MainAPI() {
 
         val links = doc.select("div.tab-content.quality").map {
             val quality = getQualityFromId(it.attr("id").getIntFromText())
-            doc.select(".col-lg-6 > a").map { linkElement ->
+            it.select(".col-lg-6 > a").map { linkElement ->
                 linkElement.attr("href") to quality
                 // Only uses the download links, primarily to prevent unnecessary duplicate requests.
             }.filter { link -> link.first.contains("/link/") }
