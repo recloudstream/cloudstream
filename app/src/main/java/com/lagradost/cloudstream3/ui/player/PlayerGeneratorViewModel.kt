@@ -96,6 +96,11 @@ class PlayerGeneratorViewModel : ViewModel() {
             val currentLinks = mutableSetOf<Pair<ExtractorLink?, ExtractorUri?>>()
             val currentSubs = mutableSetOf<SubtitleData>()
 
+            // clear old data
+            _currentSubs.postValue(currentSubs)
+            _currentLinks.postValue(currentLinks)
+
+            // load more data
             _loadingLinks.postValue(Resource.Loading())
             val loadingState = safeApiCall {
                 generator?.generateLinks(clearCache = clearCache, isCasting = isCasting, {
