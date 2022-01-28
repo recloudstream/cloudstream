@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.FrameLayout
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.extractor.ExtractorsFactory
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MergingMediaSource
@@ -18,12 +19,12 @@ import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.SubtitleView
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.MimeTypes
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -35,12 +36,13 @@ import javax.net.ssl.SSLSession
 
 const val TAG = "CS3ExoPlayer"
 
+/** Cache */
+private const val cacheSize = 300L * 1024L * 1024L // 300 mb TODO MAKE SETTING
+
 class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
 
-    /** Cache */
-    private val cacheSize = 300L * 1024L * 1024L // 300 mb TODO MAKE SETTING
     private val seekActionTime = 30000L
 
     private var ignoreSSL: Boolean = true
@@ -262,7 +264,8 @@ class CS3IPlayer : IPlayer {
 
     companion object {
         private fun createOnlineSource(link: ExtractorLink): DataSource.Factory {
-            return DefaultHttpDataSource.Factory().apply {
+            // Because Trailers.to seems to fail with http/1.1 the normal one uses.
+            return OkHttpDataSource.Factory(app.baseClient).apply {
                 setUserAgent(USER_AGENT)
                 val headers = mapOf(
                     "referer" to link.referer,
@@ -276,7 +279,7 @@ class CS3IPlayer : IPlayer {
                 setDefaultRequestProperties(headers)
 
                 //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
-                setAllowCrossProtocolRedirects(true)
+//                setAllowCrossProtocolRedirects(true)
             }
         }
 
