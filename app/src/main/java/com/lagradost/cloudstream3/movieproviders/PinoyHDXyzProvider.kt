@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.movieproviders
 
+import android.util.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -94,24 +95,20 @@ class PinoyHDXyzProvider : MainAPI() {
         val inner = body?.select("div.info")
 
         // Video details
-        val tvtype = when (url.contains("/pinoy_tv_series/", ignoreCase = true)) {
-            true -> TvType.TvSeries
-            false -> TvType.Movie
-        }
         val imgLinkCode = inner?.select("div.portfolio-tumb.ph-link > img")?.attr("src")
         val poster = if (!imgLinkCode.isNullOrEmpty()) { "${mainUrl}${imgLinkCode}" } else { null }
         //Log.i(this.name, "Result => (imgLinkCode) ${imgLinkCode}")
         val title = inner?.select("td.trFon2.entt")?.firstOrNull()?.text() ?: "<Untitled>"
         var yearRes = inner?.select("td.trFon2")?.toString()
-        if (!yearRes.isNullOrEmpty()) {
+        val year = if (!yearRes.isNullOrEmpty()) {
             if (yearRes.contains("var year =")) {
-                yearRes = yearRes.substring(yearRes.indexOf("var year ="))
-                yearRes = yearRes.substring(0, yearRes.indexOf(';')).replace("var year =", "")
-                    .trim().trim('\'')
+                yearRes = yearRes.substring(yearRes.indexOf("var year =") + "var year =".length)
+                //Log.i(this.name, "Result => (yearRes) $yearRes")
+                yearRes = yearRes.substring(0, yearRes.indexOf(';'))
+                    .trim().removeSurrounding("'")
             }
-        }
-        //Log.i(this.name, "Result => (yearRes) ${yearRes}")
-        val year = yearRes?.toIntOrNull()
+            yearRes.toIntOrNull()
+        } else { null }
 
         var descript = body?.select("div.eText")?.text()
         if (!descript.isNullOrEmpty()) {
@@ -121,7 +118,49 @@ class PinoyHDXyzProvider : MainAPI() {
             } catch (e: java.lang.Exception) {  }
         }
 
-        // Video links
+        // Try looking for episodes, for series
+        val episodeList = ArrayList<TvSeriesEpisode>()
+        val bodyText = body?.select("div.section-cotent1.col-md-12")?.select("section")
+            ?.select("script")?.toString() ?: ""
+        //Log.i(this.name, "Result => (bodyText) ${bodyText}")
+
+        "(?<=ses=\\(')(.*)(?='\\).split)".toRegex().find(bodyText)?.groupValues?.get(0).let {
+            if (!it.isNullOrEmpty()) {
+                var count = 0
+                it.split(", ").forEach { ep ->
+                    count++
+                    val listEpStream = listOf(ep.trim()).toJson()
+                    //Log.i(this.name, "Result => (ep $count) $listEpStream")
+                    episodeList.add(
+                        TvSeriesEpisode(
+                            name = null,
+                            season = null,
+                            episode = count,
+                            data = listEpStream,
+                            posterUrl = null,
+                            date = null
+                        )
+                    )
+                }
+            }
+        }
+        if (episodeList.size > 0) {
+            return TvSeriesLoadResponse(
+                title,
+                url,
+                this.name,
+                TvType.TvSeries,
+                episodeList,
+                poster,
+                year,
+                descript,
+                null,
+                null,
+                null
+            )
+        }
+
+        // Video links for Movie
         val listOfLinks: MutableList<String> = mutableListOf()
         body?.select("div.tabcontent > iframe")?.forEach {
             val linkMain = it?.attr("src")
@@ -138,69 +177,12 @@ class PinoyHDXyzProvider : MainAPI() {
             }
         }
 
-        var extraLinks = body?.select("div.tabcontent.hide")?.text()
-        if (!extraLinks.isNullOrEmpty()) {
-            try {
-                extraLinks = extraLinks.substring(extraLinks.indexOf("_x_Polus1"))
-                extraLinks = extraLinks.trim().substring("_x_Polus1".length)
-                extraLinks = extraLinks.substring(0, extraLinks.indexOf("<script>"))
-                extraLinks.split("_x_Polus").forEach { item ->
-                    if (item.contains("https://")) {
-                        val lnkurl = item.substring(item.indexOf("https://")).trim()
-                        listOfLinks.add(lnkurl)
-                        //Log.i(this.name, "Result => (lnkurl) $lnkurl")
-                    }
-                }
-            } catch (e: Exception) { }
-        }
+        val extraLinks = body?.select("div.tabcontent.hide")?.text()
+        listOfLinks.addAll(fetchUrls(extraLinks))
 
-        // Parse episodes if series
-        if (tvtype == TvType.TvSeries) {
-            val indexStart = "ses=("
-            val episodeList = ArrayList<TvSeriesEpisode>()
-            val bodyText = body?.select("div.section-cotent1.col-md-12")?.select("section")
-                ?.select("script")?.toString() ?: ""
-            //Log.i(this.name, "Result => (bodyText) ${bodyText}")
-            if (bodyText.contains(indexStart)) {
-                var epListText = bodyText.substring(bodyText.indexOf(indexStart))
-                if (epListText.isNotEmpty()) {
-                    epListText = epListText.substring(indexStart.length, epListText.indexOf(")"))
-                        .trim().trim('\'')
-                    //Log.i(this.name, "Result => (epListText) ${epListText}")
-                    var count = 0
-                    epListText.split(',').forEach { ep ->
-                        count++
-                        val listEpStream = listOf(ep.trim()).toJson()
-                        //Log.i(this.name, "Result => (ep $count) $listEpStream")
-                        episodeList.add(
-                            TvSeriesEpisode(
-                                name = null,
-                                season = null,
-                                episode = count,
-                                data = listEpStream,
-                                posterUrl = poster,
-                                date = null
-                            )
-                        )
-                    }
-                    return TvSeriesLoadResponse(
-                        title,
-                        url,
-                        this.name,
-                        tvtype,
-                        episodeList,
-                        poster,
-                        year,
-                        descript,
-                        null,
-                        null,
-                        null
-                    )
-                }
-            }
-        }
         val streamLinks = listOfLinks.distinct().toJson()
-        return MovieLoadResponse(title, url, this.name, tvtype, streamLinks, poster, year, descript, null, null)
+        //Log.i(this.name, "Result => (streamLinks) streamLinks")
+        return MovieLoadResponse(title, url, this.name, TvType.Movie, streamLinks, poster, year, descript, null, null)
     }
 
     override suspend fun loadLinks(
@@ -209,12 +191,14 @@ class PinoyHDXyzProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
+        var count = 0
         mapper.readValue<List<String>>(data).forEach { item ->
             if (item.isNotEmpty()) {
                 val url = item.trim()
                 loadExtractor(url, mainUrl, callback)
+                count++
             }
         }
-        return true
+        return count > 0
     }
 }

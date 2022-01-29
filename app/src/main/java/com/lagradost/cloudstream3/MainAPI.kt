@@ -657,3 +657,11 @@ fun MainAPI.newTvSeriesLoadResponse(
     builder.initializer()
     return builder
 }
+
+fun fetchUrls(text: String?): List<String> {
+    if (text.isNullOrEmpty()) {
+        return listOf()
+    }
+    val linkRegex = Regex("""(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))""")
+    return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
+}
