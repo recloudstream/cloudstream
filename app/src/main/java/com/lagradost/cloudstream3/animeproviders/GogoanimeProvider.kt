@@ -1,11 +1,15 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
 class GogoanimeProvider : MainAPI() {
     companion object {
@@ -24,6 +28,26 @@ class GogoanimeProvider : MainAPI() {
         }
 
         val qualityRegex = Regex("(\\d+)P")
+
+        // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt#L60
+        // No Licence on the function
+        private fun cryptoHandler(
+            string: String,
+            iv: ByteArray,
+            secretKeyString: ByteArray,
+            encrypt: Boolean = true
+        ): String {
+            val ivParameterSpec = IvParameterSpec(iv)
+            val secretKey = SecretKeySpec(secretKeyString, "AES")
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            return if (!encrypt) {
+                cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec)
+                String(cipher.doFinal(base64DecodeArray(string)))
+            } else {
+                cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec)
+                base64Encode(cipher.doFinal(string.toByteArray()))
+            }
+        }
     }
 
     override val mainUrl = "https://gogoanime.wiki"
@@ -193,43 +217,111 @@ class GogoanimeProvider : MainAPI() {
         }
     }
 
+    data class GogoSources(
+        val source: List<GogoSource>?,
+        val sourceBk: List<GogoSource>?,
+        //val track: List<Any?>,
+        //val advertising: List<Any?>,
+        //val linkiframe: String
+    )
+
+    data class GogoSource(
+        val file: String,
+        val label: String?,
+        val type: String?,
+        val default: String? = null
+    )
+
     private fun extractVideos(uri: String, callback: (ExtractorLink) -> Unit) {
         val doc = app.get(uri).document
 
         val iframe = fixUrlNull(doc.selectFirst("div.play-video > iframe").attr("src")) ?: return
 
-        val link = iframe.replace("streaming.php", "download")
-        val page = app.get(link, headers = mapOf("Referer" to iframe))
+        argpmap(
+            {
+                val link = iframe.replace("streaming.php", "download")
+                val page = app.get(link, headers = mapOf("Referer" to iframe))
 
-        page.document.select(".dowload > a").pmap {
-            if (it.hasAttr("download")) {
-                val qual = if (it.text()
-                        .contains("HDP")
-                ) "1080" else qualityRegex.find(it.text())?.destructured?.component1().toString()
-                callback(
-                    ExtractorLink(
-                        "Gogoanime",
-                        if (qual == "null") "Gogoanime" else "Gogoanime - " + qual + "p",
-                        it.attr("href"),
-                        page.url,
-                        getQualityFromName(qual),
-                        it.attr("href").contains(".m3u8")
-                    )
-                )
-            } else {
-                val url = it.attr("href")
-                loadExtractor(url, null, callback)
-            }
-        }
+                page.document.select(".dowload > a").pmap {
+                    if (it.hasAttr("download")) {
+                        val qual = if (it.text()
+                                .contains("HDP")
+                        ) "1080" else qualityRegex.find(it.text())?.destructured?.component1()
+                            .toString()
+                        callback(
+                            ExtractorLink(
+                                "Gogoanime",
+                                if (qual == "null") "Gogoanime" else "Gogoanime - " + qual + "p",
+                                it.attr("href"),
+                                page.url,
+                                getQualityFromName(qual),
+                                it.attr("href").contains(".m3u8")
+                            )
+                        )
+                    } else {
+                        val url = it.attr("href")
+                        loadExtractor(url, null, callback)
+                    }
+                }
+            }, {
+                val streamingResponse = app.get(iframe, headers = mapOf("Referer" to iframe))
+                val streamingDocument = streamingResponse.document
+                argpmap({
+                    streamingDocument.select(".list-server-items > .linkserver")
+                        ?.forEach { element ->
+                            val status = element.attr("data-status") ?: return@forEach
+                            if (status != "1") return@forEach
+                            val data = element.attr("data-video") ?: return@forEach
+                            loadExtractor(data, streamingResponse.url, callback)
+                        }
+                }, {
+                    // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt
+                    // No Licence on the following code
+                    val encrypted =
+                        streamingDocument.select("script[data-name='crypto']").attr("data-value")
+                    val iv = streamingDocument.select("script[data-name='ts']").attr("data-value")
+                        .toByteArray()
 
-        val streamingResponse = app.get(iframe, headers = mapOf("Referer" to iframe))
-        streamingResponse.document.select(".list-server-items > .linkserver")
-            ?.forEach { element ->
-                val status = element.attr("data-status") ?: return@forEach
-                if (status != "1") return@forEach
-                val data = element.attr("data-video") ?: return@forEach
-                loadExtractor(data, streamingResponse.url, callback)
+                    val id = Regex("id=([^&]+)").find(iframe)!!.value.removePrefix("id=")
+
+                    val secretKey = cryptoHandler(encrypted, iv, iv + iv, false)
+                    val encryptedId =
+                        cryptoHandler(id, "0000000000000000".toByteArray(), secretKey.toByteArray())
+
+                    val jsonResponse =
+                        app.get(
+                            "http://gogoplay.io/encrypt-ajax.php?id=$encryptedId&time=00000000000000000000",
+                            headers = mapOf("X-Requested-With" to "XMLHttpRequest")
+                        )
+                    val sources = AppUtils.parseJson<GogoSources>(jsonResponse.text)
+
+                    fun invokeGogoSource(
+                        source: GogoSource,
+                        sourceCallback: (ExtractorLink) -> Unit
+                    ) {
+                        sourceCallback.invoke(
+                            ExtractorLink(
+                                this.name,
+                                "${this.name} ${source.label?.replace("0 P","0p") ?: ""}",
+                                source.file,
+                                "",
+                                getQualityFromName(source.label ?: ""),
+                                isM3u8 = source.type == "hls"
+                            )
+                        )
+                    }
+
+                    sources.source?.forEach {
+                        println("${this.name} ${it.label ?: ""}")
+                        invokeGogoSource(it, callback)
+                    }
+                    sources.sourceBk?.forEach {
+                        println("${this.name} ${it.label ?: ""}")
+                        invokeGogoSource(it, callback)
+                    }
+                })
             }
+        )
     }
 
     override suspend fun loadLinks(

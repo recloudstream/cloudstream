@@ -267,10 +267,24 @@ abstract class MainAPI {
 /** Might need a different implementation for desktop*/
 @SuppressLint("NewApi")
 fun base64Decode(string: String): String {
+    return String(base64DecodeArray(string), Charsets.ISO_8859_1)
+}
+
+@SuppressLint("NewApi")
+fun base64DecodeArray(string: String): ByteArray {
     return try {
-        String(android.util.Base64.decode(string, android.util.Base64.DEFAULT), Charsets.ISO_8859_1)
+        android.util.Base64.decode(string, android.util.Base64.DEFAULT)
     } catch (e: Exception) {
-        String(Base64.getDecoder().decode(string))
+        Base64.getDecoder().decode(string)
+    }
+}
+
+@SuppressLint("NewApi")
+fun base64Encode(array: ByteArray): String {
+    return try {
+        String(android.util.Base64.encode(array, android.util.Base64.NO_WRAP), Charsets.ISO_8859_1)
+    } catch (e: Exception) {
+        String(Base64.getEncoder().encode(array))
     }
 }
 

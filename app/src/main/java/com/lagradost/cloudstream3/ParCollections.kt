@@ -29,6 +29,26 @@ fun <T, R> Iterable<T>.pmap(
     return ArrayList<R>(destination)
 }
 
-fun <A, B>List<A>.apmap(f: suspend (A) -> B): List<B> = runBlocking {
+fun <A, B> List<A>.apmap(f: suspend (A) -> B): List<B> = runBlocking {
     map { async { f(it) } }.map { it.await() }
 }
+
+// run code in parallel
+fun <R> argpmap(
+    vararg transforms: () -> R,
+    numThreads: Int = maxOf(Runtime.getRuntime().availableProcessors() - 2, 1),
+    exec: ExecutorService = Executors.newFixedThreadPool(numThreads)
+) {
+    for (item in transforms) {
+        exec.submit { item.invoke() }
+    }
+
+    exec.shutdown()
+    exec.awaitTermination(1, TimeUnit.DAYS)
+}
+
+//fun <R> argamap(
+//    vararg transforms: () -> R,
+//) = runBlocking {
+//    transforms.map { async { it.invoke() } }.map { it.await() }
+//}

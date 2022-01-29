@@ -52,7 +52,7 @@ enum class Qualities(var value: Int) {
 }
 
 fun getQualityFromName(qualityName: String): Int {
-    return when (qualityName.replace("p", "").replace("P", "")) {
+    return when (qualityName.replace("p", "").replace("P", "").trim()) {
         "360" -> Qualities.P360
         "480" -> Qualities.P480
         "720" -> Qualities.P720
