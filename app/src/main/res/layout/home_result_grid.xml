@@ -2,7 +2,9 @@
 
 <!--  android:layout_width="114dp"
         android:layout_height="180dp"-->
-<androidx.cardview.widget.CardView
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:foreground="@drawable/outline_drawable"
         android:layout_margin="2dp"
         android:layout_width="114dp"
@@ -11,9 +13,8 @@
         android:elevation="10dp"
         app:cardCornerRadius="@dimen/rounded_image_radius"
         android:id="@+id/backgroundCard"
-        app:cardBackgroundColor="?attr/primaryGrayBackground"
-        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        app:cardBackgroundColor="?attr/primaryGrayBackground">
+
     <ImageView
             android:duplicateParentState="true"
             android:id="@+id/imageView"
@@ -22,15 +23,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/search_poster_img_des"/>
+            android:contentDescription="@string/search_poster_img_des" />
+
     <ImageView
             android:focusable="false"
             android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:src="@drawable/title_shadow"
-            android:layout_gravity="bottom" tools:ignore="ContentDescription">
-    </ImageView>
+            android:layout_gravity="bottom"
+            tools:ignore="ContentDescription" />
+
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,15 +47,14 @@
             android:maxLines="2"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            android:ellipsize="end"
-    />
+            android:ellipsize="end" />
+
     <ImageView
             android:id="@+id/search_item_download_play"
             android:layout_gravity="center"
             android:src="@drawable/play_button"
             android:layout_width="60dp"
-            android:layout_height="60dp">
-    </ImageView>
+            android:layout_height="60dp" />
 
     <androidx.core.widget.ContentLoadingProgressBar
             android:layout_marginBottom="-1.5dp"
@@ -63,8 +65,7 @@
             android:layout_width="match_parent"
             tools:progress="50"
             android:layout_gravity="bottom"
-            android:layout_height="5dp">
-    </androidx.core.widget.ContentLoadingProgressBar>
+            android:layout_height="5dp" />
 
     <!--<View
             android:id="@+id/search_result_lang"
@@ -108,8 +109,9 @@
                 android:minWidth="50dp"
                 android:gravity="center"
                 android:background="@drawable/dub_bg_color"
-                android:layout_width="wrap_content" android:layout_height="wrap_content">
-        </TextView>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
         <TextView
                 android:id="@+id/text_is_sub"
                 android:text="@string/app_subbed_text"
@@ -122,7 +124,7 @@
                 android:minWidth="50dp"
                 android:gravity="center"
                 android:background="@drawable/sub_bg_color"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-        />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

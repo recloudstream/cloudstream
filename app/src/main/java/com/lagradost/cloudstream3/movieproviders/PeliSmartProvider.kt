@@ -6,10 +6,8 @@ import com.lagradost.cloudstream3.utils.extractorApis
 import java.util.ArrayList
 
 class PeliSmartProvider: MainAPI() {
-    override val mainUrl: String
-        get() = "https://pelismart.com"
-    override val name: String
-        get() = "PeliSmart"
+    override val mainUrl = "https://pelismart.com"
+    override val name = "PeliSmart"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

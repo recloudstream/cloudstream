@@ -2,7 +2,9 @@
 
 <!--  android:layout_width="114dp"
         android:layout_height="180dp"-->
-<androidx.cardview.widget.CardView
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:foreground="@drawable/outline_drawable"
         android:layout_margin="2dp"
         android:layout_width="148dp"
@@ -11,9 +13,8 @@
         android:elevation="10dp"
         app:cardCornerRadius="@dimen/rounded_image_radius"
         android:id="@+id/backgroundCard"
-        app:cardBackgroundColor="?attr/primaryGrayBackground"
-        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        app:cardBackgroundColor="?attr/primaryGrayBackground">
+
     <ImageView
             android:duplicateParentState="true"
             android:id="@+id/imageView"
@@ -22,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/search_poster_img_des"/>
+            android:contentDescription="@string/search_poster_img_des" />
     <!--
     <LinearLayout
             android:orientation="vertical"

@@ -88,7 +88,7 @@
                     android:focusable="true"
                     android:clickable="true"
                     android:background="@drawable/video_tap_button_always_white"
-                    android:contentDescription="@string/go_back_img_des"/>
+                    android:contentDescription="@string/go_back_img_des" />
         </FrameLayout>
     </FrameLayout>
 

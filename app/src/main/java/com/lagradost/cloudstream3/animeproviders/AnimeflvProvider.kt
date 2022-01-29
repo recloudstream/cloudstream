@@ -1,11 +1,12 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 import java.util.*
 import kotlin.collections.ArrayList
 
-class AnimeflvnetProvider:MainAPI() {
+class AnimeflvnetProvider : MainAPI() {
     companion object {
         fun getType(t: String): TvType {
             return if (t.contains("OVA") || t.contains("Especial")) TvType.ONA
@@ -13,10 +14,9 @@ class AnimeflvnetProvider:MainAPI() {
             else TvType.Anime
         }
     }
-    override val mainUrl: String
-        get() = "https://m.animeflv.net"
-    override val name: String
-        get() = "AnimeFLV"
+
+    override val mainUrl = "https://m.animeflv.net"
+    override val name = "AnimeFLV"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -26,8 +26,6 @@ class AnimeflvnetProvider:MainAPI() {
         TvType.ONA,
         TvType.Anime,
     )
-
-
 
     override suspend fun getMainPage(): HomePageResponse {
         val urls = listOf(
@@ -50,7 +48,9 @@ class AnimeflvnetProvider:MainAPI() {
                         TvType.Anime,
                         fixUrl(poster),
                         null,
-                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
+                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
+                            DubStatus.Dubbed
+                        ) else EnumSet.of(DubStatus.Subbed),
                     )
                 }
 
@@ -78,7 +78,9 @@ class AnimeflvnetProvider:MainAPI() {
                 TvType.Anime,
                 fixUrl(image),
                 null,
-                if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
+                if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(
+                    DubStatus.Subbed
+                ),
             )
         }
         return ArrayList(episodes)
@@ -87,23 +89,25 @@ class AnimeflvnetProvider:MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
         val title = doc.selectFirst("h1.Title").text()
-        val description = doc.selectFirst(".Anime > header:nth-child(1) > p:nth-child(3)").text().replace("Sinopsis: ","")
+        val description = doc.selectFirst(".Anime > header:nth-child(1) > p:nth-child(3)").text()
+            .replace("Sinopsis: ", "")
         val poster = doc.selectFirst(".Image  img").attr("src")
         val episodes = doc.select("li.Episode").map { li ->
             val href = fixUrl(li.selectFirst("a").attr("href"))
             AnimeEpisode(
-                fixUrl(href), "Episodio" + li.selectFirst("a").text().replace(title,"")
+                fixUrl(href), "Episodio" + li.selectFirst("a").text().replace(title, "")
             )
         }
         val type = doc.selectFirst("span.Type.A").text()
         val genre = doc.select("a.Tag")
             .map { it?.text()?.trim().toString() }
 
-        val status = when (doc.selectFirst("article.Anime.Single.Bglg header p strong.Anm-On")?.text()) {
-            "En emisión" -> ShowStatus.Ongoing
-            "Finalizado" -> ShowStatus.Completed
-            else -> null
-        }
+        val status =
+            when (doc.selectFirst("article.Anime.Single.Bglg header p strong.Anm-On")?.text()) {
+                "En emisión" -> ShowStatus.Ongoing
+                "Finalizado" -> ShowStatus.Completed
+                else -> null
+            }
         return newAnimeLoadResponse(title, url, getType(type)) {
             posterUrl = fixUrl(poster)
             addEpisodes(DubStatus.Subbed, episodes)
@@ -112,6 +116,7 @@ class AnimeflvnetProvider:MainAPI() {
             tags = genre
         }
     }
+
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
@@ -121,24 +126,19 @@ class AnimeflvnetProvider:MainAPI() {
         //There might be a better way to do this, but this one works
         val html = app.get(data).text
         val linkRegex = Regex("""(https:.*?\.html.*)""")
+
         val videos = linkRegex.findAll(html).map {
             it.value.replace("\\/", "/")
         }.toList()
-        val serversRegex = Regex("(https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&\\/\\/=]*))")
-        val links = serversRegex.findAll(videos.toString()).map {
-            it.value.replace("https://embedsb.com","https://watchsb.com")
-        }.toList()
-        for (link in links) {
-            for (extractor in extractorApis) {
-                if (link.startsWith(extractor.mainUrl)) {
-                    extractor.getSafeUrl(link, data)?.forEach {
-                        callback(it)
-                    }
-                }
-            }
 
+        val serversRegex =
+            Regex("(https?://(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))")
+
+        serversRegex.findAll(videos.toString()).map {
+            it.value.replace("https://embedsb.com", "https://watchsb.com")
+        }.forEach { link ->
+            loadExtractor(link, data, callback)
         }
         return true
     }
-
 }

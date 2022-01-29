@@ -5,10 +5,8 @@ import com.lagradost.cloudstream3.utils.*
 import java.util.*
 
 class CinecalidadProvider:MainAPI() {
-    override val mainUrl: String
-        get() = "https://cinecalidad.lol"
-    override val name: String
-        get() = "Cinecalidad"
+    override val mainUrl = "https://cinecalidad.lol"
+    override val name = "Cinecalidad"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

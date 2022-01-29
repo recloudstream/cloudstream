@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:background="?attr/primaryGrayBackground"
         android:id="@+id/download_child_root"
         android:orientation="vertical"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.download.DownloadFragment">
+
     <com.google.android.material.appbar.AppBarLayout
             android:background="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
         <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/download_child_toolbar"
                 android:paddingTop="@dimen/navbar_height"
@@ -21,8 +22,8 @@
                 app:navigationIconTint="?attr/iconColor"
                 app:titleTextColor="?attr/textColor"
                 app:layout_scrollFlags="scroll|enterAlways"
-                android:layout_width="match_parent" android:layout_height="wrap_content">
-        </com.google.android.material.appbar.MaterialToolbar>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -34,6 +35,5 @@
             tools:listitem="@layout/download_child_episode"
             android:id="@+id/download_child_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-    </androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="match_parent" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

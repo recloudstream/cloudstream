@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -10,18 +9,20 @@
         android:orientation="vertical"
         android:background="?attr/primaryGrayBackground"
         android:layout_marginTop="@dimen/navbar_height">
+
     <FrameLayout
             android:visibility="visible"
             android:layout_margin="10dp"
             android:background="@drawable/search_background"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-    >
+            android:layout_height="45dp">
+
         <FrameLayout
                 android:layout_gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_marginEnd="30dp"
                 android:layout_height="30dp">
+
             <androidx.appcompat.widget.SearchView
                     android:nextFocusUp="@id/nav_rail_view"
                     android:nextFocusRight="@id/search_filter"
@@ -43,11 +44,13 @@
                     android:layout_gravity="center_vertical"
                     app:iconifiedByDefault="false"
                     tools:ignore="RtlSymmetry">
-                <requestFocus/>
+
+                <requestFocus />
 
                 <androidx.core.widget.ContentLoadingProgressBar
                         android:id="@+id/search_loading_bar"
-                        android:layout_width="20dp" android:layout_height="20dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_marginStart="-35dp"
                         style="@style/Widget.AppCompat.ProgressBar"
                         android:foregroundTint="@color/white"
@@ -61,6 +64,7 @@
                             -->
             </androidx.appcompat.widget.SearchView>
         </FrameLayout>
+
         <ImageView
                 android:nextFocusUp="@id/nav_rail_view"
                 android:nextFocusRight="@id/main_search"
@@ -75,8 +79,7 @@
                 android:layout_margin="10dp"
                 android:layout_gravity="end|center_vertical"
                 app:tint="?attr/textColor"
-                android:contentDescription="@string/change_providers_img_des">
-        </ImageView>
+                android:contentDescription="@string/change_providers_img_des" />
     </FrameLayout>
 
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -93,8 +96,8 @@
             android:paddingEnd="8dp"
             android:id="@+id/search_autofit_results"
             tools:listitem="@layout/search_result_grid"
-            android:orientation="vertical"
-    />
+            android:orientation="vertical" />
+
     <androidx.recyclerview.widget.RecyclerView
             android:nextFocusLeft="@id/nav_rail_view"
             android:descendantFocusability="afterDescendants"
@@ -103,6 +106,5 @@
             android:id="@+id/search_master_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/homepage_parent"
-    />
+            tools:listitem="@layout/homepage_parent" />
 </LinearLayout>

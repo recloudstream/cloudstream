@@ -2,16 +2,13 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.FEmbed
-import java.util.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.loadExtractor
+import java.util.*
 import kotlin.collections.ArrayList
 
 
-
-class MonoschinosProvider:MainAPI() {
-
+class MonoschinosProvider : MainAPI() {
     companion object {
         fun getType(t: String): TvType {
             return if (t.contains("OVA") || t.contains("Especial")) TvType.ONA
@@ -20,10 +17,8 @@ class MonoschinosProvider:MainAPI() {
         }
     }
 
-    override val mainUrl: String
-        get() = "https://monoschinos2.com"
-    override val name: String
-        get() = "Monoschinos"
+    override val mainUrl = "https://monoschinos2.com"
+    override val name = "Monoschinos"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -37,30 +32,40 @@ class MonoschinosProvider:MainAPI() {
     override suspend fun getMainPage(): HomePageResponse {
         val urls = listOf(
             Pair("$mainUrl/emision", "En emisión"),
-            Pair("$mainUrl/animes?categoria=pelicula&genero=false&fecha=false&letra=false", "Peliculas"),
+            Pair(
+                "$mainUrl/animes?categoria=pelicula&genero=false&fecha=false&letra=false",
+                "Peliculas"
+            ),
             Pair("$mainUrl/animes", "Animes"),
         )
 
         val items = ArrayList<HomePageList>()
 
-        items.add(HomePageList("Capítulos actualizados", app.get(mainUrl, timeout = 120).document.select(".col-6").map{
-            val title = it.selectFirst("p.animetitles").text()
-            val poster = it.selectFirst(".animeimghv").attr("data-src")
-            val epRegex = Regex("episodio-(\\d+)")
-            val url = it.selectFirst("a").attr("href").replace("ver/","anime/").replace(epRegex,"sub-espanol")
-            val epNum = it.selectFirst(".positioning h5").text().toIntOrNull()
-            AnimeSearchResponse(
-                title,
-                url,
-                this.name,
-                TvType.Anime,
-                poster,
-                null,
-                if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
-                subEpisodes = epNum,
-                dubEpisodes = epNum,
-            )
-        }))
+        items.add(
+            HomePageList(
+                "Capítulos actualizados",
+                app.get(mainUrl, timeout = 120).document.select(".col-6").map {
+                    val title = it.selectFirst("p.animetitles").text()
+                    val poster = it.selectFirst(".animeimghv").attr("data-src")
+                    val epRegex = Regex("episodio-(\\d+)")
+                    val url = it.selectFirst("a").attr("href").replace("ver/", "anime/")
+                        .replace(epRegex, "sub-espanol")
+                    val epNum = it.selectFirst(".positioning h5").text().toIntOrNull()
+                    AnimeSearchResponse(
+                        title,
+                        url,
+                        this.name,
+                        TvType.Anime,
+                        poster,
+                        null,
+                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
+                            DubStatus.Dubbed
+                        ) else EnumSet.of(DubStatus.Subbed),
+                        subEpisodes = epNum,
+                        dubEpisodes = epNum,
+                    )
+                })
+        )
 
         for (i in urls) {
             try {
@@ -74,7 +79,9 @@ class MonoschinosProvider:MainAPI() {
                         TvType.Anime,
                         fixUrl(poster),
                         null,
-                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
+                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
+                            DubStatus.Dubbed
+                        ) else EnumSet.of(DubStatus.Subbed),
                     )
                 }
 
@@ -89,28 +96,32 @@ class MonoschinosProvider:MainAPI() {
     }
 
     override suspend fun search(query: String): ArrayList<SearchResponse> {
-        val search = app.get("$mainUrl/buscar?q=$query", timeout = 120).document.select(".col-6").map {
-            val title = it.selectFirst(".seristitles").text()
-            val href = fixUrl(it.selectFirst("a").attr("href"))
-            val image = it.selectFirst("img.animemainimg").attr("src")
-            AnimeSearchResponse(
-                title,
-                href,
-                this.name,
-                TvType.Anime,
-                fixUrl(image),
-                null,
-                if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
-            )
-        }
+        val search =
+            app.get("$mainUrl/buscar?q=$query", timeout = 120).document.select(".col-6").map {
+                val title = it.selectFirst(".seristitles").text()
+                val href = fixUrl(it.selectFirst("a").attr("href"))
+                val image = it.selectFirst("img.animemainimg").attr("src")
+                AnimeSearchResponse(
+                    title,
+                    href,
+                    this.name,
+                    TvType.Anime,
+                    fixUrl(image),
+                    null,
+                    if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
+                        DubStatus.Dubbed
+                    ) else EnumSet.of(DubStatus.Subbed),
+                )
+            }
         return ArrayList(search)
     }
+
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url, timeout = 120).document
         val poster = doc.selectFirst(".chapterpic img").attr("src")
         val title = doc.selectFirst(".chapterdetails h1").text()
         val type = doc.selectFirst("div.chapterdetls2").text()
-        val description = doc.selectFirst("p.textComplete").text().replace("Ver menos","")
+        val description = doc.selectFirst("p.textComplete").text().replace("Ver menos", "")
         val genres = doc.select(".breadcrumb-item a").map { it.text() }
         val status = when (doc.selectFirst("button.btn1")?.text()) {
             "Estreno" -> ShowStatus.Ongoing

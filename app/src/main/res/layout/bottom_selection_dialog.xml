@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -18,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_rowWeight="1"
             tools:text="Test"
-            android:layout_height="wrap_content">
-    </TextView>
+            android:layout_height="wrap_content" />
+
     <ListView
             android:nextFocusRight="@id/cancel_btt"
             android:nextFocusLeft="@id/apply_btt"
@@ -31,8 +30,8 @@
             tools:listitem="@layout/sort_bottom_single_choice"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_rowWeight="1"
-    />
+            android:layout_rowWeight="1" />
+
     <LinearLayout
             android:id="@+id/apply_btt_holder"
             android:orientation="horizontal"
@@ -47,14 +46,13 @@
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_apply"
                 android:id="@+id/apply_btt"
-                android:layout_width="wrap_content"
-        />
+                android:layout_width="wrap_content" />
+
         <com.google.android.material.button.MaterialButton
                 style="@style/BlackButton"
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_cancel"
                 android:id="@+id/cancel_btt"
-                android:layout_width="wrap_content"
-        />
+                android:layout_width="wrap_content" />
     </LinearLayout>
 </LinearLayout>

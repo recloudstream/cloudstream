@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical">
 
     <ListView
@@ -19,8 +19,8 @@
             tools:listitem="@layout/sort_bottom_single_choice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_rowWeight="1"
-    />
+            android:layout_rowWeight="1" />
+
     <HorizontalScrollView
             android:layout_marginTop="-60dp"
             android:paddingStart="10dp"
@@ -30,6 +30,7 @@
             android:requiresFadingEdge="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
@@ -54,36 +55,41 @@
 
                     android:id="@+id/home_select_movies"
                     android:text="@string/movies"
-                    style="@style/RoundedSelectableButton"/>
+                    style="@style/RoundedSelectableButton" />
+
             <com.google.android.material.button.MaterialButton
                     android:nextFocusLeft="@id/home_select_movies"
                     android:nextFocusRight="@id/home_select_anime"
 
                     android:id="@+id/home_select_tv_series"
                     android:text="@string/tv_series"
-                    style="@style/RoundedSelectableButton"/>
+                    style="@style/RoundedSelectableButton" />
+
             <com.google.android.material.button.MaterialButton
                     android:nextFocusLeft="@id/home_select_tv_series"
                     android:nextFocusRight="@id/home_select_cartoons"
 
                     android:id="@+id/home_select_anime"
                     android:text="@string/anime"
-                    style="@style/RoundedSelectableButton"/>
+                    style="@style/RoundedSelectableButton" />
+
             <com.google.android.material.button.MaterialButton
                     android:nextFocusLeft="@id/home_select_anime"
                     android:nextFocusRight="@id/home_select_documentaries"
 
                     android:id="@+id/home_select_cartoons"
                     android:text="@string/cartoons"
-                    style="@style/RoundedSelectableButton"/>
+                    style="@style/RoundedSelectableButton" />
+
             <com.google.android.material.button.MaterialButton
                     android:nextFocusLeft="@id/home_select_cartoons"
 
                     android:id="@+id/home_select_documentaries"
                     android:text="@string/documentaries"
-                    style="@style/RoundedSelectableButton"/>
+                    style="@style/RoundedSelectableButton" />
         </LinearLayout>
     </HorizontalScrollView>
+
     <LinearLayout
             android:visibility="gone"
             android:id="@+id/apply_btt_holder"
@@ -98,14 +104,13 @@
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_apply"
                 android:id="@+id/apply_btt"
-                android:layout_width="wrap_content"
-        />
+                android:layout_width="wrap_content" />
+
         <com.google.android.material.button.MaterialButton
                 style="@style/BlackButton"
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_cancel"
                 android:id="@+id/cancel_btt"
-                android:layout_width="wrap_content"
-        />
+                android:layout_width="wrap_content" />
     </LinearLayout>
 </LinearLayout>

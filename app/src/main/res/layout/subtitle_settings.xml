@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/subs_root"
-        android:background="?attr/primaryBlackBackground"
->
+        android:background="?attr/primaryBlackBackground">
+
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
         <TextView
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
@@ -21,25 +21,26 @@
                 android:textColor="?attr/textColor"
                 android:layout_width="match_parent"
                 android:layout_rowWeight="1"
-                android:layout_height="wrap_content">
-        </TextView>
+                android:layout_height="wrap_content" />
 
-        <FrameLayout android:layout_width="match_parent" android:layout_height="75sp">
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="75sp">
+
             <ImageView
                     android:scaleType="centerCrop"
                     android:src="@drawable/subtitles_preview_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/preview_background_img_des">
-            </ImageView>
+                    android:contentDescription="@string/preview_background_img_des" />
+
             <com.google.android.exoplayer2.ui.SubtitleView
                     android:id="@+id/subtitle_text"
 
                     android:layout_width="match_parent"
                     android:layout_gravity="center"
                     android:foregroundGravity="center"
-                    android:layout_height="match_parent">
-            </com.google.android.exoplayer2.ui.SubtitleView>
+                    android:layout_height="match_parent" />
         </FrameLayout>
 
         <TextView
@@ -49,8 +50,8 @@
 
                 android:id="@+id/subs_font"
                 android:text="@string/subs_font"
-                style="@style/SettingsItem">
-        </TextView>
+                style="@style/SettingsItem" />
+
         <TextView
                 android:nextFocusUp="@id/subs_font"
                 android:nextFocusDown="@id/subs_text_color"
@@ -59,8 +60,8 @@
 
                 android:id="@+id/subs_font_size"
                 android:text="@string/subs_font_size"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem" />
+
         <TextView
                 android:nextFocusUp="@id/subs_font_size"
                 android:nextFocusDown="@id/subs_outline_color"
@@ -69,8 +70,8 @@
 
                 android:id="@+id/subs_text_color"
                 android:text="@string/subs_text_color"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem" />
+
         <TextView
                 android:nextFocusUp="@id/subs_text_color"
                 android:nextFocusDown="@id/subs_background_color"
@@ -79,8 +80,8 @@
 
                 android:id="@+id/subs_outline_color"
                 android:text="@string/subs_outline_color"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem" />
+
         <TextView
                 android:nextFocusUp="@id/subs_outline_color"
                 android:nextFocusDown="@id/subs_window_color"
@@ -89,8 +90,8 @@
 
                 android:id="@+id/subs_background_color"
                 android:text="@string/subs_background_color"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem" />
+
         <TextView
                 android:nextFocusUp="@id/subs_background_color"
                 android:nextFocusDown="@id/subs_edge_type"
@@ -99,8 +100,8 @@
 
                 android:id="@+id/subs_window_color"
                 android:text="@string/subs_window_color"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem" />
+
         <TextView
                 android:nextFocusUp="@id/subs_window_color"
                 android:nextFocusDown="@id/subs_subtitle_elevation"
@@ -109,8 +110,8 @@
 
                 android:id="@+id/subs_edge_type"
                 android:text="@string/subs_edge_type"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem" />
+
         <TextView
                 android:nextFocusUp="@id/subs_edge_type"
                 android:nextFocusDown="@id/subs_auto_select_language"
@@ -119,8 +120,8 @@
 
                 android:id="@+id/subs_subtitle_elevation"
                 android:text="@string/subs_subtitle_elevation"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem" />
+
         <TextView
                 android:nextFocusUp="@id/subs_subtitle_elevation"
                 android:nextFocusDown="@id/subs_download_languages"
@@ -129,8 +130,8 @@
 
                 android:id="@+id/subs_auto_select_language"
                 android:text="@string/subs_auto_select_language"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem" />
+
         <TextView
                 android:nextFocusUp="@id/subs_auto_select_language"
                 android:nextFocusDown="@id/apply_btt"
@@ -139,8 +140,8 @@
 
                 android:id="@+id/subs_download_languages"
                 android:text="@string/subs_download_languages"
-                style="@style/SettingsItem"
-        />
+                style="@style/SettingsItem" />
+
         <TextView
                 android:gravity="center"
                 android:text="@string/subs_hold_to_reset_to_default"
@@ -149,8 +150,7 @@
                 android:textColor="?attr/textColor"
                 android:layout_width="match_parent"
                 android:layout_rowWeight="1"
-                android:layout_height="wrap_content">
-        </TextView>
+                android:layout_height="wrap_content" />
 
         <LinearLayout
                 android:orientation="horizontal"
@@ -168,7 +168,8 @@
                     android:text="@string/sort_apply"
                     android:id="@+id/apply_btt"
                     android:layout_width="wrap_content">
-                <requestFocus/>
+
+                <requestFocus />
             </com.google.android.material.button.MaterialButton>
 
             <com.google.android.material.button.MaterialButton
@@ -178,8 +179,7 @@
                     android:layout_gravity="center_vertical|end"
                     android:text="@string/sort_cancel"
                     android:id="@+id/cancel_btt"
-                    android:layout_width="wrap_content"
-            />
+                    android:layout_width="wrap_content" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

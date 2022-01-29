@@ -211,6 +211,7 @@
                     android:id="@+id/player_pause_play_holder"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
                 <ImageView
                         app:tint="@color/white"
                         android:id="@+id/player_pause_play"

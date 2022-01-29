@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -12,6 +11,7 @@
             android:layout_height="0dp"
             android:orientation="vertical"
             android:layout_weight="50">
+
         <TextView
                 android:paddingStart="?android:attr/listPreferredItemPaddingStart"
                 android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
@@ -23,8 +23,8 @@
                 android:textColor="?attr/textColor"
                 android:layout_width="match_parent"
                 android:layout_rowWeight="1"
-                android:layout_height="wrap_content">
-        </TextView>
+                android:layout_height="wrap_content" />
+
         <ListView
                 android:layout_marginTop="-10dp"
                 android:paddingTop="10dp"
@@ -34,15 +34,16 @@
                 tools:listitem="@layout/sort_bottom_single_choice"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_rowWeight="1"
-        />
+                android:layout_rowWeight="1" />
     </LinearLayout>
+
     <LinearLayout
             android:id="@+id/sort_subtitles_holder"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
             android:layout_weight="50">
+
         <TextView
                 android:paddingStart="?android:attr/listPreferredItemPaddingStart"
                 android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
@@ -54,8 +55,8 @@
                 android:textColor="?attr/textColor"
                 android:layout_rowWeight="1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-        </TextView>
+                android:layout_height="wrap_content" />
+
         <ListView
                 android:layout_marginTop="-10dp"
                 android:paddingTop="10dp"
@@ -65,7 +66,6 @@
                 tools:listitem="@layout/sort_bottom_single_choice"
                 android:layout_width="match_parent"
                 android:layout_rowWeight="1"
-                android:layout_height="match_parent">
-        </ListView>
+                android:layout_height="match_parent" />
     </LinearLayout>
 </LinearLayout>

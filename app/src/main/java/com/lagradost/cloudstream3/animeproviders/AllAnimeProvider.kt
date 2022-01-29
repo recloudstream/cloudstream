@@ -223,19 +223,24 @@ class AllAnimeProvider : MainAPI() {
         @JsonProperty("episodeIframeHead") val episodeIframeHead: String
     )
 
-    private fun getM3u8Qualities(m3u8Link: String, referer: String, qualityName: String): ArrayList<ExtractorLink> {
-        return ArrayList(hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(m3u8Link, null), true).map { stream ->
-            val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
-            ExtractorLink(
-                this.name,
-                "${this.name} - $qualityName $qualityString",
-                stream.streamUrl,
-                referer,
-                getQualityFromName(stream.quality.toString()),
-                true,
-                stream.headers
-            )
-        })
+    private fun getM3u8Qualities(
+        m3u8Link: String,
+        referer: String,
+        qualityName: String
+    ): ArrayList<ExtractorLink> {
+        return ArrayList(
+            hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(m3u8Link, null), true).map { stream ->
+                val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
+                ExtractorLink(
+                    this.name,
+                    "${this.name} - $qualityName $qualityString",
+                    stream.streamUrl,
+                    referer,
+                    getQualityFromName(stream.quality.toString()),
+                    true,
+                    stream.headers
+                )
+            })
     }
 
     override suspend fun loadLinks(
@@ -244,8 +249,10 @@ class AllAnimeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        var apiEndPoint = mapper.readValue<ApiEndPoint>(app.get("$mainUrl/getVersion").text).episodeIframeHead
-        if (apiEndPoint.endsWith("/")) apiEndPoint = apiEndPoint.slice(0 until apiEndPoint.length - 1)
+        var apiEndPoint =
+            mapper.readValue<ApiEndPoint>(app.get("$mainUrl/getVersion").text).episodeIframeHead
+        if (apiEndPoint.endsWith("/")) apiEndPoint =
+            apiEndPoint.slice(0 until apiEndPoint.length - 1)
 
         val html = app.get(data).text
 

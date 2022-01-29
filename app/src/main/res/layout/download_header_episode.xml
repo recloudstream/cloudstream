@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/rounded_image_radius"
         app:cardBackgroundColor="?attr/boxItemBackground"
         android:id="@+id/episode_holder"
         android:foreground="@drawable/outline_drawable"
-        android:layout_marginBottom="10dp"
->
+        android:layout_marginBottom="10dp">
+
     <LinearLayout
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
@@ -19,17 +18,17 @@
         <!--app:cardCornerRadius="@dimen/roundedImageRadius"-->
         <androidx.cardview.widget.CardView
                 android:layout_width="70dp"
-                android:layout_height="104dp"
-        >
+                android:layout_height="104dp">
+
             <ImageView
                     android:id="@+id/download_header_poster"
                     tools:src="@drawable/example_poster"
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/episode_poster_img_des">
-            </ImageView>
+                    android:contentDescription="@string/episode_poster_img_des" />
         </androidx.cardview.widget.CardView>
+
         <LinearLayout
                 android:layout_marginStart="15dp"
                 android:orientation="vertical"
@@ -37,21 +36,21 @@
                 android:layout_width="match_parent"
                 android:layout_marginEnd="70dp"
                 android:layout_height="wrap_content">
+
             <TextView
                     android:id="@+id/download_header_title"
                     tools:text="Perfect Run"
                     android:textStyle="bold"
                     android:textColor="?attr/textColor"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-            </TextView>
+                    android:layout_height="wrap_content" />
+
             <TextView
                     android:id="@+id/download_header_info"
                     tools:text="1 episode | 285MB"
                     android:textColor="?attr/grayTextColor"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-            </TextView>
+                    android:layout_height="wrap_content" />
         </LinearLayout>
 
         <ImageView
@@ -61,13 +60,14 @@
                 android:id="@+id/download_header_goto_child"
                 android:layout_gravity="center_vertical|end"
                 android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
-                android:contentDescription="@string/download"/>
+                android:contentDescription="@string/download" />
 
         <FrameLayout
                 android:layout_marginStart="-50dp"
                 android:layout_gravity="end"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
+
             <androidx.core.widget.ContentLoadingProgressBar
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
@@ -82,8 +82,8 @@
                     android:layout_margin="5dp"
                     android:layout_gravity="center_vertical"
                     android:progress="0"
-                    android:visibility="visible"
-            />
+                    android:visibility="visible" />
+
             <ImageView
 
                     android:visibility="visible"

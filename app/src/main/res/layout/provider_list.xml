@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:background="?attr/primaryBlackBackground"
@@ -27,8 +27,10 @@
             tools:text="Search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <requestFocus/>
+
+        <requestFocus />
     </com.google.android.material.switchmaterial.SwitchMaterial>
+
     <ListView
             android:nextFocusRight="@id/cancel_btt"
             android:nextFocusLeft="@id/apply_btt"
@@ -44,8 +46,8 @@
             tools:listitem="@layout/sort_bottom_single_choice"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_rowWeight="1"
-    />
+            android:layout_rowWeight="1" />
+
     <ListView
             android:nextFocusRight="@id/cancel_btt"
             android:nextFocusLeft="@id/apply_btt"
@@ -61,8 +63,8 @@
             tools:listitem="@layout/sort_bottom_single_choice"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_rowWeight="1"
-    />
+            android:layout_rowWeight="1" />
+
     <LinearLayout
             android:id="@+id/apply_btt_holder"
             android:orientation="horizontal"
@@ -80,8 +82,8 @@
                 style="@style/WhiteButton"
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_apply"
-                android:layout_width="wrap_content"
-        />
+                android:layout_width="wrap_content" />
+
         <com.google.android.material.button.MaterialButton
                 android:nextFocusLeft="@id/apply_btt"
                 android:nextFocusRight="@id/apply_btt"
@@ -90,7 +92,6 @@
                 style="@style/BlackButton"
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/sort_cancel"
-                android:layout_width="wrap_content"
-        />
+                android:layout_width="wrap_content" />
     </LinearLayout>
 </LinearLayout>

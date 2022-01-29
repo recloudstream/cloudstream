@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/quick_search_root"
         android:background="?attr/primaryGrayBackground"
-
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <LinearLayout
             android:visibility="visible"
             android:layout_margin="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-    >
+            android:layout_height="wrap_content">
+
         <ImageView
                 android:id="@+id/quick_search_back"
                 android:layout_gravity="center"
@@ -23,14 +24,17 @@
                 app:tint="@android:color/white"
                 android:layout_width="25dp"
                 android:layout_height="wrap_content">
-            <requestFocus/>
+
+            <requestFocus />
         </ImageView>
+
         <FrameLayout
                 android:layout_marginStart="10dp"
                 android:background="@drawable/search_background"
                 android:layout_gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="45dp">
+
             <androidx.appcompat.widget.SearchView
                     android:nextFocusRight="@id/search_filter"
                     android:nextFocusLeft="@id/search_filter"
@@ -54,7 +58,8 @@
 
                 <androidx.core.widget.ContentLoadingProgressBar
                         android:id="@+id/quick_search_loading_bar"
-                        android:layout_width="20dp" android:layout_height="20dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_marginStart="-35dp"
                         style="@style/Widget.AppCompat.ProgressBar"
                         android:foregroundTint="@color/white"
@@ -69,6 +74,7 @@
             </androidx.appcompat.widget.SearchView>
         </FrameLayout>
     </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
             android:descendantFocusability="afterDescendants"
 
@@ -76,6 +82,5 @@
             android:id="@+id/quick_search_master_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/homepage_parent"
-    />
+            tools:listitem="@layout/homepage_parent" />
 </LinearLayout>

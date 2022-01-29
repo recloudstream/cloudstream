@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginBottom="0dp"
-        android:layoutDirection="ltr"
->
+        android:layoutDirection="ltr">
 
     <androidx.cardview.widget.CardView
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
@@ -22,13 +20,14 @@
             app:cardCornerRadius="@dimen/rounded_image_radius"
             app:cardBackgroundColor="?attr/boxItemBackground"
             android:clickable="true"
-            android:focusable="true"
-    >
+            android:focusable="true">
+
         <androidx.cardview.widget.CardView
                 android:elevation="0dp"
                 app:cardCornerRadius="@dimen/rounded_image_radius"
                 android:layout_width="54dp"
                 android:layout_height="match_parent">
+
             <ImageView
                     android:layout_gravity="left"
                     android:id="@+id/imageView"
@@ -36,7 +35,7 @@
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    tools:ignore="RtlHardcoded"/>
+                    tools:ignore="RtlHardcoded" />
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
@@ -45,6 +44,7 @@
                 android:orientation="vertical"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="64dp">
+
             <TextView
                     tools:text="@string/no_data"
                     android:layout_width="match_parent"
@@ -53,8 +53,8 @@
                     android:textColor="?attr/textColor"
                     android:id="@+id/imageText"
                     android:textStyle="bold"
-                    android:maxLines="3"
-            />
+                    android:maxLines="3" />
+
             <TextView
                     tools:text="@string/no_data"
                     android:layout_width="match_parent"
@@ -63,8 +63,8 @@
                     android:id="@+id/imageTextExtra"
                     android:textSize="13sp"
                     android:textStyle="bold"
-                    android:maxLines="3"
-            />
+                    android:maxLines="3" />
+
             <TextView
                     tools:text="Rated 4.13"
                     android:visibility="gone"
@@ -72,8 +72,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorPrimary"
                     android:id="@+id/imageTextProvider"
-                    android:maxLines="1"
-            />
+                    android:maxLines="1" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

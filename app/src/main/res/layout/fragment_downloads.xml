@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/download_root"
-        android:orientation="vertical"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/download_root"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/primaryGrayBackground"
@@ -25,41 +24,47 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
             <TextView
                     android:textColor="?attr/textColor"
                     android:layout_marginBottom="5dp"
                     android:text="@string/download_storage_text"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-            </TextView>
+                    android:layout_height="wrap_content" />
+
             <LinearLayout
                     android:layout_marginBottom="5dp"
                     android:layout_width="fill_parent"
                     android:layout_height="12dp"
                     android:orientation="horizontal">
+
                 <View
                         android:layout_weight="0.5"
                         android:id="@+id/download_used"
                         android:background="?attr/white"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent" />
+
                 <View
                         android:id="@+id/download_app"
                         android:layout_weight="0.10"
                         android:background="?attr/colorPrimary"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent" />
+
                 <View
                         android:id="@+id/download_free"
                         android:layout_weight="0.10"
                         android:background="?attr/grayTextColor"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent" />
             </LinearLayout>
+
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                 <View
                         android:layout_marginEnd="5dp"
                         android:layout_marginTop="5dp"
@@ -67,7 +72,8 @@
                         android:layout_gravity="center_vertical"
                         android:background="?attr/white"
                         android:layout_width="10dp"
-                        android:layout_height="10dp"/>
+                        android:layout_height="10dp" />
+
                 <TextView
                         android:id="@+id/download_used_txt"
                         android:layout_gravity="center_vertical"
@@ -75,14 +81,15 @@
                         android:textSize="12sp"
                         android:textColor="?attr/textColor"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                 <View
                         android:layout_margin="5dp"
                         android:layout_gravity="center_vertical"
                         android:background="?attr/colorPrimary"
                         android:layout_width="10dp"
-                        android:layout_height="10dp"/>
+                        android:layout_height="10dp" />
+
                 <TextView
                         android:id="@+id/download_app_txt"
                         android:layout_gravity="center_vertical"
@@ -90,13 +97,15 @@
                         android:textSize="12sp"
                         android:textColor="?attr/textColor"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
+
                 <View
                         android:layout_margin="5dp"
                         android:layout_gravity="center_vertical"
                         android:background="?attr/grayTextColor"
                         android:layout_width="10dp"
-                        android:layout_height="10dp"/>
+                        android:layout_height="10dp" />
+
                 <TextView
                         android:id="@+id/download_free_txt"
                         android:textSize="12sp"
@@ -104,11 +113,11 @@
                         tools:text="Free • 30.58GB"
                         android:textColor="?attr/textColor"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
-    
+
     <androidx.recyclerview.widget.RecyclerView
             android:nextFocusLeft="@id/nav_rail_view"
             android:descendantFocusability="afterDescendants"
@@ -119,8 +128,8 @@
             android:id="@+id/download_list"
             android:layout_width="match_parent"
             tools:listitem="@layout/download_header_episode"
-            android:layout_height="match_parent">
-    </androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="match_parent" />
+
     <TextView
             android:id="@+id/text_no_downloads"
             android:layout_width="match_parent"
@@ -133,7 +142,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     <!--
     <ProgressBar
@@ -155,18 +164,25 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:orientation="vertical">
+
         <LinearLayout
                 android:layout_marginStart="@dimen/loading_margin"
                 android:layout_marginEnd="@dimen/loading_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-            <include layout="@layout/loading_downloads"/>
-            <include layout="@layout/loading_downloads"/>
-            <include layout="@layout/loading_downloads"/>
-            <include layout="@layout/loading_downloads"/>
-            <include layout="@layout/loading_downloads"/>
-            <include layout="@layout/loading_downloads"/>
+
+            <include layout="@layout/loading_downloads" />
+
+            <include layout="@layout/loading_downloads" />
+
+            <include layout="@layout/loading_downloads" />
+
+            <include layout="@layout/loading_downloads" />
+
+            <include layout="@layout/loading_downloads" />
+
+            <include layout="@layout/loading_downloads" />
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

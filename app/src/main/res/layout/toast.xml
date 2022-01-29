@@ -1,5 +1,4 @@
-<androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toast_layout_root"
         android:orientation="horizontal"
@@ -15,6 +14,6 @@
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="?attr/textColor"/>
+            android:textColor="?attr/textColor" />
 
 </androidx.cardview.widget.CardView>

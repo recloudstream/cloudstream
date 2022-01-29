@@ -5,10 +5,8 @@ import com.lagradost.cloudstream3.utils.*
 import java.util.*
 
 class PelisplusHDProvider:MainAPI() {
-    override val mainUrl: String
-        get() = "https://pelisplushd.net"
-    override val name: String
-        get() = "PelisplusHD"
+    override val mainUrl = "https://pelisplushd.net"
+    override val name = "PelisplusHD"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
