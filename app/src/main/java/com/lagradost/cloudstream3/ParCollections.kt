@@ -2,13 +2,9 @@ package com.lagradost.cloudstream3
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 //https://stackoverflow.com/questions/34697828/parallel-operations-on-kotlin-collections
+/*
 fun <T, R> Iterable<T>.pmap(
     numThreads: Int = maxOf(Runtime.getRuntime().availableProcessors() - 2, 1),
     exec: ExecutorService = Executors.newFixedThreadPool(numThreads),
@@ -27,14 +23,14 @@ fun <T, R> Iterable<T>.pmap(
     exec.awaitTermination(1, TimeUnit.DAYS)
 
     return ArrayList<R>(destination)
-}
+}*/
 
 fun <A, B> List<A>.apmap(f: suspend (A) -> B): List<B> = runBlocking {
     map { async { f(it) } }.map { it.await() }
 }
 
 // run code in parallel
-fun <R> argpmap(
+/*fun <R> argpmap(
     vararg transforms: () -> R,
     numThreads: Int = maxOf(Runtime.getRuntime().availableProcessors() - 2, 1),
     exec: ExecutorService = Executors.newFixedThreadPool(numThreads)
@@ -45,10 +41,10 @@ fun <R> argpmap(
 
     exec.shutdown()
     exec.awaitTermination(1, TimeUnit.DAYS)
-}
+}*/
 
-//fun <R> argamap(
-//    vararg transforms: () -> R,
-//) = runBlocking {
-//    transforms.map { async { it.invoke() } }.map { it.await() }
-//}
+fun <R> argamap(
+    vararg transforms: suspend () -> R,
+) = runBlocking {
+    transforms.map { async { it.invoke() } }.map { it.await() }
+}

@@ -12,7 +12,7 @@ open class WatchSB : ExtractorApi() {
     override val mainUrl = "https://watchsb.com"
     override val requiresReferer = false
 
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
+    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val response = app.get(
             url, interceptor = WebViewResolver(
                 Regex("""master\.m3u8""")

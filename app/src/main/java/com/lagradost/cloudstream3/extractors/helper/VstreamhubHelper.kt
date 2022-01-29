@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.extractors.helper
 
-import android.util.Log
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -11,7 +10,7 @@ class VstreamhubHelper {
         private val baseUrl: String = "https://vstreamhub.com"
         private val baseName: String = "Vstreamhub"
 
-        fun getUrls(url: String, callback: (ExtractorLink) -> Unit) {
+        suspend fun getUrls(url: String, callback: (ExtractorLink) -> Unit) {
             if (url.startsWith(baseUrl)) {
                 // Fetch links
                 val doc = app.get(url).document.select("script")

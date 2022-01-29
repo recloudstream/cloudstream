@@ -76,7 +76,7 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                 override fun shouldInterceptRequest(
                     view: WebView,
                     request: WebResourceRequest
-                ): WebResourceResponse? {
+                ): WebResourceResponse? = runBlocking {
                     val webViewUrl = request.url.toString()
 //                    println("Loading WebView URL: $webViewUrl")
 
@@ -84,7 +84,7 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                         fixedRequest = request.toRequest().also(requestCallBack)
                         println("Web-view request finished: $webViewUrl")
                         destroyWebView()
-                        return null
+                        return@runBlocking null
                     }
 
                     if (additionalUrls.any { it.containsMatchIn(webViewUrl) }) {
@@ -128,7 +128,13 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                      *  Overriding with okhttp might fuck up otherwise working requests,
                      *  e.g the recaptcha request.
                      * **/
-                    return try {
+
+                    /** NOTE!  request.requestHeaders is not perfect!
+                     *  They don't contain all the headers the browser actually gives.
+                     *  Overriding with okhttp might fuck up otherwise working requests,
+                     *  e.g the recaptcha request.
+                     * **/
+                    return@runBlocking try {
                         when {
                             blacklistedFiles.any { URI(webViewUrl).path.contains(it) } || webViewUrl.endsWith(
                                 "/favicon.ico"
@@ -152,7 +158,7 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                                 webViewUrl,
                                 headers = request.requestHeaders
                             ).response.toWebResourceResponse()
-                            else -> return super.shouldInterceptRequest(view, request)
+                            else -> return@runBlocking super.shouldInterceptRequest(view, request)
                         }
                     } catch (e: Exception) {
                         null

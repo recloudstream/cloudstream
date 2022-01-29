@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.pmap
+import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -27,9 +27,9 @@ class Pelisplus(val mainUrl: String) {
     private val normalApis = arrayListOf(MultiQuality())
 
     // https://gogo-stream.com/streaming.php?id=MTE3NDg5
-    fun getUrl(id: String, isCasting: Boolean = false, callback: (ExtractorLink) -> Unit): Boolean {
+    suspend fun getUrl(id: String, isCasting: Boolean = false, callback: (ExtractorLink) -> Unit): Boolean {
         try {
-            normalApis.pmap { api ->
+            normalApis.apmap { api ->
                 val url = api.getExtractorUrl(id)
                 val source = api.getSafeUrl(url)
                 source?.forEach { callback.invoke(it) }
@@ -37,7 +37,7 @@ class Pelisplus(val mainUrl: String) {
             val extractorUrl = getExtractorUrl(id)
 
             /** Stolen from GogoanimeProvider.kt extractor */
-            normalSafeApiCall {
+            suspendSafeApiCall {
                 val link = getDownloadUrl(id)
                 println("Generated vidstream download link: $link")
                 val page = app.get(link, referer = extractorUrl)
@@ -46,8 +46,8 @@ class Pelisplus(val mainUrl: String) {
                 val qualityRegex = Regex("(\\d+)P")
 
                 //a[download]
-                pageDoc.select(".dowload > a")?.pmap { element ->
-                    val href = element.attr("href") ?: return@pmap
+                pageDoc.select(".dowload > a")?.apmap { element ->
+                    val href = element.attr("href") ?: return@apmap
                     val qual = if (element.text()
                             .contains("HDP")
                     ) "1080" else qualityRegex.find(element.text())?.destructured?.component1().toString()
@@ -78,7 +78,7 @@ class Pelisplus(val mainUrl: String) {
                     //val name = element.text()
 
                     // Matches vidstream links with extractors
-                    extractorApis.filter { !it.requiresReferer || !isCasting }.pmap { api ->
+                    extractorApis.filter { !it.requiresReferer || !isCasting }.apmap { api ->
                         if (link.startsWith(api.mainUrl)) {
                             val extractedLinks = api.getSafeUrl(link, extractorUrl)
                             if (extractedLinks?.isNotEmpty() == true) {

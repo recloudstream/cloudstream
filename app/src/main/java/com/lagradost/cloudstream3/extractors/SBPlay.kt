@@ -26,7 +26,7 @@ open class SBPlay : ExtractorApi() {
     override val name = "SBPlay"
     override val requiresReferer = false
 
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
+    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val response = app.get(url, referer = referer).text
         val document = Jsoup.parse(response)
 

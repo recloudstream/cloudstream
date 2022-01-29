@@ -59,7 +59,7 @@ class VfFilmProvider : MainAPI() {
         return true
     }
 
-    private fun getDirect(original: String): String {  // original data, https://vf-film.org/?trembed=1&trid=55313&trtype=1 for example
+    private suspend fun getDirect(original: String): String {  // original data, https://vf-film.org/?trembed=1&trid=55313&trtype=1 for example
         val response = app.get(original).text
         val url = "iframe .*src=\"(.*?)\"".toRegex().find(response)?.groupValues?.get(1)
             .toString()  // https://vudeo.net/embed-uweno86lzx8f.html for example

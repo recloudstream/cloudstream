@@ -191,7 +191,7 @@ class WatchAsianProvider : MainAPI() {
         return count > 0
     }
 
-    private fun getServerLinks(url: String) : String {
+    private suspend fun getServerLinks(url: String) : String {
         val moviedoc = app.get(url, referer = mainUrl).document
         return moviedoc.select("div.anime_muti_link > ul > li")
             ?.mapNotNull {

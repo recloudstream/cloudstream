@@ -257,7 +257,7 @@ class ZoroProvider : MainAPI() {
         }
     }
 
-    private fun getM3u8FromRapidCloud(url: String): String {
+    private suspend fun getM3u8FromRapidCloud(url: String): String {
         return Regex("""/(embed-\d+)/(.*?)\?z=""").find(url)?.groupValues?.let {
             val jsonLink = "https://rapid-cloud.ru/ajax/${it[1]}/getSources?id=${it[2]}"
             app.get(jsonLink).text
@@ -295,7 +295,7 @@ class ZoroProvider : MainAPI() {
         }
 
         // Prevent duplicates
-        servers.distinctBy { it.second }.pmap {
+        servers.distinctBy { it.second }.apmap {
             val link =
                 "$mainUrl/ajax/v2/episode/sources?id=${it.second}"
             val extractorLink = app.get(
@@ -316,7 +316,7 @@ class ZoroProvider : MainAPI() {
                         extractorLink
                     )
 
-                if (response.contains("<html")) return@pmap
+                if (response.contains("<html")) return@apmap
                 val mapped = mapper.readValue<SflixProvider.SourceObject>(response)
 
                 mapped.tracks?.forEach { track ->

@@ -66,7 +66,7 @@ interface SyncAPI : OAuth2API {
     val icon: Int
 
     val mainUrl: String
-    fun search(name: String): List<SyncSearchResult>?
+    suspend fun search(name: String): List<SyncSearchResult>?
 
     /**
     -1 -> None
@@ -77,9 +77,9 @@ interface SyncAPI : OAuth2API {
     4 -> PlanToWatch
     5 -> ReWatching
      */
-    fun score(id: String, status: SyncStatus): Boolean
+    suspend fun score(id: String, status: SyncStatus): Boolean
 
-    fun getStatus(id: String): SyncStatus?
+    suspend fun getStatus(id: String): SyncStatus?
 
-    fun getResult(id: String): SyncResult?
+    suspend fun getResult(id: String): SyncResult?
 }

@@ -14,7 +14,6 @@ import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.SyncApis
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
-import com.lagradost.cloudstream3.ui.APIRepository.Companion.providersActive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -26,7 +25,8 @@ data class OnGoingSearch(
 )
 
 class SearchViewModel : ViewModel() {
-    private val _searchResponse: MutableLiveData<Resource<ArrayList<SearchResponse>>> = MutableLiveData()
+    private val _searchResponse: MutableLiveData<Resource<ArrayList<SearchResponse>>> =
+        MutableLiveData()
     val searchResponse: LiveData<Resource<ArrayList<SearchResponse>>> get() = _searchResponse
 
     private val _currentSearch: MutableLiveData<ArrayList<OnGoingSearch>> = MutableLiveData()
@@ -40,9 +40,14 @@ class SearchViewModel : ViewModel() {
     }
 
     var onGoingSearch: Job? = null
-    fun searchAndCancel(query: String, isMainApis: Boolean = true, ignoreSettings: Boolean = false) {
+    fun searchAndCancel(
+        query: String,
+        isMainApis: Boolean = true,
+        providersActive: Set<String> = setOf(),
+        ignoreSettings: Boolean = false
+    ) {
         onGoingSearch?.cancel()
-        onGoingSearch = search(query, isMainApis, ignoreSettings)
+        onGoingSearch = search(query, isMainApis, providersActive, ignoreSettings)
     }
 
     data class SyncSearchResultSearchResponse(
@@ -65,7 +70,12 @@ class SearchViewModel : ViewModel() {
         )
     }
 
-    private fun search(query: String, isMainApis: Boolean = true, ignoreSettings: Boolean = false) =
+    private fun search(
+        query: String,
+        isMainApis: Boolean = true,
+        providersActive: Set<String>,
+        ignoreSettings: Boolean = false
+    ) =
         viewModelScope.launch {
             if (query.length <= 1) {
                 clearSearch()
@@ -81,7 +91,7 @@ class SearchViewModel : ViewModel() {
             withContext(Dispatchers.IO) { // This interrupts UI otherwise
                 if (isMainApis) {
                     repos.filter { a ->
-                        ignoreSettings || (providersActive.size == 0 || providersActive.contains(a.name))
+                        ignoreSettings || (providersActive.isEmpty() || providersActive.contains(a.name))
                     }.apmap { a -> // Parallel
                         val search = a.search(query)
                         currentList.add(OnGoingSearch(a.name, search))
@@ -102,7 +112,8 @@ class SearchViewModel : ViewModel() {
 
             val list = ArrayList<SearchResponse>()
             val nestedList =
-                currentList.map { it.data }.filterIsInstance<Resource.Success<List<SearchResponse>>>().map { it.value }
+                currentList.map { it.data }
+                    .filterIsInstance<Resource.Success<List<SearchResponse>>>().map { it.value }
 
             // I do it this way to move the relevant search results to the top
             var index = 0

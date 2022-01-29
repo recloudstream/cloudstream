@@ -16,7 +16,7 @@ class Streamhub : ExtractorApi() {
         return "$mainUrl/e/$id"
     }
 
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
+    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val response = app.get(url).text
         Regex("eval((.|\\n)*?)</script>").find(response)?.groupValues?.get(1)?.let { jsEval ->
             JsUnpacker("eval$jsEval").unpack()?.let { unPacked ->

@@ -232,17 +232,17 @@ class GogoanimeProvider : MainAPI() {
         val default: String? = null
     )
 
-    private fun extractVideos(uri: String, callback: (ExtractorLink) -> Unit) {
+    private suspend fun extractVideos(uri: String, callback: (ExtractorLink) -> Unit) {
         val doc = app.get(uri).document
 
         val iframe = fixUrlNull(doc.selectFirst("div.play-video > iframe").attr("src")) ?: return
 
-        argpmap(
+        argamap(
             {
                 val link = iframe.replace("streaming.php", "download")
                 val page = app.get(link, headers = mapOf("Referer" to iframe))
 
-                page.document.select(".dowload > a").pmap {
+                page.document.select(".dowload > a").apmap {
                     if (it.hasAttr("download")) {
                         val qual = if (it.text()
                                 .contains("HDP")
@@ -266,7 +266,7 @@ class GogoanimeProvider : MainAPI() {
             }, {
                 val streamingResponse = app.get(iframe, headers = mapOf("Referer" to iframe))
                 val streamingDocument = streamingResponse.document
-                argpmap({
+                argamap({
                     streamingDocument.select(".list-server-items > .linkserver")
                         ?.forEach { element ->
                             val status = element.attr("data-status") ?: return@forEach
@@ -302,7 +302,7 @@ class GogoanimeProvider : MainAPI() {
                         sourceCallback.invoke(
                             ExtractorLink(
                                 this.name,
-                                "${this.name} ${source.label?.replace("0 P","0p") ?: ""}",
+                                "${this.name} ${source.label?.replace("0 P", "0p") ?: ""}",
                                 source.file,
                                 "",
                                 getQualityFromName(source.label ?: ""),
@@ -312,11 +312,9 @@ class GogoanimeProvider : MainAPI() {
                     }
 
                     sources.source?.forEach {
-                        println("${this.name} ${it.label ?: ""}")
                         invokeGogoSource(it, callback)
                     }
                     sources.sourceBk?.forEach {
-                        println("${this.name} ${it.label ?: ""}")
                         invokeGogoSource(it, callback)
                     }
                 })

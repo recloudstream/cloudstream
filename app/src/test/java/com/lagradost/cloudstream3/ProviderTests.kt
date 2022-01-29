@@ -13,7 +13,7 @@ class ProviderTests {
         return allApis.filter { !it.usesWebView }
     }
 
-    private fun loadLinks(api: MainAPI, url: String?): Boolean {
+    private suspend fun loadLinks(api: MainAPI, url: String?): Boolean {
         Assert.assertNotNull("Api ${api.name} has invalid url on episode", url)
         if (url == null) return true
         var linksLoaded = 0
@@ -39,7 +39,7 @@ class ProviderTests {
         return true
     }
 
-    private fun testSingleProviderApi(api: MainAPI): Boolean {
+    private suspend fun testSingleProviderApi(api: MainAPI): Boolean {
         val searchQueries = listOf("over", "iron", "guy")
         var correctResponses = 0
         var searchResult: List<SearchResponse>? = null
@@ -144,7 +144,7 @@ class ProviderTests {
 
     @Test
     fun providerCorrectHomepage() {
-        getAllProviders().pmap { api ->
+        getAllProviders().apmap { api ->
             if (api.hasMainPage) {
                 try {
                     val homepage = api.getMainPage()
@@ -175,10 +175,10 @@ class ProviderTests {
 //    }
 
     @Test
-    fun providerCorrect() {
+    suspend fun providerCorrect() {
         val invalidProvider = ArrayList<Pair<MainAPI,Exception?>>()
         val providers = getAllProviders()
-        providers.pmap { api ->
+        providers.apmap { api ->
             try {
                 println("Trying $api")
                 if (testSingleProviderApi(api)) {

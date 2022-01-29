@@ -54,7 +54,7 @@ class DubbedAnimeProvider : MainAPI() {
         @JsonProperty("tags") val tags: String,*/
     )
 
-    private fun parseDocumentTrending(url: String): List<SearchResponse> {
+    private suspend fun parseDocumentTrending(url: String): List<SearchResponse> {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         return document.select("li > a").map {
@@ -73,7 +73,7 @@ class DubbedAnimeProvider : MainAPI() {
         }
     }
 
-    private fun parseDocument(url: String, trimEpisode: Boolean = false): List<SearchResponse> {
+    private suspend fun parseDocument(url: String, trimEpisode: Boolean = false): List<SearchResponse> {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         return document.select("a.grid__link").map {
@@ -109,7 +109,7 @@ class DubbedAnimeProvider : MainAPI() {
     }
 
 
-    private fun getAnimeEpisode(slug: String, isMovie: Boolean): EpisodeInfo {
+    private suspend fun getAnimeEpisode(slug: String, isMovie: Boolean): EpisodeInfo {
         val url =
             mainUrl + (if (isMovie) "/movies/jsonMovie" else "/xz/v3/jsonEpi") + ".php?slug=$slug&_=$unixTime"
         val response = app.get(url).text

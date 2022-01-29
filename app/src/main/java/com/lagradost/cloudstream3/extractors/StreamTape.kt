@@ -13,7 +13,7 @@ class StreamTape : ExtractorApi() {
     private val linkRegex =
         Regex("""'robotlink'\)\.innerHTML = '(.+?)'\+ \('(.+?)'\)""")
 
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
+    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         with(app.get(url)) {
             linkRegex.find(this.text)?.let {
                 val extractedUrl = "https:${it.groups[1]!!.value + it.groups[2]!!.value.substring(3,)}"

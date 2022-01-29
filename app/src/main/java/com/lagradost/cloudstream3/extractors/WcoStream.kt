@@ -12,7 +12,7 @@ class WcoStream : ExtractorApi() {
     override val requiresReferer = false
     private val hlsHelper = M3u8Helper()
 
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
+    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val baseUrl = url.split("/e/")[0]
 
         val html = app.get(url, headers = mapOf("Referer" to "https://wcostream.cc/")).text

@@ -81,6 +81,59 @@
                 app:tint="?attr/textColor"
                 android:contentDescription="@string/change_providers_img_des" />
     </FrameLayout>
+    <HorizontalScrollView
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:fadingEdge="horizontal"
+            android:requiresFadingEdge="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                    android:nextFocusRight="@id/search_select_tv_series"
+
+                    android:id="@+id/search_select_movies"
+                    android:text="@string/movies"
+                    style="@style/RoundedSelectableButton" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:nextFocusLeft="@id/search_select_movies"
+                    android:nextFocusRight="@id/search_select_anime"
+
+                    android:id="@+id/search_select_tv_series"
+                    android:text="@string/tv_series"
+                    style="@style/RoundedSelectableButton" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:nextFocusLeft="@id/search_select_tv_series"
+                    android:nextFocusRight="@id/search_select_cartoons"
+
+                    android:id="@+id/search_select_anime"
+                    android:text="@string/anime"
+                    style="@style/RoundedSelectableButton" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:nextFocusLeft="@id/search_select_anime"
+                    android:nextFocusRight="@id/search_select_documentaries"
+
+                    android:id="@+id/search_select_cartoons"
+                    android:text="@string/cartoons"
+                    style="@style/RoundedSelectableButton" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:nextFocusLeft="@id/search_select_cartoons"
+
+                    android:id="@+id/search_select_documentaries"
+                    android:text="@string/documentaries"
+                    style="@style/RoundedSelectableButton" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
 
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
             android:nextFocusLeft="@id/nav_rail_view"

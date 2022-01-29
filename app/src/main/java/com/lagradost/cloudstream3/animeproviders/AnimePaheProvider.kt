@@ -3,7 +3,7 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.network.AppResponse
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -23,7 +23,7 @@ class AnimePaheProvider : MainAPI() {
             else TvType.Anime
         }
 
-        fun generateSession(): Boolean {
+        suspend fun generateSession(): Boolean {
             if (cookies.isNotEmpty()) return true
             return try {
                 val response = app.get("$MAIN_URL/")
@@ -124,7 +124,7 @@ class AnimePaheProvider : MainAPI() {
         @JsonProperty("data") val data: List<AnimePaheSearchData>
     )
 
-    private fun getAnimeByIdAndTitle(title: String, animeId: Int): String? {
+    private suspend fun getAnimeByIdAndTitle(title: String, animeId: Int): String? {
         val url = "$mainUrl/api?m=search&l=8&q=$title"
         val headers = mapOf("referer" to "$mainUrl/")
 
@@ -186,7 +186,7 @@ class AnimePaheProvider : MainAPI() {
     )
 
 
-    private fun generateListOfEpisodes(link: String): ArrayList<AnimeEpisode> {
+    private suspend fun generateListOfEpisodes(link: String): ArrayList<AnimeEpisode> {
         try {
             val attrs = link.split('/')
             val id = attrs[attrs.size - 1].split("?")[0]
@@ -243,8 +243,7 @@ class AnimePaheProvider : MainAPI() {
     }
 
     override suspend fun load(url: String): LoadResponse? {
-        return normalSafeApiCall {
-
+        return suspendSafeApiCall {
             val regex = Regex("""a/(\d+)\?slug=(.+)""")
             val (animeId, animeTitle) = regex.find(url)!!.destructured
             val link = getAnimeByIdAndTitle(animeTitle, animeId.toInt())!!
@@ -436,7 +435,7 @@ class AnimePaheProvider : MainAPI() {
         @JsonProperty("data") val data: List<Map<String, VideoQuality>>
     )
 
-    private fun bypassAdfly(adflyUri: String): String {
+    private suspend fun bypassAdfly(adflyUri: String): String {
         if (!generateSession()) {
             return bypassAdfly(adflyUri)
         }
@@ -461,7 +460,7 @@ class AnimePaheProvider : MainAPI() {
         return decodeAdfly(YTSM.find(adflyContent?.text.toString())!!.destructured.component1())
     }
 
-    private fun getStreamUrlFromKwik(adflyUri: String): String {
+    private suspend fun getStreamUrlFromKwik(adflyUri: String): String {
         val fContent =
             app.get(
                 bypassAdfly(adflyUri),
@@ -496,7 +495,7 @@ class AnimePaheProvider : MainAPI() {
         return content?.headers?.values("location").toString()
     }
 
-    private fun extractVideoLinks(episodeLink: String): List<ExtractorLink> {
+    private suspend fun extractVideoLinks(episodeLink: String): List<ExtractorLink> {
         var link = episodeLink
         val headers = mapOf("referer" to "$mainUrl/")
 
@@ -506,7 +505,6 @@ class AnimePaheProvider : MainAPI() {
             val regex = """&ep=(\d+)!!FALSE!!""".toRegex()
             val episodeNum = regex.find(link)?.destructured?.component1()?.toIntOrNull()
             link = link.replace(regex, "")
-
 
             val req = app.get(link, headers = headers).text
             val jsonResponse = req.let { mapper.readValue<AnimePaheAnimeData>(it) }

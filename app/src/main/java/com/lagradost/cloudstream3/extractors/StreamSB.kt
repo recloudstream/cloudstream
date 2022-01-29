@@ -19,7 +19,7 @@ class StreamSB : ExtractorApi() {
     override val requiresReferer = false
 
     // 	https://sbembed.com/embed-ns50b0cukf9j.html   ->   https://sbvideo.net/play/ns50b0cukf9j
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
+    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
         val newUrl = url.replace("sbplay.org/embed-", "sbplay.org/play/").removeSuffix(".html")
         with(app.get(newUrl, timeout = 10)) {

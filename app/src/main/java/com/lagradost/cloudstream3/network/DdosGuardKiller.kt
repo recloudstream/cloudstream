@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.network
 
 import androidx.annotation.AnyThread
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.network.Requests.Companion.await
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -18,17 +20,17 @@ class DdosGuardKiller(private val alwaysBypass: Boolean) : Interceptor {
 
     private var ddosBypassPath: String? = null
 
-    override fun intercept(chain: Interceptor.Chain): Response {
+    override fun intercept(chain: Interceptor.Chain): Response =  runBlocking {
         val request = chain.request()
-        if (alwaysBypass) return bypassDdosGuard(request)
+        if (alwaysBypass) return@runBlocking bypassDdosGuard(request)
 
         val response = chain.proceed(request)
-        return if (response.code == 403) {
+        return@runBlocking if (response.code == 403) {
             bypassDdosGuard(request)
         } else response
     }
 
-    private fun bypassDdosGuard(request: Request): Response {
+    private suspend fun bypassDdosGuard(request: Request): Response {
         ddosBypassPath = ddosBypassPath ?: Regex("'(.*?)'").find(
             app.get(
                 "https://check.ddos-guard.net/check.js"
@@ -49,6 +51,6 @@ class DdosGuardKiller(private val alwaysBypass: Boolean) : Interceptor {
             request.newBuilder()
                 .headers(headers)
                 .build()
-        ).execute()
+        ).await()
     }
 }

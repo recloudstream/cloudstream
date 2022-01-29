@@ -22,7 +22,6 @@ import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
-import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -294,7 +293,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         this.getString(R.string.provider_lang_key),
                         selectedList.map { names[it].first }.toMutableSet()
                     ).apply()
-                    APIRepository.providersActive = it.context.getApiSettings()
+                    //APIRepository.providersActive = it.context.getApiSettings()
                 }
             }
 

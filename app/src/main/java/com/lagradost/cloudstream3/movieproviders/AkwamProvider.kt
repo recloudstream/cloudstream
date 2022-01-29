@@ -41,7 +41,7 @@ class AkwamProvider : MainAPI() {
             "Series" to "$mainUrl/series",
             "Shows" to "$mainUrl/shows"
         )
-        val pages = moviesUrl.pmap {
+        val pages = moviesUrl.apmap {
             val doc = app.get(it.second).document
             val list = doc.select("div.col-lg-auto.col-md-4.col-6.mb-12").mapNotNull { element ->
                 element.toSearchResponse()
@@ -150,7 +150,7 @@ class AkwamProvider : MainAPI() {
 
 
     // Maybe possible to not use the url shortener but cba investigating that.
-    private fun skipUrlShortener(url: String): AppResponse {
+    private suspend fun skipUrlShortener(url: String): AppResponse {
         return app.get(app.get(url).document.select("a.download-link").attr("href"))
     }
 
@@ -180,7 +180,7 @@ class AkwamProvider : MainAPI() {
             }.filter { link -> link.first.contains("/link/") }
         }.flatten()
 
-        links.pmap {
+        links.map {
             val linkDoc = skipUrlShortener(it.first).document
             val button = linkDoc.select("div.btn-loader > a")
             val url = button.attr("href")

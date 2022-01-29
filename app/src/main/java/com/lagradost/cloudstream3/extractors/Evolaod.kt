@@ -15,7 +15,7 @@ open class Evoload : ExtractorApi() {
 
 
 
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
+    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val id = url.replace("https://evoload.io/e/", "")  // wanted media id
         val csrv_token = app.get("https://csrv.evosrv.com/captcha?m412548=").text  // whatever that is
         val captchaPass = app.get("https://cd2.evosrv.com/html/jsx/e.jsx").text.take(300).split("captcha_pass = '")[1].split("\'")[0]  //extract the captcha pass from the js response (located in the 300 first chars)

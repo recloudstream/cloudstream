@@ -75,7 +75,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override fun search(name: String): List<SyncAPI.SyncSearchResult>? {
+    override suspend fun search(name: String): List<SyncAPI.SyncSearchResult>? {
         val data = searchShows(name) ?: return null
         return data.data.Page.media.map {
             SyncAPI.SyncSearchResult(
@@ -88,7 +88,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override fun getResult(id: String): SyncAPI.SyncResult? {
+    override suspend fun getResult(id: String): SyncAPI.SyncResult? {
         val internalId = id.toIntOrNull() ?: return null
         val season = getSeason(internalId)?.data?.Media ?: return null
 
@@ -104,7 +104,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override fun getStatus(id: String): SyncAPI.SyncStatus? {
+    override suspend fun getStatus(id: String): SyncAPI.SyncStatus? {
         val internalId = id.toIntOrNull() ?: return null
         val data = getDataAboutId(internalId) ?: return null
 
@@ -116,7 +116,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override fun score(id: String, status: SyncAPI.SyncStatus): Boolean {
+    override suspend fun score(id: String, status: SyncAPI.SyncStatus): Boolean {
         return postDataAboutId(
             id.toIntOrNull() ?: return false,
             fromIntToAnimeStatus(status.status),
@@ -143,7 +143,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 .replace("[^a-zA-Z0-9]".toRegex(), "")
         }
 
-        private fun searchShows(name: String): GetSearchRoot? {
+        private suspend fun searchShows(name: String): GetSearchRoot? {
             try {
                 val query = """
                 query (${"$"}id: Int, ${"$"}page: Int, ${"$"}search: String, ${"$"}type: MediaType) {
@@ -225,7 +225,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
 
         // Should use https://gist.github.com/purplepinapples/5dc60f15f2837bf1cea71b089cfeaa0a
-        fun getShowId(malId: String?, name: String, year: Int?): GetSearchMedia? {
+        suspend fun getShowId(malId: String?, name: String, year: Int?): GetSearchMedia? {
             // Strips these from the name
             val blackList = listOf(
                 "TV Dubbed",
@@ -293,7 +293,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
 
 
-        private fun getSeason(id: Int): SeasonResponse? {
+        private suspend fun getSeason(id: Int): SeasonResponse? {
             val q: String = """
                query (${'$'}id: Int = $id) {
                    Media (id: ${'$'}id, type: ANIME) {
@@ -351,7 +351,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         )!!
     }
 
-    fun getDataAboutId(id: Int): AniListTitleHolder? {
+    suspend fun getDataAboutId(id: Int): AniListTitleHolder? {
         val q =
             """query (${'$'}id: Int = $id) { # Define which variables will be used in the query (id)
                 Media (id: ${'$'}id, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
@@ -410,7 +410,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun postApi(url: String, q: String, cache: Boolean = false): String {
+    private suspend fun postApi(url: String, q: String, cache: Boolean = false): String {
         return try {
             if (!checkToken()) {
                 // println("VARS_ " + vars)
@@ -514,7 +514,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         return getKey(ANILIST_CACHED_LIST) as? Array<Lists>
     }
 
-    fun getAnilistAnimeListSmart(): Array<Lists>? {
+    suspend fun getAnilistAnimeListSmart(): Array<Lists>? {
         if (getKey<String>(
                 accountId,
                 ANILIST_TOKEN_KEY,
@@ -535,7 +535,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun getFullAnilistList(): FullAnilistList? {
+    private suspend fun getFullAnilistList(): FullAnilistList? {
         try {
             var userID: Int? = null
             /** WARNING ASSUMES ONE USER! **/
@@ -597,7 +597,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    fun toggleLike(id: Int): Boolean {
+    suspend fun toggleLike(id: Int): Boolean {
         val q = """mutation (${'$'}animeId: Int = $id) {
 				ToggleFavourite (animeId: ${'$'}animeId) {
 					anime {
@@ -614,7 +614,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         return data != ""
     }
 
-    private fun postDataAboutId(
+    private suspend fun postDataAboutId(
         id: Int,
         type: AniListStatusType,
         score: Int?,
@@ -643,7 +643,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun getUser(setSettings: Boolean = true): AniListUser? {
+    private suspend fun getUser(setSettings: Boolean = true): AniListUser? {
         val q = """
 				{
   					Viewer {
@@ -686,9 +686,9 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    fun getAllSeasons(id: Int): List<SeasonResponse?> {
+    suspend fun getAllSeasons(id: Int): List<SeasonResponse?> {
         val seasons = mutableListOf<SeasonResponse?>()
-        fun getSeasonRecursive(id: Int) {
+        suspend fun getSeasonRecursive(id: Int) {
             val season = getSeason(id)
             if (season != null) {
                 seasons.add(season)

@@ -110,7 +110,7 @@ class LookMovieProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        fun search(query: String, isMovie: Boolean): ArrayList<SearchResponse> {
+        suspend fun search(query: String, isMovie: Boolean): ArrayList<SearchResponse> {
             val url = "$mainUrl/${if (isMovie) "movies" else "shows"}/search/?q=$query"
             val response = app.get(url).text
             val document = Jsoup.parse(response)
@@ -158,7 +158,7 @@ class LookMovieProvider : MainAPI() {
         }
     }
 
-    private fun loadCurrentLinks(url: String, callback: (ExtractorLink) -> Unit) {
+    private suspend fun loadCurrentLinks(url: String, callback: (ExtractorLink) -> Unit) {
         val response = app.get(url.replace("\$unixtime", unixTime.toString())).text
         M3u8Manifest.extractLinks(response).forEach {
             callback.invoke(

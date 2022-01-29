@@ -16,7 +16,7 @@ object FillerEpisodeCheck {
         return name.lowercase(Locale.ROOT)/*.replace(" ", "")*/.replace("-", " ").replace("[^a-zA-Z0-9 ]".toRegex(), "")
     }
 
-    private fun getFillerList(): Boolean {
+    private suspend fun getFillerList(): Boolean {
         if (list != null) return true
         try {
             val result = app.get("$MAIN_URL/shows").text
@@ -59,7 +59,7 @@ object FillerEpisodeCheck {
         return q + "cache" + z
     }
 
-    fun getFillerEpisodes(query: String): HashMap<Int, Boolean>? {
+    suspend fun getFillerEpisodes(query: String): HashMap<Int, Boolean>? {
         try {
             if (!getFillerList()) return null
             val localList = list ?: return null

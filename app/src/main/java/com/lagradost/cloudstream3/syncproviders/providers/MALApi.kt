@@ -50,7 +50,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return null
     }
 
-    override fun search(name: String): List<SyncAPI.SyncSearchResult> {
+    override suspend fun search(name: String): List<SyncAPI.SyncSearchResult> {
         val url = "https://api.myanimelist.net/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
         val auth = getKey<String>(
             accountId,
@@ -73,7 +73,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override fun score(id: String, status : SyncAPI.SyncStatus): Boolean {
+    override suspend fun score(id: String, status : SyncAPI.SyncStatus): Boolean {
         return setScoreRequest(
             id.toIntOrNull() ?: return false,
             fromIntToAnimeStatus(status.status),
@@ -82,12 +82,12 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override fun getResult(id: String): SyncAPI.SyncResult? {
+    override suspend fun getResult(id: String): SyncAPI.SyncResult? {
         val internalId = id.toIntOrNull() ?: return null
         TODO("Not yet implemented")
     }
 
-    override fun getStatus(id: String): SyncAPI.SyncStatus? {
+    override suspend fun getStatus(id: String): SyncAPI.SyncStatus? {
         val internalId = id.toIntOrNull() ?: return null
 
         val data = getDataAboutMalId(internalId)?.my_list_status ?: return null
@@ -182,7 +182,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun refreshToken() {
+    private suspend fun refreshToken() {
         try {
             val res = app.post(
                 "https://myanimelist.net/v1/oauth2/token",
@@ -281,7 +281,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return getKey(MAL_CACHED_LIST) as? Array<Data>
     }
 
-    fun getMalAnimeListSmart(): Array<Data>? {
+    suspend fun getMalAnimeListSmart(): Array<Data>? {
         if (getKey<String>(
                 accountId,
                 MAL_TOKEN_KEY
@@ -299,7 +299,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun getMalAnimeList(): Array<Data>? {
+    private suspend fun getMalAnimeList(): Array<Data>? {
         return try {
             checkMalToken()
             var offset = 0
@@ -321,7 +321,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return fromIntToAnimeStatus(malStatusAsString.indexOf(string))
     }
 
-    private fun getMalAnimeListSlice(offset: Int = 0): MalList? {
+    private suspend fun getMalAnimeListSlice(offset: Int = 0): MalList? {
         val user = "@me"
         val auth = getKey<String>(
             accountId,
@@ -344,7 +344,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun getDataAboutMalId(id: Int): MalAnime? {
+    private suspend fun getDataAboutMalId(id: Int): MalAnime? {
         return try {
             // https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get
             val url = "https://api.myanimelist.net/v2/anime/$id?fields=id,title,num_episodes,my_list_status"
@@ -362,7 +362,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    fun setAllMalData() {
+    suspend fun setAllMalData() {
         val user = "@me"
         var isDone = false
         var index = 0
@@ -426,7 +426,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return null
     }
 
-    private fun checkMalToken() {
+    private suspend fun checkMalToken() {
         if (unixTime > getKey(
                 accountId,
                 MAL_UNIXTIME_KEY
@@ -436,7 +436,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun getMalUser(setSettings: Boolean = true): MalUser? {
+    private suspend fun getMalUser(setSettings: Boolean = true): MalUser? {
         checkMalToken()
         return try {
             val res = app.get(
@@ -483,7 +483,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    fun setScoreRequest(
+    suspend fun setScoreRequest(
         id: Int,
         status: MalStatusType? = null,
         score: Int? = null,
@@ -514,7 +514,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun setScoreRequest(
+    private suspend fun setScoreRequest(
         id: Int,
         status: String? = null,
         score: Int? = null,

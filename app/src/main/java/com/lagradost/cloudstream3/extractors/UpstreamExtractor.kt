@@ -10,7 +10,7 @@ class UpstreamExtractor: ExtractorApi() {
     override val mainUrl: String = "https://upstream.to"
     override val requiresReferer = true
 
-    override fun getUrl(url: String, referer: String?): List<ExtractorLink> {
+    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         // WIP: m3u8 link fetched but sometimes not playing
         //Log.i(this.name, "Result => (no extractor) ${url}")
         val sources: MutableList<ExtractorLink> = mutableListOf()

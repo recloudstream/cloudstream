@@ -8,8 +8,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 
 class APIRepository(val api: MainAPI) {
     companion object {
-        var providersActive = HashSet<String>()
-        var typesActive = HashSet<TvType>()
         var dubStatusActive = HashSet<DubStatus>()
 
         val noneApi = object : MainAPI() {

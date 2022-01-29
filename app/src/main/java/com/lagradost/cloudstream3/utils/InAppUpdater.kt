@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -83,7 +84,12 @@ class InAppUpdater {
             val url = "https://api.github.com/repos/LagradOst/CloudStream-3/releases"
             val headers = mapOf("Accept" to "application/vnd.github.v3+json")
             val response =
-                mapper.readValue<List<GithubRelease>>(app.get(url, headers = headers).text)
+                mapper.readValue<List<GithubRelease>>(runBlocking {
+                    app.get(
+                        url,
+                        headers = headers
+                    ).text
+                })
 
             val versionRegex = Regex("""(.*?((\d+)\.(\d+)\.(\d+))\.apk)""")
             val versionRegexLocal = Regex("""(.*?((\d+)\.(\d+)\.(\d+)).*)""")
@@ -139,7 +145,7 @@ class InAppUpdater {
             return Update(false, null, null, null)
         }
 
-        private fun Activity.getPreReleaseUpdate(): Update {
+        private fun Activity.getPreReleaseUpdate(): Update = runBlocking {
             val tagUrl =
                 "https://api.github.com/repos/LagradOst/CloudStream-3/git/ref/tags/pre-release"
             val releaseUrl = "https://api.github.com/repos/LagradOst/CloudStream-3/releases"
@@ -159,7 +165,7 @@ class InAppUpdater {
             val shouldUpdate =
                 (getString(R.string.prerelease_commit_hash) != tagResponse.github_object.sha)
 
-            return if (foundAsset != null) {
+            return@runBlocking if (foundAsset != null) {
                 Update(
                     shouldUpdate,
                     foundAsset.browser_download_url,

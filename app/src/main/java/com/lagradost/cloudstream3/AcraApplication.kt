@@ -5,6 +5,7 @@ import android.content.Context
 import android.widget.Toast
 import com.google.auto.service.AutoService
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -12,6 +13,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import kotlinx.coroutines.runBlocking
 import org.acra.ReportField
 import org.acra.config.CoreConfiguration
 import org.acra.data.CrashReportData
@@ -33,9 +35,11 @@ class CustomReportSender : ReportSender {
         )
 
         thread { // to not run it on main thread
-            normalSafeApiCall {
-                val post = app.post(url, data = data)
-                println("Report response: $post")
+            runBlocking {
+                suspendSafeApiCall {
+                    val post = app.post(url, data = data)
+                    println("Report response: $post")
+                }
             }
         }
 

@@ -51,6 +51,15 @@ fun <T> normalSafeApiCall(apiCall: () -> T): T? {
     }
 }
 
+suspend fun <T> suspendSafeApiCall(apiCall: suspend () -> T): T? {
+    return try {
+        apiCall.invoke()
+    } catch (throwable: Throwable) {
+        logError(throwable)
+        return null
+    }
+}
+
 fun <T> safeFail(throwable: Throwable): Resource<T> {
     val stackTraceMsg = (throwable.localizedMessage ?: "") + "\n\n" + throwable.stackTrace.joinToString(
         separator = "\n"

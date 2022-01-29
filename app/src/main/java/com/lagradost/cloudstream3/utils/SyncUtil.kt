@@ -5,13 +5,12 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.text
 import java.util.concurrent.TimeUnit
 
 object SyncUtil {
     /** first. Mal, second. Anilist,
      * valid sites are: Gogoanime, Twistmoe and 9anime*/
-    fun getIdsFromSlug(slug: String, site : String = "Gogoanime"): Pair<String?, String?>? {
+    suspend fun getIdsFromSlug(slug: String, site : String = "Gogoanime"): Pair<String?, String?>? {
         try {
             //Gogoanime, Twistmoe and 9anime
             val url =

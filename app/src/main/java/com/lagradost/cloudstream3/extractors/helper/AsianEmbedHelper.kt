@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 
 class AsianEmbedHelper {
     companion object {
-        fun getUrls(url: String, callback: (ExtractorLink) -> Unit) {
+        suspend fun getUrls(url: String, callback: (ExtractorLink) -> Unit) {
             if (url.startsWith("https://asianembed.io")) {
                 // Fetch links
                 val doc = app.get(url).document
