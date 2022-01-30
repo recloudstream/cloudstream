@@ -67,6 +67,8 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [tenshi.moe](https://tenshi.moe) 
 - [wcostream.cc](https://wcostream.cc) 
 - [bestdubbedanime.com](https://bestdubbedanime.com) 
+- [doramasyt.com](https://doramasyt.com) 
+- [cinecalidad.lol](https://cinecalidad.lol) 
 - [ihavenotv.com](https://ihavenotv.com) 
 - [vmovee.watch](https://www.vmovee.watch) 
 - [wcostream.com](https://www.wcostream.com) 
