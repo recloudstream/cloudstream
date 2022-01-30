@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class PlayerGeneratorViewModel : ViewModel() {
+    companion object {
+        val TAG = "PlayViewGen"
+    }
+
     private var generator: IGenerator? = null
 
     private val _currentLinks = MutableLiveData<Set<Pair<ExtractorLink?, ExtractorUri?>>>(setOf())
@@ -34,6 +39,7 @@ class PlayerGeneratorViewModel : ViewModel() {
     }
 
     fun loadLinksPrev() {
+        Log.i(TAG, "loadLinksPrev")
         if (generator?.hasPrev() == true) {
             generator?.prev()
             loadLinks()
@@ -41,6 +47,7 @@ class PlayerGeneratorViewModel : ViewModel() {
     }
 
     fun loadLinksNext() {
+        Log.i(TAG, "loadLinksNext")
         if (generator?.hasNext() == true) {
             generator?.next()
             loadLinks()
@@ -52,11 +59,18 @@ class PlayerGeneratorViewModel : ViewModel() {
     }
 
     fun preLoadNextLinks() {
+        Log.i(TAG, "preLoadNextLinks")
         currentJob?.cancel()
         currentJob = viewModelScope.launch {
             if (generator?.hasCache == true && generator?.hasNext() == true) {
                 safeApiCall {
-                    generator?.generateLinks(clearCache = false, isCasting = false, {}, {}, offset = 1)
+                    generator?.generateLinks(
+                        clearCache = false,
+                        isCasting = false,
+                        {},
+                        {},
+                        offset = 1
+                    )
                 }
             }
         }
@@ -69,10 +83,7 @@ class PlayerGeneratorViewModel : ViewModel() {
     fun getNextMeta(): Any? {
         return normalSafeApiCall {
             if (generator?.hasNext() == false) return@normalSafeApiCall null
-            generator?.next()
-            val next = generator?.getCurrent()
-            generator?.prev()
-            next
+            generator?.getCurrent(offset = 1)
         }
     }
 
@@ -91,6 +102,7 @@ class PlayerGeneratorViewModel : ViewModel() {
     private var currentJob: Job? = null
 
     fun loadLinks(clearCache: Boolean = false, isCasting: Boolean = false) {
+        Log.i(TAG, "loadLinks")
         currentJob?.cancel()
         currentJob = viewModelScope.launch {
             val currentLinks = mutableSetOf<Pair<ExtractorLink?, ExtractorUri?>>()

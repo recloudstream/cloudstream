@@ -184,12 +184,12 @@ object APIHolder {
         return realSet
     }
 
-    fun Context.filterProviderByPreferredMedia(): List<MainAPI> {
+    fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired : Boolean = true): List<MainAPI> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val currentPrefMedia =
             settingsManager.getInt(this.getString(R.string.prefer_media_type_key), 0)
         val langs = this.getApiProviderLangSettings()
-        val allApis = apis.filter { langs.contains(it.lang) }.filter { api -> api.hasMainPage }
+        val allApis = apis.filter { langs.contains(it.lang) }.filter { api -> api.hasMainPage || !hasHomePageIsRequired}
         return if (currentPrefMedia < 1) {
             allApis
         } else {

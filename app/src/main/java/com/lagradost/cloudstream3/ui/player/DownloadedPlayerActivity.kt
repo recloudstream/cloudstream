@@ -6,6 +6,7 @@ import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.getUri
 import com.lagradost.cloudstream3.utils.ExtractorUri
@@ -72,8 +73,12 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             "NULL"
         }
 
-        val realUri = AppUtils.getVideoContentUri(this, realPath)
-        val tryUri = realUri ?: uri
+        val tryUri = try {
+            AppUtils.getVideoContentUri(this, realPath) ?: uri
+        } catch (e: Exception) {
+            logError(e)
+            uri
+        }
 
         setContentView(R.layout.empty_layout)
         Log.i(DTAG, "navigating")

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
@@ -12,14 +13,16 @@ import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import kotlinx.android.synthetic.main.homepage_parent.view.*
 
 class ParentItemAdapter(
-    var items: List<HomePageList>,
+    private var items: MutableList<HomePageList>,
     private val clickCallback: (SearchClickCallback) -> Unit,
     private val moreInfoClickCallback: (HomePageList) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): ParentViewHolder {
         val layout = R.layout.homepage_parent
         return ParentViewHolder(
-            LayoutInflater.from(parent.context).inflate(layout, parent, false), clickCallback, moreInfoClickCallback
+            LayoutInflater.from(parent.context).inflate(layout, parent, false),
+            clickCallback,
+            moreInfoClickCallback
         )
     }
 
@@ -33,6 +36,20 @@ class ParentItemAdapter(
 
     override fun getItemCount(): Int {
         return items.size
+    }
+
+    override fun getItemId(position: Int): Long {
+        return items[position].name.hashCode().toLong()
+    }
+
+    fun updateList(newList: List<HomePageList>) {
+        val diffResult = DiffUtil.calculateDiff(
+            SearchDiffCallback(this.items, newList))
+
+        items.clear()
+        items.addAll(newList)
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     class ParentViewHolder
@@ -60,4 +77,17 @@ class ParentItemAdapter(
             }
         }
     }
+}
+
+class SearchDiffCallback(private val oldList: List<HomePageList>, private val newList: List<HomePageList>) :
+    DiffUtil.Callback() {
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition].name == newList[newItemPosition].name
+
+    override fun getOldListSize() = oldList.size
+
+    override fun getNewListSize() = newList.size
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition] == newList[newItemPosition]
 }

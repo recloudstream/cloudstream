@@ -71,6 +71,15 @@ class GeneratorPlayer : FullScreenPlayer() {
         return setSubtitles(null)
     }
 
+    private fun getPos(): Long {
+        val durPos = DataStoreHelper.getViewPos(viewModel.getId()) ?: return 0L
+        if (durPos.duration == 0L) return 0L
+        if (durPos.position * 100L / durPos.duration > 95L) {
+            return 0L
+        }
+        return durPos.position
+    }
+
     private fun loadLink(link: Pair<ExtractorLink?, ExtractorUri?>?, sameEpisode: Boolean) {
         if (link == null) return
 
@@ -93,8 +102,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 url,
                 uri,
                 startPosition = if (sameEpisode) null else {
-                    if (isNextEpisode) 0L else (DataStoreHelper.getViewPos(viewModel.getId())?.position
-                        ?: 0L)
+                    if (isNextEpisode) 0L else getPos()
                 },
                 currentSubs,
             )
@@ -272,11 +280,16 @@ class GeneratorPlayer : FullScreenPlayer() {
                         init = init || if (subtitleIndex <= 0) {
                             noSubtitles()
                         } else {
-                            setSubtitles(currentSubtitles[subtitleIndex - 1])
+                            currentSubtitles.getOrNull(subtitleIndex - 1)?.let {
+                                setSubtitles(it)
+                                true
+                            } ?: false
                         }
                     }
                     if (init) {
-                        loadLink(sortedUrls[sourceIndex], true)
+                        sortedUrls.getOrNull(sourceIndex)?.let {
+                            loadLink(it, true)
+                        }
                     }
                     sourceDialog.dismissSafe(activity)
                 }
@@ -304,11 +317,13 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun nextEpisode() {
         isNextEpisode = true
+        player.release()
         viewModel.loadLinksNext()
     }
 
     override fun prevEpisode() {
         isNextEpisode = true
+        player.release()
         viewModel.loadLinksPrev()
     }
 
@@ -336,6 +351,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun playerPositionChanged(posDur: Pair<Long, Long>) {
         val (position, duration) = posDur
         viewModel.getId()?.let {
+            println("SET VIEW ID: $it ($position/$duration)")
             DataStoreHelper.setViewPos(it, position, duration)
         }
         val percentage = position * 100L / duration

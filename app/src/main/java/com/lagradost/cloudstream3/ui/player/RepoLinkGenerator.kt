@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.util.Log
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
@@ -8,7 +9,14 @@ import com.lagradost.cloudstream3.utils.ExtractorUri
 import kotlin.math.max
 import kotlin.math.min
 
-class RepoLinkGenerator(private val episodes: List<ResultEpisode>, private var currentIndex: Int = 0) : IGenerator {
+class RepoLinkGenerator(
+    private val episodes: List<ResultEpisode>,
+    private var currentIndex: Int = 0
+) : IGenerator {
+    companion object {
+        val TAG = "RepoLink"
+    }
+
     override val hasCache = true
 
     override fun hasNext(): Boolean {
@@ -20,16 +28,19 @@ class RepoLinkGenerator(private val episodes: List<ResultEpisode>, private var c
     }
 
     override fun next() {
+        Log.i(TAG, "next")
         if (hasNext())
             currentIndex++
     }
 
     override fun prev() {
+        Log.i(TAG, "prev")
         if (hasPrev())
             currentIndex--
     }
 
     override fun goto(index: Int) {
+        Log.i(TAG, "goto $index")
         // clamps value
         currentIndex = min(episodes.size - 1, max(0, index))
     }
@@ -38,8 +49,8 @@ class RepoLinkGenerator(private val episodes: List<ResultEpisode>, private var c
         return episodes[currentIndex].id
     }
 
-    override fun getCurrent(): Any {
-        return episodes[currentIndex]
+    override fun getCurrent(offset: Int): Any? {
+        return episodes.getOrNull(currentIndex + offset)
     }
 
     // this is a simple array that is used to instantly load links if they are already loaded
@@ -51,10 +62,10 @@ class RepoLinkGenerator(private val episodes: List<ResultEpisode>, private var c
         isCasting: Boolean,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
-        offset : Int,
+        offset: Int,
     ): Boolean {
         val index = currentIndex
-        val current = episodes[index + offset]
+        val current = episodes.getOrNull(index + offset) ?: return false
 
         val currentLinkCache = if (clearCache) mutableSetOf() else linkCache[index].toMutableSet()
         val currentSubsCache = if (clearCache) mutableSetOf() else subsCache[index].toMutableSet()
@@ -76,7 +87,7 @@ class RepoLinkGenerator(private val episodes: List<ResultEpisode>, private var c
 
         // this stops all execution if links are cached
         // no extra get requests
-        if(currentLinkCache.size > 0) {
+        if (currentLinkCache.size > 0) {
             return true
         }
 
@@ -86,13 +97,13 @@ class RepoLinkGenerator(private val episodes: List<ResultEpisode>, private var c
             isCasting,
             { file ->
                 val correctFile = PlayerSubtitleHelper.getSubtitleData(file)
-                if(!currentSubsUrls.contains(correctFile.url)) {
+                if (!currentSubsUrls.contains(correctFile.url)) {
                     currentSubsUrls.add(correctFile.url)
 
                     // this part makes sure that all names are unique for UX
                     var name = correctFile.name
                     var count = 0
-                    while(currentSubsNames.contains(name)) {
+                    while (currentSubsNames.contains(name)) {
                         count++
                         name = "${correctFile.name} $count"
                     }
@@ -108,7 +119,7 @@ class RepoLinkGenerator(private val episodes: List<ResultEpisode>, private var c
                 }
             },
             { link ->
-                if(!currentLinks.contains(link.url)) {
+                if (!currentLinks.contains(link.url)) {
                     if (!currentLinkCache.contains(link)) {
                         currentLinks.add(link.url)
                         callback(Pair(link, null))

@@ -45,7 +45,7 @@ class VfFilmProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if (data == "") return false
+        if (data.length <= 4) return false
         callback.invoke(
             ExtractorLink(
                 this.name,
@@ -100,14 +100,13 @@ class VfFilmProvider : MainAPI() {
                 number_player += 1
             }
         }
-        if (found == false) {
+        if (!found) {
             number_player = 0
         }
         val i = number_player.toString()
         val trid = Regex("iframe .*trid=(.*?)&").find(document.html())?.groupValues?.get(1)
 
         val data = getDirect("$mainUrl/?trembed=$i&trid=$trid&trtype=1")
-
 
         return MovieLoadResponse(
             title,

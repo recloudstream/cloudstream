@@ -145,7 +145,7 @@ class SearchFragment : Fragment() {
 
         search_filter.setOnClickListener { searchView ->
             searchView?.context?.let { ctx ->
-                val validAPIs = ctx.filterProviderByPreferredMedia()
+                val validAPIs = ctx.filterProviderByPreferredMedia(hasHomePageIsRequired = false)
                 var currentValidApis = listOf<MainAPI>()
                 val currentSelectedApis = if (selectedApis.isEmpty()) validAPIs.map { it.name }
                     .toMutableSet() else selectedApis
@@ -213,7 +213,7 @@ class SearchFragment : Fragment() {
                     fun updateList() {
                         arrayAdapter.clear()
                         currentValidApis = validAPIs.filter { api ->
-                            api.hasMainPage && api.supportedTypes.any {
+                            api.supportedTypes.any {
                                 selectedSearchTypes.contains(it)
                             }
                         }.sortedBy { it.name }
@@ -224,7 +224,7 @@ class SearchFragment : Fragment() {
                             listView?.setItemChecked(index, currentSelectedApis.contains(api))
                         }
 
-                        arrayAdapter.notifyDataSetChanged()
+                        //arrayAdapter.notifyDataSetChanged()
                         arrayAdapter.addAll(names)
                         arrayAdapter.notifyDataSetChanged()
                     }
@@ -373,14 +373,16 @@ class SearchFragment : Fragment() {
                 // https://stackoverflow.com/questions/6866238/concurrent-modification-exception-adding-to-an-arraylist
                 listLock.lock()
                 (search_master_recycler?.adapter as ParentItemAdapter?)?.apply {
-                    items = list.map { ongoing ->
+                    val newItems = list.map { ongoing ->
                         val ongoingList = HomePageList(
                             ongoing.apiName,
                             if (ongoing.data is Resource.Success) ongoing.data.value.filterSearchResponse() else ArrayList()
                         )
                         ongoingList
                     }
-                    notifyDataSetChanged()
+                    updateList(newItems)
+
+                    //notifyDataSetChanged()
                 }
             } catch (e: Exception) {
                 logError(e)
@@ -399,7 +401,7 @@ class SearchFragment : Fragment() {
         //main_search.onActionViewExpanded()*/
 
         val masterAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
-            ParentItemAdapter(listOf(), { callback ->
+            ParentItemAdapter(mutableListOf(), { callback ->
                 SearchHelper.handleSearchClickCallback(activity, callback)
             }, { item ->
                 activity?.loadHomepageList(item)

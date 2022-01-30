@@ -42,8 +42,8 @@ class DownloadFileGenerator(
         return episodes[currentIndex].id
     }
 
-    override fun getCurrent(): Any {
-        return episodes[currentIndex]
+    override fun getCurrent(offset: Int): Any? {
+        return episodes.getOrNull(currentIndex + offset)
     }
 
     override suspend fun generateLinks(

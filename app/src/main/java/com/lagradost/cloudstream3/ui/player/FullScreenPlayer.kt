@@ -352,7 +352,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         activity?.hideSystemUI()
         animateLayoutChanges()
-        player_pause_play.requestFocus()
+        player_pause_play?.requestFocus()
     }
 
     private fun toggleLock() {
