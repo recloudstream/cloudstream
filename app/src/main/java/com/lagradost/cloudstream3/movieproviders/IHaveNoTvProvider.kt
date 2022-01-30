@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.extractors.StreamTape
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import java.net.URLEncoder
 
@@ -18,8 +18,23 @@ class IHaveNoTvProvider : MainAPI() {
         // Uhh, I am too lazy to scrape the "latest documentaries" and "recommended documentaries",
         // so I am just scraping 3 random categories
         val allCategories = listOf(
-            "astronomy", "brain", "creativity", "design", "economics", "environment", "health", "history",
-            "lifehack", "math", "music", "nature", "people", "physics", "science", "technology", "travel"
+            "astronomy",
+            "brain",
+            "creativity",
+            "design",
+            "economics",
+            "environment",
+            "health",
+            "history",
+            "lifehack",
+            "math",
+            "music",
+            "nature",
+            "people",
+            "physics",
+            "science",
+            "technology",
+            "travel"
         )
 
         val categories = allCategories.asSequence().shuffled().take(3)
@@ -82,7 +97,9 @@ class IHaveNoTvProvider : MainAPI() {
                 res.selectFirst("a[href][title]")
             }
             val year =
-                Regex("""•?\s+(\d{4})\s+•""").find(res.selectFirst(".episodeMeta").text())?.destructured?.component1()
+                Regex("""•?\s+(\d{4})\s+•""").find(
+                    res.selectFirst(".episodeMeta").text()
+                )?.destructured?.component1()
                     ?.toIntOrNull()
 
             val title = aTag.attr("title")
@@ -138,7 +155,8 @@ class IHaveNoTvProvider : MainAPI() {
                     ep.selectFirst(".episodeMeta").text()
                 )?.destructured?.component1()?.toIntOrNull()
 
-                categories.addAll(ep.select(".episodeMeta > a[href*=\"/category/\"]").map { it.text().trim() })
+                categories.addAll(
+                    ep.select(".episodeMeta > a[href*=\"/category/\"]").map { it.text().trim() })
 
                 TvSeriesEpisode(
                     epTitle,
@@ -165,7 +183,8 @@ class IHaveNoTvProvider : MainAPI() {
                 description,
                 null,
                 null,
-                soup.selectFirst(".videoDetails").select("a[href*=\"/category/\"]").map { it.text().trim() }
+                soup.selectFirst(".videoDetails").select("a[href*=\"/category/\"]")
+                    .map { it.text().trim() }
             ))
         }
 
@@ -201,9 +220,7 @@ class IHaveNoTvProvider : MainAPI() {
 
         val iframe = soup.selectFirst("#videoWrap iframe")
         if (iframe != null) {
-            if (iframe.attr("src").startsWith("https://streamtape.com")) {
-                StreamTape().getSafeUrl(iframe.attr("src"))?.forEach(callback)
-            }
+            loadExtractor(iframe.attr("src"), null, callback)
         }
         return true
     }

@@ -157,13 +157,10 @@ class DramaSeeProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         var count = 0
-        mapper.readValue<List<String>>(data).forEach { item ->
+        mapper.readValue<List<String>>(data).apmap { item ->
             if (item.isNotEmpty()) {
                 count++
-                var url = item.trim()
-                if (url.startsWith("//")) {
-                    url = "https:$url"
-                }
+                var url = fixUrl(item.trim())
                 //Log.i(this.name, "Result => (url) ${url}")
                 when {
                     url.startsWith("https://asianembed.io") -> {

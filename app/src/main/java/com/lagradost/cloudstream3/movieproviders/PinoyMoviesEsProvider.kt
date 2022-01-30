@@ -136,7 +136,7 @@ class PinoyMoviesEsProvider : MainAPI() {
             it?.attr("data-post") ?: return@mapNotNull null
         }?.filter { it.isNotEmpty() }?.distinct() ?: listOf()
 
-        postlist.forEach { datapost ->
+        postlist.apmap { datapost ->
             //Log.i(this.name, "Result => (datapost) ${datapost}")
             val content = mapOf(
                 Pair("action", "doo_player_ajax"),
@@ -163,7 +163,7 @@ class PinoyMoviesEsProvider : MainAPI() {
     ): Boolean {
         // parse movie servers
         var count = 0
-        mapper.readValue<List<String>>(data).forEach { link ->
+        mapper.readValue<List<String>>(data).apmap { link ->
             count++
             //Log.i(this.name, "Result => (link) $link")
             if (link.startsWith("https://vstreamhub.com")) {

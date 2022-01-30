@@ -215,10 +215,9 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
     ): Boolean {
         val urls = (tryParseJson<Pair<String, String>>(data)?.let { (prefix, server) ->
             val episodesUrl = "$mainUrl/ajax/v2/episode/servers/$server"
-            val episodes = app.get(episodesUrl).text
 
             // Supported streams, they're identical
-            Jsoup.parse(episodes).select("a").mapNotNull { element ->
+            app.get(episodesUrl).document.select("a").mapNotNull { element ->
                 val id = element?.attr("data-id") ?: return@mapNotNull null
                 if (element.select("span")?.text()?.trim()?.isValidServer() == true) {
                     "$prefix.$id".replace("/tv/", "/watch-tv/")
@@ -250,7 +249,6 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 mapped.sources2 to "source 3",
                 mapped.sourcesBackup to "source backup"
             ).forEach { (sources, sourceName) ->
-                println("SOURCE:::: $sourceName $sources")
                 sources?.forEach {
                     it?.toExtractorLink(this, sourceName)?.forEach(callback)
                 }

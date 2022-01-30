@@ -179,7 +179,7 @@ class PinoyMoviePediaProvider : MainAPI() {
     ): Boolean {
         // parse movie servers
         var count = 0
-        mapper.readValue<List<String>>(data).forEach { link ->
+        mapper.readValue<List<String>>(data).apmap { link ->
             count++
             if (link.contains("fembed.com")) {
                 val extractor = FEmbed()

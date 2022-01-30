@@ -69,7 +69,17 @@ class FilmanProvider : MainAPI() {
                 val img = i.selectFirst("> img").attr("src").replace("/thumb/", "/big/")
                 val name = i.selectFirst(".title").text()
                 if (type === TvType.TvSeries) {
-                    returnValue.add(TvSeriesSearchResponse(name, href, this.name, type, img, null, null))
+                    returnValue.add(
+                        TvSeriesSearchResponse(
+                            name,
+                            href,
+                            this.name,
+                            type,
+                            img,
+                            null,
+                            null
+                        )
+                    )
                 } else {
                     returnValue.add(MovieSearchResponse(name, href, this.name, type, img, null))
                 }
@@ -98,15 +108,26 @@ class FilmanProvider : MainAPI() {
             val regex = Regex("""\[s(\d{1,3})e(\d{1,3})]""").find(e)
             if (regex != null) {
                 val eid = regex.groups
-                episodes.add(TvSeriesEpisode(
-                    e.split("]")[1].trim(),
-                    eid[1]?.value?.toInt(),
-                    eid[2]?.value?.toInt(),
-                    episode.attr("href"),
-                ))
+                episodes.add(
+                    TvSeriesEpisode(
+                        e.split("]")[1].trim(),
+                        eid[1]?.value?.toInt(),
+                        eid[2]?.value?.toInt(),
+                        episode.attr("href"),
+                    )
+                )
             }
         }
-        return TvSeriesLoadResponse(title, url, name, TvType.TvSeries, episodes, posterUrl, year, plot)
+        return TvSeriesLoadResponse(
+            title,
+            url,
+            name,
+            TvType.TvSeries,
+            episodes,
+            posterUrl,
+            year,
+            plot
+        )
     }
 
     override suspend fun loadLinks(
@@ -115,20 +136,16 @@ class FilmanProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        if(data.isEmpty()) {
-            return false
-        }
         val document = if (data.startsWith("http"))
-            Jsoup.parse(app.get(data).text).select("#links").first()
-            else Jsoup.parse(data)
+            app.get(data).document.select("#links").first()
+        else Jsoup.parse(data)
 
-        val items = document.select(".link-to-video")
-        for (i in items) {
-            val decoded = base64Decode(i.select("a").attr("data-iframe"))
+        document.select(".link-to-video")?.apmap { item ->
+            val decoded = base64Decode(item.select("a").attr("data-iframe"))
             val link = mapper.readValue<LinkElement>(decoded).src
             loadExtractor(link, null, callback)
         }
-       return true
+        return true
     }
 }
 

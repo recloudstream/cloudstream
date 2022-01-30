@@ -115,13 +115,13 @@ object APIHolder {
     }
 
     fun Context.getApiSettings(): HashSet<String> {
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        //val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
         hashSet.addAll(apis.filter { activeLangs.contains(it.lang) }.map { it.name })
 
-        val set = settingsManager.getStringSet(
+        /*val set = settingsManager.getStringSet(
             this.getString(R.string.search_providers_list_key),
             hashSet
         )?.toHashSet() ?: hashSet
@@ -132,9 +132,10 @@ object APIHolder {
             if (activeLangs.contains(api.lang)) {
                 list.add(name)
             }
-        }
-        if (list.isEmpty()) return hashSet
-        return list
+        }*/
+        //if (list.isEmpty()) return hashSet
+        //return list
+        return hashSet
     }
 
     fun Context.getApiDubstatusSettings(): HashSet<DubStatus> {

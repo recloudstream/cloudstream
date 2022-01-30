@@ -1,10 +1,11 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.extractorApis
 import java.util.*
 
-class CinecalidadProvider:MainAPI() {
+class CinecalidadProvider : MainAPI() {
     override val mainUrl = "https://cinecalidad.lol"
     override val name = "Cinecalidad"
     override val lang = "es"
@@ -15,6 +16,7 @@ class CinecalidadProvider:MainAPI() {
         TvType.Movie,
         TvType.TvSeries,
     )
+
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
@@ -22,18 +24,22 @@ class CinecalidadProvider:MainAPI() {
             Pair("$mainUrl/genero-de-la-pelicula/peliculas-en-calidad-4k/", "4K UHD"),
         )
 
-        items.add(HomePageList("Series",app.get("$mainUrl/ver-serie/").document.select(".item.tvshows").map{
-            val title = it.selectFirst("div.in_title").text()
-            TvSeriesSearchResponse(
-                title,
-                it.selectFirst("a").attr("href"),
-                this.name,
-                TvType.TvSeries,
-                it.selectFirst(".poster.custom img").attr("data-src"),
-                null,
-                null,
-            )
-        }))
+        items.add(
+            HomePageList(
+                "Series",
+                app.get("$mainUrl/ver-serie/").document.select(".item.tvshows").map {
+                    val title = it.selectFirst("div.in_title").text()
+                    TvSeriesSearchResponse(
+                        title,
+                        it.selectFirst("a").attr("href"),
+                        this.name,
+                        TvType.TvSeries,
+                        it.selectFirst(".poster.custom img").attr("data-src"),
+                        null,
+                        null,
+                    )
+                })
+        )
 
         for (i in urls) {
             try {
@@ -100,7 +106,9 @@ class CinecalidadProvider:MainAPI() {
         val soup = app.get(url, timeout = 120).document
 
         val title = soup.selectFirst(".single_left h1").text()
-        val description = soup.selectFirst(".single_left > table:nth-child(3) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2) > p")?.text()?.trim()
+        val description =
+            soup.selectFirst(".single_left > table:nth-child(3) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2) > p")
+                ?.text()?.trim()
         val poster: String? = soup.selectFirst(".alignnone").attr("data-src")
         val episodes = soup.select("div.se-c div.se-a ul.episodios li").map { li ->
             val href = li.selectFirst("a").attr("href")
@@ -114,7 +122,8 @@ class CinecalidadProvider:MainAPI() {
                 epThumb
             )
         }
-        return when (val tvType = if (url.contains("/ver-pelicula/")) TvType.Movie else TvType.TvSeries) {
+        return when (val tvType =
+            if (url.contains("/ver-pelicula/")) TvType.Movie else TvType.TvSeries) {
             TvType.TvSeries -> {
                 TvSeriesLoadResponse(
                     title,
@@ -157,9 +166,10 @@ class CinecalidadProvider:MainAPI() {
             val urlserver = app.get(url).text
             val serverRegex = Regex("(https:.*?\\\")")
             val videos = serverRegex.findAll(urlserver).map {
-                it.value.replace("\\/", "/").replace("\"","")
+                it.value.replace("\\/", "/").replace("\"", "")
             }.toList()
-            val serversRegex = Regex("(https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&\\/\\/=]*))")
+            val serversRegex =
+                Regex("(https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&\\/\\/=]*))")
             val links = serversRegex.findAll(videos.toString()).map { it.value }.toList()
             for (link in links) {
                 for (extractor in extractorApis) {

@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import android.util.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -192,7 +191,7 @@ class PinoyHDXyzProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         var count = 0
-        mapper.readValue<List<String>>(data).forEach { item ->
+        mapper.readValue<List<String>>(data).apmap { item ->
             if (item.isNotEmpty()) {
                 val url = item.trim()
                 loadExtractor(url, mainUrl, callback)

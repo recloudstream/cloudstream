@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import android.util.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.*
@@ -9,7 +8,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
-import kotlin.Exception
 
 class KdramaHoodProvider : MainAPI() {
     override val mainUrl = "https://kdramahood.com"
@@ -131,13 +129,10 @@ class KdramaHoodProvider : MainAPI() {
                 if (!epLinksContent.isNullOrEmpty()) {
                     //Log.i(this.name, "Result => (epLinksContent) ${Jsoup.parse(epLinksContent)?.select("div")}")
                     Jsoup.parse(epLinksContent)?.select("div")?.forEach { em ->
-                        var href = em?.html()?.trim()?.removePrefix("'") ?: return@forEach
-                        if (href.startsWith("//")) {
-                            href = "https:$href"
-                        }
+                        val href = em?.html()?.trim()?.removePrefix("'") ?: return@forEach
                         //Log.i(this.name, "Result => (ep#$count link) $href")
                         if (href.isNotEmpty()) {
-                            listOfLinks.add(href)
+                            listOfLinks.add(fixUrl(href))
                         }
                     }
                     /* Doesn't get all links for some reasons
@@ -188,7 +183,7 @@ class KdramaHoodProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         var count = 0
-        mapper.readValue<List<String>>(data).forEach { item ->
+        mapper.readValue<List<String>>(data).apmap { item ->
             if (item.isNotEmpty()) {
                 count++
                 var url = item.trim()

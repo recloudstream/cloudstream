@@ -22,6 +22,7 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
+import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
@@ -92,6 +93,22 @@ class SearchFragment : Fragment() {
 
     var selectedSearchTypes = mutableListOf<TvType>()
     var selectedApis = mutableSetOf<String>()
+
+    fun search(query: String?) {
+        if (query == null) return
+        context?.getApiSettings()?.let { settings ->
+            searchViewModel.searchAndCancel(
+                query = query,
+                providersActive = selectedApis.filter { name ->
+                    settings.contains(name) && getApiFromName(name).supportedTypes.any {
+                        selectedSearchTypes.contains(
+                            it
+                        )
+                    }
+                }.toSet()
+            )
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -274,6 +291,7 @@ class SearchFragment : Fragment() {
 
                     button?.isSelected = buttonContains()
                     button?.setOnClickListener {
+                        val last = selectedSearchTypes.toSet()
                         selectedSearchTypes.clear()
                         selectedSearchTypes.addAll(validTypes)
                         for ((otherButton, _) in pairList) {
@@ -281,6 +299,8 @@ class SearchFragment : Fragment() {
                         }
                         it?.context?.setKey(SEARCH_PREF_TAGS, selectedSearchTypes)
                         it?.isSelected = true
+                        if (last != selectedSearchTypes.toSet()) // if you click the same button again the it does nothing
+                            search(main_search?.query?.toString())
                     }
 
                     button?.setOnLongClickListener {
@@ -292,6 +312,7 @@ class SearchFragment : Fragment() {
                             selectedSearchTypes.removeAll(validTypes)
                         }
                         it?.context?.setKey(SEARCH_PREF_TAGS, selectedSearchTypes)
+                        search(main_search?.query?.toString())
                         return@setOnLongClickListener true
                     }
                 }
@@ -305,12 +326,7 @@ class SearchFragment : Fragment() {
 
         main_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                searchViewModel.searchAndCancel(
-                    query = query,
-                    providersActive = selectedApis.filter { name ->
-                        getApiFromName(name).supportedTypes.any { selectedSearchTypes.contains(it) }
-                    }.toSet()
-                )
+                search(query)
 
                 main_search?.let {
                     hideKeyboard(it)

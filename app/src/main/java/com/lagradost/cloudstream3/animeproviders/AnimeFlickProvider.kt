@@ -95,9 +95,7 @@ class AnimeFlickProvider : MainAPI() {
             var alreadyAdded = false
             for (extractor in extractorApis) {
                 if (link.startsWith(extractor.mainUrl)) {
-                    extractor.getSafeUrl(link, data)?.forEach {
-                        callback(it)
-                    }
+                    extractor.getSafeUrl(link, data)?.forEach(callback)
                     alreadyAdded = true
                     break
                 }

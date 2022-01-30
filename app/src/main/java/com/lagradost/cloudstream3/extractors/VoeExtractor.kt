@@ -1,9 +1,8 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mapper
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -29,14 +28,14 @@ open class VoeExtractor : ExtractorApi() {
                 .replace("0,", "0")
                 .trim()
             //Log.i(this.name, "Result => (src) ${src}")
-            mapper.readValue<ResponseLinks?>(src)?.let { voelink ->
+            parseJson<ResponseLinks?>(src)?.let { voelink ->
                 //Log.i(this.name, "Result => (voelink) ${voelink}")
                 val linkUrl = voelink.url
                 val linkLabel = voelink.label?.toString() ?: ""
                 if (!linkUrl.isNullOrEmpty()) {
                     extractedLinksList.add(
                         ExtractorLink(
-                            name = "Voe ${linkLabel}",
+                            name = "Voe $linkLabel",
                             source = this.name,
                             url = linkUrl,
                             quality = getQualityFromName(linkLabel),

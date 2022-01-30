@@ -79,7 +79,7 @@ fun getAndUnpack(string: String): String {
 /**
  * Tries to load the appropriate extractor based on link, returns true if any extractor is loaded.
  * */
-suspend fun loadExtractor(url: String, referer: String?, callback: (ExtractorLink) -> Unit) : Boolean {
+suspend fun loadExtractor(url: String, referer: String? = null, callback: (ExtractorLink) -> Unit) : Boolean {
     for (extractor in extractorApis) {
         if (url.startsWith(extractor.mainUrl)) {
             extractor.getSafeUrl(url, referer)?.forEach(callback)

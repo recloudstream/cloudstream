@@ -77,36 +77,40 @@ open class VidstreamProviderTemplate : MainAPI() {
         val description = soup.selectFirst(".post-entry")?.text()?.trim()
         var poster: String? = null
 
-        val episodes = soup.select(".listing.items.lists > .video-block").withIndex().map { (_, li) ->
-            val epTitle = if (li.selectFirst(".name") != null)
-                if (li.selectFirst(".name").text().contains("Episode"))
-                    "Episode " + li.selectFirst(".name").text().split("Episode")[1].trim()
-                else
-                    li.selectFirst(".name").text()
-            else ""
-            val epThumb = li.selectFirst("img")?.attr("src")
-            val epDate = li.selectFirst(".meta > .date").text()
+        val episodes =
+            soup.select(".listing.items.lists > .video-block").withIndex().map { (_, li) ->
+                val epTitle = if (li.selectFirst(".name") != null)
+                    if (li.selectFirst(".name").text().contains("Episode"))
+                        "Episode " + li.selectFirst(".name").text().split("Episode")[1].trim()
+                    else
+                        li.selectFirst(".name").text()
+                else ""
+                val epThumb = li.selectFirst("img")?.attr("src")
+                val epDate = li.selectFirst(".meta > .date").text()
 
-            if (poster == null) {
-                poster = li.selectFirst("img")?.attr("onerror")?.split("=")?.get(1)?.replace(Regex("[';]"), "")
-            }
+                if (poster == null) {
+                    poster = li.selectFirst("img")?.attr("onerror")?.split("=")?.get(1)
+                        ?.replace(Regex("[';]"), "")
+                }
 
-            val epNum = Regex("""Episode (\d+)""").find(epTitle)?.destructured?.component1()?.toIntOrNull()
+                val epNum = Regex("""Episode (\d+)""").find(epTitle)?.destructured?.component1()
+                    ?.toIntOrNull()
 
-            TvSeriesEpisode(
-                epTitle,
-                null,
-                epNum,
-                fixUrl(li.selectFirst("a").attr("href")),
-                epThumb,
-                epDate
-            )
-        }.reversed()
+                TvSeriesEpisode(
+                    epTitle,
+                    null,
+                    epNum,
+                    fixUrl(li.selectFirst("a").attr("href")),
+                    epThumb,
+                    epDate
+                )
+            }.reversed()
 
         val year = episodes.first().date?.split("-")?.get(0)?.toIntOrNull()
 
         // Make sure to get the type right to display the correct UI.
-        val tvType = if (episodes.size == 1 && episodes[0].name == title) TvType.Movie else TvType.TvSeries
+        val tvType =
+            if (episodes.size == 1 && episodes[0].name == title) TvType.Movie else TvType.TvSeries
 
         return when (tvType) {
             TvType.TvSeries -> {
@@ -157,7 +161,8 @@ open class VidstreamProviderTemplate : MainAPI() {
                 val elements = inner.select(".video-block").map {
                     val link = fixUrl(it.select("a").attr("href"))
                     val image = it.select(".picture > img").attr("src")
-                    val name = it.select("div.name").text().trim().replace(Regex("""[Ee]pisode \d+"""), "")
+                    val name =
+                        it.select("div.name").text().trim().replace(Regex("""[Ee]pisode \d+"""), "")
                     val isSeries = (name.contains("Season") || name.contains("Episode"))
 
                     if (isSeries) {
@@ -188,9 +193,7 @@ open class VidstreamProviderTemplate : MainAPI() {
                         title, elements
                     )
                 )
-
             }
-
         }
         return HomePageResponse(homePageList)
     }
@@ -206,7 +209,8 @@ open class VidstreamProviderTemplate : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         // "?: return" is a very useful statement which returns if the iframe link isn't found.
-        val iframeLink = Jsoup.parse(app.get(data).text).selectFirst("iframe")?.attr("src") ?: return false
+        val iframeLink =
+            Jsoup.parse(app.get(data).text).selectFirst("iframe")?.attr("src") ?: return false
 
         // In this case the video player is a vidstream clone and can be handled by the vidstream extractor.
         // This case is a both unorthodox and you normally do not call extractors as they detect the url returned and does the rest.
@@ -228,13 +232,15 @@ open class VidstreamProviderTemplate : MainAPI() {
                 null
             }
         }
-        servers.forEach {
+        servers.apmap {
             // When checking strings make sure to make them lowercase and trimmed because edgecases like "beta server " wouldn't work otherwise.
-            if (it.first.trim().equals( "beta server", ignoreCase = true)) {
+            if (it.first.trim().equals("beta server", ignoreCase = true)) {
                 // Group 1: link, Group 2: Label
                 // Regex can be used to effectively parse small amounts of json without bothering with writing a json class.
-                val sourceRegex = Regex("""sources:[\W\w]*?file:\s*["'](.*?)["'][\W\w]*?label:\s*["'](.*?)["']""")
-                val trackRegex = Regex("""tracks:[\W\w]*?file:\s*["'](.*?)["'][\W\w]*?label:\s*["'](.*?)["']""")
+                val sourceRegex =
+                    Regex("""sources:[\W\w]*?file:\s*["'](.*?)["'][\W\w]*?label:\s*["'](.*?)["']""")
+                val trackRegex =
+                    Regex("""tracks:[\W\w]*?file:\s*["'](.*?)["'][\W\w]*?label:\s*["'](.*?)["']""")
 
                 // Having a referer is often required. It's a basic security check most providers have.
                 // Try to replicate what your browser does.

@@ -2,8 +2,11 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.getPostForm
+import com.lagradost.cloudstream3.utils.loadExtractor
 import okio.Buffer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -211,14 +214,7 @@ class AllMoviesForYouProvider : MainAPI() {
                         }
                     }
                 } else if (requestUrl.startsWith("https://dood")) {
-                    for (extractor in extractorApis) {
-                        if (requestUrl.startsWith(extractor.mainUrl)) {
-                            extractor.getSafeUrl(requestUrl)?.forEach { link ->
-                                callback(link)
-                            }
-                            break
-                        }
-                    }
+                    loadExtractor(requestUrl, null, callback)
                 } else {
                     callback(
                         ExtractorLink(

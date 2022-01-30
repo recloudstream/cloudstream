@@ -231,7 +231,7 @@ open class PelisplusProviderTemplate : MainAPI() {
                 null
             }
         }
-        servers.forEach {
+        servers.apmap {
             // When checking strings make sure to make them lowercase and trimmed because edgecases like "beta server " wouldn't work otherwise.
             if (it.first.trim().equals("beta server", ignoreCase = true)) {
                 // Group 1: link, Group 2: Label

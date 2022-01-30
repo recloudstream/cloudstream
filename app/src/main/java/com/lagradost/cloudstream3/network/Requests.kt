@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.network
 
 import android.content.Context
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.R
@@ -286,6 +287,7 @@ open class Requests {
         timeout: Long = 0L,
         interceptor: Interceptor? = null,
     ): AppResponse {
+        Log.i("GET", url)
         val client = baseClient
             .newBuilder()
             .followRedirects(allowRedirects)
@@ -315,6 +317,7 @@ open class Requests {
         cacheUnit: TimeUnit = DEFAULT_TIME_UNIT,
         timeout: Long = 0L,
     ): AppResponse {
+        Log.i("POST", url)
         val client = baseClient
             .newBuilder()
             .followRedirects(allowRedirects)
@@ -339,6 +342,7 @@ open class Requests {
         cacheUnit: TimeUnit = DEFAULT_TIME_UNIT,
         timeout: Long = 0L
     ): AppResponse {
+        Log.i("PUT", url)
         val client = baseClient
             .newBuilder()
             .followRedirects(allowRedirects)

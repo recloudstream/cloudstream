@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
@@ -43,8 +44,17 @@ fun <A, B> List<A>.apmap(f: suspend (A) -> B): List<B> = runBlocking {
     exec.awaitTermination(1, TimeUnit.DAYS)
 }*/
 
+// built in try catch
 fun <R> argamap(
     vararg transforms: suspend () -> R,
 ) = runBlocking {
-    transforms.map { async { it.invoke() } }.map { it.await() }
+    transforms.map {
+        async {
+            try {
+                it.invoke()
+            } catch (e: Exception) {
+                logError(e)
+            }
+        }
+    }.map { it.await() }
 }

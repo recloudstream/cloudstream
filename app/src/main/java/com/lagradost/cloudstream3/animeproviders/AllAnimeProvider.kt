@@ -258,7 +258,7 @@ class AllAnimeProvider : MainAPI() {
 
         val sources = Regex("""sourceUrl[:=]"(.+?)"""").findAll(html).toList()
             .map { URLDecoder.decode(it.destructured.component1().sanitize(), "UTF-8") }
-        sources.forEach {
+        sources.apmap {
             var link = it
             if (URI(link).isAbsolute || link.startsWith("//")) {
                 if (link.startsWith("//")) link = "https:$it"

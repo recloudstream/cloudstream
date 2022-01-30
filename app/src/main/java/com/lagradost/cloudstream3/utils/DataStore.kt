@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
+
 //const val WATCH_HEADER_CACHE = "watch_header_cache"
 const val DOWNLOAD_EPISODE_CACHE = "download_episode_cache"
 const val VIDEO_PLAYER_BRIGHTNESS = "video_player_alpha_key"
