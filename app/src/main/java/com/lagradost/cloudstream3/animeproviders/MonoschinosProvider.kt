@@ -11,7 +11,7 @@ import kotlin.collections.ArrayList
 class MonoschinosProvider : MainAPI() {
     companion object {
         fun getType(t: String): TvType {
-            return if (t.contains("OVA") || t.contains("Especial")) TvType.ONA
+            return if (t.contains("OVA") || t.contains("Especial")) TvType.OVA
             else if (t.contains("Pelicula")) TvType.AnimeMovie
             else TvType.Anime
         }
@@ -25,7 +25,7 @@ class MonoschinosProvider : MainAPI() {
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.AnimeMovie,
-        TvType.ONA,
+        TvType.OVA,
         TvType.Anime,
     )
 

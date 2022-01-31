@@ -12,7 +12,7 @@ import java.util.*
 class WcoProvider : MainAPI() {
     companion object {
         fun getType(t: String): TvType {
-            return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
+            return if (t.contains("OVA") || t.contains("Special")) TvType.OVA
             else if (t.contains("Movie")) TvType.AnimeMovie
             else TvType.Anime
         }
@@ -26,7 +26,7 @@ class WcoProvider : MainAPI() {
     override val supportedTypes = setOf(
         TvType.AnimeMovie,
         TvType.Anime,
-        TvType.ONA
+        TvType.OVA
     )
 
     override suspend fun getMainPage(): HomePageResponse {

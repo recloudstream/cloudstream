@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.cloudstream3.mvvm.logError
 import java.util.regex.Pattern
 import kotlin.math.pow
 
@@ -57,7 +58,7 @@ class JsUnpacker(packedJS: String?) {
                     val word = m.group(0)
                     val x = unbase.unbase(word)
                     var value: String? = null
-                    if (x < symtab.size) {
+                    if (x < symtab.size && x >= 0) {
                         value = symtab[x]
                     }
                     if (value != null && value.isNotEmpty()) {
@@ -68,7 +69,7 @@ class JsUnpacker(packedJS: String?) {
                 return decoded.toString()
             }
         } catch (e: Exception) {
-//            logError(e)
+            logError(e)
         }
         return null
     }

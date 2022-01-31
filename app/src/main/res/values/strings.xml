@@ -258,12 +258,14 @@
     <string name="anime">Anime</string>
     <string name="torrent">Torrents</string>
     <string name="documentaries">Documentaries</string>
+    <string name="ova">OVA</string>
 
     <!--singular-->
     <string name="movies_singular">Movie</string>
     <string name="tv_series_singular">Series</string>
     <string name="cartoons_singular">Cartoon</string>
     <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentary</string>
 

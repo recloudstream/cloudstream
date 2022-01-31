@@ -192,7 +192,7 @@ class ResultFragment : Fragment() {
             updateUIListener?.invoke()
         }
 
-        private var updateUIListener : (() -> Unit)? = null
+        private var updateUIListener: (() -> Unit)? = null
     }
 
     private var currentLoadingCount =
@@ -517,7 +517,7 @@ class ResultFragment : Fragment() {
                     TvType.Movie -> "Movies"
                     TvType.AnimeMovie -> "Movies"
                     TvType.TvSeries -> "TVSeries/$titleName"
-                    TvType.ONA -> "ONA"
+                    TvType.OVA -> "OVA"
                     TvType.Cartoon -> "Cartoons/$titleName"
                     TvType.Torrent -> "Torrent"
                     TvType.Documentary -> "Documentaries"
@@ -771,7 +771,7 @@ class ResultFragment : Fragment() {
                             val i = Intent(ACTION_VIEW)
                             i.data = Uri.parse(link.url)
                             startActivity(i)
-                        } catch (e : Exception) {
+                        } catch (e: Exception) {
                             logError(e)
                         }
                     }
@@ -1338,6 +1338,22 @@ class ResultFragment : Fragment() {
                         } else {
                             lateFixDownloadButton(false)
                         }
+
+                        context?.getString(
+                            when (d.type) {
+                                TvType.TvSeries -> R.string.tv_series_singular
+                                TvType.Anime -> R.string.anime_singular
+                                TvType.OVA -> R.string.ova_singular
+                                TvType.AnimeMovie -> R.string.movies_singular
+                                TvType.Cartoon -> R.string.cartoons_singular
+                                TvType.Documentary -> R.string.documentaries_singular
+                                TvType.Movie -> R.string.movies_singular
+                                TvType.Torrent -> R.string.torrent_singular
+                            }
+                        )?.let {
+                            result_meta_type?.text = it
+                        }
+
 
                         when (d) {
                             is AnimeLoadResponse -> {

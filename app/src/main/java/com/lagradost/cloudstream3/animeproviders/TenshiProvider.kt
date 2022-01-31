@@ -20,7 +20,7 @@ class TenshiProvider : MainAPI() {
         //var cookie: Map<String, String> = mapOf()
 
         fun getType(t: String): TvType {
-            return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
+            return if (t.contains("OVA") || t.contains("Special")) TvType.OVA
             else if (t.contains("Movie")) TvType.AnimeMovie
             else TvType.Anime
         }
@@ -30,7 +30,7 @@ class TenshiProvider : MainAPI() {
     override val name = "Tenshi.moe"
     override val hasQuickSearch = false
     override val hasMainPage = true
-    override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
+    override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.OVA)
     private var ddosGuardKiller = DdosGuardKiller(true)
 
     /*private fun loadToken(): Boolean {

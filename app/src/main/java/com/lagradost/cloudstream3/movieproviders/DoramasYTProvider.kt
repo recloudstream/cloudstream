@@ -11,7 +11,7 @@ import kotlin.collections.ArrayList
 class DoramasYTProvider : MainAPI() {
     companion object {
         fun getType(t: String): TvType {
-            return if (t.contains("OVA") || t.contains("Especial")) TvType.ONA
+            return if (t.contains("OVA") || t.contains("Especial")) TvType.OVA
             else if (t.contains("Pelicula")) TvType.Movie
             else TvType.TvSeries
         }

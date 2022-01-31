@@ -146,7 +146,7 @@ class HomeFragment : Fragment() {
             movies: MaterialButton?
         ): List<Pair<MaterialButton?, List<TvType>>> {
             return listOf(
-                Pair(anime, listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie)),
+                Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
                 Pair(cartoons, listOf(TvType.Cartoon)),
                 Pair(tvs, listOf(TvType.TvSeries)),
                 Pair(docs, listOf(TvType.Documentary)),
@@ -376,7 +376,7 @@ class HomeFragment : Fragment() {
                     Pair(R.string.tv_series, listOf(TvType.TvSeries)),
                     Pair(R.string.documentaries, listOf(TvType.Documentary)),
                     Pair(R.string.cartoons, listOf(TvType.Cartoon)),
-                    Pair(R.string.anime, listOf(TvType.Anime, TvType.ONA, TvType.AnimeMovie)),
+                    Pair(R.string.anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
                     Pair(R.string.torrent, listOf(TvType.Torrent)),
                 ).filter { item -> currentApi.supportedTypes.any { type -> item.second.contains(type) } }
                 home_provider_meta_info?.text =

@@ -12,7 +12,7 @@ class KawaiifuProvider : MainAPI() {
     override val hasQuickSearch = false
     override val hasMainPage = true
 
-    override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
+    override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie)
 
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()

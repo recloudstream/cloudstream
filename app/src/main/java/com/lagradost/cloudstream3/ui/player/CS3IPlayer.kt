@@ -221,10 +221,11 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    private fun releasePlayer() {
+    private fun releasePlayer(saveTime: Boolean = true) {
         Log.i(TAG, "releasePlayer")
 
-        updatedTime()
+        if (saveTime)
+            updatedTime()
 
         exoPlayer?.release()
         simpleCache?.release()
@@ -558,7 +559,8 @@ class CS3IPlayer : IPlayer {
                         val invalid = exoPlayer?.duration?.let { duration ->
                             duration < 20000L
                         } ?: false
-                        if(invalid) {
+                        if (invalid) {
+                            releasePlayer(saveTime = false)
                             playerError?.invoke(InvalidFileException("Too short playback"))
                             return
                         }

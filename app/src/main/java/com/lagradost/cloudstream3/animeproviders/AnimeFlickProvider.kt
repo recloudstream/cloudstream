@@ -10,7 +10,7 @@ import java.util.*
 class AnimeFlickProvider : MainAPI() {
     companion object {
         fun getType(t: String): TvType {
-            return if (t.contains("OVA") || t.contains("Special")) TvType.ONA
+            return if (t.contains("OVA") || t.contains("Special")) TvType.OVA
             else if (t.contains("Movie")) TvType.AnimeMovie
             else TvType.Anime
         }
@@ -24,7 +24,7 @@ class AnimeFlickProvider : MainAPI() {
     override val supportedTypes = setOf(
         TvType.AnimeMovie,
         TvType.Anime,
-        TvType.ONA
+        TvType.OVA
     )
 
     override suspend fun search(query: String): ArrayList<SearchResponse> {

@@ -321,16 +321,16 @@
 
                             <TextView
                                     android:maxLines="2"
-                                    android:layout_marginBottom="10dp"
+                                    android:layout_marginBottom="5dp"
                                     android:id="@+id/result_title"
-                                    tools:text="The Perfect Run The Perfect Run The Perfect Run"
+                                    tools:text="The Perfect Run The Perfect Run"
                                     android:textSize="20sp"
                                     android:textStyle="bold"
                                     android:textColor="?attr/textColor"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
 
-                            <LinearLayout
+                            <com.lagradost.cloudstream3.widget.FlowLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
 
@@ -339,8 +339,24 @@
                                         style="@style/SmallBlackButton"
                                         android:layout_gravity="center_vertical"
                                         tools:text="Gogoanime" />
-
                                 <TextView
+                                        android:id="@+id/result_meta_type"
+                                        android:paddingStart="5dp"
+                                        android:paddingEnd="5dp"
+                                        android:minHeight="24dp"
+                                        android:gravity="center"
+
+                                        tools:text="Movie"
+                                        android:layout_gravity="center_vertical"
+                                        android:textColor="?attr/textColor"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+                                <TextView
+                                        android:paddingStart="5dp"
+                                        android:paddingEnd="5dp"
+                                        android:minHeight="24dp"
+                                        android:gravity="center"
+
                                         android:id="@+id/result_meta_year"
                                         android:layout_marginStart="10dp"
                                         tools:text="2021"
@@ -351,7 +367,10 @@
 
                                 <TextView
                                         android:id="@+id/result_meta_rating"
-                                        android:layout_marginStart="10dp"
+                                        android:paddingStart="5dp"
+                                        android:paddingEnd="5dp"
+                                        android:minHeight="24dp"
+                                        android:gravity="center"
 
                                         tools:text="Rated: 8.5/10.0"
                                         android:layout_gravity="center_vertical"
@@ -360,15 +379,18 @@
                                         android:layout_height="wrap_content" />
 
                                 <TextView
+                                        android:paddingStart="5dp"
+                                        android:paddingEnd="5dp"
+                                        android:minHeight="24dp"
+                                        android:gravity="center"
                                         android:id="@+id/result_meta_duration"
-                                        android:layout_marginStart="10dp"
 
                                         tools:text="121min"
                                         android:layout_gravity="center_vertical"
                                         android:textColor="?attr/textColor"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content" />
-                            </LinearLayout>
+                            </com.lagradost.cloudstream3.widget.FlowLayout>
 
                             <FrameLayout
                                     android:layout_width="match_parent"

@@ -74,7 +74,8 @@ object APIHolder {
         DramaSeeProvider(),
         WatchAsianProvider(),
         KdramaHoodProvider(),
-        AkwamProvider()
+        AkwamProvider(),
+        AnimePaheProvider(),
     )
 
     val restrictedApis = arrayListOf(
@@ -194,7 +195,7 @@ object APIHolder {
             allApis
         } else {
             // Filter API depending on preferred media type
-            val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.ONA)
+            val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.OVA)
             val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon)
             val mediaTypeList = if (currentPrefMedia == 1) listEnumMovieTv else listEnumAnime
 
@@ -232,7 +233,7 @@ abstract class MainAPI {
         TvType.TvSeries,
         TvType.Cartoon,
         TvType.Anime,
-        TvType.ONA,
+        TvType.OVA,
     )
 
     open val vpnStatus = VPNStatus.None
@@ -386,7 +387,7 @@ enum class TvType {
     TvSeries,
     Cartoon,
     Anime,
-    ONA,
+    OVA,
     Torrent,
     Documentary,
 }
@@ -398,7 +399,7 @@ fun TvType.isMovieType(): Boolean {
 
 // returns if the type has an anime opening
 fun TvType.isAnimeOp(): Boolean {
-    return this == TvType.Anime || this == TvType.ONA
+    return this == TvType.Anime || this == TvType.OVA
 }
 
 data class SubtitleFile(val lang: String, val url: String)
@@ -478,7 +479,7 @@ interface LoadResponse {
     val posterUrl: String?
     val year: Int?
     val plot: String?
-    val rating: Int? // 0-100
+    val rating: Int? // 1-1000
     val tags: List<String>?
     var duration: Int? // in minutes
     val trailerUrl: String?
@@ -492,7 +493,7 @@ fun LoadResponse?.isEpisodeBased(): Boolean {
 
 fun LoadResponse?.isAnimeBased(): Boolean {
     if (this == null) return false
-    return (this.type == TvType.Anime || this.type == TvType.ONA) // && (this is AnimeLoadResponse)
+    return (this.type == TvType.Anime || this.type == TvType.OVA) // && (this is AnimeLoadResponse)
 }
 
 fun TvType?.isEpisodeBased(): Boolean {

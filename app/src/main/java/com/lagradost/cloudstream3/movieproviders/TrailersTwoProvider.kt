@@ -119,9 +119,9 @@ class TrailersTwoProvider : TmdbProvider() {
     override val supportedTypes = setOf(
         TvType.Movie,
         TvType.TvSeries,
-        TvType.AnimeMovie,
-        TvType.Anime,
-        TvType.Cartoon
+        //TvType.AnimeMovie,
+        //TvType.Anime,
+        //TvType.Cartoon
     )
 
     override suspend fun loadLinks(
