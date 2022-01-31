@@ -2,7 +2,7 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.extractors.*
+import com.lagradost.cloudstream3.extractors.XStreamCdn
 import com.lagradost.cloudstream3.extractors.helper.AsianEmbedHelper
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -144,7 +144,7 @@ class WatchAsianProvider : MainAPI() {
         //If there's only 1 episode, consider it a movie.
         if (episodeList.size == 1) {
             //Clean title
-            title = title.removeSuffix("Episode 1")
+            title = title.trim().removeSuffix("Episode 1")
             val streamlink = getServerLinks(episodeList[0].data)
             //Log.i(this.name, "Result => (streamlink) $streamlink")
             return MovieLoadResponse(title, url, this.name, TvType.Movie, streamlink, poster, year, descript, null, null)
@@ -178,11 +178,20 @@ class WatchAsianProvider : MainAPI() {
             count++
             val url = fixUrl(item.trim())
             //Log.i(this.name, "Result => (url) $url")
-            if (url.startsWith("https://asianembed.io")) {
-                // Fetch links
-                AsianEmbedHelper.getUrls(url, callback)
-            } else {
-                loadExtractor(url, mainUrl, callback)
+            when {
+                url.startsWith("https://asianembed.io") || url.startsWith("https://asianload.io") -> {
+                    AsianEmbedHelper.getUrls(url, callback)
+                }
+                url.startsWith("https://embedsito.com") -> {
+                    val extractor = XStreamCdn()
+                    extractor.domainUrl = "embedsito.com"
+                    extractor.getSafeUrl(url)?.apmap { link ->
+                        callback.invoke(link)
+                    }
+                }
+                else -> {
+                    loadExtractor(url, mainUrl, callback)
+                }
             }
         }
         return count > 0

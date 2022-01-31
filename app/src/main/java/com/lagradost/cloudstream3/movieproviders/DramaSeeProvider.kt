@@ -96,7 +96,7 @@ class DramaSeeProvider : MainAPI() {
 
         // Episodes Links
         val episodeList = ArrayList<TvSeriesEpisode>()
-        body?.select("ul.episodes > li.episode-item")?.forEach { ep ->
+        body?.select("ul.episodes > li")?.forEach { ep ->
             val innerA = ep.select("a") ?: return@forEach
             val count = innerA.select("span.episode")?.text()?.toIntOrNull() ?: 0
             val epLink = fixUrlNull(innerA.attr("href")) ?: return@forEach
@@ -110,13 +110,13 @@ class DramaSeeProvider : MainAPI() {
                     val innerPage = app.get(fixUrl(ajaxUrl), referer = epLink).document
                     val listOfLinks = mutableListOf<String>()
                     innerPage.select("div.player.active > main > div")?.forEach { em ->
-                        val href = em.attr("src") ?: ""
+                        val href = fixUrlNull(em.attr("src")) ?: ""
                         if (href.isNotEmpty()) {
                             listOfLinks.add(href)
                         }
                     }
 
-                    //Log.i(this.name, "Result => (listOfLinks) ${listOfLinks}")
+                    //Log.i(this.name, "Result => (listOfLinks) ${listOfLinks.toJson()}")
                     episodeList.add(
                         TvSeriesEpisode(
                             name = null,
@@ -160,18 +160,16 @@ class DramaSeeProvider : MainAPI() {
         mapper.readValue<List<String>>(data).apmap { item ->
             if (item.isNotEmpty()) {
                 count++
-                var url = fixUrl(item.trim())
+                val url = fixUrl(item.trim())
                 //Log.i(this.name, "Result => (url) ${url}")
                 when {
-                    url.startsWith("https://asianembed.io") -> {
+                    url.startsWith("https://asianembed.io") || url.startsWith("https://asianload.io") -> {
                         AsianEmbedHelper.getUrls(url, callback)
                     }
                     url.startsWith("https://embedsito.com") -> {
                         val extractor = XStreamCdn()
                         extractor.domainUrl = "embedsito.com"
-                        extractor.getUrl(url).forEach { link ->
-                            callback.invoke(link)
-                        }
+                        extractor.getSafeUrl(url)?.forEach(callback)
                     }
                     else -> {
                         loadExtractor(url, mainUrl, callback)

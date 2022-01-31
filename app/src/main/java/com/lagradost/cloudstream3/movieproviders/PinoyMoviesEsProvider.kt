@@ -39,10 +39,17 @@ class PinoyMoviesEsProvider : MainAPI() {
                     }
                     // Fetch details
                     val link = urlTitle?.select("a")?.attr("href") ?: ""
-                    val name = urlTitle?.text() ?: ""
-                    val year = urlTitle?.select("span")?.text()?.toIntOrNull()
-                    //Log.i(this.name, "Result => (link) ${link}")
                     val image = it?.select("div.poster > img")?.attr("data-src")
+
+                    // Get Title and Year
+                    val name = urlTitle?.select("h3")?.text() ?: ""
+                    var year = urlTitle?.select("span")?.text()?.toIntOrNull()
+
+                    if (year == null) {
+                        // Get year from name
+                        val rex = Regex("\\((\\d+)")
+                        year = rex.find(name)?.value?.replace("(", "")?.toIntOrNull()
+                    }
 
                     MovieSearchResponse(
                         name,
