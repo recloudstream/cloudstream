@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.*
+import retrofit2.awaitResponse
 import java.util.*
 
 /**
@@ -15,7 +16,8 @@ data class TmdbLink(
     @JsonProperty("imdbID") val imdbID: String?,
     @JsonProperty("tmdbID") val tmdbID: Int?,
     @JsonProperty("episode") val episode: Int?,
-    @JsonProperty("season") val season: Int?
+    @JsonProperty("season") val season: Int?,
+    @JsonProperty("movieName") val movieName: String? = null,
 )
 
 open class TmdbProvider : MainAPI() {
@@ -144,6 +146,7 @@ open class TmdbProvider : MainAPI() {
                 this.id,
                 null,
                 null,
+                this.title ?: this.original_title,
             ).toJson(),
             getImageUrl(this.poster_path),
             this.release_date?.let {
@@ -173,23 +176,33 @@ open class TmdbProvider : MainAPI() {
 //                it.toSearchResponse()
 //            } ?: listOf()
 
-        val discoverMovies = tmdb.discoverMovie().build().execute().body()?.results?.map {
-            it.toSearchResponse()
-        } ?: listOf()
-
-        val discoverSeries = tmdb.discoverTv().build().execute().body()?.results?.map {
-            it.toSearchResponse()
-        } ?: listOf()
-
-        // https://en.wikipedia.org/wiki/ISO_3166-1
-        val topMovies =
-            tmdb.moviesService().topRated(1, "en-US", "US").execute().body()?.results?.map {
-                it.toSearchResponse()
-            } ?: listOf()
-
-        val topSeries = tmdb.tvService().topRated(1, "en-US").execute().body()?.results?.map {
-            it.toSearchResponse()
-        } ?: listOf()
+        var discoverMovies: List<MovieSearchResponse> = listOf()
+        var discoverSeries: List<TvSeriesSearchResponse> = listOf()
+        var topMovies: List<MovieSearchResponse> = listOf()
+        var topSeries: List<TvSeriesSearchResponse> = listOf()
+        argamap(
+            {
+                discoverMovies = tmdb.discoverMovie().build().awaitResponse().body()?.results?.map {
+                    it.toSearchResponse()
+                } ?: listOf()
+            }, {
+                discoverSeries = tmdb.discoverTv().build().awaitResponse().body()?.results?.map {
+                    it.toSearchResponse()
+                } ?: listOf()
+            }, {
+                // https://en.wikipedia.org/wiki/ISO_3166-1
+                topMovies =
+                    tmdb.moviesService().topRated(1, "en-US", "US").awaitResponse()
+                        .body()?.results?.map {
+                            it.toSearchResponse()
+                        } ?: listOf()
+            }, {
+                topSeries =
+                    tmdb.tvService().topRated(1, "en-US").awaitResponse().body()?.results?.map {
+                        it.toSearchResponse()
+                    } ?: listOf()
+            }
+        )
 
         return HomePageResponse(
             listOf(
@@ -232,19 +245,19 @@ open class TmdbProvider : MainAPI() {
 
         return if (useMetaLoadResponse) {
             return if (isTvSeries) {
-                val body = tmdb.tvService().tv(id, "en-US").execute().body()
+                val body = tmdb.tvService().tv(id, "en-US").awaitResponse().body()
                 body?.toLoadResponse()
             } else {
-                val body = tmdb.moviesService().summary(id, "en-US").execute().body()
+                val body = tmdb.moviesService().summary(id, "en-US").awaitResponse().body()
                 body?.toLoadResponse()
             }
         } else {
             loadFromTmdb(id)?.let { return it }
             if (isTvSeries) {
-                tmdb.tvService().externalIds(id, "en-US").execute().body()?.imdb_id?.let {
+                tmdb.tvService().externalIds(id, "en-US").awaitResponse().body()?.imdb_id?.let {
                     val fromImdb = loadFromImdb(it)
                     val result = if (fromImdb == null) {
-                        val details = tmdb.tvService().tv(id, "en-US").execute().body()
+                        val details = tmdb.tvService().tv(id, "en-US").awaitResponse().body()
                         loadFromImdb(it, details?.seasons ?: listOf())
                             ?: loadFromTmdb(id, details?.seasons ?: listOf())
                     } else {
@@ -254,16 +267,14 @@ open class TmdbProvider : MainAPI() {
                     result
                 }
             } else {
-                tmdb.moviesService().externalIds(id, "en-US").execute()
+                tmdb.moviesService().externalIds(id, "en-US").awaitResponse()
                     .body()?.imdb_id?.let { loadFromImdb(it) }
             }
         }
-
-
     }
 
     override suspend fun search(query: String): List<SearchResponse>? {
-        return tmdb.searchService().multi(query, 1, "en-Us", "US", true).execute()
+        return tmdb.searchService().multi(query, 1, "en-Us", "US", true).awaitResponse()
             .body()?.results?.mapNotNull {
                 it.movie?.toSearchResponse() ?: it.tvShow?.toSearchResponse()
             }

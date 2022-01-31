@@ -293,6 +293,10 @@ open class Requests {
             .followRedirects(allowRedirects)
             .followSslRedirects(allowRedirects)
             .callTimeout(timeout, TimeUnit.SECONDS)
+        if (timeout > 0)
+            client
+                .connectTimeout(timeout, TimeUnit.SECONDS)
+                .readTimeout(timeout, TimeUnit.SECONDS)
 
         if (interceptor != null) client.addInterceptor(interceptor)
         val request =

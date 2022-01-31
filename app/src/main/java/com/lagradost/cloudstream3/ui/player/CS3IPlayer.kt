@@ -554,6 +554,15 @@ class CS3IPlayer : IPlayer {
                     updatedTime()
                     if (!hasUsedFirstRender) { // this insures that we only call this once per player load
                         Log.i(TAG, "Rendered first frame")
+
+                        val invalid = exoPlayer?.duration?.let { duration ->
+                            duration < 20000L
+                        } ?: false
+                        if(invalid) {
+                            playerError?.invoke(InvalidFileException("Too short playback"))
+                            return
+                        }
+
                         setPreferredSubtitles(currentSubtitles)
                         hasUsedFirstRender = true
                         val format = exoPlayer?.videoFormat

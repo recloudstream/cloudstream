@@ -1,13 +1,10 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.lagradost.cloudstream3.SubtitleFile
-import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mapper
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.metaproviders.TmdbLink
 import com.lagradost.cloudstream3.metaproviders.TmdbProvider
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -19,6 +16,105 @@ class TrailersTwoProvider : TmdbProvider() {
     override val mainUrl = "https://trailers.to"
     override val useMetaLoadResponse = true
     override val instantLinkLoading = true
+
+    data class TrailersEpisode(
+        // val tvShowItemID: Long?,
+        //val tvShow: String,
+        //val tvShowIMDB: String?,
+        //val tvShowTMDB: Long?,
+        @JsonProperty("ItemID")
+        val itemID: Int,
+        //val title: String,
+        //@JsonProperty("IMDb")
+        @JsonProperty("IMDb")
+        val imdb: String?,
+        //@JsonProperty("TMDb")
+        @JsonProperty("TMDb")
+        val tmdb: Int?,
+        //val releaseDate: String,
+        //val entryDate: String
+    )
+
+    data class TrailersMovie(
+        @JsonProperty("ItemID")
+        val itemID: Int,
+        @JsonProperty("IMDb")
+        val imdb: String?,
+        @JsonProperty("TMDb")
+        val tmdb: Int?,
+        //@JsonProperty("Title")
+        //val title: String?,
+    )
+
+    /*companion object {
+        private var tmdbToIdMovies: HashMap<Int, Int> = hashMapOf()
+        private var imdbToIdMovies: HashMap<String, Int> = hashMapOf()
+        private var tmdbToIdTvSeries: HashMap<Int, Int> = hashMapOf()
+        private var imdbToIdTvSeries: HashMap<String, Int> = hashMapOf()
+
+        private const val startDate = 1900
+        private const val endDate = 9999
+
+        fun getEpisode(tmdb: Int?, imdb: String?): Int? {
+            var currentId: Int? = null
+            if (tmdb != null) {
+                currentId = tmdbToIdTvSeries[tmdb]
+            }
+            if (imdb != null && currentId == null) {
+                currentId = imdbToIdTvSeries[imdb]
+            }
+            return currentId
+        }
+
+        fun getMovie(tmdb: Int?, imdb: String?): Int? {
+            var currentId: Int? = null
+            if (tmdb != null) {
+                currentId = tmdbToIdMovies[tmdb]
+            }
+            if (imdb != null && currentId == null) {
+                currentId = imdbToIdMovies[imdb]
+            }
+            return currentId
+        }
+
+        suspend fun fillData(isMovie: Boolean) {
+            if (isMovie) {
+                if (tmdbToIdMovies.isNotEmpty() || imdbToIdMovies.isNotEmpty()) {
+                    return
+                }
+                parseJson<List<TrailersMovie>>(
+                    app.get(
+                        "https://trailers.to/movies?from=$startDate-01-01&to=$endDate",
+                        timeout = 30
+                    ).text
+                ).forEach { movie ->
+                    movie.imdb?.let {
+                        imdbToIdTvSeries[it] = movie.itemID
+                    }
+                    movie.tmdb?.let {
+                        tmdbToIdTvSeries[it] = movie.itemID
+                    }
+                }
+            } else {
+                if (tmdbToIdTvSeries.isNotEmpty() || imdbToIdTvSeries.isNotEmpty()) {
+                    return
+                }
+                parseJson<List<TrailersEpisode>>(
+                    app.get(
+                        "https://trailers.to/episodes?from=$startDate-01-01&to=$endDate",
+                        timeout = 30
+                    ).text
+                ).forEach { episode ->
+                    episode.imdb?.let {
+                        imdbToIdTvSeries[it] = episode.itemID
+                    }
+                    episode.tmdb?.let {
+                        tmdbToIdTvSeries[it] = episode.itemID
+                    }
+                }
+            }
+        }
+    }*/
 
     override val supportedTypes = setOf(
         TvType.Movie,
@@ -34,50 +130,99 @@ class TrailersTwoProvider : TmdbProvider() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val mappedData = mapper.readValue<TmdbLink>(data)
+        val mappedData = parseJson<TmdbLink>(data)
         val (id, site) = if (mappedData.imdbID != null) listOf(
             mappedData.imdbID,
             "imdb"
         ) else listOf(mappedData.tmdbID.toString(), "tmdb")
 
         val isMovie = mappedData.episode == null && mappedData.season == null
-        val subtitleUrl = if (isMovie) {
-            callback.invoke(
-                ExtractorLink(
-                    this.name,
-                    this.name,
-                    "https://trailers.to/video/$user/$site/$id",
-                    "https://trailers.to",
-                    Qualities.Unknown.value,
-                    false,
-                )
+        val (videoUrl, subtitleUrl) = if (isMovie) {
+            val suffix = "$user/$site/$id"
+            Pair(
+                "https://trailers.to/video/$suffix",
+                "https://trailers.to/subtitles/$suffix"
             )
-            "https://trailers.to/subtitles/$user/$site/$id"
         } else {
-            callback.invoke(
-                ExtractorLink(
-                    this.name,
-                    this.name,
-                    "https://trailers.to/video/$user/$site/$id/S${mappedData.season ?: 1}E${mappedData.episode ?: 1}",
-                    "https://trailers.to",
-                    Qualities.Unknown.value,
-                    false,
-                )
+            val suffix = "$user/$site/$id/S${mappedData.season ?: 1}E${mappedData.episode ?: 1}"
+            Pair(
+                "https://trailers.to/video/$suffix",
+                "https://trailers.to/subtitles/$suffix"
             )
-            "https://trailers.to/subtitles/$user/$site/$id/S${mappedData.season ?: 1}E${mappedData.episode ?: 1}"
         }
 
-        val subtitles =
-            app.get(subtitleUrl).text
-        val subtitlesMapped = mapper.readValue<List<TrailersSubtitleFile>>(subtitles)
-        subtitlesMapped.forEach {
-            subtitleCallback.invoke(
-                SubtitleFile(
-                    SubtitleHelper.fromTwoLettersToLanguage(it.LanguageCode ?: "en") ?: "English",
-                    "https://trailers.to/subtitles/${it.ContentHash ?: return@forEach}/${it.LanguageCode ?: return@forEach}.vtt" // ${it.MetaInfo?.SubFormat ?: "srt"}"
-                )
+        callback.invoke(
+            ExtractorLink(
+                this.name,
+                this.name,
+                videoUrl,
+                "https://trailers.to",
+                Qualities.Unknown.value,
+                false,
             )
-        }
+        )
+
+        argamap(
+            {
+                val subtitles =
+                    app.get(subtitleUrl).text
+                val subtitlesMapped = parseJson<List<TrailersSubtitleFile>>(subtitles)
+                subtitlesMapped.forEach {
+                    subtitleCallback.invoke(
+                        SubtitleFile(
+                            SubtitleHelper.fromTwoLettersToLanguage(it.LanguageCode ?: "en")
+                                ?: "English",
+                            "https://trailers.to/subtitles/${it.ContentHash ?: return@forEach}/${it.LanguageCode ?: return@forEach}.vtt" // ${it.MetaInfo?.SubFormat ?: "srt"}"
+                        )
+                    )
+                }
+            }, {
+                //https://trailers.to/en/quick-search?q=iron man
+                val name = mappedData.movieName
+                if (name != null && isMovie) {
+                    app.get("https://trailers.to/en/quick-search?q=${name}").document.select("a.post-minimal")
+                        .mapNotNull {
+                            it?.attr("href")
+                        }.map { Regex("""/movie/(\d+)/""").find(it)?.groupValues?.getOrNull(1) }
+                        .firstOrNull()?.let { movieId ->
+                            val correctUrl = app.get(videoUrl).url
+                            callback.invoke(
+                                ExtractorLink(
+                                    this.name,
+                                    "${this.name} Backup",
+                                    correctUrl.replace("/$user/0/", "/$user/$movieId/"),
+                                    "https://trailers.to",
+                                    Qualities.Unknown.value,
+                                    false,
+                                )
+                            )
+                        }
+                }
+            }
+        )
+
+        /*
+        // the problem with this code is that it tages ages and the json file is 50mb or so for movies
+        fillData(isMovie)
+        val movieId = if (isMovie) {
+            getMovie(mappedData.tmdbID, mappedData.imdbID)
+        } else {
+            getEpisode(mappedData.tmdbID, mappedData.imdbID)
+        } ?: return@argamap
+        val request = app.get(data)
+        val endUrl = request.url
+        callback.invoke(
+            ExtractorLink(
+                this.name,
+                "${this.name} Backup",
+                endUrl.replace("/cloudstream/0/", "/cloudstream/$movieId/"),
+                "https://trailers.to",
+                Qualities.Unknown.value,
+                false,
+            )
+        )
+         */
+
         return true
     }
 }

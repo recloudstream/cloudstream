@@ -44,6 +44,8 @@ enum class CSPlayerLoading {
     //IsDone,
 }
 
+class InvalidFileException(msg : String) : Exception(msg)
+
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
 const val STATE_RESUME_WINDOW = "resumeWindow"
 const val STATE_RESUME_POSITION = "resumePosition"

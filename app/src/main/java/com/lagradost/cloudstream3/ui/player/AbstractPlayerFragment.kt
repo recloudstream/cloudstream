@@ -236,6 +236,14 @@ abstract class AbstractPlayerFragment(
                     }
                 }
             }
+            is InvalidFileException -> {
+                showToast(
+                    activity,
+                    "${ctx.getString(R.string.source_error)}\n${exception.message}",
+                    Toast.LENGTH_SHORT
+                )
+                nextMirror()
+            }
             else -> {
                 showToast(activity, exception.message, Toast.LENGTH_SHORT)
             }
