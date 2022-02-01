@@ -18,6 +18,7 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.media.session.MediaButtonReceiver
+import androidx.preference.PreferenceManager
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
@@ -332,6 +333,17 @@ abstract class AbstractPlayerFragment(
             subStyle = SubtitlesFragment.getCurrentSavedStyle()
             player.initSubtitles(subView, subtitle_holder, subStyle)
             SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
+
+            try {
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+                val currentPrefSize =
+                    settingsManager.getInt(getString(R.string.video_cache_key), 300)
+
+                player.cacheSize = currentPrefSize * 1024L * 1024L
+            } catch (e : Exception) {
+                logError(e)
+            }
         }
 
         /*context?.let { ctx ->

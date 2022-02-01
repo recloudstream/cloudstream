@@ -12,6 +12,7 @@
     <string name="benene_count" translatable="false">benene_count</string>
     <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
+    <string name="video_cache_key" translatable="false">video_cache_key</string>
     <string name="prerelease_commit_hash" translatable="false">unknown_prerelease</string>
     <string name="use_system_brightness_key" translatable="false">use_system_brightness_key</string>
     <string name="swipe_enabled_key" translatable="false">swipe_enabled_key</string>
@@ -296,6 +297,7 @@
     <string name="dont_show_again">Don\'t show again</string>
     <string name="update">Update</string>
     <string name="watch_quality_pref">Preferred watch quality</string>
+    <string name="video_cache_settings">Video cache size</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
 

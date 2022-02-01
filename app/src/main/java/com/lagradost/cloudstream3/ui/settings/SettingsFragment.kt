@@ -197,6 +197,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val preferedMediaTypePreference = findPreference<Preference>(getString(R.string.prefer_media_type_key))!!
         val appThemePreference = findPreference<Preference>(getString(R.string.app_theme_key))!!
         val subPreference = findPreference<Preference>(getString(R.string.subtitle_settings_key))!!
+        val videoCachePreference = findPreference<Preference>(getString(R.string.video_cache_key))!!
+
+        videoCachePreference.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.video_cache_size_names)
+            val prefValues = resources.getIntArray(R.array.video_cache_size_values)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+            val currentPrefSize =
+                settingsManager.getInt(getString(R.string.video_cache_key), 300)
+
+            activity?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentPrefSize),
+                getString(R.string.video_cache_settings),
+                true,
+                {}) {
+                settingsManager.edit()
+                    .putInt(getString(R.string.video_cache_key), prefValues[it])
+                    .apply()
+            }
+            return@setOnPreferenceClickListener true
+        }
 
         subPreference.setOnPreferenceClickListener {
             SubtitlesFragment.push(activity, false)

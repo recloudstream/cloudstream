@@ -37,11 +37,11 @@ import javax.net.ssl.SSLSession
 const val TAG = "CS3ExoPlayer"
 
 /** Cache */
-private const val cacheSize = 300L * 1024L * 1024L // 300 mb TODO MAKE SETTING
 
 class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
+    var cacheSize = 300L * 1024L * 1024L // 300 mb
 
     private val seekActionTime = 30000L
 

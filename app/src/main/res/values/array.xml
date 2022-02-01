@@ -56,6 +56,22 @@
         <item>1</item>
         <item>2</item>
     </array>
+    <array name="video_cache_size_names">
+        <item>@string/none</item>
+        <item>100MB</item>
+        <item>200MB</item>
+        <item>300MB</item>
+        <item>400MB</item>
+        <item>500MB</item>
+    </array>
+    <array name="video_cache_size_values">
+        <item>0</item>
+        <item>100</item>
+        <item>200</item>
+        <item>300</item>
+        <item>400</item>
+        <item>500</item>
+    </array>
 
     <array name="episode_long_click_options">
         <item>@string/episode_action_chomecast_episode</item>
