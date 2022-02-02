@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context.CLIPBOARD_SERVICE
@@ -35,6 +36,8 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.*
@@ -46,6 +49,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
+import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
@@ -193,6 +197,167 @@ class ResultFragment : Fragment() {
         }
 
         private var updateUIListener: (() -> Unit)? = null
+
+        suspend fun startDownload(
+            episode: ResultEpisode,
+            currentIsMovie: Boolean,
+            currentHeaderName: String,
+            currentType: TvType,
+            currentPoster: String,
+            apiName: String,
+            parentId: Int,
+            url: String,
+            links: List<ExtractorLink>,
+            subs: List<SubtitleData>?
+        ) {
+            val titleName = sanitizeFilename(currentHeaderName)
+
+            val meta = VideoDownloadManager.DownloadEpisodeMetadata(
+                episode.id,
+                titleName,
+                apiName,
+                episode.poster ?: currentPoster,
+                episode.name,
+                if (currentIsMovie) null else episode.season,
+                if (currentIsMovie) null else episode.episode
+            )
+
+            val folder = when (currentType) {
+                TvType.Anime -> "Anime/$titleName"
+                TvType.Movie -> "Movies"
+                TvType.AnimeMovie -> "Movies"
+                TvType.TvSeries -> "TVSeries/$titleName"
+                TvType.OVA -> "OVA"
+                TvType.Cartoon -> "Cartoons/$titleName"
+                TvType.Torrent -> "Torrent"
+                TvType.Documentary -> "Documentaries"
+            }
+
+            val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
+
+            // SET VISUAL KEYS
+            setKey(
+                DOWNLOAD_HEADER_CACHE,
+                parentId.toString(),
+                VideoDownloadHelper.DownloadHeaderCached(
+                    apiName,
+                    url,
+                    currentType,
+                    currentHeaderName,
+                    currentPoster,
+                    parentId,
+                    System.currentTimeMillis(),
+                )
+            )
+
+            setKey(
+                getFolderName(
+                    DOWNLOAD_EPISODE_CACHE,
+                    parentId.toString()
+                ), // 3 deep folder for faster acess
+                episode.id.toString(),
+                VideoDownloadHelper.DownloadEpisodeCached(
+                    episode.name,
+                    episode.poster,
+                    episode.episode,
+                    episode.season,
+                    episode.id,
+                    parentId,
+                    episode.rating,
+                    episode.description,
+                    System.currentTimeMillis(),
+                )
+            )
+
+            // DOWNLOAD VIDEO
+            VideoDownloadManager.downloadEpisodeUsingWorker(
+                context ?: return,
+                src,//url ?: return,
+                folder,
+                meta,
+                links
+            )
+            // 1. Checks if the lang should be downloaded
+            // 2. Makes it into the download format
+            // 3. Downloads it as a .vtt file
+            val downloadList = getDownloadSubsLanguageISO639_1()
+            subs?.let { subsList ->
+                subsList.filter {
+                    downloadList.contains(
+                        SubtitleHelper.fromLanguageToTwoLetters(
+                            it.name,
+                            true
+                        )
+                    )
+                }
+                    .map { ExtractorSubtitleLink(it.name, it.url, "") }
+                    .forEach { link ->
+                        val epName = meta.name
+                            ?: "${context?.getString(R.string.episode)} ${meta.episode}"
+                        val fileName =
+                            sanitizeFilename(epName + if (downloadList.size > 1) " ${link.name}" else "")
+
+                        withContext(Dispatchers.IO) {
+                            normalSafeApiCall {
+                                VideoDownloadManager.downloadThing(
+                                    context ?: return@normalSafeApiCall,
+                                    link,
+                                    fileName,
+                                    folder,
+                                    "vtt",
+                                    false,
+                                    null
+                                ) {
+                                    // no notification
+                                }
+                            }
+                        }
+                    }
+            }
+        }
+
+        suspend fun downloadEpisode(
+            activity: Activity?,
+            episode: ResultEpisode,
+            currentIsMovie: Boolean,
+            currentHeaderName: String,
+            currentType: TvType,
+            currentPoster: String,
+            apiName: String,
+            parentId: Int,
+            url: String,
+        ) {
+            safeApiCall {
+                val generator = RepoLinkGenerator(listOf(episode))
+                val currentLinks = mutableSetOf<ExtractorLink>()
+                val currentSubs = mutableSetOf<SubtitleData>()
+                generator.generateLinks(clearCache = false, isCasting = false, callback = {
+                    it.first?.let { link ->
+                        currentLinks.add(link)
+                    }
+                }, subtitleCallback = { sub ->
+                    currentSubs.add(sub)
+                })
+
+                if (currentLinks.isEmpty()) {
+                    showToast(activity, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+                    return@safeApiCall
+                }
+
+                startDownload(
+                    episode,
+                    currentIsMovie,
+                    currentHeaderName,
+                    currentType,
+                    currentPoster,
+                    apiName,
+                    parentId,
+                    url,
+                    sortUrls(currentLinks),
+                    sortSubs(currentSubs),
+                )
+            }
+        }
     }
 
     private var currentLoadingCount =
@@ -449,6 +614,28 @@ class ResultFragment : Fragment() {
         }
 
         fun handleAction(episodeClick: EpisodeClickEvent): Job = main {
+            if (episodeClick.action == ACTION_DOWNLOAD_EPISODE) {
+                val isMovie = currentIsMovie ?: return@main
+                val headerName = currentHeaderName ?: return@main
+                val tvType = currentType ?: return@main
+                val poster = currentPoster ?: return@main
+                val id = currentId ?: return@main
+                val curl = url ?: return@main
+                showToast(activity, R.string.download_started, Toast.LENGTH_SHORT)
+                downloadEpisode(
+                    activity,
+                    episodeClick.data,
+                    isMovie,
+                    headerName,
+                    tvType,
+                    poster,
+                    apiName,
+                    id,
+                    curl,
+                )
+                return@main
+            }
+
             var currentLinks: Set<ExtractorLink>? = null
             var currentSubs: Set<SubtitleData>? = null
 
@@ -498,121 +685,6 @@ class ResultFragment : Fragment() {
                 )
             }
 
-            fun startDownload(links: List<ExtractorLink>, subs: List<SubtitleData>?) {
-                val isMovie = currentIsMovie ?: return
-                val titleName = sanitizeFilename(currentHeaderName ?: return)
-
-                val meta = VideoDownloadManager.DownloadEpisodeMetadata(
-                    episodeClick.data.id,
-                    titleName,
-                    apiName,
-                    episodeClick.data.poster ?: currentPoster,
-                    episodeClick.data.name,
-                    if (isMovie) null else episodeClick.data.season,
-                    if (isMovie) null else episodeClick.data.episode
-                )
-
-                val folder = when (currentType) {
-                    TvType.Anime -> "Anime/$titleName"
-                    TvType.Movie -> "Movies"
-                    TvType.AnimeMovie -> "Movies"
-                    TvType.TvSeries -> "TVSeries/$titleName"
-                    TvType.OVA -> "OVA"
-                    TvType.Cartoon -> "Cartoons/$titleName"
-                    TvType.Torrent -> "Torrent"
-                    TvType.Documentary -> "Documentaries"
-                    null -> null
-                }
-
-                context?.let { ctx ->
-                    val parentId = currentId ?: return@let
-                    val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
-
-                    // SET VISUAL KEYS
-                    ctx.setKey(
-                        DOWNLOAD_HEADER_CACHE,
-                        parentId.toString(),
-                        VideoDownloadHelper.DownloadHeaderCached(
-                            apiName,
-                            url ?: return@let,
-                            currentType ?: return@let,
-                            currentHeaderName ?: return@let,
-                            currentPoster,
-                            currentId ?: return@let,
-                            System.currentTimeMillis(),
-                        )
-                    )
-
-                    val epData = episodeClick.data
-                    ctx.setKey(
-                        getFolderName(
-                            DOWNLOAD_EPISODE_CACHE,
-                            parentId.toString()
-                        ), // 3 deep folder for faster acess
-                        epData.id.toString(),
-                        VideoDownloadHelper.DownloadEpisodeCached(
-                            epData.name,
-                            epData.poster,
-                            epData.episode,
-                            epData.season,
-                            epData.id,
-                            parentId,
-                            epData.rating,
-                            epData.description,
-                            System.currentTimeMillis(),
-                        )
-                    )
-
-                    // DOWNLOAD VIDEO
-                    VideoDownloadManager.downloadEpisodeUsingWorker(
-                        ctx,
-                        src,//url ?: return,
-                        folder,
-                        meta,
-                        links
-                    )
-                    // 1. Checks if the lang should be downloaded
-                    // 2. Makes it into the download format
-                    // 3. Downloads it as a .vtt file
-                    val downloadList = getDownloadSubsLanguageISO639_1()
-                    main {
-                        subs?.let { subsList ->
-                            subsList.filter {
-                                downloadList.contains(
-                                    SubtitleHelper.fromLanguageToTwoLetters(
-                                        it.name,
-                                        true
-                                    )
-                                )
-                            }
-                                .map { ExtractorSubtitleLink(it.name, it.url, "") }
-                                .forEach { link ->
-                                    val epName = meta.name
-                                        ?: "${context?.getString(R.string.episode)} ${meta.episode}"
-                                    val fileName =
-                                        sanitizeFilename(epName + if (downloadList.size > 1) " ${link.name}" else "")
-                                    val topFolder = "$folder"
-
-                                    withContext(Dispatchers.IO) {
-                                        normalSafeApiCall {
-                                            VideoDownloadManager.downloadThing(
-                                                ctx,
-                                                link,
-                                                fileName,
-                                                topFolder,
-                                                "vtt",
-                                                false,
-                                                null
-                                            ) {
-                                                // no notification
-                                            }
-                                        }
-                                    }
-                                }
-                        }
-                    }
-                }
-            }
 
             suspend fun requireLinks(isCasting: Boolean, displayLoading: Boolean = true): Boolean {
                 val skipLoading = getApiFromName(apiName).instantLinkLoading
@@ -864,12 +936,6 @@ class ResultFragment : Fragment() {
                     viewModel.loadEpisode(episodeClick.data, false)
                 }
 
-                ACTION_DOWNLOAD_EPISODE -> {
-                    startDownload(
-                        sortUrls(currentLinks ?: return@main),
-                        sortSubs(currentSubs ?: return@main)
-                    )
-                }
 
                 ACTION_DOWNLOAD_MIRROR -> {
                     acquireSingleExtractorLink(
@@ -878,11 +944,21 @@ class ResultFragment : Fragment() {
                         ),//(currentLinks ?: return@main).filter { !it.isM3u8 },
                         getString(R.string.episode_action_download_mirror)
                     ) { link ->
-                        showToast(activity, R.string.download_started, Toast.LENGTH_SHORT)
-                        startDownload(
-                            listOf(link),
-                            sortSubs(currentSubs ?: return@acquireSingleExtractorLink)
-                        )
+                        main {
+                            startDownload(
+                                episodeClick.data,
+                                currentIsMovie ?: return@main,
+                                currentHeaderName ?: return@main,
+                                currentType ?: return@main,
+                                currentPoster ?: return@main,
+                                apiName,
+                                currentId ?: return@main,
+                                url ?: return@main,
+                                listOf(link),
+                                sortSubs(currentSubs ?: return@main)
+                            )
+                            showToast(activity, R.string.download_started, Toast.LENGTH_SHORT)
+                        }
                     }
                 }
             }

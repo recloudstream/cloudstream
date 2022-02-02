@@ -294,7 +294,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                     ignoreCase = true
                 ) || this.equals("RapidStream", ignoreCase = true)
             ) return true
-            return true
+            return false
         }
 
         // For re-use in Zoro

@@ -14,7 +14,8 @@ class RepoLinkGenerator(
     private var currentIndex: Int = 0
 ) : IGenerator {
     companion object {
-        val TAG = "RepoLink"
+        const val TAG = "RepoLink"
+        val cache: HashMap<Int, Pair<MutableSet<ExtractorLink>, MutableSet<SubtitleData>>> = hashMapOf()
     }
 
     override val hasCache = true
@@ -54,8 +55,8 @@ class RepoLinkGenerator(
     }
 
     // this is a simple array that is used to instantly load links if they are already loaded
-    var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })
-    var subsCache = Array<Set<SubtitleData>>(size = episodes.size, init = { setOf() })
+    //var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })
+    //var subsCache = Array<Set<SubtitleData>>(size = episodes.size, init = { setOf() })
 
     override suspend fun generateLinks(
         clearCache: Boolean,
@@ -67,8 +68,14 @@ class RepoLinkGenerator(
         val index = currentIndex
         val current = episodes.getOrNull(index + offset) ?: return false
 
-        val currentLinkCache = if (clearCache) mutableSetOf() else linkCache[index].toMutableSet()
-        val currentSubsCache = if (clearCache) mutableSetOf() else subsCache[index].toMutableSet()
+        val (currentLinkCache, currentSubsCache) = if (clearCache) {
+            Pair(mutableSetOf(), mutableSetOf())
+        } else {
+            cache[current.id] ?: Pair(mutableSetOf(), mutableSetOf())
+        }
+
+        //val currentLinkCache = if (clearCache) mutableSetOf() else linkCache[index].toMutableSet()
+        //val currentSubsCache = if (clearCache) mutableSetOf() else subsCache[index].toMutableSet()
 
         val currentLinks = mutableSetOf<String>()       // makes all urls unique
         val currentSubsUrls = mutableSetOf<String>()    // makes all subs urls unique
@@ -91,7 +98,7 @@ class RepoLinkGenerator(
             return true
         }
 
-        return APIRepository(
+        val result = APIRepository(
             getApiFromNameNull(current.apiName) ?: throw Exception("This provider does not exist")
         ).loadLinks(current.data,
             isCasting,
@@ -114,7 +121,7 @@ class RepoLinkGenerator(
                     if (!currentSubsCache.contains(updatedFile)) {
                         subtitleCallback(updatedFile)
                         currentSubsCache.add(updatedFile)
-                        subsCache[index] = currentSubsCache
+                        //subsCache[index] = currentSubsCache
                     }
                 }
             },
@@ -124,10 +131,13 @@ class RepoLinkGenerator(
                         currentLinks.add(link.url)
                         callback(Pair(link, null))
                         currentLinkCache.add(link)
-                        linkCache[index] = currentLinkCache
+                        //linkCache[index] = currentLinkCache
                     }
                 }
             }
         )
+        cache[current.id] = Pair(currentLinkCache, currentSubsCache)
+
+        return result
     }
 }
