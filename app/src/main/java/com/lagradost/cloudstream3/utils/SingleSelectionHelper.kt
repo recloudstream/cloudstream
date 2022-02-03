@@ -2,17 +2,71 @@ package com.lagradost.cloudstream3.utils
 
 import android.app.Activity
 import android.app.Dialog
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
-import androidx.core.view.marginLeft
-import androidx.core.view.marginRight
-import androidx.core.view.marginTop
+import androidx.core.view.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 object SingleSelectionHelper {
+    fun Activity.showOptionSelectStringRes(
+        view: View?,
+        poster: String?,
+        options: List<Int>,
+        tvOptions: List<Int> = listOf(),
+        callback: (Pair<Boolean, Int>) -> Unit
+    ) {
+        this.showOptionSelect(view, poster, options.map { this.getString(it) },tvOptions.map { this.getString(it) }, callback)
+    }
+
+    private fun Activity.showOptionSelect(
+        view: View?,
+        poster: String?,
+        options: List<String>,
+        tvOptions: List<String>,
+        callback: (Pair<Boolean, Int>) -> Unit
+    ) {
+        if (this.isTvSettings()) {
+            val builder =
+                AlertDialog.Builder(this, R.style.AlertDialogCustom)
+                    .setView(R.layout.options_popup_tv)
+
+            val dialog = builder.create()
+            dialog.show()
+
+            dialog.findViewById<ListView>(R.id.listview1)?.let { listView ->
+                listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                listView.adapter = ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice_color).apply {
+                    addAll(tvOptions)
+                }
+
+                listView.setOnItemClickListener { _, _, i, _ ->
+                    callback.invoke(Pair(true,i))
+                    dialog.dismissSafe(this)
+                }
+            }
+
+            dialog.findViewById<ImageView>(R.id.imageView)?.apply {
+                isGone = poster.isNullOrEmpty()
+                setImage(poster)
+            }
+        } else {
+            view?.popupMenuNoIconsAndNoStringRes(options.mapIndexed { index, s ->
+                Pair(
+                    index,
+                    s
+                )
+            }) {
+                callback(Pair(false,this.itemId))
+            }
+        }
+    }
+
     fun Activity.showDialog(
         dialog: Dialog,
         items: List<String>,
@@ -98,7 +152,8 @@ object SingleSelectionHelper {
         callback: (List<Int>) -> Unit,
     ) {
         val builder =
-            AlertDialog.Builder(this, R.style.AlertDialogCustom).setView(R.layout.bottom_selection_dialog)
+            AlertDialog.Builder(this, R.style.AlertDialogCustom)
+                .setView(R.layout.bottom_selection_dialog)
 
         val dialog = builder.create()
         dialog.show()
@@ -114,7 +169,8 @@ object SingleSelectionHelper {
         callback: (Int) -> Unit,
     ) {
         val builder =
-            AlertDialog.Builder(this, R.style.AlertDialogCustom).setView(R.layout.bottom_selection_dialog)
+            AlertDialog.Builder(this, R.style.AlertDialogCustom)
+                .setView(R.layout.bottom_selection_dialog)
 
         val dialog = builder.create()
         dialog.show()
@@ -151,7 +207,7 @@ object SingleSelectionHelper {
             name,
             showApply,
             false,
-            { if(it.isNotEmpty()) callback.invoke(it.first()) },
+            { if (it.isNotEmpty()) callback.invoke(it.first()) },
             dismissCallback
         )
     }
