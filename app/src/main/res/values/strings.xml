@@ -235,6 +235,8 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">This will permanently delete %s\nAre you sure?</string>
+    <string name="resume_time_left" formatted="true">%dm\nremaining</string>
+
 
     <string name="status_ongoing">Ongoing</string>
     <string name="status_completed">Completed</string>

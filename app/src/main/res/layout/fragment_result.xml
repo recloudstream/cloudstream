@@ -339,6 +339,7 @@
                                         style="@style/SmallBlackButton"
                                         android:layout_gravity="center_vertical"
                                         tools:text="Gogoanime" />
+
                                 <TextView
                                         android:id="@+id/result_meta_type"
                                         android:paddingStart="5dp"
@@ -351,6 +352,7 @@
                                         android:textColor="?attr/textColor"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content" />
+
                                 <TextView
                                         android:paddingStart="5dp"
                                         android:paddingEnd="5dp"
@@ -672,6 +674,87 @@
                                 android:textColor="?attr/grayTextColor"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            android:layout_marginTop="5dp"
+                            android:orientation="vertical"
+                            android:id="@+id/result_series_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                        <com.google.android.material.button.MaterialButton
+                                android:layout_marginBottom="10dp"
+                                android:nextFocusUp="@id/result_bookmark_button"
+                                android:nextFocusDown="@id/result_download_movie"
+
+                                android:id="@+id/result_resume_series_button"
+                                style="@style/WhiteButton"
+                                android:layout_marginStart="0dp"
+                                android:layout_marginEnd="0dp"
+                                android:visibility="visible"
+                                tools:visibility="visible"
+                                android:layout_gravity="center_vertical"
+                                android:text="@string/resume"
+                                app:icon="@drawable/ic_baseline_play_arrow_24"
+                                android:layout_width="match_parent" />
+                        <com.google.android.material.button.MaterialButton
+                                android:layout_marginBottom="10dp"
+                                android:nextFocusUp="@id/result_bookmark_button"
+                                android:nextFocusDown="@id/result_download_movie"
+
+                                android:id="@+id/result_next_series_button"
+                                style="@style/WhiteButton"
+                                android:layout_marginStart="0dp"
+                                android:layout_marginEnd="0dp"
+                                android:visibility="gone"
+                                android:layout_gravity="center_vertical"
+                                android:text="@string/next_episode"
+                                app:icon="@drawable/cast_ic_mini_controller_skip_next"
+                                android:layout_width="match_parent" />
+
+                        <TextView
+                                android:textColor="?attr/textColor"
+                                android:id="@+id/result_resume_series_title"
+                                android:textStyle="bold"
+                                android:textSize="17sp"
+                                tools:text="S1E1 Episode 1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                        <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                            <androidx.core.widget.ContentLoadingProgressBar
+                                    android:layout_height="20dp"
+                                    tools:progress="50"
+                                    android:id="@+id/result_resume_series_progress"
+                                    android:indeterminate="false"
+                                    style="?android:attr/progressBarStyleHorizontal"
+                                    android:progressBackgroundTint="?attr/colorPrimary"
+                                    android:max="100"
+                                    android:layout_gravity="end|center_vertical"
+                                    android:progress="0"
+                                    android:layout_width="match_parent"
+                                    android:layout_weight="1"
+                                    android:visibility="visible"
+                                    tools:visibility="visible" />
+                            <TextView
+                                    android:id="@+id/result_resume_series_progress_text"
+                                    android:layout_gravity="center"
+                                    android:paddingStart="10dp"
+                                    android:gravity="center"
+                                    tools:text="69m\nremaining"
+                                    android:layout_weight="0"
+                                    android:textColor="?attr/grayTextColor"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:ignore="RtlSymmetry" />
+                        </LinearLayout>
                     </LinearLayout>
                     <!--<TextView
                             android:visibility="gone"

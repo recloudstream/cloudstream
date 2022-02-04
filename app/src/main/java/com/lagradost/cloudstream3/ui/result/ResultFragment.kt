@@ -526,6 +526,8 @@ class ResultFragment : Fragment() {
 
     private fun updateUI() {
         viewModel.reloadEpisodes()
+
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -1020,6 +1022,31 @@ class ResultFragment : Fragment() {
 
         observe(viewModel.episodes) { episodeList ->
             lateFixDownloadButton(episodeList.size <= 1) // movies can have multible parts but still be *movies* this will fix this
+            var isSeriesVisible = false
+            DataStoreHelper.getLastWatched(currentId)?.let { resume ->
+                if (currentIsMovie == false && episodeList.size >= 3) {
+                    isSeriesVisible = true
+                    result_resume_series_button?.setOnClickListener {
+                        episodeList.firstOrNull { it.id == resume.episodeId }?.let {
+                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, it))
+                        }
+                    }
+                    result_resume_series_title?.text =
+                        if (resume.season == null)
+                            "${getString(R.string.episode)} ${resume.episode}"
+                        else
+                            " \"${getString(R.string.season_short)}${resume.season}:${getString(R.string.episode_short)}${resume.episode}\""
+
+                    getViewPos(resume.episodeId)?.let { viewPos ->
+                        result_resume_series_progress?.apply {
+                            max = (viewPos.duration / 1000).toInt()
+                            progress = (viewPos.position / 1000).toInt()
+                        }
+                        result_resume_series_progress_text?.text = getString(R.string.resume_time_left).format((viewPos.duration - viewPos.position) / (60_000))
+                    }
+                }
+            }
+            result_series_parent?.isVisible = isSeriesVisible
 
             when (startAction) {
                 START_ACTION_RESUME_LATEST -> {
