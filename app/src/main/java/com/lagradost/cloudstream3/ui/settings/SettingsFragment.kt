@@ -198,11 +198,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val appThemePreference = findPreference<Preference>(getString(R.string.app_theme_key))!!
         val subPreference = findPreference<Preference>(getString(R.string.subtitle_settings_key))!!
         val videoCachePreference = findPreference<Preference>(getString(R.string.video_cache_key))!!
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         videoCachePreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.video_cache_size_names)
             val prefValues = resources.getIntArray(R.array.video_cache_size_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             val currentPrefSize =
                 settingsManager.getInt(getString(R.string.video_cache_key), 300)
@@ -255,8 +255,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         subdubPreference.setOnPreferenceClickListener {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-
             activity?.getApiDubstatusSettings()?.let { current ->
                 val dublist = DubStatus.values()
                 val names = dublist.map { it.name }
@@ -284,8 +282,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         providerLangPreference.setOnPreferenceClickListener {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-
             activity?.getApiProviderLangSettings()?.let { current ->
                 val allLangs = HashSet<String>()
                 for (api in apis) {
@@ -348,7 +344,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         downloadPathPreference.setOnPreferenceClickListener {
             val dirs = getDownloadDirs()
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             val currentDir =
                 settingsManager.getString(getString(R.string.download_path_pref), null) ?: getDownloadDir().toString()
@@ -376,7 +371,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         preferedMediaTypePreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.media_type_pref)
             val prefValues = resources.getIntArray(R.array.media_type_pref_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             val currentPrefMedia =
                 settingsManager.getInt(getString(R.string.prefer_media_type_key), 0)
@@ -400,7 +394,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         allLayoutPreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.app_layout)
             val prefValues = resources.getIntArray(R.array.app_layout_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             val currentLayout =
                 settingsManager.getInt(getString(R.string.app_layout_key), -1)
@@ -425,7 +418,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         colorPrimaryPreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.themes_overlay_names)
             val prefValues = resources.getStringArray(R.array.themes_overlay_names_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             val currentLayout =
                 settingsManager.getString(getString(R.string.primary_color_key), prefValues.first())
@@ -450,7 +442,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         appThemePreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.themes_names)
             val prefValues = resources.getStringArray(R.array.themes_names_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             val currentLayout =
                 settingsManager.getString(getString(R.string.app_theme_key), prefValues.first())
@@ -475,7 +466,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         watchQualityPreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.quality_pref)
             val prefValues = resources.getIntArray(R.array.quality_pref_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             val currentQuality =
                 settingsManager.getInt(
@@ -498,7 +488,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         dnsPreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.dns_pref)
             val prefValues = resources.getIntArray(R.array.dns_pref_values)
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
             val currentDns =
                 settingsManager.getInt(getString(R.string.dns_pref), 0)
@@ -516,8 +505,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-
             beneneCount = settingsManager.getInt(getString(R.string.benene_count), 0)
 
             benenePreference.summary =
@@ -567,7 +554,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 try {
                     val code = languageCodes[languageIndex]
                     setLocale(activity, code)
-                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(pref.context)
                     settingsManager.edit().putString(getString(R.string.locale_key), code).apply()
                     activity?.recreate()
                 } catch (e: Exception) {
@@ -579,7 +565,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun getCurrentLocale(): String {
-        val res = context!!.resources
+        val res = requireContext().resources
 // Change locale settings in the app.
         // val dm = res.displayMetrics
         val conf = res.configuration

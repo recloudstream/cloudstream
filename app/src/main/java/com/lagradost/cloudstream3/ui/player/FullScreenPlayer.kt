@@ -974,8 +974,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(activity)
             context?.let { ctx ->
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+
                 navigationBarHeight = ctx.getNavigationBarHeight()
                 statusBarHeight = ctx.getStatusBarHeight()
 

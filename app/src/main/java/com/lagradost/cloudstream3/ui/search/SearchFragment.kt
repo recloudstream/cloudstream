@@ -410,8 +410,8 @@ class SearchFragment : Fragment() {
         search_master_recycler?.adapter = masterAdapter
         search_master_recycler?.layoutManager = GridLayoutManager(context, 1)
 
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-        val isAdvancedSearch = settingsManager.getBoolean("advanced_search", true)
+        val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
+        val isAdvancedSearch = settingsManager?.getBoolean("advanced_search", true) ?: true
 
         search_master_recycler?.isVisible = isAdvancedSearch
         search_autofit_results?.isVisible = !isAdvancedSearch

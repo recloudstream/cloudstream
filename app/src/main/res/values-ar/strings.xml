@@ -275,7 +275,7 @@
 	
     <string name="subtitles_example_text">نصٌّ حكيمٌ لهُ سِرٌّ قاطِعٌ وَذُو شَأنٍ عَظيمٍ مكتوبٌ على ثوبٍ أخضرَ ومُغلفٌ بجلدٍ أزرق</string>
 
-    <string name="tab_recommended">موصى به</string>
+    <string name="recommended">موصى به</string>
     <string name="player_load_subtitles">تحميل من ملف</string>
     <string name="downloaded_file">الملف الذي تم تنزيله</string>	
 </resources>

@@ -335,13 +335,16 @@ abstract class AbstractPlayerFragment(
             SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 
             try {
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+                context?.let {
+                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(
+                        it
+                    )
+                    val currentPrefSize =
+                        settingsManager.getInt(getString(R.string.video_cache_key), 300)
 
-                val currentPrefSize =
-                    settingsManager.getInt(getString(R.string.video_cache_key), 300)
-
-                player.cacheSize = currentPrefSize * 1024L * 1024L
-            } catch (e : Exception) {
+                    player.cacheSize = currentPrefSize * 1024L * 1024L
+                }
+            } catch (e: Exception) {
                 logError(e)
             }
         }

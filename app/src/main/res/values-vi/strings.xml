@@ -271,7 +271,7 @@
     -->
     <string name="subtitles_example_text">Xem trước mẫu phụ đề</string>
 
-    <string name="tab_recommended">Được đề xuất</string>
+    <string name="recommended">Được đề xuất</string>
     <string name="player_loaded_subtitles" formatted="true">Đã tải %s</string>
     <string name="player_load_subtitles">Chọn tệp</string>
     <string name="downloaded_file">Tệp đã tải</string>

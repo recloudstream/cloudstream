@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.Intent.*
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,6 +30,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.discord.panels.OverlappingPanelsLayout
+import com.discord.panels.PanelsChildGestureRegionObserver
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
@@ -85,6 +88,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import kotlinx.android.synthetic.main.fragment_result.*
+import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -175,7 +179,7 @@ fun ResultEpisode.getWatchProgress(): Float {
     return (getDisplayPosition() / 1000).toFloat() / (duration / 1000).toFloat()
 }
 
-class ResultFragment : Fragment() {
+class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegionsListener {
     companion object {
         fun newInstance(
             url: String,
@@ -375,7 +379,7 @@ class ResultFragment : Fragment() {
     ): View? {
         viewModel =
             ViewModelProvider(this)[ResultViewModel::class.java]
-        return inflater.inflate(R.layout.fragment_result, container, false)
+        return inflater.inflate(R.layout.fragment_result_swipe, container, false)
     }
 
     override fun onDestroyView() {
@@ -491,8 +495,18 @@ class ResultFragment : Fragment() {
     }
 
     private fun setRecommendations(rec: List<SearchResponse>?) {
-        return
-        result_recommendations?.isGone = rec.isNullOrEmpty()
+        val isInvalid = rec.isNullOrEmpty()
+        result_recommendations?.isGone = isInvalid
+        result_recommendations_btt?.isGone = isInvalid
+        result_recommendations_btt?.setOnClickListener {
+            if(result_overlapping_panels?.getSelectedPanel()?.ordinal == 1) {
+                result_overlapping_panels?.openEndPanel()
+            } else {
+                result_overlapping_panels?.closePanels()
+            }
+        }
+        result_overlapping_panels?.setEndPanelLockState(if (isInvalid) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
+
         rec?.let { list ->
             (result_recommendations?.adapter as SearchAdapter?)?.apply {
                 cardList = list
@@ -502,8 +516,8 @@ class ResultFragment : Fragment() {
     }
 
     private fun fixGrid() {
-        activity?.getSpanCount()?.let { count ->
-            result_recommendations?.spanCount = count
+        activity?.getSpanCount()?.let { _ ->
+            //result_recommendations?.spanCount = count // this is due to discord not changing size with rotation
         }
     }
 
@@ -534,6 +548,9 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fixGrid()
+        result_recommendations?.spanCount = 3
+        result_overlapping_panels?.setStartPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
+        result_overlapping_panels?.setEndPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
 
         updateUIListener = ::updateUI
 
@@ -546,7 +563,7 @@ class ResultFragment : Fragment() {
         hideKeyboard()
         activity?.loadCache()
 
-        activity?.fixPaddingStatusbar(result_scroll)
+        activity?.fixPaddingStatusbar(result_top_bar)
         //activity?.fixPaddingStatusbar(result_barstatus)
 
         /* val backParameter = result_back.layoutParams as FrameLayout.LayoutParams
@@ -1042,7 +1059,8 @@ class ResultFragment : Fragment() {
                             max = (viewPos.duration / 1000).toInt()
                             progress = (viewPos.position / 1000).toInt()
                         }
-                        result_resume_series_progress_text?.text = getString(R.string.resume_time_left).format((viewPos.duration - viewPos.position) / (60_000))
+                        result_resume_series_progress_text?.text =
+                            getString(R.string.resume_time_left).format((viewPos.duration - viewPos.position) / (60_000))
                     }
                 }
             }
@@ -1527,5 +1545,9 @@ class ResultFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {
+        result_overlapping_panels?.setChildGestureRegions(gestureRegions)
     }
 }

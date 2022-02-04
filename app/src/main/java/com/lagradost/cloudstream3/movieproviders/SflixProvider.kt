@@ -119,6 +119,23 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 ?: throw RuntimeException("Unable to get id from '$url'")
         else dataId
 
+        val recommendations =
+            document.select("div.film_list-wrap > div.flw-item")?.mapNotNull { element ->
+                val titleHeader =
+                    element.select("div.film-detail > .film-name > a") ?: return@mapNotNull null
+                val recUrl = fixUrlNull(titleHeader.attr("href")) ?: return@mapNotNull null
+                val recTitle = titleHeader.text() ?: return@mapNotNull null
+                val poster = element.select("div.film-poster > img")?.attr("data-src")
+                MovieSearchResponse(
+                    recTitle,
+                    recUrl,
+                    this.name,
+                    if (recUrl.contains("/movie/")) TvType.Movie else TvType.TvSeries,
+                    poster,
+                    year = null
+                )
+            }
+
         if (isMovie) {
             // Movies
             val episodesUrl = "$mainUrl/ajax/movie/episodes/$id"
@@ -139,6 +156,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 this.posterUrl = posterUrl
                 this.plot = plot
                 setDuration(duration)
+                this.recommendations = recommendations
             }
         } else {
             val seasonsDocument = app.get("$mainUrl/ajax/v2/tv/seasons/$id").document
@@ -183,6 +201,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 this.year = year
                 this.plot = plot
                 setDuration(duration)
+                this.recommendations = recommendations
             }
         }
     }

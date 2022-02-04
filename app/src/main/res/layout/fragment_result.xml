@@ -165,6 +165,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                <!--
                 <FrameLayout
                         android:background="?attr/primaryGrayBackground"
                         android:paddingStart="@dimen/result_padding"
@@ -204,25 +205,6 @@
                                 android:visibility="gone"
                                 app:mediaRouteButtonTint="?attr/textColor" />
 
-                        <!--
-                        <ImageView
-                                android:visibility="gone"
-                                android:nextFocusUp="@id/result_back"
-                                android:nextFocusDown="@id/result_descript"
-                                android:nextFocusLeft="@id/result_back"
-                                android:nextFocusRight="@id/result_share"
-
-                                android:id="@+id/result_add_sync"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="10dp"
-                                android:elevation="10dp"
-
-                                android:background="?android:attr/selectableItemBackgroundBorderless"
-                                android:src="@drawable/ic_baseline_add_24"
-                                android:layout_gravity="end|center_vertical"
-                                android:contentDescription="@string/add_sync"
-                                app:tint="?attr/textColor" />-->
 
                         <ImageView
                                 android:nextFocusUp="@id/result_back"
@@ -278,7 +260,7 @@
                                 android:contentDescription="@string/result_open_in_browser"
                                 app:tint="?attr/textColor" />
                     </LinearLayout>
-                </FrameLayout>
+                </FrameLayout>-->
 
                 <LinearLayout
                         android:clipToPadding="false"
@@ -477,122 +459,6 @@
                             android:textStyle="normal"
                             android:textColor="?attr/textColor" />
 
-                    <LinearLayout
-                            android:visibility="gone"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="vertical"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                        <TextView
-                                android:textStyle="bold"
-                                android:textSize="16sp"
-                                android:text="MyAnimeList"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-
-                        <LinearLayout
-                                android:visibility="visible"
-                                android:orientation="horizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                            <ImageView
-                                    android:padding="10dp"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                                    android:src="@drawable/ic_baseline_add_24"
-                                    android:layout_gravity="end|center_vertical"
-                                    android:contentDescription="@string/result_share"
-                                    app:tint="?attr/textColor" />
-
-                            <TextView
-                                    android:layout_gravity="center_vertical"
-                                    android:padding="10dp"
-                                    android:textSize="17sp"
-                                    android:textColor="?attr/textColor"
-                                    android:text="24/30"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
-
-                            <androidx.core.widget.ContentLoadingProgressBar
-                                    android:layout_width="match_parent"
-                                    android:layout_height="20dp"
-                                    android:progress="50"
-                                    android:indeterminate="false"
-                                    android:progressBackgroundTint="?attr/colorPrimary"
-                                    style="?android:attr/progressBarStyleHorizontal"
-                                    android:max="100"
-                                    android:layout_gravity="end|center_vertical"
-                                    tools:visibility="visible" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                            <TextView
-                                    android:layout_gravity="center_vertical"
-                                    android:padding="10dp"
-                                    android:textSize="17sp"
-                                    android:textColor="?attr/textColor"
-                                    android:text="Rated:"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
-
-                            <com.google.android.material.button.MaterialButton
-                                    android:layout_height="30dp"
-                                    android:text="7/10"
-                                    android:minWidth="0dp"
-                                    android:layout_width="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="0dp"
-                                    style="@style/BlackButton" />
-
-                            <TextView
-                                    android:layout_gravity="center_vertical"
-                                    android:padding="10dp"
-                                    android:textSize="17sp"
-                                    android:textColor="?attr/textColor"
-                                    android:text="Status:"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
-
-                            <com.google.android.material.button.MaterialButton
-                                    android:layout_height="30dp"
-                                    android:text="Watching"
-                                    android:minWidth="0dp"
-                                    android:layout_width="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="0dp"
-                                    style="@style/BlackButton" />
-                        </LinearLayout>
-
-                        <FrameLayout
-                                android:visibility="gone"
-                                android:paddingTop="12dp"
-                                android:paddingBottom="12dp"
-                                android:orientation="horizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                            <TextView
-                                    android:id="@+id/home_parent_item_title"
-                                    style="@style/WatchHeaderText"
-                                    tools:text="Recommended" />
-
-                            <ImageView
-                                    app:tint="?attr/textColor"
-                                    android:layout_marginEnd="5dp"
-                                    android:layout_gravity="end|center_vertical"
-                                    android:src="@drawable/ic_baseline_arrow_forward_24"
-                                    android:layout_width="30dp"
-                                    android:layout_height="match_parent"
-                                    android:contentDescription="@string/home_more_info" />
-                        </FrameLayout>
-
-                    </LinearLayout>
 
                     <com.lagradost.cloudstream3.widget.FlowLayout
                             android:id="@+id/result_tag"
@@ -794,18 +660,6 @@
                         </com.google.android.material.tabs.TabItem>
                     </com.google.android.material.tabs.TabLayout>-->
 
-                    <com.lagradost.cloudstream3.ui.AutofitRecyclerView
-                            android:visibility="gone"
-                            android:descendantFocusability="afterDescendants"
-
-                            android:background="?attr/primaryBlackBackground"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:clipToPadding="false"
-                            app:spanCount="3"
-                            android:id="@+id/result_recommendations"
-                            tools:listitem="@layout/search_result_grid"
-                            android:orientation="vertical" />
 
                     <LinearLayout
                             android:id="@+id/result_episodes_tab"
@@ -926,30 +780,6 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <LinearLayout
-                android:layout_gravity="bottom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    android:id="@+id/result_bookmark_fab"
-                    app:icon="@drawable/ic_baseline_bookmark_24"
-                    style="@style/ExtendedFloatingActionButton"
-                    tools:ignore="ContentDescription" />
-
-            <fragment
-                    app:customCastBackgroundColor="?attr/primaryBlackBackground"
-                    app:castControlButtons="@array/cast_mini_controller_control_buttons"
-                    android:id="@+id/cast_mini_controller"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    class="com.lagradost.cloudstream3.ui.MyMiniControllerFragment"
-                    tools:ignore="FragmentTagUsage" />
-        </LinearLayout>
     </FrameLayout>
 
 
