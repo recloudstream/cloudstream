@@ -131,14 +131,15 @@ open class TmdbProvider : MainAPI() {
             this.genres?.mapNotNull { it.name },
             this.episode_run_time?.average()?.toInt(),
             null,
-            this.recommendations?.results?.map { it.toSearchResponse() }
+            (this.recommendations ?: this.similar)?.results?.map { it.toSearchResponse() }
         )
     }
 
     private fun Movie.toLoadResponse(): MovieLoadResponse {
+        println("TRAILRES::::::: ${this.similar} :::: ${this.recommendations} ")
         return MovieLoadResponse(
             this.title ?: this.original_title,
-            getUrl(id, true),
+            getUrl(id, false),
             this@TmdbProvider.apiName,
             TvType.Movie,
             TmdbLink(
@@ -160,7 +161,7 @@ open class TmdbProvider : MainAPI() {
             this.genres?.mapNotNull { it.name },
             this.runtime,
             null,
-            this.recommendations?.results?.map { it.toSearchResponse() }
+            (this.recommendations ?: this.similar)?.results?.map { it.toSearchResponse() }
         )
     }
 
@@ -246,10 +247,26 @@ open class TmdbProvider : MainAPI() {
         return if (useMetaLoadResponse) {
             return if (isTvSeries) {
                 val body = tmdb.tvService().tv(id, "en-US").awaitResponse().body()
-                body?.toLoadResponse()
+                val response = body?.toLoadResponse()
+                if (response != null && response.recommendations.isNullOrEmpty()) {
+                    tmdb.tvService().recommendations(id, 1,"en-US").awaitResponse().body()?.let {
+                        it.results?.map { res -> res.toSearchResponse() }
+                    }?.let { list ->
+                        response.recommendations = list
+                    }
+                }
+                response
             } else {
                 val body = tmdb.moviesService().summary(id, "en-US").awaitResponse().body()
-                body?.toLoadResponse()
+                val response = body?.toLoadResponse()
+                if (response != null && response.recommendations.isNullOrEmpty()) {
+                   tmdb.moviesService().recommendations(id, 1,"en-US").awaitResponse().body()?.let {
+                       it.results?.map { res -> res.toSearchResponse() }
+                   }?.let { list ->
+                       response.recommendations = list
+                   }
+                }
+                response
             }
         } else {
             loadFromTmdb(id)?.let { return it }
