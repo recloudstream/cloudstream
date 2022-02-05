@@ -12,7 +12,6 @@ import org.jsoup.nodes.Document
 import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class TenshiProvider : MainAPI() {
     companion object {
@@ -256,10 +255,18 @@ class TenshiProvider : MainAPI() {
             )
         })
 
+        val similarAnime = document.select("ul.anime-loop > li > a")?.mapNotNull { element ->
+            val href = element.attr("href") ?: return@mapNotNull null
+            val title =
+                element.selectFirst("> .overlay > .thumb-title")?.text() ?: return@mapNotNull null
+            val img = element.selectFirst("> img")?.attr("src")
+            AnimeSearchResponse(title, href, this.name, TvType.Anime, img)
+        }
 
         val type = document.selectFirst("a[href*=\"$mainUrl/type/\"]")?.text()?.trim()
 
         return newAnimeLoadResponse(canonicalTitle, url, getType(type ?: "")) {
+            recommendations = similarAnime
             posterUrl = document.selectFirst("img.cover-image")?.attr("src")
             plot = document.selectFirst(".entry-description > .card-body")?.text()?.trim()
             tags =

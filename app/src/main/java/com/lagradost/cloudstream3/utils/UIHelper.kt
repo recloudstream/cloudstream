@@ -119,16 +119,18 @@ object UIHelper {
         return color
     }
 
-    fun ImageView?.setImage(url: String?) {
-        if (this == null || url.isNullOrBlank()) return
-        try {
+    fun ImageView?.setImage(url: String?) : Boolean {
+        if (this == null || url.isNullOrBlank()) return false
+        return try {
             GlideApp.with(this.context)
                 .load(GlideUrl(url)).transition(
                     DrawableTransitionOptions.withCrossFade()
                 )
                 .into(this)
+            true
         } catch (e: Exception) {
             logError(e)
+            false
         }
     }
 

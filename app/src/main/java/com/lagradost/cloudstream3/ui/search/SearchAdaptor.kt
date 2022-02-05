@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -22,7 +23,7 @@ const val SEARCH_ACTION_FOCUSED = 4
 class SearchClickCallback(val action: Int, val view: View, val position : Int, val card: SearchResponse)
 
 class SearchAdapter(
-    var cardList: List<SearchResponse>,
+    private val cardList: MutableList<SearchResponse>,
     private val resView: AutofitRecyclerView,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -46,6 +47,17 @@ class SearchAdapter(
 
     override fun getItemCount(): Int {
         return cardList.size
+    }
+
+    fun updateList(newList: List<SearchResponse>) {
+        val diffResult = DiffUtil.calculateDiff(
+            SearchResponseDiffCallback(this.cardList, newList)
+        )
+
+        cardList.clear()
+        cardList.addAll(newList)
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     class CardViewHolder
@@ -73,4 +85,17 @@ class SearchAdapter(
             SearchResultBuilder.bind(clickCallback, card, position, itemView)
         }
     }
+}
+
+class SearchResponseDiffCallback(private val oldList: List<SearchResponse>, private val newList: List<SearchResponse>) :
+    DiffUtil.Callback() {
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition].name == newList[newItemPosition].name
+
+    override fun getOldListSize() = oldList.size
+
+    override fun getNewListSize() = newList.size
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition] == newList[newItemPosition]
 }

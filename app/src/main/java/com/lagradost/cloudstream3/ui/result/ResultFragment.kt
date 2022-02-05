@@ -392,10 +392,6 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         downloadButton?.dispose()
         updateUIListener = null
         super.onDestroy()
-        activity?.let {
-            it.window?.navigationBarColor =
-                it.colorFromAttribute(R.attr.primaryGrayBackground)
-        }
     }
 
     override fun onResume() {
@@ -499,18 +495,16 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         result_recommendations?.isGone = isInvalid
         result_recommendations_btt?.isGone = isInvalid
         result_recommendations_btt?.setOnClickListener {
-            if(result_overlapping_panels?.getSelectedPanel()?.ordinal == 1) {
+            if (result_overlapping_panels?.getSelectedPanel()?.ordinal == 1) {
                 result_overlapping_panels?.openEndPanel()
             } else {
                 result_overlapping_panels?.closePanels()
             }
         }
         result_overlapping_panels?.setEndPanelLockState(if (isInvalid) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
-
-        rec?.let { list ->
-            (result_recommendations?.adapter as SearchAdapter?)?.apply {
-                cardList = list
-                notifyDataSetChanged()
+        result_recommendations.post {
+            rec?.let { list ->
+                (result_recommendations?.adapter as SearchAdapter?)?.updateList(list)
             }
         }
     }
@@ -540,13 +534,12 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
     private fun updateUI() {
         viewModel.reloadEpisodes()
-
-
     }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         fixGrid()
         result_recommendations?.spanCount = 3
         result_overlapping_panels?.setStartPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
@@ -954,7 +947,6 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 ACTION_RELOAD_EPISODE -> {
                     viewModel.loadEpisode(episodeClick.data, false)
                 }
-
 
                 ACTION_DOWNLOAD_MIRROR -> {
                     acquireSingleExtractorLink(

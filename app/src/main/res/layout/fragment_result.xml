@@ -15,12 +15,10 @@
             app:shimmer_highlight_alpha="0.3"
             app:shimmer_duration="@integer/loading_time"
             app:shimmer_auto_start="true"
-            android:paddingTop="40dp"
             android:id="@+id/result_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
             android:orientation="vertical">
 
         <LinearLayout

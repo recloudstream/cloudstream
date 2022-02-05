@@ -115,7 +115,7 @@ class HomeFragment : Fragment() {
             // Span settings
             recycle.spanCount = currentSpan
 
-            recycle.adapter = SearchAdapter(item.list, recycle) { callback ->
+            recycle.adapter = SearchAdapter(item.list.toMutableList(), recycle) { callback ->
                 handleSearchClickCallback(this, callback)
                 if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
                     bottomSheetDialogBuilder.dismissSafe(this)

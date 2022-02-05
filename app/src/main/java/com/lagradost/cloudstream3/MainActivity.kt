@@ -43,6 +43,7 @@ import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -195,6 +196,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onBackPressed() {
+        this.window?.navigationBarColor =
+            this.colorFromAttribute(R.attr.primaryGrayBackground)
         this.updateLocale()
         backEvent.invoke(true)
         super.onBackPressed()

@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
@@ -40,17 +41,15 @@ object SearchResultBuilder {
 
         // Do logic
 
-        bar?.visibility = View.GONE
-        playImg?.visibility = View.GONE
-        textIsDub?.visibility = View.GONE
-        textIsSub?.visibility = View.GONE
+        bar?.isVisible = false
+        playImg?.isVisible = false
+        textIsDub?.isVisible = false
+        textIsSub?.isVisible = false
 
         cardText?.text = card.name
 
-        //imageTextProvider.text = card.apiName
-        if (!card.posterUrl.isNullOrEmpty()) {
-            cardView.setImage(card.posterUrl)
-        } else {
+        cardView.isVisible = true
+        if (!cardView.setImage(card.posterUrl)) {
             cardView.setImageResource(R.drawable.default_cover)
         }
 
