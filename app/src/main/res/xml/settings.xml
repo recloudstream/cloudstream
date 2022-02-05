@@ -95,7 +95,7 @@
                 android:key="@string/show_fillers_key"
                 android:icon="@drawable/ic_baseline_skip_next_24"
                 android:title="@string/show_fillers_settings"
-                android:defaultValue="true" />
+                android:defaultValue="false" />
         <Preference
                 android:key="@string/dns_key"
                 android:title="@string/dns_pref"

@@ -36,7 +36,7 @@ android {
         targetSdkVersion 30
 
         versionCode 42
-        versionName "2.6.9"
+        versionName "2.6.10"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
@@ -52,8 +52,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
-            debuggable true
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         prerelease {
@@ -61,12 +62,15 @@ android {
             buildConfigField("boolean", "BETA", "true")
             signingConfig signingConfigs.prerelease
             versionNameSuffix '-PRE'
-            minifyEnabled false
-            debuggable true
+            minifyEnabled true
+            debuggable false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
+            debuggable true
             applicationIdSuffix ".debug"
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {

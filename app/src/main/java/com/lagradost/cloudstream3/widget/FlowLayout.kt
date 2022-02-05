@@ -8,10 +8,19 @@ import com.lagradost.cloudstream3.R
 import kotlin.math.max
 
 class FlowLayout : ViewGroup {
+    var itemSpacing : Int = 0
+
     constructor(context: Context?) : super(context)
 
-    @JvmOverloads
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int = 0) : super(context, attrs, defStyleAttr)
+    //@JvmOverloads
+    //constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int = 0) : super(context, attrs, defStyleAttr)
+
+    @SuppressLint("CustomViewStyleable")
+    internal constructor(c: Context, attrs: AttributeSet?) : super(c, attrs) {
+        val t = c.obtainStyledAttributes(attrs, R.styleable.FlowLayout_Layout)
+        itemSpacing = t.getDimensionPixelSize(R.styleable.FlowLayout_Layout_itemSpacing, 0);
+        t.recycle()
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val realWidth = MeasureSpec.getSize(widthMeasureSpec)
@@ -29,13 +38,13 @@ class FlowLayout : ViewGroup {
             //check if child can be placed in the current row, else go to next line
             if (currentChildHookPointx + childWidth > realWidth) {
                 //new line
-                currentWidth = Math.max(currentWidth, currentChildHookPointx)
+                currentWidth = max(currentWidth, currentChildHookPointx)
 
                 //reset for new line
                 currentChildHookPointx = 0
                 currentChildHookPointy += childHeight
             }
-            val nextChildHookPointx = currentChildHookPointx + childWidth
+            val nextChildHookPointx = currentChildHookPointx + childWidth + if(childWidth == 0) 0 else itemSpacing
             val nextChildHookPointy = currentChildHookPointy
             currentHeight = max(currentHeight, currentChildHookPointy + childHeight)
             val lp = child.layoutParams as LayoutParams
@@ -44,7 +53,7 @@ class FlowLayout : ViewGroup {
             currentChildHookPointx = nextChildHookPointx
             currentChildHookPointy = nextChildHookPointy
         }
-        currentWidth = Math.max(currentChildHookPointx, currentWidth)
+        currentWidth = max(currentChildHookPointx, currentWidth)
         setMeasuredDimension(resolveSize(currentWidth, widthMeasureSpec),
             resolveSize(currentHeight, heightMeasureSpec))
     }
@@ -83,7 +92,7 @@ class FlowLayout : ViewGroup {
         @SuppressLint("CustomViewStyleable")
         internal constructor(c: Context, attrs: AttributeSet?) : super(c, attrs) {
             val t = c.obtainStyledAttributes(attrs, R.styleable.FlowLayout_Layout)
-            spacing = 0 //t.getDimensionPixelSize(R.styleable.FlowLayout_Layout_layout_space, 0);
+            spacing = 0//t.getDimensionPixelSize(R.styleable.FlowLayout_Layout_itemSpacing, 0);
             t.recycle()
         }
 

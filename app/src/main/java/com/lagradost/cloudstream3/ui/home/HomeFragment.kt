@@ -779,10 +779,10 @@ class HomeFragment : Fragment() {
         home_loaded.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { view, _, scrollY, _, oldScrollY ->
             val dy = scrollY - oldScrollY
             if (dy > 0) { //check for scroll down
-                home_api_fab?.hide()
+                home_api_fab?.shrink() // hide
             } else if (dy < -5) {
                 if (view?.context?.isTvSettings() == false) {
-                    home_api_fab?.show()
+                    home_api_fab?.extend() // show
                 }
             }
         })

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.setActors
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.*
@@ -79,6 +80,15 @@ open class TmdbProvider : MainAPI() {
         )
     }
 
+    private fun List<CastMember?>?.toActors(): List<Pair<Actor, String?>>? {
+        return this?.mapNotNull {
+            Pair(
+                Actor(it?.name ?: return@mapNotNull null, getImageUrl(it.profile_path)),
+                it.character
+            )
+        }
+    }
+
     private fun TvShow.toLoadResponse(): TvSeriesLoadResponse {
         val episodes = this.seasons?.filter { !disableSeasonZero || (it.season_number ?: 0) != 0 }
             ?.mapNotNull { season ->
@@ -112,57 +122,56 @@ open class TmdbProvider : MainAPI() {
                 }
             }?.flatten() ?: listOf()
 
-        return TvSeriesLoadResponse(
+        return newTvSeriesLoadResponse(
             this.name ?: this.original_name,
             getUrl(id, true),
-            this@TmdbProvider.apiName,
             TvType.TvSeries,
-            episodes,
-            getImageUrl(this.poster_path),
-            this.first_air_date?.let {
+            episodes
+        ) {
+            posterUrl = getImageUrl(poster_path)
+            year = first_air_date?.let {
                 Calendar.getInstance().apply {
                     time = it
                 }.get(Calendar.YEAR)
-            },
-            this.overview,
-            null, // this.status
-            this.external_ids?.imdb_id,
-            this.rating,
-            this.genres?.mapNotNull { it.name },
-            this.episode_run_time?.average()?.toInt(),
-            null,
-            (this.recommendations ?: this.similar)?.results?.map { it.toSearchResponse() }
-        )
+            }
+            plot = overview
+            imdbId = external_ids?.imdb_id
+            tags = genres?.mapNotNull { it.name }
+            duration = episode_run_time?.average()?.toInt()
+            rating = this@toLoadResponse.rating
+
+            recommendations = (this@toLoadResponse.recommendations
+                ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
+            setActors(credits?.cast?.toList().toActors())
+        }
     }
 
     private fun Movie.toLoadResponse(): MovieLoadResponse {
-        println("TRAILRES::::::: ${this.similar} :::: ${this.recommendations} ")
-        return MovieLoadResponse(
-            this.title ?: this.original_title,
-            getUrl(id, false),
-            this@TmdbProvider.apiName,
-            TvType.Movie,
-            TmdbLink(
+        return newMovieLoadResponse(
+            this.title ?: this.original_title, getUrl(id, false), TvType.Movie, TmdbLink(
                 this.imdb_id,
                 this.id,
                 null,
                 null,
                 this.title ?: this.original_title,
-            ).toJson(),
-            getImageUrl(this.poster_path),
-            this.release_date?.let {
+            ).toJson()
+        ) {
+            posterUrl = getImageUrl(poster_path)
+            year = release_date?.let {
                 Calendar.getInstance().apply {
                     time = it
                 }.get(Calendar.YEAR)
-            },
-            this.overview,
-            null,//this.status
-            this.rating,
-            this.genres?.mapNotNull { it.name },
-            this.runtime,
-            null,
-            (this.recommendations ?: this.similar)?.results?.map { it.toSearchResponse() }
-        )
+            }
+            plot = overview
+            imdbId = external_ids?.imdb_id
+            tags = genres?.mapNotNull { it.name }
+            duration = runtime
+            rating = this@toLoadResponse.rating
+
+            recommendations = (this@toLoadResponse.recommendations
+                ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
+            setActors(credits?.cast?.toList().toActors())
+        }
     }
 
     override suspend fun getMainPage(): HomePageResponse {
@@ -248,23 +257,38 @@ open class TmdbProvider : MainAPI() {
             return if (isTvSeries) {
                 val body = tmdb.tvService().tv(id, "en-US").awaitResponse().body()
                 val response = body?.toLoadResponse()
-                if (response != null && response.recommendations.isNullOrEmpty()) {
-                    tmdb.tvService().recommendations(id, 1,"en-US").awaitResponse().body()?.let {
-                        it.results?.map { res -> res.toSearchResponse() }
-                    }?.let { list ->
-                        response.recommendations = list
-                    }
+                if (response != null) {
+                    if (response.recommendations.isNullOrEmpty())
+                        tmdb.tvService().recommendations(id, 1, "en-US").awaitResponse().body()
+                            ?.let {
+                                it.results?.map { res -> res.toSearchResponse() }
+                            }?.let { list ->
+                            response.recommendations = list
+                        }
+
+                    if (response.actors.isNullOrEmpty())
+                        tmdb.tvService().credits(id, "en-US").awaitResponse().body()?.let {
+                            response.setActors(it.cast?.toActors())
+                        }
                 }
+
                 response
             } else {
                 val body = tmdb.moviesService().summary(id, "en-US").awaitResponse().body()
                 val response = body?.toLoadResponse()
-                if (response != null && response.recommendations.isNullOrEmpty()) {
-                   tmdb.moviesService().recommendations(id, 1,"en-US").awaitResponse().body()?.let {
-                       it.results?.map { res -> res.toSearchResponse() }
-                   }?.let { list ->
-                       response.recommendations = list
-                   }
+                if (response != null) {
+                    if (response.recommendations.isNullOrEmpty())
+                        tmdb.moviesService().recommendations(id, 1, "en-US").awaitResponse().body()
+                            ?.let {
+                                it.results?.map { res -> res.toSearchResponse() }
+                            }?.let { list ->
+                                response.recommendations = list
+                            }
+
+                    if (response.actors.isNullOrEmpty())
+                        tmdb.moviesService().credits(id).awaitResponse().body()?.let {
+                            response.setActors(it.cast?.toActors())
+                        }
                 }
                 response
             }

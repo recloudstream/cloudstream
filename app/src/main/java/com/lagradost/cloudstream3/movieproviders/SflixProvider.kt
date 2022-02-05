@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.setActorNames
+import com.lagradost.cloudstream3.LoadResponse.Companion.setDuration
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -100,13 +102,37 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         val img = details.select("img.film-poster-img")
         val posterUrl = img.attr("src")
         val title = img.attr("title")
+
+        /*
         val year = Regex("""[Rr]eleased:\s*(\d{4})""").find(
             document.select("div.elements").text()
         )?.groupValues?.get(1)?.toIntOrNull()
         val duration = Regex("""[Dd]uration:\s*(\d*)""").find(
             document.select("div.elements").text()
-        )?.groupValues?.get(1)?.trim()?.plus(" min")
-
+        )?.groupValues?.get(1)?.trim()?.plus(" min")*/
+        var duration = document.selectFirst(".fs-item > .duration").text()?.trim()
+        var year: Int? = null
+        var tags: List<String>? = null
+        var cast: List<String>? = null
+        document.select("div.elements > .row > div > .row-line")?.forEach { element ->
+            val type = element?.select(".type")?.text() ?: return@forEach
+            when {
+                type.contains("Released") -> {
+                    year = Regex("\\d+").find(
+                        element.ownText() ?: return@forEach
+                    )?.groupValues?.firstOrNull()?.toIntOrNull()
+                }
+                type.contains("Genre") -> {
+                    tags = element.select("a")?.mapNotNull { it.text() }
+                }
+                type.contains("Cast") -> {
+                    cast = element.select("a")?.mapNotNull { it.text() }
+                }
+                type.contains("Duration") -> {
+                    duration = duration ?: element.ownText()?.trim()
+                }
+            }
+        }
         val plot = details.select("div.description").text().replace("Overview:", "").trim()
 
         val isMovie = url.contains("/movie/")
@@ -156,6 +182,8 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 this.posterUrl = posterUrl
                 this.plot = plot
                 setDuration(duration)
+                setActorNames(cast)
+                this.tags = tags
                 this.recommendations = recommendations
             }
         } else {
@@ -201,6 +229,8 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 this.year = year
                 this.plot = plot
                 setDuration(duration)
+                setActorNames(cast)
+                this.tags = tags
                 this.recommendations = recommendations
             }
         }

@@ -26,7 +26,10 @@ class MeloMovieProvider : MainAPI() {
         //"mppa" for tags
     )
 
-    data class MeloMovieLink(val name: String, val link: String)
+    data class MeloMovieLink(
+        @JsonProperty("name") val name: String,
+        @JsonProperty("link") val link: String
+    )
 
     override suspend fun quickSearch(query: String): List<SearchResponse> {
         return search(query)
@@ -106,7 +109,16 @@ class MeloMovieProvider : MainAPI() {
     ): Boolean {
         val links = parseJson<List<MeloMovieLink>>(data)
         for (link in links) {
-            callback.invoke(ExtractorLink(this.name, link.name, link.link, "", getQualityFromName(link.name), false))
+            callback.invoke(
+                ExtractorLink(
+                    this.name,
+                    link.name,
+                    link.link,
+                    "",
+                    getQualityFromName(link.name),
+                    false
+                )
+            )
         }
         return true
     }
@@ -125,11 +137,13 @@ class MeloMovieProvider : MainAPI() {
         val type = findUsingRegex("var posttype = ([0-9]*)")?.toInt() ?: return null
         val titleInfo = document.selectFirst("div.movie_detail_title > div > div > h1")
         val title = titleInfo.ownText()
-        val year = titleInfo.selectFirst("> a")?.text()?.replace("(", "")?.replace(")", "")?.toIntOrNull()
+        val year =
+            titleInfo.selectFirst("> a")?.text()?.replace("(", "")?.replace(")", "")?.toIntOrNull()
         val plot = document.selectFirst("div.col-lg-12 > p").text()
 
         if (type == 1) { // MOVIE
-            val serialize = document.selectFirst("table.accordion__list") ?: throw ErrorLoadingException("No links found")
+            val serialize = document.selectFirst("table.accordion__list")
+                ?: throw ErrorLoadingException("No links found")
             return MovieLoadResponse(
                 title,
                 url,
@@ -143,15 +157,19 @@ class MeloMovieProvider : MainAPI() {
             )
         } else if (type == 2) {
             val episodes = ArrayList<TvSeriesEpisode>()
-            val seasons = document.select("div.accordion__card") ?: throw ErrorLoadingException("No episodes found")
+            val seasons = document.select("div.accordion__card")
+                ?: throw ErrorLoadingException("No episodes found")
             for (s in seasons) {
                 val season =
-                    s.selectFirst("> div.card-header > button > span").text().replace("Season: ", "").toIntOrNull()
+                    s.selectFirst("> div.card-header > button > span").text()
+                        .replace("Season: ", "").toIntOrNull()
                 val localEpisodes = s.select("> div.collapse > div > div > div.accordion__card")
                 for (e in localEpisodes) {
                     val episode =
-                        e.selectFirst("> div.card-header > button > span").text().replace("Episode: ", "").toIntOrNull()
-                    val links = e.selectFirst("> div.collapse > div > table.accordion__list") ?: continue
+                        e.selectFirst("> div.card-header > button > span").text()
+                            .replace("Episode: ", "").toIntOrNull()
+                    val links =
+                        e.selectFirst("> div.collapse > div > table.accordion__list") ?: continue
                     val data = serializeData(links)
                     episodes.add(TvSeriesEpisode(null, season, episode, data))
                 }

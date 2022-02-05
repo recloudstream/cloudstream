@@ -189,12 +189,13 @@ object APIHolder {
         return realSet
     }
 
-    fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired : Boolean = true): List<MainAPI> {
+    fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val currentPrefMedia =
             settingsManager.getInt(this.getString(R.string.prefer_media_type_key), 0)
         val langs = this.getApiProviderLangSettings()
-        val allApis = apis.filter { langs.contains(it.lang) }.filter { api -> api.hasMainPage || !hasHomePageIsRequired}
+        val allApis = apis.filter { langs.contains(it.lang) }
+            .filter { api -> api.hasMainPage || !hasHomePageIsRequired }
         return if (currentPrefMedia < 1) {
             allApis
         } else {
@@ -426,6 +427,23 @@ interface SearchResponse {
     val id: Int?
 }
 
+enum class ActorRole {
+    Main,
+    Supporting,
+}
+
+data class Actor(
+    val name: String,
+    val image: String? = null,
+)
+
+data class ActorData(
+    val actor: Actor,
+    val role: ActorRole? = null,
+    val roleString : String? = null,
+    val voiceActor: Actor? = null,
+)
+
 data class AnimeSearchResponse(
     override val name: String,
     override val url: String,
@@ -488,6 +506,38 @@ interface LoadResponse {
     var duration: Int? // in minutes
     val trailerUrl: String?
     val recommendations: List<SearchResponse>?
+    var actors: List<ActorData>?
+
+    companion object {
+        fun LoadResponse.setActorNames(actors: List<String>?) {
+            this.actors = actors?.map { ActorData(Actor(it)) }
+        }
+
+        fun LoadResponse.setActors(actors: List<Pair<Actor, String?>>?) {
+            println("ACTORS: ${actors?.size}")
+            this.actors = actors?.map { (actor, role) -> ActorData(actor, roleString = role) }
+        }
+
+        fun LoadResponse.setDuration(input: String?) {
+            val cleanInput = input?.trim()?.replace(" ","") ?: return
+            Regex("([0-9]*)h.*?([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
+                if (values.size == 3) {
+                    val hours = values[1].toIntOrNull()
+                    val minutes = values[2].toIntOrNull()
+                    this.duration = if (minutes != null && hours != null) {
+                        hours * 60 + minutes
+                    } else null
+                    if (this.duration != null) return
+                }
+            }
+            Regex("([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
+                if (values.size == 2) {
+                    this.duration = values[1].toIntOrNull()
+                    if (this.duration != null) return
+                }
+            }
+        }
+    }
 }
 
 fun LoadResponse?.isEpisodeBased(): Boolean {
@@ -530,6 +580,7 @@ data class TorrentLoadResponse(
     override var duration: Int? = null,
     override var trailerUrl: String? = null,
     override var recommendations: List<SearchResponse>? = null,
+    override var actors: List<ActorData>? = null,
 ) : LoadResponse
 
 data class AnimeLoadResponse(
@@ -556,6 +607,7 @@ data class AnimeLoadResponse(
     override var duration: Int? = null,
     override var trailerUrl: String? = null,
     override var recommendations: List<SearchResponse>? = null,
+    override var actors: List<ActorData>? = null,
 ) : LoadResponse
 
 fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<AnimeEpisode>?) {
@@ -591,6 +643,7 @@ data class MovieLoadResponse(
     override var duration: Int? = null,
     override var trailerUrl: String? = null,
     override var recommendations: List<SearchResponse>? = null,
+    override var actors: List<ActorData>? = null,
 ) : LoadResponse
 
 fun MainAPI.newMovieLoadResponse(
@@ -609,24 +662,6 @@ fun MainAPI.newMovieLoadResponse(
     )
     builder.initializer()
     return builder
-}
-
-fun LoadResponse.setDuration(input: String?) {
-    if (input == null) return
-    Regex("([0-9]*)h.*?([0-9]*)m").matchEntire(input)?.groupValues?.let { values ->
-        if (values.size == 3) {
-            val hours = values[1].toIntOrNull()
-            val minutes = values[2].toIntOrNull()
-            this.duration = if (minutes != null && hours != null) {
-                hours * 60 + minutes
-            } else null
-        }
-    }
-    Regex("([0-9]*)m").matchEntire(input)?.groupValues?.let { values ->
-        if (values.size == 2) {
-            this.duration = values[1].toIntOrNull()
-        }
-    }
 }
 
 data class TvSeriesEpisode(
@@ -658,6 +693,7 @@ data class TvSeriesLoadResponse(
     override var duration: Int? = null,
     override var trailerUrl: String? = null,
     override var recommendations: List<SearchResponse>? = null,
+    override var actors: List<ActorData>? = null,
 ) : LoadResponse
 
 fun MainAPI.newTvSeriesLoadResponse(
@@ -682,6 +718,7 @@ fun fetchUrls(text: String?): List<String> {
     if (text.isNullOrEmpty()) {
         return listOf()
     }
-    val linkRegex = Regex("""(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))""")
+    val linkRegex =
+        Regex("""(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))""")
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
 }

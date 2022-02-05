@@ -108,44 +108,44 @@ object VideoDownloadManager {
     }
 
     data class DownloadEpisodeMetadata(
-        val id: Int,
-        val mainName: String,
-        val sourceApiName: String?,
-        val poster: String?,
-        val name: String?,
-        val season: Int?,
-        val episode: Int?
+        @JsonProperty("id") val id: Int,
+        @JsonProperty("mainName") val mainName: String,
+        @JsonProperty("sourceApiName") val sourceApiName: String?,
+        @JsonProperty("poster") val poster: String?,
+        @JsonProperty("name") val name: String?,
+        @JsonProperty("season") val season: Int?,
+        @JsonProperty("episode") val episode: Int?
     )
 
     data class DownloadItem(
-        val source: String?,
-        val folder: String?,
-        val ep: DownloadEpisodeMetadata,
-        val links: List<ExtractorLink>,
+        @JsonProperty("source") val source: String?,
+        @JsonProperty("folder") val folder: String?,
+        @JsonProperty("ep") val ep: DownloadEpisodeMetadata,
+        @JsonProperty("links") val links: List<ExtractorLink>,
     )
 
     data class DownloadResumePackage(
-        val item: DownloadItem,
-        val linkIndex: Int?,
+        @JsonProperty("item") val item: DownloadItem,
+        @JsonProperty("linkIndex") val linkIndex: Int?,
     )
 
     data class DownloadedFileInfo(
-        val totalBytes: Long,
-        val relativePath: String,
-        val displayName: String,
-        val extraInfo: String? = null,
-        val basePath: String? = null // null is for legacy downloads. See getDefaultPath()
+        @JsonProperty("totalBytes") val totalBytes: Long,
+        @JsonProperty("relativePath") val relativePath: String,
+        @JsonProperty("displayName") val displayName: String,
+        @JsonProperty("extraInfo") val extraInfo: String? = null,
+        @JsonProperty("basePath") val basePath: String? = null // null is for legacy downloads. See getDefaultPath()
     )
 
     data class DownloadedFileInfoResult(
-        val fileLength: Long,
-        val totalBytes: Long,
-        val path: Uri,
+        @JsonProperty("fileLength") val fileLength: Long,
+        @JsonProperty("totalBytes") val totalBytes: Long,
+        @JsonProperty("path") val path: Uri,
     )
 
     data class DownloadQueueResumePackage(
-        val index: Int,
-        val pkg: DownloadResumePackage,
+        @JsonProperty("index") val index: Int,
+        @JsonProperty("pkg") val pkg: DownloadResumePackage,
     )
 
     private const val SUCCESS_DOWNLOAD_DONE = 1

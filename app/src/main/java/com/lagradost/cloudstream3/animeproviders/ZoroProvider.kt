@@ -172,6 +172,13 @@ class ZoroProvider : MainAPI() {
         }
     }
 
+    private fun Element?.getActor(): Actor? {
+        val image =
+            fixUrlNull(this?.selectFirst(".pi-avatar > img")?.attr("data-src")) ?: return null
+        val name = this?.selectFirst(".pi-detail > .pi-name")?.text() ?: return null
+        return Actor(name = name, image = image)
+    }
+
     override suspend fun load(url: String): LoadResponse {
         val html = app.get(url).text
         val document = Jsoup.parse(html)
@@ -222,6 +229,23 @@ class ZoroProvider : MainAPI() {
             )
         }
 
+        val actors = document.select("div.block-actors-content > div.bac-list-wrap > div.bac-item")
+            ?.mapNotNull { head ->
+                val subItems = head.select(".per-info") ?: return@mapNotNull null
+                if(subItems.isEmpty()) return@mapNotNull null
+                var role: ActorRole? = null
+                val mainActor = subItems.first()?.let {
+                    role = when (it.selectFirst(".pi-detail > .pi-cast")?.text()?.trim()) {
+                        "Supporting" -> ActorRole.Supporting
+                        "Main" -> ActorRole.Main
+                        else -> null
+                    }
+                    it.getActor()
+                } ?: return@mapNotNull null
+                val voiceActor = if(subItems.size >= 2) subItems[1]?.getActor() else null
+                ActorData(actor = mainActor, role = role, voiceActor = voiceActor)
+            }
+
         val recommendations =
             document.select("#main-content > section > .tab-content > div > .film_list-wrap > .flw-item")
                 .mapNotNull { head ->
@@ -254,6 +278,7 @@ class ZoroProvider : MainAPI() {
             plot = description
             this.tags = tags
             this.recommendations = recommendations
+            this.actors = actors
         }
     }
 

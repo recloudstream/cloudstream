@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.animeproviders
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -218,18 +219,18 @@ class GogoanimeProvider : MainAPI() {
     }
 
     data class GogoSources(
-        val source: List<GogoSource>?,
-        val sourceBk: List<GogoSource>?,
+        @JsonProperty("source") val source: List<GogoSource>?,
+        @JsonProperty("sourceBk") val sourceBk: List<GogoSource>?,
         //val track: List<Any?>,
         //val advertising: List<Any?>,
         //val linkiframe: String
     )
 
     data class GogoSource(
-        val file: String,
-        val label: String?,
-        val type: String?,
-        val default: String? = null
+        @JsonProperty("file") val file: String,
+        @JsonProperty("label") val label: String?,
+        @JsonProperty("type") val type: String?,
+        @JsonProperty("default") val default: String? = null
     )
 
     private suspend fun extractVideos(uri: String, callback: (ExtractorLink) -> Unit) {

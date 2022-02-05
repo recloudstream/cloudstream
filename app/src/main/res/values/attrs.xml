@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="FlowLayout_Layout"/>
-    <declare-styleable name="FlowLayout_Layout_layout_space"/>
+    <declare-styleable name="FlowLayout_Layout">
+        <attr format="dimension" name="itemSpacing" />
+    </declare-styleable>
+    <declare-styleable name="FlowLayout_Layout_layout_space" />
 
     <declare-styleable name="CustomCast">
-        <attr name="customCastBackgroundColor" format="color"/>
+        <attr name="customCastBackgroundColor" format="color" />
     </declare-styleable>
 
     <style name="customCastDefColor">
@@ -12,19 +14,19 @@
     </style>
 
     <declare-styleable name="MainColors">
-        <attr name="colorPrimary" format="color"/>
-        <attr name="colorSearch" format="color"/>
-        <attr name="colorOngoing" format="color"/>
-        <attr name="colorPrimaryDark" format="color"/>
+        <attr name="colorPrimary" format="color" />
+        <attr name="colorSearch" format="color" />
+        <attr name="colorOngoing" format="color" />
+        <attr name="colorPrimaryDark" format="color" />
 
-        <attr name="primaryGrayBackground" format="color"/>
-        <attr name="primaryBlackBackground" format="color"/>
-        <attr name="iconGrayBackground" format="color"/>
-        <attr name="boxItemBackground" format="color"/>
+        <attr name="primaryGrayBackground" format="color" />
+        <attr name="primaryBlackBackground" format="color" />
+        <attr name="iconGrayBackground" format="color" />
+        <attr name="boxItemBackground" format="color" />
 
-        <attr name="textColor" format="color"/>
-        <attr name="grayTextColor" format="color"/>
-        <attr name="iconColor" format="color"/>
-        <attr name="white" format="color"/>
+        <attr name="textColor" format="color" />
+        <attr name="grayTextColor" format="color" />
+        <attr name="iconColor" format="color" />
+        <attr name="white" format="color" />
     </declare-styleable>
 </resources>

@@ -229,6 +229,19 @@
         <item name="android:fontFamily">@font/google_sans</item>
     </style>
 
+    <style name="ResultInfoText">
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="textColor">?attr/white</item>
+
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">24dp</item>
+        <item name="android:minWidth">0dp</item>
+     <!--   <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>-->
+    </style>
+
     <style name="AppMaterialButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="android:fontFamily">@font/google_sans</item>
     </style>

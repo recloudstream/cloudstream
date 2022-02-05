@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.setDuration
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities

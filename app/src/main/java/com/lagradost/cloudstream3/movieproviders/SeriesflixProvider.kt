@@ -1,11 +1,12 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.setDuration
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.*
-import kotlin.collections.ArrayList
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 
-class SeriesflixProvider:MainAPI() {
+class SeriesflixProvider : MainAPI() {
     override val mainUrl = "https://seriesflix.video"
     override val name = "Seriesflix"
     override val lang = "es"
@@ -16,6 +17,7 @@ class SeriesflixProvider:MainAPI() {
         TvType.Movie,
         TvType.TvSeries,
     )
+
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
@@ -48,6 +50,7 @@ class SeriesflixProvider:MainAPI() {
         if (items.size <= 0) throw ErrorLoadingException()
         return HomePageResponse(items)
     }
+
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
         val doc = app.get(url).document
@@ -80,15 +83,14 @@ class SeriesflixProvider:MainAPI() {
     }
 
 
-
-    override suspend fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse {
         val type = if (url.contains("/movies/")) TvType.Movie else TvType.TvSeries
 
         val document = app.get(url).document
 
         val title = document.selectFirst("h1.Title").text()
         val descRegex = Regex("(Recuerda.*Seriesflix.)")
-        val descipt = document.selectFirst("div.Description > p").text().replace(descRegex,"")
+        val descipt = document.selectFirst("div.Description > p").text().replace(descRegex, "")
         val rating =
             document.selectFirst("div.Vote > div.post-ratings > span")?.text()?.toFloatOrNull()
                 ?.times(1000)?.toInt()
@@ -100,10 +102,11 @@ class SeriesflixProvider:MainAPI() {
             null
         }
         val postercss = document.selectFirst("head").toString()
-        val posterRegex = Regex("(\"og:image\" content=\"https:\\/\\/seriesflix.video\\/wp-content\\/uploads\\/(\\d+)\\/(\\d+)\\/?.*.jpg)")
+        val posterRegex =
+            Regex("(\"og:image\" content=\"https://seriesflix.video/wp-content/uploads/(\\d+)/(\\d+)/?.*.jpg)")
         val poster = try {
             posterRegex.findAll(postercss).map {
-                it.value.replace("\"og:image\" content=\"","")
+                it.value.replace("\"og:image\" content=\"", "")
             }.toList().first()
         } catch (e: Exception) {
             document.select(".TPostBg").attr("src")
@@ -186,14 +189,18 @@ class SeriesflixProvider:MainAPI() {
             val movieID = it.attr("data-id")
             val serverID = it.attr("data-key")
             val type = if (data.contains("movies")) 1 else 2
-            val url = "$mainUrl/?trembed=$serverID&trid=$movieID&trtype=$type" //This is to get the POST key value
+            val url =
+                "$mainUrl/?trembed=$serverID&trid=$movieID&trtype=$type" //This is to get the POST key value
             val doc1 = app.get(url).document
             doc1.select("div.Video iframe").apmap {
                 val iframe = it.attr("src")
-                val postkey = iframe.replace("https://sc.seriesflix.video/index.php?h=","") // this obtains
+                val postkey =
+                    iframe.replace("https://sc.seriesflix.video/index.php?h=", "") // this obtains
                 // djNIdHNCR2lKTGpnc3YwK3pyRCs3L2xkQmljSUZ4ai9ibTcza0JRODNMcmFIZ0hPejdlYW0yanJIL2prQ1JCZA POST KEY
-                app.post("https://sc.seriesflix.video/r.php",
-                    headers = mapOf("Host" to "sc.seriesflix.video",
+                app.post(
+                    "https://sc.seriesflix.video/r.php",
+                    headers = mapOf(
+                        "Host" to "sc.seriesflix.video",
                         "User-Agent" to USER_AGENT,
                         "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                         "Accept-Language" to "en-US,en;q=0.5",
@@ -206,12 +213,13 @@ class SeriesflixProvider:MainAPI() {
                         "Sec-Fetch-Dest" to "iframe",
                         "Sec-Fetch-Mode" to "navigate",
                         "Sec-Fetch-Site" to "same-origin",
-                        "Sec-Fetch-User" to "?1",),
+                        "Sec-Fetch-User" to "?1",
+                    ),
                     params = mapOf(Pair("h", postkey)),
-                    data =  mapOf(Pair("h", postkey)),
+                    data = mapOf(Pair("h", postkey)),
                     allowRedirects = false
-                ).response.headers.values("location").apmap {link ->
-                    val url1 = link.replace("#bu","")
+                ).response.headers.values("location").apmap { link ->
+                    val url1 = link.replace("#bu", "")
                     loadExtractor(url1, data, callback)
                 }
             }

@@ -391,6 +391,10 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         //requireActivity().viewModelStore.clear() // REMEMBER THE CLEAR
         downloadButton?.dispose()
         updateUIListener = null
+        result_cast_items?.let {
+            PanelsChildGestureRegionObserver.Provider.get().unregister(it)
+        }
+
         super.onDestroy()
     }
 
@@ -482,12 +486,49 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         setFormatText(result_meta_duration, R.string.duration_format, duration)
     }
 
+    private fun setShow(showStatus : ShowStatus?) {
+        val status = when (showStatus) {
+            null -> null
+            ShowStatus.Ongoing -> R.string.status_ongoing
+            ShowStatus.Completed -> R.string.status_completed
+        }
+
+        if (status == null) {
+            result_meta_status?.isVisible = false
+        } else {
+            context?.getString(status)?.let {
+                result_meta_status?.text = it
+            }
+        }
+    }
+
     private fun setYear(year: Int?) {
         setFormatText(result_meta_year, R.string.year_format, year)
     }
 
     private fun setRating(rating: Int?) {
         setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000f))
+    }
+
+    private fun setActors(actors: List<ActorData>?) {
+        if (actors.isNullOrEmpty()) {
+            result_cast_text?.isVisible = false
+            result_cast_items?.isVisible = false
+        } else {
+            val isImage = actors.first().actor.image != null
+            if (isImage) {
+                (result_cast_items?.adapter as ActorAdaptor?)?.apply {
+                    updateList(actors)
+                }
+                result_cast_text?.isVisible = false
+                result_cast_items?.isVisible = true
+            } else {
+                result_cast_text?.isVisible = true
+                result_cast_items?.isVisible = false
+                setFormatText(result_cast_text, R.string.cast_format,
+                    actors.joinToString { it.actor.name })
+            }
+        }
     }
 
     private fun setRecommendations(rec: List<SearchResponse>?) {
@@ -540,6 +581,10 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        result_cast_items?.let {
+            PanelsChildGestureRegionObserver.Provider.get().register(it)
+        }
+        result_cast_items?.adapter = ActorAdaptor(mutableListOf())
         fixGrid()
         result_recommendations?.spanCount = 3
         result_overlapping_panels?.setStartPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
@@ -1281,22 +1326,17 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                             }
                         }
 
-                        val metadataInfoArray = ArrayList<Pair<Int, String>>()
-                        if (d is AnimeLoadResponse) {
-                            val status = when (d.showStatus) {
-                                null -> null
-                                ShowStatus.Ongoing -> R.string.status_ongoing
-                                ShowStatus.Completed -> R.string.status_completed
-                            }
-                            if (status != null) {
-                                metadataInfoArray.add(Pair(R.string.status, getString(status)))
-                            }
+                        val showStatus = when (d) {
+                            is TvSeriesLoadResponse -> d.showStatus
+                            is AnimeLoadResponse -> d.showStatus
+                            else -> null
                         }
-
+                        setShow(showStatus)
                         setDuration(d.duration)
                         setYear(d.year)
                         setRating(d.rating)
                         setRecommendations(d.recommendations)
+                        setActors(d.actors)
 
                         result_meta_site?.text = d.apiName
 
@@ -1509,7 +1549,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
             val showFillers =
-                settingsManager.getBoolean(ctx.getString(R.string.show_fillers_key), true)
+                settingsManager.getBoolean(ctx.getString(R.string.show_fillers_key), false)
 
             val tempUrl = url
             if (tempUrl != null) {
@@ -1537,6 +1577,13 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 }
             }
         }
+
+        PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(this)
     }
 
     override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {

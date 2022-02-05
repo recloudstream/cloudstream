@@ -506,8 +506,10 @@
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:visibility="gone"
             tools:visibility="visible"
+            android:text="@string/home_source"
             android:id="@+id/home_api_fab"
             app:icon="@drawable/ic_baseline_filter_list_24"
             style="@style/ExtendedFloatingActionButton"
+            android:textColor="?attr/textColor"
             tools:ignore="ContentDescription" />
 </FrameLayout>
