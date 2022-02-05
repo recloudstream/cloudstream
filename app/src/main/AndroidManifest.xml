@@ -77,6 +77,10 @@
                 <data android:scheme="https" android:host="bestdubbedanime.com" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="doramasyt.com" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="cinecalidad.lol" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="cuevana3.io" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="entrepeliculasyseries.nu" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="pelisflix.li" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="seriesflix.video" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="ihavenotv.com" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="www.vmovee.watch" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="www.wcostream.com" android:pathPrefix="/"/>
