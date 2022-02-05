@@ -110,6 +110,10 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     VoeExtractor(),
     UpstreamExtractor(),
 
+    Tomatomatela(),
+    Cinestart(),
+    OkRu(),
+
     // dood extractors
     DoodToExtractor(),
     DoodSoExtractor(),

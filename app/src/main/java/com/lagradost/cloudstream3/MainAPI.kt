@@ -44,6 +44,10 @@ object APIHolder {
         DubbedAnimeProvider(),
         DoramasYTProvider(),
         CinecalidadProvider(),
+        CuevanaProvider(),
+        EntrepeliculasyseriesProvider(),
+        PelisflixProvider(),
+        SeriesflixProvider(),
         IHaveNoTvProvider(), // Documentaries provider
         //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
         VMoveeProvider(),
