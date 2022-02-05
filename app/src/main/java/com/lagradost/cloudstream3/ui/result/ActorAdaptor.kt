@@ -71,6 +71,9 @@ class ActorAdaptor(
                         ActorRole.Supporting -> {
                             R.string.actor_supporting
                         }
+                        ActorRole.Background -> {
+                            R.string.actor_background
+                        }
                     }
                 )?.let { text ->
                     actorExtra.isVisible = true

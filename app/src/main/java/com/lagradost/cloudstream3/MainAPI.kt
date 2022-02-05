@@ -430,6 +430,7 @@ interface SearchResponse {
 enum class ActorRole {
     Main,
     Supporting,
+    Background,
 }
 
 data class Actor(
@@ -509,13 +510,19 @@ interface LoadResponse {
     var actors: List<ActorData>?
 
     companion object {
-        fun LoadResponse.setActorNames(actors: List<String>?) {
+        @JvmName("addActorNames")
+        fun LoadResponse.addActors(actors: List<String>?) {
             this.actors = actors?.map { ActorData(Actor(it)) }
         }
 
-        fun LoadResponse.setActors(actors: List<Pair<Actor, String?>>?) {
-            println("ACTORS: ${actors?.size}")
+        @JvmName("addActors")
+        fun LoadResponse.addActors(actors: List<Pair<Actor, String?>>?) {
             this.actors = actors?.map { (actor, role) -> ActorData(actor, roleString = role) }
+        }
+
+        @JvmName("addActorsRole")
+        fun LoadResponse.addActors(actors: List<Pair<Actor, ActorRole?>>?) {
+            this.actors = actors?.map { (actor, role) -> ActorData(actor, role = role) }
         }
 
         fun LoadResponse.setDuration(input: String?) {

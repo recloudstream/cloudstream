@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
+import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -163,12 +165,34 @@ class AllAnimeProvider : MainAPI() {
             }) else null)
         }
 
+        val characters = soup.select("div.character > div.card-character-box")?.mapNotNull {
+            val img = it?.selectFirst("img")?.attr("src") ?: return@mapNotNull null
+            val name = it.selectFirst("div > a")?.ownText() ?: return@mapNotNull null
+            val role = when (it.selectFirst("div > .text-secondary")?.text()?.trim()) {
+                "Main" -> ActorRole.Main
+                "Supporting" -> ActorRole.Supporting
+                "Background" -> ActorRole.Background
+                else -> null
+            }
+            Pair(Actor(name, img), role)
+        }
+
+        val recommendations = soup.select("#suggesction > div > div.p > .swipercard")?.mapNotNull {
+            val recTitle = it?.selectFirst(".showname > a") ?: return@mapNotNull null
+            val recName = recTitle.text() ?: return@mapNotNull null
+            val href = fixUrlNull(recTitle.attr("href")) ?: return@mapNotNull null
+            val img = it.selectFirst(".image > img").attr("src") ?: return@mapNotNull null
+            AnimeSearchResponse(recName, href, this.name, TvType.Anime, img)
+        }
+
         return newAnimeLoadResponse(title, url, TvType.Anime) {
             posterUrl = poster
             year = showData.airedStart?.year
 
             addEpisodes(DubStatus.Subbed, episodes.first)
             addEpisodes(DubStatus.Dubbed, episodes.second)
+            addActors(characters)
+            this.recommendations = recommendations
 
             showStatus = getStatus(showData.status.toString())
 
@@ -259,56 +283,58 @@ class AllAnimeProvider : MainAPI() {
         val sources = Regex("""sourceUrl[:=]"(.+?)"""").findAll(html).toList()
             .map { URLDecoder.decode(it.destructured.component1().sanitize(), "UTF-8") }
         sources.apmap {
-            var link = it
-            if (URI(link).isAbsolute || link.startsWith("//")) {
-                if (link.startsWith("//")) link = "https:$it"
+            safeApiCall {
+                var link = it.replace(" ", "%20")
+                if (URI(link).isAbsolute || link.startsWith("//")) {
+                    if (link.startsWith("//")) link = "https:$it"
 
-                if (Regex("""streaming\.php\?""").matches(link)) {
-                    // for now ignore
-                } else if (!embedIsBlacklisted(link)) {
-                    if (URI(link).path.contains(".m3u")) {
-                        getM3u8Qualities(link, data, URI(link).host).forEach(callback)
-                    } else {
-                        callback(
-                            ExtractorLink(
-                                "AllAnime - " + URI(link).host,
-                                "",
-                                link,
-                                data,
-                                getQualityFromName("1080"),
-                                false
-                            )
-                        )
-                    }
-                }
-            } else {
-                link = apiEndPoint + URI(link).path + ".json?" + URI(link).query
-                val response = app.get(link)
-
-                if (response.code < 400) {
-                    val links = mapper.readValue<AllAnimeVideoApiResponse>(response.text).links
-                    links.forEach { server ->
-                        if (server.hls != null && server.hls) {
-                            getM3u8Qualities(
-                                server.link,
-                                "$apiEndPoint/player?uri=" + (if (URI(server.link).host.isNotEmpty()) server.link else apiEndPoint + URI(
-                                    server.link
-                                ).path),
-                                server.resolutionStr
-                            ).forEach(callback)
+                    if (Regex("""streaming\.php\?""").matches(link)) {
+                        // for now ignore
+                    } else if (!embedIsBlacklisted(link)) {
+                        if (URI(link).path.contains(".m3u")) {
+                            getM3u8Qualities(link, data, URI(link).host).forEach(callback)
                         } else {
                             callback(
                                 ExtractorLink(
-                                    "AllAnime - " + URI(server.link).host,
-                                    server.resolutionStr,
-                                    server.link,
-                                    "$apiEndPoint/player?uri=" + (if (URI(server.link).host.isNotEmpty()) server.link else apiEndPoint + URI(
-                                        server.link
-                                    ).path),
+                                    "AllAnime - " + URI(link).host,
+                                    "",
+                                    link,
+                                    data,
                                     getQualityFromName("1080"),
                                     false
                                 )
                             )
+                        }
+                    }
+                } else {
+                    link = apiEndPoint + URI(link).path + ".json?" + URI(link).query
+                    val response = app.get(link)
+
+                    if (response.code < 400) {
+                        val links = mapper.readValue<AllAnimeVideoApiResponse>(response.text).links
+                        links.forEach { server ->
+                            if (server.hls != null && server.hls) {
+                                getM3u8Qualities(
+                                    server.link,
+                                    "$apiEndPoint/player?uri=" + (if (URI(server.link).host.isNotEmpty()) server.link else apiEndPoint + URI(
+                                        server.link
+                                    ).path),
+                                    server.resolutionStr
+                                ).forEach(callback)
+                            } else {
+                                callback(
+                                    ExtractorLink(
+                                        "AllAnime - " + URI(server.link).host,
+                                        server.resolutionStr,
+                                        server.link,
+                                        "$apiEndPoint/player?uri=" + (if (URI(server.link).host.isNotEmpty()) server.link else apiEndPoint + URI(
+                                            server.link
+                                        ).path),
+                                        getQualityFromName("1080"),
+                                        false
+                                    )
+                                )
+                            }
                         }
                     }
                 }

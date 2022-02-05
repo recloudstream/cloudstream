@@ -2,7 +2,7 @@ package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.LoadResponse.Companion.setActors
+import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.*
@@ -142,7 +142,7 @@ open class TmdbProvider : MainAPI() {
 
             recommendations = (this@toLoadResponse.recommendations
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
-            setActors(credits?.cast?.toList().toActors())
+            addActors(credits?.cast?.toList().toActors())
         }
     }
 
@@ -170,7 +170,7 @@ open class TmdbProvider : MainAPI() {
 
             recommendations = (this@toLoadResponse.recommendations
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
-            setActors(credits?.cast?.toList().toActors())
+            addActors(credits?.cast?.toList().toActors())
         }
     }
 
@@ -268,7 +268,7 @@ open class TmdbProvider : MainAPI() {
 
                     if (response.actors.isNullOrEmpty())
                         tmdb.tvService().credits(id, "en-US").awaitResponse().body()?.let {
-                            response.setActors(it.cast?.toActors())
+                            response.addActors(it.cast?.toActors())
                         }
                 }
 
@@ -287,7 +287,7 @@ open class TmdbProvider : MainAPI() {
 
                     if (response.actors.isNullOrEmpty())
                         tmdb.moviesService().credits(id).awaitResponse().body()?.let {
-                            response.setActors(it.cast?.toActors())
+                            response.addActors(it.cast?.toActors())
                         }
                 }
                 response

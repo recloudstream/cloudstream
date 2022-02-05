@@ -1080,11 +1080,13 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             DataStoreHelper.getLastWatched(currentId)?.let { resume ->
                 if (currentIsMovie == false && episodeList.size >= 3) {
                     isSeriesVisible = true
+
                     result_resume_series_button?.setOnClickListener {
                         episodeList.firstOrNull { it.id == resume.episodeId }?.let {
                             handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, it))
                         }
                     }
+
                     result_resume_series_title?.text =
                         if (resume.season == null)
                             "${getString(R.string.episode)} ${resume.episode}"
@@ -1098,6 +1100,8 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         }
                         result_resume_series_progress_text?.text =
                             getString(R.string.resume_time_left).format((viewPos.duration - viewPos.position) / (60_000))
+                    } ?: run {
+                        isSeriesVisible = false
                     }
                 }
             }

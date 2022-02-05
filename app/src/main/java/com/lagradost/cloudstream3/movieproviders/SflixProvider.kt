@@ -2,7 +2,7 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.LoadResponse.Companion.setActorNames
+import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.LoadResponse.Companion.setDuration
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
@@ -182,7 +182,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 this.posterUrl = posterUrl
                 this.plot = plot
                 setDuration(duration)
-                setActorNames(cast)
+                addActors(cast)
                 this.tags = tags
                 this.recommendations = recommendations
             }
@@ -229,7 +229,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                 this.year = year
                 this.plot = plot
                 setDuration(duration)
-                setActorNames(cast)
+                addActors(cast)
                 this.tags = tags
                 this.recommendations = recommendations
             }

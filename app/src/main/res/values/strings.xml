@@ -387,5 +387,7 @@
     <string name="downloaded_file">Downloaded file</string>
     <string name="actor_main">Main</string>
     <string name="actor_supporting">Supporting</string>
+    <string name="actor_background">Background</string>
+
     <string name="home_source">Source</string>
 </resources>
