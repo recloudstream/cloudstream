@@ -670,6 +670,8 @@
                     </LinearLayout>
 
                     <LinearLayout
+                            tools:visibility="visible"
+                            android:visibility="gone"
                             android:paddingTop="10dp"
                             android:id="@+id/result_resume_progress_holder"
                             android:orientation="horizontal"

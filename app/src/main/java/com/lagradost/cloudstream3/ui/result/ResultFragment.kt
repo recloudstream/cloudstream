@@ -1509,6 +1509,13 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                                     }
                                 }
 
+                                result_download_movie?.setOnLongClickListener {
+                                    val card =
+                                        currentEpisodes?.firstOrNull() ?: return@setOnLongClickListener false
+                                    handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, card))
+                                    return@setOnLongClickListener true
+                                }
+
                                 /*downloadButton?.setUpMaterialButton(
                                     file?.fileLength,
                                     file?.totalBytes,
