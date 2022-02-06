@@ -478,7 +478,7 @@ data class MovieSearchResponse(
     override val type: TvType,
 
     override val posterUrl: String?,
-    val year: Int?,
+    val year: Int? = null,
     override val id: Int? = null,
 ) : SearchResponse
 
@@ -523,6 +523,11 @@ interface LoadResponse {
         @JvmName("addActorsRole")
         fun LoadResponse.addActors(actors: List<Pair<Actor, ActorRole?>>?) {
             this.actors = actors?.map { (actor, role) -> ActorData(actor, role = role) }
+        }
+
+        @JvmName("addActorsOnly")
+        fun LoadResponse.addActors(actors: List<Actor>?) {
+            this.actors = actors?.map { actor -> ActorData(actor) }
         }
 
         fun LoadResponse.setDuration(input: String?) {

@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.network.AppResponse
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -16,7 +17,7 @@ class AkwamProvider : MainAPI() {
 
     private fun Element.toSearchResponse(): SearchResponse? {
         val url = select("a.box")?.attr("href") ?: return null
-        if(url.contains("/games/") || url.contains("/programs/")) return null
+        if (url.contains("/games/") || url.contains("/programs/")) return null
         val poster = select("picture > img")
         val title = poster.attr("alt")
         val posterUrl = poster.attr("data-src")
@@ -107,26 +108,39 @@ class AkwamProvider : MainAPI() {
             it.text()
         }
 
-        // Commented out as no use yet
-//        val recommendations = doc.select("div.entry-image").map {
-//            it.toSearchResponse()
-//        }
+        val actors = doc.select("div.widget-body > div > div.entry-box > a")?.mapNotNull {
+            val name = it?.selectFirst("div > .entry-title")?.text() ?: return@mapNotNull null
+            val image = it.selectFirst("div > img")?.attr("src") ?: return@mapNotNull null
+            Actor(name, image)
+        }
+
+        val recommendations =
+            doc.select("div > div.widget-body > div.row > div > div.entry-box")?.mapNotNull {
+                val recTitle = it?.selectFirst("div.entry-body > .entry-title > .text-white")
+                    ?: return@mapNotNull null
+                val href = recTitle.attr("href") ?: return@mapNotNull null
+                val name = recTitle.text() ?: return@mapNotNull null
+                val poster = it.selectFirst(".entry-image > a > picture > img")?.attr("data-src")
+                    ?: return@mapNotNull null
+                MovieSearchResponse(name, href, this.name, TvType.Movie, fixUrl(poster))
+            }
 
         return if (isMovie) {
-            MovieLoadResponse(
+            newMovieLoadResponse(
                 title,
                 url,
-                this@AkwamProvider.name,
                 TvType.Movie,
-                url,
-                posterUrl,
-                year,
-                synopsis,
-                null, // Possible
-                rating,
-                tags,
-                duration,
-            )
+                url
+            ) {
+                this.posterUrl = posterUrl
+                this.year = year
+                this.plot = synopsis
+                this.rating = rating
+                this.tags = tags
+                this.duration = duration
+                this.recommendations = recommendations
+                addActors(actors)
+            }
         } else {
             val episodes = doc.select("div.bg-primary2.p-4.col-lg-4.col-md-6.col-12").map {
                 it.toTvSeriesEpisode()
@@ -144,6 +158,8 @@ class AkwamProvider : MainAPI() {
                 this.rating = rating
                 this.year = year
                 this.plot = synopsis
+                this.recommendations = recommendations
+                addActors(actors)
             }
         }
     }
