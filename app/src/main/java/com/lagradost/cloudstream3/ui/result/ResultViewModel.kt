@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.content.Context
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,6 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
@@ -19,19 +17,20 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
-import com.lagradost.cloudstream3.utils.DataStoreHelper.setLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.getFillerEpisodes
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -195,7 +194,7 @@ class ResultViewModel : ViewModel() {
             id.value?.let {
                 setDub(it, status)
             }
-            _dubStatus.postValue(status)
+            _dubStatus.postValue(status!!)
             updateEpisodes(null, episodes, null)
         }
     }

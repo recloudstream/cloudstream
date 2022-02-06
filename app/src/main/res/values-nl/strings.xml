@@ -34,11 +34,11 @@
     <string name="go_back">Ga terug</string>
     <string name="episode_poster_img_des">Afleveringsposter</string>
     <string name="play_episode">Aflevering afspelen</string>
-    <string name="need_storage">Toestaan om afleveringen te downloaden</string>
+    <!--<string name="need_storage">Toestaan om afleveringen te downloaden</string>-->
     <string name="download">Download</string>
     <string name="error_loading_links_toast">Fout bij laden van links</string>
     <string name="download_storage_text">Interne opslag</string>
-    <string name="options">Opties</string>
+    <!--<string name="options">Opties</string>-->
 
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>

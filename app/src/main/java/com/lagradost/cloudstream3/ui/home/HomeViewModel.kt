@@ -90,8 +90,9 @@ class HomeViewModel : ViewModel() {
                 )
             }?.filterNotNull()
         }
-
-        _resumeWatching.postValue(resumeWatchingResult)
+        resumeWatchingResult?.let {
+            _resumeWatching.postValue(it)
+        }
     }
 
     fun loadStoredData(preferredWatchStatus: EnumSet<WatchType>?) = viewModelScope.launch {
@@ -179,7 +180,9 @@ class HomeViewModel : ViewModel() {
                 }
                 else -> Unit
             }
-            _page.postValue(data)
+            data?.let {
+                _page.postValue(it)
+            }
         } else {
             _page.postValue(Resource.Success(HomePageResponse(emptyList())))
         }

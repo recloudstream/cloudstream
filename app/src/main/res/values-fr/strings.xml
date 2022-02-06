@@ -31,7 +31,7 @@
     <string name="go_back">Retour</string>
     <string name="episode_poster_img_des">Miniature de l\'Episode</string>
     <string name="play_episode">Lire l\'Episode</string>
-    <string name="need_storage">Permet de télécharger les épisodes</string>
+    <!--<string name="need_storage">Permet de télécharger les épisodes</string>-->
     <string name="download">Télécharger</string>
     <string name="downloaded">Téléchargé</string>
     <string name="downloading">Téléchargement</string>

@@ -34,11 +34,11 @@
     <string name="go_back">Πίσω</string>
     <string name="episode_poster_img_des">Πόστερ</string>
     <string name="play_episode">Αναπαραγωγή Επισοδείου</string>
-    <string name="need_storage">Δώσε άδεια για την λήψη επισοδείου</string>
+    <!--<string name="need_storage">Δώσε άδεια για την λήψη επισοδείου</string>-->
     <string name="download">Λήξη</string>
     <string name="error_loading_links_toast">Σφάλμα φόρτωσεις συνδέσμων</string>
     <string name="download_storage_text">Εσωτερικός χώρος</string>
-    <string name="options">Επιλογές</string>
+    <!--<string name="options">Επιλογές</string>-->
 
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
