@@ -91,8 +91,24 @@ class DramaSeeProvider : MainAPI() {
         val year = if (title.length > 5) { title.substring(title.length - 5)
             .trim().trimEnd(')').toIntOrNull() } else { null }
         //Log.i(this.name, "Result => (year) ${title.substring(title.length - 5)}")
-        val descript = body?.select("div.series-body")?.firstOrNull()
-            ?.select("div.js-content")?.text()
+        val seriesBody = body?.select("div.series-body")
+        val descript = seriesBody?.firstOrNull()?.select("div.js-content")?.text()
+        val tags = seriesBody?.select("div.series-tags > a")?.mapNotNull { it?.text()?.trim() ?: return@mapNotNull null }
+        val recs = body?.select("ul.series > li")?.mapNotNull {
+            val a = it.select("a.series-img") ?: return@mapNotNull null
+            val aUrl = fixUrlNull(a.attr("href")) ?: return@mapNotNull null
+            val aImg = fixUrlNull(a.select("img")?.attr("src"))
+            val aName = a.select("img")?.attr("alt") ?: return@mapNotNull null
+            val aYear = aName.trim().takeLast(5).removeSuffix(")").toIntOrNull()
+            MovieSearchResponse(
+                url = aUrl,
+                name = aName,
+                type = TvType.Movie,
+                posterUrl = aImg,
+                year = aYear,
+                apiName = this.name
+            )
+        }
 
         // Episodes Links
         val episodeList = ArrayList<TvSeriesEpisode>()
@@ -101,7 +117,7 @@ class DramaSeeProvider : MainAPI() {
             val count = innerA.select("span.episode")?.text()?.toIntOrNull() ?: 0
             val epLink = fixUrlNull(innerA.attr("href")) ?: return@forEach
             //Log.i(this.name, "Result => (epLink) ${epLink}")
-            if (epLink.isNotEmpty()) {
+            if (epLink.isNotBlank()) {
                 // Fetch video links
                 val epVidLinkEl = app.get(epLink, referer = mainUrl).document
                 val ajaxUrl = epVidLinkEl.select("div#js-player")?.attr("embed")
@@ -111,7 +127,7 @@ class DramaSeeProvider : MainAPI() {
                     val listOfLinks = mutableListOf<String>()
                     innerPage.select("div.player.active > main > div")?.forEach { em ->
                         val href = fixUrlNull(em.attr("src")) ?: ""
-                        if (href.isNotEmpty()) {
+                        if (href.isNotBlank()) {
                             listOfLinks.add(href)
                         }
                     }
@@ -133,20 +149,30 @@ class DramaSeeProvider : MainAPI() {
 
         //If there's only 1 episode, consider it a movie.
         if (episodeList.size == 1) {
-            return MovieLoadResponse(title, url, this.name, TvType.Movie, episodeList[0].data, poster, year, descript, null, null)
+            return MovieLoadResponse(
+                name = title,
+                url = url,
+                apiName = this.name,
+                type = TvType.Movie,
+                dataUrl = episodeList[0].data,
+                posterUrl = poster,
+                year = year,
+                plot = descript,
+                recommendations = recs,
+                tags = tags
+            )
         }
         return TvSeriesLoadResponse(
-            title,
-            url,
-            this.name,
-            TvType.TvSeries,
-            episodeList.reversed(),
-            poster,
-            year,
-            descript,
-            null,
-            null,
-            null
+            name = title,
+            url = url,
+            apiName = this.name,
+            type = TvType.TvSeries,
+            episodes = episodeList.reversed(),
+            posterUrl = poster,
+            year = year,
+            plot = descript,
+            recommendations = recs,
+            tags = tags
         )
     }
 

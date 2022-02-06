@@ -37,7 +37,7 @@ class VstreamhubHelper {
                             val startString = "window.open(["
                             val bb = aa.substring(aa.indexOf(startString))
                             val datavid = bb.substring(startString.length, bb.indexOf("]")).removeSurrounding("\"")
-                            if (datavid.isNotEmpty()) {
+                            if (datavid.isNotBlank()) {
                                 loadExtractor(datavid, url, callback)
                                 //Log.i(baseName, "Result => (datavid) ${datavid}")
                             }

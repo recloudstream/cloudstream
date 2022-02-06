@@ -21,7 +21,7 @@ open class VoeExtractor : ExtractorApi() {
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
         val doc = app.get(url).text
-        if (doc.isNotEmpty()) {
+        if (doc.isNotBlank()) {
             val start = "const sources ="
             var src = doc.substring(doc.indexOf(start))
             src = src.substring(start.length, src.indexOf(";"))

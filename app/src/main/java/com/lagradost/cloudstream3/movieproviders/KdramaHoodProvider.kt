@@ -110,6 +110,24 @@ class KdramaHoodProvider : MainAPI() {
             res
         } catch (e: Exception) { null }
 
+        val recs = doc.select("div.sidebartv > div.tvitemrel")?.mapNotNull {
+            val a = it?.select("a") ?: return@mapNotNull null
+            val aUrl = fixUrlNull(a.attr("href")) ?: return@mapNotNull null
+            val aImg = a.select("img")
+            val aCover = fixUrlNull(aImg?.attr("src")) ?: fixUrlNull(aImg?.attr("data-src"))
+            val aNameYear = a.select("div.datatvrel") ?: return@mapNotNull null
+            val aName = aNameYear.select("h4")?.text() ?: aImg?.attr("alt") ?: return@mapNotNull null
+            val aYear = aName.trim().takeLast(5).removeSuffix(")").toIntOrNull()
+            MovieSearchResponse(
+                url = aUrl,
+                name = aName,
+                type = TvType.Movie,
+                posterUrl = aCover,
+                year = aYear,
+                apiName = this.name
+            )
+        }
+
         // Episodes Links
         val episodeList = inner?.select("ul.episodios > li")?.mapNotNull { ep ->
             //Log.i(this.name, "Result => (ep) ${ep}")
@@ -119,7 +137,7 @@ class KdramaHoodProvider : MainAPI() {
             //Log.i(this.name, "Result => (innerA) ${innerA}")
             val epLink = fixUrlNull(innerA.attr("href")) ?: return@mapNotNull null
             //Log.i(this.name, "Result => (epLink) ${epLink}")
-            if (epLink.isNotEmpty()) {
+            if (epLink.isNotBlank()) {
                 // Fetch video links
                 val epVidLinkEl = app.get(epLink, referer = mainUrl).document
                 val epLinksContent = epVidLinkEl.selectFirst("div.player_nav > script")?.html()
@@ -131,20 +149,10 @@ class KdramaHoodProvider : MainAPI() {
                     Jsoup.parse(epLinksContent)?.select("div")?.forEach { em ->
                         val href = em?.html()?.trim()?.removePrefix("'") ?: return@forEach
                         //Log.i(this.name, "Result => (ep#$count link) $href")
-                        if (href.isNotEmpty()) {
+                        if (href.isNotBlank()) {
                             listOfLinks.add(fixUrl(href))
                         }
                     }
-                    /* Doesn't get all links for some reasons
-                    val rex = Regex("(?<=ifr_target.src =)(.*)(?=';)")
-                    rex.find(epLinksContent)?.groupValues?.forEach { em ->
-                        val href = em.trim()
-                        Log.i(this.name, "Result => (ep #$count href) $href")
-                        if (href.isNotEmpty()) {
-                            listOfLinks.add(href)
-                        }
-                    }
-                     */
                 }
             }
             TvSeriesEpisode(
@@ -159,20 +167,28 @@ class KdramaHoodProvider : MainAPI() {
 
         //If there's only 1 episode, consider it a movie.
         if (episodeList.size == 1) {
-            return MovieLoadResponse(title, url, this.name, TvType.Movie, episodeList[0].data, poster, year, descript, null, null)
+            return MovieLoadResponse(
+                name = title,
+                url = url,
+                apiName = this.name,
+                type = TvType.Movie,
+                dataUrl = episodeList[0].data,
+                posterUrl = poster,
+                year = year,
+                plot = descript,
+                recommendations = recs
+            )
         }
         return TvSeriesLoadResponse(
-            title,
-            url,
-            this.name,
-            TvType.TvSeries,
-            episodeList.reversed(),
-            poster,
-            year,
-            descript,
-            null,
-            null,
-            null
+            name = title,
+            url = url,
+            apiName = this.name,
+            type = TvType.TvSeries,
+            episodes = episodeList.reversed(),
+            posterUrl = poster,
+            year = year,
+            plot = descript,
+            recommendations = recs
         )
     }
 
@@ -184,7 +200,7 @@ class KdramaHoodProvider : MainAPI() {
     ): Boolean {
         var count = 0
         mapper.readValue<List<String>>(data).apmap { item ->
-            if (item.isNotEmpty()) {
+            if (item.isNotBlank()) {
                 count++
                 var url = item.trim()
                 if (url.startsWith("//")) {

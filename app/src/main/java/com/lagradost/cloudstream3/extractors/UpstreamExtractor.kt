@@ -15,7 +15,7 @@ class UpstreamExtractor: ExtractorApi() {
         //Log.i(this.name, "Result => (no extractor) ${url}")
         val sources: MutableList<ExtractorLink> = mutableListOf()
         val doc = app.get(url, referer = referer).text
-        if (doc.isNotEmpty()) {
+        if (doc.isNotBlank()) {
             var reg = Regex("(?<=master)(.*)(?=hls)")
             val result = reg.find(doc)?.groupValues?.map {
                 it.trim('|')
