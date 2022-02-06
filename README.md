@@ -70,6 +70,8 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [wcostream.cc](https://wcostream.cc) 
 - [bestdubbedanime.com](https://bestdubbedanime.com) 
 - [doramasyt.com](https://doramasyt.com) 
+- [pelisflix.li](https://pelisflix.li) 
+- [seriesflix.video](https://seriesflix.video) 
 - [ihavenotv.com](https://ihavenotv.com) 
 - [vmovee.watch](https://www.vmovee.watch) 
 - [wcostream.com](https://www.wcostream.com) 
