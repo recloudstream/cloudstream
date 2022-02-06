@@ -5,6 +5,8 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.R
@@ -28,7 +30,8 @@ class EasyDownloadButton : IDisposable {
     }
 
     private var downloadProgressEventListener: ((Triple<Int, Long, Long>) -> Unit)? = null
-    private var downloadStatusEventListener: ((Pair<Int, VideoDownloadManager.DownloadType>) -> Unit)? = null
+    private var downloadStatusEventListener: ((Pair<Int, VideoDownloadManager.DownloadType>) -> Unit)? =
+        null
 
     fun setUpMaterialButton(
         setupCurrentBytes: Long?,
@@ -39,10 +42,47 @@ class EasyDownloadButton : IDisposable {
         data: IMinimumData,
         clickCallback: (DownloadClickEvent) -> Unit,
     ) {
-        setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadButton, {
-            downloadButton.setIconResource(it.first)
-            downloadButton.text = it.second
-        }, clickCallback)
+        setUpDownloadButton(
+            setupCurrentBytes,
+            setupTotalBytes,
+            progressBar,
+            textView,
+            data,
+            downloadButton,
+            {
+                downloadButton.setIconResource(it.first)
+                downloadButton.text = it.second
+            },
+            clickCallback
+        )
+    }
+
+    fun setUpMoreButton(
+        setupCurrentBytes: Long?,
+        setupTotalBytes: Long?,
+        progressBar: ContentLoadingProgressBar,
+        downloadImage: ImageView,
+        textView: TextView?,
+        textViewProgress: TextView?,
+        clickableView: View,
+        isTextPercentage: Boolean,
+        data: IMinimumData,
+        clickCallback: (DownloadClickEvent) -> Unit,
+    ) {
+        setUpDownloadButton(
+            setupCurrentBytes,
+            setupTotalBytes,
+            progressBar,
+            textViewProgress,
+            data,
+            clickableView,
+            { (image, text) ->
+                downloadImage.isVisible = textViewProgress?.isGone ?: true
+                downloadImage.setImageResource(image)
+                textView?.text = text
+            },
+            clickCallback, isTextPercentage
+        )
     }
 
     fun setUpButton(
@@ -54,9 +94,18 @@ class EasyDownloadButton : IDisposable {
         data: IMinimumData,
         clickCallback: (DownloadClickEvent) -> Unit,
     ) {
-        setUpDownloadButton(setupCurrentBytes, setupTotalBytes, progressBar, textView, data, downloadImage, {
-            downloadImage.setImageResource(it.first)
-        }, clickCallback)
+        setUpDownloadButton(
+            setupCurrentBytes,
+            setupTotalBytes,
+            progressBar,
+            textView,
+            data,
+            downloadImage,
+            {
+                downloadImage.setImageResource(it.first)
+            },
+            clickCallback
+        )
     }
 
     private fun setUpDownloadButton(
@@ -68,11 +117,12 @@ class EasyDownloadButton : IDisposable {
         downloadView: View,
         downloadImageChangeCallback: (Pair<Int, String>) -> Unit,
         clickCallback: (DownloadClickEvent) -> Unit,
+        isTextPercentage: Boolean = false
     ) {
         var lastState: VideoDownloadManager.DownloadType? = null
         var currentBytes = setupCurrentBytes ?: 0
         var totalBytes = setupTotalBytes ?: 0
-        var needImageUpdate = false
+        var needImageUpdate = true
 
         fun changeDownloadImage(state: VideoDownloadManager.DownloadType) {
             lastState = state
@@ -92,7 +142,12 @@ class EasyDownloadButton : IDisposable {
             } else {
                 Pair(R.drawable.netflix_download, R.string.download)
             }
-            downloadImageChangeCallback.invoke(Pair(img.first, downloadView.context.getString(img.second)))
+            downloadImageChangeCallback.invoke(
+                Pair(
+                    img.first,
+                    downloadView.context.getString(img.second)
+                )
+            )
         }
 
         fun fixDownloadedBytes(setCurrentBytes: Long, setTotalBytes: Long, animate: Boolean) {
@@ -113,7 +168,9 @@ class EasyDownloadButton : IDisposable {
                 val totalMbString = "%.1f".format(setTotalBytes / 1000000f)
 
                 textView?.text =
-                    textView?.context?.getString(R.string.download_size_format)?.format(currentMbString, totalMbString)
+                    if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
+                        textView?.context?.getString(R.string.download_size_format)
+                            ?.format(currentMbString, totalMbString)
 
                 progressBar.let { bar ->
                     bar.max = (setTotalBytes / 1000).toInt()
@@ -144,20 +201,22 @@ class EasyDownloadButton : IDisposable {
                 if (downloadData.second != currentBytes || downloadData.third != totalBytes) { // TO PREVENT WASTING UI TIME
                     Coroutines.runOnMainThread {
                         fixDownloadedBytes(downloadData.second, downloadData.third, true)
+                        changeDownloadImage(VideoDownloadManager.getDownloadState(data.id))
                     }
                 }
             }
         }
 
-        downloadStatusEventListener = { downloadData: Pair<Int, VideoDownloadManager.DownloadType> ->
-            if (data.id == downloadData.first) {
-                if (lastState != downloadData.second || needImageUpdate) { // TO PREVENT WASTING UI TIME
-                    Coroutines.runOnMainThread {
-                        changeDownloadImage(downloadData.second)
+        downloadStatusEventListener =
+            { downloadData: Pair<Int, VideoDownloadManager.DownloadType> ->
+                if (data.id == downloadData.first) {
+                    if (lastState != downloadData.second || needImageUpdate) { // TO PREVENT WASTING UI TIME
+                        Coroutines.runOnMainThread {
+                            changeDownloadImage(downloadData.second)
+                        }
                     }
                 }
             }
-        }
 
         downloadProgressEventListener?.let { VideoDownloadManager.downloadProgressEvent += it }
         downloadStatusEventListener?.let { VideoDownloadManager.downloadStatusEvent += it }

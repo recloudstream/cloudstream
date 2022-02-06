@@ -177,13 +177,14 @@ class AllAnimeProvider : MainAPI() {
             Pair(Actor(name, img), role)
         }
 
-        val recommendations = soup.select("#suggesction > div > div.p > .swipercard")?.mapNotNull {
-            val recTitle = it?.selectFirst(".showname > a") ?: return@mapNotNull null
-            val recName = recTitle.text() ?: return@mapNotNull null
-            val href = fixUrlNull(recTitle.attr("href")) ?: return@mapNotNull null
-            val img = it.selectFirst(".image > img").attr("src") ?: return@mapNotNull null
-            AnimeSearchResponse(recName, href, this.name, TvType.Anime, img)
-        }
+        // bruh, they use graphql
+        //val recommendations = soup.select("#suggesction > div > div.p > .swipercard")?.mapNotNull {
+        //    val recTitle = it?.selectFirst(".showname > a") ?: return@mapNotNull null
+        //    val recName = recTitle.text() ?: return@mapNotNull null
+        //    val href = fixUrlNull(recTitle.attr("href")) ?: return@mapNotNull null
+        //    val img = it.selectFirst(".image > img").attr("src") ?: return@mapNotNull null
+        //    AnimeSearchResponse(recName, href, this.name, TvType.Anime, img)
+        //}
 
         return newAnimeLoadResponse(title, url, TvType.Anime) {
             posterUrl = poster
@@ -192,7 +193,7 @@ class AllAnimeProvider : MainAPI() {
             addEpisodes(DubStatus.Subbed, episodes.first)
             addEpisodes(DubStatus.Dubbed, episodes.second)
             addActors(characters)
-            this.recommendations = recommendations
+            //this.recommendations = recommendations
 
             showStatus = getStatus(showData.status.toString())
 

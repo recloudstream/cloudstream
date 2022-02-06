@@ -486,7 +486,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         setFormatText(result_meta_duration, R.string.duration_format, duration)
     }
 
-    private fun setShow(showStatus : ShowStatus?) {
+    private fun setShow(showStatus: ShowStatus?) {
         val status = when (showStatus) {
             null -> null
             ShowStatus.Ongoing -> R.string.status_ongoing
@@ -1439,12 +1439,15 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                                     )
                                 downloadButton?.dispose()
                                 downloadButton = EasyDownloadButton()
-                                downloadButton?.setUpMaterialButton(
+                                downloadButton?.setUpMoreButton(
                                     file?.fileLength,
                                     file?.totalBytes,
                                     result_movie_progress_downloaded,
+                                    result_movie_download_icon,
+                                    result_movie_download_text,
+                                    result_movie_download_text_precentage,
                                     result_download_movie,
-                                    result_movie_text_progress,
+                                    true,
                                     VideoDownloadHelper.DownloadEpisodeCached(
                                         d.name,
                                         d.posterUrl,
@@ -1491,6 +1494,59 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                                         )
                                     }
                                 }
+
+                                /*downloadButton?.setUpMaterialButton(
+                                    file?.fileLength,
+                                    file?.totalBytes,
+                                    result_movie_progress_downloaded,
+                                    result_download_movie,
+                                    null, //result_movie_text_progress
+                                    VideoDownloadHelper.DownloadEpisodeCached(
+                                        d.name,
+                                        d.posterUrl,
+                                        0,
+                                        null,
+                                        localId,
+                                        localId,
+                                        d.rating,
+                                        d.plot,
+                                        System.currentTimeMillis(),
+                                    )
+                                ) { downloadClickEvent ->
+                                    if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
+                                        currentEpisodes?.firstOrNull()?.let { episode ->
+                                            handleAction(
+                                                EpisodeClickEvent(
+                                                    ACTION_DOWNLOAD_EPISODE,
+                                                    ResultEpisode(
+                                                        d.name,
+                                                        d.name,
+                                                        null,
+                                                        0,
+                                                        null,
+                                                        episode.data,
+                                                        d.apiName,
+                                                        localId,
+                                                        0,
+                                                        0L,
+                                                        0L,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        d.type,
+                                                        localId,
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    } else {
+                                        handleDownloadClick(
+                                            activity,
+                                            currentHeaderName,
+                                            downloadClickEvent
+                                        )
+                                    }
+                                }*/
                             }
                         } else {
                             lateFixDownloadButton(false)
