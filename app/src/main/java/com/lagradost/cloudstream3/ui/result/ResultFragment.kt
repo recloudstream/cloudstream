@@ -1077,8 +1077,9 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         observe(viewModel.episodes) { episodeList ->
             lateFixDownloadButton(episodeList.size <= 1) // movies can have multible parts but still be *movies* this will fix this
             var isSeriesVisible = false
+            var isProgressVisible = false
             DataStoreHelper.getLastWatched(currentId)?.let { resume ->
-                if (currentIsMovie == false && episodeList.size >= 3) {
+                if (currentIsMovie == false) {
                     isSeriesVisible = true
 
                     result_resume_series_button?.setOnClickListener {
@@ -1092,20 +1093,33 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                             "${getString(R.string.episode)} ${resume.episode}"
                         else
                             " \"${getString(R.string.season_short)}${resume.season}:${getString(R.string.episode_short)}${resume.episode}\""
+                }
 
-                    getViewPos(resume.episodeId)?.let { viewPos ->
+                getViewPos(resume.episodeId)?.let { viewPos ->
+                    if(viewPos.position > 30_000L || currentIsMovie == false) { // first 30s will not show for movies
                         result_resume_series_progress?.apply {
                             max = (viewPos.duration / 1000).toInt()
                             progress = (viewPos.position / 1000).toInt()
                         }
                         result_resume_series_progress_text?.text =
                             getString(R.string.resume_time_left).format((viewPos.duration - viewPos.position) / (60_000))
-                    } ?: run {
+                        isProgressVisible = true
+                    } else {
+                        isProgressVisible = false
                         isSeriesVisible = false
                     }
+                } ?: run {
+                    isProgressVisible = false
+                    isSeriesVisible = false
                 }
             }
+
             result_series_parent?.isVisible = isSeriesVisible
+            result_resume_progress_holder?.isVisible = isProgressVisible
+            context?.getString(if (isProgressVisible) R.string.resume else R.string.play_movie_button)
+                ?.let {
+                    result_play_movie?.text = it
+                }
 
             when (startAction) {
                 START_ACTION_RESUME_LATEST -> {
@@ -1354,10 +1368,10 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
                         result_poster_holder?.visibility = VISIBLE
 
-                        result_play_movie?.text =
+                        /*result_play_movie?.text =
                             if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(
                                 R.string.play_movie_button
-                            )
+                            )*/
                         //result_plot_header?.text =
                         //    if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
                         if (!d.plot.isNullOrEmpty()) {

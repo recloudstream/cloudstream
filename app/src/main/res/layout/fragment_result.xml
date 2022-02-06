@@ -667,39 +667,41 @@
                                 tools:text="S1E1 Episode 1"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
+                    </LinearLayout>
 
-                        <LinearLayout
-                                android:orientation="horizontal"
+                    <LinearLayout
+                            android:paddingTop="10dp"
+                            android:id="@+id/result_resume_progress_holder"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                        <androidx.core.widget.ContentLoadingProgressBar
+                                android:layout_height="20dp"
+                                tools:progress="50"
+                                android:id="@+id/result_resume_series_progress"
+                                android:indeterminate="false"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:progressBackgroundTint="?attr/colorPrimary"
+                                android:max="100"
+                                android:layout_gravity="end|center_vertical"
+                                android:progress="0"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_weight="1"
+                                android:visibility="visible"
+                                tools:visibility="visible" />
 
-                            <androidx.core.widget.ContentLoadingProgressBar
-                                    android:layout_height="20dp"
-                                    tools:progress="50"
-                                    android:id="@+id/result_resume_series_progress"
-                                    android:indeterminate="false"
-                                    style="?android:attr/progressBarStyleHorizontal"
-                                    android:progressBackgroundTint="?attr/colorPrimary"
-                                    android:max="100"
-                                    android:layout_gravity="end|center_vertical"
-                                    android:progress="0"
-                                    android:layout_width="match_parent"
-                                    android:layout_weight="1"
-                                    android:visibility="visible"
-                                    tools:visibility="visible" />
-
-                            <TextView
-                                    android:id="@+id/result_resume_series_progress_text"
-                                    android:layout_gravity="center"
-                                    android:paddingStart="10dp"
-                                    android:gravity="center"
-                                    tools:text="69m\nremaining"
-                                    android:layout_weight="0"
-                                    android:textColor="?attr/grayTextColor"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    tools:ignore="RtlSymmetry" />
-                        </LinearLayout>
+                        <TextView
+                                android:id="@+id/result_resume_series_progress_text"
+                                android:layout_gravity="center"
+                                android:paddingStart="10dp"
+                                android:gravity="center"
+                                tools:text="69m\nremaining"
+                                android:layout_weight="0"
+                                android:textColor="?attr/grayTextColor"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                tools:ignore="RtlSymmetry" />
                     </LinearLayout>
                     <!--<TextView
                             android:visibility="gone"
