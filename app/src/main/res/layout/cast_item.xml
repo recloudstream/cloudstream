@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content">
 
             <androidx.cardview.widget.CardView
-                    app:cardCornerRadius="70dp"
+                    app:cardCornerRadius="35dp"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:foreground="@drawable/outline_drawable">
@@ -49,7 +49,7 @@
             <androidx.cardview.widget.CardView
                     android:id="@+id/voice_actor_image_holder"
                     android:layout_gravity="end|bottom"
-                    app:cardCornerRadius="40dp"
+                    app:cardCornerRadius="20dp"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:foreground="@drawable/outline_drawable">
@@ -69,7 +69,8 @@
         </FrameLayout>
 
         <LinearLayout
-                android:padding="10dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
                 android:orientation="vertical"
                 android:layout_gravity="center"
                 android:gravity="center_horizontal"
