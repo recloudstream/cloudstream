@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.select.Elements
+import java.lang.Exception
 
 class PinoyMoviesEsProvider : MainAPI() {
     override val name = "Pinoy Movies"
@@ -110,10 +111,10 @@ class PinoyMoviesEsProvider : MainAPI() {
             .document.select("div#archive-content > article")
 
         return document?.mapNotNull {
-            val urlTitle = it?.select("div.data") ?: return@mapNotNull null
             // Fetch details
+            val urlTitle = it?.select("div.data") ?: return@mapNotNull null
             val link = urlTitle.select("a")?.attr("href") ?: return@mapNotNull null
-            val title = urlTitle.text() ?: "<No Title>"
+            val title = urlTitle.text()?.trim() ?: "<No Title>"
             val year = urlTitle.select("span.year")?.text()?.toIntOrNull()
             val image = it.select("div.poster > img")?.attr("src")
 
@@ -148,7 +149,9 @@ class PinoyMoviesEsProvider : MainAPI() {
             val aUrl = a.attr("href") ?: return@mapNotNull null
             val aImg = a.select("img")?.attr("data-src")
             val aName = a.select("img")?.attr("alt") ?: return@mapNotNull null
-            val aYear = aName.trim().takeLast(5).removeSuffix(")").toIntOrNull()
+            val aYear = try {
+                aName.trim().takeLast(5).removeSuffix(")").toIntOrNull()
+            } catch (e: Exception) { null }
             MovieSearchResponse(
                 url = aUrl,
                 name = aName,

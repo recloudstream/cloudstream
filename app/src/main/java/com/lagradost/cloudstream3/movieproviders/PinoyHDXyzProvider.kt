@@ -28,7 +28,7 @@ class PinoyHDXyzProvider : MainAPI() {
                 // Get inner div from article
                 val innerBody = it?.selectFirst("a") ?: return@mapNotNull null
                 // Fetch details
-                val name = it.text()
+                val name = it.text()?.trim()
                 if (name.isNullOrBlank()) { return@mapNotNull null }
 
                 val link = innerBody.attr("href") ?: return@mapNotNull null
