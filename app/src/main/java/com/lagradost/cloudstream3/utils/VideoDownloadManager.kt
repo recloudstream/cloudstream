@@ -1055,6 +1055,16 @@ object VideoDownloadManager {
     ): Int {
         val displayName = getDisplayName(name, extension)
 
+        // delete all subtitle files
+        if (extension == "mp4") {
+            try {
+                delete(context, name, folder, "vtt", parentId, basePath)
+                delete(context, name, folder, "srt", parentId, basePath)
+            } catch (e: Exception) {
+                logError(e)
+            }
+        }
+
         // If scoped storage and using download dir (not accessible with UniFile)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && basePath.isDownloadDir()) {
             val relativePath = getRelativePath(folder)
