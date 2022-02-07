@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.extractors.FEmbed
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
+import java.lang.Exception
 
 class PinoyMoviePediaProvider : MainAPI() {
     override val name = "Pinoy Moviepedia"
@@ -115,9 +116,8 @@ class PinoyMoviePediaProvider : MainAPI() {
         // Video details
         val data = inner?.select("div.data")
         val poster = inner?.select("div.poster > img")?.attr("src")
-        val title = data?.select("h1")?.firstOrNull()?.text() ?: ""
-        val descript = body?.select("div#info > div.wp-content")
-            ?.select("p")?.get(0)?.text()
+        val title = data?.select("h1")?.firstOrNull()?.text()?.trim() ?: ""
+        val descript = body?.select("div#info > div.wp-content p")?.firstOrNull()?.text()
         val rex = Regex("\\((\\d+)")
         val yearRes = rex.find(title)?.value ?: ""
         //Log.i(this.name, "Result => (yearRes) ${yearRes}")
@@ -130,7 +130,10 @@ class PinoyMoviePediaProvider : MainAPI() {
             val aUrl = a.attr("href") ?: return@mapNotNull null
             val aImg = a.select("img")?.attr("src")
             val aName = a.select("img")?.attr("alt") ?: return@mapNotNull null
-            val aYear = aName.trim().takeLast(5).removeSuffix(")").toIntOrNull()
+            val aYear = try {
+                aName.trim().takeLast(5).removeSuffix(")").toIntOrNull()
+            } catch (e: Exception) { null }
+
             MovieSearchResponse(
                 url = aUrl,
                 name = aName,
@@ -145,9 +148,9 @@ class PinoyMoviePediaProvider : MainAPI() {
         val playcontainer = body?.select("div#playcontainer")
         val listOfLinks: MutableList<String> = mutableListOf()
         playcontainer?.select("iframe")?.forEach { item ->
-            val lnk = item?.attr("src")?.trim()
+            val lnk = item?.attr("src")?.trim() ?: ""
             //Log.i(this.name, "Result => (lnk) $lnk")
-            if (!lnk.isNullOrEmpty()) {
+            if (lnk.isNotBlank()) {
                 listOfLinks.add(lnk)
             }
         }
