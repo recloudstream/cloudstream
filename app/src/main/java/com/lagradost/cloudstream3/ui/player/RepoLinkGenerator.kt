@@ -126,6 +126,7 @@ class RepoLinkGenerator(
                 }
             },
             { link ->
+                Log.d(TAG, "Loaded ExtractorLink: $link")
                 if (!currentLinks.contains(link.url)) {
                     if (!currentLinkCache.contains(link)) {
                         currentLinks.add(link.url)
