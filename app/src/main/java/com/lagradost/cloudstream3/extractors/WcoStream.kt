@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.utils.*
 
 class WcoStream : ExtractorApi() {
-    override val name = "WcoStream"
+    override val name = "VidStream" //Cause works for animekisa and wco
     override val mainUrl = "https://vidstream.pro"
     override val requiresReferer = false
     private val hlsHelper = M3u8Helper()
