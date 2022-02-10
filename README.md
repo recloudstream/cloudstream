@@ -64,6 +64,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [pelismart.com](https://pelismart.com) 
 - [gogoanime.wiki](https://gogoanime.wiki) 
 - [allanime.site](https://allanime.site) 
+- [animekisa.in](https://animekisa.in) 
 - [animeflick.net](https://animeflick.net) 
 - [m.animeflv.net](https://m.animeflv.net) 
 - [tenshi.moe](https://tenshi.moe) 
