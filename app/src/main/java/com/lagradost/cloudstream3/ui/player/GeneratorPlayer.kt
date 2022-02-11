@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -26,11 +27,13 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
+import kotlinx.coroutines.Job
 
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
@@ -80,6 +83,19 @@ class GeneratorPlayer : FullScreenPlayer() {
         return durPos.position
     }
 
+    var currentVerifyLink: Job? = null
+
+    private fun loadExtractorJob(extractorLink: ExtractorLink?) {
+        currentVerifyLink?.cancel()
+        extractorLink?.let {
+            currentVerifyLink = ioSafe {
+                if (it.extractorData != null) {
+                    getApiFromNameNull(it.source)?.extractorVerifierJob(it.extractorData)
+                }
+            }
+        }
+    }
+
     private fun loadLink(link: Pair<ExtractorLink?, ExtractorUri?>?, sameEpisode: Boolean) {
         if (link == null) return
 
@@ -93,6 +109,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         setPlayerDimen(null)
         setTitle()
 
+        loadExtractorJob(link.first)
         // load player
         context?.let { ctx ->
             val (url, uri) = link
@@ -345,6 +362,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun onDestroy() {
         ResultFragment.updateUI()
+        currentVerifyLink?.cancel()
         super.onDestroy()
     }
 

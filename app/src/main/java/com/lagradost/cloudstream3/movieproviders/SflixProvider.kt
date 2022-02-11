@@ -1,20 +1,26 @@
 package com.lagradost.cloudstream3.movieproviders
 
+import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.LoadResponse.Companion.setDuration
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.network.WebViewResolver
+import com.lagradost.cloudstream3.network.getRequestCreator
+import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
+import kotlin.system.measureTimeMillis
 
 class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
     override val mainUrl = providerUrl
@@ -292,12 +298,19 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
         urls?.apmap { url ->
             suspendSafeApiCall {
-                val sources = app.get(
-                    url,
-                    interceptor = WebViewResolver(
-                        Regex("""/getSources"""),
-                    )
-                ).text
+                val resolved = WebViewResolver(
+                    Regex("""/getSources"""),
+                    // This is unreliable, generating my own link instead
+//                  additionalUrls = listOf(Regex("""^.*transport=polling(?!.*sid=).*$"""))
+                ).resolveUsingWebView(getRequestCreator(url))
+//              val extractorData = resolved.second.getOrNull(0)?.url?.toString()
+
+                // Some smarter ws11 or w10 selection might be required in the future.
+                val extractorData =
+                    "https://ws10.rabbitstream.net/socket.io/?EIO=4&transport=polling"
+
+                val sources = resolved.first?.let { app.baseClient.newCall(it).execute().text }
+                    ?: return@suspendSafeApiCall
 
                 val mapped = parseJson<SourceObject>(sources)
 
@@ -314,13 +327,112 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                     mapped.sourcesBackup to "source backup"
                 ).forEach { (sources, sourceName) ->
                     sources?.forEach {
-                        it?.toExtractorLink(this, sourceName)?.forEach(callback)
+                        it?.toExtractorLink(this, sourceName, extractorData)?.forEach(callback)
                     }
                 }
             }
         }
 
         return !urls.isNullOrEmpty()
+    }
+
+    data class PollingData(
+        @JsonProperty("sid") val sid: String? = null,
+        @JsonProperty("upgrades") val upgrades: ArrayList<String> = arrayListOf(),
+        @JsonProperty("pingInterval") val pingInterval: Int? = null,
+        @JsonProperty("pingTimeout") val pingTimeout: Int? = null
+    )
+
+    /*
+    # python code to figure out the time offset based on code if necessary
+    chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
+    code = "Nxa_-bM"
+    total = 0
+    for i, char in enumerate(code[::-1]):
+        index = chars.index(char)
+        value = index * 64**i
+        total += value
+    print(f"total {total}")
+    */
+    private fun generateTimeStamp(): String {
+        val chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
+        var code = ""
+        var time = unixTimeMS
+        while (time > 0) {
+            code += chars[(time % (chars.length)).toInt()]
+            time /= chars.length
+        }
+        return code.reversed()
+    }
+
+    override suspend fun extractorVerifierJob(extractorData: String?) {
+        if (extractorData == null) return
+
+        val jsonText =
+            app.get("$extractorData&t=${generateTimeStamp()}").text.replaceBefore("{", "")
+        val data = parseJson<PollingData>(jsonText)
+        val headers = mapOf(
+            "User-Agent" to USER_AGENT,
+            "Referer" to "https://rabbitstream.net/"
+        )
+
+        // 40 is hardcoded, dunno how it's generated, but it seems to work everywhere.
+        // This request is obligatory
+        app.post(
+            "$extractorData&t=${generateTimeStamp()}&sid=${data.sid}",
+            data = 40, headers = headers
+        )//.also { println("First post ${it.text}") }
+        // This makes the second get request work, and re-connect work.
+        val reconnectSid =
+            parseJson<PollingData>(
+                app.get(
+                    "$extractorData&t=${generateTimeStamp()}&sid=${data.sid}",
+                    headers = headers
+                )
+                    //.also { println("First get ${it.text}") }
+                    .text.replaceBefore("{", "")
+            ).sid
+        // This response is used in the post requests. Same contents in all it seems.
+        val authInt =
+            app.get(
+                "$extractorData&t=${generateTimeStamp()}&sid=${data.sid}",
+                timeout = 60,
+                headers = headers
+            ).text
+                //.also { println("Second get ${it}") }
+                // Dunno if it's actually generated like this, just guessing.
+                .toIntOrNull()?.plus(1) ?: 3
+
+        // Prevents them from fucking us over with doing a while(true){} loop
+        val interval = maxOf(data.pingInterval?.toLong()?.plus(2000) ?: return, 10000L)
+        var reconnect = false
+        // New SID can be negotiated as above, but not implemented yet as it seems rare.
+        while (true) {
+            val authData = if (reconnect) """
+                42["_reconnect", "$reconnectSid"]
+            """.trimIndent() else authInt
+
+            val url = "${extractorData}&t=${generateTimeStamp()}&sid=${data.sid}"
+            app.post(url, data = authData, headers = headers)
+            //.also { println("Sflix post job ${it.text}") }
+            Log.d(this.name, "Running Sflix job $url")
+
+            val time = measureTimeMillis {
+                // This acts as a timeout
+                val getResponse = app.get(
+                    "${extractorData}&t=${generateTimeStamp()}&sid=${data.sid}",
+                    timeout = 60,
+                    headers = headers
+                ).text //.also { println("Sflix get job $it") }
+                if (getResponse.contains("sid")) {
+                    reconnect = true
+//                println("Reconnecting")
+                }
+            }
+            // Always waits even if the get response is instant, to prevent a while true loop.
+            if (time < interval - 4000)
+                delay(interval)
+        }
     }
 
     private fun Element.toSearchResult(): SearchResponse {
@@ -363,7 +475,11 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         }
 
         // For re-use in Zoro
-        fun Sources.toExtractorLink(caller: MainAPI, name: String): List<ExtractorLink>? {
+        fun Sources.toExtractorLink(
+            caller: MainAPI,
+            name: String,
+            extractorData: String? = null
+        ): List<ExtractorLink>? {
             return this.file?.let { file ->
                 //println("FILE::: $file")
                 val isM3u8 = URI(this.file).path.endsWith(".m3u8") || this.type.equals(
@@ -382,7 +498,8 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                                 stream.streamUrl,
                                 caller.mainUrl,
                                 getQualityFromName(stream.quality.toString()),
-                                true
+                                true,
+                                extractorData = extractorData
                             )
                         }
                 } else {
@@ -393,6 +510,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                         caller.mainUrl,
                         getQualityFromName(this.type ?: ""),
                         false,
+                        extractorData = extractorData
                     ))
                 }
             }
