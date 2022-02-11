@@ -97,6 +97,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     Mp4Upload(),
     StreamTape(),
     MixDrop(),
+    Mcloud(),
     XStreamCdn(),
     StreamSB(),
     Streamhub(),
