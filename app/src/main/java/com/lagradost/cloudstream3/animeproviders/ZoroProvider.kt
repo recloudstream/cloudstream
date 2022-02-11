@@ -359,7 +359,7 @@ class ZoroProvider : MainAPI() {
 
                 list.forEach { subList ->
                     subList.first?.forEach { a ->
-                        a?.toExtractorLink(this, subList.second + " - ${it.first}")
+                        a?.toExtractorLink(this, subList.second + " - ${it.first}", null)
                             ?.forEach(callback)
                     }
                 }

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.annotation.WorkerThread
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -246,23 +247,43 @@ abstract class MainAPI {
     open val vpnStatus = VPNStatus.None
     open val providerType = ProviderType.DirectProvider
 
+    @WorkerThread
     suspend open fun getMainPage(): HomePageResponse? {
         throw NotImplementedError()
     }
-
+    @WorkerThread
     suspend open fun search(query: String): List<SearchResponse>? {
         throw NotImplementedError()
     }
-
+    @WorkerThread
     suspend open fun quickSearch(query: String): List<SearchResponse>? {
         throw NotImplementedError()
     }
-
+    @WorkerThread
+    /**
+     * Based on data from search() or getMainPage() it generates a LoadResponse,
+     * basically opening the info page from a link.
+     * */
     suspend open fun load(url: String): LoadResponse? {
         throw NotImplementedError()
     }
 
+    /**
+     * Largely redundant feature for most providers.
+     *
+     * This job runs in the background when a link is playing in exoplayer.
+     * First implemented to do polling for sflix to keep the link from getting expired.
+     *
+     * This function might be updated to include exoplayer timestamps etc in the future
+     * if the need arises.
+     * */
+    @WorkerThread
+    suspend open fun extractorVerifierJob(extractorData: String?) {
+        throw NotImplementedError()
+    }
+
     /**Callback is fired once a link is found, will return true if method is executed successfully*/
+    @WorkerThread
     suspend open fun loadLinks(
         data: String,
         isCasting: Boolean,

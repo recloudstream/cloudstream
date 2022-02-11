@@ -32,13 +32,13 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
     }
 
     /**
-     * @param requestCallBack asynchronously return matched requests by either interceptUrl or additionalUrls.
+     * @param requestCallBack asynchronously return matched requests by either interceptUrl or additionalUrls. If true, destroy WebView.
      * @return the final request (by interceptUrl) and all the collected urls (by additionalUrls).
      * */
     @SuppressLint("SetJavaScriptEnabled")
     suspend fun resolveUsingWebView(
         request: Request,
-        requestCallBack: (Request) -> Unit = {}
+        requestCallBack: (Request) -> Boolean = { false }
     ): Pair<Request?, List<Request>> {
         val url = request.url.toString()
         val headers = request.headers
@@ -81,14 +81,18 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
 //                    println("Loading WebView URL: $webViewUrl")
 
                     if (interceptUrl.containsMatchIn(webViewUrl)) {
-                        fixedRequest = request.toRequest().also(requestCallBack)
+                        fixedRequest = request.toRequest().also {
+                            if (requestCallBack(it)) destroyWebView()
+                        }
                         println("Web-view request finished: $webViewUrl")
                         destroyWebView()
                         return@runBlocking null
                     }
 
                     if (additionalUrls.any { it.containsMatchIn(webViewUrl) }) {
-                        extraRequestList.add(request.toRequest().also(requestCallBack))
+                        extraRequestList.add(request.toRequest().also {
+                            if (requestCallBack(it)) destroyWebView()
+                        })
                     }
 
                     // Suppress image requests as we don't display them anywhere
@@ -129,11 +133,6 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                      *  e.g the recaptcha request.
                      * **/
 
-                    /** NOTE!  request.requestHeaders is not perfect!
-                     *  They don't contain all the headers the browser actually gives.
-                     *  Overriding with okhttp might fuck up otherwise working requests,
-                     *  e.g the recaptcha request.
-                     * **/
                     return@runBlocking try {
                         when {
                             blacklistedFiles.any { URI(webViewUrl).path.contains(it) } || webViewUrl.endsWith(
@@ -204,7 +203,7 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                 null,
                 emptyMap(),
                 emptyMap(),
-                emptyMap(),
+                emptyMap<String, String>(),
                 10,
                 TimeUnit.MINUTES
             )
