@@ -100,6 +100,19 @@
                 android:textSize="40sp" />
     </RelativeLayout>
 
+    <FrameLayout
+            android:id="@+id/player_episode_filler_holder"
+            android:layout_margin="20dp"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+                style="@style/SmallBlackButton"
+                android:text="@string/filler"
+                android:id="@+id/player_episode_filler" />
+    </FrameLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_video_holder"
             android:layout_width="match_parent"
@@ -136,6 +149,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/player_video_title"
                     tools:text="1920x1080" />
+
 
             <!-- Removed as it has no use anymore-->
             <!--<androidx.mediarouter.app.MediaRouteButton
@@ -175,6 +189,8 @@
                         android:focusable="true"
                         android:contentDescription="@string/go_back_img_des" />
             </FrameLayout>
+
+
         </FrameLayout>
 
         <!--use for thinner app:trackThickness="3dp" com.google.android.material.progressindicator.CircularProgressIndicator-->

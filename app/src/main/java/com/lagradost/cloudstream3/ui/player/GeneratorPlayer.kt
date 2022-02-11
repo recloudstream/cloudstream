@@ -282,7 +282,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                         } else {
                             currentSubtitles.getOrNull(subtitleIndex - 1)?.let {
                                 setSubtitles(it)
-                                true
                             } ?: false
                         }
                     }
@@ -458,8 +457,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         var season: Int? = null
         var tvType: TvType? = null
 
+        var isFiller : Boolean? = null
         when (val meta = currentMeta) {
             is ResultEpisode -> {
+                isFiller = meta.isFiller
                 headerName = meta.headerName
                 episode = meta.episode
                 season = meta.season
@@ -472,6 +473,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 tvType = meta.tvType
             }
         }
+
+        player_episode_filler_holder?.isVisible = isFiller ?: false
 
         player_video_title?.text = if (headerName != null) {
             headerName +

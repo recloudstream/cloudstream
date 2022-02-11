@@ -563,6 +563,13 @@ class CS3IPlayer() : IPlayer {
                     super.onPlayerError(error)
                 }
 
+                //override fun onCues(cues: MutableList<Cue>) {
+                //    cues.firstOrNull()?.text?.let {
+                //        println("CUE: $it")
+                //    }
+                //    super.onCues(cues)
+                //}
+
                 override fun onRenderedFirstFrame() {
                     updatedTime()
                     if (!hasUsedFirstRender) { // this insures that we only call this once per player load

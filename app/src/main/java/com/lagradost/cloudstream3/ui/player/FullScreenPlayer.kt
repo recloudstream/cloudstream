@@ -42,7 +42,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.Vector2
-import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlin.math.*
 
@@ -387,6 +386,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         //TITLE
         player_video_title_rez?.startAnimation(fadeAnimation)
+        player_episode_filler?.startAnimation(fadeAnimation)
         player_video_title?.startAnimation(fadeAnimation)
         player_top_holder?.startAnimation(fadeAnimation)
         // BOTTOM
@@ -408,6 +408,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_top_holder?.isGone = isGone
         player_video_title?.isGone = isGone
         player_video_title_rez?.isGone = isGone
+        player_episode_filler?.isGone = isGone
         player_center_menu?.isGone = isGone
         player_lock?.isGone = !isShowing
         //player_media_route_button?.isClickable = !isGone
