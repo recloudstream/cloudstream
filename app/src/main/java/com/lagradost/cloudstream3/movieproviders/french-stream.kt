@@ -58,7 +58,7 @@ class FrenchStreamProvider : MainAPI() {
             soup.selectFirst("div.fdesc").text().toString()
                 .split("streaming", ignoreCase = true)[1].replace(" :  ", "")
         var poster = fixUrlNull(soup.selectFirst("div.fposter > img")?.attr("src"))
-        val listEpisode = soup.selectFirst("div.elink")
+        val listEpisode = soup.select("div.elink")
 
         if (isMovie) {
             val trailer = soup.selectFirst("div.fleft > span > a")?.attr("href")
@@ -86,20 +86,33 @@ class FrenchStreamProvider : MainAPI() {
             )
         } else  // a tv serie
         {
-            val episodes = listEpisode.select("a").map { a ->
+            //println(listEpisode)
+            //println("listeEpisode:")
+            val episode_list = if ("<a" !in (listEpisode[0]).toString()) {  // check if VF is empty
+                listEpisode[1]  // no vf, return vostfr
+            }
+            else {
+                listEpisode[0] // no vostfr, return vf
+            }
+
+            //println(url)
+
+            val episodes = episode_list.select("a").map { a ->
+                val epNum = a.text().split("Episode")[1].trim().toIntOrNull()
                 val epTitle = if (a.text()?.toString() != null)
                     if (a.text().contains("Episode")) {
-                        "Episode " + a.text().split("Episode")[1].trim()
+                        val type = if ("honey" in a.attr("id")) {
+                            "VF"
+                        } else {
+                            "VOSTFR"
+                        }
+                        "Episode " + epNum?.toString() + " en " + type
                     } else {
                         a.text()
-                    }
-                else ""
+                    } else ""
                 if (poster == null) {
                     poster = a.selectFirst("div.fposter > img")?.attr("src")
                 }
-
-                val epNum = Regex("""Episode (\d+)""").find(epTitle)?.destructured?.component1()
-                    ?.toIntOrNull()
                 TvSeriesEpisode(
                     epTitle,
                     null,
@@ -128,11 +141,15 @@ class FrenchStreamProvider : MainAPI() {
     fun translate(
         // the website has weird naming of series for episode 2 and 1 and original version content
         episodeNumber: String,
+        is_vf_available: Boolean,
     ): String {
-        return when (episodeNumber) {
-            "ABCDE" -> "34" // ABCDE is episode 2
-            "1" -> "FGHIJK"
-            else -> (episodeNumber.toInt() + 32).toString()
+        if (episodeNumber == "1") {
+            if (is_vf_available) {  // 1 translate differently if vf is available or not
+                return "FGHIJK"
+            } else { return "episode033" }
+        }
+        else {
+            return "episode" + (episodeNumber.toInt() + 32).toString()
         }
     }
 
@@ -149,31 +166,28 @@ class FrenchStreamProvider : MainAPI() {
                     data.split("-episodenumber:")  // the data contains the url and the wanted episode number (a temporary dirty fix that will last forever)
                 val url = split[0]
                 val wantedEpisode =
-                    if (split[1] == "2") { // the episode number 2 has id of ABCDE, no questions asked
+                    if (split[1] == "2") { // the episode number 2 has id of ABCDE, don't ask any question
                         "ABCDE"
                     } else {
-                        split[1]
+                        "episode" + split[1]
                     }
 
-                val translated = translate(wantedEpisode)
+
                 val soup = app.get(fixUrl(url)).document
                 val div =
-                    if (wantedEpisode == "ABCDE") {  // Causes issues trying to convert to int with ABCDE abviously
-                        ""
-                    } else if (wantedEpisode.toInt() == 1) {
+                    if (wantedEpisode == "episode1") {
                         "> div.tabs-sel "  // this element is added when the wanted episode is one (the place changes in the document)
                     } else {
                         ""
                     }
-
                 val serversvf =// French version servers
-                    soup.select("div#episode$wantedEpisode > div.selink > ul.btnss $div> li")
+                    soup.select("div#$wantedEpisode > div.selink > ul.btnss $div> li")
                         .mapNotNull { li ->  // list of all french version servers
                             val serverUrl = fixUrl(li.selectFirst("a").attr("href"))
 //                            val litext = li.text()
-                            if (serverUrl != "") {
-                                if (li.text().replace("&nbsp;", "").replace(" ", "") != "") {
-                                    Pair(li.text().replace(" ", ""), fixUrl(serverUrl))
+                            if (serverUrl.isNotBlank()) {
+                                if (li.text().replace("&nbsp;", "").replace(" ", "").isNotBlank()) {
+                                    Pair(li.text().replace(" ", ""), "vf" + fixUrl(serverUrl))
                                 } else {
                                     null
                                 }
@@ -182,13 +196,14 @@ class FrenchStreamProvider : MainAPI() {
                             }
                         }
 
+                val translated = translate(split[1], serversvf.isNotEmpty())
                 val serversvo =  // Original version servers
-                    soup.select("div#episode$translated > div.selink > ul.btnss $div> li")
+                    soup.select("div#$translated > div.selink > ul.btnss $div> li")
                         .mapNotNull { li ->
                             val serverUrl = fixUrlNull(li.selectFirst("a")?.attr("href"))
                             if (!serverUrl.isNullOrEmpty()) {
-                                if (li.text().replace("&nbsp;", "").replace(" ", "") != "") {
-                                    Pair(li.text().replace(" ", ""), fixUrl(serverUrl))
+                                if (li.text().replace("&nbsp;", "").isNotBlank()) {
+                                    Pair(li.text().replace(" ", ""), "vo" + fixUrl(serverUrl))
                                 } else {
                                     null
                                 }
@@ -204,7 +219,7 @@ class FrenchStreamProvider : MainAPI() {
                             val serverurl = fixUrlNull(a.attr("href")) ?: return@mapNotNull null
                             val parent = a.parents()[2]
                             val element = parent.selectFirst("a").text().plus(" ")
-                            if (a.text().replace("&nbsp;", "").trim() != "") {
+                            if (a.text().replace("&nbsp;", "").isNotBlank()) {
                                 Pair(element.plus(a.text()), fixUrl(serverurl))
                             } else {
                                 null
@@ -216,8 +231,8 @@ class FrenchStreamProvider : MainAPI() {
         servers.apmap {
             for (extractor in extractorApis) {
                 if (it.first.contains(extractor.name, ignoreCase = true)) {
-//                    val name = it.first
-//                    print("true for $name")
+        //                    val name = it.first
+        //                    print("true for $name")
                     extractor.getSafeUrl(it.second, it.second)?.forEach(callback)
                     break
                 }
