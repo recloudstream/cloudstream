@@ -1,9 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
 import android.net.Uri
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.gms.cast.*
 import com.google.android.gms.cast.framework.CastSession
@@ -20,9 +17,6 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 object CastHelper {
-    private val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
-
     fun getMediaInfo(
         epData: ResultEpisode,
         holder: MetadataHolder,

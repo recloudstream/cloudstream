@@ -11,6 +11,7 @@
     <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
     <string name="benene_count" translatable="false">benene_count</string>
     <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
+    <string name="subtitle_settings_chomecast_key" translatable="false">subtitle_settings_chomecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
     <string name="video_cache_key" translatable="false">video_cache_key</string>
     <string name="prerelease_commit_hash" translatable="false">unknown_prerelease</string>
@@ -175,6 +176,9 @@
     <string name="player_size_settings_des">Remove the black borders</string>
     <string name="player_subtitles_settings">Subtitles</string>
     <string name="player_subtitles_settings_des">Player subtitles settings</string>
+    <string name="chomecast_subtitles_settings">Chomecast Subtitles</string>
+    <string name="chomecast_subtitles_settings_des">Chromecast subtitles settings</string>
+
     <string name="eigengraumode_settings">Eigengravy Mode</string>
     <string name="eigengraumode_settings_des">Adds a speed option in the player</string>
     <string name="swipe_to_seek_settings">Swipe to seek</string>

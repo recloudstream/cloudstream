@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.movieproviders.SflixProvider
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.toExtractorLink
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.toSubtitleFile
 import com.lagradost.cloudstream3.network.WebViewResolver
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
@@ -283,10 +284,10 @@ class ZoroProvider : MainAPI() {
     }
 
     private suspend fun getM3u8FromRapidCloud(url: String): String {
-        return Regex("""/(embed-\d+)/(.*?)\?z=""").find(url)?.groupValues?.let {
+        return /*Regex("""/(embed-\d+)/(.*?)\?z=""").find(url)?.groupValues?.let {
             val jsonLink = "https://rapid-cloud.ru/ajax/${it[1]}/getSources?id=${it[2]}"
             app.get(jsonLink).text
-        } ?: app.get(
+        } ?:*/ app.get(
             "$url&autoPlay=1&oa=0",
             headers = mapOf(
                 "Referer" to "https://zoro.to/",
@@ -319,6 +320,7 @@ class ZoroProvider : MainAPI() {
             )
         }
 
+
         // Prevent duplicates
         servers.distinctBy { it.second }.apmap {
             val link =
@@ -326,7 +328,7 @@ class ZoroProvider : MainAPI() {
             val extractorLink = app.get(
                 link,
             ).mapped<RapidCloudResponse>().link
-
+//.also { println("AAAAAAAAA: ${it.text}") }
             // Loads the links in the appropriate extractor.
             val hasLoadedExtractorLink = loadExtractor(extractorLink, mainUrl, callback)
 
@@ -342,7 +344,7 @@ class ZoroProvider : MainAPI() {
                     )
 
                 if (response.contains("<html")) return@apmap
-                val mapped = mapper.readValue<SflixProvider.SourceObject>(response)
+                val mapped = parseJson<SflixProvider.SourceObject>(response)
 
                 mapped.tracks?.forEach { track ->
                     track?.toSubtitleFile()?.let { subtitleFile ->

@@ -81,6 +81,19 @@
         />
     </action>
 
+    <action android:id="@+id/global_to_navigation_chrome_subtitles"
+            app:destination="@id/navigation_chrome_subtitles"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim">
+        <argument
+                android:name="hide"
+                app:argType="boolean"
+                android:defaultValue="true"
+                />
+    </action>
+
     <action android:id="@+id/global_to_navigation_quick_search"
             app:destination="@id/navigation_quick_search"
             app:enterAnim="@anim/enter_anim"
@@ -167,6 +180,12 @@
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment"
             android:label="@string/subtitles_settings"/>
+
+    <fragment
+            android:id="@+id/navigation_chrome_subtitles"
+            android:layout_height="match_parent"
+            android:name="com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment"
+            android:label="@string/chomecast_subtitles_settings"/>
 
     <fragment
             android:id="@+id/navigation_quick_search"
