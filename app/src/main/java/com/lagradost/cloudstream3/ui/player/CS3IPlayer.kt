@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.FrameLayout
@@ -35,7 +36,7 @@ const val TAG = "CS3ExoPlayer"
 
 /** Cache */
 
-class CS3IPlayer() : IPlayer {
+class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
     var cacheSize = 300L * 1024L * 1024L // 300 mb
@@ -112,6 +113,24 @@ class CS3IPlayer() : IPlayer {
         this.prevEpisode = prevEpisode
     }
 
+    // I know, this is not a perfect solution, however it works for fixing subs
+    private fun reloadSubs() {
+        exoPlayer?.applicationLooper?.let {
+            try {
+                Handler(it).post {
+                    try {
+                        seekTime(1L)
+                    } catch (e : Exception) {
+                        logError(e)
+                    }
+                }
+            } catch (e : Exception) {
+                logError(e)
+            }
+
+        }
+    }
+
     fun initSubtitles(subView: SubtitleView?, subHolder: FrameLayout?, style: SaveCaptionStyle?) {
         subtitleHelper.initSubtitles(subView, subHolder, style)
     }
@@ -178,6 +197,13 @@ class CS3IPlayer() : IPlayer {
                             trackSelector.buildUponParameters()
                                 .setPreferredTextLanguage("_$name")
                         )
+
+                        // ugliest code I have written, it seeks 1ms to *update* the subtitles
+                        //exoPlayer?.applicationLooper?.let {
+                        //    Handler(it).postDelayed({
+                        //        seekTime(1L)
+                        //    }, 1)
+                        //}
                     }
                     SubtitleStatus.NOT_FOUND -> {
                         // not found
@@ -261,6 +287,8 @@ class CS3IPlayer() : IPlayer {
     }
 
     companion object {
+        var requestSubtitleUpdate : (() -> Unit)? = null
+
         private fun createOnlineSource(link: ExtractorLink): DataSource.Factory {
             // Because Trailers.to seems to fail with http/1.1 the normal one uses.
             return DefaultHttpDataSource.Factory().apply {
@@ -368,6 +396,8 @@ class CS3IPlayer() : IPlayer {
             return trackSelector
         }
 
+        var currentTextRenderer: TextRenderer? = null
+
         private fun buildExoPlayer(
             context: Context,
             mediaItem: MediaItem,
@@ -389,11 +419,14 @@ class CS3IPlayer() : IPlayer {
                             textRendererOutput,
                             metadataRendererOutput
                         ).map {
-                            if (it is TextRenderer) TextRenderer(
-                                textRendererOutput,
-                                eventHandler.looper,
-                                CustomSubtitleDecoderFactory()
-                            ) else it
+                            if (it is TextRenderer) {
+                                currentTextRenderer = TextRenderer(
+                                    textRendererOutput,
+                                    eventHandler.looper,
+                                    CustomSubtitleDecoderFactory()
+                                )
+                                currentTextRenderer!!
+                            } else it
                         }.toTypedArray()
                     }
                     .setTrackSelector(trackSelector ?: getTrackSelector(context))
@@ -505,6 +538,8 @@ class CS3IPlayer() : IPlayer {
                 cacheFactory = cacheFactory
             )
 
+            requestSubtitleUpdate = ::reloadSubs
+
             playerUpdated?.invoke(exoPlayer)
             exoPlayer?.prepare()
 
@@ -572,6 +607,7 @@ class CS3IPlayer() : IPlayer {
 
                 override fun onRenderedFirstFrame() {
                     updatedTime()
+
                     if (!hasUsedFirstRender) { // this insures that we only call this once per player load
                         Log.i(TAG, "Rendered first frame")
 

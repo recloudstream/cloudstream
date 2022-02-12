@@ -121,6 +121,7 @@ class CustomDecoder : SubtitleDecoder {
                                 }
                                 decoder.queueInputBuffer(buff)
                             }
+                            CS3IPlayer.requestSubtitleUpdate?.invoke()
                         }
                     }
                 }
