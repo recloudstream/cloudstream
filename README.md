@@ -62,7 +62,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 <!--SITE LIST START-->
 - [pelisplus.icu](https://pelisplus.icu) 
 - [pelismart.com](https://pelismart.com) 
-- [gogoanime.wiki](https://gogoanime.wiki) 
+- [gogoanime.film](https://gogoanime.film) 
 - [allanime.site](https://allanime.site) 
 - [animekisa.in](https://animekisa.in) 
 - [animeflick.net](https://animeflick.net) 
