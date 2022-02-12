@@ -443,7 +443,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     // this is used because you don't want to hide UI when double tap seeking
     private var currentDoubleTapIndex = 0
     private fun toggleShowDelayed() {
-        if (doubleTapEnabled) {
+        if (doubleTapEnabled || doubleTapPauseEnabled) {
             val index = currentDoubleTapIndex
             player_holder?.postDelayed({
                 if (index == currentDoubleTapIndex) {
@@ -623,8 +623,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     && holdTime != null
                     && holdTime < DOUBLE_TAB_MAXIMUM_HOLD_TIME // it is a click not a long hold
                 ) {
-                    if (doubleTapEnabled
-                        && !isLocked
+                    if (!isLocked
                         && (System.currentTimeMillis() - currentLastTouchEndTime) < DOUBLE_TAB_MINIMUM_TIME_BETWEEN // the time since the last action is short
                     ) {
                         currentClickCount++
@@ -634,16 +633,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             if (doubleTapPauseEnabled) { // you can pause if your tap is in the middle of the screen
                                 when {
                                     currentTouch.x < screenWidth / 2 - (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
-                                        rewind()
+                                        if (doubleTapEnabled)
+                                            rewind()
                                     }
                                     currentTouch.x > screenWidth / 2 + (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
-                                        fastForward()
+                                        if (doubleTapEnabled)
+                                            fastForward()
                                     }
                                     else -> {
                                         player.handleEvent(CSPlayerEvent.PlayPauseToggle)
                                     }
                                 }
-                            } else {
+                            } else if (doubleTapEnabled) {
                                 if (currentTouch.x < screenWidth / 2) {
                                     rewind()
                                 } else {
