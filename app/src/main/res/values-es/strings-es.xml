@@ -123,7 +123,7 @@
      <string name="benene">Darle benene a los devs</string>
      <string name="benene_des">Benene dada</string>
      <string name="app_language">Idioma de App</string>
-     <string name="no_chomecast_support_toast">Este proveedor no tiene soporte para chromecast</string>
+     <string name="no_chromecast_support_toast">Este proveedor no tiene soporte para chromecast</string>
      <string name="no_links_found_toast">Links No Encontrados</string>
      <string name="copy_link_toast">Link copiado al portapapeles</string>
      <string name="play_episode_toast">Reproducir capítulo</string>
@@ -164,8 +164,8 @@
      <string name="unexpected_error">Error de reproductor inesperado</string>
      <string name="storage_error">Error de descarga
  revisar permisos de almacenamiento</string>
-     <string name="episode_action_chomecast_episode">Chromecast al Capítulo</string>
-     <string name="episode_action_chomecast_mirror">Chromecast al Espejo</string>
+     <string name="episode_action_chromecast_episode">Chromecast al Capítulo</string>
+     <string name="episode_action_chromecast_mirror">Chromecast al Espejo</string>
      <string name="episode_action_play_in_app">Mirar en App</string>
      <string name="episode_action_play_in_vlc">Mirar en VLC</string>
      <string name="episode_action_play_in_browser">Mirar en Navegador</string>

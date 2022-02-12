@@ -100,7 +100,7 @@
 
     <string name="app_language">एप्प की भाषा</string>
 
-    <string name="no_chomecast_support_toast">यह सूत्र क्रोमकास्ट का समर्थन नही करता</string>
+    <string name="no_chromecast_support_toast">यह सूत्र क्रोमकास्ट का समर्थन नही करता</string>
     <string name="no_links_found_toast">कोई लिंक नही मिले</string>
     <string name="copy_link_toast">लिंक को क्लिपबोर्ड पे कॉपी करदिया गया</string>
     <string name="play_episode_toast">चलाये</string>
@@ -133,8 +133,8 @@
     <string name="anime">अनिमे</string>
     <string name="torrent">टोरेंट</string>
 
-    <string name="episode_action_chomecast_episode">क्रोमकास्ट एपिसोड</string>
-    <string name="episode_action_chomecast_mirror">कक्रोमकास्ट मिरर</string>
+    <string name="episode_action_chromecast_episode">क्रोमकास्ट एपिसोड</string>
+    <string name="episode_action_chromecast_mirror">कक्रोमकास्ट मिरर</string>
     <string name="episode_action_play_in_app">एप्प मैं चलाये</string>
     <string name="episode_action_play_in_vlc">VLC में चलाए</string>
     <string name="episode_action_play_in_browser">Browser में चलाए</string>

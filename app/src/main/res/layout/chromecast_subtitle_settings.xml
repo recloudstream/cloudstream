@@ -16,7 +16,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:textStyle="bold"
-                android:text="@string/chomecast_subtitles_settings"
+                android:text="@string/chromecast_subtitles_settings"
                 android:textSize="20sp"
                 android:textColor="?attr/textColor"
                 android:layout_width="match_parent"

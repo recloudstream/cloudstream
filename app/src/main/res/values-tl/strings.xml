@@ -152,7 +152,7 @@
 
     <string name="app_language">Wika</string>
 
-    <string name="no_chomecast_support_toast">Walang chromecast support ang provider na ito</string>
+    <string name="no_chromecast_support_toast">Walang chromecast support ang provider na ito</string>
     <string name="no_links_found_toast">Walang link na nakita</string>
     <string name="copy_link_toast">Link copied to clipboard</string>
     <string name="play_episode_toast">Play Episode</string>
@@ -201,8 +201,8 @@
     <string name="unexpected_error">Unexpected player error</string>
     <string name="storage_error">Download error, check storage permissions</string>
 
-    <string name="episode_action_chomecast_episode">Chromecast Episode</string>
-    <string name="episode_action_chomecast_mirror">Chromecast Mirror</string>
+    <string name="episode_action_chromecast_episode">Chromecast Episode</string>
+    <string name="episode_action_chromecast_mirror">Chromecast Mirror</string>
     <string name="episode_action_play_in_app">I-play sa App</string>
     <string name="episode_action_play_in_vlc">I-play sa VLC</string>
     <string name="episode_action_play_in_browser">I-play sa browser</string>

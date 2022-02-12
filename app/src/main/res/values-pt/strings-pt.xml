@@ -149,7 +149,7 @@
 	
     <string name="app_language">Linguagem do App</string>
 	
-    <string name="no_chomecast_support_toast">Este fornecedor não tem suporte para Chromecast</string>
+    <string name="no_chromecast_support_toast">Este fornecedor não tem suporte para Chromecast</string>
     <string name="no_links_found_toast">Links Não Encontrados</string>
     <string name="copy_link_toast">Link copiado para a prancheta</string>
     <string name="play_episode_toast">Reproduzir episódio</string>
@@ -209,8 +209,8 @@
     <string name="unexpected_error">Erro inesperado do player reproductor</string>
     <string name="storage_error">Erro de descàrrega; verifica permissões de armazenamento</string>
 	
-    <string name="episode_action_chomecast_episode">Chromecast o Episódio</string>
-    <string name="episode_action_chomecast_mirror">Chromecast á o Espelho</string>
+    <string name="episode_action_chromecast_episode">Chromecast o Episódio</string>
+    <string name="episode_action_chromecast_mirror">Chromecast á o Espelho</string>
     <string name="episode_action_play_in_app">Assistir no App</string>
     <string name="episode_action_play_in_vlc">Assistir no VLC</string>
     <string name="episode_action_play_in_browser">Assistir no Navegador</string>

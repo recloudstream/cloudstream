@@ -151,7 +151,7 @@
 
     <string name="app_language">لغة التطبيق</string>
 
-    <string name="no_chomecast_support_toast">ChromeCast هذا المزود ليس لديه دعم</string>
+    <string name="no_chromecast_support_toast">ChromeCast هذا المزود ليس لديه دعم</string>
     <string name="no_links_found_toast">لم يتم العثور على روابط</string>
     <string name="copy_link_toast">تم نسخ الرابط إلى الحافظة</string>
     <string name="play_episode_toast">تشغيل الحلقة</string>
@@ -211,8 +211,8 @@
     <string name="unexpected_error">خطأ غير متوقع في مشغل</string>
     <string name="storage_error">خطأ في التنزيل ، تحقق من أذونات التخزين</string>
 
-    <string name="episode_action_chomecast_episode">Chromecast حلقة</string>
-    <string name="episode_action_chomecast_mirror">Chromecast مرآة</string>
+    <string name="episode_action_chromecast_episode">Chromecast حلقة</string>
+    <string name="episode_action_chromecast_mirror">Chromecast مرآة</string>
     <string name="episode_action_play_in_app">تشغيل في التطبيق</string>
     <string name="episode_action_play_in_vlc">VLC تشغيل في</string>
     <string name="episode_action_play_in_browser">تشغيل في الويب </string>

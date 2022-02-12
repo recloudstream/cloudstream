@@ -150,7 +150,7 @@
 	
     <string name="app_language">Limba Aplicației</string>
 	
-    <string name="no_chomecast_support_toast">Acest furnizor nu are suport pentru Chromecast</string>
+    <string name="no_chromecast_support_toast">Acest furnizor nu are suport pentru Chromecast</string>
     <string name="no_links_found_toast">Niciun Link Găsit</string>
     <string name="copy_link_toast">Link copiat în clipboard</string>
     <string name="play_episode_toast">Redă episodul</string>
@@ -210,8 +210,8 @@
     <string name="unexpected_error">Eroare neașteptată a playerului</string>
     <string name="storage_error">Eroare de descărcare; verificați permisiunile de stocare</string>
     
-	<string name="episode_action_chomecast_episode">Chromecast Acest Episod</string>
-    <string name="episode_action_chomecast_mirror">Chromecast Acest Oglindă</string>
+	<string name="episode_action_chromecast_episode">Chromecast Acest Episod</string>
+    <string name="episode_action_chromecast_mirror">Chromecast Acest Oglindă</string>
     <string name="episode_action_play_in_app">Redă în Aplicație</string>
     <string name="episode_action_play_in_vlc">Redă în VLC</string>
     <string name="episode_action_play_in_browser">Redă în Browser</string>

@@ -107,7 +107,7 @@
     <string name="benene">aaaaaoooooaoouuhaauugghhaauuh</string>
     <string name="benene_des">ahooo aaaghh</string>
     <string name="app_language">haaooh</string>
-    <string name="no_chomecast_support_toast">aauugghhoh ouuhhh ohaaauugghhaaahhuoouuhah</string>
+    <string name="no_chromecast_support_toast">aauugghhoh ouuhhh ohaaauugghhaaahhuoouuhah</string>
     <string name="no_links_found_toast">oh ohaaaaghhah ahhha</string>
     <string name="copy_link_toast">ooh oouuh ahoooah ohaa oh ouuhhh</string>
     <string name="play_episode_toast">ouuhhhoouuh ouuhhh</string>
@@ -142,8 +142,8 @@
     <string name="cartoons">ahoooouuhhh</string>
     <string name="anime">aahooo</string>
     <string name="torrent">ah ooh</string>
-    <string name="episode_action_chomecast_episode">aauugghhooo-ahah ohaaauugghh</string>
-    <string name="episode_action_chomecast_mirror">aoohaaahhu ahouuhhh</string>
+    <string name="episode_action_chromecast_episode">aauugghhooo-ahah ohaaauugghh</string>
+    <string name="episode_action_chromecast_mirror">aoohaaahhu ahouuhhh</string>
     <string name="episode_action_play_in_app">ooo-ahahaauuh aaahhu</string>
     <string name="episode_action_play_in_vlc">ooo-ahah ohaauuh</string>
     <string name="episode_action_play_in_browser">ahoha ooo-ahahohoohah oooohh</string>

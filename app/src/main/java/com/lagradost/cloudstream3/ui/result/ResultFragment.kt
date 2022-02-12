@@ -628,7 +628,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             media_route_button?.alpha = if (chromecastSupport) 1f else 0.3f
             if (!chromecastSupport) {
                 media_route_button.setOnClickListener {
-                    showToast(activity, R.string.no_chomecast_support_toast, Toast.LENGTH_LONG)
+                    showToast(activity, R.string.no_chromecast_support_toast, Toast.LENGTH_LONG)
                 }
             }
 
@@ -907,7 +907,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 }
 
                 ACTION_CHROME_CAST_MIRROR -> {
-                    acquireSingeExtractorLink(getString(R.string.episode_action_chomecast_mirror)) { link ->
+                    acquireSingeExtractorLink(getString(R.string.episode_action_chromecast_mirror)) { link ->
                         val mirrorIndex = currentLinks?.indexOf(link) ?: -1
                         startChromecast(if (mirrorIndex == -1) 0 else mirrorIndex)
                     }

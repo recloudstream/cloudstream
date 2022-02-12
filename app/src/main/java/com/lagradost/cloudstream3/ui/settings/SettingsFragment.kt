@@ -200,7 +200,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val subPreference = findPreference<Preference>(getString(R.string.subtitle_settings_key))!!
         val videoCachePreference = findPreference<Preference>(getString(R.string.video_cache_key))!!
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val chromecastSubsPreference = findPreference<Preference>(getString(R.string.subtitle_settings_chomecast_key))!!
+        val chromecastSubsPreference = findPreference<Preference>(getString(R.string.subtitle_settings_chromecast_key))!!
 
         videoCachePreference.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.video_cache_size_names)

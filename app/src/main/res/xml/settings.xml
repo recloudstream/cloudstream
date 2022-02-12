@@ -12,10 +12,10 @@
                 android:icon="@drawable/ic_outline_subtitles_24"
                 app:summary="@string/player_subtitles_settings_des" />
         <Preference
-                android:key="@string/subtitle_settings_chomecast_key"
-                android:title="@string/chomecast_subtitles_settings"
+                android:key="@string/subtitle_settings_chromecast_key"
+                android:title="@string/chromecast_subtitles_settings"
                 android:icon="@drawable/ic_outline_subtitles_24"
-                app:summary="@string/chomecast_subtitles_settings_des" />
+                app:summary="@string/chromecast_subtitles_settings_des" />
         <Preference
                 android:key="@string/quality_pref_key"
                 android:title="@string/watch_quality_pref"

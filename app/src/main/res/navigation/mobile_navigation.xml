@@ -185,7 +185,7 @@
             android:id="@+id/navigation_chrome_subtitles"
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment"
-            android:label="@string/chomecast_subtitles_settings"/>
+            android:label="@string/chromecast_subtitles_settings"/>
 
     <fragment
             android:id="@+id/navigation_quick_search"

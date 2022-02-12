@@ -138,7 +138,7 @@
 
     <string name="app_language">Јазик на апликацијата</string>
 
-    <string name="no_chomecast_support_toast">Овој провајдер нема поддршка за Chromecast</string>
+    <string name="no_chromecast_support_toast">Овој провајдер нема поддршка за Chromecast</string>
     <string name="no_links_found_toast">Не се пронајдени врски</string>
     <string name="copy_link_toast">Врската е копирана во таблата со исечоци</string>
     <string name="play_episode_toast">Пушти ја епизодата</string>
@@ -187,8 +187,8 @@
     <string name="unexpected_error">Неочекувана грешка со плеерот</string>
     <string name="storage_error">Грешка при превземањето, проверете си ги дозволите за користење на простор</string>
 
-    <string name="episode_action_chomecast_episode">Епизода на Chromecast</string>
-    <string name="episode_action_chomecast_mirror">Огледало на Chromecastr</string>
+    <string name="episode_action_chromecast_episode">Епизода на Chromecast</string>
+    <string name="episode_action_chromecast_mirror">Огледало на Chromecastr</string>
     <string name="episode_action_play_in_app">Пушти во апликацијата</string>
     <string name="episode_action_play_in_vlc">Пушти на VLC</string>
     <string name="episode_action_play_in_browser">Пушти на прелистувач</string>

@@ -171,7 +171,7 @@
 
     <string name="app_language">Lingua app</string>
 
-    <string name="no_chomecast_support_toast">Questo provider non ha il supporto per Chromecast</string>
+    <string name="no_chromecast_support_toast">Questo provider non ha il supporto per Chromecast</string>
     <string name="no_links_found_toast">Nessun link trovato</string>
     <string name="copy_link_toast">Link copiato negli appunti</string>
     <string name="play_episode_toast">Riproduci episodio</string>
@@ -235,8 +235,8 @@
     <string name="unexpected_error">Unexpected player error</string>
     <string name="storage_error">Errore download, controlla i permessi di archiviazione</string>
 
-    <string name="episode_action_chomecast_episode">Episodio Chromecast</string>
-    <string name="episode_action_chomecast_mirror">Mirror Chromecast</string>
+    <string name="episode_action_chromecast_episode">Episodio Chromecast</string>
+    <string name="episode_action_chromecast_mirror">Mirror Chromecast</string>
     <string name="episode_action_play_in_app">Riproduci in app</string>
     <string name="episode_action_play_in_vlc">Riproduci in VLC</string>
     <string name="episode_action_play_in_browser">Riproduci nel browser</string>

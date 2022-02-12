@@ -74,8 +74,8 @@
     </array>
 
     <array name="episode_long_click_options">
-        <item>@string/episode_action_chomecast_episode</item>
-        <item>@string/episode_action_chomecast_mirror</item>
+        <item>@string/episode_action_chromecast_episode</item>
+        <item>@string/episode_action_chromecast_mirror</item>
         <item>@string/episode_action_play_in_app</item>
         <item>@string/episode_action_play_in_vlc</item>
         <item>@string/episode_action_play_in_browser</item>

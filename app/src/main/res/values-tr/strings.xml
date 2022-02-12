@@ -181,7 +181,7 @@
 
     <string name="app_language">Uygulama Dili</string>
 
-    <string name="no_chomecast_support_toast">Bu sağlayıcının chromecast desteği yok</string>
+    <string name="no_chromecast_support_toast">Bu sağlayıcının chromecast desteği yok</string>
     <string name="no_links_found_toast">Hiçbir Bağlantı Bulumamadı</string>
     <string name="copy_link_toast">Bağlantı panoya kopyalandı</string>
     <string name="play_episode_toast">Bölümü Oynat</string>
@@ -230,8 +230,8 @@
     <string name="unexpected_error">Beklenmeyen oynatıcı hatası</string>
     <string name="storage_error">İndirme hatası, depolama izinlerini kontrol et</string>
 
-    <string name="episode_action_chomecast_episode">Chromecast Bölümü</string>
-    <string name="episode_action_chomecast_mirror">Chromecast Yansıtma</string>
+    <string name="episode_action_chromecast_episode">Chromecast Bölümü</string>
+    <string name="episode_action_chromecast_mirror">Chromecast Yansıtma</string>
     <string name="episode_action_play_in_app">Uygulamada Oynat</string>
     <string name="episode_action_play_in_vlc">VLC\'de Oynat</string>
     <string name="episode_action_play_in_browser">Tarayıcıda Oynat</string>

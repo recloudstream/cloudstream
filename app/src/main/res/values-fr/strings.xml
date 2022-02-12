@@ -117,7 +117,7 @@
     <string name="benene">Donner une benene aux devs</string>
     <string name="benene_des">benenes données</string>
     <string name="app_language">Language de l\'application</string>
-    <string name="no_chomecast_support_toast">Ce fournisseur ne supporte pas le Chromecast</string>
+    <string name="no_chromecast_support_toast">Ce fournisseur ne supporte pas le Chromecast</string>
     <string name="no_links_found_toast">Aucun lien trouvé</string>
     <string name="copy_link_toast">Lien copié dans le presse-papiers</string>
     <string name="play_episode_toast">Lecture de l\'episode</string>
@@ -158,8 +158,8 @@
     <string name="render_error">Erreur d\'affichage</string>
     <string name="unexpected_error">Erreur innatendue du lecteur</string>
     <string name="storage_error">Erreur du téléchargement, vérifier l\'autorisation du stockage</string>
-    <string name="episode_action_chomecast_episode">Episode Chromecast</string>
-    <string name="episode_action_chomecast_mirror">Miroir Chromecast</string>
+    <string name="episode_action_chromecast_episode">Episode Chromecast</string>
+    <string name="episode_action_chromecast_mirror">Miroir Chromecast</string>
     <string name="episode_action_play_in_app">Lecture dans l\'application</string>
     <string name="episode_action_play_in_vlc">Lecture dans VLC</string>
     <string name="episode_action_play_in_browser">Lecture dans le navigateur</string>

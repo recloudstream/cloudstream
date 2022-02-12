@@ -11,7 +11,7 @@
     <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
     <string name="benene_count" translatable="false">benene_count</string>
     <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
-    <string name="subtitle_settings_chomecast_key" translatable="false">subtitle_settings_chomecast_key</string>
+    <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
     <string name="video_cache_key" translatable="false">video_cache_key</string>
     <string name="prerelease_commit_hash" translatable="false">unknown_prerelease</string>
@@ -176,8 +176,8 @@
     <string name="player_size_settings_des">Remove the black borders</string>
     <string name="player_subtitles_settings">Subtitles</string>
     <string name="player_subtitles_settings_des">Player subtitles settings</string>
-    <string name="chomecast_subtitles_settings">Chomecast Subtitles</string>
-    <string name="chomecast_subtitles_settings_des">Chromecast subtitles settings</string>
+    <string name="chromecast_subtitles_settings">Chromecast Subtitles</string>
+    <string name="chromecast_subtitles_settings_des">Chromecast subtitles settings</string>
 
     <string name="eigengraumode_settings">Eigengravy Mode</string>
     <string name="eigengraumode_settings_des">Adds a speed option in the player</string>
@@ -215,7 +215,7 @@
 
     <string name="app_language">App Language</string>
 
-    <string name="no_chomecast_support_toast">This provider has no Chromecast support</string>
+    <string name="no_chromecast_support_toast">This provider has no Chromecast support</string>
     <string name="no_links_found_toast">No Links Found</string>
     <string name="copy_link_toast">Link copied to clipboard</string>
     <string name="play_episode_toast">Play Episode</string>
@@ -284,8 +284,8 @@
     <string name="unexpected_error">Unexpected player error</string>
     <string name="storage_error">Download error, check storage permissions</string>
 
-    <string name="episode_action_chomecast_episode">Chromecast Episode</string>
-    <string name="episode_action_chomecast_mirror">Chromecast Mirror</string>
+    <string name="episode_action_chromecast_episode">Chromecast Episode</string>
+    <string name="episode_action_chromecast_mirror">Chromecast Mirror</string>
     <string name="episode_action_play_in_app">Play In App</string>
     <string name="episode_action_play_in_vlc">Play In VLC</string>
     <string name="episode_action_play_in_browser">Play in browser</string>

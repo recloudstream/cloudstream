@@ -131,7 +131,7 @@
 
     <string name="app_language">Język</string>
 
-    <string name="no_chomecast_support_toast">Ten dostawca nie wspiera chromecast</string>
+    <string name="no_chromecast_support_toast">Ten dostawca nie wspiera chromecast</string>
     <string name="no_links_found_toast">Nie znaleziono linków</string>
     <string name="copy_link_toast">Skopiowano do schowka</string>
     <string name="play_episode_toast">Odtwórz odcinek</string>
@@ -180,8 +180,8 @@
     <string name="unexpected_error">Nieoczekiwany błąd odtwarzacza</string>
     <string name="storage_error">Błąd pobierania, sprawdź uprawnienia</string>
 
-    <string name="episode_action_chomecast_episode">Chromecast odcinka</string>
-    <string name="episode_action_chomecast_mirror">Chromecast mirroru</string>
+    <string name="episode_action_chromecast_episode">Chromecast odcinka</string>
+    <string name="episode_action_chromecast_mirror">Chromecast mirroru</string>
     <string name="episode_action_play_in_app">Odtwórz w aplikacji</string>
     <string name="episode_action_play_in_vlc">Odtwórz w VLC</string>
     <string name="episode_action_play_in_browser">Odtwórz w przeglądarce</string>

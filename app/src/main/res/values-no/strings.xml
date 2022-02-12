@@ -145,7 +145,7 @@
 
     <string name="app_language">appspråk</string>
 
-    <string name="no_chomecast_support_toast">Denne leverandøren har ingen Chromecast-støtte</string>
+    <string name="no_chromecast_support_toast">Denne leverandøren har ingen Chromecast-støtte</string>
     <string name="no_links_found_toast">Ingen lenker funnet</string>
     <string name="copy_link_toast">Linken er kopiert til utklippstavlen</string>
     <string name="play_episode_toast">spille episode</string>
@@ -193,8 +193,8 @@
     <string name="unexpected_error">Uventet spillerfeil</string>
     <string name="storage_error">Nedlastingsfeil, sjekk lagringstillatelser</string>
 
-    <string name="episode_action_chomecast_episode">Støpt Episode</string>
-    <string name="episode_action_chomecast_mirror">Støpt Speil</string>
+    <string name="episode_action_chromecast_episode">Støpt Episode</string>
+    <string name="episode_action_chromecast_mirror">Støpt Speil</string>
     <string name="episode_action_play_in_app">Spill i appen</string>
     <string name="episode_action_play_in_vlc">Spill i VLC</string>
     <string name="episode_action_play_in_browser">Spill i nettleseren</string>

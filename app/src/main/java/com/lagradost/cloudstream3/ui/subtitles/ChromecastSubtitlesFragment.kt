@@ -38,7 +38,7 @@ const val CHROME_SUBTITLE_KEY = "chome_subtitle_settings"
 data class SaveChromeCaptionStyle(
     @JsonProperty("fontFamily") var fontFamily: String? = null,
     @JsonProperty("fontGenericFamily") var fontGenericFamily: Int? = null,
-    @JsonProperty("backgroundColor") var backgroundColor: Int = Color.TRANSPARENT, // transparent, 0x00FFFFFF
+    @JsonProperty("backgroundColor") var backgroundColor: Int = 0x00FFFFFF, // transparent
     @JsonProperty("edgeColor") var edgeColor: Int = Color.BLACK, // BLACK
     @JsonProperty("edgeType") var edgeType: Int = TextTrackStyle.EDGE_TYPE_OUTLINE,
     @JsonProperty("foregroundColor") var foregroundColor: Int = Color.WHITE,
