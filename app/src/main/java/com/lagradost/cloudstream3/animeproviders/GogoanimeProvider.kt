@@ -51,7 +51,7 @@ class GogoanimeProvider : MainAPI() {
         }
     }
 
-    override val mainUrl = "https://gogoanime.wiki"
+    override val mainUrl = "https://gogoanime.film"
     override val name = "GogoAnime"
     override val hasQuickSearch = false
     override val hasMainPage = true
