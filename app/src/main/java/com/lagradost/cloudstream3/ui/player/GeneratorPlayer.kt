@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.material.button.MaterialButton
 import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
@@ -143,11 +144,15 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun openSubPicker() {
         subsPathPicker.launch(
             arrayOf(
-                "text/vtt",
-                "application/x-subrip",
                 "text/plain",
                 "text/str",
-                "application/octet-stream"
+                "application/octet-stream",
+                MimeTypes.TEXT_UNKNOWN,
+                MimeTypes.TEXT_VTT,
+                MimeTypes.TEXT_SSA,
+                MimeTypes.APPLICATION_TTML,
+                MimeTypes.APPLICATION_MP4VTT,
+                MimeTypes.APPLICATION_SUBRIP,
             )
         )
     }
