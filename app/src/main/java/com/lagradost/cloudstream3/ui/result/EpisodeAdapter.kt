@@ -223,7 +223,7 @@ class EpisodeAdapter(
                         card.episode,
                         card.season,
                         card.id,
-                        0,
+                        card.parentId,
                         card.rating,
                         card.description,
                         System.currentTimeMillis(),

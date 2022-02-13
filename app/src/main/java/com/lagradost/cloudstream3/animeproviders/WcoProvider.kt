@@ -124,7 +124,7 @@ class WcoProvider : MainAPI() {
 
         while (!document.select(".pagination").isEmpty()) {
             val link = document.select("a.page-link[rel=\"next\"]")
-            if (!link.isEmpty()) {
+            if (!link.isEmpty() && returnValue.size < 40) {
                 val extraResponse = app.get(fixUrl(link[0].attr("href"))).text
                 document = Jsoup.parse(extraResponse)
                 returnValue.addAll(parseSearchPage(document))
@@ -132,7 +132,7 @@ class WcoProvider : MainAPI() {
                 break
             }
         }
-        return returnValue
+        return returnValue.distinctBy { it.url }
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse> {

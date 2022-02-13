@@ -118,7 +118,7 @@ data class ResultEpisode(
     val description: String?,
     val isFiller: Boolean?,
     val tvType: TvType,
-    val parentId: Int?,
+    val parentId: Int,
 )
 
 fun ResultEpisode.getRealPosition(): Long {
@@ -151,7 +151,7 @@ fun buildResultEpisode(
     description: String?,
     isFiller: Boolean?,
     tvType: TvType,
-    parentId: Int?,
+    parentId: Int,
 ): ResultEpisode {
     val posDur = getViewPos(id)
     return ResultEpisode(

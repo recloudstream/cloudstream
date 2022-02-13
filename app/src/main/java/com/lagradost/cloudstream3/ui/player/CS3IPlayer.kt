@@ -120,14 +120,13 @@ class CS3IPlayer : IPlayer {
                 Handler(it).post {
                     try {
                         seekTime(1L)
-                    } catch (e : Exception) {
+                    } catch (e: Exception) {
                         logError(e)
                     }
                 }
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 logError(e)
             }
-
         }
     }
 
@@ -287,7 +286,7 @@ class CS3IPlayer : IPlayer {
     }
 
     companion object {
-        var requestSubtitleUpdate : (() -> Unit)? = null
+        var requestSubtitleUpdate: (() -> Unit)? = null
 
         private fun createOnlineSource(link: ExtractorLink): DataSource.Factory {
             // Because Trailers.to seems to fail with http/1.1 the normal one uses.
@@ -660,8 +659,8 @@ class CS3IPlayer : IPlayer {
             val offlineSourceFactory = context.createOfflineSource()
 
             val (subSources, activeSubtitles) = getSubSources(
-                offlineSourceFactory,
-                offlineSourceFactory,
+                onlineSourceFactory = offlineSourceFactory,
+                offlineSourceFactory = offlineSourceFactory,
                 subtitleHelper,
             )
 
@@ -740,8 +739,8 @@ class CS3IPlayer : IPlayer {
             val offlineSourceFactory = context.createOfflineSource()
 
             val (subSources, activeSubtitles) = getSubSources(
-                offlineSourceFactory,
-                onlineSourceFactory,
+                onlineSourceFactory = onlineSourceFactory,
+                offlineSourceFactory = offlineSourceFactory,
                 subtitleHelper
             )
 

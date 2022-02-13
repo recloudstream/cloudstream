@@ -129,8 +129,7 @@ object DownloadButtonSetup {
                                         displayName = keyInfo.displayName,
                                         relativePath = keyInfo.relativePath,
                                     )
-                                ),
-                                0
+                                )
                             )
                         )
                         //R.id.global_to_navigation_player, PlayerFragment.newInstance(
