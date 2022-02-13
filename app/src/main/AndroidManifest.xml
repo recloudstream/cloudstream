@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
 
     <uses-feature android:name="android.hardware.touchscreen"
                   android:required="false"/>
@@ -137,6 +138,7 @@
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="${applicationId}.provider"
                 android:exported="false"
+                android:enabled="true"
                 android:grantUriPermissions="true">
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"

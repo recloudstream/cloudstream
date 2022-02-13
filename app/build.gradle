@@ -88,6 +88,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.google.android.mediahome:video:1.0.0'
     testImplementation 'org.json:json:20180813'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -95,10 +96,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.0-alpha01'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.0-alpha01'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.0-alpha02'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.0-alpha02'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -167,4 +168,6 @@ dependencies {
 
     // for shimmer when loading
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    implementation "androidx.tvprovider:tvprovider:1.0.0"
 }

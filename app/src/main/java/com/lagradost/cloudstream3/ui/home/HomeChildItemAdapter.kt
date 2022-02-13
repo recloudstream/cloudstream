@@ -3,14 +3,16 @@ package com.lagradost.cloudstream3.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
+import com.lagradost.cloudstream3.ui.search.SearchResponseDiffCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 
 class HomeChildItemAdapter(
-    var cardList: List<SearchResponse>,
+    val cardList: MutableList<SearchResponse>,
     val layout: Int = R.layout.home_result_grid,
     private val nextFocusUp: Int? = null,
     private val nextFocusDown: Int? = null,
@@ -42,6 +44,17 @@ class HomeChildItemAdapter(
 
     override fun getItemId(position: Int): Long {
         return (cardList[position].id ?: position).toLong()
+    }
+
+    fun updateList(newList: List<SearchResponse>) {
+        val diffResult = DiffUtil.calculateDiff(
+            SearchResponseDiffCallback(this.cardList, newList)
+        )
+
+        cardList.clear()
+        cardList.addAll(newList)
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     class CardViewHolder

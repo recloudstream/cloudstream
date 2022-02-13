@@ -65,12 +65,12 @@ class ParentItemAdapter(
         fun bind(info: HomePageList) {
             title.text = info.name
             recyclerView.adapter = HomeChildItemAdapter(
-                info.list,
+                info.list.toMutableList(),
                 clickCallback = clickCallback,
                 nextFocusUp = recyclerView.nextFocusUpId,
                 nextFocusDown = recyclerView.nextFocusDownId
             )
-            (recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
+            //(recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
 
             moreInfo.setOnClickListener {
                 moreInfoClickCallback.invoke(info)

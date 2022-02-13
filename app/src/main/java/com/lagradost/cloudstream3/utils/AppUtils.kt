@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ComponentName
 import android.content.ContentValues
@@ -10,6 +11,7 @@ import android.database.Cursor
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.media.tv.TvContract.Channels.COLUMN_INTERNAL_PROVIDER_ID
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -18,20 +20,23 @@ import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
+import androidx.tvprovider.media.tv.PreviewChannelHelper
+import androidx.tvprovider.media.tv.TvContractCompat
+import androidx.tvprovider.media.tv.WatchNextProgram
+import androidx.tvprovider.media.tv.WatchNextProgram.fromCursor
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
-import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.mapper
-import com.lagradost.cloudstream3.movieproviders.MeloMovieProvider
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
 import com.lagradost.cloudstream3.utils.JsUnpacker.Companion.load
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -41,6 +46,136 @@ import java.net.URL
 import java.net.URLDecoder
 
 object AppUtils {
+    //fun Context.deleteFavorite(data: SearchResponse) {
+    //    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+    //    normalSafeApiCall {
+    //        val existingId =
+    //            getWatchNextProgramByVideoId(data.url, this).second ?: return@normalSafeApiCall
+    //        contentResolver.delete(
+//
+    //            TvContractCompat.buildWatchNextProgramUri(existingId),
+    //            null, null
+    //        )
+    //    }
+    //}
+    @SuppressLint("RestrictedApi")
+    private fun buildWatchNextProgramUri(
+        context: Context,
+        card: DataStoreHelper.ResumeWatchingResult
+    ): WatchNextProgram {
+        val isSeries = !card.type.isMovieType()
+        val title = if (isSeries) {
+            context.getNameFull(card.name, card.episode, card.season)
+        } else {
+            card.name
+        }
+
+        val builder = WatchNextProgram.Builder()
+            .setEpisodeTitle(title)
+            .setType(
+                if (isSeries) {
+                    TvContractCompat.WatchNextPrograms.TYPE_TV_EPISODE
+                } else TvContractCompat.WatchNextPrograms.TYPE_MOVIE
+            )
+            .setWatchNextType(TvContractCompat.WatchNextPrograms.WATCH_NEXT_TYPE_CONTINUE)
+            .setTitle(title)
+            .setPosterArtUri(Uri.parse(card.posterUrl))
+            .setIntentUri(Uri.parse(card.url)) //TODO FIX intent
+            .setInternalProviderId(card.url)
+        //.setLastEngagementTimeUtcMillis(System.currentTimeMillis())
+
+        card.watchPos?.let {
+            builder.setDurationMillis(it.duration.toInt())
+            builder.setLastPlaybackPositionMillis(it.position.toInt())
+        }
+        // .setLastEngagementTimeUtcMillis() //TODO
+
+        if (isSeries)
+            card.episode?.let {
+                builder.setEpisodeNumber(it)
+            }
+
+        return builder.build()
+    }
+
+    /**
+     * Find the Watch Next program for given id.
+     * Returns the first instance available.
+     */
+    @SuppressLint("RestrictedApi")
+    // Suppress RestrictedApi due to https://issuetracker.google.com/138150076
+    fun findFirstWatchNextProgram(context: Context, predicate: (Cursor) -> Boolean):
+            Pair<WatchNextProgram?, Long?> {
+        val COLUMN_WATCH_NEXT_ID_INDEX = 0
+//        val COLUMN_WATCH_NEXT_INTERNAL_PROVIDER_ID_INDEX = 1
+//        val COLUMN_WATCH_NEXT_COLUMN_BROWSABLE_INDEX = 2
+
+        val cursor = context.contentResolver.query(
+            TvContractCompat.WatchNextPrograms.CONTENT_URI,
+            WatchNextProgram.PROJECTION,
+            /* selection = */ null,
+            /* selectionArgs = */ null,
+            /* sortOrder= */ null
+        )
+        cursor?.use {
+            if (it.moveToFirst()) {
+                do {
+                    if (predicate(cursor)) {
+                        return fromCursor(cursor) to cursor.getLong(COLUMN_WATCH_NEXT_ID_INDEX)
+                    }
+                } while (it.moveToNext())
+            }
+        }
+        return null to null
+    }
+
+    /**
+     * Query the Watch Next list and find the program with given videoId.
+     * Return null if not found.
+     */
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("Range")
+    @Synchronized
+    private fun getWatchNextProgramByVideoId(
+        id: String,
+        context: Context
+    ): Pair<WatchNextProgram?, Long?> {
+        return findFirstWatchNextProgram(context) { cursor ->
+            (cursor.getString(cursor.getColumnIndex(COLUMN_INTERNAL_PROVIDER_ID)) == id)
+        }
+    }
+
+    // https://github.com/googlearchive/leanback-homescreen-channels/blob/master/app/src/main/java/com/google/android/tvhomescreenchannels/SampleTvProvider.java
+    @SuppressLint("RestrictedApi")
+    @WorkerThread
+    fun Context.addProgramsToContinueWatching(data: List<DataStoreHelper.ResumeWatchingResult>) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+
+        ioSafe {
+            data.forEach { episodeInfo ->
+                try {
+                    val (program, id) = getWatchNextProgramByVideoId(episodeInfo.url, this)
+                    val nextProgram = buildWatchNextProgramUri(this, episodeInfo)
+
+                    // If the program is already in the Watch Next row, update it
+                    if (program != null && id != null) {
+                        PreviewChannelHelper(this).updateWatchNextProgram(
+                            nextProgram,
+                            id,
+                        )
+                    } else {
+                        PreviewChannelHelper(this)
+                            .publishWatchNextProgram(nextProgram)
+                    }
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+        }
+    }
+
+    @SuppressLint("Range")
     fun getVideoContentUri(context: Context, videoFilePath: String): Uri? {
         val cursor = context.contentResolver.query(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Video.Media._ID),
@@ -94,14 +229,14 @@ object AppUtils {
         return mapper.writeValueAsString(this)
     }
 
-    inline fun <reified T> parseJson(value : String): T {
+    inline fun <reified T> parseJson(value: String): T {
         return mapper.readValue(value)
     }
 
-    inline fun <reified T> tryParseJson(value : String): T? {
+    inline fun <reified T> tryParseJson(value: String): T? {
         return try {
             parseJson(value)
-        } catch (_ : Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -168,7 +303,7 @@ object AppUtils {
         startAction: Int = 0,
         startValue: Int = 0
     ) {
-        (this as AppCompatActivity?)?.loadResult(card.url, card.apiName, startAction, startValue)
+        (this as? AppCompatActivity?)?.loadResult(card.url, card.apiName, startAction, startValue)
     }
 
     fun Activity.requestLocalAudioFocus(focusRequest: AudioFocusRequest?) {
@@ -230,6 +365,7 @@ object AppUtils {
     }
 
     // Copied from https://github.com/videolan/vlc-android/blob/master/application/vlc-android/src/org/videolan/vlc/util/FileUtils.kt
+    @SuppressLint("Range")
     fun Context.getUri(data: Uri?): Uri? {
         var uri = data
         val ctx = this
@@ -245,11 +381,13 @@ object AppUtils {
                         arrayOf(MediaStore.MediaColumns.DISPLAY_NAME), null, null, null
                     )
                     if (cursor != null && cursor.moveToFirst()) {
-                        val filename = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
-                            .replace("/", "")
+                        val filename =
+                            cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
+                                .replace("/", "")
                         inputStream = ctx.contentResolver.openInputStream(data)
                         if (inputStream == null) return data
-                        os = FileOutputStream(Environment.getExternalStorageDirectory().path + "/Download/" + filename)
+                        os =
+                            FileOutputStream(Environment.getExternalStorageDirectory().path + "/Download/" + filename)
                         val buffer = ByteArray(1024)
                         var bytesRead = inputStream.read(buffer)
                         while (bytesRead >= 0) {
@@ -272,7 +410,8 @@ object AppUtils {
                     arrayOf(MediaStore.Video.Media.DATA), null, null, null
                 )?.use {
                     val columnIndex = it.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
-                    if (it.moveToFirst()) Uri.fromFile(File(it.getString(columnIndex))) ?: data else data
+                    if (it.moveToFirst()) Uri.fromFile(File(it.getString(columnIndex)))
+                        ?: data else data
                 }
                 //uri = MediaUtils.getContentMediaUri(data)
                 /*} else if (data.authority == ctx.getString(R.string.tv_provider_authority)) {
