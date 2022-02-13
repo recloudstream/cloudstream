@@ -79,7 +79,7 @@
     <string name="subs_edge_type">Kiểu viền</string>
     <string name="subs_subtitle_elevation">Độ nâng</string>
     <string name="subs_font">Kiểu chữ</string>
-	<string name="subs_font_size">Kích thước chữ</string>
+    <string name="subs_font_size">Kích thước chữ</string>
 
     <string name="search_provider_text_providers">Tìm kiếm theo nhà cung cấp</string>
     <string name="search_provider_text_types">Tìm kiếm theo thể loại</string>
@@ -97,7 +97,9 @@
 
     <string name="vpn_might_be_needed">Bạn có thể sẽ cần sử dụng VPN để xem phim này.</string>
     <string name="vpn_torrent">Phim này được chiếu dưới dạng Torrent. Hãy sử dụng VPN để xem nhé</string>
-	
+
+    <string name="provider_info_meta">Siêu dữ liệu không được cung cấp bởi trang web, quá trình tải video sẽ không thành công nếu nó không tồn tại trên trang web.</string>	
+
     <string name="torrent_plot">Thông tin phim</string>
     <string name="normal_no_plot">Đang cập nhật</string>
     <string name="torrent_no_plot">Không tìm thấy thông tin</string>
@@ -108,16 +110,20 @@
     <string name="player_size_settings_des">Điều này sẽ xóa khoảng đen của phim</string>
     <string name="player_subtitles_settings">Phụ đề</string>
     <string name="player_subtitles_settings_des">Cài đặt phụ đề</string>
+    <string name="chromecast_subtitles_settings">Phụ đề Chromecast</string>
+    <string name="chromecast_subtitles_settings_des">Cài đặt phụ đề Chromecast</string>
+	
     <string name="eigengraumode_settings">Điều chỉnh tốc độ khi xem phim</string>
     <string name="eigengraumode_settings_des">Có thể điều chỉnh tốc độ phát phim</string>
     <string name="swipe_to_seek_settings">Vuốt để tua nhanh</string>
     <string name="swipe_to_seek_settings_des">Bạn có thể vuốt trái hoặc phải để tua nhanh khi đang xem phim</string>
     <string name="swipe_to_change_settings">Vuốt để điều chỉnh âm lượng và độ sáng</string>
     <string name="swipe_to_change_settings_des">Vuốt từ dưới lên trên ở bên trái hoặc phải đều điều chỉnh độ sáng và âm lượng</string>
-    <string name="double_tap_to_seek_settings">Nhấn 2 lần đề tua</string>
+    <string name="double_tap_to_seek_settings">Nhấn 2 lần để tua</string>
+    <string name="double_tap_to_pause_settings">Chạm 2 lần để tạm dừng</string>
     <string name="double_tap_to_seek_settings_des">Nhấn 2 lần vào bên trái hoặc màn hình để tua trước hoặc sau
     </string>
-	<string name="double_tap_to_pause_settings_des">Nhấn vào giữa để tạm dừng</string>
+    <string name="double_tap_to_pause_settings_des">Nhấn vào giữa để tạm dừng</string>
     <string name="use_system_brightness_settings">Sử dụng độ sáng hệ thống</string>
     <string name="use_system_brightness_settings_des">Sử dụng độ sáng hệ thống trong trình phát ứng dụng
     </string>
@@ -154,14 +160,16 @@
     <string name="no_season">Không có mùa nào</string>
     <string name="episode">Tập</string>
     <string name="episodes">Tập</string>
-    <string name="season_short">S</string>
-    <string name="episode_short">E</string>
+    <string name="season_short">M</string>
+    <string name="episode_short">T</string>
+    <string name="no_episodes_found">Không thấy tập</string>
 
     <string name="delete_file">Xóa Tệp</string>
     <string name="delete">Xóa</string>
     <string name="pause">Tạm Dừng</string>
     <string name="resume">Tiếp Tục</string>
     <string name="delete_message">Điều này sẽ xóa %s\nBạn có chắc chắn muốn xóa?</string>
+    <string name="resume_time_left" formatted="true">%dm\ncòn lại</string>
 
     <string name="status_ongoing">Đang Chiếu</string>
     <string name="status_completed">Hoàn Thành</string>
@@ -187,6 +195,7 @@
     <string name="cartoons">Hoạt Hình</string>
     <string name="anime">Anime</string>
     <string name="torrent">Torrent</string>
+    <string name="documentaries">Phim Tài Liệu</string>
 	
 	<!--singular-->
     <string name="movies_singular">Phim Lẻ</string>
@@ -215,7 +224,7 @@
     <string name="no_update_found">Bạn đang dùng phiên bản mới nhất</string>
     <string name="check_for_update">Kiểm tra cập nhật phiển bản mới</string>
 
-    <string name="video_lock">Khóa Màn Hình</string>
+    <string name="video_lock">Khóa</string>
     <string name="video_aspect_ratio_resize">Thu Phóng</string>
     <string name="video_source">Phụ Đề</string>
     <string name="video_skip_op">Tua Nhanh</string>
@@ -223,6 +232,8 @@
     <string name="dont_show_again">Không hiển thị lại</string>
     <string name="update">Cập nhật</string>
     <string name="watch_quality_pref">Tự động chọn chất lượng phim</string>
+    <string name="video_cache_settings">Kích thước video cache</string>
+    <string name="dns_pref_summary">Rất hữu ích để bỏ chặn ISP</string>
 
     <string name="download_path_pref">Đường dẫn tải xuống</string>
 	
@@ -232,7 +243,7 @@
     <string name="resize_fill">Kéo dãn</string>
     <string name="resize_zoom">Phóng to</string>
 	
-	<string name="general">Tổng quan</string>
+    <string name="general">Tổng quan</string>
     <string name="provider_lang_settings">Ngôn ngữ nhà cung cấp</string>
     <string name="app_layout">Giao diện App</string>
     <string name="preferred_media_settings">Thể loại ưu tiên</string>
@@ -242,7 +253,7 @@
     <string name="phone_layout">Giao diện điện thoại</string>
 
     <string name="primary_color_settings">Màu chính</string>
-    <string name="app_theme_settings">Chủ đề ứng dụng</string>
+    <string name="app_theme_settings">Chủ đề App</string>
 	
 	<!-- account stuff -->
 	<string name="account">tài khoản</string>
@@ -275,5 +286,9 @@
     <string name="player_loaded_subtitles" formatted="true">Đã tải %s</string>
     <string name="player_load_subtitles">Chọn tệp</string>
     <string name="downloaded_file">Tệp đã tải</string>
+    <string name="actor_main">Chính</string>
+    <string name="actor_supporting">Hỗ trợ</string>
+    <string name="actor_background">Lý lịch</string>
 
+    <string name="home_source">Nguồn</string>
 </resources>
