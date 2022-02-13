@@ -11,6 +11,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.text.Editable
 import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -20,11 +21,16 @@ import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHO
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -35,6 +41,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
@@ -70,6 +77,19 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var playerResizeEnabled = false
     protected var doubleTapEnabled = false
     protected var doubleTapPauseEnabled = true
+
+    protected var subtitleDelay
+        set(value) = try {
+            player.setSubtitleOffset(-value)
+        } catch (e: Exception) {
+            logError(e)
+        }
+        get() = try {
+            -player.getSubtitleOffset()
+        } catch (e: Exception) {
+            logError(e)
+            0L
+        }
 
     //private var useSystemBrightness = false
     protected var useTrueSystemBrightness = true
@@ -196,6 +216,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_top_holder?.startAnimation(fadeAnimation)
     }
 
+    override fun subtitlesChanged() {
+        player_subtitle_offset_btt?.isGone = player.getCurrentPreferredSubtitle() == null
+    }
+
     override fun onResume() {
         activity?.hideSystemUI()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
@@ -239,6 +263,77 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun skipOp() {
         player.seekTime(85000) // skip 85s
+    }
+
+    private fun showSubtitleOffsetDialog() {
+        context?.let { ctx ->
+            val builder =
+                AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                    .setView(R.layout.subtitle_offset)
+            val dialog = builder.create()
+            dialog.show()
+
+            val beforeOffset = subtitleDelay
+
+            val applyButton = dialog.findViewById<TextView>(R.id.apply_btt)!!
+            val cancelButton = dialog.findViewById<TextView>(R.id.cancel_btt)!!
+            val input = dialog.findViewById<EditText>(R.id.subtitle_offset_input)!!
+            val sub = dialog.findViewById<ImageView>(R.id.subtitle_offset_subtract)!!
+            val add = dialog.findViewById<ImageView>(R.id.subtitle_offset_add)!!
+            val subTitle = dialog.findViewById<TextView>(R.id.subtitle_offset_sub_title)!!
+
+            input.doOnTextChanged { text, _, _, _ ->
+                text?.toString()?.toLongOrNull()?.let {
+                    subtitleDelay = it
+                    when {
+                        it > 0L -> {
+                            context?.getString(R.string.subtitle_offset_extra_hint_later_format)
+                                ?.format(it)
+                        }
+                        it < 0L -> {
+                            context?.getString(R.string.subtitle_offset_extra_hint_before_format)
+                                ?.format(-it)
+                        }
+                        it == 0L -> {
+                            context?.getString(R.string.subtitle_offset_extra_hint_none_format)
+                        }
+                        else -> {
+                            null
+                        }
+                    }?.let { str ->
+                        subTitle.text = str
+                    }
+                }
+            }
+            input.text = Editable.Factory.getInstance()?.newEditable(beforeOffset.toString())
+
+            val buttonChange = 100L
+
+            fun changeBy(by: Long) {
+                val current = (input.text?.toString()?.toLongOrNull() ?: 0) + by
+                input.text = Editable.Factory.getInstance()?.newEditable(current.toString())
+            }
+
+            add.setOnClickListener {
+                changeBy(buttonChange)
+            }
+
+            sub.setOnClickListener {
+                changeBy(-buttonChange)
+            }
+
+            dialog.setOnDismissListener {
+                activity?.hideSystemUI()
+            }
+            applyButton.setOnClickListener {
+                dialog.dismissSafe(activity)
+                player.seekTime(1L)
+            }
+            cancelButton.setOnClickListener {
+                subtitleDelay = beforeOffset
+                dialog.dismissSafe(activity)
+            }
+        }
     }
 
     private fun showSpeedDialog() {
@@ -1053,6 +1148,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_lock?.setOnClickListener {
             autoHide()
             toggleLock()
+        }
+
+        player_subtitle_offset_btt?.setOnClickListener {
+            showSubtitleOffsetDialog()
         }
 
         exo_rew?.setOnClickListener {

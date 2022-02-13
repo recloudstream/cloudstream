@@ -74,6 +74,7 @@ class CS3IPlayer : IPlayer {
     private var updateIsPlaying: ((Pair<CSPlayerLoading, CSPlayerLoading>) -> Unit)? = null
     private var requestAutoFocus: (() -> Unit)? = null
     private var playerError: ((Exception) -> Unit)? = null
+    private var subtitlesUpdates: (() -> Unit)? = null
 
     /** width x height */
     private var playerDimensionsLoaded: ((Pair<Int, Int>) -> Unit)? = null
@@ -100,7 +101,8 @@ class CS3IPlayer : IPlayer {
         requestedListeningPercentages: List<Int>?,
         playerPositionChanged: ((Pair<Long, Long>) -> Unit)?,
         nextEpisode: (() -> Unit)?,
-        prevEpisode: (() -> Unit)?
+        prevEpisode: (() -> Unit)?,
+        subtitlesUpdates: (() -> Unit)?
     ) {
         this.playerUpdated = playerUpdated
         this.updateIsPlaying = updateIsPlaying
@@ -111,6 +113,7 @@ class CS3IPlayer : IPlayer {
         this.playerPositionChanged = playerPositionChanged
         this.nextEpisode = nextEpisode
         this.prevEpisode = prevEpisode
+        this.subtitlesUpdates = subtitlesUpdates
     }
 
     // I know, this is not a perfect solution, however it works for fixing subs
@@ -215,6 +218,17 @@ class CS3IPlayer : IPlayer {
         } ?: false
     }
 
+    var currentSubtitleOffset : Long = 0
+
+    override fun setSubtitleOffset(offset: Long) {
+        currentSubtitleOffset = offset
+        currentTextRenderer?.setRenderOffsetMs(offset)
+    }
+
+    override fun getSubtitleOffset(): Long {
+        return currentSubtitleOffset//currentTextRenderer?.getRenderOffsetMs() ?: currentSubtitleOffset
+    }
+
     override fun getCurrentPreferredSubtitle(): SubtitleData? {
         return subtitleHelper.getAllSubtitles().firstOrNull { sub ->
             exoPlayerSelectedTracks.any {
@@ -251,6 +265,7 @@ class CS3IPlayer : IPlayer {
 
         exoPlayer?.release()
         simpleCache?.release()
+        currentTextRenderer = null
 
         exoPlayer = null
         simpleCache = null
@@ -395,7 +410,7 @@ class CS3IPlayer : IPlayer {
             return trackSelector
         }
 
-        var currentTextRenderer: TextRenderer? = null
+        var currentTextRenderer: CustomTextRenderer? = null
 
         private fun buildExoPlayer(
             context: Context,
@@ -404,6 +419,7 @@ class CS3IPlayer : IPlayer {
             currentWindow: Int,
             playbackPosition: Long,
             playBackSpeed: Float,
+            subtitleOffset : Long,
             playWhenReady: Boolean = true,
             cacheFactory: CacheDataSource.Factory? = null,
             trackSelector: TrackSelector? = null,
@@ -419,7 +435,8 @@ class CS3IPlayer : IPlayer {
                             metadataRendererOutput
                         ).map {
                             if (it is TextRenderer) {
-                                currentTextRenderer = TextRenderer(
+                                currentTextRenderer = CustomTextRenderer(
+                                    subtitleOffset,
                                     textRendererOutput,
                                     eventHandler.looper,
                                     CustomSubtitleDecoderFactory()
@@ -534,7 +551,8 @@ class CS3IPlayer : IPlayer {
                 playbackPosition,
                 playBackSpeed,
                 playWhenReady = isPlaying, // this keep the current state of the player
-                cacheFactory = cacheFactory
+                cacheFactory = cacheFactory,
+                subtitleOffset = currentSubtitleOffset
             )
 
             requestSubtitleUpdate = ::reloadSubs
@@ -558,6 +576,7 @@ class CS3IPlayer : IPlayer {
                 override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
                     exoPlayerSelectedTracks =
                         tracksInfo.trackGroupInfos.mapNotNull { it.trackGroup.getFormat(0).language?.let { lang -> lang to it.isSelected } }
+                    subtitlesUpdates?.invoke()
                     super.onTracksInfoChanged(tracksInfo)
                 }
 

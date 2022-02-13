@@ -508,14 +508,25 @@
                                 style="@style/VideoButton"
                                 android:nextFocusLeft="@id/player_resize_btt"
 
-                                android:nextFocusRight="@id/player_sources_btt"
+                                android:nextFocusRight="@id/player_subtitle_offset_btt"
                                 app:icon="@drawable/ic_baseline_speed_24"
                                 tools:text="Speed" />
 
                         <com.google.android.material.button.MaterialButton
-                                android:id="@+id/player_sources_btt"
+                                android:visibility="gone"
+                                tools:visibility="visible"
+                                android:id="@+id/player_subtitle_offset_btt"
                                 style="@style/VideoButton"
                                 android:nextFocusLeft="@id/player_speed_btt"
+
+                                android:nextFocusRight="@id/player_sources_btt"
+                                app:icon="@drawable/ic_outline_subtitles_24"
+                                android:text="@string/subtitle_offset"/>
+
+                        <com.google.android.material.button.MaterialButton
+                                android:id="@+id/player_sources_btt"
+                                style="@style/VideoButton"
+                                android:nextFocusLeft="@id/player_subtitle_offset_btt"
 
                                 android:nextFocusRight="@id/player_skip_op"
                                 android:text="@string/video_source"

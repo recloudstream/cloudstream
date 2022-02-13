@@ -85,6 +85,10 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
+    open fun subtitlesChanged() {
+        throw NotImplementedError()
+    }
+
     private fun keepScreenOn(on: Boolean) {
         if (on) {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -325,7 +329,7 @@ abstract class AbstractPlayerFragment(
                 SKIP_OP_VIDEO_PERCENTAGE,
                 PRELOAD_NEXT_EPISODE_PERCENTAGE,
                 NEXT_WATCH_EPISODE_PERCENTAGE,
-            )
+            ), subtitlesUpdates = ::subtitlesChanged
         )
 
         if (player is CS3IPlayer) {
