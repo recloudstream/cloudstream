@@ -125,6 +125,8 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                         ".srt",
                         ".ts",
                         ".gif",
+                        // Warning, this might fuck some future sites, but it's used to make Sflix work.
+                        "wss://"
                     )
 
                     /** NOTE!  request.requestHeaders is not perfect!
