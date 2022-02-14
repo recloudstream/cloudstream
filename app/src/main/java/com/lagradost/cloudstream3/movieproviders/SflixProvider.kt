@@ -308,7 +308,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
                 // Some smarter ws11 or w10 selection might be required in the future.
                 val extractorData =
-                    "https://ws10.rabbitstream.net/socket.io/?EIO=4&transport=polling"
+                    "https://ws11.rabbitstream.net/socket.io/?EIO=4&transport=polling"
 
                 val sources = resolved.first?.let { app.baseClient.newCall(it).execute().text }
                     ?: return@suspendSafeApiCall
@@ -384,19 +384,25 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
     /**
      * Generates a new session if the request fails
+     * @return the data and if it is new.
      * */
-    private suspend fun getUpdatedData(response: AppResponse, data: PollingData, baseUrl: String) : PollingData {
-        if (!response.response.isSuccessful){
-            return negotiateNewSid(baseUrl) ?: data
+    private suspend fun getUpdatedData(
+        response: AppResponse,
+        data: PollingData,
+        baseUrl: String
+    ): Pair<PollingData, Boolean> {
+        if (!response.response.isSuccessful) {
+            return negotiateNewSid(baseUrl)?.let {
+                it to true
+            } ?: data to false
         }
-        return data
+        return data to false
     }
 
     override suspend fun extractorVerifierJob(extractorData: String?) {
         if (extractorData == null) return
 
         val headers = mapOf(
-            "User-Agent" to USER_AGENT,
             "Referer" to "https://rabbitstream.net/"
         )
 
@@ -431,13 +437,26 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         // Prevents them from fucking us over with doing a while(true){} loop
         val interval = maxOf(data.pingInterval?.toLong()?.plus(2000) ?: return, 10000L)
         var reconnect = false
+        var newAuth = false
         while (true) {
-            val authData = if (reconnect) """
-                42["_reconnect", "$reconnectSid"]
-            """.trimIndent() else authInt
+            val authData =
+                when {
+                    newAuth -> "40"
+                    reconnect -> """42["_reconnect", "$reconnectSid"]"""
+                    else -> authInt
+                }
 
             val url = "${extractorData}&t=${generateTimeStamp()}&sid=${data.sid}"
-            data = getUpdatedData(app.post(url, data = authData, headers = headers), data, extractorData)
+
+            getUpdatedData(
+                app.post(url, data = authData, headers = headers),
+                data,
+                extractorData
+            ).also {
+                newAuth = it.second
+                data = it.first
+            }
+
             //.also { println("Sflix post job ${it.text}") }
             Log.d(this.name, "Running Sflix job $url")
 
