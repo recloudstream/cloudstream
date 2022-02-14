@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.LoadResponse.Companion.setDuration
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
+import com.lagradost.cloudstream3.network.AppResponse
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.network.getRequestCreator
 import com.lagradost.cloudstream3.network.text
@@ -365,17 +366,41 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         return code.reversed()
     }
 
+
+    /**
+     * Generates a session
+     * */
+    private suspend fun negotiateNewSid(baseUrl: String): PollingData? {
+        // Tries multiple times
+        for (i in 1..5) {
+            val jsonText =
+                app.get("$baseUrl&t=${generateTimeStamp()}").text.replaceBefore("{", "")
+//            println("Negotiated sid $jsonText")
+            parseJson<PollingData?>(jsonText)?.let { return it }
+            delay(1000L * i)
+        }
+        return null
+    }
+
+    /**
+     * Generates a new session if the request fails
+     * */
+    private suspend fun getUpdatedData(response: AppResponse, data: PollingData, baseUrl: String) : PollingData {
+        if (!response.response.isSuccessful){
+            return negotiateNewSid(baseUrl) ?: data
+        }
+        return data
+    }
+
     override suspend fun extractorVerifierJob(extractorData: String?) {
         if (extractorData == null) return
 
-        val jsonText =
-            app.get("$extractorData&t=${generateTimeStamp()}").text.replaceBefore("{", "")
-        val data = parseJson<PollingData>(jsonText)
         val headers = mapOf(
             "User-Agent" to USER_AGENT,
             "Referer" to "https://rabbitstream.net/"
         )
 
+        var data = negotiateNewSid(extractorData) ?: return
         // 40 is hardcoded, dunno how it's generated, but it seems to work everywhere.
         // This request is obligatory
         app.post(
@@ -389,7 +414,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                     "$extractorData&t=${generateTimeStamp()}&sid=${data.sid}",
                     headers = headers
                 )
-                    //.also { println("First get ${it.text}") }
+//                    .also { println("First get ${it.text}") }
                     .text.replaceBefore("{", "")
             ).sid
         // This response is used in the post requests. Same contents in all it seems.
@@ -406,14 +431,13 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         // Prevents them from fucking us over with doing a while(true){} loop
         val interval = maxOf(data.pingInterval?.toLong()?.plus(2000) ?: return, 10000L)
         var reconnect = false
-        // New SID can be negotiated as above, but not implemented yet as it seems rare.
         while (true) {
             val authData = if (reconnect) """
                 42["_reconnect", "$reconnectSid"]
             """.trimIndent() else authInt
 
             val url = "${extractorData}&t=${generateTimeStamp()}&sid=${data.sid}"
-            app.post(url, data = authData, headers = headers)
+            data = getUpdatedData(app.post(url, data = authData, headers = headers), data, extractorData)
             //.also { println("Sflix post job ${it.text}") }
             Log.d(this.name, "Running Sflix job $url")
 
@@ -423,15 +447,16 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                     "${extractorData}&t=${generateTimeStamp()}&sid=${data.sid}",
                     timeout = 60,
                     headers = headers
-                ).text //.also { println("Sflix get job $it") }
-                if (getResponse.contains("sid")) {
+                )
+//                    .also { println("Sflix get job ${it.text}") }
+                if (getResponse.text.contains("sid")) {
                     reconnect = true
-//                println("Reconnecting")
+//                    println("Reconnecting")
                 }
             }
             // Always waits even if the get response is instant, to prevent a while true loop.
             if (time < interval - 4000)
-                delay(interval)
+                delay(4000)
         }
     }
 
