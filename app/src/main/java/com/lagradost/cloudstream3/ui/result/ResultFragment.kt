@@ -1096,7 +1096,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 }
 
                 getViewPos(resume.episodeId)?.let { viewPos ->
-                    if(viewPos.position > 30_000L || currentIsMovie == false) { // first 30s will not show for movies
+                    if (viewPos.position > 30_000L || currentIsMovie == false) { // first 30s will not show for movies
                         result_resume_series_progress?.apply {
                             max = (viewPos.duration / 1000).toInt()
                             progress = (viewPos.position / 1000).toInt()
@@ -1511,7 +1511,8 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
                                 result_download_movie?.setOnLongClickListener {
                                     val card =
-                                        currentEpisodes?.firstOrNull() ?: return@setOnLongClickListener false
+                                        currentEpisodes?.firstOrNull()
+                                            ?: return@setOnLongClickListener false
                                     handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, card))
                                     return@setOnLongClickListener true
                                 }

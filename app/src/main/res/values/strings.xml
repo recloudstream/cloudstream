@@ -366,6 +366,8 @@
     <string name="add_account">Add account</string>
     <string name="add_sync">Add tracking</string>
     <string name="added_sync_format" formatted="true">Added %s</string>
+    <string name="upload_sync">Sync</string>
+
     <!-- ============ -->
     <string name="none">None</string>
     <string name="normal">Normal</string>

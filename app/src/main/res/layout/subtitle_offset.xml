@@ -43,7 +43,7 @@
                 android:inputType="numberSigned"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:autofillHints="@string/subtitle_offset_hint"
+                android:hint="@string/subtitle_offset_hint"
                 tools:ignore="LabelFor" />
 
         <ImageView
