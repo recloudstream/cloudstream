@@ -53,15 +53,47 @@ object SearchResultBuilder {
             cardView.setImageResource(R.drawable.default_cover)
         }
 
-        bg.setOnClickListener {
+        fun click(view: View?) {
             clickCallback.invoke(
                 SearchClickCallback(
                     if (card is DataStoreHelper.ResumeWatchingResult) SEARCH_ACTION_PLAY_FILE else SEARCH_ACTION_LOAD,
-                    it,
+                    view ?: return,
                     position,
                     card
                 )
             )
+        }
+
+        fun longClick(view: View?) {
+            clickCallback.invoke(
+                SearchClickCallback(
+                    SEARCH_ACTION_SHOW_METADATA,
+                    view ?: return,
+                    position,
+                    card
+                )
+            )
+        }
+
+        fun focus(view: View?, focus: Boolean) {
+            if (focus) {
+                clickCallback.invoke(
+                    SearchClickCallback(
+                        SEARCH_ACTION_FOCUSED,
+                        view ?: return,
+                        position,
+                        card
+                    )
+                )
+            }
+        }
+
+        bg.setOnClickListener {
+            click(it)
+        }
+
+        itemView.setOnClickListener {
+            click(it)
         }
 
         if (nextFocusUp != null) {
@@ -90,23 +122,23 @@ object SearchResultBuilder {
         }
 
         bg.setOnLongClickListener {
-            clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_SHOW_METADATA, it, position, card))
+            longClick(it)
             return@setOnLongClickListener true
         }
+
         itemView.setOnLongClickListener {
-            clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_SHOW_METADATA, it, position, card))
+            longClick(it)
             return@setOnLongClickListener true
         }
+
         bg.setOnFocusChangeListener { view, b ->
-            if (b) {
-                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_FOCUSED, view, position, card))
-            }
+            focus(view, b)
         }
+
         itemView.setOnFocusChangeListener { view, b ->
-            if (b) {
-                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_FOCUSED, view, position, card))
-            }
+            focus(view, b)
         }
+
         when (card) {
             is DataStoreHelper.ResumeWatchingResult -> {
                 val pos = card.watchPos?.fixVisual()
@@ -119,7 +151,8 @@ object SearchResultBuilder {
                 playImg?.visibility = View.VISIBLE
 
                 if (!card.type.isMovieType()) {
-                    cardText?.text = cardText?.context?.getNameFull(card.name, card.episode, card.season)
+                    cardText?.text =
+                        cardText?.context?.getNameFull(card.name, card.episode, card.season)
                 }
             }
             is AnimeSearchResponse -> {
@@ -135,7 +168,8 @@ object SearchResultBuilder {
                 textIsDub?.apply {
                     val dubText = context.getString(R.string.app_dubbed_text)
                     text = if (card.dubEpisodes != null && card.dubEpisodes > 0) {
-                        context.getString(R.string.app_dub_sub_episode_text_format).format(dubText, card.dubEpisodes)
+                        context.getString(R.string.app_dub_sub_episode_text_format)
+                            .format(dubText, card.dubEpisodes)
                     } else {
                         dubText
                     }
@@ -144,7 +178,8 @@ object SearchResultBuilder {
                 textIsSub?.apply {
                     val subText = context.getString(R.string.app_subbed_text)
                     text = if (card.subEpisodes != null && card.subEpisodes > 0) {
-                        context.getString(R.string.app_dub_sub_episode_text_format).format(subText, card.subEpisodes)
+                        context.getString(R.string.app_dub_sub_episode_text_format)
+                            .format(subText, card.subEpisodes)
                     } else {
                         subText
                     }

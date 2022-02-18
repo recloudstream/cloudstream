@@ -74,6 +74,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return getLayoutInt() == 1
         }
 
+        fun Context.isEmulatorSettings() : Boolean {
+            return getLayoutInt() == 2
+        }
+
         private fun Context.isAutoTv(): Boolean {
             val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager?
             return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION

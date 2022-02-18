@@ -62,8 +62,6 @@ class GrdLayoutManager(val context: Context, private val spanCoun: Int) : GridLa
     }
 
     private fun calcOffsetToNextView(direction: Int): Int {
-        println("calc")
-
         val spanCount = this.spanCoun
         val orientation = this.orientation
 
