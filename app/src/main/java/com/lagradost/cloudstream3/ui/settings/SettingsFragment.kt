@@ -375,7 +375,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 {}) {
                 // Last = custom
                 if (it == dirs.size) {
-                    pathPicker.launch(Uri.EMPTY)
+                    try {
+                        pathPicker.launch(Uri.EMPTY)
+                    } catch (e : Exception) {
+                        logError(e)
+                    }
                 } else {
                     // Sets both visual and actual paths.
                     // key = used path

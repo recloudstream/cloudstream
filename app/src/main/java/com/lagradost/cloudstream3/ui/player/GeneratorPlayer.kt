@@ -142,19 +142,23 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun openSubPicker() {
-        subsPathPicker.launch(
-            arrayOf(
-                "text/plain",
-                "text/str",
-                "application/octet-stream",
-                MimeTypes.TEXT_UNKNOWN,
-                MimeTypes.TEXT_VTT,
-                MimeTypes.TEXT_SSA,
-                MimeTypes.APPLICATION_TTML,
-                MimeTypes.APPLICATION_MP4VTT,
-                MimeTypes.APPLICATION_SUBRIP,
+        try {
+            subsPathPicker.launch(
+                arrayOf(
+                    "text/plain",
+                    "text/str",
+                    "application/octet-stream",
+                    MimeTypes.TEXT_UNKNOWN,
+                    MimeTypes.TEXT_VTT,
+                    MimeTypes.TEXT_SSA,
+                    MimeTypes.APPLICATION_TTML,
+                    MimeTypes.APPLICATION_MP4VTT,
+                    MimeTypes.APPLICATION_SUBRIP,
+                )
             )
-        )
+        } catch (e : Exception) {
+            logError(e)
+        }
     }
 
     // Open file picker
