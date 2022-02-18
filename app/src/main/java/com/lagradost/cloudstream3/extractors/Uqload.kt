@@ -25,7 +25,12 @@ open class Uqload : ExtractorApi() {
             } else {
                 ""
             }
-        val cleaned_url = url.substring(2, url.length)
+        
+        val cleaned_url = if (lang == "ht") {  // if url doesn't contain a flag and the url starts with http://
+            url
+        } else {
+            url.substring(2, url.length)
+        }
         with(app.get(cleaned_url)) {  // raised error ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED (3003) is due to the response: "error_nofile"
             srcRegex.find(this.text)?.groupValues?.get(1)?.replace("\"", "")?.let { link ->
                 return listOf(
