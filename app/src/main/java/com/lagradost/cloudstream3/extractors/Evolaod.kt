@@ -26,9 +26,13 @@ open class Evoload : ExtractorApi() {
             } else {
                 ""
             }
-        val cleaned_url = url.substring(2, url.length)
-
-        //println(lang)
+        
+        val cleaned_url = if (lang == "ht") {  // if url doesn't contain a flag and the url starts with http://
+            url
+        } else {
+            url.substring(2, url.length)
+        }
+	//println(lang)
         //println(cleaned_url)
 
         val id = cleaned_url.replace("https://evoload.io/e/", "")  // wanted media id
