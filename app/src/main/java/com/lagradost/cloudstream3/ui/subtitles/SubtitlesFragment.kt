@@ -26,7 +26,7 @@ import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -197,10 +197,10 @@ class SubtitlesFragment : Fragment() {
         state = getCurrentSavedStyle()
         context?.updateState()
 
-        val isTvSettings = context?.isTvSettings() == true
+        val isTvTrueSettings = context?.isTrueTvSettings() == true
 
         fun View.setFocusableInTv() {
-            this.isFocusableInTouchMode = isTvSettings
+            this.isFocusableInTouchMode = isTvTrueSettings
         }
 
         fun View.setup(id: Int) {

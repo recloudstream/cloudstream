@@ -100,12 +100,14 @@
         <item>@string/automatic</item>
         <item>@string/phone_layout</item>
         <item>@string/tv_layout</item>
+        <item>@string/emulator_layout</item>
     </array>
 
     <array name="app_layout_values">
         <item>-1</item>
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </array>
 
     <string-array name="themes_overlay_names">

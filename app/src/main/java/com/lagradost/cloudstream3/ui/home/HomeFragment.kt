@@ -39,6 +39,7 @@ import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -800,11 +801,13 @@ class HomeFragment : Fragment() {
             if (ctx.isTvSettings()) {
                 home_api_fab?.isVisible = false
                 home_change_api?.isVisible = true
-                home_change_api_loading?.isVisible = true
-                home_change_api_loading?.isFocusable = true
-                home_change_api_loading?.isFocusableInTouchMode = true
-                home_change_api?.isFocusable = true
-                home_change_api?.isFocusableInTouchMode = true
+                if(ctx.isTrueTvSettings()) {
+                    home_change_api_loading?.isVisible = true
+                    home_change_api_loading?.isFocusable = true
+                    home_change_api_loading?.isFocusableInTouchMode = true
+                    home_change_api?.isFocusable = true
+                    home_change_api?.isFocusableInTouchMode = true
+                }
                 // home_bookmark_select?.isFocusable = true
                 // home_bookmark_select?.isFocusableInTouchMode = true
             } else {

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
@@ -81,23 +81,32 @@ object SearchResultBuilder {
             }
         }
 
-        if (bg.context.isTvSettings()) {
+        if (bg.context.isTrueTvSettings()) {
             bg.isFocusable = true
             bg.isFocusableInTouchMode = true
             bg.touchscreenBlocksFocus = false
+            itemView.isFocusableInTouchMode = true
+            itemView.isFocusable = true
         }
 
         bg.setOnLongClickListener {
             clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_SHOW_METADATA, it, position, card))
             return@setOnLongClickListener true
         }
-
+        itemView.setOnLongClickListener {
+            clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_SHOW_METADATA, it, position, card))
+            return@setOnLongClickListener true
+        }
         bg.setOnFocusChangeListener { view, b ->
             if (b) {
                 clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_FOCUSED, view, position, card))
             }
         }
-
+        itemView.setOnFocusChangeListener { view, b ->
+            if (b) {
+                clickCallback.invoke(SearchClickCallback(SEARCH_ACTION_FOCUSED, view, position, card))
+            }
+        }
         when (card) {
             is DataStoreHelper.ResumeWatchingResult -> {
                 val pos = card.watchPos?.fixVisual()

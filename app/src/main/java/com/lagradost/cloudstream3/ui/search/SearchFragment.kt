@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.currentSpan
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -319,7 +320,7 @@ class SearchFragment : Fragment() {
             }
         }
 
-        if (context?.isTvSettings() == true) {
+        if (context?.isTrueTvSettings() == true) {
             search_filter.isFocusable = true
             search_filter.isFocusableInTouchMode = true
         }

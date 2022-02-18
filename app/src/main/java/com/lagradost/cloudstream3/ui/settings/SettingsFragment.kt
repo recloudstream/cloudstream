@@ -57,13 +57,21 @@ import kotlin.concurrent.thread
 
 class SettingsFragment : PreferenceFragmentCompat() {
     companion object {
-        fun Context.isTvSettings(): Boolean {
+        private fun Context.getLayoutInt() : Int {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-            var value = settingsManager.getInt(this.getString(R.string.app_layout_key), -1)
+            return settingsManager.getInt(this.getString(R.string.app_layout_key), -1)
+        }
+
+        fun Context.isTvSettings(): Boolean {
+            var value = getLayoutInt()
             if (value == -1) {
                 value = if (isAutoTv()) 1 else 0
             }
-            return value == 1
+            return value == 1 || value == 2
+        }
+
+        fun Context.isTrueTvSettings() : Boolean {
+            return getLayoutInt() == 1
         }
 
         private fun Context.isAutoTv(): Boolean {

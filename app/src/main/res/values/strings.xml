@@ -343,6 +343,7 @@
     <string name="automatic">Auto</string>
     <string name="tv_layout">TV Layout</string>
     <string name="phone_layout">Phone Layout</string>
+    <string name="emulator_layout">Emulator Layout</string>
 
     <string name="primary_color_settings">Primary Color</string>
     <string name="app_theme_settings">App Theme</string>
