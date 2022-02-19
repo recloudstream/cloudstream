@@ -3,14 +3,12 @@ package com.lagradost.cloudstream3.movieproviders
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.getCaptchaToken
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.LoadResponse.Companion.setDuration
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.network.AppResponse
-import com.lagradost.cloudstream3.network.WebViewResolver
-import com.lagradost.cloudstream3.network.getRequestCreator
-import com.lagradost.cloudstream3.network.text
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
@@ -277,6 +275,14 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         @JsonProperty("tracks") val tracks: List<Tracks?>?
     )
 
+    data class IframeJson(
+//        @JsonProperty("type") val type: String? = null,
+        @JsonProperty("link") val link: String? = null,
+//        @JsonProperty("sources") val sources: ArrayList<String> = arrayListOf(),
+//        @JsonProperty("tracks") val tracks: ArrayList<String> = arrayListOf(),
+//        @JsonProperty("title") val title: String? = null
+    )
+
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
@@ -299,21 +305,67 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
         urls?.apmap { url ->
             suspendSafeApiCall {
-                val resolved = WebViewResolver(
-                    Regex("""/getSources"""),
-                    // This is unreliable, generating my own link instead
-//                  additionalUrls = listOf(Regex("""^.*transport=polling(?!.*sid=).*$"""))
-                ).resolveUsingWebView(getRequestCreator(url))
-//              val extractorData = resolved.second.getOrNull(0)?.url?.toString()
+//                val resolved = WebViewResolver(
+//                    Regex("""/getSources"""),
+//                    // This is unreliable, generating my own link instead
+////                  additionalUrls = listOf(Regex("""^.*transport=polling(?!.*sid=).*$"""))
+//                ).resolveUsingWebView(getRequestCreator(url))
+////              val extractorData = resolved.second.getOrNull(0)?.url?.toString()
+
+                // ------- Main site -------
+
+                // Possible without token
+
+//                val response = app.get(url)
+//                val key =
+//                    response.document.select("script[src*=https://www.google.com/recaptcha/api.js?render=]")
+//                        .attr("src").substringAfter("render=")
+//                val token = getCaptchaToken(mainUrl, key) ?: return@suspendSafeApiCall
+
+                val serverId = url.substringAfterLast(".")
+                val iframeLink =
+                    app.get("https://sflix.to/ajax/get_link/$serverId").mapped<IframeJson>().link
+                        ?: return@suspendSafeApiCall
+
+                // ------- Iframe -------
+                val mainIframeUrl =
+                    iframeLink.substringBeforeLast("/") // "https://rabbitstream.net/embed-4/6sBcv1i8vUF6?z=" -> "https://rabbitstream.net/embed-4"
+                val mainIframeId = iframeLink.substringAfterLast("/")
+                    .substringBefore("?") // "https://rabbitstream.net/embed-4/6sBcv1i8vUF6?z=" -> "6sBcv1i8vUF6"
+
+                val iframe = app.get(iframeLink, referer = mainUrl)
+                val iframeKey =
+                    iframe.document.select("script[src*=https://www.google.com/recaptcha/api.js?render=]")
+                        .attr("src").substringAfter("render=")
+                val iframeToken = getCaptchaToken(iframeLink, iframeKey)
+                val number = Regex("""recaptchaNumber = '(.*?)'""").find(iframe.text)?.groupValues?.get(1)
+
+                val mapped = app.get(
+                    "${mainIframeUrl.replace("/embed", "/ajax/embed")}/getSources?id=$mainIframeId&_token=$iframeToken&_number=$number",
+                    referer = "https://rabbitstream.net/",
+                    headers = mapOf(
+                        "X-Requested-With" to "XMLHttpRequest",
+                        "Accept" to "*/*",
+                        "Accept-Language" to "en-US,en;q=0.5",
+//                        "Cache-Control" to "no-cache",
+                        "Connection" to "keep-alive",
+//                        "Sec-Fetch-Dest" to "empty",
+//                        "Sec-Fetch-Mode" to "no-cors",
+//                        "Sec-Fetch-Site" to "cross-site",
+//                        "Pragma" to "no-cache",
+//                        "Cache-Control" to "no-cache",
+                        "TE" to "trailers"
+                    )
+                ).mapped<SourceObject>()
 
                 // Some smarter ws11 or w10 selection might be required in the future.
                 val extractorData =
                     "https://ws11.rabbitstream.net/socket.io/?EIO=4&transport=polling"
 
-                val sources = resolved.first?.let { app.baseClient.newCall(it).execute().text }
-                    ?: return@suspendSafeApiCall
+//                val sources = resolved.first?.let { app.baseClient.newCall(it).execute().text }
+//                    ?: return@suspendSafeApiCall
 
-                val mapped = parseJson<SourceObject>(sources)
+//                val mapped = parseJson<SourceObject>(sources)
 
                 mapped.tracks?.forEach {
                     it?.toSubtitleFile()?.let { subtitleFile ->
