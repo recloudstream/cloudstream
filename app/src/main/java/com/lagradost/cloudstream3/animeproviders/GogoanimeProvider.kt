@@ -305,7 +305,7 @@ class GogoanimeProvider : MainAPI() {
                                 this.name,
                                 "${this.name} ${source.label?.replace("0 P", "0p") ?: ""}",
                                 source.file,
-                                "",
+                                "https://gogoplay.io",
                                 getQualityFromName(source.label ?: ""),
                                 isM3u8 = source.type == "hls"
                             )

@@ -100,18 +100,27 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     Mcloud(),
     XStreamCdn(),
     StreamSB(),
+    StreamSB1(),
+    StreamSB2(),
+    StreamSB3(),
+    StreamSB4(),
+    StreamSB5(),
+    StreamSB6(),
+    StreamSB7(),
+    StreamSB8(),
+    StreamSB9(),
     Streamhub(),
 
     FEmbed(),
     FeHD(),
     Fplayer(),
-    WatchSB(),
+  //  WatchSB(), 'cause StreamSB.kt works
     Uqload(),
     Uqload1(),
     Evoload(),
     Evoload1(),
     VoeExtractor(),
-    UpstreamExtractor(),
+   // UpstreamExtractor(), GenericM3U8.kt works
 
     Tomatomatela(),
     Cinestart(),
@@ -125,10 +134,15 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
 
     AsianLoad(),
 
-    SBPlay(),
-    SBPlay1(),
-    SBPlay2(),
-    SBPlay3(),
+    ZplayerV2(),
+    GenericM3U8(),
+    Jawcloud(),
+
+  // StreamSB.kt works
+  //  SBPlay(),
+  //  SBPlay1(),
+  //  SBPlay2(),
+
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

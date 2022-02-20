@@ -1,52 +1,142 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.ExtractorApi
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.getAndUnpack
-import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 
-class StreamSB : ExtractorApi() {
-    override val name = "StreamSB"
+
+class StreamSB1 : StreamSB() {
+    override val mainUrl = "https://sbplay1.com"
+}
+
+class StreamSB2 : StreamSB() {
+    override val mainUrl = "https://sbplay2.com"
+}
+
+class StreamSB3 : StreamSB() {
+    override val mainUrl = "https://sbplay.one"
+}
+
+class StreamSB4 : StreamSB() {
+    override val mainUrl = "https://cloudemb.com"
+}
+
+class StreamSB5 : StreamSB() {
     override val mainUrl = "https://sbplay.org"
-    private val sourceRegex = Regex("""sources:[\W\w]*?file:\s*"(.*?)"""")
+}
 
-    //private val m3u8Regex = Regex(""".*?(\d*).m3u8""")
-    //private val urlRegex = Regex("""(.*?)([^/]+$)""")
+class StreamSB6 : StreamSB() {
+    override val mainUrl = "https://embedsb.com"
+}
 
-    // 1: Resolution 2: url
-    private val m3u8UrlRegex = Regex("""RESOLUTION=\d*x(\d*).*\n(http.*.m3u8)""")
+class StreamSB7 : StreamSB() {
+    override val mainUrl = "https://pelistop.co"
+}
+
+class StreamSB8 : StreamSB() {
+    override val mainUrl = "https://streamsb.net"
+}
+
+class StreamSB9 : StreamSB() {
+    override val mainUrl = "https://sbplay.one"
+}
+
+// This is a modified version of https://github.com/jmir1/aniyomi-extensions/blob/master/src/en/genoanime/src/eu/kanade/tachiyomi/animeextension/en/genoanime/extractors/StreamSBExtractor.kt
+// The following code is under the Apache License 2.0 https://github.com/jmir1/aniyomi-extensions/blob/master/LICENSE 
+open class StreamSB : ExtractorApi() {
+    override val name = "StreamSB"
+    override val mainUrl = "https://watchsb.com"
     override val requiresReferer = false
 
-    // 	https://sbembed.com/embed-ns50b0cukf9j.html   ->   https://sbvideo.net/play/ns50b0cukf9j
-    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
-        val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
-        val newUrl = url.replace("sbplay.org/embed-", "sbplay.org/play/").removeSuffix(".html")
-        with(app.get(newUrl, timeout = 10)) {
-            getAndUnpack(this.text).let {
-                sourceRegex.findAll(it).forEach { sourceMatch ->
-                    val extractedUrl = sourceMatch.groupValues[1]
-                    if (extractedUrl.contains(".m3u8")) {
-                        with(app.get(extractedUrl)) {
-                            m3u8UrlRegex.findAll(this.text).forEach { match ->
-                                val extractedUrlM3u8 = match.groupValues[2]
-                                val extractedRes = match.groupValues[1]
-                                extractedLinksList.add(
-                                    ExtractorLink(
-                                        name,
-                                        "$name ${extractedRes}p",
-                                        extractedUrlM3u8,
-                                        extractedUrl,
-                                        getQualityFromName(extractedRes),
-                                        true
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+    private val hexArray = "0123456789ABCDEF".toCharArray()
+
+    private fun bytesToHex(bytes: ByteArray): String {
+        val hexChars = CharArray(bytes.size * 2)
+        for (j in bytes.indices) {
+            val v = bytes[j].toInt() and 0xFF
+
+            hexChars[j * 2] = hexArray[v ushr 4]
+            hexChars[j * 2 + 1] = hexArray[v and 0x0F]
         }
-        return extractedLinksList
+        return String(hexChars)
+    }
+
+
+    data class StreamData (
+        @JsonProperty("file") val file: String,
+        @JsonProperty("cdn_img") val cdnImg: String,
+        @JsonProperty("hash") val hash: String,
+        @JsonProperty("subs") val subs: List<String>,
+        @JsonProperty("length") val length: String,
+        @JsonProperty("id") val id: String,
+        @JsonProperty("title") val title: String,
+        @JsonProperty("backup") val backup: String,
+    )
+
+    data class Main (
+        @JsonProperty("stream_data") val streamData: StreamData,
+        @JsonProperty("status_code") val statusCode: Int,
+    )
+
+    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
+        val regexID = Regex("(embed-[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+|\\/e\\/[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
+        val id = regexID.findAll(url).map {
+            it.value.replace(Regex("(embed-|\\/e\\/)"),"")
+        }.first()
+        val bytes = id.toByteArray()
+        val bytesToHex = bytesToHex(bytes)
+        val master = "$mainUrl/sources40/566d337678566f743674494a7c7c${bytesToHex}7c7c346b6767586d6934774855537c7c73747265616d7362/6565417268755339773461447c7c346133383438333436313335376136323337373433383634376337633465366534393338373136643732373736343735373237613763376334363733353737303533366236333463353333363534366137633763373337343732363536313664373336327c7c6b586c3163614468645a47617c7c73747265616d7362"
+        val headers = mapOf(
+            "Host" to url.substringAfter("https://").substringBefore("/"),
+            "User-Agent" to USER_AGENT,
+            "Accept" to "application/json, text/plain, */*",
+            "Accept-Language" to "en-US,en;q=0.5",
+            "Referer" to url,
+            "watchsb" to "streamsb",
+            "DNT" to "1",
+            "Connection" to "keep-alive",
+            "Sec-Fetch-Dest" to "empty",
+            "Sec-Fetch-Mode" to "no-cors",
+            "Sec-Fetch-Site" to "same-origin",
+            "TE" to "trailers",
+            "Pragma" to "no-cache",
+            "Cache-Control" to "no-cache",)
+        val urltext = app.get(master,
+            headers = headers,
+            allowRedirects = false
+        ).text
+        val mapped = urltext.let { parseJson<Main>(it) }
+        if (urltext.contains("m3u8")) return  M3u8Helper().m3u8Generation(
+            M3u8Helper.M3u8Stream(
+                mapped.streamData.file,
+                headers = mapOf(
+                    "User-Agent" to USER_AGENT,
+                    "Accept" to "*/*",
+                    "Accept-Language" to "en-US,en;q=0.5",
+                    "Accept-Encoding" to "gzip, deflate, br",
+                    "Origin" to mainUrl,
+                    "DNT" to "1",
+                    "Connection" to "keep-alive",
+                    "Referer" to "$mainUrl/",
+                    "Sec-Fetch-Dest" to "empty",
+                    "Sec-Fetch-Mode" to "cors",
+                    "Sec-Fetch-Site" to "cross-site",),
+            ), true
+        )
+            .map { stream ->
+                val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
+                ExtractorLink(
+                    name,
+                    "$name $qualityString",
+                    stream.streamUrl,
+                    url,
+                    getQualityFromName(stream.quality.toString()),
+                    true
+                )
+            }
+        return null
     }
 }
