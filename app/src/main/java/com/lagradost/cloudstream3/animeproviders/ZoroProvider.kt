@@ -1,13 +1,15 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.util.NameTransformer
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.getCaptchaToken
 import com.lagradost.cloudstream3.movieproviders.SflixProvider
+import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.extractRabbitStream
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.toExtractorLink
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.toSubtitleFile
 import com.lagradost.cloudstream3.network.WebViewResolver
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
@@ -233,7 +235,7 @@ class ZoroProvider : MainAPI() {
         val actors = document.select("div.block-actors-content > div.bac-list-wrap > div.bac-item")
             ?.mapNotNull { head ->
                 val subItems = head.select(".per-info") ?: return@mapNotNull null
-                if(subItems.isEmpty()) return@mapNotNull null
+                if (subItems.isEmpty()) return@mapNotNull null
                 var role: ActorRole? = null
                 val mainActor = subItems.first()?.let {
                     role = when (it.selectFirst(".pi-detail > .pi-cast")?.text()?.trim()) {
@@ -243,7 +245,7 @@ class ZoroProvider : MainAPI() {
                     }
                     it.getActor()
                 } ?: return@mapNotNull null
-                val voiceActor = if(subItems.size >= 2) subItems[1]?.getActor() else null
+                val voiceActor = if (subItems.size >= 2) subItems[1]?.getActor() else null
                 ActorData(actor = mainActor, role = role, voiceActor = voiceActor)
             }
 
@@ -328,42 +330,11 @@ class ZoroProvider : MainAPI() {
             val extractorLink = app.get(
                 link,
             ).mapped<RapidCloudResponse>().link
-//.also { println("AAAAAAAAA: ${it.text}") }
-            // Loads the links in the appropriate extractor.
             val hasLoadedExtractorLink = loadExtractor(extractorLink, mainUrl, callback)
 
             if (!hasLoadedExtractorLink) {
-
-                // Not an extractor because:
-                // 1. No subtitle callback
-                // 2. Missing dub/sub status in parameter (might be substituted in the referer)
-
-                val response =
-                    getM3u8FromRapidCloud(
-                        extractorLink
-                    )
-
-                if (response.contains("<html")) return@apmap
-                val mapped = parseJson<SflixProvider.SourceObject>(response)
-
-                mapped.tracks?.forEach { track ->
-                    track?.toSubtitleFile()?.let { subtitleFile ->
-                        subtitleCallback.invoke(subtitleFile)
-                    }
-                }
-
-                val list = listOf(
-                    mapped.sources to "source 1",
-                    mapped.sources1 to "source 2",
-                    mapped.sources2 to "source 3",
-                    mapped.sourcesBackup to "source backup"
-                )
-
-                list.forEach { subList ->
-                    subList.first?.forEach { a ->
-                        a?.toExtractorLink(this, subList.second + " - ${it.first}", null)
-                            ?.forEach(callback)
-                    }
+                extractRabbitStream(extractorLink, subtitleCallback, callback) { sourceName ->
+                     sourceName + " - ${it.first}"
                 }
             }
         }

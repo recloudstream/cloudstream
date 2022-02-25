@@ -22,6 +22,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.hippo.unifile.UniFile
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.MainActivity
@@ -29,11 +30,13 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.services.VideoDownloadService
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.internal.closeQuietly
@@ -677,7 +680,7 @@ object VideoDownloadManager {
         extension: String,
         tryResume: Boolean,
         parentId: Int?,
-        createNotificationCallback: (CreateNotificationMetadata) -> Unit
+        createNotificationCallback: (CreateNotificationMetadata) -> Unit,
     ): Int {
         if (link.url.startsWith("magnet") || link.url.endsWith(".torrent")) {
             return ERROR_UNKNOWN
@@ -1135,7 +1138,6 @@ object VideoDownloadManager {
 
         val displayName = getDisplayName(name, extension)
 
-
         val fileStream = stream.fileStream!!
 
         val firstTs = tsIterator.next()
@@ -1346,6 +1348,13 @@ object VideoDownloadManager {
         val name =
             sanitizeFilename(ep.name ?: "${context.getString(R.string.episode)} ${ep.episode}")
 
+        // Make sure this is cancelled when download is done or cancelled.
+        val extractorJob = ioSafe {
+            if (link.extractorData != null) {
+                getApiFromNameNull(link.source)?.extractorVerifierJob(link.extractorData)
+            }
+        }
+
         if (link.isM3u8 || URI(link.url).path.endsWith(".m3u8")) {
             val startIndex = if (tryResume) {
                 context.getKey<DownloadedFileInfo>(
@@ -1369,7 +1378,7 @@ object VideoDownloadManager {
                         meta.hlsTotal
                     )
                 }
-            }
+            }.also { extractorJob.cancel() }
         }
 
         return normalSafeApiCall {
@@ -1387,7 +1396,7 @@ object VideoDownloadManager {
                     )
                 }
             }
-        } ?: ERROR_UNKNOWN
+        }.also { extractorJob.cancel() } ?: ERROR_UNKNOWN
     }
 
     fun downloadCheck(
