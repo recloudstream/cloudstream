@@ -305,15 +305,6 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
         urls?.apmap { url ->
             suspendSafeApiCall {
-//                val resolved = WebViewResolver(
-//                    Regex("""/getSources"""),
-//                    // This is unreliable, generating my own link instead
-////                  additionalUrls = listOf(Regex("""^.*transport=polling(?!.*sid=).*$"""))
-//                ).resolveUsingWebView(getRequestCreator(url))
-////              val extractorData = resolved.second.getOrNull(0)?.url?.toString()
-
-                // ------- Main site -------
-
                 // Possible without token
 
 //                val response = app.get(url)
@@ -324,7 +315,7 @@ class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
                 val serverId = url.substringAfterLast(".")
                 val iframeLink =
-                    app.get("https://sflix.to/ajax/get_link/$serverId").mapped<IframeJson>().link
+                    app.get("${this.mainUrl}/ajax/get_link/$serverId").mapped<IframeJson>().link
                         ?: return@suspendSafeApiCall
 
                 // Some smarter ws11 or w10 selection might be required in the future.
