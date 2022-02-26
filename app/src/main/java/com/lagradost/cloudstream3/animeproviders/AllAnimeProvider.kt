@@ -87,13 +87,13 @@ class AllAnimeProvider : MainAPI() {
         @JsonProperty("data") val data: Data
     )
 
-    override suspend fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val link =
             """$mainUrl/graphql?variables=%7B%22search%22%3A%7B%22allowAdult%22%3Afalse%2C%22query%22%3A%22$query%22%7D%2C%22limit%22%3A26%2C%22page%22%3A1%2C%22translationType%22%3A%22sub%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%229343797cc3d9e3f444e2d3b7db9a84d759b816a4d84512ea72d079f85bb96e98%22%7D%7D"""
         var res = app.get(link).text
         if (res.contains("PERSISTED_QUERY_NOT_FOUND")) {
             res = app.get(link).text
-            if (res.contains("PERSISTED_QUERY_NOT_FOUND")) return ArrayList()
+            if (res.contains("PERSISTED_QUERY_NOT_FOUND")) return emptyList()
         }
         val response = mapper.readValue<AllAnimeQuery>(res)
 
@@ -102,7 +102,7 @@ class AllAnimeProvider : MainAPI() {
             !(it.availableEpisodes?.raw == 0 && it.availableEpisodes.sub == 0 && it.availableEpisodes.dub == 0)
         }
 
-        return ArrayList(results.map {
+        return results.map {
             AnimeSearchResponse(
                 it.name,
                 "$mainUrl/anime/${it.Id}",
@@ -115,7 +115,7 @@ class AllAnimeProvider : MainAPI() {
                 it.availableEpisodes?.dub,
                 it.availableEpisodes?.sub
             )
-        })
+        }
     }
 
     private data class AvailableEpisodesDetail(
@@ -154,11 +154,11 @@ class AllAnimeProvider : MainAPI() {
 
         val episodes = showData.availableEpisodes.let {
             if (it == null) return@let Pair(null, null)
-            Pair(if (it.sub != 0) ArrayList((1..it.sub).map { epNum ->
+            Pair(if (it.sub != 0) ((1..it.sub).map { epNum ->
                 AnimeEpisode(
                     "$mainUrl/anime/${showData.Id}/episodes/sub/$epNum", episode = epNum
                 )
-            }) else null, if (it.dub != 0) ArrayList((1..it.dub).map { epNum ->
+            }) else null, if (it.dub != 0) ((1..it.dub).map { epNum ->
                 AnimeEpisode(
                     "$mainUrl/anime/${showData.Id}/episodes/dub/$epNum", episode = epNum
                 )
@@ -251,21 +251,20 @@ class AllAnimeProvider : MainAPI() {
     private fun getM3u8Qualities(
         m3u8Link: String,
         referer: String,
-        qualityName: String
-    ): ArrayList<ExtractorLink> {
-        return ArrayList(
-            hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(m3u8Link, null), true).map { stream ->
-                val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
-                ExtractorLink(
-                    this.name,
-                    "${this.name} - $qualityName $qualityString",
-                    stream.streamUrl,
-                    referer,
-                    getQualityFromName(stream.quality.toString()),
-                    true,
-                    stream.headers
-                )
-            })
+        qualityName: String,
+    ): List<ExtractorLink> {
+        return hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(m3u8Link, null), true).map { stream ->
+            val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
+            ExtractorLink(
+                this.name,
+                "${this.name} - $qualityName $qualityString",
+                stream.streamUrl,
+                referer,
+                getQualityFromName(stream.quality.toString()),
+                true,
+                stream.headers
+            )
+        }
     }
 
     override suspend fun loadLinks(

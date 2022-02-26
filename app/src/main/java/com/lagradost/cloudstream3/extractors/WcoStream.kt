@@ -6,7 +6,11 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.utils.*
 
-class WcoStream : ExtractorApi() {
+class Vidstreamz : WcoStream() {
+    override val mainUrl: String = "https://vidstreamz.online"
+}
+
+open class WcoStream : ExtractorApi() {
     override val name = "VidStream" //Cause works for animekisa and wco
     override val mainUrl = "https://vidstream.pro"
     override val requiresReferer = false
@@ -16,8 +20,8 @@ class WcoStream : ExtractorApi() {
         val baseUrl = url.split("/e/")[0]
 
         val html = app.get(url, headers = mapOf("Referer" to "https://wcostream.cc/")).text
-        val (Id) = "/e/(.*?)?domain".toRegex().find(url)!!.destructured
-        val (skey) = """skey\s=\s['"](.*?)['"];""".toRegex().find(html)!!.destructured
+        val (Id) = ("/e/(.*?)?domain".toRegex().find(url)?.destructured ?: Regex("""/e/(.*)""").find(url)?.destructured) ?: return emptyList()
+        val (skey) = """skey\s=\s['"](.*?)['"];""".toRegex().find(html)?.destructured ?: return emptyList()
 
         val apiLink = "$baseUrl/info/$Id?domain=wcostream.cc&skey=$skey"
         val referrer = "$baseUrl/e/$Id?domain=wcostream.cc"
@@ -44,19 +48,21 @@ class WcoStream : ExtractorApi() {
         if (mapped.success) {
             mapped.media.sources.forEach {
                 if (it.file.contains("m3u8")) {
-                    hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(it.file, null), true).forEach { stream ->
-                        val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
-                        sources.add(
-                            ExtractorLink(
-                                name,
-                                "$name $qualityString",
-                                stream.streamUrl,
-                                "",
-                                getQualityFromName(stream.quality.toString()),
-                                true
+                    hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(it.file, null), true)
+                        .forEach { stream ->
+                            val qualityString =
+                                if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
+                            sources.add(
+                                ExtractorLink(
+                                    name,
+                                    "$name $qualityString",
+                                    stream.streamUrl,
+                                    "",
+                                    getQualityFromName(stream.quality.toString()),
+                                    true
+                                )
                             )
-                        )
-                    }
+                        }
                 } else {
                     sources.add(
                         ExtractorLink(

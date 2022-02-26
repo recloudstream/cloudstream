@@ -27,12 +27,12 @@ class AnimeFlickProvider : MainAPI() {
         TvType.OVA
     )
 
-    override suspend fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val link = "https://animeflick.net/search.php?search=$query"
         val html = app.get(link).text
         val doc = Jsoup.parse(html)
 
-        return ArrayList(doc.select(".row.mt-2").map {
+        return doc.select(".row.mt-2").map {
             val href = mainUrl + it.selectFirst("a").attr("href")
             val title = it.selectFirst("h5 > a").text()
             val poster = mainUrl + it.selectFirst("img").attr("src").replace("70x110", "225x320")
@@ -45,7 +45,7 @@ class AnimeFlickProvider : MainAPI() {
                 null,
                 EnumSet.of(DubStatus.Subbed),
             )
-        })
+        }
     }
 
     override suspend fun load(url: String): LoadResponse {

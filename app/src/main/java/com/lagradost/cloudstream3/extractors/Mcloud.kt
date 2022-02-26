@@ -1,12 +1,14 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.app
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper
+import com.lagradost.cloudstream3.utils.getQualityFromName
 
 open class Mcloud : ExtractorApi() {
     override val name = "Mcloud"
@@ -30,6 +32,11 @@ open class Mcloud : ExtractorApi() {
         val link = url.replace("$mainUrl/e/","$mainUrl/info/")
         val response = app.get(link, headers = headers).text
 
+        if(response.startsWith("<!DOCTYPE html>")) {
+            // TODO decrypt html for link
+            return emptyList()
+        }
+
         data class Sources (
             @JsonProperty("file") val file: String
         )
@@ -43,7 +50,7 @@ open class Mcloud : ExtractorApi() {
             @JsonProperty("media") val media: Media,
         )
 
-        val mapped = response.let { parseJson<JsonMcloud>(it) }
+        val mapped = parseJson<JsonMcloud>(response)
         val sources = mutableListOf<ExtractorLink>()
 
         if (mapped.success)

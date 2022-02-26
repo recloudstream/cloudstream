@@ -94,6 +94,7 @@ suspend fun loadExtractor(url: String, referer: String? = null, callback: (Extra
 val extractorApis: Array<ExtractorApi> = arrayOf(
     //AllProvider(),
     WcoStream(),
+    Vidstreamz(),
     Mp4Upload(),
     StreamTape(),
     MixDrop(),
