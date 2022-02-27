@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -257,11 +258,16 @@ class NineAnimeProvider : MainAPI() {
                 jsonservers.mp4upload,
                 jsonservers.streamtape
             ).mapNotNull {
-                val epserver = app.get("$mainUrl/ajax/anime/episode?id=$it").text
-                (if (epserver.contains("url")) {
-                    parseJson<Links>(epserver)
-                } else null)?.url?.let { it1 -> getLink(it1.replace("=", "")) }
-                    ?.replace("/embed/", "/e/")
+                try {
+                    val epserver = app.get("$mainUrl/ajax/anime/episode?id=$it").text
+                    (if (epserver.contains("url")) {
+                        parseJson<Links>(epserver)
+                    } else null)?.url?.let { it1 -> getLink(it1.replace("=", "")) }
+                        ?.replace("/embed/", "/e/")
+                } catch (e : Exception) {
+                    logError(e)
+                    null
+                }
             }.apmap { url ->
                 loadExtractor(
                     url, data, callback

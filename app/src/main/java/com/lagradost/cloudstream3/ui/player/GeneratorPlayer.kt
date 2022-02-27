@@ -480,6 +480,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     @SuppressLint("SetTextI18n")
     fun setTitle() {
         var headerName: String? = null
+        var subName : String? = null
         var episode: Int? = null
         var season: Int? = null
         var tvType: TvType? = null
@@ -489,12 +490,14 @@ class GeneratorPlayer : FullScreenPlayer() {
             is ResultEpisode -> {
                 isFiller = meta.isFiller
                 headerName = meta.headerName
+                subName = meta.name
                 episode = meta.episode
                 season = meta.season
                 tvType = meta.tvType
             }
             is ExtractorUri -> {
                 headerName = meta.headerName
+                subName = meta.name
                 episode = meta.episode
                 season = meta.season
                 tvType = meta.tvType
@@ -504,13 +507,13 @@ class GeneratorPlayer : FullScreenPlayer() {
         player_episode_filler_holder?.isVisible = isFiller ?: false
 
         player_video_title?.text = if (headerName != null) {
-            headerName +
+            (headerName +
                     if (tvType.isEpisodeBased() && episode != null)
                         if (season == null)
                             " - ${getString(R.string.episode)} $episode"
                         else
                             " \"${getString(R.string.season_short)}${season}:${getString(R.string.episode_short)}${episode}\""
-                    else ""
+                    else "") + if(subName.isNullOrBlank()) "" else " - $subName"
         } else {
             ""
         }
