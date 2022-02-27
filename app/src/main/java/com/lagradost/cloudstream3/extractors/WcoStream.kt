@@ -9,6 +9,10 @@ import com.lagradost.cloudstream3.utils.*
 class Vidstreamz : WcoStream() {
     override val mainUrl: String = "https://vidstreamz.online"
 }
+class Vizcloud : WcoStream() {
+    override val mainUrl: String = "https://vizcloud2.ru"
+}
+
 
 open class WcoStream : ExtractorApi() {
     override val name = "VidStream" //Cause works for animekisa and wco

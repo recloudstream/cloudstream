@@ -70,6 +70,11 @@ object APIHolder {
         SflixProvider("https://dopebox.to", "Dopebox"),
         SflixProvider("https://solarmovie.pe", "Solarmovie"),
 
+        BflixProvider("https://bflix.ru","Bflix"),
+        BflixProvider("https://fmovies.to","Fmovies.to"),
+        BflixProvider("https://sflix.pro","Sflix.pro"),
+
+
         //TmdbProvider(),
 
         FilmanProvider(),
