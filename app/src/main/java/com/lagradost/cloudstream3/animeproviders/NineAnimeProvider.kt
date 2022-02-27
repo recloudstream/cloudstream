@@ -190,12 +190,9 @@ class NineAnimeProvider : MainAPI() {
     )
 
     override suspend fun load(url: String): LoadResponse? {
-        val urlclean = url.substringAfter("watch/")
-        val regexID = Regex("(\\.[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
-        val animeid = regexID.find(urlclean)?.value?.replace(".", "") ?: return null
-        val animeidencoded = encode(getVrf(animeid) ?: return null)
-
         val doc = app.get(url).document
+        val animeid = doc.selectFirst("div.player-wrapper.watchpage").attr("data-id") ?: return null
+        val animeidencoded = encode(getVrf(animeid) ?: return null)
         val poster = doc.selectFirst("aside.main div.thumb div img").attr("src")
         val title = doc.selectFirst(".info .title").text()
         val description = doc.selectFirst("div.info p").text().replace("Ver menos", "").trim()
@@ -205,14 +202,42 @@ class NineAnimeProvider : MainAPI() {
             ).mapped<Response>().html
         )?.select("ul.episodes li a")?.mapNotNull {
             val link = it?.attr("href") ?: return@mapNotNull null
-            val epnum = it.attr("data-base")?.toIntOrNull()
-            AnimeEpisode(link, episode = epnum)
+            val name = "Episode ${it.text()}"
+            AnimeEpisode(link, name)
         } ?: return null
 
-        return newAnimeLoadResponse(title, url, TvType.Anime) {
+
+        val recommendations =
+            doc.select("div.container aside.main section div.body ul.anime-list li")?.mapNotNull { element ->
+                val recTitle = element.select("a.name").text() ?: return@mapNotNull null
+                val image = element.select("a.poster img")?.attr("src")
+                val recUrl = fixUrl(element.select("a").attr("href"))
+                AnimeSearchResponse(
+                    recTitle,
+                    fixUrl(recUrl),
+                    this.name,
+                    TvType.Anime,
+                    image,
+                    dubStatus =
+                    if (recTitle.contains("(DUB)") || recTitle.contains("(Dub)")) EnumSet.of(
+                        DubStatus.Dubbed
+                    ) else EnumSet.of(DubStatus.Subbed),
+                )
+            }
+        val infodoc = doc.selectFirst("div.info .meta .col1").text()
+        val tvType = if (infodoc.contains("Movie")) TvType.AnimeMovie else TvType.Anime
+        val status =
+            if (infodoc.contains("Completed")) ShowStatus.Completed
+            else if (infodoc.contains("Airing")) ShowStatus.Ongoing
+            else null
+        val tags = doc.select("div.info .meta .col1 div:contains(Genre) a").map { it.text() }
+        return newAnimeLoadResponse(title, url, tvType) {
             posterUrl = poster
             addEpisodes(DubStatus.Subbed, episodes)
             plot = description
+            this.recommendations = recommendations
+            showStatus = status
+            this.tags = tags
         }
     }
 
@@ -234,10 +259,8 @@ class NineAnimeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val urlclean = data.substringAfter("watch/")
-        val regexID = Regex("(\\.[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
-        val animeid = regexID.find(urlclean)?.value?.replace(".", "") ?: return false
-
+        val document = app.get(data).document
+        val animeid = document.selectFirst("div.player-wrapper.watchpage").attr("data-id") ?: return false
         val animeidencoded = encode(getVrf(animeid) ?: return false)
 
         Jsoup.parse(
