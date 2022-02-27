@@ -125,9 +125,9 @@ class NineAnimeProvider : MainAPI() {
 
     private fun ze(input: String): String {
         val t = if (input.replace("""[\t\n\f\r]""".toRegex(), "").length % 4 == 0) {
-            input.replace("""/==?$/""".toRegex(), "")
+            input.replace(Regex("""/==?$/"""), "")
         } else input
-        if (t.length % 4 == 1 || t.contains("""[^+/0-9A-Za-z]""".toRegex())) throw Exception("bad input")
+        if (t.length % 4 == 1 || t.contains(Regex("""[^+/0-9A-Za-z]"""))) throw Exception("bad input")
         var i: Int
         var r = ""
         var e = 0

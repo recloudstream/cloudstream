@@ -102,7 +102,7 @@ class CS3IPlayer : IPlayer {
         playerPositionChanged: ((Pair<Long, Long>) -> Unit)?,
         nextEpisode: (() -> Unit)?,
         prevEpisode: (() -> Unit)?,
-        subtitlesUpdates: (() -> Unit)?
+        subtitlesUpdates: (() -> Unit)?,
     ) {
         this.playerUpdated = playerUpdated
         this.updateIsPlaying = updateIsPlaying
@@ -218,7 +218,7 @@ class CS3IPlayer : IPlayer {
         } ?: false
     }
 
-    var currentSubtitleOffset : Long = 0
+    var currentSubtitleOffset: Long = 0
 
     override fun setSubtitleOffset(offset: Long) {
         currentSubtitleOffset = offset
@@ -419,7 +419,7 @@ class CS3IPlayer : IPlayer {
             currentWindow: Int,
             playbackPosition: Long,
             playBackSpeed: Float,
-            subtitleOffset : Long,
+            subtitleOffset: Long,
             playWhenReady: Boolean = true,
             cacheFactory: CacheDataSource.Factory? = null,
             trackSelector: TrackSelector? = null,
@@ -617,10 +617,7 @@ class CS3IPlayer : IPlayer {
                 }
 
                 //override fun onCues(cues: MutableList<Cue>) {
-                //    cues.firstOrNull()?.text?.let {
-                //        println("CUE: $it")
-                //    }
-                //    super.onCues(cues)
+                //    super.onCues(cues.map { cue -> cue.buildUpon().setText("Hello world").setSize(Cue.DIMEN_UNSET).build() })
                 //}
 
                 override fun onRenderedFirstFrame() {

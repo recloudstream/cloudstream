@@ -54,7 +54,7 @@ class WcoProvider : MainAPI() {
                     val title = nameHeader.text().replace(" (Dub)", "")
                     val href =
                         nameHeader.attr("href").replace("/watch/", "/anime/")
-                            .replace("-episode-.*".toRegex(), "/")
+                            .replace(Regex("-episode-.*"), "/")
                     val isDub =
                         filmPoster.selectFirst("> div.film-poster-quality")?.text()?.contains("DUB")
                             ?: false

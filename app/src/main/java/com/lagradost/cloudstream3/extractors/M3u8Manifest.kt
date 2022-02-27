@@ -5,7 +5,7 @@ object M3u8Manifest {
     // URL = first, QUALITY = second
     fun extractLinks(m3u8Data: String): ArrayList<Pair<String, String>> {
         val data: ArrayList<Pair<String, String>> = ArrayList()
-        "\"(.*?)\":\"(.*?)\"".toRegex().findAll(m3u8Data).forEach {
+        Regex("\"(.*?)\":\"(.*?)\"").findAll(m3u8Data).forEach {
             var quality = it.groupValues[1].replace("auto", "Auto")
             if (quality != "Auto" && !quality.endsWith('p')) quality += "p"
             val url = it.groupValues[2]

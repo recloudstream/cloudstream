@@ -39,9 +39,9 @@ class HDMProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         if (data == "") return false
-        val slug = ".*/(.*?)\\.mp4".toRegex().find(data)?.groupValues?.get(1) ?: return false
+        val slug = Regex(".*/(.*?)\\.mp4").find(data)?.groupValues?.get(1) ?: return false
         val response = app.get(data).text
-        val key = "playlist\\.m3u8(.*?)\"".toRegex().find(response)?.groupValues?.get(1) ?: return false
+        val key = Regex("playlist\\.m3u8(.*?)\"").find(response)?.groupValues?.get(1) ?: return false
         callback.invoke(
             ExtractorLink(
                 this.name,

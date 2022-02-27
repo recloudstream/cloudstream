@@ -308,7 +308,7 @@ open class NonFinalTextRenderer @JvmOverloads constructor(
     }
 
     private fun invokeUpdateOutputInternal(cues: List<Cue>) {
-        output.onCues(cues)
+        output.onCues(cues.map { cue -> cue.buildUpon().setSize(Cue.DIMEN_UNSET).build() }) // this fixes https://github.com/LagradOst/CloudStream-3/issues/717
     }
 
     /**

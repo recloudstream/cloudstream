@@ -284,7 +284,7 @@ class TenshiProvider : MainAPI() {
                 document.selectFirst("span.value > span[title=\"Japanese\"]")?.parent()?.text()
                     ?.trim()
 
-            val pattern = "(\\d{4})".toRegex()
+            val pattern = Regex("(\\d{4})")
             val yearText = document.selectFirst("li.release-date .value").text()
             year = pattern.find(yearText)?.groupValues?.get(1)?.toIntOrNull()
 

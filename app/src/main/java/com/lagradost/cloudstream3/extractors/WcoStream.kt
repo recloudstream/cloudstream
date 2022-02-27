@@ -20,8 +20,8 @@ open class WcoStream : ExtractorApi() {
         val baseUrl = url.split("/e/")[0]
 
         val html = app.get(url, headers = mapOf("Referer" to "https://wcostream.cc/")).text
-        val (Id) = ("/e/(.*?)?domain".toRegex().find(url)?.destructured ?: Regex("""/e/(.*)""").find(url)?.destructured) ?: return emptyList()
-        val (skey) = """skey\s=\s['"](.*?)['"];""".toRegex().find(html)?.destructured ?: return emptyList()
+        val (Id) = (Regex("/e/(.*?)?domain").find(url)?.destructured ?: Regex("""/e/(.*)""").find(url)?.destructured) ?: return emptyList()
+        val (skey) = Regex("""skey\s=\s['"](.*?)['"];""").find(html)?.destructured ?: return emptyList()
 
         val apiLink = "$baseUrl/info/$Id?domain=wcostream.cc&skey=$skey"
         val referrer = "$baseUrl/e/$Id?domain=wcostream.cc"
