@@ -66,10 +66,6 @@ object APIHolder {
 
         AsianLoadProvider(),
 
-        SflixProvider("https://sflix.to", "Sflix"),
-        SflixProvider("https://dopebox.to", "Dopebox"),
-        SflixProvider("https://solarmovie.pe", "Solarmovie"),
-
         BflixProvider("https://bflix.ru","Bflix"),
         BflixProvider("https://fmovies.to","Fmovies.to"),
         BflixProvider("https://sflix.pro","Sflix.pro"),
@@ -102,6 +98,10 @@ object APIHolder {
     private val backwardsCompatibleProviders = arrayListOf(
         KawaiifuProvider(), // removed due to cloudflare
         HDMProvider(),// removed due to cloudflare
+
+        SflixProvider("https://sflix.to", "Sflix"),
+        SflixProvider("https://dopebox.to", "Dopebox"),
+        SflixProvider("https://solarmovie.pe", "Solarmovie"),
     )
 
     fun getApiFromName(apiName: String?): MainAPI {
