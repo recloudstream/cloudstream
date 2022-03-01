@@ -156,7 +156,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     MimeTypes.APPLICATION_SUBRIP,
                 )
             )
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             logError(e)
         }
     }
@@ -480,12 +480,12 @@ class GeneratorPlayer : FullScreenPlayer() {
     @SuppressLint("SetTextI18n")
     fun setTitle() {
         var headerName: String? = null
-        var subName : String? = null
+        var subName: String? = null
         var episode: Int? = null
         var season: Int? = null
         var tvType: TvType? = null
 
-        var isFiller : Boolean? = null
+        var isFiller: Boolean? = null
         when (val meta = currentMeta) {
             is ResultEpisode -> {
                 isFiller = meta.isFiller
@@ -513,7 +513,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                             " - ${getString(R.string.episode)} $episode"
                         else
                             " \"${getString(R.string.season_short)}${season}:${getString(R.string.episode_short)}${episode}\""
-                    else "") + if(subName.isNullOrBlank()) "" else " - $subName"
+                    else "") + if (subName.isNullOrBlank() || subName == headerName) "" else " - $subName"
         } else {
             ""
         }
