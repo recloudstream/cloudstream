@@ -36,7 +36,6 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.internal.closeQuietly
@@ -1346,7 +1345,18 @@ object VideoDownloadManager {
         tryResume: Boolean = false,
     ): Int {
         val name =
-            sanitizeFilename(ep.name ?: "${context.getString(R.string.episode)} ${ep.episode}")
+            // kinda ugly ik
+            sanitizeFilename(
+                if (ep.name == null) {
+                    "${context.getString(R.string.episode)} ${ep.episode}"
+                } else {
+                    if (ep.episode != null) {
+                        "${context.getString(R.string.episode)} ${ep.episode} - ${ep.name}"
+                    } else {
+                        ep.name
+                    }
+                }
+            )
 
         // Make sure this is cancelled when download is done or cancelled.
         val extractorJob = ioSafe {

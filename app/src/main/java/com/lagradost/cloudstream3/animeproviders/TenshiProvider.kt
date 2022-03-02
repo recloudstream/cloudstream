@@ -245,9 +245,10 @@ class TenshiProvider : MainAPI() {
         }
 
         val episodes = ArrayList(episodeNodes.map {
+            val title = it.selectFirst(".episode-title")?.text()?.trim()
             AnimeEpisode(
                 it.attr("href"),
-                it.selectFirst(".episode-title")?.text()?.trim(),
+                if(title == "No Title") null else title,
                 it.selectFirst("img")?.attr("src"),
                 dateParser(it?.selectFirst(".episode-date")?.text()?.trim()),
                 null,
@@ -342,7 +343,7 @@ class TenshiProvider : MainAPI() {
                         headers = getHeaders(
                             mapOf(),
                             null,
-                            ddosGuardKiller?.savedCookiesMap?.get(URI(this.mainUrl).host) ?: mapOf()
+                            ddosGuardKiller.savedCookiesMap.get(URI(this.mainUrl).host) ?: mapOf()
                         ).toMap()
                     )
                 })

@@ -44,7 +44,6 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
                         ::handleNotification
                     )
                     awaitDownload(info.ep.id)
-
                 } else if (pkg != null) {
                     downloadFromResume(applicationContext, pkg, ::handleNotification)
                     awaitDownload(pkg.item.ep.id)
@@ -68,9 +67,9 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
 
     private suspend fun awaitDownload(id: Int) {
         var isDone = false
-        val listener = { data: Pair<Int, VideoDownloadManager.DownloadType> ->
-            if (id == data.first) {
-                when (data.second) {
+        val listener = { (localId, localType): Pair<Int, VideoDownloadManager.DownloadType> ->
+            if (id == localId) {
+                when (localType) {
                     VideoDownloadManager.DownloadType.IsDone, VideoDownloadManager.DownloadType.IsFailed, VideoDownloadManager.DownloadType.IsStopped -> {
                         isDone = true
                     }
