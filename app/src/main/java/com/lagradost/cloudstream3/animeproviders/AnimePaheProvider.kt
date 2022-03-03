@@ -140,14 +140,14 @@ class AnimePaheProvider : MainAPI() {
     }
 
 
-    override suspend fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/api?m=search&l=8&q=$query"
         val headers = mapOf("referer" to "$mainUrl/")
 
         val req = app.get(url, headers = headers).text
         val data = req.let { mapper.readValue<AnimePaheSearch>(it) }
 
-        return ArrayList(data.data.map {
+        return data.data.map {
             AnimeSearchResponse(
                 it.title,
                 "https://pahe.win/a/${it.id}?slug=${it.title}",
@@ -160,7 +160,7 @@ class AnimePaheProvider : MainAPI() {
                 null,
                 it.episodes
             )
-        })
+        }
     }
 
     private data class AnimeData(

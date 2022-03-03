@@ -191,7 +191,7 @@ class TenshiProvider : MainAPI() {
 //        return returnValue
 //    }
 
-    override suspend fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/anime"
         var document = app.get(
             url,
@@ -203,10 +203,10 @@ class TenshiProvider : MainAPI() {
         val returnValue = parseSearchPage(document).toMutableList()
 
         while (!document.select("""a.page-link[rel="next"]""").isEmpty()) {
-            val link = document.select("""a.page-link[rel="next"]""")
-            if (link != null && !link.isEmpty()) {
+            val link = document.selectFirst("""a.page-link[rel="next"]""")?.attr("href")
+            if (!link.isNullOrBlank()) {
                 document = app.get(
-                    link[0].attr("href"),
+                    link,
                     cookies = mapOf("loop-view" to "thumb"),
                     interceptor = ddosGuardKiller
                 ).document
@@ -216,7 +216,7 @@ class TenshiProvider : MainAPI() {
             }
         }
 
-        return ArrayList(returnValue)
+        return returnValue
     }
 
     override suspend fun load(url: String): LoadResponse {

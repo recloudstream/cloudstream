@@ -5,7 +5,6 @@ import com.lagradost.cloudstream3.extractors.FEmbed
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class DoramasYTProvider : MainAPI() {
@@ -99,25 +98,23 @@ class DoramasYTProvider : MainAPI() {
         return HomePageResponse(items)
     }
 
-    override suspend fun search(query: String): ArrayList<SearchResponse> {
-        val search =
-            app.get("$mainUrl/buscar?q=$query", timeout = 120).document.select(".col-6").map {
-                val title = it.selectFirst(".animedtls p").text()
-                val href = it.selectFirst("a").attr("href")
-                val image = it.selectFirst(".animes img").attr("src")
-                AnimeSearchResponse(
-                    title,
-                    href,
-                    this.name,
-                    TvType.Anime,
-                    image,
-                    null,
-                    if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
-                        DubStatus.Dubbed
-                    ) else EnumSet.of(DubStatus.Subbed),
-                )
-            }
-        return ArrayList(search)
+    override suspend fun search(query: String): List<SearchResponse> {
+        return app.get("$mainUrl/buscar?q=$query", timeout = 120).document.select(".col-6").map {
+            val title = it.selectFirst(".animedtls p").text()
+            val href = it.selectFirst("a").attr("href")
+            val image = it.selectFirst(".animes img").attr("src")
+            AnimeSearchResponse(
+                title,
+                href,
+                this.name,
+                TvType.Anime,
+                image,
+                null,
+                if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
+                    DubStatus.Dubbed
+                ) else EnumSet.of(DubStatus.Subbed),
+            )
+        }
     }
 
     override suspend fun load(url: String): LoadResponse {

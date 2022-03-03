@@ -19,17 +19,15 @@ class HDMProvider : MainAPI() {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         val items = document.select("div.col-md-2 > article > a")
-        if (items.isEmpty()) return ArrayList()
-        val returnValue = ArrayList<SearchResponse>()
-        for (i in items) {
+        if (items.isEmpty()) return emptyList()
+
+        return items.map { i ->
             val href = i.attr("href")
             val data = i.selectFirst("> div.item")
             val img = data.selectFirst("> img").attr("src")
             val name = data.selectFirst("> div.movie-details").text()
-            returnValue.add(MovieSearchResponse(name, href, this.name, TvType.Movie, img, null))
+            MovieSearchResponse(name, href, this.name, TvType.Movie, img, null)
         }
-
-        return returnValue
     }
 
     override suspend fun loadLinks(
@@ -72,7 +70,7 @@ class HDMProvider : MainAPI() {
     }
 
     override suspend fun getMainPage(): HomePageResponse {
-        val html = app.get("$mainUrl", timeout = 25).text
+        val html = app.get(mainUrl, timeout = 25).text
         val document = Jsoup.parse(html)
         val all = ArrayList<HomePageList>()
 

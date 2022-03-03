@@ -37,29 +37,25 @@ class AllMoviesForYouProvider : MainAPI() {
         val document = app.get(url).document
 
         val items = document.select("ul.MovieList > li > article > a")
-        val returnValue = ArrayList<SearchResponse>()
-        for (item in items) {
+        return items.map { item ->
             val href = item.attr("href")
             val title = item.selectFirst("> h2.Title").text()
             val img = fixUrl(item.selectFirst("> div.Image > figure > img").attr("data-src"))
             val type = getType(href)
             if (type == TvType.Movie) {
-                returnValue.add(MovieSearchResponse(title, href, this.name, type, img, null))
-            } else if (type == TvType.TvSeries) {
-                returnValue.add(
-                    TvSeriesSearchResponse(
-                        title,
-                        href,
-                        this.name,
-                        type,
-                        img,
-                        null,
-                        null
-                    )
+                MovieSearchResponse(title, href, this.name, type, img, null)
+            } else {
+                TvSeriesSearchResponse(
+                    title,
+                    href,
+                    this.name,
+                    type,
+                    img,
+                    null,
+                    null
                 )
             }
         }
-        return returnValue
     }
 
     private fun getLink(document: Document): List<String>? {

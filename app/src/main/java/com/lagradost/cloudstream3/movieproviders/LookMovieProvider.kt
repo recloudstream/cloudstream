@@ -110,36 +110,31 @@ class LookMovieProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        suspend fun search(query: String, isMovie: Boolean): ArrayList<SearchResponse> {
+        suspend fun search(query: String, isMovie: Boolean): List<SearchResponse> {
             val url = "$mainUrl/${if (isMovie) "movies" else "shows"}/search/?q=$query"
             val response = app.get(url).text
             val document = Jsoup.parse(response)
 
             val items = document.select("div.flex-wrap-movielist > div.movie-item-style-1")
-            val returnValue = ArrayList<SearchResponse>()
-            items.forEach { item ->
+            return items.map { item ->
                 val titleHolder = item.selectFirst("> div.mv-item-infor > h6 > a")
                 val href = fixUrl(titleHolder.attr("href"))
                 val name = titleHolder.text()
                 val posterHolder = item.selectFirst("> div.image__placeholder > a")
                 val poster = posterHolder.selectFirst("> img")?.attr("data-src")
                 val year = posterHolder.selectFirst("> p.year")?.text()?.toIntOrNull()
-
-                returnValue.add(
-                    if (isMovie) {
-                        MovieSearchResponse(
-                            name, href, this.name, TvType.Movie, poster, year
-                        )
-                    } else
-                        TvSeriesSearchResponse(
-                            name, href, this.name, TvType.TvSeries, poster, year, null
-                        )
-                )
+                if (isMovie) {
+                    MovieSearchResponse(
+                        name, href, this.name, TvType.Movie, poster, year
+                    )
+                } else
+                    TvSeriesSearchResponse(
+                        name, href, this.name, TvType.TvSeries, poster, year, null
+                    )
             }
-            return returnValue
         }
 
-        val movieList = search(query, true)
+        val movieList = search(query, true).toMutableList()
         val seriesList = search(query, false)
         movieList.addAll(seriesList)
         return movieList

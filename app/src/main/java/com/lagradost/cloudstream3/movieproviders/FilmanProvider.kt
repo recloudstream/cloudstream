@@ -25,13 +25,12 @@ class FilmanProvider : MainAPI() {
         val categories = ArrayList<HomePageList>()
         for (l in lists) {
             val title = l.parent().select("h3").text()
-            val items = ArrayList<SearchResponse>()
-            for (i in l.select(".poster")) {
+            val items = l.select(".poster").map { i ->
                 val name = i.select("a[href]").attr("title")
                 val href = i.select("a[href]").attr("href")
                 val poster = i.select("img[src]").attr("src")
                 val year = l.select(".film_year").text().toIntOrNull()
-                val returnValue = if (l.hasClass("series-list")) TvSeriesSearchResponse(
+                if (l.hasClass("series-list")) TvSeriesSearchResponse(
                     name,
                     href,
                     this.name,
@@ -47,7 +46,6 @@ class FilmanProvider : MainAPI() {
                     poster,
                     year
                 )
-                items.add(returnValue)
             }
             categories.add(HomePageList(title, items))
         }
@@ -62,29 +60,25 @@ class FilmanProvider : MainAPI() {
         val movies = lists[1].select(".item")
         val series = lists[3].select(".item")
         if (movies.isEmpty() && series.isEmpty()) return ArrayList()
-        fun getVideos(type: TvType, items: Elements): ArrayList<SearchResponse> {
-            val returnValue = ArrayList<SearchResponse>()
-            for (i in items) {
+        fun getVideos(type: TvType, items: Elements): List<SearchResponse> {
+            return items.map { i ->
                 val href = i.attr("href")
                 val img = i.selectFirst("> img").attr("src").replace("/thumb/", "/big/")
                 val name = i.selectFirst(".title").text()
                 if (type === TvType.TvSeries) {
-                    returnValue.add(
-                        TvSeriesSearchResponse(
-                            name,
-                            href,
-                            this.name,
-                            type,
-                            img,
-                            null,
-                            null
-                        )
+                    TvSeriesSearchResponse(
+                        name,
+                        href,
+                        this.name,
+                        type,
+                        img,
+                        null,
+                        null
                     )
                 } else {
-                    returnValue.add(MovieSearchResponse(name, href, this.name, type, img, null))
+                    MovieSearchResponse(name, href, this.name, type, img, null)
                 }
             }
-            return returnValue
         }
         return getVideos(TvType.Movie, movies) + getVideos(TvType.TvSeries, series)
     }
@@ -102,22 +96,17 @@ class FilmanProvider : MainAPI() {
             return MovieLoadResponse(title, url, name, TvType.Movie, data, posterUrl, year, plot)
         }
         title = document.selectFirst(".info").parent().select("h2").text()
-        val episodes = ArrayList<TvSeriesEpisode>()
-        for (episode in episodesElements) {
+        val episodes = episodesElements.mapNotNull { episode ->
             val e = episode.text()
-            val regex = Regex("""\[s(\d{1,3})e(\d{1,3})]""").find(e)
-            if (regex != null) {
-                val eid = regex.groups
-                episodes.add(
-                    TvSeriesEpisode(
-                        e.split("]")[1].trim(),
-                        eid[1]?.value?.toInt(),
-                        eid[2]?.value?.toInt(),
-                        episode.attr("href"),
-                    )
-                )
-            }
-        }
+            val regex = Regex("""\[s(\d{1,3})e(\d{1,3})]""").find(e) ?: return@mapNotNull null
+            val eid = regex.groups
+            TvSeriesEpisode(
+                e.split("]")[1].trim(),
+                eid[1]?.value?.toInt(),
+                eid[2]?.value?.toInt(),
+                episode.attr("href"),
+            )
+        }.toMutableList()
         episodes.sortBy { (it.season?.times(10000) ?: 0) + (it.episode ?: 0) }
         return TvSeriesLoadResponse(
             title,

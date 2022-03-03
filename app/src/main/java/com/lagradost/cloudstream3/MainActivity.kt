@@ -6,10 +6,17 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import android.view.WindowManager
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
@@ -270,6 +277,31 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    private fun NavDestination.matchDestination(@IdRes destId: Int): Boolean =
+        hierarchy.any { it.id == destId }
+
+    private fun onNavDestinationSelected(item: MenuItem, navController: NavController): Boolean {
+        val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
+            .setEnterAnim(R.anim.enter_anim)
+            .setExitAnim(R.anim.exit_anim)
+            .setPopEnterAnim(R.anim.pop_enter)
+            .setPopExitAnim(R.anim.pop_exit)
+        if (item.order and Menu.CATEGORY_SECONDARY == 0) {
+            builder.setPopUpTo(
+                navController.graph.findStartDestination().id,
+                inclusive = false,
+                saveState = true
+            )
+        }
+        val options = builder.build()
+        return try {
+            navController.navigate(item.itemId, null, options)
+            navController.currentDestination?.matchDestination(item.itemId) == true
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // init accounts
         for (api in OAuth2accountApis) {
@@ -315,9 +347,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         nav_view?.setupWithNavController(navController)
         val navRail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
         navRail?.setupWithNavController(navController)
+
+        navRail?.setOnItemSelectedListener { item ->
+            onNavDestinationSelected(
+                item,
+                navController
+            )
+        }
+        nav_view?.setOnItemSelectedListener { item ->
+            onNavDestinationSelected(
+                item,
+                navController
+            )
+        }
         navController.addOnDestinationChangedListener { _, destination, _ ->
             updateNavBar(destination)
         }
+
         loadCache()
 
         /*nav_view.setOnNavigationItemSelectedListener { item ->

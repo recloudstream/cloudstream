@@ -1,74 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/mobile_navigation"
-            app:startDestination="@+id/navigation_home">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/mobile_navigation"
+        app:startDestination="@+id/navigation_home">
 
-    <action android:id="@+id/global_to_navigation_results"
+    <action
+            android:id="@+id/global_to_navigation_results"
             app:destination="@id/navigation_results"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim"
-    >
+            app:popExitAnim="@anim/exit_anim">
         <argument
                 android:name="url"
-                app:argType="string"/>
+                app:argType="string" />
         <argument
                 android:name="apiName"
-                app:argType="string"
-        />
+                app:argType="string" />
         <argument
                 android:name="startAction"
                 app:argType="integer"
-                android:defaultValue="0"
-        />
+                android:defaultValue="0" />
         <argument
                 android:name="startValue"
                 app:argType="integer"
-                android:defaultValue="0"
-        />
+                android:defaultValue="0" />
         <argument
                 android:name="restart"
                 app:argType="boolean"
-                android:defaultValue="false"
-        />
+                android:defaultValue="false" />
     </action>
-    <action android:id="@+id/global_to_navigation_player"
+    <action
+            android:id="@+id/global_to_navigation_player"
             app:destination="@id/navigation_player"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim"
-    >
+            app:popExitAnim="@anim/exit_anim">
         <argument
                 android:name="data"
                 app:argType="string"
-                android:defaultValue="@null"
-        />
+                android:defaultValue="@null" />
         <argument
                 android:name="uriData"
                 app:argType="string"
-                android:defaultValue="@null"
-        />
+                android:defaultValue="@null" />
         <argument
                 android:name="resumePosition"
                 app:argType="long"
-                android:defaultValue="0L"
-        />
+                android:defaultValue="0L" />
     </action>
 
-    <action android:id="@+id/global_to_navigation_home"
+    <action
+            android:id="@+id/global_to_navigation_home"
             app:destination="@id/navigation_home"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim"
-    >
-    </action>
+            app:popExitAnim="@anim/exit_anim" />
 
-    <action android:id="@+id/global_to_navigation_subtitles"
+    <action
+            android:id="@+id/global_to_navigation_subtitles"
             app:destination="@id/navigation_subtitles"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
@@ -77,11 +70,11 @@
         <argument
                 android:name="hide"
                 app:argType="boolean"
-                android:defaultValue="true"
-        />
+                android:defaultValue="true" />
     </action>
 
-    <action android:id="@+id/global_to_navigation_chrome_subtitles"
+    <action
+            android:id="@+id/global_to_navigation_chrome_subtitles"
             app:destination="@id/navigation_chrome_subtitles"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
@@ -90,11 +83,11 @@
         <argument
                 android:name="hide"
                 app:argType="boolean"
-                android:defaultValue="true"
-                />
+                android:defaultValue="true" />
     </action>
 
-    <action android:id="@+id/global_to_navigation_quick_search"
+    <action
+            android:id="@+id/global_to_navigation_quick_search"
             app:destination="@id/navigation_quick_search"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
@@ -103,109 +96,143 @@
         <argument
                 android:name="mainapi"
                 app:argType="boolean"
-                android:defaultValue="true"
-
-        />
+                android:defaultValue="true" />
         <argument
-        android:name="autosearch"
-        app:argType="string"
-        android:defaultValue="@null"
-        />
+                android:name="autosearch"
+                app:argType="string"
+                android:defaultValue="@null" />
     </action>
 
-    <action android:id="@+id/global_to_navigation_settings"
+    <action
+            android:id="@+id/global_to_navigation_settings"
             app:destination="@id/navigation_settings"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim"
-    >
-    </action>
+            app:popExitAnim="@anim/exit_anim" />
 
-    <action android:id="@+id/global_to_navigation_downloads"
+    <action
+            android:id="@+id/global_to_navigation_downloads"
             app:destination="@id/navigation_downloads"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim"
-    >
-    </action>
+            app:popExitAnim="@anim/exit_anim" />
 
-    <action android:id="@+id/global_to_navigation_search"
+    <action
+            android:id="@+id/global_to_navigation_search"
             app:destination="@id/navigation_search"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim"
-    >
-    </action>
+            app:popExitAnim="@anim/exit_anim" />
 
     <fragment
             android:id="@+id/navigation_home"
             android:name="com.lagradost.cloudstream3.ui.home.HomeFragment"
             android:label="@string/title_home"
-            tools:layout="@layout/fragment_home"/>
+            tools:layout="@layout/fragment_home"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
 
     <fragment
             android:id="@+id/navigation_search"
             android:name="com.lagradost.cloudstream3.ui.search.SearchFragment"
             android:label="@string/title_search"
-            tools:layout="@layout/fragment_search"/>
+            tools:layout="@layout/fragment_search"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
 
     <fragment
             android:id="@+id/navigation_downloads"
             android:name="com.lagradost.cloudstream3.ui.download.DownloadFragment"
             android:label="@string/title_downloads"
-            tools:layout="@layout/fragment_downloads">
+            tools:layout="@layout/fragment_downloads"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim">
 
-        <action android:id="@+id/action_navigation_downloads_to_navigation_download_child"
+        <action
+                android:id="@+id/action_navigation_downloads_to_navigation_download_child"
                 app:destination="@id/navigation_download_child">
             <argument
                     android:name="name"
-                    app:argType="string"/>
+                    app:argType="string" />
             <argument
                     android:name="folder"
-                    app:argType="string"
-            />
+                    app:argType="string" />
         </action>
     </fragment>
     <fragment
             android:id="@+id/navigation_settings"
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.settings.SettingsFragment"
-            android:label="@string/title_settings"/>
+            android:label="@string/title_settings"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
 
     <fragment
             android:id="@+id/navigation_subtitles"
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment"
-            android:label="@string/subtitles_settings"/>
+            android:label="@string/subtitles_settings"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
 
     <fragment
             android:id="@+id/navigation_chrome_subtitles"
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment"
-            android:label="@string/chromecast_subtitles_settings"/>
+            android:label="@string/chromecast_subtitles_settings"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
 
     <fragment
             android:id="@+id/navigation_quick_search"
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment"
-            android:label="@string/search"/>
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim"
+            android:label="@string/search" />
 
     <fragment
             android:id="@+id/navigation_download_child"
             android:layout_height="match_parent"
             android:name="com.lagradost.cloudstream3.ui.download.DownloadChildFragment"
-            android:label="@string/title_settings"/>
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim"
+            android:label="@string/title_settings" />
 
     <fragment
             android:id="@+id/navigation_results"
             android:layout_height="match_parent"
-            android:name="com.lagradost.cloudstream3.ui.result.ResultFragment"/>
+            android:name="com.lagradost.cloudstream3.ui.result.ResultFragment"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
 
     <fragment
             android:id="@+id/navigation_player"
             android:layout_height="match_parent"
-            android:name="com.lagradost.cloudstream3.ui.player.GeneratorPlayer"/>
+            android:name="com.lagradost.cloudstream3.ui.player.GeneratorPlayer"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
 </navigation>

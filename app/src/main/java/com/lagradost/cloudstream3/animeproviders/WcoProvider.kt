@@ -79,11 +79,10 @@ class WcoProvider : MainAPI() {
         return "$mainUrl/anime/$aniId"
     }
 
-    private fun parseSearchPage(soup: Document): ArrayList<SearchResponse> {
+    private fun parseSearchPage(soup: Document): List<SearchResponse> {
         val items = soup.select(".film_list-wrap > .flw-item")
         if (items.isEmpty()) return ArrayList()
-        val returnValue = ArrayList<SearchResponse>()
-        for (i in items) {
+        return items.map { i ->
             val href = fixAnimeLink(i.selectFirst("a").attr("href"))
             val img = fixUrl(i.selectFirst("img").attr("data-src"))
             val title = i.selectFirst("img").attr("title")
@@ -94,25 +93,22 @@ class WcoProvider : MainAPI() {
             val type =
                 i.selectFirst(".film-detail.film-detail-fix > div > span:nth-child(3)").text()
 
-            returnValue.add(
-                if (getType(type) == TvType.AnimeMovie) {
-                    MovieSearchResponse(
-                        title, href, this.name, TvType.AnimeMovie, img, year
-                    )
-                } else {
-                    AnimeSearchResponse(
-                        title,
-                        href,
-                        this.name,
-                        TvType.Anime,
-                        img,
-                        year,
-                        EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed),
-                    )
-                }
-            )
+            if (getType(type) == TvType.AnimeMovie) {
+                MovieSearchResponse(
+                    title, href, this.name, TvType.AnimeMovie, img, year
+                )
+            } else {
+                AnimeSearchResponse(
+                    title,
+                    href,
+                    this.name,
+                    TvType.Anime,
+                    img,
+                    year,
+                    EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed),
+                )
+            }
         }
-        return returnValue
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -120,7 +116,7 @@ class WcoProvider : MainAPI() {
         val response =
             app.get(url, params = mapOf("keyword" to query))
         var document = Jsoup.parse(response.text)
-        val returnValue = parseSearchPage(document)
+        val returnValue = parseSearchPage(document).toMutableList()
 
         while (!document.select(".pagination").isEmpty()) {
             val link = document.select("a.page-link[rel=\"next\"]")
@@ -136,8 +132,6 @@ class WcoProvider : MainAPI() {
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse> {
-        val returnValue: ArrayList<SearchResponse> = ArrayList()
-
         val response = JSONObject(
             app.post(
                 "https://wcostream.cc/ajax/search",
@@ -146,35 +140,30 @@ class WcoProvider : MainAPI() {
         ).getString("html") // I won't make a dataclass for this shit
         val document = Jsoup.parse(response)
 
-        document.select("a.nav-item").forEach {
-            val title = it.selectFirst("img")?.attr("title").toString()
-            val img = it?.selectFirst("img")?.attr("src")
-            val href = it?.attr("href").toString()
+        return document.select("a.nav-item").mapNotNull {
+            val title = it.selectFirst("img")?.attr("title") ?: return@mapNotNull null
+            val img = it?.selectFirst("img")?.attr("src") ?: return@mapNotNull null
+            val href = it?.attr("href") ?: return@mapNotNull null
             val isDub = title.contains("(Dub)")
-            val filmInfo = it?.selectFirst(".film-infor")
+            val filmInfo = it.selectFirst(".film-infor")
             val year = filmInfo?.select("span")?.get(0)?.text()?.toIntOrNull()
             val type = filmInfo?.select("span")?.get(1)?.text().toString()
-            if (title != "null") {
-                returnValue.add(
-                    if (getType(type) == TvType.AnimeMovie) {
-                        MovieSearchResponse(
-                            title, href, this.name, TvType.AnimeMovie, img, year
-                        )
-                    } else {
-                        AnimeSearchResponse(
-                            title,
-                            href,
-                            this.name,
-                            TvType.Anime,
-                            img,
-                            year,
-                            EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed),
-                        )
-                    }
+            if (getType(type) == TvType.AnimeMovie) {
+                MovieSearchResponse(
+                    title, href, this.name, TvType.AnimeMovie, img, year
+                )
+            } else {
+                AnimeSearchResponse(
+                    title,
+                    href,
+                    this.name,
+                    TvType.Anime,
+                    img,
+                    year,
+                    EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed),
                 )
             }
         }
-        return returnValue
     }
 
     override suspend fun load(url: String): LoadResponse {

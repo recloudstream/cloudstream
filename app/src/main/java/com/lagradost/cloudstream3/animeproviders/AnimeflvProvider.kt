@@ -4,7 +4,6 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AnimeflvnetProvider : MainAPI() {
     companion object {
@@ -63,11 +62,10 @@ class AnimeflvnetProvider : MainAPI() {
         return HomePageResponse(items)
     }
 
-    override suspend fun search(query: String): ArrayList<SearchResponse> {
-
+    override suspend fun search(query: String): List<SearchResponse> {
         val url = "${mainUrl}/browse?q=${query}"
         val doc = app.get(url).document
-        val episodes = doc.select("ul.List-Animes li.Anime").map {
+        return doc.select("ul.List-Animes li.Anime").map {
             val title = it.selectFirst("h2.title").text()
             val href = fixUrl(it.selectFirst("a").attr("href"))
             val image = it.selectFirst(".Image img").attr("src")
@@ -83,7 +81,6 @@ class AnimeflvnetProvider : MainAPI() {
                 ),
             )
         }
-        return ArrayList(episodes)
     }
 
     override suspend fun load(url: String): LoadResponse {

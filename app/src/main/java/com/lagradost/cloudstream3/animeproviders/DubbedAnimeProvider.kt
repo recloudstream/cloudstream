@@ -73,7 +73,10 @@ class DubbedAnimeProvider : MainAPI() {
         }
     }
 
-    private suspend fun parseDocument(url: String, trimEpisode: Boolean = false): List<SearchResponse> {
+    private suspend fun parseDocument(
+        url: String,
+        trimEpisode: Boolean = false
+    ): List<SearchResponse> {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         return document.select("a.grid__link").map {
@@ -131,31 +134,28 @@ class DubbedAnimeProvider : MainAPI() {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         val items = document.select("div.grid__item > a")
-        if (items.isEmpty()) return ArrayList()
-        val returnValue = ArrayList<SearchResponse>()
-        for (i in items) {
+        if (items.isEmpty()) return emptyList()
+        return items.map { i ->
             val href = fixUrl(i.attr("href"))
             val title = i.selectFirst("div.gridtitlek").text()
             val img = fixUrlNull(i.selectFirst("img.grid__img")?.attr("src"))
-            returnValue.add(
-                if (getIsMovie(href)) {
-                    MovieSearchResponse(
-                        title, href, this.name, TvType.AnimeMovie, img, null
-                    )
-                } else {
-                    AnimeSearchResponse(
-                        title,
-                        href,
-                        this.name,
-                        TvType.Anime,
-                        img,
-                        null,
-                        EnumSet.of(DubStatus.Dubbed),
-                    )
-                }
-            )
+
+            if (getIsMovie(href)) {
+                MovieSearchResponse(
+                    title, href, this.name, TvType.AnimeMovie, img, null
+                )
+            } else {
+                AnimeSearchResponse(
+                    title,
+                    href,
+                    this.name,
+                    TvType.Anime,
+                    img,
+                    null,
+                    EnumSet.of(DubStatus.Dubbed),
+                )
+            }
         }
-        return returnValue
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -164,33 +164,28 @@ class DubbedAnimeProvider : MainAPI() {
         val document = Jsoup.parse(response)
         val items = document.select("div.resultinner > a.resulta")
         if (items.isEmpty()) return ArrayList()
-        val returnValue = ArrayList<SearchResponse>()
-        for (i in items) {
+        return items.map { i ->
             val innerDiv = i.selectFirst("> div.result")
             val href = fixUrl(i.attr("href"))
             val img = fixUrl(innerDiv.selectFirst("> div.imgkz > img").attr("src"))
             val title = innerDiv.selectFirst("> div.titleresults").text()
 
-            returnValue.add(
-                if (getIsMovie(href)) {
-                    MovieSearchResponse(
-                        title, href, this.name, TvType.AnimeMovie, img, null
-                    )
-                } else {
-                    AnimeSearchResponse(
-                        title,
-                        href,
-                        this.name,
-                        TvType.Anime,
-                        img,
-                        null,
-                        EnumSet.of(DubStatus.Dubbed),
-                    )
-                }
-            )
+            if (getIsMovie(href)) {
+                MovieSearchResponse(
+                    title, href, this.name, TvType.AnimeMovie, img, null
+                )
+            } else {
+                AnimeSearchResponse(
+                    title,
+                    href,
+                    this.name,
+                    TvType.Anime,
+                    img,
+                    null,
+                    EnumSet.of(DubStatus.Dubbed),
+                )
+            }
         }
-
-        return returnValue
     }
 
     override suspend fun loadLinks(

@@ -13,11 +13,11 @@ class FrenchStreamProvider : MainAPI() {
     override val lang = "fr"
     override val supportedTypes = setOf(TvType.AnimeMovie, TvType.TvSeries, TvType.Movie)
 
-    override suspend fun search(query: String): ArrayList<SearchResponse> {
+    override suspend fun search(query: String): List<SearchResponse> {
         val link = "$mainUrl/?do=search&subaction=search&story=$query"
         val soup = app.post(link).document
 
-        return ArrayList(soup.select("div.short-in.nl").map { li ->
+        return soup.select("div.short-in.nl").map { li ->
             val href = fixUrl(li.selectFirst("a.short-poster").attr("href"))
             val poster = li.selectFirst("img")?.attr("src")
             val title = li.selectFirst("> a.short-poster").text().toString().replace(". ", "")
@@ -46,7 +46,7 @@ class FrenchStreamProvider : MainAPI() {
                     year,
                 )
             }
-        })
+        }
     }
 
     override suspend fun load(url: String): LoadResponse {
