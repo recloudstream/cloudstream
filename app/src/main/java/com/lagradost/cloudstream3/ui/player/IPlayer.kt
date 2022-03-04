@@ -95,6 +95,7 @@ interface IPlayer {
         data: ExtractorUri? = null,
         startPosition: Long? = null,
         subtitles : Set<SubtitleData>,
+        subtitle : SubtitleData?,
     )
 
     fun reloadPlayer(context: Context)

@@ -40,6 +40,7 @@ class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
     var cacheSize = 300L * 1024L * 1024L // 300 mb
+    private var simpleCacheSize = 100L * 1024L * 1024L
 
     private val seekActionTime = 30000L
 
@@ -143,13 +144,14 @@ class CS3IPlayer : IPlayer {
         link: ExtractorLink?,
         data: ExtractorUri?,
         startPosition: Long?,
-        subtitles: Set<SubtitleData>
+        subtitles: Set<SubtitleData>,
+        subtitle: SubtitleData?
     ) {
         Log.i(TAG, "loadPlayer")
         if (sameEpisode) {
             saveData()
         } else {
-            currentSubtitles = null
+            currentSubtitles = subtitle
             playbackPosition = 0
         }
 
@@ -420,6 +422,7 @@ class CS3IPlayer : IPlayer {
             playbackPosition: Long,
             playBackSpeed: Float,
             subtitleOffset: Long,
+            cacheSize: Long,
             playWhenReady: Boolean = true,
             cacheFactory: CacheDataSource.Factory? = null,
             trackSelector: TrackSelector? = null,
@@ -446,6 +449,16 @@ class CS3IPlayer : IPlayer {
                         }.toTypedArray()
                     }
                     .setTrackSelector(trackSelector ?: getTrackSelector(context))
+                    .setLoadControl(
+                        DefaultLoadControl.Builder()
+                            .setTargetBufferBytes(if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt())
+                            .setBufferDurationsMs(
+                                DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                                ((cacheSize * 75L) / 32768L).toInt(), // 500mb = 20min
+                                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
+                            ).build()
+                    )
 
             val videoMediaSource =
                 (if (cacheFactory == null) DefaultMediaSourceFactory(context) else DefaultMediaSourceFactory(
@@ -465,6 +478,7 @@ class CS3IPlayer : IPlayer {
                 )
                 setHandleAudioBecomingNoisy(true)
                 setPlaybackSpeed(playBackSpeed)
+
             }
         }
     }
@@ -550,6 +564,7 @@ class CS3IPlayer : IPlayer {
                 currentWindow,
                 playbackPosition,
                 playBackSpeed,
+                cacheSize = cacheSize,
                 playWhenReady = isPlaying, // this keep the current state of the player
                 cacheFactory = cacheFactory,
                 subtitleOffset = currentSubtitleOffset
@@ -763,7 +778,7 @@ class CS3IPlayer : IPlayer {
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
 
             if (simpleCache == null)
-                simpleCache = getCache(context, cacheSize)
+                simpleCache = getCache(context, simpleCacheSize)
 
             val cacheFactory = CacheDataSource.Factory().apply {
                 simpleCache?.let { setCache(it) }

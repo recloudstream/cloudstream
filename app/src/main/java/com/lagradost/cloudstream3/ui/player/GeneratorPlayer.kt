@@ -123,6 +123,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     if (isNextEpisode) 0L else getPos()
                 },
                 currentSubs,
+                (if(sameEpisode) currentSelectedSubtitles else null) ?: getAutoSelectSubtitle(currentSubs, settings = true, downloads = true),
             )
         }
     }
@@ -433,16 +434,37 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    private fun autoSelectFromSettings() {
-        // auto select subtitle based of settings
-        val langCode = preferredAutoSelectSubtitles
-        if (!langCode.isNullOrEmpty() && player.getCurrentPreferredSubtitle() == null) {
-            val lang = SubtitleHelper.fromTwoLettersToLanguage(langCode) ?: return
+    private fun getAutoSelectSubtitle(
+        subtitles: Set<SubtitleData>,
+        settings: Boolean,
+        downloads: Boolean
+    ): SubtitleData? {
+        val langCode = preferredAutoSelectSubtitles ?: return null
+        val lang = SubtitleHelper.fromTwoLettersToLanguage(langCode) ?: return null
 
-            currentSubs.firstOrNull { sub ->
+        if (settings)
+            subtitles.firstOrNull { sub ->
                 sub.name.startsWith(lang)
                         || sub.name.trim() == langCode
             }?.let { sub ->
+                return sub
+            }
+        if (downloads) {
+            return subtitles.firstOrNull { sub ->
+                (sub.origin == SubtitleOrigin.DOWNLOADED_FILE || sub.name == context?.getString(
+                    R.string.default_subtitles
+                ))
+            }
+        }
+        return null
+    }
+
+    private fun autoSelectFromSettings() {
+        // auto select subtitle based of settings
+        val langCode = preferredAutoSelectSubtitles
+
+        if (!langCode.isNullOrEmpty() && player.getCurrentPreferredSubtitle() == null) {
+            getAutoSelectSubtitle(currentSubs, settings = true, downloads = false)?.let { sub ->
                 context?.let { ctx ->
                     if (setSubtitles(sub)) {
                         player.reloadPlayer(ctx)
@@ -455,11 +477,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun autoSelectFromDownloads() {
         if (player.getCurrentPreferredSubtitle() == null) {
-            currentSubs.firstOrNull { sub ->
-                (sub.origin == SubtitleOrigin.DOWNLOADED_FILE || sub.name == context?.getString(
-                    R.string.default_subtitles
-                ))
-            }?.let { sub ->
+            getAutoSelectSubtitle(currentSubs, settings = false, downloads = true)?.let { sub ->
                 context?.let { ctx ->
                     if (setSubtitles(sub)) {
                         player.reloadPlayer(ctx)
