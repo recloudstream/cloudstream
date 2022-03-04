@@ -40,7 +40,7 @@ class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
     var cacheSize = 300L * 1024L * 1024L // 300 mb
-    private var simpleCacheSize = 100L * 1024L * 1024L
+    private val simpleCacheSize : Long get() = cacheSize / 2 // idk chosen at random kinda
 
     private val seekActionTime = 30000L
 
@@ -451,10 +451,19 @@ class CS3IPlayer : IPlayer {
                     .setTrackSelector(trackSelector ?: getTrackSelector(context))
                     .setLoadControl(
                         DefaultLoadControl.Builder()
-                            .setTargetBufferBytes(if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt())
+                            .setTargetBufferBytes(
+                                if(cacheSize <= 0) {
+                                    DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES
+                                } else {
+                                    if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt()
+                                }
+                            )
                             .setBufferDurationsMs(
                                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                                ((cacheSize * 75L) / 32768L).toInt(), // 500mb = 20min
+                                maxOf(
+                                    DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                                    ((cacheSize * 75L) / 32768L).toInt()
+                                ), // 500mb = 20min
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
                             ).build()
