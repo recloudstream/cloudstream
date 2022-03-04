@@ -20,33 +20,32 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
 
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
-        val urls = listOf(
-            Pair("$mainUrl/home", "Movies"),
-            Pair("$mainUrl/tv-series", "Series"),
-            Pair("$mainUrl/top-imdb", "Top"),
+        val soup = app.get("$mainUrl/home").document
+        val testa = listOf(
+            Pair("Movies", "div.tab-content[data-name=movies] div.filmlist div.item"),
+            Pair("Shows", "div.tab-content[data-name=shows] div.filmlist div.item"),
+            Pair("Trending", "div.tab-content[data-name=trending] div.filmlist div.item"),
+            Pair("Latest Movies", "div.container section.bl:contains(Latest Movies) div.filmlist div.item"),
+            Pair("Latest TV-Series", "div.container section.bl:contains(Latest TV-Series) div.filmlist div.item"),
         )
-        for (i in urls) {
-            try {
-                val response = app.get(i.first)
-                val soup = Jsoup.parse(response.text)
-                val home = soup.select(".filmlist div.item").map {
-                    val title = it.selectFirst("h3 a").text()
-                    val link = fixUrl(it.selectFirst("a").attr("href"))
-                    TvSeriesSearchResponse(
-                        title,
-                        link,
-                        this.name,
-                        if (link.contains("/movie/")) TvType.Movie else TvType.TvSeries,
-                        it.selectFirst("a.poster img").attr("src"),
-                        null,
-                        null,
-                    )
-                }
-
-                items.add(HomePageList(i.second, home))
-            } catch (e: Exception) {
-                e.printStackTrace()
+        for ((name, element) in testa) try {
+            val test = soup.select(element).map {
+                val title = it.selectFirst("h3 a").text()
+                val link = fixUrl(it.selectFirst("a").attr("href"))
+                // val quality = it.selectFirst("div.quality").text()
+                TvSeriesSearchResponse(
+                    title,
+                    link,
+                    this.name,
+                    if (link.contains("/movie/")) TvType.Movie else TvType.TvSeries,
+                    it.selectFirst("a.poster img").attr("src"),
+                    null,
+                    null,
+                )
             }
+            items.add(HomePageList(name, test))
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         if (items.size <= 0) throw ErrorLoadingException()
@@ -248,7 +247,15 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                         year = null
                     )
                 }
-
+        val rating = soup.selectFirst(".info span.imdb").text().toFloatOrNull()
+            ?.times(1000)?.toInt()
+        val durationdoc = soup.selectFirst("div.info div.meta").toString()
+        val durationregex = Regex("((\\d+) min)")
+        val yearegex = Regex("<span>(\\d+)<\\/span>")
+        val duration = if (durationdoc.contains("na min")) null
+        else durationregex.find(durationdoc)?.destructured?.component1()?.replace(" min","")?.toIntOrNull()
+        val year = if (mainUrl == "https://bflix.ru") { yearegex.find(durationdoc)?.destructured?.component1()
+            ?.replace(Regex("<span>|<\\/span>"),"") } else null
         return when (tvType) {
             TvType.TvSeries -> {
                 TvSeriesLoadResponse(
@@ -258,13 +265,14 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                     tvType,
                     episodes!!,
                     poster,
-                    null,
+                    year?.toIntOrNull(),
                     description,
                     null,
                     null,
-                    null,
+                    rating,
                     tags,
                     recommendations = recommendations,
+                    duration = duration,
                 )
             }
             TvType.Movie -> {
@@ -275,12 +283,13 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                     tvType,
                     url,
                     poster,
-                    null,
+                    year?.toIntOrNull(),
                     description,
                     null,
-                    null,
+                    rating,
                     tags,
-                    recommendations = recommendations
+                    recommendations = recommendations,
+                    duration = duration
                 )
             }
             else -> null

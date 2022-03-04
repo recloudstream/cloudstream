@@ -1,11 +1,12 @@
 package com.lagradost.cloudstream3.animeproviders
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import java.util.*
 
-class AnimeflvnetProvider : MainAPI() {
+class AnimeflvnetProvider:MainAPI() {
     companion object {
         fun getType(t: String): TvType {
             return if (t.contains("OVA") || t.contains("Especial")) TvType.OVA
@@ -13,9 +14,8 @@ class AnimeflvnetProvider : MainAPI() {
             else TvType.Anime
         }
     }
-
-    override val mainUrl = "https://m.animeflv.net"
-    override val name = "AnimeFLV"
+    override val mainUrl = "https://www3.animeflv.net"
+    override val name = "Animeflv.net"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -28,21 +28,24 @@ class AnimeflvnetProvider : MainAPI() {
 
     override suspend fun getMainPage(): HomePageResponse {
         val urls = listOf(
-            Pair("$mainUrl/browse?type[]=movie&order=updated", "Peliculas actualizadas"),
-            Pair("$mainUrl/browse?order=updated", "Animes recientemente actualizados"),
-            Pair("$mainUrl/browse?status[]=2&order=default", "Animes finalizados"),
+            Pair("$mainUrl/browse?type[]=movie&order=updated", "Películas"),
+            Pair("$mainUrl/browse?status[]=2&order=default", "Animes"),
             Pair("$mainUrl/browse?status[]=1&order=rating", "En emision"),
         )
         val items = ArrayList<HomePageList>()
-        for (i in urls) {
-            try {
-                val doc = app.get(i.first).document
-                val home = doc.select("ul.List-Animes li.Anime").map {
-                    val title = it.selectFirst("h2.title").text()
-                    val poster = it.selectFirst(".Image img").attr("src")
+        items.add(
+            HomePageList(
+                "Últimos episodios",
+                app.get(mainUrl).document.select("main.Main ul.ListEpisodios li").map {
+                    val title = it.selectFirst("strong.Title").text()
+                    val poster = it.selectFirst("span img").attr("src")
+                    val epRegex = Regex("(-(\\d+)\$)")
+                    val url = it.selectFirst("a").attr("href").replace(epRegex,"")
+                        .replace("ver/","anime/")
+                    val epNum = it.selectFirst("span.Capi").text().replace("Episodio ","").toIntOrNull()
                     AnimeSearchResponse(
                         title,
-                        fixUrl(it.selectFirst("a").attr("href")),
+                        fixUrl(url),
                         this.name,
                         TvType.Anime,
                         fixUrl(poster),
@@ -50,10 +53,29 @@ class AnimeflvnetProvider : MainAPI() {
                         if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
                             DubStatus.Dubbed
                         ) else EnumSet.of(DubStatus.Subbed),
+                        subEpisodes = epNum,
+                        dubEpisodes = epNum,
+                    )
+                })
+        )
+        for ((url, name) in urls) {
+            try {
+                val doc = app.get(url).document
+                val home = doc.select("ul.ListAnimes li article").map {
+                    val title = it.selectFirst("h3.Title").text()
+                    val poster = it.selectFirst("figure img").attr("src")
+                    AnimeSearchResponse(
+                        title,
+                        fixUrl(it.selectFirst("a").attr("href")),
+                        this.name,
+                        TvType.Anime,
+                        fixUrl(poster),
+                        null,
+                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
                     )
                 }
 
-                items.add(HomePageList(i.second, home))
+                items.add(HomePageList(name, home))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -62,79 +84,93 @@ class AnimeflvnetProvider : MainAPI() {
         return HomePageResponse(items)
     }
 
+    data class SearchObject (
+        @JsonProperty("id") val id: String,
+        @JsonProperty("title") val title: String,
+        @JsonProperty("type") val type: String,
+        @JsonProperty("last_id") val lastId: String,
+        @JsonProperty("slug") val slug: String
+    )
+
     override suspend fun search(query: String): List<SearchResponse> {
-        val url = "${mainUrl}/browse?q=${query}"
-        val doc = app.get(url).document
-        return doc.select("ul.List-Animes li.Anime").map {
-            val title = it.selectFirst("h2.title").text()
-            val href = fixUrl(it.selectFirst("a").attr("href"))
-            val image = it.selectFirst(".Image img").attr("src")
-            AnimeSearchResponse(
-                title,
-                href,
-                this.name,
-                TvType.Anime,
-                fixUrl(image),
-                null,
-                if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(
-                    DubStatus.Subbed
-                ),
-            )
+        val response = app.post("https://www3.animeflv.net/api/animes/search",
+            data = mapOf(Pair("value",query))
+        ).text
+        val json = parseJson<List<SearchObject>>(response)
+       return json.map { searchr ->
+            val title = searchr.title
+            val href = "$mainUrl/anime/${searchr.slug}"
+            val image = "$mainUrl/uploads/animes/covers/${searchr.id}.jpg"
+                AnimeSearchResponse(
+                    title,
+                    href,
+                    this.name,
+                    TvType.Anime,
+                    fixUrl(image),
+                    null,
+                    if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
+                )
         }
     }
 
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
+        val episodes = ArrayList<AnimeEpisode>()
         val title = doc.selectFirst("h1.Title").text()
-        val description = doc.selectFirst(".Anime > header:nth-child(1) > p:nth-child(3)").text()
-            .replace("Sinopsis: ", "")
-        val poster = doc.selectFirst(".Image  img").attr("src")
-        val episodes = doc.select("li.Episode").map { li ->
-            val href = fixUrl(li.selectFirst("a").attr("href"))
-            AnimeEpisode(
-                fixUrl(href), "Episodio" + li.selectFirst("a").text().replace(title, "")
-            )
+        val poster = doc.selectFirst("div.AnimeCover div.Image figure img").attr("src")
+        val description = doc.selectFirst("div.Description p").text()
+        val type = doc.selectFirst("span.Type").text()
+        val status = when (doc.selectFirst("p.AnmStts span")?.text()) {
+            "En emision" -> ShowStatus.Ongoing
+            "Finalizado" -> ShowStatus.Completed
+            else -> null
         }
-        val type = doc.selectFirst("span.Type.A").text()
-        val genre = doc.select("a.Tag")
+        val genre = doc.select("nav.Nvgnrs a")
             .map { it?.text()?.trim().toString() }
 
-        val status =
-            when (doc.selectFirst("article.Anime.Single.Bglg header p strong.Anm-On")?.text()) {
-                "En emisión" -> ShowStatus.Ongoing
-                "Finalizado" -> ShowStatus.Completed
-                else -> null
+        doc.select("script").map { script ->
+            if (script.data().contains("var episodes = [")) {
+                val data = script.data().substringAfter("var episodes = [").substringBefore("];")
+                data.split("],").forEach {
+                    val epNum = it.removePrefix("[").substringBefore(",")
+                    // val epthumbid = it.removePrefix("[").substringAfter(",").substringBefore("]")
+                    val animeid = doc.selectFirst("div.Strs.RateIt").attr("data-id")
+                    val epthumb = "https://cdn.animeflv.net/screenshots/$animeid/$epNum/th_3.jpg"
+                    val link = url.replace("/anime/","/ver/")+"-$epNum"
+                    episodes.add( AnimeEpisode(
+                        link,
+                        null,
+                        posterUrl = epthumb,
+                        episode = epNum.toIntOrNull()
+                    )
+                    )
+                }
             }
+        }
         return newAnimeLoadResponse(title, url, getType(type)) {
             posterUrl = fixUrl(poster)
-            addEpisodes(DubStatus.Subbed, episodes)
+            addEpisodes(DubStatus.Subbed, episodes.reversed())
             showStatus = status
             plot = description
             tags = genre
         }
     }
-
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        //There might be a better way to do this, but this one works
-        val html = app.get(data).text
-        val linkRegex = Regex("""(https:.*?\.html.*)""")
-
-        val videos = linkRegex.findAll(html).map {
-            it.value.replace("\\/", "/")
-        }.toList()
-
-        val serversRegex =
-            Regex("(https?://(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))")
-
-        serversRegex.findAll(videos.toString()).map {
-            it.value.replace("https://embedsb.com", "https://watchsb.com")
-        }.forEach { link ->
-            loadExtractor(link, data, callback)
+        app.get(data).document.select("script").apmap { script ->
+            if (script.data().contains("var videos = {") || script.data().contains("var anime_id =") || script.data().contains("server")) {
+                val videos = script.data().replace("\\/", "/")
+                fetchUrls(videos).map {
+                    it.replace("https://embedsb.com/e/","https://watchsb.com/e/")
+                        .replace("https://ok.ru","http://ok.ru")
+                }.apmap {
+                    loadExtractor(it, data, callback)
+                }
+            }
         }
         return true
     }

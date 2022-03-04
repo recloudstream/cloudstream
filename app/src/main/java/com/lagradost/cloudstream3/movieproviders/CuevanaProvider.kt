@@ -1,10 +1,11 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import java.util.*
 
 class CuevanaProvider:MainAPI() {
@@ -24,9 +25,27 @@ class CuevanaProvider:MainAPI() {
             Pair(mainUrl, "Recientemente actualizadas"),
             Pair("$mainUrl/estrenos/", "Estrenos"),
         )
-        for (i in urls) {
+        items.add(
+            HomePageList(
+                "Series",
+                app.get("$mainUrl/serie", timeout = 120).document.select("section.home-series li").map {
+                    val title = it.selectFirst("h2.Title").text()
+                    val poster = it.selectFirst("img.lazy").attr("data-src")
+                    val url = it.selectFirst("a").attr("href")
+                    TvSeriesSearchResponse(
+                        title,
+                        url,
+                        this.name,
+                        TvType.Anime,
+                        poster,
+                        null,
+                        null,
+                    )
+                })
+        )
+        for ((url, name) in urls) {
             try {
-                val soup = app.get(i.first).document
+                val soup = app.get(url).document
                 val home = soup.select("section li.xxx.TPostMv").map {
                     val title = it.selectFirst("h2.Title").text()
                     val link = it.selectFirst("a").attr("href")
@@ -41,7 +60,7 @@ class CuevanaProvider:MainAPI() {
                     )
                 }
 
-                items.add(HomePageList(i.second, home))
+                items.add(HomePageList(name, home))
             } catch (e: Exception) {
                 logError(e)
             }
@@ -80,7 +99,7 @@ class CuevanaProvider:MainAPI() {
                     null
                 )
             }
-        }.toList()
+        }
     }
     override suspend fun load(url: String): LoadResponse? {
         val soup = app.get(url, timeout = 120).document
@@ -88,24 +107,47 @@ class CuevanaProvider:MainAPI() {
         val description = soup.selectFirst(".Description p")?.text()?.trim()
         val poster: String? = soup.selectFirst(".movtv-info div.Image img").attr("data-src")
         val year1 = soup.selectFirst("footer p.meta").toString()
-        val yearRegex = Regex("(\\d+)<\\/span>")
-        val year =  yearRegex.findAll(year1).map {
-            it.value.replace("</span>","")
-        }.toList().first().toIntOrNull()
+        val yearRegex = Regex("<span>(\\d+)</span>")
+        val yearf =  yearRegex.find(year1)?.destructured?.component1()?.replace(Regex("<span>|</span>"),"")
+        val year = if (yearf.isNullOrBlank()) null else yearf.toIntOrNull()
         val episodes = soup.select(".all-episodes li.TPostMv article").map { li ->
             val href = li.select("a").attr("href")
             val epThumb =
                 li.selectFirst("div.Image img").attr("data-src") ?: li.selectFirst("img.lazy").attr("data-srcc")
-            val name = li.selectFirst("h2.Title").text()
+            val seasonid = li.selectFirst("span.Year").text().let { str ->
+                str.split("x").mapNotNull { subStr -> subStr.toIntOrNull() }
+            }
+            val isValid = seasonid.size == 2
+            val episode = if (isValid) seasonid.getOrNull(1) else null
+            val season = if (isValid) seasonid.getOrNull(0) else null
             TvSeriesEpisode(
-                name,
                 null,
-                null,
+                season,
+                episode,
                 href,
                 fixUrl(epThumb)
             )
         }
-        return when (val tvType = if (episodes.isEmpty()) TvType.Movie else TvType.TvSeries) {
+        val tags = soup.select("ul.InfoList li.AAIco-adjust:contains(Genero) a").map { it.text() }
+        val tvType = if (episodes.isEmpty()) TvType.Movie else TvType.TvSeries
+        val recelement = if (tvType == TvType.TvSeries) "main section div.series_listado.series div.xxx"
+        else "main section ul.MovieList li"
+        val recommendations =
+            soup.select(recelement).mapNotNull { element ->
+                val recTitle = element.select("h2.Title").text() ?: return@mapNotNull null
+                val image = element.select("figure img")?.attr("data-src")
+                val recUrl = fixUrl(element.select("a").attr("href"))
+                MovieSearchResponse(
+                    recTitle,
+                    recUrl,
+                    this.name,
+                    TvType.Movie,
+                    image,
+                    year = null
+                )
+            }
+
+        return when (tvType) {
             TvType.TvSeries -> {
                 TvSeriesLoadResponse(
                     title,
@@ -116,6 +158,8 @@ class CuevanaProvider:MainAPI() {
                     poster,
                     year,
                     description,
+                    tags = tags,
+                    recommendations = recommendations
                 )
             }
             TvType.Movie -> {
@@ -128,6 +172,8 @@ class CuevanaProvider:MainAPI() {
                     poster,
                     year,
                     description,
+                    tags = tags,
+                    recommendations = recommendations
                 )
             }
             else -> null
@@ -199,7 +245,7 @@ class CuevanaProvider:MainAPI() {
                             }.toList().apmap { gotolink ->
                                 app.post("https://api.cuevana3.io/ir/redirect_ddh.php", allowRedirects = false,
                                     headers = mapOf("Host" to "api.cuevana3.io",
-                                        "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0",
+                                        "User-Agent" to USER_AGENT,
                                         "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                                         "Accept-Language" to "en-US,en;q=0.5",
                                         "Content-Type" to "application/x-www-form-urlencoded",

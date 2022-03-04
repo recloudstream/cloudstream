@@ -1,9 +1,9 @@
 package com.lagradost.cloudstream3.movieproviders
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.extractors.Evoload
-import com.lagradost.cloudstream3.extractors.FEmbed
-import com.lagradost.cloudstream3.extractors.StreamTape
+import com.lagradost.cloudstream3.extractors.Cinestart
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.*
 import java.util.*
 
@@ -30,9 +30,9 @@ class CinecalidadProvider:MainAPI() {
             Pair("$mainUrl/genero-de-la-pelicula/peliculas-en-calidad-4k/", "4K UHD"),
         )
 
-        for (i in urls) {
+        for ((url, name) in urls) {
             try {
-                val soup = app.get(i.first).document
+                val soup = app.get(url).document
                 val home = soup.select(".item.movies").map {
                     val title = it.selectFirst("div.in_title").text()
                     val link = it.selectFirst("a").attr("href")
@@ -47,9 +47,9 @@ class CinecalidadProvider:MainAPI() {
                     )
                 }
 
-                items.add(HomePageList(i.second, home))
+                items.add(HomePageList(name, home))
             } catch (e: Exception) {
-                e.printStackTrace()
+                logError(e)
             }
         }
 
@@ -99,15 +99,20 @@ class CinecalidadProvider:MainAPI() {
         val poster: String? = soup.selectFirst(".alignnone").attr("data-src")
         val episodes = soup.select("div.se-c div.se-a ul.episodios li").map { li ->
             val href = li.selectFirst("a").attr("href")
-            val epThumb = li.selectFirst("div.imagen img").attr("data-src") ?: li.selectFirst("div.imagen img").attr("src")
-
+            val epThumb = li.selectFirst("img.lazy").attr("data-src")
             val name = li.selectFirst(".episodiotitle a").text()
+            val seasonid = li.selectFirst(".numerando").text().replace(Regex("(S|E)"),"").let { str ->
+                str.split("-").mapNotNull { subStr -> subStr.toIntOrNull() }
+            }
+            val isValid = seasonid.size == 2
+            val episode = if (isValid) seasonid.getOrNull(1) else null
+            val season = if (isValid) seasonid.getOrNull(0) else null
             TvSeriesEpisode(
                 name,
-                null,
-                null,
+                season,
+                episode,
                 href,
-                epThumb
+                if (epThumb.contains("svg")) null else epThumb
             )
         }
         return when (val tvType = if (url.contains("/ver-pelicula/")) TvType.Movie else TvType.TvSeries) {
@@ -145,26 +150,107 @@ class CinecalidadProvider:MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        app.get(data).document.select(".dooplay_player_option").apmap {
+
+        val datam = app.get(data)
+        val doc = datam.document
+        val datatext = datam.text
+
+        doc.select(".dooplay_player_option").apmap {
             val url = it.attr("data-option")
-            if (url.startsWith("https://evoload.io")) {
-                val extractor = Evoload()
+            if (url.startsWith("https://cinestart.net")) {
+                val extractor = Cinestart()
                 extractor.getSafeUrl(url)?.forEach { link ->
                     callback.invoke(link)
                 }
             } else {
                 loadExtractor(url, mainUrl, callback)
             }
+            if (url.startsWith("https://cinecalidad.lol")) {
+                val cineurlregex = Regex("(https:\\/\\/cinecalidad\\.lol\\/play\\/\\?h=[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
+                cineurlregex.findAll(url).map {
+                    it.value.replace("/play/","/play/r.php")
+                }.toList().apmap {
+                    app.get(it,
+                        headers = mapOf(
+                            "Host" to "cinecalidad.lol",
+                            "User-Agent" to USER_AGENT,
+                            "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                            "Accept-Language" to "en-US,en;q=0.5",
+                            "DNT" to "1",
+                            "Connection" to "keep-alive",
+                            "Referer" to data,
+                            "Upgrade-Insecure-Requests" to "1",
+                            "Sec-Fetch-Dest" to "iframe",
+                            "Sec-Fetch-Mode" to "navigate",
+                            "Sec-Fetch-Site" to "same-origin",
+                            "Sec-Fetch-User" to "?1",
+                        ),
+                        allowRedirects = false).response.headers.values("location").apmap { extractedurl ->
+                        if (extractedurl.contains("cinestart"))   {
+                            loadExtractor(extractedurl, mainUrl, callback)
+                        }
+                    }
+                }
+            }
         }
-        if ((app.get(data).text.contains("en castellano"))) app.get("$data?ref=es").document.select(".dooplay_player_option").apmap {
+        if (datatext.contains("en castellano")) app.get("$data?ref=es").document.select(".dooplay_player_option").apmap {
             val url = it.attr("data-option")
-            if (url.startsWith("https://evoload.io")) {
-                val extractor = Evoload()
+            if (url.startsWith("https://cinestart.net")) {
+                val extractor = Cinestart()
                 extractor.getSafeUrl(url)?.forEach { link ->
                     callback.invoke(link)
                 }
             } else {
                 loadExtractor(url, mainUrl, callback)
+            }
+
+            if (url.startsWith("https://cinecalidad.lol")) {
+                val cineurlregex = Regex("(https:\\/\\/cinecalidad\\.lol\\/play\\/\\?h=[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
+                cineurlregex.findAll(url).map {
+                    it.value.replace("/play/","/play/r.php")
+                }.toList().apmap {
+                    app.get(it,
+                        headers = mapOf(
+                            "Host" to "cinecalidad.lol",
+                            "User-Agent" to USER_AGENT,
+                            "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                            "Accept-Language" to "en-US,en;q=0.5",
+                            "DNT" to "1",
+                            "Connection" to "keep-alive",
+                            "Referer" to data,
+                            "Upgrade-Insecure-Requests" to "1",
+                            "Sec-Fetch-Dest" to "iframe",
+                            "Sec-Fetch-Mode" to "navigate",
+                            "Sec-Fetch-Site" to "same-origin",
+                            "Sec-Fetch-User" to "?1",
+                        ),
+                        allowRedirects = false).response.headers.values("location").apmap { extractedurl ->
+                        if (extractedurl.contains("cinestart"))   {
+                            loadExtractor(extractedurl, mainUrl, callback)
+                        }
+                    }
+                }
+            }
+        }
+        if (datatext.contains("Subtítulo LAT") || datatext.contains("Forzados LAT"))   {
+            doc.select("#panel_descarga.pane a").apmap {
+                val link = if (data.contains("serie") || data.contains("episodio")) "${data}${it.attr("href")}"
+                else it.attr("href")
+                val docsub = app.get(link)
+                val linksub = docsub.document
+                val validsub = docsub.text
+                if (validsub.contains("Subtítulo") || validsub.contains("Forzados")) {
+                    val langregex = Regex("(Subtítulo.*\$|Forzados.*\$)")
+                    val langdoc = linksub.selectFirst("div.titulo h3").text()
+                    val reallang = langregex.find(langdoc)?.destructured?.component1()
+                    linksub.select("a.link").apmap {
+                        val sublink = if (data.contains("serie") || data.contains("episodio")) "${data}${it.attr("href")}"
+                        else it.attr("href")
+                        subtitleCallback(
+                            SubtitleFile(reallang!!, sublink)
+                        )
+                    }
+                }
             }
         }
         return true

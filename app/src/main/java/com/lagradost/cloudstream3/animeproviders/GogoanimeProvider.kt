@@ -2,10 +2,7 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.AppUtils
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.getQualityFromName
-import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.*
 import org.jsoup.Jsoup
 import java.util.*
 import javax.crypto.Cipher
@@ -300,16 +297,36 @@ class GogoanimeProvider : MainAPI() {
                         source: GogoSource,
                         sourceCallback: (ExtractorLink) -> Unit
                     ) {
-                        sourceCallback.invoke(
-                            ExtractorLink(
-                                this.name,
-                                "${this.name} ${source.label?.replace("0 P", "0p") ?: ""}",
+                        if (source.file.contains("m3u8")) {
+                            M3u8Helper().m3u8Generation(
+                            M3u8Helper.M3u8Stream(
                                 source.file,
-                                "https://gogoplay.io",
-                                getQualityFromName(source.label ?: ""),
-                                isM3u8 = source.type == "hls"
-                            )
+                                headers = mapOf("Referer" to "https://gogoplay.io")
+                            ), true
                         )
+                            .map { stream ->
+                                val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
+                                sourceCallback(  ExtractorLink(
+                                    name,
+                                    "$name $qualityString",
+                                    stream.streamUrl,
+                                    "https://gogoplay.io",
+                                    getQualityFromName(stream.quality.toString()),
+                                    true
+                                ))
+                            }
+                        } else if (source.file.contains("vidstreaming")) {
+                            sourceCallback.invoke(
+                                ExtractorLink(
+                                    this.name,
+                                    "${this.name} ${source.label?.replace("0 P", "0p") ?: ""}",
+                                    source.file,
+                                    "https://gogoplay.io",
+                                    getQualityFromName(source.label ?: ""),
+                                    isM3u8 = source.type == "hls"
+                                )
+                            )
+                        }
                     }
 
                     sources.source?.forEach {

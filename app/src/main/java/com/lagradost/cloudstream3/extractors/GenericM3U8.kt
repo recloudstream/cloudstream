@@ -10,10 +10,6 @@ import com.lagradost.cloudstream3.utils.getQualityFromName
 
 
 
-class ZplayerV2 : GenericM3U8() {
-    override val name = "Zplayer V2"
-    override val mainUrl = "https://v2.zplayer.live"
-}
 
 open class GenericM3U8 : ExtractorApi() {
     override val name = "Upstream"

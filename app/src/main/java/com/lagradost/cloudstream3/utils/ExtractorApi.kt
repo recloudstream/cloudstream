@@ -136,9 +136,12 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
 
     AsianLoad(),
 
-    ZplayerV2(),
-    GenericM3U8(),
+   // GenericM3U8(),
     Jawcloud(),
+    Zplayer(),
+    ZplayerV2(),
+    Upstream(),
+
 
   // StreamSB.kt works
   //  SBPlay(),

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
+import org.jsoup.nodes.Element
 import java.util.*
 
 class PelisplusHDProvider:MainAPI() {
@@ -14,41 +15,51 @@ class PelisplusHDProvider:MainAPI() {
     override val supportedTypes = setOf(
         TvType.Movie,
         TvType.TvSeries,
-        TvType.Anime,
     )
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
-        val urls = listOf(
-            Pair("$mainUrl/peliculas", "Peliculas"),
-            Pair("$mainUrl/series", "Series"),
-            Pair("$mainUrl/generos/dorama", "Doramas"),
-            Pair("$mainUrl/animes", "Animes"),
+        val document = app.get(mainUrl).document
+        val map = mapOf(
+            "Películas" to "#default-tab-1",
+            "Series" to "#default-tab-2",
+            "Anime" to "#default-tab-3",
+            "Doramas" to "#default-tab-4",
         )
-        for (i in urls) {
-            try {
-                val soup = app.get(i.first).document
-                val home = soup.select("a.Posters-link").map {
-                    val title = it.selectFirst(".listing-content p").text()
-                    val link = it.selectFirst("a").attr("href")
-                    TvSeriesSearchResponse(
-                        title,
-                        link,
-                        this.name,
-                        if (link.contains("/pelicula/")) TvType.Movie else TvType.TvSeries,
-                        it.selectFirst(".Posters-img").attr("src"),
-                        null,
-                        null,
-                    )
+        map.forEach {
+            items.add(HomePageList(
+                it.key,
+                document.select(it.value).select("a.Posters-link").map { element ->
+                    element.toSearchResult()
                 }
-
-                items.add(HomePageList(i.second, home))
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            ))
         }
-
-        if (items.size <= 0) throw ErrorLoadingException()
         return HomePageResponse(items)
+    }
+    private fun Element.toSearchResult(): SearchResponse {
+        val title = this.select(".listing-content p").text()
+        val href = this.select("a").attr("href")
+        val posterUrl = this.select(".Posters-img").attr("src")
+        val isMovie = href.contains("/pelicula/")
+        return if (isMovie) {
+            MovieSearchResponse(
+                title,
+                href,
+                name,
+                TvType.Movie,
+                posterUrl,
+                null
+            )
+        } else {
+            TvSeriesSearchResponse(
+                title,
+                href,
+                name,
+                TvType.Movie,
+                posterUrl,
+                null,
+                null
+            )
+        }
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -93,10 +104,17 @@ class PelisplusHDProvider:MainAPI() {
         val episodes = soup.select("div.tab-pane .btn").map { li ->
             val href = li.selectFirst("a").attr("href")
             val name = li.selectFirst(".btn-primary.btn-block").text()
+            val seasonid = href.replace("/capitulo/","-")
+                .replace(Regex("$mainUrl/.*/.*/temporada/"),"").let { str ->
+                    str.split("-").mapNotNull { subStr -> subStr.toIntOrNull() }
+                }
+            val isValid = seasonid.size == 2
+            val episode = if (isValid) seasonid.getOrNull(1) else null
+            val season = if (isValid) seasonid.getOrNull(0) else null
             TvSeriesEpisode(
                 name,
-                null,
-                null,
+                season,
+                episode,
                 href,
             )
         }
@@ -117,7 +135,7 @@ class PelisplusHDProvider:MainAPI() {
                     poster,
                     year,
                     description,
-                    ShowStatus.Ongoing,
+                    null,
                     null,
                     null,
                     tags,
@@ -147,20 +165,9 @@ class PelisplusHDProvider:MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val soup = app.get(data).document
-        val selector = soup.selectFirst("div.player > script").toString()
-        val linkRegex = Regex("""(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))""")
-        val links = linkRegex.findAll(selector).map {
-            it.value.replace("https://pelisplushd.net/fembed.php?url=","https://www.fembed.com/v/")
-                .replace("https://pelistop.co/","https://watchsb.com/")
-        }.toList()
-        for (link in links) {
-            for (extractor in extractorApis) {
-                if (link.startsWith(extractor.mainUrl)) {
-                    extractor.getSafeUrl(link, data)?.forEach {
-                        callback(it)
-                    }
-                }
+        app.get(data).document.select("div.player > script").map { script ->
+            fetchUrls(script.data().replace("https://pelisplushd.net/fembed.php?url=","https://www.fembed.com/v/")).apmap {
+                loadExtractor(it, data, callback)
             }
         }
         return true

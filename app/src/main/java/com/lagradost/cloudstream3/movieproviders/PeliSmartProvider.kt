@@ -3,7 +3,8 @@ package com.lagradost.cloudstream3.movieproviders
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.extractorApis
-import java.util.ArrayList
+import com.lagradost.cloudstream3.utils.loadExtractor
+import kotlin.collections.ArrayList
 
 class PeliSmartProvider: MainAPI() {
     override val mainUrl = "https://pelismart.com"
@@ -26,9 +27,9 @@ class PeliSmartProvider: MainAPI() {
             Pair("$mainUrl/documentales/", "Documentales"),
         )
 
-        for (i in urls) {
+        for ((url, name) in urls) {
             try {
-                val soup = app.get(i.first).document
+                val soup = app.get(url).document
                 val home = soup.select(".description-off").map {
                     val title = it.selectFirst("h3.entry-title a").text()
                     val link = it.selectFirst("a").attr("href")
@@ -43,7 +44,7 @@ class PeliSmartProvider: MainAPI() {
                     )
                 }
 
-                items.add(HomePageList(i.second, home))
+                items.add(HomePageList(name, home))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -96,12 +97,20 @@ class PeliSmartProvider: MainAPI() {
             val href = li.selectFirst("a").attr("href")
             val preregex = Regex("(\\d+)\\. ")
             val name = li.selectFirst("a").text().replace(preregex,"")
-            TvSeriesEpisode(
-                name,
-                null,
-                null,
-                href,
-            )
+            val regextest = Regex("(temporada-(\\d+)-capitulo-(\\d+)|temporada-(\\d+)-episodio-(\\d+))")
+            val test = regextest.find(href)?.destructured?.component1()?.replace(Regex("(temporada-|-)"),"")
+            val seasonid = test.let { str ->
+                str?.split("episodio","capitulo")?.mapNotNull { subStr -> subStr.toIntOrNull() }
+            }
+            val isValid = seasonid?.size == 2
+            val episode = if (isValid) seasonid?.getOrNull(1) else null
+            val season = if (isValid) seasonid?.getOrNull(0) else null
+                TvSeriesEpisode(
+                    name,
+                    season,
+                    episode,
+                    href,
+                )
         }
         return when (val tvType = if (episodes.isEmpty()) TvType.Movie else TvType.TvSeries) {
             TvType.TvSeries -> {
@@ -138,24 +147,15 @@ class PeliSmartProvider: MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val soup = app.get(data).text
-        val linkRegex = Regex("""(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))""")
-        val link1 = linkRegex.findAll(soup).map {
-            it.value.replace("https://pelismart.com/p/1.php?v=","https://evoload.io/e/")
-                .replace("https://pelismart.com/p/2.php?v=","https://streamtape.com/e/")
-                .replace("https://pelismart.com/p/4.php?v=","https://dood.to/e/")
-                .replace("https://pelismarthd.com/p/1.php?v=","https://evoload.io/e/")
-                .replace("https://pelismarthd.com/p/2.php?v=","https://streamtape.com/e/")
-                .replace("https://pelismarthd.com/p/4.php?v=","https://dood.to/e/")
-        }.toList()
-        for (link in link1) {
-            for (extractor in extractorApis) {
-                if (link.startsWith(extractor.mainUrl)) {
-                    extractor.getSafeUrl(link, data)?.forEach {
-                        callback(it)
-                    }
-                }
-            }
-        }
+         fetchUrls(soup).apmap {
+             val urlc = it.replace("https://pelismart.com/p/1.php?v=","https://evoload.io/e/")
+             .replace("https://pelismart.com/p/2.php?v=","https://streamtape.com/e/")
+             .replace("https://pelismart.com/p/4.php?v=","https://dood.to/e/")
+             .replace("https://pelismarthd.com/p/1.php?v=","https://evoload.io/e/")
+             .replace("https://pelismarthd.com/p/2.php?v=","https://streamtape.com/e/")
+             .replace("https://pelismarthd.com/p/4.php?v=","https://dood.to/e/")
+             loadExtractor(urlc, data, callback)
+         }
         return true
     }
 }
