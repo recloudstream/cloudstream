@@ -66,7 +66,6 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [allanime.site](https://allanime.site) 
 - [animekisa.in](https://animekisa.in) 
 - [animeflick.net](https://animeflick.net) 
-- [m.animeflv.net](https://m.animeflv.net) 
 - [tenshi.moe](https://tenshi.moe) 
 - [wcostream.cc](https://wcostream.cc) 
 - [bestdubbedanime.com](https://bestdubbedanime.com) 
