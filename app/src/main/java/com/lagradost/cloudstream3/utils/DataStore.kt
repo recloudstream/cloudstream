@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -30,6 +31,24 @@ object DataStore {
 
     fun getFolderName(folder: String, path: String): String {
         return "${folder}/${path}"
+    }
+
+    fun <T> Context.setKeyRaw(path: String, value: T, isEditingAppSettings: Boolean = false) {
+        val editor: SharedPreferences.Editor =
+            if (isEditingAppSettings) getDefaultSharedPrefs().edit() else getSharedPrefs().edit()
+        when (value) {
+            is Boolean -> editor.putBoolean(path, value)
+            is Int -> editor.putInt(path, value)
+            is String -> editor.putString(path, value)
+            is Float -> editor.putFloat(path, value)
+            is Long -> editor.putLong(path, value)
+            (value as? Set<String> != null) -> editor.putStringSet(path, value as Set<String>)
+        }
+        editor.apply()
+    }
+
+    fun Context.getDefaultSharedPrefs(): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     fun Context.getKeys(folder: String): List<String> {

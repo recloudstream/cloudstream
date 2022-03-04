@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSet
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
+import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
@@ -330,7 +331,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         changeStatusBarState(isEmulatorSettings())
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
-
+        setUpBackup()
 
         CommonActivity.init(this)
 

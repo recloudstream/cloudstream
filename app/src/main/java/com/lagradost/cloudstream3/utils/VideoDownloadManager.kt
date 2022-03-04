@@ -1043,7 +1043,7 @@ object VideoDownloadManager {
         return basePathToFile(this, basePathSetting) to basePathSetting
     }
 
-    private fun UniFile?.isDownloadDir(): Boolean {
+    fun UniFile?.isDownloadDir(): Boolean {
         return this != null && this.filePath == getDownloadDir()?.filePath
     }
 

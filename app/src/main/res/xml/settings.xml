@@ -170,6 +170,16 @@
                 app:icon="@drawable/ic_baseline_system_update_24" />
 
         <Preference
+                android:icon="@drawable/baseline_save_as_24"
+                android:key="@string/backup_key"
+                android:title="@string/backup_settings" />
+
+        <Preference
+                android:icon="@drawable/baseline_restore_page_24"
+                android:key="@string/restore_key"
+                android:title="@string/restore_settings" />
+
+        <Preference
                 android:key="@string/mal_key"
                 android:icon="@drawable/mal_logo" />
 

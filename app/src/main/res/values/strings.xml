@@ -31,6 +31,8 @@
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
+    <string name="restore_key" translatable="false">restore_key</string>
+    <string name="backup_key" translatable="false">backup_key</string>
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
 
@@ -194,6 +196,14 @@
     <string name="use_system_brightness_settings_des">Use system brightness in the app player instead of a dark
         overlay
     </string>
+
+    <string name="restore_settings">Restore data from backup</string>
+    <string name="backup_settings">Backup data</string>
+    <string name="restore_success">Loaded backup file</string>
+    <string name="restore_failed_format" formatted="true">Failed to restore data from file %s</string>
+    <string name="backup_success">Successfully stored data</string>
+    <string name="backup_failed">Storage permissions missing, please try again</string>
+    <string name="backup_failed_error_format">Error backing up %s</string>
 
     <string name="search">Search</string>
     <string name="settings_info">Info</string>
