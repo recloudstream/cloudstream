@@ -69,10 +69,11 @@
                 <data android:scheme="https" android:host="pelisplus.icu" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="pelisplushd.net" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="pelismart.com" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="gogoanime.wiki" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="gogoanime.film" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="allanime.site" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="animekisa.in" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="animeflick.net" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="m.animeflv.net" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www3.animeflv.net" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="tenshi.moe" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="wcostream.cc" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="bestdubbedanime.com" android:pathPrefix="/"/>
@@ -92,8 +93,9 @@
                 <data android:scheme="https" android:host="vf-serie.org" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="french-stream.re" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="asianembed.io" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="sflix.to" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="dopebox.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="bflix.ru" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="fmovies.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="sflix.pro" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="filman.cc" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="zoro.to" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="pinoymoviepedia.ru" android:pathPrefix="/"/>
@@ -105,6 +107,7 @@
                 <data android:scheme="https" android:host="kdramahood.com" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="akwam.io" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="animepahe.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="9anime.center" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="asiaflix.app" android:pathPrefix="/"/>
             </intent-filter>
             <intent-filter>
