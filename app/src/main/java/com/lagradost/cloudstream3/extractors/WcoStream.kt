@@ -14,6 +14,9 @@ class Vizcloud : WcoStream() {
     override val mainUrl: String = "https://vizcloud2.ru"
 }
 
+class Vizcloud2 : WcoStream() {
+    override val mainUrl: String = "https://vizcloud2.online"
+}
 
 open class WcoStream : ExtractorApi() {
     override val name = "VidStream" //Cause works for animekisa and wco
@@ -87,9 +90,10 @@ open class WcoStream : ExtractorApi() {
                         }
                     }
                 }
-                if (mainUrl == "https://vidstream.pro" || mainUrl == "https://vidstreamz.online") {
+                if (mainUrl == "https://vidstream.pro" || mainUrl == "https://vidstreamz.online" || mainUrl == "https://vizcloud2.online") {
                 if (it.file.contains("m3u8")) {
-                    hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(it.file, null), true)
+                    hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(it.file.replace("#.mp4",""), null,
+                    headers = mapOf("Referer" to url)), true)
                         .forEach { stream ->
                             val qualityString =
                                 if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
@@ -98,9 +102,9 @@ open class WcoStream : ExtractorApi() {
                                     name,
                                     "$name $qualityString",
                                     stream.streamUrl,
-                                    "",
+                                    url,
                                     getQualityFromName(stream.quality.toString()),
-                                    true
+                                    true,
                                 )
                             )
                         }

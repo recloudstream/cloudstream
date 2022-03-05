@@ -199,8 +199,6 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         val soup = app.get(url).document
         val movieid = soup.selectFirst("div#watch").attr("data-id")
         val movieidencoded = encode(getVrf(movieid) ?: return null)
-        val tvType = if (url.contains("/movie/")) TvType.Movie else TvType.TvSeries
-
         val title = soup.selectFirst("div.info h1").text()
         val description = soup.selectFirst(".info .desc")?.text()?.trim()
         val poster: String? = try {
@@ -210,7 +208,7 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         }
 
         val tags = soup.select("div.info .meta div:contains(Genre) a").map { it.text() }
-        val episodes = if (tvType == TvType.TvSeries) Jsoup.parse(
+        val episodes =  Jsoup.parse(
             app.get(
                 "$mainUrl/ajax/film/servers?id=$movieid&vrf=$movieidencoded"
             ).mapped<Response>().html
@@ -225,13 +223,16 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
             val season = if (isValid) extraData?.getOrNull(0) else null
 
             val eptitle = it.selectFirst(".episode a span.name").text()
+            val secondtitle = it.selectFirst(".episode a span").text()
+                .replace(Regex("(Episode (\\d+):|Episode (\\d+)-|Episode (\\d+))"),"") ?: ""
             TvSeriesEpisode(
-                eptitle,
+                secondtitle+eptitle,
                 season,
                 episode,
                 href,
             )
-        } else null
+        }
+        val tvType = if (url.contains("/movie/") && episodes.size == 1) TvType.Movie else TvType.TvSeries
         val recommendations =
             soup.select("div.bl-2 section.bl div.content div.filmlist div.item")
                 ?.mapNotNull { element ->
@@ -263,7 +264,7 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
                     url,
                     this.name,
                     tvType,
-                    episodes!!,
+                    episodes,
                     poster,
                     year?.toIntOrNull(),
                     description,
@@ -332,8 +333,11 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
             ).html
         )
             .select("html body #episodes").map {
-                val tvType = if (data.contains("movie/")) TvType.Movie else TvType.TvSeries
                 val cleandata = data.replace(mainUrl, "")
+                val a = it.select("a").map {
+                    it.attr("data-kname")
+                }
+                val tvType = if (data.contains("movie/") && a.size == 1) TvType.Movie else TvType.TvSeries
                 val servers = if (tvType == TvType.Movie) it.select(".episode a").attr("data-ep")
                 else
                     it.select(".episode a[href=$cleandata]").attr("data-ep")
