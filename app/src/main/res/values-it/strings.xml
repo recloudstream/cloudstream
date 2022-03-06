@@ -30,7 +30,7 @@
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
 
-    <string name="app_name">CloudStream</string>
+    <!-- <string name="app_name">CloudStream</string> -->
     <string name="title_home">Home</string>
     <string name="title_search">Cerca</string>
     <string name="title_downloads">Scaricati</string>
@@ -44,12 +44,12 @@
     <string name="result_share">Condividi</string>
     <string name="result_open_in_browser">Apri nel browser</string>
     <string name="skip_loading">Salta caricamento</string>
-    <string name="loading_chromecast">Caricando…</string>
+    <string name="loading_chromecast">Caricamento…</string>
 
     <string name="type_watching">Guardando</string>
     <string name="type_on_hold">In attesa</string>
     <string name="type_completed">Completato</string>
-    <string name="type_dropped">Lasciati</string>
+    <string name="type_dropped">Abbandonato</string>
     <string name="type_plan_to_watch">Da guardare</string>
     <string name="type_none">Nessuno</string>
     <string name="type_re_watching">Riguardando</string>
@@ -82,7 +82,7 @@
     <string name="popup_delete_file">Elimina file</string>
     <string name="popup_play_file">Riproduci file</string>
     <string name="popup_resume_download">Riprendi download</string>
-    <string name="popup_pause_download">Ferma Download</string>
+    <string name="popup_pause_download">Ferma download</string>
 
     <string name="pref_disable_acra">Disabilita segnalazione automatica di bug</string>
     <string name="home_more_info">Più info</string>
@@ -95,7 +95,7 @@
     <string name="action_add_to_bookmarks">Imposta stato riproduzione</string>
     <string name="sort_apply">Applica</string>
     <string name="sort_cancel">Cancella</string>
-    <string name="player_speed">Velocità riproduttore</string>
+    <string name="player_speed">Velocità video</string>
 
     <string name="subtitles_settings">Impostazioni sottotitoli</string>
     <string name="subs_text_color">Colore testo</string>
@@ -105,16 +105,16 @@
     <string name="subs_edge_type">Tipo bordo</string>
     <string name="subs_subtitle_elevation">Elevazione sottotitolo</string>
     <string name="subs_font">Font</string>
-    <string name="subs_font_size">Grandezza font</string>
+    <string name="subs_font_size">Dimensione font</string>
 
     <string name="search_provider_text_providers">Cerca per provider</string>
     <string name="search_provider_text_types">Cerca per tipo</string>
 
-    <string name="benene_count_text">%d Banene date agli sviluppatori</string>
-    <string name="benene_count_text_none">Nessuna banene data</string>
+    <string name="benene_count_text">%d banane date agli sviluppatori</string>
+    <string name="benene_count_text_none">Nessuna banana data</string>
 
-    <string name="subs_auto_select_language">Selezione autoamtica lingua</string>
-    <string name="subs_download_languages">Lingua download</string>
+    <string name="subs_auto_select_language">Selezione automatica lingua</string>
+    <string name="subs_download_languages">Lingue da scaricare</string>
     <string name="subs_hold_to_reset_to_default">Tenere premuto per ripristinare le impostazioni predefinite</string>
     <string name="continue_watching">Continua a guardare</string>
 
@@ -124,50 +124,61 @@
     <string name="vpn_might_be_needed">Potrebbe essere necessaria una VPN per far funzionare correttamente questo provider</string>
     <string name="vpn_torrent">Questo provider è un torrent, si raccomanda una VPN</string>
 
-    <string name="provider_info_meta">Metadata is not provided by site, video loading will fail if it does not exist on site.</string>
+    <string name="provider_info_meta">I metadati non sono forniti dal sito, il caricamento del video fallirà se non esiste sul sito.</string>
 
     <string name="torrent_plot">Descrizione</string>
     <string name="normal_no_plot">Nessuna trama trovata</string>
     <string name="torrent_no_plot">Nessuna descrizione trovata</string>
 
-    <string name="picture_in_picture">Picture-in-picture</string>
+    <string name="picture_in_picture">Picture-in-Picture</string>
     <string name="picture_in_picture_des">Continua la riproduzione in un lettore in miniatura sopra altre applicazioni</string>
-    <string name="player_size_settings">Pulsante di ridimensionamento del riproduttore</string>
+    <string name="player_size_settings">Pulsante di ridimensionamento del video</string>
     <string name="player_size_settings_des">Rimuovi bordi neri</string>
     <string name="player_subtitles_settings">Sottotitoli</string>
-    <string name="player_subtitles_settings_des">Impostazioni sottotitoli riproduttore</string>
+    <string name="player_subtitles_settings_des">Impostazioni sottotitoli</string>
+    <string name="chromecast_subtitles_settings">Sottotitoli Chromecast</string>
+    <string name="chromecast_subtitles_settings_des">Impostazioni sottotitoli Chromecast</string>
+
     <string name="eigengraumode_settings">Modalità eigengravy</string>
-    <string name="eigengraumode_settings_des">Aggiungi opzione velocità nel riproduttore</string>
-    <string name="swipe_to_seek_settings">Scorri per cercare</string>
-    <string name="swipe_to_seek_settings_des">Scorri a sinistra o a destra per controllare il tempo nel videoplayer</string>
+    <string name="eigengraumode_settings_des">Aggiungi opzione velocità nel player</string>
+    <string name="swipe_to_seek_settings">Scorri per mandare avanti/indietro</string>
+    <string name="swipe_to_seek_settings_des">Scorri a sinistra o a destra per controllare il tempo del video</string>
     <string name="swipe_to_change_settings">Scorri per cambiare le impostazioni</string>
-    <string name="swipe_to_change_settings_des">Passare il dito sul lato sinistro o destro per cambiare la luminosità o il volume</string>
-    <string name="double_tap_to_seek_settings">Doppio tocco per cercare</string>
+    <string name="swipe_to_change_settings_des">Passa il dito sul lato sinistro o destro per cambiare la luminosità o il volume</string>
+    <string name="double_tap_to_seek_settings">Doppio tocco per mandare avanti/indietro</string>
     <string name="double_tap_to_pause_settings">Doppio tocco per mettere in pausa</string>
-    <string name="double_tap_to_seek_settings_des">Tocca due volte il lato destro o sinistro per cercare in avanti o indietro
+    <string name="double_tap_to_seek_settings_des">Tocca due volte il lato destro o sinistro dello schermo per mandare avanti o indietro il video
     </string>
-    <string name="double_tap_to_pause_settings_des">Tocca al centro per mettere in pausa</string>
+    <string name="double_tap_to_pause_settings_des">Tocca due volte il centro dello schermo per mettere in pausa il video</string>
     <string name="use_system_brightness_settings">Utilizzare la luminosità del sistema</string>
-    <string name="use_system_brightness_settings_des">Utilizzare la luminosità del sistema nel lettore di app invece di una sovrapposizione scura
+    <string name="use_system_brightness_settings_des">Utilizzare la luminosità del sistema al posto di una sovrapposizione scura
     </string>
-    
+
+    <string name="restore_settings">Ripristinare i dati da backup</string>
+    <string name="backup_settings">Backup data</string>
+    <string name="restore_success">File di backup caricato</string>
+    <string name="restore_failed_format" formatted="true">Impossibile ripristinare i dati dal file %s</string>
+    <string name="backup_success">Dati salvati con successo</string>
+    <string name="backup_failed">Permessi di archiviazione mancanti, riprova</string>
+    <string name="backup_failed_error_format">Errore nel backup %s</string>
+
     <string name="search">Cerca</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Ricerca avanzata</string>
     <string name="advanced_search_des">Dividi i risultati della ricerca per provider</string>
     <string name="bug_report_settings_off">Invia i dati solo in caso di crash</string>
     <string name="bug_report_settings_on">Non inviare alcun dato</string>
-    <string name="show_fillers_settings">Mostra episodio filler per anime</string>
+    <string name="show_fillers_settings">Mostra episodi filler per anime</string>
     <string name="updates_settings">Mostra gli aggiornamenti dell\'app</string>
     <string name="updates_settings_des">Cerca automaticamente nuovi aggiornamenti all\'avvio</string>
-    <string name="uprereleases_settings">Aggiornamento alle prerelease</string>
+    <string name="uprereleases_settings">Aggiorna alle prerelease</string>
     <string name="uprereleases_settings_des">Cerca per aggiornamenti alle prerelease invice di cercare solo le release complete</string>
     <string name="github">Github</string>
     <string name="lightnovel">App di light novel degli stessi sviluppatori</string>
     <string name="anim">App di anime dagli stessi sviluppatori</string>
     <string name="discord">Entra Discord</string>
-    <string name="benene">Dai una banene agli sviluppatori</string>
-    <string name="benene_des">Dai una banene</string>
+    <string name="benene">Dai una banana agli sviluppatori</string>
+    <string name="benene_des">Dai una banana</string>
 
     <string name="app_language">Lingua app</string>
 
@@ -194,7 +205,7 @@
     <string name="resume">Riprendi</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Staip per eliminare permanentemente %s\nSei sicuro?</string>
+    <string name="delete_message" formatted="true">Stai per eliminare permanentemente %s\nSei sicuro?</string>
 
     <string name="status_ongoing">In corso</string>
     <string name="status_completed">Completato</string>
@@ -220,12 +231,14 @@
     <string name="anime">Anime</string>
     <string name="torrent">Torrent</string>
     <string name="documentaries">Documentari</string>
+    <string name="ova">OVA</string>
 
     <!--singular-->
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serie TV</string>
     <string name="cartoons_singular">Cartoni</string>
     <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentari</string>
 
@@ -235,7 +248,7 @@
     <string name="unexpected_error">Unexpected player error</string>
     <string name="storage_error">Errore download, controlla i permessi di archiviazione</string>
 
-    <string name="episode_action_chromecast_episode">Episodio Chromecast</string>
+    <string name="episode_action_chromecast_episode">Chromecast</string>
     <string name="episode_action_chromecast_mirror">Mirror Chromecast</string>
     <string name="episode_action_play_in_app">Riproduci in app</string>
     <string name="episode_action_play_in_vlc">Riproduci in VLC</string>
@@ -256,10 +269,11 @@
     <string name="dont_show_again">Non mostrare di nuovo</string>
     <string name="update">Aggiorna</string>
     <string name="watch_quality_pref">Risoluzione preferita</string>
-    <string name="dns_pref">DNS su HTTPS</string>
+    <string name="video_cache_settings">Dimensione cache video</string>
+    <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Utile per bypassare i blocchi ISP</string>
 
-    <string name="download_path_pref">Scarica path</string>
+    <string name="download_path_pref">Download path</string>
 
     <string name="display_subbed_dubbed_settings">Mostra anime doppiati/sottotitolati</string>
 
@@ -287,15 +301,15 @@
     </string>
     <string name="general">Generale</string>
     <string name="provider_lang_settings">Lingua provider</string>
-    <string name="app_layout">Disposizione app</string>
+    <string name="app_layout">Layout app</string>
     <string name="preferred_media_settings">Media preferito</string>
 
     <string name="automatic">Auto</string>
-    <string name="tv_layout">Disposizione TV</string>
-    <string name="phone_layout">Disposizione telefono</string>
+    <string name="tv_layout">Layout TV</string>
+    <string name="phone_layout">Layout Telefono</string>
 
     <string name="primary_color_settings">Colore primario</string>
-    <string name="app_theme_settings">Tema app</string>
+    <string name="app_theme_settings">Tema</string>
 
     <!-- account stuff -->
     <string name="anilist_key" translatable="false">anilist_key</string>
@@ -327,16 +341,27 @@
     <string name="subtitles_depressed">Depresso</string>
     <string name="subtitles_shadow">Ombra</string>
     <string name="subtitles_raised">Sollevato</string>
+    <string name="subtitle_offset">Sincronizza sottotitoli</string>
+    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_title">Ritardo sottotitoli</string>
+    <string name="subtitle_offset_extra_hint_later_format">Usa questo se i sottotitoli sono mostrati %dms troppo presto</string>
+    <string name="subtitle_offset_extra_hint_before_format">Usa questo se i sottotitoli vengono mostrati %dms troppo tardi</string>
+    <string name="subtitle_offset_extra_hint_none_format">Nessun ritardo dei sottotitoli</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
     see: 
 	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
 	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
     -->
-    <string name="subtitles_example_text">The quick brown fox jumps over the lazy dog</string>
+    <string name="subtitles_example_text">Ma che bel gufo spenzola da quei travi</string>
 
     <string name="recommended">Consiglaito</string>
     <string name="player_loaded_subtitles" formatted="true">Caricato %s</string>
     <string name="player_load_subtitles">Carica da file</string>
     <string name="downloaded_file">Downloaded file</string>
+    <string name="actor_main">Main</string>
+    <string name="actor_supporting">Supporting</string>
+    <string name="actor_background">Background</string>
+
+    <string name="home_source">Sorgente</string>
 </resources>
