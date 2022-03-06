@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.*
+import com.lagradost.cloudstream3.metaproviders.CrossTmdbProvider
 import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -86,6 +87,8 @@ object APIHolder {
         AkwamProvider(),
         AnimePaheProvider(),
         NineAnimeProvider(),
+
+        CrossTmdbProvider(),
     )
 
     val restrictedApis = arrayListOf(
@@ -277,6 +280,8 @@ object APIHolder {
 abstract class MainAPI {
     open val name = "NONE"
     open val mainUrl = "NONE"
+
+    //open val uniqueId : Int by lazy { this.name.hashCode() } // in case of duplicate providers you can have a shared id
 
     open val lang = "en" // ISO_639_1 check SubtitleHelper
 

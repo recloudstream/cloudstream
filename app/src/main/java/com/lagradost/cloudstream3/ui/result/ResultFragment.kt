@@ -990,7 +990,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 }
 
                 ACTION_RELOAD_EPISODE -> {
-                    viewModel.loadEpisode(episodeClick.data, false)
+                    viewModel.loadEpisode(episodeClick.data, false, clearCache = true)
                 }
 
                 ACTION_DOWNLOAD_MIRROR -> {

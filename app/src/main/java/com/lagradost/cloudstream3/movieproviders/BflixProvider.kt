@@ -18,6 +18,8 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         TvType.TvSeries,
     )
 
+    //override val uniqueId: Int by lazy { "BflixProvider".hashCode() }
+
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val soup = app.get("$mainUrl/home").document
@@ -323,6 +325,7 @@ class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val soup = app.get(data).document
+
         val movieid = encode(soup.selectFirst("div#watch").attr("data-id") ?: return false)
         val movieidencoded = encode(getVrf(movieid!!) ?: return false)
         Jsoup.parse(

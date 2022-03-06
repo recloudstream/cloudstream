@@ -251,7 +251,7 @@ open class TmdbProvider : MainAPI() {
         val found = idRegex.find(url)
 
         val isTvSeries = found?.groupValues?.getOrNull(1).equals("tv", ignoreCase = true)
-        val id = found?.groupValues?.getOrNull(2)?.toIntOrNull() ?: return null
+        val id = found?.groupValues?.getOrNull(2)?.toIntOrNull() ?: throw ErrorLoadingException("No id found")
 
         return if (useMetaLoadResponse) {
             return if (isTvSeries) {
