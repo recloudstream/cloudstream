@@ -15,6 +15,7 @@ class CrossTmdbProvider : TmdbProvider() {
     override val lang = "en"
     override val useMetaLoadResponse = true
     override val usesWebView = true
+    override val supportedTypes = setOf(TvType.Movie)
 
     private fun filterName(name: String): String {
         return Regex("""[^a-zA-Z0-9-]""").replace(name, "")
@@ -54,11 +55,12 @@ class CrossTmdbProvider : TmdbProvider() {
     }
 
     override suspend fun search(query: String): List<SearchResponse>? {
-        return super.search(query)?.filterIsInstance<MovieSearchResponse>()
+        return super.search(query)?.filterIsInstance<MovieSearchResponse>() // TODO REMOVE
     }
 
     override suspend fun load(url: String): LoadResponse? {
         val base = super.load(url)?.apply {
+            this.recommendations = this.recommendations?.filterIsInstance<MovieSearchResponse>() // TODO REMOVE
             val matchName = filterName(this.name)
             when (this) {
                 is MovieLoadResponse -> {
@@ -95,6 +97,9 @@ class CrossTmdbProvider : TmdbProvider() {
                     }.filterNotNull()
                     this.dataUrl =
                         CrossMetaData(true, data.map { it.apiName to it.dataUrl }).toJson()
+                }
+                else -> {
+                    throw ErrorLoadingException("Nothing besides movies are implemented for this provider")
                 }
             }
         }

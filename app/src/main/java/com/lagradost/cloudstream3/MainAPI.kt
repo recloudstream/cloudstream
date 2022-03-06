@@ -596,7 +596,7 @@ interface LoadResponse {
     val tags: List<String>?
     var duration: Int? // in minutes
     val trailerUrl: String?
-    val recommendations: List<SearchResponse>?
+    var recommendations: List<SearchResponse>?
     var actors: List<ActorData>?
 
     companion object {
