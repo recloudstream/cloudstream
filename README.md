@@ -92,5 +92,6 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [kdramahood.com](https://kdramahood.com) 
 - [akwam.io](https://akwam.io) 
 - [9anime.center](https://9anime.center) 
+- [animeworld.tv](https://www.animeworld.tv) 
 - [asiaflix.app](https://asiaflix.app) 
 <!--SITE LIST END-->
