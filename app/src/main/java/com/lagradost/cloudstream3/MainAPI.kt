@@ -89,6 +89,7 @@ object APIHolder {
         AnimePaheProvider(),
         NineAnimeProvider(),
         AnimeWorldProvider(),
+        SoaptwoDayProvider(),
 
         CrossTmdbProvider(),
     )
