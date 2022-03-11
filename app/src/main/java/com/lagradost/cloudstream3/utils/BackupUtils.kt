@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object BackupUtils {
-    var restoreFileSelector: ActivityResultLauncher<String>? = null
+    var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
 
     // Kinda hack, but I couldn't think of a better way
     data class BackupVars(
@@ -143,7 +143,7 @@ object BackupUtils {
     fun FragmentActivity.setUpBackup() {
         try {
             restoreFileSelector =
-                registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+                registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
                     this.let { activity ->
                         uri?.let {
                             try {
@@ -180,7 +180,14 @@ object BackupUtils {
 
     fun FragmentActivity.restorePrompt() {
         runOnUiThread {
-            restoreFileSelector?.launch("application/json")
+            restoreFileSelector?.launch(
+                arrayOf(
+                    "text/plain",
+                    "text/str",
+                    "text/x-unknown",
+                    "application/json"
+                )
+            )
         }
     }
 
