@@ -16,7 +16,7 @@ class MyCimaProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)
 
     private fun String.getImageURL(): String? {
-        return Regex("""--im(age|g):url\((.*?)\);""").find(this)?.groupValues?.getOrNull(2)
+        return this.replace("--im(age|g):url\\(|\\);".toRegex(), "")
     }
 
     private fun String.getIntFromText(): Int? {
@@ -30,9 +30,7 @@ class MyCimaProvider : MainAPI() {
         val year = select("div.GridItem span.year")?.text()
         val title = select("div.Thumb--GridItem strong").text()
             .replace("$year", "")
-            .replace("مشاهدة فيلم","")
-            .replace("مسلسل","")
-            .replace("مترجم","")
+            .replace("مشاهدة|فيلم|مسلسل|مترجم".toRegex(), "")
             .replace("( نسخة مدبلجة )"," ( نسخة مدبلجة ) ")
         // If you need to differentiate use the url.
         return MovieSearchResponse(
@@ -90,17 +88,14 @@ class MyCimaProvider : MainAPI() {
         val year = doc.select("div.Title--Content--Single-begin h1 a.unline")?.text()?.getIntFromText()
         val title = doc.select("div.Title--Content--Single-begin h1").text()
             .replace("($year)", "")
-            .replace("مشاهدة فيلم","")
-            .replace("مسلسل","")
-            .replace("مترجم","")
-            .replace("فيلم","")
+            .replace("مشاهدة|فيلم|مسلسل|مترجم".toRegex(), "")
         // A bit iffy to parse twice like this, but it'll do.
         val duration =
             doc.select("ul.Terms--Content--Single-begin li").firstOrNull {
                 it.text().contains("المدة")
             }?.text()?.getIntFromText()
 
-        val synopsis = doc.select("div.StoryMovieContent").text() ?: doc.select("div.PostItemContent").text()
+        val synopsis = doc.select("div.StoryMovieContent").text().ifEmpty { doc.select("div.PostItemContent").text() }
 
         val tags = doc.select("li:nth-child(3) > p > a").map { it.text() }
 
@@ -128,41 +123,47 @@ class MyCimaProvider : MainAPI() {
             }
         } else {
             val episodes = ArrayList<TvSeriesEpisode>()
-            val seasons = doc.select("div.List--Seasons--Episodes a").map {
+            val seasons = doc.select("div.List--Seasons--Episodes a").not(".selected").map {
                 it.attr("href")
             }
-                if(seasons.isNotEmpty()) {
+            val moreButton = doc.select("div.MoreEpisodes--Button")
+            val season = doc.select("div.List--Seasons--Episodes a.selected").text().getIntFromText()
+            doc.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a")
+                .apmap { episodes.add(TvSeriesEpisode(it.text(), season, it.text().getIntFromText(), it.attr("href"), null, null))}
+            if(moreButton.isNotEmpty()) {
+                val n = doc.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a").size
+                val totals = doc.select("div.Episodes--Seasons--Episodes a").first().text().getIntFromText()
+                arrayListOf(n, n+40, n+80, n+120, n+160, n+200, n+240, n+280, n+320, n+360)
+                    .apmap { it ->
+                        if(it > totals!!) return@apmap
+                        val ajaxURL = "$mainUrl/AjaxCenter/MoreEpisodes/${moreButton.attr("data-term")}/$it"
+                        val jsonResponse = app.get(ajaxURL)
+                        val json = parseJson<MoreEPS>(jsonResponse.text)
+                        val document = Jsoup.parse(json.output?.replace("""\""", ""))
+                        document.select("a").map { episodes.add(TvSeriesEpisode(it.text(), season, it.text().getIntFromText(), it.attr("href"), null, null)) }
+                    }
+            }
+            if(seasons.isNotEmpty()) {
                     seasons.apmap { surl ->
                         if(surl.contains("%d9%85%d8%af%d8%a8%d9%84%d8%ac")) return@apmap
                             val seasonsite = app.get(surl).document
-                            val moreButton = seasonsite.select("div.MoreEpisodes--Button")
-                            val season = seasonsite.select("div.List--Seasons--Episodes a.selected").text().getIntFromText() ?: 1
+                            val fmoreButton = seasonsite.select("div.MoreEpisodes--Button")
+                            val fseason = seasonsite.select("div.List--Seasons--Episodes a.selected").text().getIntFromText() ?: 1
                             seasonsite.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a")
-                                        .apmap { episodes.add(TvSeriesEpisode(it.text(), season, it.text().getIntFromText(), it.attr("href"), null, null))}
-                            if(moreButton.isNotEmpty()) {
+                                        .apmap { episodes.add(TvSeriesEpisode(it.text(), fseason, it.text().getIntFromText(), it.attr("href"), null, null))}
+                            if(fmoreButton.isNotEmpty()) {
                                 val n = seasonsite.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a").size
                                 val totals = seasonsite.select("div.Episodes--Seasons--Episodes a").first().text().getIntFromText()
                                 arrayListOf(n, n+40, n+80, n+120, n+160, n+200, n+240, n+280, n+320, n+360)
                                     .apmap { it ->
                                         if(it > totals!!) return@apmap
-                                        val ajaxURL = "$mainUrl/AjaxCenter/MoreEpisodes/${moreButton.attr("data-term")}/$it"
+                                        val ajaxURL = "$mainUrl/AjaxCenter/MoreEpisodes/${fmoreButton.attr("data-term")}/$it"
                                         val jsonResponse = app.get(ajaxURL)
                                         val json = parseJson<MoreEPS>(jsonResponse.text)
                                         val document = Jsoup.parse(json.output?.replace("""\""", ""))
-                                        document.select("a").map { episodes.add(TvSeriesEpisode(it.text(), season, it.text().getIntFromText(), it.attr("href"), null, null)) }
+                                        document.select("a").map { episodes.add(TvSeriesEpisode(it.text(), fseason, it.text().getIntFromText(), it.attr("href"), null, null)) }
                                 }
                             } else return@apmap
-                    }
-                } else {
-                    doc.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a").map {
-                        episodes.add(TvSeriesEpisode(
-                            it.text(),
-                            doc.select("div.List--Seasons--Episodes a.selected").text().getIntFromText(),
-                            it.text().getIntFromText(),
-                            it.attr("href"),
-                            null,
-                            null
-                        ))
                     }
                 }
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes.distinct().sortedBy { it.episode }) {
