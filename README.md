@@ -92,6 +92,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [kdramahood.com](https://kdramahood.com) 
 - [akwam.io](https://akwam.io) 
 - [mycima.tv](https://mycima.tv) 
+- [egy.best](https://egy.best) 
 - [9anime.center](https://9anime.center) 
 - [animeworld.tv](https://www.animeworld.tv) 
 - [asiaflix.app](https://asiaflix.app) 
