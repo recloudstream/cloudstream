@@ -87,6 +87,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [pinoy-hd.xyz](https://www.pinoy-hd.xyz) 
 - [pinoymovies.es](https://pinoymovies.es) 
 - [trailers.to](https://trailers.to) 
+- [2embed.ru](https://www.2embed.ru) 
 - [dramasee.net](https://dramasee.net) 
 - [watchasian.sh](https://watchasian.sh) 
 - [kdramahood.com](https://kdramahood.com) 
