@@ -107,7 +107,7 @@ class FilmanProvider : MainAPI() {
                 episode.attr("href"),
             )
         }.toMutableList()
-        episodes.sortBy { (it.season?.times(10000) ?: 0) + (it.episode ?: 0) }
+
         return TvSeriesLoadResponse(
             title,
             url,

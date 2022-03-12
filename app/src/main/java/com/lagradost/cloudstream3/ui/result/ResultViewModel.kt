@@ -361,10 +361,10 @@ class ResultViewModel : ViewModel() {
                                 ))
                             }
                             idIndex++
+                            episodes.sortBy { it.episode }
 
                             Pair(ep.key, episodes)
                         }.toMap()
-
                         _dubSubEpisodes.postValue(res)
                         res[dubStatus]?.let { episodes ->
                             updateEpisodes(mainId, episodes, -1)
@@ -392,8 +392,8 @@ class ResultViewModel : ViewModel() {
                                     mainId
                                 )
                             )
-
                         }
+                        episodes.sortBy { (it.season?.times(10000) ?: 0) + it.episode }
                         updateEpisodes(mainId, episodes, -1)
                     }
                     is MovieLoadResponse -> {
