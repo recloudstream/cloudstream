@@ -14,6 +14,11 @@ class Upstream: ZplayerV2() {
     override val mainUrl: String = "https://upstream.to"
 }
 
+class Streamhub2: ZplayerV2() {
+    override val name: String = "Streamhub" //Here 'cause works
+    override val mainUrl: String = "https://streamhub.to"
+}
+
 open class ZplayerV2 : ExtractorApi() {
     override val name = "Zplayer V2"
     override val mainUrl = "https://v2.zplayer.live"

@@ -17,7 +17,7 @@ class StreamSB2 : StreamSB() {
 }
 
 class StreamSB3 : StreamSB() {
-    override val mainUrl = "https://sbplay.one"
+    override val mainUrl = "https://sbplay3.com"
 }
 
 class StreamSB4 : StreamSB() {
