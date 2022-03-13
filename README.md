@@ -92,7 +92,7 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [dramasee.net](https://dramasee.net) 
 - [watchasian.sh](https://watchasian.sh) 
 - [kdramahood.com](https://kdramahood.com) 
-- [akwam.io](https://akwam.io) 
+- [akwam.to](https://akwam.to) 
 - [mycima.tv](https://mycima.tv) 
 - [egy.best](https://egy.best) 
 - [9anime.center](https://9anime.center) 
