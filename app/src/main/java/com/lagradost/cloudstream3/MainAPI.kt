@@ -57,6 +57,7 @@ object APIHolder {
         VMoveeProvider(),
         WatchCartoonOnlineProvider(),
         AllMoviesForYouProvider(),
+        ApiMDBProvider(),
 
         MonoschinosProvider(),
 

@@ -150,6 +150,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
   //  SBPlay1(),
   //  SBPlay2(),
 
+    PlayerVoxzer(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {
