@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
+import okio.ByteString.Companion.decodeHex
 import org.jsoup.Jsoup
 import java.util.*
 import javax.crypto.Cipher
@@ -46,6 +47,13 @@ class GogoanimeProvider : MainAPI() {
                 base64Encode(cipher.doFinal(string.toByteArray()))
             }
         }
+    }
+
+    private fun String.decodeHex(): ByteArray {
+        check(length % 2 == 0) { "Must have an even length" }
+        return chunked(2)
+            .map { it.toInt(16).toByte() }
+            .toByteArray()
     }
 
     override val mainUrl = "https://gogoanime.film"
@@ -275,23 +283,22 @@ class GogoanimeProvider : MainAPI() {
                 }, {
                     // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt
                     // No Licence on the following code
-                    val encrypted =
-                        streamingDocument.select("script[data-name='crypto']").attr("data-value")
-                    val iv = streamingDocument.select("script[data-name='ts']").attr("data-value")
-                        .toByteArray()
+                    // Also modified of https://github.com/jmir1/aniyomi-extensions/blob/master/src/en/gogoanime/src/eu/kanade/tachiyomi/animeextension/en/gogoanime/extractors/GogoCdnExtractor.kt
+                    // License on the code above  https://github.com/jmir1/aniyomi-extensions/blob/master/LICENSE
+
+                    val iv = "31323835363732333833393339383532".decodeHex()
+                    val secretKey = "3235373136353338353232393338333936313634363632323738383333323838".decodeHex()
 
                     val id = Regex("id=([^&]+)").find(iframe)!!.value.removePrefix("id=")
-
-                    val secretKey = cryptoHandler(encrypted, iv, iv + iv, false)
-                    val encryptedId =
-                        cryptoHandler(id, "0000000000000000".toByteArray(), secretKey.toByteArray())
-
+                    val encryptedId = cryptoHandler(id, iv, secretKey)
                     val jsonResponse =
                         app.get(
-                            "http://gogoplay.io/encrypt-ajax.php?id=$encryptedId&time=00000000000000000000",
+                            "http://gogoplay4.com/encrypt-ajax.php?id=$encryptedId&time=00000000000000000000",
                             headers = mapOf("X-Requested-With" to "XMLHttpRequest")
                         )
-                    val sources = AppUtils.parseJson<GogoSources>(jsonResponse.text)
+                    val dataencrypted = jsonResponse.text.substringAfter("{\"data\":\"").substringBefore("\"}")
+                    val datadecrypted = cryptoHandler(dataencrypted, iv, secretKey, false)
+                    val sources = AppUtils.parseJson<GogoSources>(datadecrypted)
 
                     fun invokeGogoSource(
                         source: GogoSource,
@@ -299,29 +306,29 @@ class GogoanimeProvider : MainAPI() {
                     ) {
                         if (source.file.contains("m3u8")) {
                             M3u8Helper().m3u8Generation(
-                            M3u8Helper.M3u8Stream(
-                                source.file,
-                                headers = mapOf("Referer" to "https://gogoplay.io")
-                            ), true
-                        )
-                            .map { stream ->
-                                val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
-                                sourceCallback(  ExtractorLink(
-                                    name,
-                                    "$name $qualityString",
-                                    stream.streamUrl,
-                                    "https://gogoplay.io",
-                                    getQualityFromName(stream.quality.toString()),
-                                    true
-                                ))
-                            }
+                                M3u8Helper.M3u8Stream(
+                                    source.file,
+                                    headers = mapOf("Referer" to "https://gogoplay4.com")
+                                ), true
+                            )
+                                .map { stream ->
+                                    val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
+                                    sourceCallback(  ExtractorLink(
+                                        name,
+                                        "$name $qualityString",
+                                        stream.streamUrl,
+                                        "https://gogoplay4.com",
+                                        getQualityFromName(stream.quality.toString()),
+                                        true
+                                    ))
+                                }
                         } else if (source.file.contains("vidstreaming")) {
                             sourceCallback.invoke(
                                 ExtractorLink(
                                     this.name,
                                     "${this.name} ${source.label?.replace("0 P", "0p") ?: ""}",
                                     source.file,
-                                    "https://gogoplay.io",
+                                    "https://gogoplay4.com",
                                     getQualityFromName(source.label ?: ""),
                                     isM3u8 = source.type == "hls"
                                 )
