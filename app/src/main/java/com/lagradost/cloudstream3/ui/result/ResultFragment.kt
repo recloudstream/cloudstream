@@ -1302,7 +1302,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         currentPoster = d.posterUrl
                         currentIsMovie = !d.isEpisodeBased()
 
-                        result_openinbrower?.setOnClickListener {
+                        result_open_in_browser?.setOnClickListener {
                             val i = Intent(ACTION_VIEW)
                             i.data = Uri.parse(d.url)
                             try {
@@ -1640,6 +1640,16 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
+                    val i = Intent(ACTION_VIEW)
+                    i.data = Uri.parse(tempUrl)
+                    try {
+                        startActivity(i)
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
+                }
+
+                result_open_in_browser?.setOnClickListener {
                     val i = Intent(ACTION_VIEW)
                     i.data = Uri.parse(tempUrl)
                     try {

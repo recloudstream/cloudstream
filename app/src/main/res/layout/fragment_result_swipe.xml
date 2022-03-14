@@ -49,7 +49,7 @@
                     android:nextFocusUp="@id/result_back"
                     android:nextFocusDown="@id/result_descript"
                     android:nextFocusLeft="@id/result_add_sync"
-                    android:nextFocusRight="@id/result_openinbrower"
+                    android:nextFocusRight="@id/result_open_in_browser"
 
                     android:id="@+id/result_share"
                     android:layout_width="25dp"
@@ -69,7 +69,7 @@
                     android:nextFocusLeft="@id/result_share"
                     android:nextFocusRight="@id/result_search"
 
-                    android:id="@+id/result_openinbrower"
+                    android:id="@+id/result_open_in_browser"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_margin="5dp"
@@ -84,7 +84,7 @@
             <ImageView
                     android:nextFocusUp="@id/result_back"
                     android:nextFocusDown="@id/result_descript"
-                    android:nextFocusLeft="@id/result_openinbrower"
+                    android:nextFocusLeft="@id/result_open_in_browser"
                     android:nextFocusRight="@id/result_recommendations_btt"
 
                     android:id="@+id/result_search"
