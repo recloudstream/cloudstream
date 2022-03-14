@@ -413,6 +413,7 @@
                             android:layout_height="wrap_content" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                            android:paddingTop="5dp"
                             tools:itemCount="2"
                             android:fadingEdge="horizontal"
                             android:requiresFadingEdge="horizontal"

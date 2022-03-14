@@ -10,12 +10,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/rounded_image_radius"
-        app:cardBackgroundColor="?attr/boxItemBackground"
+        app:cardBackgroundColor="?attr/primaryBlackBackground"
 
         android:foreground="@drawable/outline_drawable"
         android:layout_marginEnd="10dp">
-
-
     <LinearLayout
             android:layout_width="100dp"
             android:orientation="vertical"
