@@ -70,13 +70,13 @@ object APIHolder {
 
             AsianLoadProvider(),
 
-            BflixProvider("https://bflix.ru","Bflix"),
-            BflixProvider("https://fmovies.to","Fmovies.to"),
-            BflixProvider("https://sflix.pro","Sflix.pro"),
+            RealBflixProvider(),
+            FmoviesProvider(),
+            SflixProProvider(),
 
-            SflixProvider("https://sflix.to", "Sflix.to"),
-            SflixProvider("https://dopebox.to", "Dopebox"),
-            SflixProvider("https://solarmovie.pe", "Solarmovie"),
+            RealSflixProvider(),
+            DopeboxProvider(),
+            SolarmovieProvider(),
 
             //TmdbProvider(),
 

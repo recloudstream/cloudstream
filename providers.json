@@ -44,17 +44,17 @@
         "url": "https://asianembed.io",
         "status": 1
     },
-    "BflixProvider": {
+    "RealBflixProvider": {
         "name": "Bflix",
         "url": "https://bflix.ru",
         "status": 1
     },
-    "BflixProviderClone1": {
+    "FmoviesProvider": {
         "name": "Fmovies.to",
         "url": "https://fmovies.to",
         "status": 1
     },
-    "BflixProviderClone2": {
+    "SflixProProvider": {
         "name": "Sflix.pro",
         "url": "https://sflix.pro",
         "status": 1
@@ -257,6 +257,21 @@
     "ZoroProvider": {
         "name": "Zoro",
         "url": "https://zoro.to",
+        "status": 1
+    },
+    "RealSflixProvider": {
+        "name": "Sflix.to",
+        "url": "https://sflix.to",
+        "status": 1
+    },
+    "DopeboxProvider": {
+        "name": "Dopebox",
+        "url": "https://dopebox.to",
+        "status": 1
+    },
+    "SolarmovieProvider": {
+        "name": "Solarmovie",
+        "url": "https://solarmovie.pe",
         "status": 1
     }
 }
