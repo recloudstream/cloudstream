@@ -112,6 +112,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     StreamSB7(),
     StreamSB8(),
     StreamSB9(),
+    StreamSB10(),
    // Streamhub(), cause Streamhub2() works
     Streamhub2(),
 
