@@ -149,7 +149,7 @@ class AllMoviesForYouProvider : MainAPI() {
                                 name,
                                 season.first,
                                 epNum,
-                                href,
+                                fixUrl(href),
                                 fixUrlNull(poster),
                                 date
                             )
@@ -175,7 +175,7 @@ class AllMoviesForYouProvider : MainAPI() {
                 title,
                 url,
                 type,
-                url
+                fixUrl(url)
             ) {
                 posterUrl = backgroundPoster
                 this.year = year?.toIntOrNull()
@@ -193,12 +193,12 @@ class AllMoviesForYouProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val doc = app.get(data).document
-        val iframe = doc.select("body iframe").map { it.attr("src") }
+        val iframe = doc.select("body iframe").map { fixUrl(it.attr("src")) }
         iframe.apmap { id ->
             if (id.contains("trembed")) {
                 val soup = app.get(id).document
                 soup.select("body iframe").map {
-                    val link = it.attr("src").replace("streamhub.to/d/","streamhub.to/e/")
+                    val link = fixUrl(it.attr("src").replace("streamhub.to/d/","streamhub.to/e/"))
                     loadExtractor(link, data, callback)
                 }
             } else loadExtractor(id, data, callback)
