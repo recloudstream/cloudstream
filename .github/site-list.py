@@ -6,7 +6,7 @@ from typing import List, Dict
 
 # Globals
 URL_REGEX = compile(
-    "override val mainUrl(?:\:\s?String)?[^\"']+[\"'](https?://[a-zA-Z0-9\.-]+)[\"']")
+    "override\sva[lr]\smainUrl[^\"']+[\"'](https?://[a-zA-Z0-9\.-]+)[\"']")
 NAME_REGEX = compile("class (.+?) ?: \w+\(\)\s\{")
 START_MARKER = "<!--SITE LIST START-->"
 END_MARKER = "<!--SITE LIST END-->"
