@@ -39,8 +39,9 @@ const val TAG = "CS3ExoPlayer"
 class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
-    var cacheSize = 300L * 1024L * 1024L // 300 mb
-    private val simpleCacheSize : Long get() = cacheSize / 2 // idk chosen at random kinda
+    var cacheSize = 0L
+    var simpleCacheSize = 0L
+    var videoBufferMs = 0L
 
     private val seekActionTime = 30000L
 
@@ -423,6 +424,7 @@ class CS3IPlayer : IPlayer {
             playBackSpeed: Float,
             subtitleOffset: Long,
             cacheSize: Long,
+            videoBufferMs: Long,
             playWhenReady: Boolean = true,
             cacheFactory: CacheDataSource.Factory? = null,
             trackSelector: TrackSelector? = null,
@@ -460,10 +462,11 @@ class CS3IPlayer : IPlayer {
                             )
                             .setBufferDurationsMs(
                                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                                maxOf(
-                                    DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                                    ((cacheSize * 75L) / 32768L).toInt()
-                                ), // 500mb = 20min
+                                if(videoBufferMs <= 0) {
+                                    DefaultLoadControl.DEFAULT_MAX_BUFFER_MS
+                                } else {
+                                    videoBufferMs.toInt()
+                                },
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
                             ).build()
@@ -574,6 +577,7 @@ class CS3IPlayer : IPlayer {
                 playbackPosition,
                 playBackSpeed,
                 cacheSize = cacheSize,
+                videoBufferMs = videoBufferMs,
                 playWhenReady = isPlaying, // this keep the current state of the player
                 cacheFactory = cacheFactory,
                 subtitleOffset = currentSubtitleOffset

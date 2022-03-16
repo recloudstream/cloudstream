@@ -269,7 +269,7 @@
     <string name="dont_show_again">Non mostrare di nuovo</string>
     <string name="update">Aggiorna</string>
     <string name="watch_quality_pref">Risoluzione preferita</string>
-    <string name="video_cache_settings">Dimensione cache video</string>
+    <string name="video_buffer_size_settings">Dimensione cache video</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Utile per bypassare i blocchi ISP</string>
 

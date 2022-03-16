@@ -339,14 +339,21 @@ abstract class AbstractPlayerFragment(
             SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 
             try {
-                context?.let {
+                context?.let { ctx ->
                     val settingsManager = PreferenceManager.getDefaultSharedPreferences(
-                        it
+                        ctx
                     )
-                    val currentPrefSize =
-                        settingsManager.getInt(getString(R.string.video_cache_key), 300)
 
-                    player.cacheSize = currentPrefSize * 1024L * 1024L
+                    val currentPrefCacheSize =
+                        settingsManager.getInt(getString(R.string.video_buffer_size_key), 0)
+                    val currentPrefDiskSize =
+                        settingsManager.getInt(getString(R.string.video_buffer_disk_key), 0)
+                    val currentPrefBufferSec =
+                        settingsManager.getInt(getString(R.string.video_buffer_length_key), 0)
+                    
+                    player.cacheSize = currentPrefCacheSize * 1024L * 1024L
+                    player.simpleCacheSize = currentPrefDiskSize * 1024L * 1024L
+                    player.videoBufferMs = currentPrefBufferSec * 1000L
                 }
             } catch (e: Exception) {
                 logError(e)

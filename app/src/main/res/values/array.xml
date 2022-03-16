@@ -56,20 +56,88 @@
         <item>1</item>
         <item>2</item>
     </array>
-    <array name="video_cache_size_names">
-        <item>@string/none</item>
+
+    <array name="video_buffer_length_names">
+        <item>@string/automatic</item>
+        <item>1min</item>
+        <item>1min 30s</item>
+        <item>2min</item>
+        <item>2min 30s</item>
+        <item>3min</item>
+        <item>3min 30s</item>
+        <item>4min</item>
+        <item>5min</item>
+        <item>6min</item>
+        <item>7min</item>
+        <item>8min</item>
+        <item>9min</item>
+        <item>10min</item>
+        <item>15min</item>
+        <item>20min</item>
+        <item>30min</item>
+    </array>
+
+    <array name="video_buffer_length_values">
+        <item>0</item>
+        <item>60</item>
+        <item>90</item>
+        <item>120</item>
+        <item>150</item>
+        <item>180</item>
+        <item>210</item>
+        <item>240</item>
+        <item>300</item>
+        <item>360</item>
+        <item>420</item>
+        <item>480</item>
+        <item>540</item>
+        <item>600</item>
+        <item>900</item>
+        <item>1200</item>
+        <item>1800</item>
+    </array>
+
+    <array name="video_buffer_size_names">
+        <item>@string/automatic</item>
+        <item>10MB</item>
+        <item>20MB</item>
+        <item>30MB</item>
+        <item>40MB</item>
+        <item>50MB</item>
+        <item>60MB</item>
+        <item>70MB</item>
+        <item>80MB</item>
+        <item>90MB</item>
         <item>100MB</item>
+        <item>150MB</item>
         <item>200MB</item>
+        <item>250MB</item>
         <item>300MB</item>
+        <item>350MB</item>
         <item>400MB</item>
+        <item>450MB</item>
         <item>500MB</item>
     </array>
-    <array name="video_cache_size_values">
+
+    <array name="video_buffer_size_values">
         <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
         <item>100</item>
+        <item>150</item>
         <item>200</item>
+        <item>250</item>
         <item>300</item>
+        <item>350</item>
         <item>400</item>
+        <item>450</item>
         <item>500</item>
     </array>
 

@@ -209,21 +209,61 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.settings, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        getPref(R.string.video_cache_key)?.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.video_cache_size_names)
-            val prefValues = resources.getIntArray(R.array.video_cache_size_values)
+        getPref(R.string.video_buffer_length_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.video_buffer_length_names)
+            val prefValues = resources.getIntArray(R.array.video_buffer_length_values)
 
             val currentPrefSize =
-                settingsManager.getInt(getString(R.string.video_cache_key), 300)
+                settingsManager.getInt(getString(R.string.video_buffer_length_key), 0)
 
-            activity?.showBottomDialog(
+            activity?.showDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentPrefSize),
-                getString(R.string.video_cache_settings),
+                getString(R.string.video_buffer_length_settings),
                 true,
                 {}) {
                 settingsManager.edit()
-                    .putInt(getString(R.string.video_cache_key), prefValues[it])
+                    .putInt(getString(R.string.video_buffer_length_key), prefValues[it])
+                    .apply()
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.video_buffer_size_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.video_buffer_size_names)
+            val prefValues = resources.getIntArray(R.array.video_buffer_size_values)
+
+            val currentPrefSize =
+                settingsManager.getInt(getString(R.string.video_buffer_size_key), 0)
+
+            activity?.showDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentPrefSize),
+                getString(R.string.video_buffer_size_settings),
+                true,
+                {}) {
+                settingsManager.edit()
+                    .putInt(getString(R.string.video_buffer_size_key), prefValues[it])
+                    .apply()
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.video_buffer_disk_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.video_buffer_size_names)
+            val prefValues = resources.getIntArray(R.array.video_buffer_size_values)
+
+            val currentPrefSize =
+                settingsManager.getInt(getString(R.string.video_buffer_disk_key), 0)
+
+            activity?.showDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentPrefSize),
+                getString(R.string.video_buffer_disk_settings),
+                true,
+                {}) {
+                settingsManager.edit()
+                    .putInt(getString(R.string.video_buffer_disk_key), prefValues[it])
                     .apply()
             }
             return@setOnPreferenceClickListener true
