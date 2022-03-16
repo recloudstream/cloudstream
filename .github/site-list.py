@@ -13,7 +13,7 @@ END_MARKER = "<!--SITE LIST END-->"
 GLOB = "app/src/main/java/com/lagradost/cloudstream3/*providers/*Provider.kt"
 MAIN_API = "app/src/main/java/com/lagradost/cloudstream3/MainAPI.kt"
 API_REGEX = compile(
-    "val (?:restrictedA|a)pis = arrayListOf\((.+?)\)(?=\n\n)", DOTALL)
+    "val\s*allProviders.*?{\s.*?arrayListOf\(([\W\w]*?)\)\s*\n*\s*}", DOTALL)
 
 sites: Dict[str, str] = {}
 enabled_sites: List[str] = []
