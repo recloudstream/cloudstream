@@ -32,6 +32,7 @@
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
     <string name="restore_key" translatable="false">restore_key</string>
+    <string name="killswitch_key" translatable="false">killswitch_key</string>
     <string name="backup_key" translatable="false">backup_key</string>
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
@@ -198,6 +199,9 @@
     </string>
 
     <string name="restore_settings">Restore data from backup</string>
+    <string name="killswitch_settings">Download latest metadata from github</string>
+    <string name="killswitch_settings_des">If you want access to all providers (even broken ones) turn this off</string>
+
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">Loaded backup file</string>
     <string name="restore_failed_format" formatted="true">Failed to restore data from file %s</string>

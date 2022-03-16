@@ -315,9 +315,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             api.init()
         }
 
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val downloadFromGithub = try {
+            settingsManager.getBoolean(getString(R.string.killswitch_key), true)
+        } catch (e: Exception) {
+            logError(e)
+            false
+        }
+
         // must give benenes to get beta providers
         val hasBenene = try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
             val count = settingsManager.getInt(getString(R.string.benene_count), 0)
             count > 30
         } catch (e: Exception) {
@@ -326,56 +333,66 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         // this pulls the latest data so ppl don't have to update to simply change provider url
-        try {
-            runBlocking {
-                withContext(Dispatchers.IO) {
-                    val cacheStr: String? = getKey(PROVIDER_STATUS_KEY)
-                    val cache : HashMap<String, ProvidersInfoJson>? = cacheStr?.let { tryParseJson(cacheStr) }
-                    if (cache != null) {
-                        // if cache is found then spin up a new request, but dont wait
-                        main {
-                            try {
-                                val txt = app.get(PROVIDER_STATUS_URL).text
-                                val newCache = tryParseJson<HashMap<String, ProvidersInfoJson>>(txt)
-                                setKey(PROVIDER_STATUS_KEY, txt)
-                                MainAPI.overrideData = newCache // update all new providers
-                                for (api in apis) { // update current providers
-                                    newCache?.get(api.javaClass.simpleName)?.let { data ->
-                                        api.overrideWithNewData(data)
+        if(downloadFromGithub) {
+            try {
+                runBlocking {
+                    withContext(Dispatchers.IO) {
+                        try {
+                            val cacheStr: String? = getKey(PROVIDER_STATUS_KEY)
+                            val cache: HashMap<String, ProvidersInfoJson>? =
+                                cacheStr?.let { tryParseJson(cacheStr) }
+                            if (cache != null) {
+                                // if cache is found then spin up a new request, but dont wait
+                                main {
+                                    try {
+                                        val txt = app.get(PROVIDER_STATUS_URL).text
+                                        val newCache =
+                                            tryParseJson<HashMap<String, ProvidersInfoJson>>(txt)
+                                        setKey(PROVIDER_STATUS_KEY, txt)
+                                        MainAPI.overrideData = newCache // update all new providers
+                                        for (api in apis) { // update current providers
+                                            newCache?.get(api.javaClass.simpleName)?.let { data ->
+                                                api.overrideWithNewData(data)
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        logError(e)
                                     }
                                 }
-                            } catch (e : Exception) {
-                                logError(e)
+                                cache
+                            } else {
+                                // if it is the first time the user has used the app then wait for a request to update all providers
+                                val txt = app.get(PROVIDER_STATUS_URL).text
+                                setKey(PROVIDER_STATUS_KEY, txt)
+                                val newCache = tryParseJson<HashMap<String, ProvidersInfoJson>>(txt)
+                                newCache
+                            }?.let { providersJsonMap ->
+                                MainAPI.overrideData = providersJsonMap
+                                val acceptableProviders =
+                                    providersJsonMap.filter { it.value.status == PROVIDER_STATUS_OK || it.value.status == PROVIDER_STATUS_SLOW }
+                                        .map { it.key }.toSet()
+
+                                val restrictedApis =
+                                    if (hasBenene) providersJsonMap.filter { it.value.status == PROVIDER_STATUS_BETA_ONLY }
+                                        .map { it.key }.toSet() else emptySet()
+
+                                apis = allProviders.filter { api ->
+                                    val name = api.javaClass.simpleName
+                                    acceptableProviders.contains(name) || restrictedApis.contains(name)
+                                }
                             }
-                        }
-                        cache
-                    } else {
-                        // if it is the first time the user has used the app then wait for a request to update all providers
-                        val txt = app.get(PROVIDER_STATUS_URL).text
-                        setKey(PROVIDER_STATUS_KEY, txt)
-                        val newCache = tryParseJson<HashMap<String, ProvidersInfoJson>>(txt)
-                        newCache
-                    }?.let { providersJsonMap ->
-                        MainAPI.overrideData = providersJsonMap
-                        val acceptableProviders =
-                            providersJsonMap.filter { it.value.status == PROVIDER_STATUS_OK || it.value.status == PROVIDER_STATUS_SLOW }
-                                .map { it.key }.toSet()
-
-                        val restrictedApis =
-                            if (hasBenene) providersJsonMap.filter { it.value.status == PROVIDER_STATUS_BETA_ONLY }
-                                .map { it.key }.toSet() else emptySet()
-
-                        apis = allProviders.filter { api ->
-                            val name = api.javaClass.simpleName
-                            acceptableProviders.contains(name) || restrictedApis.contains(name)
+                        } catch (e : Exception) {
+                            logError(e)
                         }
                     }
                 }
+            } catch (e: Exception) {
+                apis = allProviders
+                e.printStackTrace()
+                logError(e)
             }
-        } catch (e: Exception) {
+        } else {
             apis = allProviders
-            e.printStackTrace()
-            logError(e)
         }
 
         loadThemes(this)
