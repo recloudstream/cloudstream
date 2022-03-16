@@ -15,6 +15,7 @@
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
     <string name="video_buffer_size_key" translatable="false">video_buffer_size_key</string>
     <string name="video_buffer_length_key" translatable="false">video_buffer_length_key</string>
+    <string name="video_buffer_clear_key" translatable="false">video_buffer_clear_key</string>
     <string name="video_buffer_disk_key" translatable="false">video_buffer_disk_key</string>
     <string name="prerelease_commit_hash" translatable="false">unknown_prerelease</string>
     <string name="use_system_brightness_key" translatable="false">use_system_brightness_key</string>
@@ -44,6 +45,7 @@
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
     <string name="storage_size_format" translatable="false" formatted="true">%s • %sGB</string>
     <string name="download_size_format" translatable="false" formatted="true">%sMB / %sMB</string>
+    <string name="mb_format" translatable="false" formatted="true">%dMB</string>
     <string name="episode_name_format" translatable="false" formatted="true">%s %s</string>
     <string name="ffw_text_format" translatable="false" formatted="true">+%d</string>
     <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
@@ -324,6 +326,8 @@
     <string name="video_buffer_size_settings">Video buffer size</string>
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
+    <string name="video_buffer_clear_settings">Clear video and image cache</string>
+
     <string name="video_buffer_description">May cause problems on systems with low ram or storage such as Android TV devices or old phones if you set it too high</string>
 
     <string name="dns_pref">DNS over HTTPS</string>

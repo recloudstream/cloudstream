@@ -80,6 +80,11 @@
                 android:title="@string/video_buffer_length_settings"
                 android:summary="@string/video_buffer_description"
                 android:icon="@drawable/ic_baseline_storage_24" />
+
+        <Preference
+                android:key="@string/video_buffer_clear_key"
+                android:title="@string/video_buffer_clear_settings"
+                android:icon="@drawable/ic_baseline_autorenew_24" />
         <!--
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_brightness_7_24"

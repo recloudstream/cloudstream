@@ -198,10 +198,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun getPref(id: Int): Preference? {
         return try {
             findPreference(getString(id))
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             logError(e)
             null
         }
+    }
+
+    fun getFolderSize(dir: File): Long {
+        var size: Long = 0
+        dir.listFiles()?.let {
+            for (file in it) {
+                size += if (file.isFile) {
+                    // System.out.println(file.getName() + " " + file.length());
+                    file.length()
+                } else getFolderSize(file)
+            }
+        }
+
+        return size
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -247,6 +261,31 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .apply()
             }
             return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.video_buffer_clear_key)?.let { pref ->
+            val cacheDir = context?.cacheDir ?: return@let
+
+            fun updateSummery() {
+                try {
+                    pref.summary =
+                        getString(R.string.mb_format).format(getFolderSize(cacheDir) / (1024L * 1024L))
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+
+            updateSummery()
+
+            pref.setOnPreferenceClickListener {
+                try {
+                    cacheDir.deleteRecursively()
+                    updateSummery()
+                } catch (e: Exception) {
+                    logError(e)
+                }
+                return@setOnPreferenceClickListener true
+            }
         }
 
         getPref(R.string.video_buffer_disk_key)?.setOnPreferenceClickListener {
