@@ -328,7 +328,8 @@
     <string name="video_buffer_disk_settings">Video cache on disk</string>
     <string name="video_buffer_clear_settings">Clear video and image cache</string>
 
-    <string name="video_buffer_description">May cause problems on systems with low ram or storage such as Android TV devices or old phones if you set it too high</string>
+    <string name="video_ram_description">May cause problems on systems with low ram such as Android TV devices or old phones if you set it too high</string>
+    <string name="video_disk_description">May cause problems on systems with low storage space such as Android TV devices if you set it too high</string>
 
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>

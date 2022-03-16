@@ -66,25 +66,25 @@
         <Preference
                 android:key="@string/video_buffer_disk_key"
                 android:title="@string/video_buffer_disk_settings"
-                android:summary="@string/video_buffer_description"
+                android:summary="@string/video_disk_description"
                 android:icon="@drawable/ic_baseline_storage_24" />
 
         <Preference
                 android:key="@string/video_buffer_size_key"
                 android:title="@string/video_buffer_size_settings"
-                android:summary="@string/video_buffer_description"
+                android:summary="@string/video_ram_description"
                 android:icon="@drawable/ic_baseline_storage_24" />
 
         <Preference
                 android:key="@string/video_buffer_length_key"
                 android:title="@string/video_buffer_length_settings"
-                android:summary="@string/video_buffer_description"
+                android:summary="@string/video_ram_description"
                 android:icon="@drawable/ic_baseline_storage_24" />
 
         <Preference
                 android:key="@string/video_buffer_clear_key"
                 android:title="@string/video_buffer_clear_settings"
-                android:icon="@drawable/ic_baseline_autorenew_24" />
+                android:icon="@drawable/ic_baseline_delete_outline_24" />
         <!--
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_brightness_7_24"
