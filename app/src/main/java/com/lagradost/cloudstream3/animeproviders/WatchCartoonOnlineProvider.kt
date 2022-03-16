@@ -12,8 +12,8 @@ import java.util.*
 
 
 class WatchCartoonOnlineProvider : MainAPI() {
-    override val name = "WatchCartoonOnline"
-    override val mainUrl = "https://www.wcostream.com"
+    override var name = "WatchCartoonOnline"
+    override var mainUrl = "https://www.wcostream.com"
 
     override val supportedTypes = setOf(
         TvType.Cartoon,

@@ -13,8 +13,8 @@ import org.jsoup.select.Elements
 import java.lang.Exception
 
 class PinoyMoviesEsProvider : MainAPI() {
-    override val name = "Pinoy Movies"
-    override val mainUrl = "https://pinoymovies.es"
+    override var name = "Pinoy Movies"
+    override var mainUrl = "https://pinoymovies.es"
     override val lang = "tl"
     override val supportedTypes = setOf(TvType.Movie)
     override val hasDownloadSupport = false

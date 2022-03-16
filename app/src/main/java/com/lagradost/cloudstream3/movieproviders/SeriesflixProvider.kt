@@ -7,8 +7,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
 class SeriesflixProvider : MainAPI() {
-    override val mainUrl = "https://seriesflix.video"
-    override val name = "Seriesflix"
+    override var mainUrl = "https://seriesflix.video"
+    override var name = "Seriesflix"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

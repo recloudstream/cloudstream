@@ -17,8 +17,8 @@ import java.util.*
 
 
 class AllAnimeProvider : MainAPI() {
-    override val mainUrl = "https://allanime.site"
-    override val name = "AllAnime"
+    override var mainUrl = "https://allanime.site"
+    override var name = "AllAnime"
     override val hasQuickSearch = false
     override val hasMainPage = false
 

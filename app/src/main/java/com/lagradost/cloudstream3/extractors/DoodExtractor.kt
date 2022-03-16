@@ -7,21 +7,21 @@ import com.lagradost.cloudstream3.utils.Qualities
 import kotlinx.coroutines.delay
 
 class DoodToExtractor : DoodLaExtractor() {
-    override val mainUrl = "https://dood.to"
+    override var mainUrl = "https://dood.to"
 }
 
 class DoodSoExtractor : DoodLaExtractor() {
-    override val mainUrl = "https://dood.so"
+    override var mainUrl = "https://dood.so"
 }
 
 class DoodWsExtractor : DoodLaExtractor() {
-    override val mainUrl = "https://dood.ws"
+    override var mainUrl = "https://dood.ws"
 }
 
 
 open class DoodLaExtractor : ExtractorApi() {
-    override val name = "DoodStream"
-    override val mainUrl = "https://dood.la"
+    override var name = "DoodStream"
+    override var mainUrl = "https://dood.la"
     override val requiresReferer = false
 
     override fun getExtractorUrl(id: String): String {

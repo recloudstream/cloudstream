@@ -9,46 +9,46 @@ import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 
 
 class StreamSB1 : StreamSB() {
-    override val mainUrl = "https://sbplay1.com"
+    override var mainUrl = "https://sbplay1.com"
 }
 
 class StreamSB2 : StreamSB() {
-    override val mainUrl = "https://sbplay2.com"
+    override var mainUrl = "https://sbplay2.com"
 }
 
 class StreamSB3 : StreamSB() {
-    override val mainUrl = "https://sbplay3.com"
+    override var mainUrl = "https://sbplay3.com"
 }
 
 class StreamSB4 : StreamSB() {
-    override val mainUrl = "https://cloudemb.com"
+    override var mainUrl = "https://cloudemb.com"
 }
 
 class StreamSB5 : StreamSB() {
-    override val mainUrl = "https://sbplay.org"
+    override var mainUrl = "https://sbplay.org"
 }
 
 class StreamSB6 : StreamSB() {
-    override val mainUrl = "https://embedsb.com"
+    override var mainUrl = "https://embedsb.com"
 }
 
 class StreamSB7 : StreamSB() {
-    override val mainUrl = "https://pelistop.co"
+    override var mainUrl = "https://pelistop.co"
 }
 
 class StreamSB8 : StreamSB() {
-    override val mainUrl = "https://streamsb.net"
+    override var mainUrl = "https://streamsb.net"
 }
 
 class StreamSB9 : StreamSB() {
-    override val mainUrl = "https://sbplay.one"
+    override var mainUrl = "https://sbplay.one"
 }
 
 // This is a modified version of https://github.com/jmir1/aniyomi-extensions/blob/master/src/en/genoanime/src/eu/kanade/tachiyomi/animeextension/en/genoanime/extractors/StreamSBExtractor.kt
 // The following code is under the Apache License 2.0 https://github.com/jmir1/aniyomi-extensions/blob/master/LICENSE
 open class StreamSB : ExtractorApi() {
-    override val name = "StreamSB"
-    override val mainUrl = "https://watchsb.com"
+    override var name = "StreamSB"
+    override var mainUrl = "https://watchsb.com"
     override val requiresReferer = false
 
     private val hexArray = "0123456789ABCDEF".toCharArray()

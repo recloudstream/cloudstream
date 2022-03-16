@@ -6,10 +6,10 @@ import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
 
 class NyaaProvider : MainAPI() {
-    override val name = "Nyaa"
+    override var name = "Nyaa"
     override val hasChromecastSupport = false
 
-    override val mainUrl = "https://nyaa.si"
+    override var mainUrl = "https://nyaa.si"
     override val supportedTypes = setOf(TvType.Torrent)
     override val vpnStatus = VPNStatus.Torrent
     override val instantLinkLoading = true

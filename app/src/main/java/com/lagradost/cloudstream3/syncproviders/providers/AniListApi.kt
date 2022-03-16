@@ -26,11 +26,11 @@ import java.net.URL
 import java.util.*
 
 class AniListApi(index: Int) : AccountManager(index), SyncAPI {
-    override val name = "AniList"
+    override var name = "AniList"
     override val key = "6871"
     override val redirectUrl = "anilistlogin"
     override val idPrefix = "anilist"
-    override val mainUrl = "https://anilist.co"
+    override var mainUrl = "https://anilist.co"
     override val icon = R.drawable.ic_anilist_icon
 
     override fun loginInfo(): OAuth2API.LoginInfo? {

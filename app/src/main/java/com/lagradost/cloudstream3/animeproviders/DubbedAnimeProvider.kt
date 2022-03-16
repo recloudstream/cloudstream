@@ -11,8 +11,8 @@ import org.jsoup.Jsoup
 import java.util.*
 
 class DubbedAnimeProvider : MainAPI() {
-    override val mainUrl = "https://bestdubbedanime.com"
-    override val name = "DubbedAnime"
+    override var mainUrl = "https://bestdubbedanime.com"
+    override var name = "DubbedAnime"
     override val hasQuickSearch = true
     override val hasMainPage = true
 

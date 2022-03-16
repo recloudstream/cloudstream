@@ -22,8 +22,8 @@ import java.net.URI
 import kotlin.system.measureTimeMillis
 
 class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
-    override val mainUrl = providerUrl
-    override val name = providerName
+    override var mainUrl = providerUrl
+    override var name = providerName
 
     override val hasQuickSearch = false
     override val hasMainPage = true

@@ -25,8 +25,8 @@ class TenshiProvider : MainAPI() {
         }
     }
 
-    override val mainUrl = "https://tenshi.moe"
-    override val name = "Tenshi.moe"
+    override var mainUrl = "https://tenshi.moe"
+    override var name = "Tenshi.moe"
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.OVA)

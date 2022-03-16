@@ -8,8 +8,8 @@ import com.lagradost.cloudstream3.utils.Qualities
 import java.net.URI
 
 class Streamhub : ExtractorApi() {
-    override val mainUrl = "https://streamhub.to"
-    override val name = "Streamhub"
+    override var mainUrl = "https://streamhub.to"
+    override var name = "Streamhub"
     override val requiresReferer = false
 
     override fun getExtractorUrl(id: String): String {

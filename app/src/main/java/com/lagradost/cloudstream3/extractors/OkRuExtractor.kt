@@ -25,8 +25,8 @@ data class Videos (
 )
 
 open class OkRu : ExtractorApi() {
-    override val name = "Okru"
-    override val mainUrl = "http://ok.ru"
+    override var name = "Okru"
+    override var mainUrl = "http://ok.ru"
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {

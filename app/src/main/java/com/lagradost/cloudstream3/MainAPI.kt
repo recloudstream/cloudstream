@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Base64.encodeToString
 import androidx.annotation.WorkerThread
 import androidx.preference.PreferenceManager
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -31,86 +32,84 @@ object APIHolder {
 
     private const val defProvider = 0
 
-    val apis = arrayListOf(
-        PelisplusProvider(),
-        PelisplusHDProvider(),
-        PeliSmartProvider(),
-        GogoanimeProvider(),
-        AllAnimeProvider(),
-        AnimekisaProvider(),
-        //ShiroProvider(), // v2 fucked me
-        AnimeFlickProvider(),
-        AnimeflvnetProvider(),
+    val allProviders by lazy {
+        arrayListOf(
+            PelisplusProvider(),
+            PelisplusHDProvider(),
+            PeliSmartProvider(),
+            GogoanimeProvider(),
+            AllAnimeProvider(),
+            AnimekisaProvider(),
+            //ShiroProvider(), // v2 fucked me
+            AnimeFlickProvider(),
+            AnimeflvnetProvider(),
 
-        TenshiProvider(),
-        WcoProvider(),
-        // MeloMovieProvider(), // Captcha for links
-        DubbedAnimeProvider(),
-        DoramasYTProvider(),
-        CinecalidadProvider(),
-        CuevanaProvider(),
-        EntrepeliculasyseriesProvider(),
-        PelisflixProvider(),
-        SeriesflixProvider(),
-        IHaveNoTvProvider(), // Documentaries provider
-        //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
-        VMoveeProvider(),
-        WatchCartoonOnlineProvider(),
-        AllMoviesForYouProvider(),
-        ApiMDBProvider(),
+            TenshiProvider(),
+            WcoProvider(),
+            // MeloMovieProvider(), // Captcha for links
+            DubbedAnimeProvider(),
+            DoramasYTProvider(),
+            CinecalidadProvider(),
+            CuevanaProvider(),
+            EntrepeliculasyseriesProvider(),
+            PelisflixProvider(),
+            SeriesflixProvider(),
+            IHaveNoTvProvider(), // Documentaries provider
+            //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
+            VMoveeProvider(),
+            WatchCartoonOnlineProvider(),
+            AllMoviesForYouProvider(),
+            ApiMDBProvider(),
 
-        MonoschinosProvider(),
+            MonoschinosProvider(),
 
-        VidEmbedProvider(),
-        VfFilmProvider(),
-        VfSerieProvider(),
-        FrenchStreamProvider(),
+            VidEmbedProvider(),
+            VfFilmProvider(),
+            VfSerieProvider(),
+            FrenchStreamProvider(),
 
-        AsianLoadProvider(),
+            AsianLoadProvider(),
 
-        BflixProvider("https://bflix.ru","Bflix"),
-        BflixProvider("https://fmovies.to","Fmovies.to"),
-        BflixProvider("https://sflix.pro","Sflix.pro"),
+            BflixProvider("https://bflix.ru","Bflix"),
+            BflixProvider("https://fmovies.to","Fmovies.to"),
+            BflixProvider("https://sflix.pro","Sflix.pro"),
 
-        SflixProvider("https://sflix.to", "Sflix.to"),
-        SflixProvider("https://dopebox.to", "Dopebox"),
-        SflixProvider("https://solarmovie.pe", "Solarmovie"),
+            SflixProvider("https://sflix.to", "Sflix.to"),
+            SflixProvider("https://dopebox.to", "Dopebox"),
+            SflixProvider("https://solarmovie.pe", "Solarmovie"),
 
-        //TmdbProvider(),
+            //TmdbProvider(),
 
-        FilmanProvider(),
+            FilmanProvider(),
 
-        ZoroProvider(),
-        PinoyMoviePediaProvider(),
-        PinoyHDXyzProvider(),
-        PinoyMoviesEsProvider(),
-        TrailersTwoProvider(),
-        TwoEmbedProvider(),
-        DramaSeeProvider(),
-        WatchAsianProvider(),
-        KdramaHoodProvider(),
-        AkwamProvider(),
-        MyCimaProvider(),
-        EgyBestProvider(),
-        AnimePaheProvider(),
-        NineAnimeProvider(),
-        AnimeWorldProvider(),
-        SoaptwoDayProvider(),
+            ZoroProvider(),
+            PinoyMoviePediaProvider(),
+            PinoyHDXyzProvider(),
+            PinoyMoviesEsProvider(),
+            TrailersTwoProvider(),
+            TwoEmbedProvider(),
+            DramaSeeProvider(),
+            WatchAsianProvider(),
+            KdramaHoodProvider(),
+            AkwamProvider(),
+            MyCimaProvider(),
+            EgyBestProvider(),
+            AnimePaheProvider(),
+            NineAnimeProvider(),
+            AnimeWorldProvider(),
+            SoaptwoDayProvider(),
 
-        CrossTmdbProvider(),
-    )
+            CrossTmdbProvider(),
 
-    val restrictedApis = arrayListOf(
-        // TrailersToProvider(), // be aware that this is fuckery
-        // NyaaProvider(), // torrents in cs3 is wack
-        // ThenosProvider(), // ddos protection and wacked links
-        AsiaFlixProvider(),
-    )
+            //restricted
+            AsiaFlixProvider(),
+            //backwards
+            KawaiifuProvider(), // removed due to cloudflare
+            HDMProvider(),// removed due to cloudflare
+        )
+    }
 
-    private val backwardsCompatibleProviders = arrayListOf(
-        KawaiifuProvider(), // removed due to cloudflare
-        HDMProvider(),// removed due to cloudflare
-    )
+    var apis : List<MainAPI> = arrayListOf()
 
     fun getApiFromName(apiName: String?): MainAPI {
         return getApiFromNameNull(apiName) ?: apis[defProvider]
@@ -118,15 +117,7 @@ object APIHolder {
 
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
-        for (api in apis) {
-            if (apiName == api.name)
-                return api
-        }
-        for (api in restrictedApis) {
-            if (apiName == api.name)
-                return api
-        }
-        for (api in backwardsCompatibleProviders) {
+        for (api in allProviders) {
             if (apiName == api.name)
                 return api
         }
@@ -281,10 +272,45 @@ object APIHolder {
     }
 }
 
+
+/*
+0 = Site not good
+1 = All good
+2 = Slow, heavy traffic
+3 = restricted, must donate 30 benenes to use
+ */
+const val PROVIDER_STATUS_KEY = "PROVIDER_STATUS_KEY"
+const val PROVIDER_STATUS_URL = "https://raw.githubusercontent.com/LagradOst/CloudStream-3/master/providers.json"
+const val PROVIDER_STATUS_BETA_ONLY = 3
+const val PROVIDER_STATUS_SLOW = 2
+const val PROVIDER_STATUS_OK = 1
+const val PROVIDER_STATUS_DOWN = 0
+
+data class ProvidersInfoJson(
+    @JsonProperty("name") var name: String,
+    @JsonProperty("url") var url: String,
+    @JsonProperty("status") var status: Int,
+)
+
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
 abstract class MainAPI {
-    open val name = "NONE"
-    open val mainUrl = "NONE"
+    companion object {
+        var overrideData : HashMap<String, ProvidersInfoJson>? = null
+    }
+
+    public fun overrideWithNewData(data : ProvidersInfoJson) {
+        this.name = data.name
+        this.mainUrl = data.url
+    }
+
+    init {
+        overrideData?.get(this.javaClass.simpleName)?.let { data ->
+            overrideWithNewData(data)
+        }
+    }
+
+    open var name = "NONE"
+    open var mainUrl = "NONE"
 
     //open val uniqueId : Int by lazy { this.name.hashCode() } // in case of duplicate providers you can have a shared id
 
@@ -317,17 +343,17 @@ abstract class MainAPI {
     open val providerType = ProviderType.DirectProvider
 
     @WorkerThread
-    suspend open fun getMainPage(): HomePageResponse? {
+    open suspend fun getMainPage(): HomePageResponse? {
         throw NotImplementedError()
     }
 
     @WorkerThread
-    suspend open fun search(query: String): List<SearchResponse>? {
+    open suspend fun search(query: String): List<SearchResponse>? {
         throw NotImplementedError()
     }
 
     @WorkerThread
-    suspend open fun quickSearch(query: String): List<SearchResponse>? {
+    open suspend fun quickSearch(query: String): List<SearchResponse>? {
         throw NotImplementedError()
     }
 
@@ -336,7 +362,7 @@ abstract class MainAPI {
      * Based on data from search() or getMainPage() it generates a LoadResponse,
      * basically opening the info page from a link.
      * */
-    suspend open fun load(url: String): LoadResponse? {
+    open suspend fun load(url: String): LoadResponse? {
         throw NotImplementedError()
     }
 
@@ -350,13 +376,13 @@ abstract class MainAPI {
      * if the need arises.
      * */
     @WorkerThread
-    suspend open fun extractorVerifierJob(extractorData: String?) {
+    open suspend fun extractorVerifierJob(extractorData: String?) {
         throw NotImplementedError()
     }
 
     /**Callback is fired once a link is found, will return true if method is executed successfully*/
     @WorkerThread
-    suspend open fun loadLinks(
+    open suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,

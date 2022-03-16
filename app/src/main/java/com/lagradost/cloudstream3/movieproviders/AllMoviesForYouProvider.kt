@@ -19,8 +19,8 @@ class AllMoviesForYouProvider : MainAPI() {
     }
 
     // Fetching movies will not work if this link is outdated.
-    override val mainUrl = "https://allmoviesforyou.net"
-    override val name = "AllMoviesForYou"
+    override var mainUrl = "https://allmoviesforyou.net"
+    override var name = "AllMoviesForYou"
     override val hasMainPage = true
     override val supportedTypes = setOf(
         TvType.Movie,

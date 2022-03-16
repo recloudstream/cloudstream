@@ -8,19 +8,19 @@ import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.utils.*
 
 class Vidstreamz : WcoStream() {
-    override val mainUrl: String = "https://vidstreamz.online"
+    override var mainUrl = "https://vidstreamz.online"
 }
 class Vizcloud : WcoStream() {
-    override val mainUrl: String = "https://vizcloud2.ru"
+    override var mainUrl = "https://vizcloud2.ru"
 }
 
 class Vizcloud2 : WcoStream() {
-    override val mainUrl: String = "https://vizcloud2.online"
+    override var mainUrl = "https://vizcloud2.online"
 }
 
 open class WcoStream : ExtractorApi() {
-    override val name = "VidStream" //Cause works for animekisa and wco
-    override val mainUrl = "https://vidstream.pro"
+    override var name = "VidStream" //Cause works for animekisa and wco
+    override var mainUrl = "https://vidstream.pro"
     override val requiresReferer = false
     private val hlsHelper = M3u8Helper()
 

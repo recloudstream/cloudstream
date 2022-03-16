@@ -12,8 +12,8 @@ import kotlin.collections.ArrayList
 
 class AnimekisaProvider : MainAPI() {
 
-    override val mainUrl = "https://animekisa.in"
-    override val name = "Animekisa"
+    override var mainUrl = "https://animekisa.in"
+    override var name = "Animekisa"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true

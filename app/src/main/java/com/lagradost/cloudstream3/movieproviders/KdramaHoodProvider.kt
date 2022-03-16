@@ -14,8 +14,8 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 
 class KdramaHoodProvider : MainAPI() {
-    override val mainUrl = "https://kdramahood.com"
-    override val name = "KDramaHood"
+    override var mainUrl = "https://kdramahood.com"
+    override var name = "KDramaHood"
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val hasChromecastSupport = false

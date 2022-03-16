@@ -56,8 +56,8 @@ class GogoanimeProvider : MainAPI() {
             .toByteArray()
     }
 
-    override val mainUrl = "https://gogoanime.film"
-    override val name = "GogoAnime"
+    override var mainUrl = "https://gogoanime.film"
+    override var name = "GogoAnime"
     override val hasQuickSearch = false
     override val hasMainPage = true
 

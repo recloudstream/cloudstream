@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.utils.*
 import java.util.*
 
 class EntrepeliculasyseriesProvider:MainAPI() {
-    override val mainUrl = "https://entrepeliculasyseries.nu"
-    override val name = "EntrePeliculasySeries"
+    override var mainUrl = "https://entrepeliculasyseries.nu"
+    override var name = "EntrePeliculasySeries"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

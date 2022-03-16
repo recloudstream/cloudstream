@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.TvType
  * make the app know what functions to call
  */
 class AsianLoadProvider : VidstreamProviderTemplate() {
-    override val name = "AsianLoad"
-    override val mainUrl = "https://asianembed.io"
+    override var name = "AsianLoad"
+    override var mainUrl = "https://asianembed.io"
     override val homePageUrlList = listOf(
         mainUrl,
         "$mainUrl/recently-added-raw",

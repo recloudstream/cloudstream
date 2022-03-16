@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 
 class CrossTmdbProvider : TmdbProvider() {
-    override val name = "MultiMovie"
+    override var name = "MultiMovie"
     override val apiName = "MultiMovie"
     override val lang = "en"
     override val useMetaLoadResponse = true

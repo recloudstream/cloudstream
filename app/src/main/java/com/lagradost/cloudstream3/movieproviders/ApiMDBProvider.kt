@@ -10,8 +10,8 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 
 class ApiMDBProvider : TmdbProvider() {
     override val apiName = "ApiMDB"
-    override val name = "ApiMDB"
-    override val mainUrl = "https://v2.apimdb.net"
+    override var name = "ApiMDB"
+    override var mainUrl = "https://v2.apimdb.net"
     override val useMetaLoadResponse = true
     override val instantLinkLoading = false
     override val supportedTypes = setOf(

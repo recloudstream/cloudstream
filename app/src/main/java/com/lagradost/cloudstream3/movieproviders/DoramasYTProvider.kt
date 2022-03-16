@@ -16,8 +16,8 @@ class DoramasYTProvider : MainAPI() {
         }
     }
 
-    override val mainUrl = "https://doramasyt.com"
-    override val name = "DoramasYT"
+    override var mainUrl = "https://doramasyt.com"
+    override var name = "DoramasYT"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

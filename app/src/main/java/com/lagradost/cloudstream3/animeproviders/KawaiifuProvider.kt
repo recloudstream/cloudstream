@@ -7,8 +7,8 @@ import org.jsoup.Jsoup
 import java.util.*
 
 class KawaiifuProvider : MainAPI() {
-    override val mainUrl = "https://kawaiifu.com"
-    override val name = "Kawaiifu"
+    override var mainUrl = "https://kawaiifu.com"
+    override var name = "Kawaiifu"
     override val hasQuickSearch = false
     override val hasMainPage = true
 

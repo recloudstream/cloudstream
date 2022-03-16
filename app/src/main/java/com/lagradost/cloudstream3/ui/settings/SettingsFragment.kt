@@ -22,7 +22,6 @@ import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
-import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.CommonActivity.setLocale
@@ -299,9 +298,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             activity?.getApiProviderLangSettings()?.let { current ->
                 val allLangs = HashSet<String>()
                 for (api in apis) {
-                    allLangs.add(api.lang)
-                }
-                for (api in restrictedApis) {
                     allLangs.add(api.lang)
                 }
 

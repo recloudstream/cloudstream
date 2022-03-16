@@ -12,8 +12,8 @@ import com.lagradost.cloudstream3.utils.getQualityFromName
 
 
 open class GenericM3U8 : ExtractorApi() {
-    override val name = "Upstream"
-    override val mainUrl = "https://upstream.to"
+    override var name = "Upstream"
+    override var mainUrl = "https://upstream.to"
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {

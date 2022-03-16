@@ -8,8 +8,8 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
 
 open class WatchSB : ExtractorApi() {
-    override val name = "WatchSB"
-    override val mainUrl = "https://watchsb.com"
+    override var name = "WatchSB"
+    override var mainUrl = "https://watchsb.com"
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {

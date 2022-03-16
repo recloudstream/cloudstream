@@ -8,8 +8,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import java.util.*
 
 class SoaptwoDayProvider:MainAPI() {
-    override val mainUrl = "https://secretlink.xyz" //Probably a rip off, but it has no captcha
-    override val name = "Soap2Day"
+    override var mainUrl = "https://secretlink.xyz" //Probably a rip off, but it has no captcha
+    override var name = "Soap2Day"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true

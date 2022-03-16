@@ -13,8 +13,8 @@ import org.jsoup.Jsoup
 //BE AWARE THAT weboas.is is a clone of lookmovie
 class LookMovieProvider : MainAPI() {
     override val hasQuickSearch = true
-    override val name = "LookMovie"
-    override val mainUrl = "https://lookmovie.io"
+    override var name = "LookMovie"
+    override var mainUrl = "https://lookmovie.io"
 
     override val supportedTypes = setOf(
         TvType.Movie,

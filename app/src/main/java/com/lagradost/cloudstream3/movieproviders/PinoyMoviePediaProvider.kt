@@ -9,8 +9,8 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import java.lang.Exception
 
 class PinoyMoviePediaProvider : MainAPI() {
-    override val name = "Pinoy Moviepedia"
-    override val mainUrl = "https://pinoymoviepedia.ru"
+    override var name = "Pinoy Moviepedia"
+    override var mainUrl = "https://pinoymoviepedia.ru"
     override val lang = "tl"
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries)
     override val hasDownloadSupport = true

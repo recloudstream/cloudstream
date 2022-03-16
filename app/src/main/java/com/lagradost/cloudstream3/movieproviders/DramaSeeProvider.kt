@@ -9,8 +9,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
 class DramaSeeProvider : MainAPI() {
-    override val mainUrl = "https://dramasee.net"
-    override val name = "DramaSee"
+    override var mainUrl = "https://dramasee.net"
+    override var name = "DramaSee"
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val hasChromecastSupport = false

@@ -8,8 +8,8 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 
 class BflixProvider(providerUrl: String, providerName: String) : MainAPI() {
-    override val mainUrl = providerUrl
-    override val name = providerName
+    override var mainUrl = providerUrl
+    override var name = providerName
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
