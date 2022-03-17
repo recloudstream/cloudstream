@@ -378,7 +378,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
                                 apis = allProviders.filter { api ->
                                     val name = api.javaClass.simpleName
-                                    acceptableProviders.contains(name) || restrictedApis.contains(name)
+                                    // if the provider does not exist in the json file, then it is shown by default
+                                    !providersJsonMap.containsKey(name) || acceptableProviders.contains(name) || restrictedApis.contains(name)
                                 }
                             }
                         } catch (e : Exception) {
