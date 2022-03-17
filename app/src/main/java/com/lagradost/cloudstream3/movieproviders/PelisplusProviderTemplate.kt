@@ -1,11 +1,8 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.extractors.Pelisplus
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.*
 import org.jsoup.Jsoup
-import java.net.URI
 
 /** Needs to inherit from MainAPI() to
  * make the app know what functions to call
@@ -14,7 +11,6 @@ import java.net.URI
 open class PelisplusProviderTemplate : MainAPI() {
     override val lang = "es"
     open val homePageUrlList = listOf<String>()
-    open val pelisplusExtractorUrl: String? = null
 
 //    // mainUrl is good to have as a holder for the url to make future changes easier.
 //    override val mainUrl: String
@@ -35,6 +31,7 @@ open class PelisplusProviderTemplate : MainAPI() {
 
     // Searching returns a SearchResponse, which can be one of the following: AnimeSearchResponse, MovieSearchResponse, TorrentSearchResponse, TvSeriesSearchResponse
     // Each of the classes requires some different data, but always has some critical things like name, poster and url.
+
     override suspend fun search(query: String): ArrayList<SearchResponse> {
         // Simply looking at devtools network is enough to spot a request like:
         // https://vidembed.cc/search.html?keyword=neverland where neverland is the query, can be written as below.
@@ -48,7 +45,7 @@ open class PelisplusProviderTemplate : MainAPI() {
             val poster = fixUrl(li.selectFirst("img").attr("src"))
 
             // .text() selects all the text in the element, be careful about doing this while too high up in the html hierarchy
-            val title = li.selectFirst(".name").text()
+            val title = cleanName(li.selectFirst(".name").text())
             // Use get(0) and toIntOrNull() to prevent any possible crashes, [0] or toInt() will error the search on unexpected values.
             val year = li.selectFirst(".date")?.text()?.split("-")?.get(0)?.toIntOrNull()
 
@@ -73,33 +70,29 @@ open class PelisplusProviderTemplate : MainAPI() {
         val html = app.get(url).text
         val soup = Jsoup.parse(html)
 
-        var title = soup.selectFirst("h1,h2,h3").text()
-        title = if (!title.contains("Episode")) title else title.split("Episode")[0].trim()
-
+        val title = cleanName(soup.selectFirst("h1,h2,h3").text())
         val description = soup.selectFirst(".post-entry")?.text()?.trim()
-        var poster: String? = null
+        val poster = soup.selectFirst("head meta[property=og:image]").attr("content")
 
         val episodes = soup.select(".listing.items.lists > .video-block").map { li ->
-            val epTitle = if (li.selectFirst(".name") != null)
-                if (li.selectFirst(".name").text().contains("Episode"))
-                    "Episode " + li.selectFirst(".name").text().split("Episode")[1].trim()
-                else
-                    li.selectFirst(".name").text()
-            else ""
+            val href = fixUrl(li.selectFirst("a").attr("href"))
+            val regexseason = Regex("(-[Tt]emporada-(\\d+)-[Cc]apitulo-(\\d+))")
+            val aaa = regexseason.find(href)?.destructured?.component1()?.replace(Regex("(-[Tt]emporada-|[Cc]apitulo-)"),"")
+            val seasonid = aaa.let { str ->
+                str?.split("-")?.mapNotNull { subStr -> subStr.toIntOrNull() }
+            }
+            val isValid = seasonid?.size == 2
+            val episode = if (isValid) seasonid?.getOrNull(1) else null
+            val season = if (isValid) seasonid?.getOrNull(0) else null
             val epThumb = fixUrl(li.selectFirst("img").attr("src"))
             val epDate = li.selectFirst(".meta > .date").text()
 
-            if (poster == null) {
-                poster = li.selectFirst("img")?.attr("onerror")?.replace("//img", "https://img")?.split("=")?.get(1)
-                    ?.replace(Regex("[';]"), "")
-            }
 
-            val epNum = Regex("""Episode (\d+)""").find(epTitle)?.destructured?.component1()?.toIntOrNull()
 
             TvSeriesEpisode(
-                epTitle,
                 null,
-                epNum,
+                season,
+                episode,
                 fixUrl(li.selectFirst("a").attr("href")),
                 epThumb,
                 epDate
@@ -119,10 +112,10 @@ open class PelisplusProviderTemplate : MainAPI() {
                     this.name,
                     tvType,
                     episodes,
-                    poster,
+                    fixUrl(poster),
                     year,
                     description,
-                    ShowStatus.Ongoing,
+                    null,
                     null,
                     null
                 )
@@ -134,7 +127,7 @@ open class PelisplusProviderTemplate : MainAPI() {
                     this.name,
                     tvType,
                     episodes[0].data,
-                    poster,
+                    fixUrl(poster),
                     year,
                     description,
                     null,
@@ -156,12 +149,12 @@ open class PelisplusProviderTemplate : MainAPI() {
             val document = Jsoup.parse(response)
             document.select("div.main-inner")?.forEach { inner ->
                 // Always trim your text unless you want the risk of spaces at the start or end.
-                val title = inner.select(".widget-title").text().trim()
+                val title = cleanName(inner.select(".widget-title").text())
                 val elements = inner.select(".video-block").map {
                     val link = fixUrl(it.select("a").attr("href"))
                     val image = it.select(".picture > img").attr("src").replace("//img", "https://img")
-                    val name = it.select("div.name").text().trim().replace(Regex("""[Ee]pisode \d+"""), "")
-                    val isSeries = (name.contains("Season") || name.contains("Episode"))
+                    val name = cleanName(it.select("div.name").text())
+                    val isSeries = (name.contains("Temporada") || name.contains("Capítulo"))
 
                     if (isSeries) {
                         TvSeriesSearchResponse(
@@ -198,6 +191,38 @@ open class PelisplusProviderTemplate : MainAPI() {
         return HomePageResponse(homePageList)
     }
 
+
+    private fun cleanName(input: String): String = input.replace(Regex("([Tt]emporada (\\d+)|[Cc]apítulo (\\d+))|[Tt]emporada|[Cc]apítulo"),"").trim()
+
+
+    private suspend fun getPelisStream(
+        link: String,
+        callback: (ExtractorLink) -> Unit) : Boolean {
+        val soup = app.get(link).text
+        val m3u8regex = Regex("((https:|http:)\\/\\/.*m3u8.*expiry=(\\d+))")
+        val m3u8 = m3u8regex.find(soup)?.value ?: return false
+        M3u8Helper().m3u8Generation(
+            M3u8Helper.M3u8Stream(
+                m3u8,
+                headers = mapOf("Referer" to mainUrl)
+            ), true
+        )
+            .map { stream ->
+                val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
+                callback(
+                    ExtractorLink(
+                        name,
+                        "$name $qualityString",
+                        stream.streamUrl,
+                        mainUrl,
+                        getQualityFromName(stream.quality.toString()),
+                        true
+                    )
+                )
+            }
+        return true
+    }
+
     // loadLinks gets the raw .mp4 or .m3u8 urls from the data parameter in the episodes class generated in load()
     // See TvSeriesEpisode(...) in this provider.
     // The data are usually links, but can be any other string to help aid loading the links.
@@ -208,67 +233,37 @@ open class PelisplusProviderTemplate : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        // "?: return" is a very useful statement which returns if the iframe link isn't found.
-        val iframeLink = Jsoup.parse(app.get(data).text).selectFirst(".tab-video")?.attr("data-video") ?: return false
-
-        // In this case the video player is a vidstream clone and can be handled by the vidstream extractor.
-        // This case is a both unorthodox and you normally do not call extractors as they detect the url returned and does the rest.
-        val vidstreamObject = Pelisplus(pelisplusExtractorUrl ?: mainUrl)
-        // https://vidembed.cc/streaming.php?id=MzUwNTY2&... -> MzUwNTY2
-        val id = Regex("""id=([^?]*)""").find(iframeLink)?.groupValues?.get(1)
-
-        if (id != null) {
-            vidstreamObject.getUrl(id, isCasting, callback)
-        }
-
-        val html = app.get(fixUrl(iframeLink)).text
-        val soup = Jsoup.parse(html)
-
-        val servers = soup.select(".list-server-items > .linkserver").mapNotNull { li ->
-            if (!li?.attr("data-video").isNullOrEmpty()) {
-                Pair(li.text(), fixUrl(li.attr("data-video")))
-            } else {
-                null
-            }
-        }
-        servers.apmap {
-            // When checking strings make sure to make them lowercase and trimmed because edgecases like "beta server " wouldn't work otherwise.
-            if (it.first.trim().equals("beta server", ignoreCase = true)) {
-                // Group 1: link, Group 2: Label
-                // Regex can be used to effectively parse small amounts of json without bothering with writing a json class.
-                val sourceRegex = Regex("""sources:[\W\w]*?file:\s*["'](.*?)["'][\W\w]*?label:\s*["'](.*?)["']""")
-                val trackRegex = Regex("""tracks:[\W\w]*?file:\s*["'](.*?)["'][\W\w]*?label:\s*["'](.*?)["']""")
-
-                // Having a referer is often required. It's a basic security check most providers have.
-                // Try to replicate what your browser does.
-                val serverHtml = app.get(it.second, headers = mapOf("referer" to iframeLink)).text
-                sourceRegex.findAll(serverHtml).forEach { match ->
-                    callback.invoke(
-                        ExtractorLink(
-                            this.name,
-                            match.groupValues.getOrNull(2)?.let { "${this.name} $it" } ?: this.name,
-                            match.groupValues[1],
-                            it.second,
-                            // Useful function to turn something like "1080p" to an app quality.
-                            getQualityFromName(match.groupValues.getOrNull(2) ?: ""),
-                            // Kinda risky
-                            // isM3u8 makes the player pick the correct extractor for the source.
-                            // If isM3u8 is wrong the player will error on that source.
-                            URI(match.groupValues[1]).path.endsWith(".m3u8"),
-                        )
-                    )
-                }
-                trackRegex.findAll(serverHtml).forEach { match ->
-                    subtitleCallback.invoke(
-                        SubtitleFile(
-                            match.groupValues.getOrNull(2) ?: "Unknown",
-                            match.groupValues[1]
-                        )
-                    )
+        val doc = app.get(data).document
+        val info = doc.select("div.tabs-video li").text()
+        if (info.contains("Latino")) {
+            doc.select(".server-item-1 li").apmap {
+                val serverid = fixUrl(it.attr("data-video")).replace("streaming.php","play")
+                loadExtractor(serverid, data, callback)
+                if (serverid.contains("pelisplus.icu")) {
+                    getPelisStream(serverid, callback)
                 }
             }
         }
 
+        if (info.contains("Subtitulado")) {
+            doc.select(".server-item-0 li").apmap {
+                val serverid = fixUrl(it.attr("data-video")).replace("streaming.php","play")
+                loadExtractor(serverid, data, callback)
+                if (serverid.contains("pelisplus.icu")) {
+                    getPelisStream(serverid, callback)
+                }
+            }
+        }
+
+        if (info.contains("Castellano")) {
+            doc.select(".server-item-2 li").apmap {
+                val serverid = fixUrl(it.attr("data-video")).replace("streaming.php","play")
+                loadExtractor(serverid, data, callback)
+                if (serverid.contains("pelisplus.icu")) {
+                    getPelisStream(serverid, callback)
+                }
+            }
+        }
         return true
     }
 }
