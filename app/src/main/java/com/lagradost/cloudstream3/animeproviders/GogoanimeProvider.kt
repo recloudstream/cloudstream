@@ -91,7 +91,6 @@ class GogoanimeProvider : MainAPI() {
                 jsonResponse.text.substringAfter("{\"data\":\"").substringBefore("\"}")
             val datadecrypted = cryptoHandler(dataencrypted, iv, secretKey, false)
             val sources = AppUtils.parseJson<GogoSources>(datadecrypted)
-            println("GET SOURCES $sources $iframeUrl")
 
             fun invokeGogoSource(
                 source: GogoSource,
