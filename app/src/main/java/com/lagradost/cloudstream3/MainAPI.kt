@@ -34,20 +34,11 @@ object APIHolder {
 
     val allProviders by lazy {
         arrayListOf(
+            // Movie providers
             PelisplusProvider(),
             PelisplusHDProvider(),
             PeliSmartProvider(),
-            GogoanimeProvider(),
-            AllAnimeProvider(),
-            AnimekisaProvider(),
-            //ShiroProvider(), // v2 fucked me
-            AnimeFlickProvider(),
-            AnimeflvnetProvider(),
-
-            TenshiProvider(),
-            WcoProvider(),
-            // MeloMovieProvider(), // Captcha for links
-            DubbedAnimeProvider(),
+            MeloMovieProvider(), // Captcha for links
             DoramasYTProvider(),
             CinecalidadProvider(),
             CuevanaProvider(),
@@ -55,34 +46,22 @@ object APIHolder {
             PelisflixProvider(),
             SeriesflixProvider(),
             IHaveNoTvProvider(), // Documentaries provider
-            //LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
+            LookMovieProvider(), // RECAPTCHA (Please allow up to 5 seconds...)
             VMoveeProvider(),
-            WatchCartoonOnlineProvider(),
             AllMoviesForYouProvider(),
-            ApiMDBProvider(),
-
-            MonoschinosProvider(),
-
             VidEmbedProvider(),
             VfFilmProvider(),
             VfSerieProvider(),
             FrenchStreamProvider(),
-
             AsianLoadProvider(),
-
-            RealBflixProvider(),
-            FmoviesProvider(),
+            AsiaFlixProvider(), // restricted
+            BflixProvider(),
+            FmoviesToProvider(),
             SflixProProvider(),
-
-            RealSflixProvider(),
+            FilmanProvider(),
+            SflixProvider(),
             DopeboxProvider(),
             SolarmovieProvider(),
-
-            //TmdbProvider(),
-
-            FilmanProvider(),
-
-            ZoroProvider(),
             PinoyMoviePediaProvider(),
             PinoyHDXyzProvider(),
             PinoyMoviesEsProvider(),
@@ -94,18 +73,31 @@ object APIHolder {
             AkwamProvider(),
             MyCimaProvider(),
             EgyBestProvider(),
+            SoaptwoDayProvider(),
+            HDMProvider(),// disabled due to cloudflare
+
+            // Metadata providers
+            //TmdbProvider(),
+            CrossTmdbProvider(),
+            ApiMDBProvider(),
+
+            // Anime providers
+            WatchCartoonOnlineProvider(),
+            GogoanimeProvider(),
+            AllAnimeProvider(),
+            AnimekisaProvider(),
+            //ShiroProvider(), // v2 fucked me
+            AnimeFlickProvider(),
+            AnimeflvnetProvider(),
+            TenshiProvider(),
+            WcoProvider(),
             AnimePaheProvider(),
             NineAnimeProvider(),
             AnimeWorldProvider(),
-            SoaptwoDayProvider(),
-
-            CrossTmdbProvider(),
-
-            //restricted
-            AsiaFlixProvider(),
-            //backwards
-            KawaiifuProvider(), // removed due to cloudflare
-            HDMProvider(),// removed due to cloudflare
+            ZoroProvider(),
+            DubbedAnimeProvider(),
+            MonoschinosProvider(),
+            KawaiifuProvider(), // disabled due to cloudflare
         )
     }
 

@@ -21,13 +21,18 @@ import org.jsoup.nodes.Element
 import java.net.URI
 import kotlin.system.measureTimeMillis
 
-class RealSflixProvider : SflixProvider("https://sflix.to", "Sflix.to")
-class DopeboxProvider : SflixProvider("https://dopebox.to", "Dopebox")
-class SolarmovieProvider : SflixProvider("https://solarmovie.pe", "Solarmovie")
+class DopeboxProvider : SflixProvider() {
+    override var mainUrl = "https://dopebox.to"
+    override var name = "Dopebox"
+}
+class SolarmovieProvider : SflixProvider() {
+    override var mainUrl = "https://solarmovie.pe"
+    override var name = "Solarmovie"
+}
 
-open class SflixProvider(providerUrl: String, providerName: String) : MainAPI() {
-    override var mainUrl = providerUrl
-    override var name = providerName
+open class SflixProvider() : MainAPI() {
+    override var mainUrl = "https://sflix.to"
+    override var name = "Sflix.to"
 
     override val hasQuickSearch = false
     override val hasMainPage = true

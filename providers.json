@@ -1,7 +1,7 @@
 {
     "AkwamProvider": {
         "name": "Akwam",
-        "url": "https://akwam.io",
+        "url": "https://akwam.to",
         "status": 1
     },
     "AllAnimeProvider": {
@@ -44,12 +44,17 @@
         "url": "https://asianembed.io",
         "status": 1
     },
-    "RealBflixProvider": {
+    "AsiaFlixProvider": {
+        "name": "AsiaFlix",
+        "url": "https://asiaflix.app",
+        "status": 3
+    },
+    "BflixProvider": {
         "name": "Bflix",
         "url": "https://bflix.ru",
         "status": 1
     },
-    "FmoviesProvider": {
+    "FmoviesToProvider": {
         "name": "Fmovies.to",
         "url": "https://fmovies.to",
         "status": 1
@@ -71,7 +76,7 @@
     },
     "CuevanaProvider": {
         "name": "Cuevana",
-        "url": "https://cuevana3.io",
+        "url": "https://cuevana3.me",
         "status": 1
     },
     "DoramasYTProvider": {
@@ -194,6 +199,21 @@
         "url": "https://pinoymovies.es",
         "status": 1
     },
+    "SflixProvider": {
+        "name": "Sflix.to",
+        "url": "https://sflix.to",
+        "status": 1
+    },
+    "DopeboxProvider": {
+        "name": "Dopebox",
+        "url": "https://dopebox.to",
+        "status": 1
+    },
+    "SolarmovieProvider": {
+        "name": "Solarmovie",
+        "url": "https://solarmovie.pe",
+        "status": 1
+    },
     "SeriesflixProvider": {
         "name": "Seriesflix",
         "url": "https://seriesflix.video",
@@ -257,21 +277,6 @@
     "ZoroProvider": {
         "name": "Zoro",
         "url": "https://zoro.to",
-        "status": 1
-    },
-    "RealSflixProvider": {
-        "name": "Sflix.to",
-        "url": "https://sflix.to",
-        "status": 1
-    },
-    "DopeboxProvider": {
-        "name": "Dopebox",
-        "url": "https://dopebox.to",
-        "status": 1
-    },
-    "SolarmovieProvider": {
-        "name": "Solarmovie",
-        "url": "https://solarmovie.pe",
         "status": 1
     }
 }
