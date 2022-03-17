@@ -13,6 +13,7 @@
     <string name="player_speed_text_format" formatted="true">سرعة (%.2fx)</string>
     <string name="rated_format" formatted="true">Rated: %.1f</string>
     <string name="new_update_format" formatted="true">!تم إيجاد تحديث جديد\n%s -> %s</string>
+    <string name="duration_format" formatted="true">%d دقيقة</string>
 
     <string name="app_name">CloudStream</string>
     <string name="title_home">الصفحة الرئيسية</string>
@@ -23,7 +24,7 @@
     <string name="search_hint">…بحث</string>	
     <string name="no_data">لايوجد بيانات</string>
     <string name="episode_more_options_des">المزيد من الخيارات</string>
-    <string name="next_episode">الحلقة القادمة</string>
+    <string name="next_episode">الحلقة التالية</string>
     <string name="result_tags">النواع</string>
     <string name="result_share">شارك</string>
     <string name="result_open_in_browser">فتح في الويب </string>
@@ -38,7 +39,7 @@
     <string name="type_none">لا شيء</string>
     <string name="type_re_watching">إعادة المشاهدة</string>
 	
-    <string name="play_movie_button">تشغيل الفيلم</string>
+    <string name="play_movie_button">مشاهدة الفيلم</string>
     <string name="play_torrent_button">تشغيل التورنت</string>
     <string name="pick_source">المصادر</string>
     <string name="pick_subtitle">الترجمة</string>
@@ -59,8 +60,8 @@
     <string name="error_loading_links_toast">خطأ في تحميل الرابط</string>
     <string name="download_storage_text">التخزين الداخلي</string>
 
-    <string name="app_dubbed_text">دبلجة</string>
-    <string name="app_subbed_text">مترجمة</string>
+    <string name="app_dubbed_text">مدبلج</string>
+    <string name="app_subbed_text">مترجم</string>
 
     <string name="popup_delete_file">حذف ملف</string>
     <string name="popup_play_file">تشغيل الملف</string>
@@ -112,7 +113,7 @@
     <string name="normal_no_plot">لم يتم العثور على وصف</string>
     <string name="torrent_no_plot">لم يتم العثور على وصف</string>
 
-    <string name="picture_in_picture">صورة داخل صورة</string>
+    <string name="picture_in_picture">نافذة منبثقة</string>
     <string name="picture_in_picture_des">يستمر في التشغيل في مشغل مصغر فوق التطبيقات الأخرى</string>
     <string name="player_size_settings">زر تغيير حجم المشغل</string>
     <string name="player_size_settings_des">قم بإزالة الحدود السوداء</string>
@@ -162,8 +163,8 @@
     <string name="no_season">لا موسم</string>
     <string name="episode">حلقة</string>
     <string name="episodes">حلقات</string>
-    <string name="season_short">س</string>
-    <string name="episode_short">ه</string>
+    <string name="season_short">S</string>
+    <string name="episode_short">E</string>
     <string name="no_episodes_found">لم يتم العثور على أي حلقات</string>
 
     <string name="delete_file">حذف ملف</string>
@@ -173,6 +174,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message">This will permanently delete %s\nAre you sure?</string>
+    <string name="resume_time_left" formatted="true">%dد\nمتبقية</string>
 
     <string name="status_ongoing">جاري التنفيذ</string>
     <string name="status_completed">اكتمل</string>
@@ -246,12 +248,12 @@
 
     <string name="general">عام</string>
     <string name="provider_lang_settings">لغات الموفر</string>
-    <string name="app_layout">شكل التطبيق</string>	
+    <string name="app_layout">واجهة التطبيق</string>	
     <string name="preferred_media_settings">النوع المفضل من المشاهدة</string>	
 	
     <string name="automatic">أوتوماتيك</string> 
-    <string name="tv_layout">مناسب لتصميم التلفاز</string>
-    <string name="phone_layout">مناسبة لتصميم الهاتف</string>
+    <string name="tv_layout">واجهة خاصة بتلفاز</string>
+    <string name="phone_layout">واجهة خاصة بهاتف</string>
 	
     <string name="primary_color_settings">اللون الأساسي</string>
     <string name="app_theme_settings">مظهر التطبيق</string>
@@ -276,11 +278,12 @@
     <string name="subtitles_example_text">نصٌّ حكيمٌ لهُ سِرٌّ قاطِعٌ وَذُو شَأنٍ عَظيمٍ مكتوبٌ على ثوبٍ أخضرَ ومُغلفٌ بجلدٍ أزرق</string>
 
     <string name="recommended">موصى به</string>
-    <string name="player_load_subtitles">تحميل من ملف</string>
+    <string name="player_load_subtitles">إختيار ملف</string>
     <string name="downloaded_file">الملف الذي تم تنزيله</string>
     <string name="actor_main">رئيسي</string>
     <string name="actor_supporting">مساعد</string>
     <string name="actor_background">خلفية</string>
     <string name="chromecast_subtitles_settings">ترجمة كروم كاست</string>
     <string name="chromecast_subtitles_settings_des">إعدادات ترجمة الكروم كاست</string>
+    <string name="home_source">المصادر</string>
 </resources>
