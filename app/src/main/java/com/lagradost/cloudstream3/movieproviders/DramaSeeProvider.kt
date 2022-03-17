@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider.Companion.extractVidstream
 import com.lagradost.cloudstream3.extractors.*
 import com.lagradost.cloudstream3.extractors.helper.AsianEmbedHelper
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -22,31 +23,32 @@ class DramaSeeProvider : MainAPI() {
         val document = app.get(mainUrl, headers = headers).document
         val mainbody = document.getElementsByTag("body")
 
-        return HomePageResponse(mainbody?.select("section")?.map { row ->
-            val main = row?.select("main") ?: return@map null
-            val title = main.select("div.title > div > h2")?.text() ?: "Main"
-            val inner = main.select("li.series-item") ?: return@map null
+        return HomePageResponse(
+            mainbody?.select("section")?.map { row ->
+                val main = row?.select("main") ?: return@map null
+                val title = main.select("div.title > div > h2")?.text() ?: "Main"
+                val inner = main.select("li.series-item") ?: return@map null
 
-            HomePageList(
-                title,
-                inner.mapNotNull {
-                    // Get inner div from article
-                    val innerBody = it?.selectFirst("a")
-                    // Fetch details
-                    val link = fixUrlNull(innerBody?.attr("href")) ?: return@mapNotNull null
-                    val image = fixUrlNull(innerBody?.select("img")?.attr("src")) ?: ""
-                    val name = it?.selectFirst("a.series-name")?.text() ?: "<Untitled>"
-                    //Log.i(this.name, "Result => (innerBody, image) ${innerBody} / ${image}")
-                    MovieSearchResponse(
-                        name,
-                        link,
-                        this.name,
-                        TvType.TvSeries,
-                        image,
-                        year = null,
-                        id = null,
-                    )
-                }.distinctBy { c -> c.url })
+                HomePageList(
+                    title,
+                    inner.mapNotNull {
+                        // Get inner div from article
+                        val innerBody = it?.selectFirst("a")
+                        // Fetch details
+                        val link = fixUrlNull(innerBody?.attr("href")) ?: return@mapNotNull null
+                        val image = fixUrlNull(innerBody?.select("img")?.attr("src")) ?: ""
+                        val name = it?.selectFirst("a.series-name")?.text() ?: "<Untitled>"
+                        //Log.i(this.name, "Result => (innerBody, image) ${innerBody} / ${image}")
+                        MovieSearchResponse(
+                            name,
+                            link,
+                            this.name,
+                            TvType.TvSeries,
+                            image,
+                            year = null,
+                            id = null,
+                        )
+                    }.distinctBy { c -> c.url })
             }?.filterNotNull() ?: listOf()
         )
     }
@@ -55,7 +57,7 @@ class DramaSeeProvider : MainAPI() {
         val url = "$mainUrl/search?q=$query"
         val html = app.get(url).document
         val document = html.getElementsByTag("body")
-                .select("section > main > ul.series > li") ?: return listOf()
+            .select("section > main > ul.series > li") ?: return listOf()
 
         return document.mapNotNull {
             if (it == null) {
@@ -88,12 +90,17 @@ class DramaSeeProvider : MainAPI() {
         val poster = fixUrlNull(inner?.select("div.img > img")?.attr("src")) ?: ""
         //Log.i(this.name, "Result => (imgLinkCode) ${imgLinkCode}")
         val title = inner?.select("h1.series-name")?.text() ?: ""
-        val year = if (title.length > 5) { title.substring(title.length - 5)
-            .trim().trimEnd(')').toIntOrNull() } else { null }
+        val year = if (title.length > 5) {
+            title.substring(title.length - 5)
+                .trim().trimEnd(')').toIntOrNull()
+        } else {
+            null
+        }
         //Log.i(this.name, "Result => (year) ${title.substring(title.length - 5)}")
         val seriesBody = body?.select("div.series-body")
         val descript = seriesBody?.firstOrNull()?.select("div.js-content")?.text()
-        val tags = seriesBody?.select("div.series-tags > a")?.mapNotNull { it?.text()?.trim() ?: return@mapNotNull null }
+        val tags = seriesBody?.select("div.series-tags > a")
+            ?.mapNotNull { it?.text()?.trim() ?: return@mapNotNull null }
         val recs = body?.select("ul.series > li")?.mapNotNull {
             val a = it.select("a.series-img") ?: return@mapNotNull null
             val aUrl = fixUrlNull(a.attr("href")) ?: return@mapNotNull null
@@ -190,6 +197,9 @@ class DramaSeeProvider : MainAPI() {
                 //Log.i(this.name, "Result => (url) ${url}")
                 when {
                     url.startsWith("https://asianembed.io") || url.startsWith("https://asianload.io") -> {
+                        val iv = "9262859232435825".toByteArray()
+                        val secretKey = "93422192433952489752342908585752".toByteArray()
+                        extractVidstream(url, this.name, callback, iv, secretKey)
                         AsianEmbedHelper.getUrls(url, callback)
                     }
                     url.startsWith("https://embedsito.com") -> {

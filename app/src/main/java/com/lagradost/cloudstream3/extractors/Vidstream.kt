@@ -32,7 +32,6 @@ class Vidstream(val mainUrl: String) {
         isCasting: Boolean = false,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        println("VIDSTREAM:: $id")
         val extractorUrl = getExtractorUrl(id)
         argamap(
             {

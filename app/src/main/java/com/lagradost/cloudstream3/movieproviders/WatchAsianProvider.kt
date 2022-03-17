@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider.Companion.extractVidstream
 import com.lagradost.cloudstream3.extractors.XStreamCdn
 import com.lagradost.cloudstream3.extractors.helper.AsianEmbedHelper
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -35,32 +36,35 @@ class WatchAsianProvider : MainAPI() {
 
         return HomePageResponse(
             rowPair.mapNotNull { row ->
-            val main = (doc.select("div.tab-content.${row.second}")
-                ?: doc.select("div.tab-content.${row.second}.selected")) ?: return@mapNotNull null
+                val main = (doc.select("div.tab-content.${row.second}")
+                    ?: doc.select("div.tab-content.${row.second}.selected"))
+                    ?: return@mapNotNull null
 
-            val title = row.first
-            val inner = main.select("li") ?: return@mapNotNull null
+                val title = row.first
+                val inner = main.select("li") ?: return@mapNotNull null
 
-            HomePageList(
-                title,
-                inner.map {
-                // Get inner div from article
-                val innerBody = it?.selectFirst("a")
-                // Fetch details
-                val link = fixUrlNull(innerBody?.attr("href")) ?: return@map null
-                val image = fixUrlNull(innerBody?.select("img")?.attr("data-original")) ?: ""
-                val name = (innerBody?.selectFirst("h3.title")?.text() ?: innerBody?.text())?: "<Untitled>"
-                //Log.i(this.name, "Result => (innerBody, image) ${innerBody} / ${image}")
-                MovieSearchResponse(
-                    name,
-                    link,
-                    this.name,
-                    TvType.TvSeries,
-                    image,
-                    year = null,
-                    id = null,
-                )
-                }.filterNotNull().distinctBy { c -> c.url })
+                HomePageList(
+                    title,
+                    inner.map {
+                        // Get inner div from article
+                        val innerBody = it?.selectFirst("a")
+                        // Fetch details
+                        val link = fixUrlNull(innerBody?.attr("href")) ?: return@map null
+                        val image =
+                            fixUrlNull(innerBody?.select("img")?.attr("data-original")) ?: ""
+                        val name = (innerBody?.selectFirst("h3.title")?.text() ?: innerBody?.text())
+                            ?: "<Untitled>"
+                        //Log.i(this.name, "Result => (innerBody, image) ${innerBody} / ${image}")
+                        MovieSearchResponse(
+                            name,
+                            link,
+                            this.name,
+                            TvType.TvSeries,
+                            image,
+                            year = null,
+                            id = null,
+                        )
+                    }.filterNotNull().distinctBy { c -> c.url })
             }.filter { a -> a.list.isNotEmpty() }
         )
     }
@@ -68,13 +72,15 @@ class WatchAsianProvider : MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search?type=movies&keyword=$query"
         val document = app.get(url).document.getElementsByTag("body")
-                .select("div.block.tab-container > div > ul > li") ?: return listOf()
+            .select("div.block.tab-container > div > ul > li") ?: return listOf()
 
         return document.mapNotNull {
             val innerA = it?.selectFirst("a") ?: return@mapNotNull null
             val link = fixUrlNull(innerA.attr("href")) ?: return@mapNotNull null
             val title = it.select("h3.title")?.text() ?: return@mapNotNull null
-            if (title.isEmpty()) { return@mapNotNull null }
+            if (title.isEmpty()) {
+                return@mapNotNull null
+            }
             val year = null
             val imgsrc = innerA.select("img")?.attr("data-original") ?: return@mapNotNull null
             val image = fixUrlNull(imgsrc)
@@ -96,9 +102,9 @@ class WatchAsianProvider : MainAPI() {
         val isDramaDetail = url.contains("/drama-detail/")
         var poster = ""
         var title = ""
-        var descript : String? = null
-        var year : Int? = null
-        var tags : List<String>? = null
+        var descript: String? = null
+        var year: Int? = null
+        var tags: List<String>? = null
         if (isDramaDetail) {
             val main = body.select("div.details")
             val inner = main?.select("div.info")
@@ -110,7 +116,9 @@ class WatchAsianProvider : MainAPI() {
             descript = inner?.text()
 
             inner?.select("p")?.forEach { p ->
-                val caption = p?.selectFirst("span")?.text()?.trim()?.lowercase()?.removeSuffix(":")?.trim() ?: return@forEach
+                val caption =
+                    p?.selectFirst("span")?.text()?.trim()?.lowercase()?.removeSuffix(":")?.trim()
+                        ?: return@forEach
                 when (caption) {
                     "genre" -> {
                         tags = p.select("a")?.mapNotNull { it?.text()?.trim() }
@@ -132,7 +140,9 @@ class WatchAsianProvider : MainAPI() {
             year = if (title.length > 5) {
                 title.replace(")", "").replace("(", "").substring(title.length - 5)
                     .trim().trimEnd(')').toIntOrNull()
-            } else { null }
+            } else {
+                null
+            }
         }
 
         // Episodes Links
@@ -194,7 +204,9 @@ class WatchAsianProvider : MainAPI() {
     ): Boolean {
         val links = if (data.startsWith(mainUrl)) {
             getServerLinks(data)
-        } else { data }
+        } else {
+            data
+        }
         var count = 0
         mapper.readValue<List<String>>(links).apmap { item ->
             count++
@@ -202,6 +214,9 @@ class WatchAsianProvider : MainAPI() {
             //Log.i(this.name, "Result => (url) $url")
             when {
                 url.startsWith("https://asianembed.io") || url.startsWith("https://asianload.io") -> {
+                    val iv = "9262859232435825".toByteArray()
+                    val secretKey = "93422192433952489752342908585752".toByteArray()
+                    extractVidstream(url, this.name, callback, iv, secretKey)
                     AsianEmbedHelper.getUrls(url, callback)
                 }
                 url.startsWith("https://embedsito.com") -> {
@@ -219,7 +234,7 @@ class WatchAsianProvider : MainAPI() {
         return count > 0
     }
 
-    private suspend fun getServerLinks(url: String) : String {
+    private suspend fun getServerLinks(url: String): String {
         val moviedoc = app.get(url, referer = mainUrl).document
         return moviedoc.select("div.anime_muti_link > ul > li")
             ?.mapNotNull {
