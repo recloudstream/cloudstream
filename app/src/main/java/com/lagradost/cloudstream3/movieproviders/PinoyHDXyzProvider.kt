@@ -8,8 +8,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
 class PinoyHDXyzProvider : MainAPI() {
-    override val name = "Pinoy-HD"
-    override val mainUrl = "https://www.pinoy-hd.xyz"
+    override var name = "Pinoy-HD"
+    override var mainUrl = "https://www.pinoy-hd.xyz"
     override val lang = "tl"
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries)
     override val hasDownloadSupport = true

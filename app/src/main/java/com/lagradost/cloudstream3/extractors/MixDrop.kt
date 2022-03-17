@@ -4,8 +4,8 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
 class MixDrop : ExtractorApi() {
-    override val name = "MixDrop"
-    override val mainUrl = "https://mixdrop.co"
+    override var name = "MixDrop"
+    override var mainUrl = "https://mixdrop.co"
     private val srcRegex = Regex("""wurl.*?=.*?"(.*?)";""")
     override val requiresReferer = false
 

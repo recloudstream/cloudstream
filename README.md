@@ -98,4 +98,6 @@ It merely scrapes 3rd-party websites that are publicly accessable via any regula
 - [9anime.center](https://9anime.center) 
 - [animeworld.tv](https://www.animeworld.tv) 
 - [asiaflix.app](https://asiaflix.app) 
+- [kawaiifu.com](https://kawaiifu.com) 
+- [hdm.to](https://hdm.to) 
 <!--SITE LIST END-->

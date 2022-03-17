@@ -7,8 +7,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
 class PelisflixProvider : MainAPI() {
-    override val mainUrl = "https://pelisflix.li"
-    override val name = "Pelisflix"
+    override var mainUrl = "https://pelisflix.li"
+    override var name = "Pelisflix"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

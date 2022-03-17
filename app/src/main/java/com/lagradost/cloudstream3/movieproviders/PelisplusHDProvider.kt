@@ -6,8 +6,8 @@ import org.jsoup.nodes.Element
 import java.util.*
 
 class PelisplusHDProvider:MainAPI() {
-    override val mainUrl = "https://pelisplushd.net"
-    override val name = "PelisplusHD"
+    override var mainUrl = "https://pelisplushd.net"
+    override var name = "PelisplusHD"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

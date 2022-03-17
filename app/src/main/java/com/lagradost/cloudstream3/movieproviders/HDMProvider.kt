@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
 
 class HDMProvider : MainAPI() {
-    override val name = "HD Movies"
-    override val mainUrl = "https://hdm.to"
+    override var name = "HD Movies"
+    override var mainUrl = "https://hdm.to"
     override val hasMainPage = true
 
     override val supportedTypes = setOf(

@@ -5,23 +5,23 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
 class Zplayer: ZplayerV2() {
-    override val name: String = "Zplayer"
-    override val mainUrl: String = "https://zplayer.live"
+    override var name: String = "Zplayer"
+    override var mainUrl: String = "https://zplayer.live"
 }
 
 class Upstream: ZplayerV2() {
-    override val name: String = "Upstream" //Here 'cause works
-    override val mainUrl: String = "https://upstream.to"
+    override var name: String = "Upstream" //Here 'cause works
+    override var mainUrl: String = "https://upstream.to"
 }
 
 class Streamhub2: ZplayerV2() {
-    override val name: String = "Streamhub" //Here 'cause works
-    override val mainUrl: String = "https://streamhub.to"
+    override var name = "Streamhub" //Here 'cause works
+    override var mainUrl = "https://streamhub.to"
 }
 
 open class ZplayerV2 : ExtractorApi() {
-    override val name = "Zplayer V2"
-    override val mainUrl = "https://v2.zplayer.live"
+    override var name = "Zplayer V2"
+    override var mainUrl = "https://v2.zplayer.live"
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {

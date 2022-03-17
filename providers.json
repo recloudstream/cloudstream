@@ -1,0 +1,282 @@
+{
+    "AkwamProvider": {
+        "name": "Akwam",
+        "url": "https://akwam.to",
+        "status": 1
+    },
+    "AllAnimeProvider": {
+        "name": "AllAnime",
+        "url": "https://allanime.site",
+        "status": 1
+    },
+    "AllMoviesForYouProvider": {
+        "name": "AllMoviesForYou",
+        "url": "https://allmoviesforyou.net",
+        "status": 1
+    },
+    "AnimeFlickProvider": {
+        "name": "AnimeFlick",
+        "url": "https://animeflick.net",
+        "status": 1
+    },
+    "AnimePaheProvider": {
+        "name": "AnimePahe",
+        "url": "https://animepahe.com",
+        "status": 1
+    },
+    "AnimeWorldProvider": {
+        "name": "AnimeWorld",
+        "url": "https://www.animeworld.tv",
+        "status": 1
+    },
+    "AnimeflvnetProvider": {
+        "name": "Animeflv.net",
+        "url": "https://www3.animeflv.net",
+        "status": 1
+    },
+    "AnimekisaProvider": {
+        "name": "Animekisa",
+        "url": "https://animekisa.in",
+        "status": 1
+    },
+    "AsianLoadProvider": {
+        "name": "AsianLoad",
+        "url": "https://asianembed.io",
+        "status": 1
+    },
+    "AsiaFlixProvider": {
+        "name": "AsiaFlix",
+        "url": "https://asiaflix.app",
+        "status": 3
+    },
+    "BflixProvider": {
+        "name": "Bflix",
+        "url": "https://bflix.ru",
+        "status": 1
+    },
+    "FmoviesToProvider": {
+        "name": "Fmovies.to",
+        "url": "https://fmovies.to",
+        "status": 1
+    },
+    "SflixProProvider": {
+        "name": "Sflix.pro",
+        "url": "https://sflix.pro",
+        "status": 1
+    },
+    "CinecalidadProvider": {
+        "name": "Cinecalidad",
+        "url": "https://cinecalidad.lol",
+        "status": 1
+    },
+    "CrossTmdbProvider": {
+        "name": "MultiMovie",
+        "url": "NONE",
+        "status": 1
+    },
+    "CuevanaProvider": {
+        "name": "Cuevana",
+        "url": "https://cuevana3.me",
+        "status": 1
+    },
+    "DoramasYTProvider": {
+        "name": "DoramasYT",
+        "url": "https://doramasyt.com",
+        "status": 1
+    },
+    "DramaSeeProvider": {
+        "name": "DramaSee",
+        "url": "https://dramasee.net",
+        "status": 1
+    },
+    "DubbedAnimeProvider": {
+        "name": "DubbedAnime",
+        "url": "https://bestdubbedanime.com",
+        "status": 1
+    },
+    "EgyBestProvider": {
+        "name": "EgyBest",
+        "url": "https://egy.best",
+        "status": 1
+    },
+    "EntrepeliculasyseriesProvider": {
+        "name": "EntrePeliculasySeries",
+        "url": "https://entrepeliculasyseries.nu",
+        "status": 1
+    },
+    "FilmanProvider": {
+        "name": "filman.cc",
+        "url": "https://filman.cc",
+        "status": 1
+    },
+    "FrenchStreamProvider": {
+        "name": "French Stream",
+        "url": "https://french-stream.re",
+        "status": 1
+    },
+    "GogoanimeProvider": {
+        "name": "GogoAnime",
+        "url": "https://gogoanime.film",
+        "status": 1
+    },
+    "KawaiifuProvider": {
+        "name": "Kawaiifu",
+        "url": "https://kawaiifu.com",
+        "status": 0
+    },
+    "HDMProvider": {
+        "name": "HD Movies",
+        "url": "https://hdm.to",
+        "status": 0
+    },
+    "IHaveNoTvProvider": {
+        "name": "I Have No TV",
+        "url": "https://ihavenotv.com",
+        "status": 1
+    },
+    "KdramaHoodProvider": {
+        "name": "KDramaHood",
+        "url": "https://kdramahood.com",
+        "status": 1
+    },
+    "LookMovieProvider": {
+        "name": "LookMovie",
+        "url": "https://lookmovie.io",
+        "status": 0
+    },
+    "MeloMovieProvider": {
+        "name": "MeloMovie",
+        "url": "https://melomovie.com",
+        "status": 0
+    },
+    "MonoschinosProvider": {
+        "name": "Monoschinos",
+        "url": "https://monoschinos2.com",
+        "status": 1
+    },
+    "MyCimaProvider": {
+        "name": "MyCima",
+        "url": "https://mycima.tv",
+        "status": 1
+    },
+    "NineAnimeProvider": {
+        "name": "9Anime",
+        "url": "https://9anime.center",
+        "status": 1
+    },
+    "PeliSmartProvider": {
+        "name": "PeliSmart",
+        "url": "https://pelismart.com",
+        "status": 1
+    },
+    "PelisflixProvider": {
+        "name": "Pelisflix",
+        "url": "https://pelisflix.li",
+        "status": 1
+    },
+    "PelisplusHDProvider": {
+        "name": "PelisplusHD",
+        "url": "https://pelisplushd.net",
+        "status": 1
+    },
+    "PelisplusProvider": {
+        "name": "Pelisplus",
+        "url": "https://pelisplus.icu",
+        "status": 1
+    },
+    "PinoyHDXyzProvider": {
+        "name": "Pinoy-HD",
+        "url": "https://www.pinoy-hd.xyz",
+        "status": 1
+    },
+    "PinoyMoviePediaProvider": {
+        "name": "Pinoy Moviepedia",
+        "url": "https://pinoymoviepedia.ru",
+        "status": 1
+    },
+    "PinoyMoviesEsProvider": {
+        "name": "Pinoy Movies",
+        "url": "https://pinoymovies.es",
+        "status": 1
+    },
+    "SflixProvider": {
+        "name": "Sflix.to",
+        "url": "https://sflix.to",
+        "status": 1
+    },
+    "DopeboxProvider": {
+        "name": "Dopebox",
+        "url": "https://dopebox.to",
+        "status": 1
+    },
+    "SolarmovieProvider": {
+        "name": "Solarmovie",
+        "url": "https://solarmovie.pe",
+        "status": 1
+    },
+    "SeriesflixProvider": {
+        "name": "Seriesflix",
+        "url": "https://seriesflix.video",
+        "status": 1
+    },
+    "SoaptwoDayProvider": {
+        "name": "Soap2Day",
+        "url": "https://secretlink.xyz",
+        "status": 1
+    },
+    "TenshiProvider": {
+        "name": "Tenshi.moe",
+        "url": "https://tenshi.moe",
+        "status": 1
+    },
+    "TrailersTwoProvider": {
+        "name": "Trailers.to",
+        "url": "https://trailers.to",
+        "status": 1
+    },
+    "TwoEmbedProvider": {
+        "name": "2Embed",
+        "url": "https://www.2embed.ru",
+        "status": 1
+    },
+    "VMoveeProvider": {
+        "name": "VMovee",
+        "url": "https://www.vmovee.watch",
+        "status": 1
+    },
+    "VfFilmProvider": {
+        "name": "vf-film.me",
+        "url": "https://vf-film.me",
+        "status": 1
+    },
+    "VfSerieProvider": {
+        "name": "vf-serie.org",
+        "url": "https://vf-serie.org",
+        "status": 1
+    },
+    "VidEmbedProvider": {
+        "name": "VidEmbed",
+        "url": "https://vidembed.cc",
+        "status": 1
+    },
+    "WatchAsianProvider": {
+        "name": "WatchAsian",
+        "url": "https://watchasian.sh",
+        "status": 1
+    },
+    "WatchCartoonOnlineProvider": {
+        "name": "WatchCartoonOnline",
+        "url": "https://www.wcostream.com",
+        "status": 1
+    },
+    "WcoProvider": {
+        "name": "WCO Stream",
+        "url": "https://wcostream.cc",
+        "status": 1
+    },
+    "ZoroProvider": {
+        "name": "Zoro",
+        "url": "https://zoro.to",
+        "status": 1
+    }
+}

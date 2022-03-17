@@ -19,8 +19,8 @@ class WcoProvider : MainAPI() {
         }
     }
 
-    override val mainUrl = "https://wcostream.cc"
-    override val name = "WCO Stream"
+    override var mainUrl = "https://wcostream.cc"
+    override var name = "WCO Stream"
     override val hasQuickSearch = true
     override val hasMainPage = true
 

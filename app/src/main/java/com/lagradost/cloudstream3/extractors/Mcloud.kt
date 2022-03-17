@@ -11,8 +11,8 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
 
 open class Mcloud : ExtractorApi() {
-    override val name = "Mcloud"
-    override val mainUrl = "https://mcloud.to"
+    override var name = "Mcloud"
+    override var mainUrl = "https://mcloud.to"
     override val requiresReferer = true
     val headers = mapOf(
         "Host" to "mcloud.to",

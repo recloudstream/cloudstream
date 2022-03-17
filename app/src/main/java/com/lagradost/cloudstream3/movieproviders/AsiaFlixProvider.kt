@@ -11,8 +11,8 @@ import com.lagradost.cloudstream3.utils.getQualityFromName
 import java.net.URI
 
 class AsiaFlixProvider : MainAPI() {
-    override val mainUrl = "https://asiaflix.app"
-    override val name = "AsiaFlix"
+    override var mainUrl = "https://asiaflix.app"
+    override var name = "AsiaFlix"
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val hasChromecastSupport = false

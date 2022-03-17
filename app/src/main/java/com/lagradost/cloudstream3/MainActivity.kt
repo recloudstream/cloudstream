@@ -23,9 +23,9 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
 import com.google.android.material.navigationrail.NavigationRailView
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
-import com.lagradost.cloudstream3.APIHolder.restrictedApis
 import com.lagradost.cloudstream3.CommonActivity.backEvent
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
@@ -46,9 +46,12 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSet
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
+import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
@@ -60,6 +63,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -308,6 +314,88 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         for (api in OAuth2accountApis) {
             api.init()
         }
+
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val downloadFromGithub = try {
+            settingsManager.getBoolean(getString(R.string.killswitch_key), true)
+        } catch (e: Exception) {
+            logError(e)
+            false
+        }
+
+        // must give benenes to get beta providers
+        val hasBenene = try {
+            val count = settingsManager.getInt(getString(R.string.benene_count), 0)
+            count > 30
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+
+        // this pulls the latest data so ppl don't have to update to simply change provider url
+        if(downloadFromGithub) {
+            try {
+                runBlocking {
+                    withContext(Dispatchers.IO) {
+                        try {
+                            val cacheStr: String? = getKey(PROVIDER_STATUS_KEY)
+                            val cache: HashMap<String, ProvidersInfoJson>? =
+                                cacheStr?.let { tryParseJson(cacheStr) }
+                            if (cache != null) {
+                                // if cache is found then spin up a new request, but dont wait
+                                main {
+                                    try {
+                                        val txt = app.get(PROVIDER_STATUS_URL).text
+                                        val newCache =
+                                            tryParseJson<HashMap<String, ProvidersInfoJson>>(txt)
+                                        setKey(PROVIDER_STATUS_KEY, txt)
+                                        MainAPI.overrideData = newCache // update all new providers
+                                        for (api in apis) { // update current providers
+                                            newCache?.get(api.javaClass.simpleName)?.let { data ->
+                                                api.overrideWithNewData(data)
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        logError(e)
+                                    }
+                                }
+                                cache
+                            } else {
+                                // if it is the first time the user has used the app then wait for a request to update all providers
+                                val txt = app.get(PROVIDER_STATUS_URL).text
+                                setKey(PROVIDER_STATUS_KEY, txt)
+                                val newCache = tryParseJson<HashMap<String, ProvidersInfoJson>>(txt)
+                                newCache
+                            }?.let { providersJsonMap ->
+                                MainAPI.overrideData = providersJsonMap
+                                val acceptableProviders =
+                                    providersJsonMap.filter { it.value.status == PROVIDER_STATUS_OK || it.value.status == PROVIDER_STATUS_SLOW }
+                                        .map { it.key }.toSet()
+
+                                val restrictedApis =
+                                    if (hasBenene) providersJsonMap.filter { it.value.status == PROVIDER_STATUS_BETA_ONLY }
+                                        .map { it.key }.toSet() else emptySet()
+
+                                apis = allProviders.filter { api ->
+                                    val name = api.javaClass.simpleName
+                                    // if the provider does not exist in the json file, then it is shown by default
+                                    !providersJsonMap.containsKey(name) || acceptableProviders.contains(name) || restrictedApis.contains(name)
+                                }
+                            }
+                        } catch (e : Exception) {
+                            logError(e)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                apis = allProviders
+                e.printStackTrace()
+                logError(e)
+            }
+        } else {
+            apis = allProviders
+        }
+
         loadThemes(this)
         updateLocale()
         app.initClient(this)
@@ -458,27 +546,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             createISO()
         }*/
 
-        var providersString = "Current providers are:\n"
         var providersAndroidManifestString = "Current androidmanifest should be:\n"
-        for (api in apis) {
-            providersString += "+ ${api.mainUrl}\n"
+        for (api in allProviders) {
             providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
                 api.mainUrl.removePrefix(
                     "https://"
                 )
             }\" android:pathPrefix=\"/\"/>\n"
         }
-
-        for (api in restrictedApis) {
-            providersString += "+ ${api.mainUrl}\n"
-            providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
-                api.mainUrl.removePrefix(
-                    "https://"
-                )
-            }\" android:pathPrefix=\"/\"/>\n"
-        }
-        println(providersString)
-
 
         println(providersAndroidManifestString)
 
@@ -488,15 +563,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             runAutoUpdate()
         }
 
-        // must give benenes to get beta providers
-        try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-            val count = settingsManager.getInt(getString(R.string.benene_count), 0)
-            if (count > 30 && restrictedApis.size > 0 && !apis.contains(restrictedApis.first()))
-                apis.addAll(restrictedApis)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         APIRepository.dubStatusActive = getApiDubstatusSettings()
 
         try {
@@ -507,7 +573,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } catch (e: Exception) {
             logError(e)
         }
-
+        println("Loaded everything")
 /*
         val relativePath = (Environment.DIRECTORY_DOWNLOADS) + File.separatorChar
         val displayName = "output.dex" //""output.dex"

@@ -7,10 +7,10 @@ import com.lagradost.cloudstream3.TvType
  */ 
 class PelisplusProvider : PelisplusProviderTemplate() {
     // mainUrl is good to have as a holder for the url to make future changes easier.
-    override val mainUrl = "https://pelisplus.icu"
+    override var mainUrl = "https://pelisplus.icu"
 
     // name is for how the provider will be named which is visible in the UI, no real rules for this.
-    override val name = "Pelisplus"
+    override var name = "Pelisplus"
 
     override val homePageUrlList = listOf(
         mainUrl,

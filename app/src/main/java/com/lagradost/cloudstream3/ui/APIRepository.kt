@@ -11,11 +11,11 @@ class APIRepository(val api: MainAPI) {
         var dubStatusActive = HashSet<DubStatus>()
 
         val noneApi = object : MainAPI() {
-            override val name = "None"
+            override var name = "None"
             override val supportedTypes = emptySet<TvType>()
         }
         val randomApi = object : MainAPI() {
-            override val name = "Random"
+            override var name = "Random"
             override val supportedTypes = emptySet<TvType>()
         }
 

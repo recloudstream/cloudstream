@@ -8,8 +8,8 @@ import org.jsoup.nodes.Element
 
 class EgyBestProvider : MainAPI() {
     override val lang = "ar"
-    override val mainUrl = "https://egy.best"
-    override val name = "EgyBest"
+    override var mainUrl = "https://egy.best"
+    override var name = "EgyBest"
     override val usesWebView = false
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)

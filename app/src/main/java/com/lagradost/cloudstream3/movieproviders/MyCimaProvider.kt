@@ -9,8 +9,8 @@ import org.jsoup.nodes.Element
 
 class MyCimaProvider : MainAPI() {
     override val lang = "ar"
-    override val mainUrl = "https://mycima.tv"
-    override val name = "MyCima"
+    override var mainUrl = "https://mycima.tv"
+    override var name = "MyCima"
     override val usesWebView = false
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)

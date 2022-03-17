@@ -232,7 +232,7 @@
     <string name="dont_show_again">Không hiển thị lại</string>
     <string name="update">Cập nhật</string>
     <string name="watch_quality_pref">Tự động chọn chất lượng phim</string>
-    <string name="video_cache_settings">Kích thước video cache</string>
+    <string name="video_buffer_size_settings">Kích thước video cache</string>
     <string name="dns_pref_summary">Rất hữu ích để bỏ chặn ISP</string>
 
     <string name="download_path_pref">Đường dẫn tải xuống</string>

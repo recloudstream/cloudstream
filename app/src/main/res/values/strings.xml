@@ -13,7 +13,10 @@
     <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
     <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
-    <string name="video_cache_key" translatable="false">video_cache_key</string>
+    <string name="video_buffer_size_key" translatable="false">video_buffer_size_key</string>
+    <string name="video_buffer_length_key" translatable="false">video_buffer_length_key</string>
+    <string name="video_buffer_clear_key" translatable="false">video_buffer_clear_key</string>
+    <string name="video_buffer_disk_key" translatable="false">video_buffer_disk_key</string>
     <string name="prerelease_commit_hash" translatable="false">unknown_prerelease</string>
     <string name="use_system_brightness_key" translatable="false">use_system_brightness_key</string>
     <string name="swipe_enabled_key" translatable="false">swipe_enabled_key</string>
@@ -32,6 +35,7 @@
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
     <string name="restore_key" translatable="false">restore_key</string>
+    <string name="killswitch_key" translatable="false">killswitch_key</string>
     <string name="backup_key" translatable="false">backup_key</string>
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
@@ -41,6 +45,7 @@
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
     <string name="storage_size_format" translatable="false" formatted="true">%s • %sGB</string>
     <string name="download_size_format" translatable="false" formatted="true">%sMB / %sMB</string>
+    <string name="mb_format" translatable="false" formatted="true">%dMB</string>
     <string name="episode_name_format" translatable="false" formatted="true">%s %s</string>
     <string name="ffw_text_format" translatable="false" formatted="true">+%d</string>
     <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
@@ -198,6 +203,9 @@
     </string>
 
     <string name="restore_settings">Restore data from backup</string>
+    <string name="killswitch_settings">Download latest metadata from github</string>
+    <string name="killswitch_settings_des">If you want access to all providers (even broken ones) turn this off</string>
+
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">Loaded backup file</string>
     <string name="restore_failed_format" formatted="true">Failed to restore data from file %s</string>
@@ -315,7 +323,14 @@
     <string name="dont_show_again">Don\'t show again</string>
     <string name="update">Update</string>
     <string name="watch_quality_pref">Preferred watch quality</string>
-    <string name="video_cache_settings">Video cache size</string>
+    <string name="video_buffer_size_settings">Video buffer size</string>
+    <string name="video_buffer_length_settings">Video buffer length</string>
+    <string name="video_buffer_disk_settings">Video cache on disk</string>
+    <string name="video_buffer_clear_settings">Clear video and image cache</string>
+
+    <string name="video_ram_description">May cause problems on systems with low ram such as Android TV devices or old phones if you set it too high</string>
+    <string name="video_disk_description">May cause problems on systems with low storage space such as Android TV devices if you set it too high</string>
+
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
 

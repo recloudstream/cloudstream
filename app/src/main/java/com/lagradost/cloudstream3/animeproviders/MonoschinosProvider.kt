@@ -17,8 +17,8 @@ class MonoschinosProvider : MainAPI() {
         }
     }
 
-    override val mainUrl = "https://monoschinos2.com"
-    override val name = "Monoschinos"
+    override var mainUrl = "https://monoschinos2.com"
+    override var name = "Monoschinos"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

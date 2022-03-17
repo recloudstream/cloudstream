@@ -11,8 +11,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 class MeloMovieProvider : MainAPI() {
-    override val name = "MeloMovie"
-    override val mainUrl = "https://melomovie.com"
+    override var name = "MeloMovie"
+    override var mainUrl = "https://melomovie.com"
     override val instantLinkLoading = true
     override val hasQuickSearch = true
     override val hasChromecastSupport = false // MKV FILES CANT BE PLAYED ON A CHROMECAST

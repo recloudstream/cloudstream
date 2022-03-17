@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.app
 
 
 open class PlayerVoxzer : ExtractorApi() {
-    override val name = "Voxzer"
-    override val mainUrl = "https://player.voxzer.org"
+    override var name = "Voxzer"
+    override var mainUrl = "https://player.voxzer.org"
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {

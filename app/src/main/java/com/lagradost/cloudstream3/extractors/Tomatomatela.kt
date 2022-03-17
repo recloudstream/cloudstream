@@ -1,19 +1,21 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.app
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
 
 class Cinestart: Tomatomatela() {
-    override val name: String = "Cinestart"
-    override val mainUrl: String = "https://cinestart.net"
+    override var name = "Cinestart"
+    override var mainUrl = "https://cinestart.net"
     override val details = "vr.php?v="
 }
 
 open class Tomatomatela : ExtractorApi() {
-    override val name = "Tomatomatela"
-    override val mainUrl = "https://tomatomatela.com"
+    override var name = "Tomatomatela"
+    override var mainUrl = "https://tomatomatela.com"
     override val requiresReferer = false
     private data class Tomato (
         @JsonProperty("status") val status: Int,

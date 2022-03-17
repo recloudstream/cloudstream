@@ -20,10 +20,7 @@
                 android:key="@string/quality_pref_key"
                 android:title="@string/watch_quality_pref"
                 android:icon="@drawable/ic_baseline_hd_24" />
-        <Preference
-                android:key="@string/video_cache_key"
-                android:title="@string/video_cache_settings"
-                android:icon="@drawable/ic_baseline_storage_24" />
+
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_picture_in_picture_alt_24"
                 app:key="@string/pip_enabled_key"
@@ -66,6 +63,28 @@
                 android:title="@string/double_tap_to_pause_settings"
                 android:summary="@string/double_tap_to_pause_settings_des"
                 app:defaultValue="false" />
+        <Preference
+                android:key="@string/video_buffer_disk_key"
+                android:title="@string/video_buffer_disk_settings"
+                android:summary="@string/video_disk_description"
+                android:icon="@drawable/ic_baseline_storage_24" />
+
+        <Preference
+                android:key="@string/video_buffer_size_key"
+                android:title="@string/video_buffer_size_settings"
+                android:summary="@string/video_ram_description"
+                android:icon="@drawable/ic_baseline_storage_24" />
+
+        <Preference
+                android:key="@string/video_buffer_length_key"
+                android:title="@string/video_buffer_length_settings"
+                android:summary="@string/video_ram_description"
+                android:icon="@drawable/ic_baseline_storage_24" />
+
+        <Preference
+                android:key="@string/video_buffer_clear_key"
+                android:title="@string/video_buffer_clear_settings"
+                android:icon="@drawable/ic_baseline_delete_outline_24" />
         <!--
         <SwitchPreference
                 android:icon="@drawable/ic_baseline_brightness_7_24"
@@ -178,6 +197,13 @@
                 android:icon="@drawable/baseline_restore_page_24"
                 android:key="@string/restore_key"
                 android:title="@string/restore_settings" />
+
+        <SwitchPreference
+                android:icon="@drawable/netflix_download"
+                android:key="@string/killswitch_key"
+                android:defaultValue="true"
+                android:summary="@string/killswitch_settings_des"
+                android:title="@string/killswitch_settings" />
 
         <Preference
                 android:key="@string/mal_key"

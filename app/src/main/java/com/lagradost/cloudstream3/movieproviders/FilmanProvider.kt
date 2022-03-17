@@ -9,8 +9,8 @@ import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 
 class FilmanProvider : MainAPI() {
-    override val mainUrl = "https://filman.cc"
-    override val name = "filman.cc"
+    override var mainUrl = "https://filman.cc"
+    override var name = "filman.cc"
     override val lang = "pl"
     override val hasMainPage = true
     override val supportedTypes = setOf(

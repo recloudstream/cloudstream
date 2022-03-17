@@ -16,8 +16,8 @@ class AnimeFlickProvider : MainAPI() {
         }
     }
 
-    override val mainUrl = "https://animeflick.net"
-    override val name = "AnimeFlick"
+    override var mainUrl = "https://animeflick.net"
+    override var name = "AnimeFlick"
     override val hasQuickSearch = false
     override val hasMainPage = false
 

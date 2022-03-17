@@ -6,14 +6,14 @@ from typing import List, Dict
 
 # Globals
 URL_REGEX = compile(
-    "override val mainUrl(?:\:\s?String)?[^\"']+[\"'](https?://[a-zA-Z0-9\.-]+)[\"']")
+    "override\sva[lr]\smainUrl[^\"']+[\"'](https?://[a-zA-Z0-9\.-]+)[\"']")
 NAME_REGEX = compile("class (.+?) ?: \w+\(\)\s\{")
 START_MARKER = "<!--SITE LIST START-->"
 END_MARKER = "<!--SITE LIST END-->"
 GLOB = "app/src/main/java/com/lagradost/cloudstream3/*providers/*Provider.kt"
 MAIN_API = "app/src/main/java/com/lagradost/cloudstream3/MainAPI.kt"
 API_REGEX = compile(
-    "val (?:restrictedA|a)pis = arrayListOf\((.+?)\)(?=\n\n)", DOTALL)
+    "val\s*allProviders.*?{\s.*?arrayListOf\(([\W\w]*?)\)\s*\n*\s*}", DOTALL)
 
 sites: Dict[str, str] = {}
 enabled_sites: List[str] = []

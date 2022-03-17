@@ -8,8 +8,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 
 class AnimeWorldProvider : MainAPI() {
-    override val mainUrl = "https://www.animeworld.tv"
-    override val name = "AnimeWorld"
+    override var mainUrl = "https://www.animeworld.tv"
+    override var name = "AnimeWorld"
     override val lang = "it"
     override val hasMainPage = true
 

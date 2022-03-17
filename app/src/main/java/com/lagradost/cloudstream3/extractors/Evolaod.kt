@@ -4,7 +4,7 @@ import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.app
 
 class Evoload1 : Evoload() {
-    override val mainUrl = "https://evoload.io"
+    override var mainUrl = "https://evoload.io"
 }
 
 open class Evoload : ExtractorApi() {

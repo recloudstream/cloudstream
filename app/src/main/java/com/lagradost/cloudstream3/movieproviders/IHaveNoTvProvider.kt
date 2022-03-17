@@ -7,8 +7,8 @@ import org.jsoup.Jsoup
 import java.net.URLEncoder
 
 class IHaveNoTvProvider : MainAPI() {
-    override val mainUrl = "https://ihavenotv.com"
-    override val name = "I Have No TV"
+    override var mainUrl = "https://ihavenotv.com"
+    override var name = "I Have No TV"
     override val hasQuickSearch = false
     override val hasMainPage = true
 

@@ -7,8 +7,8 @@ import org.jsoup.Jsoup
 
 // referer = https://vf-film.org, USERAGENT ALSO REQUIRED
 class VfFilmProvider : MainAPI() {
-    override val mainUrl = "https://vf-film.me"
-    override val name = "vf-film.me"
+    override var mainUrl = "https://vf-film.me"
+    override var name = "vf-film.me"
     override val lang = "fr"
     override val hasQuickSearch = false
     override val hasMainPage = false

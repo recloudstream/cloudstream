@@ -44,8 +44,8 @@ class AnimePaheProvider : MainAPI() {
             Regex("""(^(?:https?:)?(?://)?(?:www\.)?(?:youtu\.be/|youtube(?:-nocookie)?\.(?:[A-Za-z]{2,4}|[A-Za-z]{2,3}\.[A-Za-z]{2})/)(?:watch|embed/|vi?/)*(?:\?[\w=&]*vi?=)?[^#&?/]{11}.*${'$'})""")
     }
 
-    override val mainUrl = MAIN_URL
-    override val name = "AnimePahe"
+    override var mainUrl = MAIN_URL
+    override var name = "AnimePahe"
     override val hasQuickSearch = false
     override val hasMainPage = true
 

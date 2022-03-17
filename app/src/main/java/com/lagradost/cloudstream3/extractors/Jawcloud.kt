@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.app
 
 
 open class Jawcloud : ExtractorApi() {
-    override val name = "Jawcloud"
-    override val mainUrl = "https://jawcloud.co"
+    override var name = "Jawcloud"
+    override var mainUrl = "https://jawcloud.co"
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {

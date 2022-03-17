@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 
 class StreamTape : ExtractorApi() {
-    override val name = "StreamTape"
-    override val mainUrl = "https://streamtape.com"
+    override var name = "StreamTape"
+    override var mainUrl = "https://streamtape.com"
     override val requiresReferer = false
 
     private val linkRegex =

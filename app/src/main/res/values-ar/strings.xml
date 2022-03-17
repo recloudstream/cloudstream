@@ -232,7 +232,7 @@
     <string name="dont_show_again">لا تظهر مرة أخرى</string>
     <string name="update">تحديث</string>
     <string name="watch_quality_pref">جودة المشاهدة المفضلة</string>
-    <string name="video_cache_settings">حجم ذاكرة التخزين المؤقت للفيديو</string>	
+    <string name="video_buffer_size_settings">حجم ذاكرة التخزين المؤقت للفيديو</string>
     <string name="dns_pref">DNS فوق HTTPS</string>
     <string name="dns_pref_summary">مفيد لتجاوز كتل مزود خدمة الإنترنت</string>
 	

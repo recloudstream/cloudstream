@@ -12,8 +12,8 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper
 class TrailersTwoProvider : TmdbProvider() {
     val user = "cloudstream"
     override val apiName = "Trailers.to"
-    override val name = "Trailers.to"
-    override val mainUrl = "https://trailers.to"
+    override var name = "Trailers.to"
+    override var mainUrl = "https://trailers.to"
     override val useMetaLoadResponse = true
     override val instantLinkLoading = true
 

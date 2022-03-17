@@ -18,8 +18,8 @@ import java.net.URI
 import java.util.*
 
 class ZoroProvider : MainAPI() {
-    override val mainUrl = "https://zoro.to"
-    override val name = "Zoro"
+    override var mainUrl = "https://zoro.to"
+    override var name = "Zoro"
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val hasChromecastSupport = true

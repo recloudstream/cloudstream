@@ -1,17 +1,14 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.Cinestart
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.*
-import java.util.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 
 class CinecalidadProvider:MainAPI() {
-    override val mainUrl: String
-        get() = "https://cinecalidad.lol"
-    override val name: String
-        get() = "Cinecalidad"
+    override var mainUrl = "https://cinecalidad.lol"
+    override var name = "Cinecalidad"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

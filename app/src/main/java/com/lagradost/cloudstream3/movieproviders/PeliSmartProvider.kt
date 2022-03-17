@@ -7,8 +7,8 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import kotlin.collections.ArrayList
 
 class PeliSmartProvider: MainAPI() {
-    override val mainUrl = "https://pelismart.com"
-    override val name = "PeliSmart"
+    override var mainUrl = "https://pelismart.com"
+    override var name = "PeliSmart"
     override val lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true

@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.utils.extractorApis
 
 
 class FrenchStreamProvider : MainAPI() {
-    override val mainUrl = "https://french-stream.re"
-    override val name = "French Stream"
+    override var mainUrl = "https://french-stream.re"
+    override var name = "French Stream"
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val lang = "fr"
