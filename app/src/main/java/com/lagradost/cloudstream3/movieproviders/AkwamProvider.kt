@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
-import com.lagradost.cloudstream3.network.AppResponse
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.nodes.Element
@@ -165,10 +164,10 @@ class AkwamProvider : MainAPI() {
     }
 
 
-    // Maybe possible to not use the url shortener but cba investigating that.
-    private suspend fun skipUrlShortener(url: String): AppResponse {
-        return app.get(app.get(url).document.select("a.download-link").attr("href"))
-    }
+//    // Maybe possible to not use the url shortener but cba investigating that.
+//    private suspend fun skipUrlShortener(url: String): AppResponse {
+//        return app.get(app.get(url).document.select("a.download-link").attr("href"))
+//    }
 
     private fun getQualityFromId(id: Int?): Qualities {
         return when (id) {
@@ -190,14 +189,15 @@ class AkwamProvider : MainAPI() {
 
         val links = doc.select("div.tab-content.quality").map {
             val quality = getQualityFromId(it.attr("id").getIntFromText())
-            it.select(".col-lg-6 > a").map { linkElement ->
-                linkElement.attr("href") to quality
-                // Only uses the download links, primarily to prevent unnecessary duplicate requests.
-            }.filter { link -> link.first.contains("/link/") }
+            it.select(".col-lg-6 > a:contains(تحميل)").map { linkElement ->
+                if(linkElement.attr("href").contains("/download/")) { linkElement.attr("href") to quality } else {
+                    "$mainUrl/download${linkElement.attr("href").split("/link")[1]}${data.split("/movie|/episode|/show/episode".toRegex())[1]}" to quality // just in case if they add the shorts urls again
+                }
+            }
         }.flatten()
 
         links.map {
-            val linkDoc = skipUrlShortener(it.first).document
+            val linkDoc = app.get(it.first).document
             val button = linkDoc.select("div.btn-loader > a")
             val url = button.attr("href")
 
