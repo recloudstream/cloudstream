@@ -53,8 +53,8 @@
     <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
     <string name="rating_format" translatable="false" formatted="true">%.1f/10.0</string>
     <string name="year_format" translatable="false" formatted="true">%d</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s 第%d集</string>
-    <string name="cast_format" formatted="true">投屏：%s</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s 共%d集</string>
+    <string name="cast_format" formatted="true">演员：%s</string>
 
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">海报</string>
@@ -69,7 +69,7 @@
     <string name="preview_background_img_des">预览背景</string>
 
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
-    <string name="player_speed_text_format" formatted="true">播放速度：(%.2fx)</string>
+    <string name="player_speed_text_format" formatted="true">速度(%.2fx)</string>
     <string name="rated_format" formatted="true">评分：%.1f</string>
     <string name="new_update_format" formatted="true">发现新版本！\n%s -> %s</string>
     <string name="filler" formatted="true">填充</string>
@@ -122,7 +122,7 @@
     <string name="error_loading_links_toast">加载链接时出错</string>
     <string name="download_storage_text">内部存储</string>
 
-    <string name="app_dubbed_text">音轨</string>
+    <string name="app_dubbed_text">配音</string>
     <string name="app_subbed_text">字幕</string>
 
     <string name="popup_delete_file">删除文件</string>
@@ -156,8 +156,8 @@
     <string name="search_provider_text_providers">按内容提供者搜索</string>
     <string name="search_provider_text_types">按类型搜索</string>
 
-    <string name="benene_count_text">%d Benenes given to devs</string>
-    <string name="benene_count_text_none">No Benenes given</string>
+    <string name="benene_count_text">送给开发者%d根香蕉</string>
+    <string name="benene_count_text_none">不送香蕉</string>
 
     <string name="subs_auto_select_language">自动选择语言</string>
     <string name="subs_download_languages">下载语言</string>
@@ -179,14 +179,14 @@
 
     <string name="picture_in_picture">画中画</string>
     <string name="picture_in_picture_des">在其他应用之上的迷你播放器中继续播放</string>
-    <string name="player_size_settings">播放器大小调整按钮</string>
+    <string name="player_size_settings">播放器画面调整按钮</string>
     <string name="player_size_settings_des">移除黑色边框</string>
     <string name="player_subtitles_settings">字幕</string>
     <string name="player_subtitles_settings_des">播放器字幕设置</string>
     <string name="chromecast_subtitles_settings">投屏字幕</string>
     <string name="chromecast_subtitles_settings_des">投屏字幕设置</string>
 
-    <string name="eigengraumode_settings">Eigengravy模式</string>
+    <string name="eigengraumode_settings">本征模式</string>
     <string name="eigengraumode_settings_des">在播放器中添加播放速度选项</string>
     <string name="swipe_to_seek_settings">滑动控制进度</string>
     <string name="swipe_to_seek_settings_des">向屏幕左侧或右侧滑动来控制播放进度</string>
@@ -218,7 +218,7 @@
     <string name="advanced_search_des">给出按内容提供者分隔的搜索结果</string>
     <string name="bug_report_settings_off">只发送关于崩溃的数据</string>
     <string name="bug_report_settings_on">不发送数据</string>
-    <string name="show_fillers_settings">为动画显示填充集</string>
+    <string name="show_fillers_settings">为动画显示下一集</string>
     <string name="updates_settings">显示应用更新</string>
     <string name="updates_settings_des">启动时自动搜索更新</string>
     <string name="uprereleases_settings">更新至预览版</string>
@@ -227,8 +227,8 @@
     <string name="lightnovel">由同一开发者开发的轻小说应用</string>
     <string name="anim">由同一开发者开发的动漫应用</string>
     <string name="discord">加入Discord</string>
-    <string name="benene">Give a benene to the devs</string>
-    <string name="benene_des">Given benene</string>
+    <string name="benene">送给开发者一根香蕉</string>
+    <string name="benene_des">送香蕉</string>
 
     <string name="app_language">应用语言</string>
 
@@ -314,15 +314,15 @@
     <string name="check_for_update">检查更新</string>
 
     <string name="video_lock">锁定</string>
-    <string name="video_aspect_ratio_resize">调整大小</string>
+    <string name="video_aspect_ratio_resize">调整画面</string>
     <string name="video_source">来源</string>
     <string name="video_skip_op">跳过OP</string>
 
     <string name="dont_show_again">不再显示</string>
     <string name="update">更新</string>
     <string name="watch_quality_pref">首选播放质量</string>
-    <string name="video_buffer_size_settings">视频缓冲区大小</string>
-    <string name="video_buffer_length_settings">视频缓冲区长度</string>
+    <string name="video_buffer_size_settings">视频缓冲大小</string>
+    <string name="video_buffer_length_settings">视频缓冲时长</string>
     <string name="video_buffer_disk_settings">磁盘上的视频缓存</string>
     <string name="video_buffer_clear_settings">清除视频和图像缓存</string>
 
@@ -334,11 +334,11 @@
 
     <string name="download_path_pref">下载路径</string>
 
-    <string name="display_subbed_dubbed_settings">显示音轨/字幕动画</string>
+    <string name="display_subbed_dubbed_settings">显示有配音/字幕的动画</string>
 
     <string name="resize_fit">适应屏幕</string>
     <string name="resize_fill">拉伸</string>
-    <string name="resize_zoom">Zoom</string>
+    <string name="resize_zoom">缩放</string>
 
     <string name="legal_notice">免责声明</string>
     <string name="legal_notice_key" translatable="false">legal_notice_key</string>
