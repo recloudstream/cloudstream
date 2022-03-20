@@ -17,11 +17,13 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -1358,9 +1360,32 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
                         result_meta_site?.text = d.apiName
 
-                        if (!d.posterUrl.isNullOrEmpty()) {
-                            result_poster?.setImage(d.posterUrl)
-                            result_poster_blur?.setImageBlur(d.posterUrl, 10, 3)
+                        val posterImageLink = d.posterUrl
+                        if (!posterImageLink.isNullOrEmpty()) {
+                            result_poster?.setImage(posterImageLink)
+                            result_poster_blur?.setImageBlur(posterImageLink, 10, 3)
+                            //Full screen view of Poster image
+                            result_poster_holder?.setOnClickListener {
+                                try {
+                                    context?.let { ctx ->
+                                        val bitmap = result_poster.drawable.toBitmap()
+                                        val sourceBuilder = AlertDialog.Builder(ctx)
+                                        sourceBuilder.setView(R.layout.result_poster)
+
+                                        val sourceDialog = sourceBuilder.create()
+                                        sourceDialog.show()
+
+                                        sourceDialog.findViewById<ImageView?>(R.id.imgPoster)?.apply {
+                                            setImageBitmap(bitmap)
+                                            setOnClickListener {
+                                                sourceDialog.dismissSafe()
+                                            }
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    logError(e)
+                                }
+                            }
                         } else {
                             result_poster?.setImageResource(R.drawable.default_cover)
                             result_poster_blur?.setImageResource(R.drawable.default_cover)
