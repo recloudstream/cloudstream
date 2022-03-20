@@ -157,7 +157,7 @@ open class SflixProvider() : MainAPI() {
         val dataId = details.attr("data-id")
         val id = if (dataId.isNullOrEmpty())
             idRegex.find(url)?.groupValues?.get(1)
-                ?: throw RuntimeException("Unable to get id from '$url'")
+                ?: throw ErrorLoadingException("Unable to get id from '$url'")
         else dataId
 
         val recommendations =
@@ -199,6 +199,8 @@ open class SflixProvider() : MainAPI() {
                 }
             }
 
+            val comingSoon = sourceIds.isEmpty()
+
             return newMovieLoadResponse(title, url, TvType.Movie, sourceIds.toJson()) {
                 this.year = year
                 this.posterUrl = posterUrl
@@ -207,6 +209,7 @@ open class SflixProvider() : MainAPI() {
                 addActors(cast)
                 this.tags = tags
                 this.recommendations = recommendations
+                this.comingSoon = comingSoon
             }
         } else {
             val seasonsDocument = app.get("$mainUrl/ajax/v2/tv/seasons/$id").document
@@ -252,6 +255,7 @@ open class SflixProvider() : MainAPI() {
                     )
                 }
             }
+
             return newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = posterUrl
                 this.year = year

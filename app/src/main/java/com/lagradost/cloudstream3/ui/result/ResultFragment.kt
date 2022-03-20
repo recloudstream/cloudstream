@@ -1375,12 +1375,13 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                                         val sourceDialog = sourceBuilder.create()
                                         sourceDialog.show()
 
-                                        sourceDialog.findViewById<ImageView?>(R.id.imgPoster)?.apply {
-                                            setImageBitmap(bitmap)
-                                            setOnClickListener {
-                                                sourceDialog.dismissSafe()
+                                        sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
+                                            ?.apply {
+                                                setImageBitmap(bitmap)
+                                                setOnClickListener {
+                                                    sourceDialog.dismissSafe()
+                                                }
                                             }
-                                        }
                                     }
                                 } catch (e: Exception) {
                                     logError(e)
@@ -1422,6 +1423,11 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         result_tag?.removeAllViews()
                         //result_tag_holder?.visibility = GONE
                         // result_status.visibility = GONE
+
+                        d.comingSoon.let { soon ->
+                            result_coming_soon?.isVisible = soon
+                            result_data_holder?.isGone = soon
+                        }
 
                         val tags = d.tags
                         if (tags.isNullOrEmpty()) {

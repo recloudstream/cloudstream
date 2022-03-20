@@ -150,7 +150,7 @@ object SearchResultBuilder {
 
                 playImg?.visibility = View.VISIBLE
 
-                if (!card.type.isMovieType()) {
+                if (card.type?.isMovieType() == false) {
                     cardText?.text =
                         cardText?.context?.getNameFull(card.name, card.episode, card.season)
                 }

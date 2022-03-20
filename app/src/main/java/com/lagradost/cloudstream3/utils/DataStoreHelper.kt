@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.WatchType
@@ -33,31 +34,33 @@ object DataStoreHelper {
     }
 
     data class BookmarkedData(
-       @JsonProperty("id") override val id: Int?,
-       @JsonProperty("bookmarkedTime") val bookmarkedTime: Long,
-       @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
-       @JsonProperty("name") override val name: String,
-       @JsonProperty("url") override val url: String,
-       @JsonProperty("apiName") override val apiName: String,
-       @JsonProperty("type") override val type: TvType,
-       @JsonProperty("posterUrl") override val posterUrl: String?,
-       @JsonProperty("year") val year: Int?,
+        @JsonProperty("id") override var id: Int?,
+        @JsonProperty("bookmarkedTime") val bookmarkedTime: Long,
+        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
+        @JsonProperty("name") override val name: String,
+        @JsonProperty("url") override val url: String,
+        @JsonProperty("apiName") override val apiName: String,
+        @JsonProperty("type") override var type: TvType? = null,
+        @JsonProperty("posterUrl") override var posterUrl: String?,
+        @JsonProperty("year") val year: Int?,
+        @JsonProperty("quality") override var quality: SearchQuality? = null
     ) : SearchResponse
 
     data class ResumeWatchingResult(
         @JsonProperty("name") override val name: String,
         @JsonProperty("url") override val url: String,
         @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override val type: TvType,
-        @JsonProperty("posterUrl") override val posterUrl: String?,
+        @JsonProperty("type") override var type: TvType? = null,
+        @JsonProperty("posterUrl") override var posterUrl: String?,
 
         @JsonProperty("watchPos") val watchPos: PosDur?,
 
-        @JsonProperty("id") override val id: Int?,
+        @JsonProperty("id") override var id: Int?,
         @JsonProperty("parentId") val parentId: Int?,
         @JsonProperty("episode") val episode: Int?,
         @JsonProperty("season") val season: Int?,
         @JsonProperty("isFromDownload") val isFromDownload: Boolean,
+        @JsonProperty("quality") override var quality: SearchQuality? = null
     ) : SearchResponse
 
     var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION

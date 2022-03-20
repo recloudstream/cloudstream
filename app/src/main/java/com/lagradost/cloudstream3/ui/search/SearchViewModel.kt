@@ -4,11 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.ErrorLoadingException
-import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.SyncApis
@@ -54,9 +51,10 @@ class SearchViewModel : ViewModel() {
         override val name: String,
         override val url: String,
         override val apiName: String,
-        override val type: TvType?,
-        override val posterUrl: String?,
-        override val id: Int?,
+        override var type: TvType?,
+        override var posterUrl: String?,
+        override var id: Int?,
+        override var quality: SearchQuality? = null
     ) : SearchResponse
 
     private fun SyncAPI.SyncSearchResult.toSearchResponse(): SyncSearchResultSearchResponse {

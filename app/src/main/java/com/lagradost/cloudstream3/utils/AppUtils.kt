@@ -63,7 +63,7 @@ object AppUtils {
         context: Context,
         card: DataStoreHelper.ResumeWatchingResult
     ): WatchNextProgram {
-        val isSeries = !card.type.isMovieType()
+        val isSeries = card.type?.isMovieType() == false
         val title = if (isSeries) {
             context.getNameFull(card.name, card.episode, card.season)
         } else {

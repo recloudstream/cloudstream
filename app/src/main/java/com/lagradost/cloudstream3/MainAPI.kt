@@ -101,7 +101,7 @@ object APIHolder {
         )
     }
 
-    var apis : List<MainAPI> = arrayListOf()
+    var apis: List<MainAPI> = arrayListOf()
 
     fun getApiFromName(apiName: String?): MainAPI {
         return getApiFromNameNull(apiName) ?: apis[defProvider]
@@ -148,7 +148,7 @@ object APIHolder {
         val domain = encodeToString(
             (uri.scheme + "://" + uri.host + ":443").encodeToByteArray(),
             0
-        ).replace("\n", "").replace("=",".")
+        ).replace("\n", "").replace("=", ".")
 
         val vToken =
             app.get(
@@ -281,7 +281,8 @@ object APIHolder {
 3 = restricted, must donate 30 benenes to use
  */
 const val PROVIDER_STATUS_KEY = "PROVIDER_STATUS_KEY"
-const val PROVIDER_STATUS_URL = "https://raw.githubusercontent.com/LagradOst/CloudStream-3/master/providers.json"
+const val PROVIDER_STATUS_URL =
+    "https://raw.githubusercontent.com/LagradOst/CloudStream-3/master/providers.json"
 const val PROVIDER_STATUS_BETA_ONLY = 3
 const val PROVIDER_STATUS_SLOW = 2
 const val PROVIDER_STATUS_OK = 1
@@ -296,10 +297,10 @@ data class ProvidersInfoJson(
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
 abstract class MainAPI {
     companion object {
-        var overrideData : HashMap<String, ProvidersInfoJson>? = null
+        var overrideData: HashMap<String, ProvidersInfoJson>? = null
     }
 
-    public fun overrideWithNewData(data : ProvidersInfoJson) {
+    public fun overrideWithNewData(data: ProvidersInfoJson) {
         this.name = data.name
         this.mainUrl = data.url
     }
@@ -540,13 +541,28 @@ class HomePageList(
     var list: List<SearchResponse>
 )
 
+enum class SearchQuality {
+    //https://en.wikipedia.org/wiki/Pirated_movie_release_types
+    Cam,
+    CamRip,
+    HdCam,
+    Telesync, // TS
+    WorkPrint,
+    Telecine, // TC
+    HQ,
+    HD,
+    BlueRay,
+    DVD,
+}
+
 interface SearchResponse {
     val name: String
     val url: String
     val apiName: String
-    val type: TvType?
-    val posterUrl: String?
-    val id: Int?
+    var type: TvType?
+    var posterUrl: String?
+    var id: Int?
+    var quality : SearchQuality?
 }
 
 enum class ActorRole {
@@ -571,49 +587,53 @@ data class AnimeSearchResponse(
     override val name: String,
     override val url: String,
     override val apiName: String,
-    override val type: TvType,
+    override var type: TvType?,
 
-    override val posterUrl: String?,
+    override var posterUrl: String?,
     val year: Int? = null,
     val dubStatus: EnumSet<DubStatus>? = null,
 
     val otherName: String? = null,
     val dubEpisodes: Int? = null,
     val subEpisodes: Int? = null,
-    override val id: Int? = null,
+    override var id: Int? = null,
+    override var quality: SearchQuality? = null,
 ) : SearchResponse
 
 data class TorrentSearchResponse(
     override val name: String,
     override val url: String,
     override val apiName: String,
-    override val type: TvType,
+    override var type: TvType?,
 
-    override val posterUrl: String?,
-    override val id: Int? = null,
+    override var posterUrl: String?,
+    override var id: Int? = null,
+    override var quality: SearchQuality? = null,
 ) : SearchResponse
 
 data class MovieSearchResponse(
     override val name: String,
     override val url: String,
     override val apiName: String,
-    override val type: TvType,
+    override var type: TvType?,
 
-    override val posterUrl: String?,
+    override var posterUrl: String?,
     val year: Int? = null,
-    override val id: Int? = null,
+    override var id: Int? = null,
+    override var quality: SearchQuality? = null,
 ) : SearchResponse
 
 data class TvSeriesSearchResponse(
     override val name: String,
     override val url: String,
     override val apiName: String,
-    override val type: TvType,
+    override var type: TvType?,
 
-    override val posterUrl: String?,
+    override var posterUrl: String?,
     val year: Int?,
     val episodes: Int?,
-    override val id: Int? = null,
+    override var id: Int? = null,
+    override var quality: SearchQuality? = null,
 ) : SearchResponse
 
 interface LoadResponse {
@@ -630,6 +650,7 @@ interface LoadResponse {
     val trailerUrl: String?
     var recommendations: List<SearchResponse>?
     var actors: List<ActorData>?
+    var comingSoon: Boolean
 
     companion object {
         @JvmName("addActorNames")
@@ -715,6 +736,7 @@ data class TorrentLoadResponse(
     override var trailerUrl: String? = null,
     override var recommendations: List<SearchResponse>? = null,
     override var actors: List<ActorData>? = null,
+    override var comingSoon: Boolean = false,
 ) : LoadResponse
 
 data class AnimeLoadResponse(
@@ -742,6 +764,7 @@ data class AnimeLoadResponse(
     override var trailerUrl: String? = null,
     override var recommendations: List<SearchResponse>? = null,
     override var actors: List<ActorData>? = null,
+    override var comingSoon: Boolean = false,
 ) : LoadResponse
 
 fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<AnimeEpisode>?) {
@@ -753,11 +776,29 @@ fun MainAPI.newAnimeLoadResponse(
     name: String,
     url: String,
     type: TvType,
-    initializer: AnimeLoadResponse.() -> Unit = { }
+    comingSoonIfNone : Boolean,
+    initializer: AnimeLoadResponse.() -> Unit = { },
 ): AnimeLoadResponse {
     val builder = AnimeLoadResponse(name = name, url = url, apiName = this.name, type = type)
     builder.initializer()
+    if(comingSoonIfNone) {
+        builder.comingSoon = true
+        for (key in builder.episodes.keys)
+            if(!builder.episodes[key].isNullOrEmpty()) {
+                builder.comingSoon = false
+                break
+            }
+    }
     return builder
+}
+
+fun MainAPI.newAnimeLoadResponse(
+    name: String,
+    url: String,
+    type: TvType,
+    initializer: AnimeLoadResponse.() -> Unit = { },
+): AnimeLoadResponse {
+    return newAnimeLoadResponse(name, url, type, true, initializer)
 }
 
 data class MovieLoadResponse(
@@ -778,6 +819,7 @@ data class MovieLoadResponse(
     override var trailerUrl: String? = null,
     override var recommendations: List<SearchResponse>? = null,
     override var actors: List<ActorData>? = null,
+    override var comingSoon: Boolean = false,
 ) : LoadResponse
 
 fun MainAPI.newMovieLoadResponse(
@@ -792,7 +834,8 @@ fun MainAPI.newMovieLoadResponse(
         url = url,
         apiName = this.name,
         type = type,
-        dataUrl = dataUrl
+        dataUrl = dataUrl,
+        comingSoon = dataUrl.isBlank()
     )
     builder.initializer()
     return builder
@@ -828,6 +871,7 @@ data class TvSeriesLoadResponse(
     override var trailerUrl: String? = null,
     override var recommendations: List<SearchResponse>? = null,
     override var actors: List<ActorData>? = null,
+    override var comingSoon: Boolean = false,
 ) : LoadResponse
 
 fun MainAPI.newTvSeriesLoadResponse(
@@ -842,7 +886,8 @@ fun MainAPI.newTvSeriesLoadResponse(
         url = url,
         apiName = this.name,
         type = type,
-        episodes = episodes
+        episodes = episodes,
+        comingSoon = episodes.isEmpty(),
     )
     builder.initializer()
     return builder

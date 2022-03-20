@@ -429,5 +429,17 @@
     <string name="actor_background">Background</string>
 
     <string name="home_source">Source</string>
+
+    <string name="coming_soon">Coming soon…</string>
+    <string name="quality_cam">Cam</string>
+    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_dvd">DVD</string>
     <string name="poster_image">Poster Image</string>
 </resources>
