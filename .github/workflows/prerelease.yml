@@ -5,6 +5,7 @@ on:
     branches: [ master ]
     paths-ignore:
       - '*.md'
+      - '*.json'
 
 concurrency: 
   group: "pre-release"

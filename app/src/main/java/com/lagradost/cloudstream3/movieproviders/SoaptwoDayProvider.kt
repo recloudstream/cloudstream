@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import org.jsoup.Jsoup
 import java.util.*
 
 class SoaptwoDayProvider:MainAPI() {
@@ -67,20 +68,44 @@ class SoaptwoDayProvider:MainAPI() {
     }
 
     override suspend fun load(url: String): LoadResponse? {
-        val soup = app.get(url, timeout = 120).document
-        val title = soup.selectFirst(".hidden-lg > div:nth-child(1) > h4").text()
+        val soup = app.get(url).document
+        val title = soup.selectFirst(".hidden-lg > div:nth-child(1) > h4")?.text() ?: ""
         val description = soup.selectFirst("p#wrap")?.text()?.trim()
-        val poster = soup.selectFirst(".col-md-5 > div:nth-child(1) > div:nth-child(1) > img").attr("src")
-        val episodes = soup.select("div.alert > div > div > a").map {
-            val link = it.attr("href")
-            val name = it.text().replace(Regex("(^(\\d+)\\.)"),"")
+        val poster = soup.selectFirst(".col-md-5 > div:nth-child(1) > div:nth-child(1) > img")?.attr("src")
+        val episodes = soup.select("div.alert > div > div > a").mapNotNull {
+            val link = fixUrlNull(it?.attr("href")) ?: return@mapNotNull null
+            val name = it?.text()?.replace(Regex("(^(\\d+)\\.)"),"")
             TvSeriesEpisode(
-                name,
-                null,
-                null,
-                fixUrl(link)
+                name = name,
+                data = link
             )
         }
+        val otherInfoBody = soup.select("div.col-sm-8 div.panel-body")?.toString()
+        //Fetch casts
+        val casts = otherInfoBody?.substringAfter("Stars : ")
+            ?.substringBefore("Genre : ")?.let {
+            Jsoup.parse(it)?.select("a")
+        }?.mapNotNull {
+            val castName = it?.text() ?: return@mapNotNull null
+            ActorData(
+                Actor(
+                    name = castName
+                )
+            )
+        }
+        //Fetch year
+        val year = otherInfoBody?.substringAfter("<h4>Release : </h4>")
+            ?.substringBefore("<div")?.let {
+                //Log.i(this.name, "Result => year string: $it")
+                Jsoup.parse(it)?.select("p")?.get(1)
+            }?.text()?.take(4)?.toIntOrNull()
+        //Fetch genres
+        val genre = otherInfoBody?.substringAfter("<h4>Genre : </h4>")
+            ?.substringBefore("<h4>Release : </h4>")?.let {
+                //Log.i(this.name, "Result => genre string: $it")
+                Jsoup.parse(it)?.select("a")
+            }?.mapNotNull { it?.text()?.trim() ?: return@mapNotNull null }
+
         val tvType = if (episodes.isEmpty()) TvType.Movie else TvType.TvSeries
         return when (tvType) {
             TvType.TvSeries -> {
@@ -90,9 +115,11 @@ class SoaptwoDayProvider:MainAPI() {
                     this.name,
                     tvType,
                     episodes.reversed(),
-                    fixUrl(poster),
-                    null,
+                    fixUrlNull(poster),
+                    year = year,
                     description,
+                    actors = casts,
+                    tags = genre
                 )
             }
             TvType.Movie -> {
@@ -102,9 +129,11 @@ class SoaptwoDayProvider:MainAPI() {
                     this.name,
                     tvType,
                     url,
-                    fixUrl(poster),
-                    null,
+                    fixUrlNull(poster),
+                    year = year,
                     description,
+                    actors = casts,
+                    tags = genre
                 )
             }
             else -> null
@@ -181,10 +210,10 @@ class SoaptwoDayProvider:MainAPI() {
             ).text.replace("\\\"","\"").replace("\"{","{").replace("}\"","}")
                 .replace("\\\\\\/","\\/")
             val json = parseJson<ServerJson>(url)
-            listOf(
+            listOfNotNull(
                 json.stream,
                 json.streambackup
-            ).filterNotNull().apmap { stream ->
+            ).apmap { stream ->
                 val cleanstreamurl = stream.replace("\\/","/").replace("\\\\\\","")
                 if (cleanstreamurl.isNotBlank()) {
                     callback(ExtractorLink(

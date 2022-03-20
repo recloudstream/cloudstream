@@ -1,0 +1,430 @@
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
+    <!-- KEYS DON'T TRANSLATE -->
+    <string name="search_providers_list_key" translatable="false">search_providers_list</string>
+    <string name="locale_key" translatable="false">app_locale</string>
+    <string name="search_types_list_key" translatable="false">search_type_list</string>
+    <string name="grid_format_key" translatable="false">grid_format</string>
+    <string name="auto_update_key" translatable="false">auto_update</string>
+    <string name="prerelease_update_key" translatable="false">prerelease_update</string>
+    <string name="manual_check_update_key" translatable="false">manual_check_update</string>
+    <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
+    <string name="benene_count" translatable="false">benene_count</string>
+    <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
+    <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
+    <string name="quality_pref_key" translatable="false">quality_pref_key</string>
+    <string name="video_buffer_size_key" translatable="false">video_buffer_size_key</string>
+    <string name="video_buffer_length_key" translatable="false">video_buffer_length_key</string>
+    <string name="video_buffer_clear_key" translatable="false">video_buffer_clear_key</string>
+    <string name="video_buffer_disk_key" translatable="false">video_buffer_disk_key</string>
+    <string name="prerelease_commit_hash" translatable="false">unknown_prerelease</string>
+    <string name="use_system_brightness_key" translatable="false">use_system_brightness_key</string>
+    <string name="swipe_enabled_key" translatable="false">swipe_enabled_key</string>
+    <string name="playback_speed_enabled_key" translatable="false">playback_speed_enabled_key</string>
+    <string name="player_resize_enabled_key" translatable="false">player_resize_enabled_key</string>
+    <string name="pip_enabled_key" translatable="false">pip_enabled_key</string>
+    <string name="double_tap_enabled_key" translatable="false">double_tap_enabled_key</string>
+    <string name="double_tap_pause_enabled_key" translatable="false">double_tap_pause_enabled_key</string>
+    <string name="swipe_vertical_enabled_key" translatable="false">swipe_vertical_enabled_key</string>
+    <string name="display_sub_key" translatable="false">display_sub_key</string>
+    <string name="show_fillers_key" translatable="false">show_fillers_key</string>
+    <string name="provider_lang_key" translatable="false">provider_lang_key</string>
+    <string name="dns_key" translatable="false">dns_key</string>
+    <string name="download_path_key" translatable="false">download_path_key</string>
+    <string name="app_name_download_path" translatable="false">Cloudstream</string>
+    <string name="app_layout_key" translatable="false">app_layout_key</string>
+    <string name="primary_color_key" translatable="false">primary_color_key</string>
+    <string name="restore_key" translatable="false">restore_key</string>
+    <string name="killswitch_key" translatable="false">killswitch_key</string>
+    <string name="backup_key" translatable="false">backup_key</string>
+    <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
+    <string name="app_theme_key" translatable="false">app_theme_key</string>
+
+
+    <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
+    <string name="storage_size_format" translatable="false" formatted="true">%s • %sGB</string>
+    <string name="download_size_format" translatable="false" formatted="true">%sMB / %sMB</string>
+    <string name="mb_format" translatable="false" formatted="true">%dMB</string>
+    <string name="episode_name_format" translatable="false" formatted="true">%s %s</string>
+    <string name="ffw_text_format" translatable="false" formatted="true">+%d</string>
+    <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
+    <string name="ffw_text_regular_format" translatable="false" formatted="true">%d</string>
+    <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
+    <string name="rating_format" translatable="false" formatted="true">%.1f/10.0</string>
+    <string name="year_format" translatable="false" formatted="true">%d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s 共%d集</string>
+    <string name="cast_format" formatted="true">演员：%s</string>
+
+    <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
+    <string name="result_poster_img_des">海报</string>
+    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="episode_poster_img_des">剧集海报</string>
+    <string name="home_main_poster_img_des">主海报</string>
+    <string name="home_next_random_img_des">随机下一个</string>
+    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
+    <string name="go_back_img_des">返回</string>
+    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
+    <string name="home_change_provider_img_des">更改内容提供者</string>
+    <string name="preview_background_img_des">预览背景</string>
+
+    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
+    <string name="player_speed_text_format" formatted="true">速度(%.2fx)</string>
+    <string name="rated_format" formatted="true">评分：%.1f</string>
+    <string name="new_update_format" formatted="true">发现新版本！\n%s -> %s</string>
+    <string name="filler" formatted="true">填充</string>
+    <string name="duration_format" formatted="true">%d分钟</string>
+
+    <string name="app_name">CloudStream</string>
+    <string name="title_home">主页</string>
+    <string name="title_search">搜索</string>
+    <string name="title_downloads">下载</string>
+    <string name="title_settings">设置</string>
+
+    <string name="search_hint">搜索…</string>
+    <string name="no_data">无数据</string>
+    <string name="episode_more_options_des">更多选项</string>
+    <string name="next_episode">下一集</string>
+    <string name="result_plot" translatable="false">@string/synopsis</string>
+    <string name="result_tags">类型</string>
+    <string name="result_share">分享</string>
+    <string name="result_open_in_browser">在浏览器中打开</string>
+    <string name="skip_loading">跳过加载</string>
+    <string name="loading_chromecast">正在加载…</string>
+
+    <string name="type_watching">正在观看</string>
+    <string name="type_on_hold">暂时搁置</string>
+    <string name="type_completed">观看完毕</string>
+    <string name="type_dropped">放弃观看</string>
+    <string name="type_plan_to_watch">计划观看</string>
+    <string name="type_none">无</string>
+    <string name="type_re_watching">重新观看</string>
+
+    <string name="play_movie_button">播放电影</string>
+    <string name="play_torrent_button">串流Torrent</string>
+    <string name="pick_source">来源</string>
+    <string name="pick_subtitle">字幕</string>
+    <string name="reload_error">重试连接…</string>
+    <string name="go_back">返回</string>
+    <string name="play_episode">播放剧集</string>
+    <!--<string name="need_storage">Allow to download episodes</string>-->
+
+    <string name="download">下载</string>
+    <string name="downloaded">已下载</string>
+    <string name="downloading">正在下载</string>
+    <string name="download_paused">下载暂停</string>
+    <string name="download_started">下载开始</string>
+    <string name="download_failed">下载失败</string>
+    <string name="download_canceled">下载取消</string>
+    <string name="download_done">下载完毕</string>
+    <string name="download_format" translatable="false">%s - %s</string>
+
+    <string name="error_loading_links_toast">加载链接时出错</string>
+    <string name="download_storage_text">内部存储</string>
+
+    <string name="app_dubbed_text">配音</string>
+    <string name="app_subbed_text">字幕</string>
+
+    <string name="popup_delete_file">删除文件</string>
+    <string name="popup_play_file">播放文件</string>
+    <string name="popup_resume_download">继续下载</string>
+    <string name="popup_pause_download">暂停下载</string>
+
+    <string name="pref_disable_acra">禁用自动错误报告</string>
+    <string name="home_more_info">更多信息</string>
+    <string name="home_expanded_hide">隐藏</string>
+    <string name="home_play">播放</string>
+    <string name="home_info">信息</string>
+    <string name="filter_bookmarks">筛选书签</string>
+    <string name="error_bookmarks_text">书签</string>
+    <string name="action_remove_from_bookmarks">移除</string>
+    <string name="action_add_to_bookmarks">设置观看状态</string>
+    <string name="sort_apply">应用</string>
+    <string name="sort_cancel">取消</string>
+    <string name="player_speed">播放速度</string>
+
+    <string name="subtitles_settings">字幕设置</string>
+    <string name="subs_text_color">文本颜色</string>
+    <string name="subs_outline_color">轮廓颜色</string>
+    <string name="subs_background_color">背景颜色</string>
+    <string name="subs_window_color">窗口颜色</string>
+    <string name="subs_edge_type">边缘类型</string>
+    <string name="subs_subtitle_elevation">字幕高度</string>
+    <string name="subs_font">字体</string>
+    <string name="subs_font_size">字体大小</string>
+
+    <string name="search_provider_text_providers">按内容提供者搜索</string>
+    <string name="search_provider_text_types">按类型搜索</string>
+
+    <string name="benene_count_text">送给开发者%d根香蕉</string>
+    <string name="benene_count_text_none">不送香蕉</string>
+
+    <string name="subs_auto_select_language">自动选择语言</string>
+    <string name="subs_download_languages">下载语言</string>
+    <string name="subs_hold_to_reset_to_default">按住重置为默认值</string>
+    <string name="continue_watching">继续观看</string>
+
+    <string name="action_remove_watching">移除</string>
+    <string name="action_open_watching">更多信息</string>
+    <string name="action_open_play">@string/home_play </string>
+
+    <string name="vpn_might_be_needed">此内容提供者可能需要VPN才能正常工作</string>
+    <string name="vpn_torrent">此内容提供者是一个Torrent,建议使用VPN</string>
+
+    <string name="provider_info_meta">站点不提供元数据，如果站点上不存在元数据，视频加载将失败。</string>
+
+    <string name="torrent_plot">简介</string>
+    <string name="normal_no_plot">没有找到简介</string>
+    <string name="torrent_no_plot">没有找到简介</string>
+
+    <string name="picture_in_picture">画中画</string>
+    <string name="picture_in_picture_des">在其他应用之上的迷你播放器中继续播放</string>
+    <string name="player_size_settings">播放器画面调整按钮</string>
+    <string name="player_size_settings_des">移除黑色边框</string>
+    <string name="player_subtitles_settings">字幕</string>
+    <string name="player_subtitles_settings_des">播放器字幕设置</string>
+    <string name="chromecast_subtitles_settings">投屏字幕</string>
+    <string name="chromecast_subtitles_settings_des">投屏字幕设置</string>
+
+    <string name="eigengraumode_settings">本征模式</string>
+    <string name="eigengraumode_settings_des">在播放器中添加播放速度选项</string>
+    <string name="swipe_to_seek_settings">滑动控制进度</string>
+    <string name="swipe_to_seek_settings_des">向屏幕左侧或右侧滑动来控制播放进度</string>
+    <string name="swipe_to_change_settings">滑动更改设置</string>
+    <string name="swipe_to_change_settings_des">在屏幕左侧或右侧滑动来更改亮度或音量</string>
+    <string name="double_tap_to_seek_settings">双击控制进度</string>
+    <string name="double_tap_to_pause_settings">双击暂停</string>
+    <string name="double_tap_to_seek_settings_des">在屏幕左侧或右侧双击来快进或快退
+    </string>
+    <string name="double_tap_to_pause_settings_des">双击屏幕中间暂停</string>
+    <string name="use_system_brightness_settings">使用系统亮度</string>
+    <string name="use_system_brightness_settings_des">在app player中使用系统亮度，而不是黑色遮罩
+    </string>
+
+    <string name="restore_settings">从备份中恢复数据</string>
+    <string name="killswitch_settings">从github下载最新元数据</string>
+    <string name="killswitch_settings_des">如果你想访问所有的内容提供者（即使是损坏的），请关闭此选项</string>
+
+    <string name="backup_settings">备份数据</string>
+    <string name="restore_success">已加载备份文件</string>
+    <string name="restore_failed_format" formatted="true">无法从文件%s中还原数据</string>
+    <string name="backup_success">成功存储数据</string>
+    <string name="backup_failed">缺少存储权限，请重试</string>
+    <string name="backup_failed_error_format">备份%s时出错</string>
+
+    <string name="search">搜索</string>
+    <string name="settings_info">信息</string>
+    <string name="advanced_search">高级搜索</string>
+    <string name="advanced_search_des">给出按内容提供者分隔的搜索结果</string>
+    <string name="bug_report_settings_off">只发送关于崩溃的数据</string>
+    <string name="bug_report_settings_on">不发送数据</string>
+    <string name="show_fillers_settings">为动画显示下一集</string>
+    <string name="updates_settings">显示应用更新</string>
+    <string name="updates_settings_des">启动时自动搜索更新</string>
+    <string name="uprereleases_settings">更新至预览版</string>
+    <string name="uprereleases_settings_des">搜索预览版更新，而不是仅搜索完整版本</string>
+    <string name="github">Github</string>
+    <string name="lightnovel">由同一开发者开发的轻小说应用</string>
+    <string name="anim">由同一开发者开发的动漫应用</string>
+    <string name="discord">加入Discord</string>
+    <string name="benene">送给开发者一根香蕉</string>
+    <string name="benene_des">送香蕉</string>
+
+    <string name="app_language">应用语言</string>
+
+    <string name="no_chromecast_support_toast">该内容提供者不支持投屏</string>
+    <string name="no_links_found_toast">没有找到链接</string>
+    <string name="copy_link_toast">链接已复制到剪贴板</string>
+    <string name="play_episode_toast">播放剧集</string>
+    <string name="subs_default_reset_toast">重置为默认值</string>
+    <string name="acra_report_toast">抱歉，应用崩溃了，将向开发人员发送一份匿名Bug报告
+    </string>
+
+    <string name="season">季</string>
+    <string name="no_season">没有季</string>
+    <string name="episode">集</string>
+    <string name="episodes">集</string>
+    <string name="season_short">S</string>
+    <string name="episode_short">E</string>
+    <string name="no_episodes_found">没有找到剧集</string>
+
+    <string name="delete_file">删除文件</string>
+    <string name="delete">删除</string>
+    <string name="cancel" translatable="false">@string/sort_cancel</string>
+    <string name="pause">暂停</string>
+    <string name="resume">继续</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message" formatted="true">这将永久删除%s\n你确定吗？</string>
+    <string name="resume_time_left" formatted="true">剩余%d分钟\n</string>
+
+
+    <string name="status_ongoing">连载中</string>
+    <string name="status_completed">已完结</string>
+    <string name="status">状态</string>
+    <string name="year">年份</string>
+    <string name="rating">评分</string>
+    <string name="duration">持续时间</string>
+    <string name="site">网站</string>
+    <string name="synopsis">简介</string>
+
+    <string name="queued">队列</string>
+    <string name="no_subtitles">无字幕</string>
+    <string name="default_subtitles">默认</string>
+
+    <string name="free_storage">空闲</string>
+    <string name="used_storage">已使用</string>
+    <string name="app_storage">应用</string>
+
+    <!--plural-->
+    <string name="movies">电影</string>
+    <string name="tv_series">剧集</string>
+    <string name="cartoons">卡通</string>
+    <string name="anime">动漫</string>
+    <string name="torrent">Torrents</string>
+    <string name="documentaries">纪录片</string>
+    <string name="ova">OVA</string>
+
+    <!--singular-->
+    <string name="movies_singular">电影</string>
+    <string name="tv_series_singular">剧集</string>
+    <string name="cartoons_singular">卡通</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="documentaries_singular">纪录片</string>
+
+    <string name="source_error">源错误</string>
+    <string name="remote_error">远程错误</string>
+    <string name="render_error">渲染器错误</string>
+    <string name="unexpected_error">意外的播放器错误</string>
+    <string name="storage_error">下载错误，请检查存储权限</string>
+
+    <string name="episode_action_chromecast_episode">投屏剧集</string>
+    <string name="episode_action_chromecast_mirror">投屏镜像</string>
+    <string name="episode_action_play_in_app">在应用程序中播放</string>
+    <string name="episode_action_play_in_vlc">在VLC中播放</string>
+    <string name="episode_action_play_in_browser">在浏览器中播放</string>
+    <string name="episode_action_copy_link">复制链接</string>
+    <string name="episode_action_auto_download">自动下载</string>
+    <string name="episode_action_download_mirror">下载镜像</string>
+    <string name="episode_action_reload_links">重新加载链接</string>
+
+    <string name="no_update_found">找不到更新</string>
+    <string name="check_for_update">检查更新</string>
+
+    <string name="video_lock">锁定</string>
+    <string name="video_aspect_ratio_resize">调整画面</string>
+    <string name="video_source">来源</string>
+    <string name="video_skip_op">跳过OP</string>
+
+    <string name="dont_show_again">不再显示</string>
+    <string name="update">更新</string>
+    <string name="watch_quality_pref">首选播放质量</string>
+    <string name="video_buffer_size_settings">视频缓冲大小</string>
+    <string name="video_buffer_length_settings">视频缓冲时长</string>
+    <string name="video_buffer_disk_settings">磁盘上的视频缓存</string>
+    <string name="video_buffer_clear_settings">清除视频和图像缓存</string>
+
+    <string name="video_ram_description">如果设置太高，可能会在内存较低的系统（如Android TV设备或旧手机）上导致问题 </string>
+    <string name="video_disk_description">如果将存储空间设置得太高，可能会导致Android TV设备等存储空间不足的系统出现问题  </string>
+
+    <string name="dns_pref">DNS over HTTPS</string>
+    <string name="dns_pref_summary">用于忽略ISP块</string>
+
+    <string name="download_path_pref">下载路径</string>
+
+    <string name="display_subbed_dubbed_settings">显示有配音/字幕的动画</string>
+
+    <string name="resize_fit">适应屏幕</string>
+    <string name="resize_fill">拉伸</string>
+    <string name="resize_zoom">缩放</string>
+
+    <string name="legal_notice">免责声明</string>
+    <string name="legal_notice_key" translatable="false">legal_notice_key</string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
+        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
+
+        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
+
+        The app is purely for educational and personal use.
+
+        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
+        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
+        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
+        user-friendly interface.
+
+        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
+        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
+        CloudStream 3 at your own risk.
+    </string>
+    <string name="general">全局</string>
+    <string name="provider_lang_settings">内容提供者语言</string>
+    <string name="app_layout">应用布局</string>
+    <string name="preferred_media_settings">首选媒体</string>
+
+    <string name="automatic">自动</string>
+    <string name="tv_layout">电视布局</string>
+    <string name="phone_layout">手机布局</string>
+    <string name="emulator_layout">模拟器布局</string>
+
+    <string name="primary_color_settings">主题色</string>
+    <string name="app_theme_settings">应用主题</string>
+
+    <!-- account stuff -->
+    <string name="anilist_key" translatable="false">anilist_key</string>
+    <string name="mal_key" translatable="false">mal_key</string>
+    <!--
+    <string name="mal_account_settings" translatable="false">MAL</string>
+    <string name="anilist_account_settings" translatable="false">AniList</string>
+    <string name="tmdb_account_settings" translatable="false">TMDB</string>
+    <string name="imdb_account_settings" translatable="false">IMDB</string>
+    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
+    <string name="trakt_account_settings" translatable="false">Trakt</string>
+    -->
+    <string name="login_format" formatted="true">%s %s</string>
+    <string name="account">账户</string>
+    <string name="logout">注销</string>
+    <string name="login">登录</string>
+    <string name="switch_account">切换账户</string>
+    <string name="add_account">添加帐户</string>
+    <string name="add_sync">添加跟踪</string>
+    <string name="added_sync_format" formatted="true">已添加%s</string>
+    <string name="upload_sync">同步</string>
+
+    <!-- ============ -->
+    <string name="none">无</string>
+    <string name="normal">普通</string>
+    <string name="all">全部</string>
+    <string name="max">最大</string>
+    <string name="min">最小</string>
+    <string name="subtitles_none" translatable="false">@string/none</string>
+    <string name="subtitles_outline">轮廓</string>
+    <string name="subtitles_depressed">降低</string>
+    <string name="subtitles_shadow">阴影</string>
+    <string name="subtitles_raised">提高</string>
+    <string name="subtitle_offset">同步字幕</string>
+    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_title">字幕延迟</string>
+    <string name="subtitle_offset_extra_hint_later_format">如果字幕过早显示%dms，请使用此选项 </string>
+    <string name="subtitle_offset_extra_hint_before_format">如果字幕过晚显示%dms，请使用此选项</string>
+    <string name="subtitle_offset_extra_hint_none_format">无字幕延迟</string>
+
+    <!--
+    Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
+    see:
+	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
+	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
+    -->
+    <string name="subtitles_example_text">一只敏捷的棕色狐狸跳过一只懒惰的狗</string>
+
+    <string name="recommended">推荐</string>
+    <string name="player_loaded_subtitles" formatted="true">已加载%s</string>
+    <string name="player_load_subtitles">从文件加载</string>
+    <string name="downloaded_file">下载的文件</string>
+    <string name="actor_main">主演</string>
+    <string name="actor_supporting">配演</string>
+    <string name="actor_background">群演</string>
+
+    <string name="home_source">来源</string>
+</resources>
