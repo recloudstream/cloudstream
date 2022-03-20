@@ -116,6 +116,15 @@ object APIHolder {
         return null
     }
 
+    fun getApiFromUrlNull(url : String?) : MainAPI? {
+        if (url == null) return null
+        for (api in allProviders) {
+            if(url.startsWith(api.mainUrl))
+                return api
+        }
+        return null
+    }
+
     fun LoadResponse.getId(): Int {
         return url.replace(getApiFromName(apiName).mainUrl, "").replace("/", "").hashCode()
     }

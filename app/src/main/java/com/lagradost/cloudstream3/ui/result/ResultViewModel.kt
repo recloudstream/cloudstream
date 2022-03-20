@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.APIHolder.getApiFromUrlNull
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -279,7 +280,7 @@ class ResultViewModel : ViewModel() {
         _publicEpisodes.postValue(Resource.Loading())
 
         _apiName.postValue(apiName)
-        val api = getApiFromNameNull(apiName)
+        val api = getApiFromNameNull(apiName) ?: getApiFromUrlNull(url)
         if (api == null) {
             _resultResponse.postValue(
                 Resource.Failure(
