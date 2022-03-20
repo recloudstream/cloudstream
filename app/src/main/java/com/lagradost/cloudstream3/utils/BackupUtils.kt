@@ -185,7 +185,9 @@ object BackupUtils {
                     "text/plain",
                     "text/str",
                     "text/x-unknown",
-                    "application/json"
+                    "application/json",
+                    "unknown/unknown",
+                    "content/unknown",
                 )
             )
         }

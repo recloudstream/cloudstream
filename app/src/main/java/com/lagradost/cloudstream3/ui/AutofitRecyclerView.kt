@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
-class GrdLayoutManager(val context: Context, private val spanCoun: Int) : GridLayoutManager(context, spanCoun) {
+class GrdLayoutManager(val context: Context, _spanCount: Int) : GridLayoutManager(context, _spanCount) {
     override fun onFocusSearchFailed(
         focused: View,
         focusDirection: Int,
@@ -16,7 +16,6 @@ class GrdLayoutManager(val context: Context, private val spanCoun: Int) : GridLa
     ): View? {
         return try {
             val fromPos = getPosition(focused)
-            println("Search failed $fromPos")
             val nextPos = getNextViewPos(fromPos, focusDirection)
             findViewByPosition(nextPos)
         } catch (e: Exception) {
@@ -62,7 +61,7 @@ class GrdLayoutManager(val context: Context, private val spanCoun: Int) : GridLa
     }
 
     private fun calcOffsetToNextView(direction: Int): Int {
-        val spanCount = this.spanCoun
+        val spanCount = this.spanCount
         val orientation = this.orientation
 
         if (orientation == VERTICAL) {
@@ -79,7 +78,6 @@ class GrdLayoutManager(val context: Context, private val spanCoun: Int) : GridLa
                 View.FOCUS_LEFT -> {
                     return -1
                 }
-
             }
         } else if (orientation == HORIZONTAL) {
             when (direction) {
@@ -95,7 +93,6 @@ class GrdLayoutManager(val context: Context, private val spanCoun: Int) : GridLa
                 View.FOCUS_LEFT -> {
                     return -spanCount
                 }
-
             }
         }
         return 0
