@@ -32,7 +32,6 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.currentSpan
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -161,10 +160,11 @@ class SearchFragment : Fragment() {
                     val tvs = dialog.findViewById<MaterialButton>(R.id.home_select_tv_series)
                     val docs = dialog.findViewById<MaterialButton>(R.id.home_select_documentaries)
                     val movies = dialog.findViewById<MaterialButton>(R.id.home_select_movies)
+                    val asian = dialog.findViewById<MaterialButton>(R.id.home_select_asian)
                     val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
                     val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)
 
-                    val pairList = HomeFragment.getPairList(anime, cartoons, tvs, docs, movies)
+                    val pairList = HomeFragment.getPairList(anime, cartoons, tvs, docs, movies,asian)
 
                     cancelBtt?.setOnClickListener {
                         dialog.dismissSafe()
@@ -273,7 +273,8 @@ class SearchFragment : Fragment() {
             search_select_cartoons,
             search_select_tv_series,
             search_select_documentaries,
-            search_select_movies
+            search_select_movies,
+            search_select_asian,
         )
 
         selectedSearchTypes = context?.getKey<List<String>>(SEARCH_PREF_TAGS)

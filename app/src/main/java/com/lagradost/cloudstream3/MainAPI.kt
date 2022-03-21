@@ -518,6 +518,7 @@ enum class TvType {
     OVA,
     Torrent,
     Documentary,
+    AsianDrama,
 }
 
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH

@@ -6,13 +6,12 @@ import com.lagradost.cloudstream3.extractors.FEmbed
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
-import java.lang.Exception
 
 class PinoyMoviePediaProvider : MainAPI() {
     override var name = "Pinoy Moviepedia"
     override var mainUrl = "https://pinoymoviepedia.ru"
     override val lang = "tl"
-    override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries)
+    override val supportedTypes = setOf(TvType.AsianDrama)
     override val hasDownloadSupport = true
     override val hasMainPage = true
     override val hasQuickSearch = false
@@ -188,7 +187,7 @@ class PinoyMoviePediaProvider : MainAPI() {
                 name = title,
                 url = url,
                 apiName = this.name,
-                type = TvType.TvSeries,
+                type = TvType.AsianDrama,
                 episodes = episodeList,
                 posterUrl = poster,
                 year = year,

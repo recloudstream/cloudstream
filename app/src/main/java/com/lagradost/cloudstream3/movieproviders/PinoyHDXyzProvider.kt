@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import android.util.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -11,11 +10,10 @@ class PinoyHDXyzProvider : MainAPI() {
     override var name = "Pinoy-HD"
     override var mainUrl = "https://www.pinoy-hd.xyz"
     override val lang = "tl"
-    override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries)
+    override val supportedTypes = setOf(TvType.AsianDrama)
     override val hasDownloadSupport = true
     override val hasMainPage = true
     override val hasQuickSearch = false
-
 
     override suspend fun getMainPage(): HomePageResponse {
         val all = ArrayList<HomePageList>()
@@ -170,7 +168,7 @@ class PinoyHDXyzProvider : MainAPI() {
                 name = title,
                 url = url,
                 apiName = this.name,
-                type = TvType.TvSeries,
+                type = TvType.AsianDrama,
                 episodes = episodeList,
                 posterUrl = poster,
                 year = year,

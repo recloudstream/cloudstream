@@ -144,14 +144,16 @@ class HomeFragment : Fragment() {
             cartoons: MaterialButton?,
             tvs: MaterialButton?,
             docs: MaterialButton?,
-            movies: MaterialButton?
+            movies: MaterialButton?,
+            asian: MaterialButton?,
         ): List<Pair<MaterialButton?, List<TvType>>> {
             return listOf(
                 Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
                 Pair(cartoons, listOf(TvType.Cartoon)),
                 Pair(tvs, listOf(TvType.TvSeries)),
                 Pair(docs, listOf(TvType.Documentary)),
-                Pair(movies, listOf(TvType.Movie, TvType.Torrent))
+                Pair(movies, listOf(TvType.Movie, TvType.Torrent)),
+                Pair(asian, listOf(TvType.AsianDrama)),
             )
         }
 
@@ -183,10 +185,11 @@ class HomeFragment : Fragment() {
                 val tvs = dialog.findViewById<MaterialButton>(R.id.home_select_tv_series)
                 val docs = dialog.findViewById<MaterialButton>(R.id.home_select_documentaries)
                 val movies = dialog.findViewById<MaterialButton>(R.id.home_select_movies)
+                val asian = dialog.findViewById<MaterialButton>(R.id.home_select_asian)
                 val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
                 val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)
 
-                val pairList = getPairList(anime, cartoons, tvs, docs, movies)
+                val pairList = getPairList(anime, cartoons, tvs, docs, movies, asian)
 
                 cancelBtt?.setOnClickListener {
                     dialog.dismissSafe()
@@ -379,6 +382,7 @@ class HomeFragment : Fragment() {
                     Pair(R.string.cartoons, listOf(TvType.Cartoon)),
                     Pair(R.string.anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
                     Pair(R.string.torrent, listOf(TvType.Torrent)),
+                    Pair(R.string.asian_drama, listOf(TvType.AsianDrama)),
                 ).filter { item -> currentApi.supportedTypes.any { type -> item.second.contains(type) } }
                 home_provider_meta_info?.text =
                     typeChoices.joinToString(separator = ", ") { getString(it.first) }
@@ -801,7 +805,7 @@ class HomeFragment : Fragment() {
             if (ctx.isTvSettings()) {
                 home_api_fab?.isVisible = false
                 home_change_api?.isVisible = true
-                if(ctx.isTrueTvSettings()) {
+                if (ctx.isTrueTvSettings()) {
                     home_change_api_loading?.isVisible = true
                     home_change_api_loading?.isFocusable = true
                     home_change_api_loading?.isFocusableInTouchMode = true

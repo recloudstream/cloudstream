@@ -16,7 +16,7 @@ class AsiaFlixProvider : MainAPI() {
     override val hasQuickSearch = false
     override val hasMainPage = true
     override val hasChromecastSupport = false
-    override val supportedTypes = setOf(TvType.TvSeries)
+    override val supportedTypes = setOf(TvType.AsianDrama)
 
     private val apiUrl = "https://api.asiaflix.app/api/v2"
 
@@ -76,7 +76,7 @@ class AsiaFlixProvider : MainAPI() {
             name,
             _id,
             this@AsiaFlixProvider.name,
-            TvType.TvSeries,
+            TvType.AsianDrama,
             image,
             releaseYear,
             episodes?.size,
@@ -100,7 +100,7 @@ class AsiaFlixProvider : MainAPI() {
             name,
             "$mainUrl$dramaUrl/$_id".replace("drama-detail", "show-details"),
             this@AsiaFlixProvider.name,
-            TvType.TvSeries,
+            TvType.AsianDrama,
             episodes.mapNotNull { it.toTvSeriesEpisode() }.sortedBy { it.episode },
             image,
             releaseYear,

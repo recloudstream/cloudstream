@@ -1,9 +1,8 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.extractors.*
+import com.lagradost.cloudstream3.extractors.XStreamCdn
 import com.lagradost.cloudstream3.extractors.helper.AsianEmbedHelper
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
@@ -20,7 +19,7 @@ class KdramaHoodProvider : MainAPI() {
     override val hasMainPage = true
     override val hasChromecastSupport = false
     override val hasDownloadSupport = true
-    override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)
+    override val supportedTypes = setOf(TvType.AsianDrama)
 
     private data class ResponseDatas(
         @JsonProperty("label") val label: String,
@@ -202,7 +201,7 @@ class KdramaHoodProvider : MainAPI() {
             name = title,
             url = url,
             apiName = this.name,
-            type = TvType.TvSeries,
+            type = TvType.AsianDrama,
             episodes = episodeList.reversed(),
             posterUrl = poster,
             year = year,

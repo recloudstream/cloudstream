@@ -16,7 +16,7 @@ class WatchAsianProvider : MainAPI() {
     override val hasMainPage = true
     override val hasChromecastSupport = false
     override val hasDownloadSupport = true
-    override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)
+    override val supportedTypes = setOf(TvType.AsianDrama)
 
     override suspend fun getMainPage(): HomePageResponse {
         val headers = mapOf("X-Requested-By" to mainUrl)
@@ -187,7 +187,7 @@ class WatchAsianProvider : MainAPI() {
             name = title,
             url = url,
             apiName = this.name,
-            type = TvType.TvSeries,
+            type = TvType.AsianDrama,
             episodes = episodeList.reversed(),
             posterUrl = poster,
             year = year,

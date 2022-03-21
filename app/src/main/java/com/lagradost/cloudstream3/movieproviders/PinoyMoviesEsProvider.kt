@@ -10,13 +10,12 @@ import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.select.Elements
-import java.lang.Exception
 
 class PinoyMoviesEsProvider : MainAPI() {
     override var name = "Pinoy Movies"
     override var mainUrl = "https://pinoymovies.es"
     override val lang = "tl"
-    override val supportedTypes = setOf(TvType.Movie)
+    override val supportedTypes = setOf(TvType.AsianDrama)
     override val hasDownloadSupport = false
     override val hasMainPage = true
     override val hasQuickSearch = false
