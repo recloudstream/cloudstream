@@ -75,6 +75,7 @@ object APIHolder {
             EgyBestProvider(),
             SoaptwoDayProvider(),
             HDMProvider(),// disabled due to cloudflare
+            TheFlixToProvider(),
 
             // Metadata providers
             //TmdbProvider(),

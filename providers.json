@@ -234,6 +234,11 @@
         "url": "https://trailers.to",
         "status": 1
     },
+    "TheFlixToProvider": {
+        "name": "TheFlix.to",
+        "url": "https://theflix.to",
+        "status": 1
+    },
     "TwoEmbedProvider": {
         "name": "2Embed",
         "url": "https://www.2embed.ru",
