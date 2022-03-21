@@ -8,8 +8,8 @@ assignees: ''
 ---
 
 **Guidelines:**
-- [x] It **is not** a duplicate issue.
-- [x] If related to a provider, I have checked the site and it works, but not the app.
+- [ ] It **is not** a duplicate issue.
+- [ ] If related to a provider, I have checked the site and it works, but not the app.
 
 **To Reproduce**
 Steps to reproduce the behavior:
