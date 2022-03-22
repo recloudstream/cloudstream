@@ -28,7 +28,7 @@ class NineAnimeProvider : MainAPI() {
                 "Recently Updated (Chinese)"
             ),
             Pair("$mainUrl/ajax/home/widget?name=random", "Random"),
-        ).map { (url, name) ->
+        ).apmap { (url, name) ->
             val home = Jsoup.parse(
                 app.get(
                     url
