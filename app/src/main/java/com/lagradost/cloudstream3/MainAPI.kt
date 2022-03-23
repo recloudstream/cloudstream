@@ -283,7 +283,7 @@ object APIHolder {
  */
 const val PROVIDER_STATUS_KEY = "PROVIDER_STATUS_KEY"
 const val PROVIDER_STATUS_URL =
-    "https://raw.githubusercontent.com/LagradOst/CloudStream-3/master/providers.json"
+    "https://raw.githubusercontent.com/LagradOst/CloudStream-3/master/docs/providers.json"
 const val PROVIDER_STATUS_BETA_ONLY = 3
 const val PROVIDER_STATUS_SLOW = 2
 const val PROVIDER_STATUS_OK = 1

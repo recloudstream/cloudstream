@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CloudStream-3 Supported Sites</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+</head>
+
+<body>
+    <div>
+        <h1>Site supported:</h1>
+        <p>Loading Status: <span id="status">Idle</span></p>
+        <ul id="siteList">
+        </ul>
+    </div>
+    <script>
+        var status = document.getElementById("status");
+        var mainContainer = document.getElementById("siteList");
+        status.innerHTML = "Fetching..."
+        $(document).ready(function () {
+            $.getJSON("providers.json", function (data) {
+                status.innerHTML = "Parsing...";
+                for (var key in data) {
+                    status.innerHTML = "Reading..." + key;
+                    if (data.hasOwnProperty(key)) {
+                        var value = data[key];
+                        var _status = value.status
+                        //Create <li> node
+                        var node = document.createElement("li");
+                        //Add <a> to <li> node
+                        var _a = document.createElement("a");
+                        _a.setAttribute('href', value.url);
+                        _a.innerHTML = value.name + ": "
+                        _a.style.color = "black";
+                        node.appendChild(_a);
+                        //Add <span> to <li> node
+                        var _span = document.createElement("span");
+                        var _statusText = "Unknown";
+                        switch (_status) {
+                            case 0:
+                                _statusText = "Unavailable";
+                                _span.style.color = "red";
+                                break;
+                            case 1:
+                                _statusText = "Available";
+                                _span.style.color = "green";
+                                break;
+                            case 2:
+                                _statusText = "Slow";
+                                _span.style.color = "yellow";
+                                break;
+                            case 3:
+                                _statusText = "Beta";
+                                _span.style.color = "blue";
+                                break;
+                        }
+                        _span.textContent = _statusText;
+                        node.appendChild(_span);
+                        //Add <li> to <ul> siteList
+                        mainContainer.appendChild(node);
+                    }
+                }
+            }).fail(function () {
+                console.log("An error has occurred.");
+                status.innerHTML = "Error occured!"
+            });
+        });
+        status.innerHTML = "Done loading!"
+    </script>
+</body>
+
+</html>
