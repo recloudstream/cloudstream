@@ -27,6 +27,8 @@
                     status.innerHTML = "Reading..." + key;
                     if (data.hasOwnProperty(key)) {
                         var value = data[key];
+                        if(value.url == "NONE") { continue; }
+                        
                         var _status = value.status
                         //Create <li> node
                         var node = document.createElement("li");
