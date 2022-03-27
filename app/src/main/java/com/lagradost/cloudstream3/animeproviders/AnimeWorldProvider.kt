@@ -155,6 +155,7 @@ class AnimeWorldProvider : MainAPI() {
                 episode = number
             )
         }
+        val comingSoon = episodes.isEmpty()
 
         val recommendations = document.select(".film-list.interesting .item").map {
             it.toSearchResult(showEpisode = false)
@@ -175,6 +176,7 @@ class AnimeWorldProvider : MainAPI() {
             this.duration = duration
             this.trailerUrl = trailerUrl
             this.recommendations = recommendations
+            this.comingSoon = comingSoon
         }
     }
 
