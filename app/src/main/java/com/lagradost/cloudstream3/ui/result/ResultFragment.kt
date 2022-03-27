@@ -39,6 +39,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
@@ -583,7 +584,6 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         result_cast_items?.let {
             PanelsChildGestureRegionObserver.Provider.get().register(it)
         }
@@ -1077,6 +1077,65 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             }
         }
 
+        /**
+         * Sets next focus to allow navigation up and down between 2 views
+         * if either of them is null nothing happens.
+         **/
+        fun setFocusUpAndDown(upper: View?, down: View?) {
+            if (upper == null || down == null) return
+            upper.nextFocusDownId = down.id
+            down.nextFocusUpId = upper.id
+        }
+
+        // This is to band-aid FireTV navigation
+        result_season_button?.isFocusableInTouchMode = context?.isTvSettings() == true
+        result_episode_select?.isFocusableInTouchMode = context?.isTvSettings() == true
+        result_dub_select?.isFocusableInTouchMode = context?.isTvSettings() == true
+
+        observe(viewModel.selectedSeason) { season ->
+            result_season_button?.text = fromIndexToSeasonText(season)
+        }
+
+        observe(viewModel.seasonSelections) { seasonList ->
+            result_season_button?.visibility = if (seasonList.size <= 1) GONE else VISIBLE.also {
+
+                // If the season button is visible the result season button will be next focus down
+                if (result_series_parent?.isVisible == true)
+                    setFocusUpAndDown(result_resume_series_button, result_season_button)
+                else
+                    setFocusUpAndDown(result_bookmark_button, result_season_button)
+            }
+
+            result_season_button?.setOnClickListener {
+                result_season_button?.popupMenuNoIconsAndNoStringRes(
+                    items = seasonList
+                        .map { Pair(it ?: -2, fromIndexToSeasonText(it)) },
+                ) {
+                    val id = this.itemId
+
+                    viewModel.changeSeason(if (id == -2) null else id)
+                }
+            }
+        }
+
+        observe(viewModel.selectedRange) { range ->
+            result_episode_select?.text = range
+        }
+
+        observe(viewModel.rangeOptions) { range ->
+            episodeRanges = range
+            result_episode_select?.visibility = if (range.size <= 1) GONE else VISIBLE.also {
+
+                // If Season button is invisible then the bookmark button next focus is episode select
+                if (result_season_button?.isVisible != true) {
+                    if (result_series_parent?.isVisible == true)
+                        setFocusUpAndDown(result_resume_series_button, result_episode_select)
+                    else
+                        setFocusUpAndDown(result_bookmark_button, result_episode_select)
+                }
+            }
+        }
+
         observe(viewModel.episodes) { episodeList ->
             lateFixDownloadButton(episodeList.size <= 1) // movies can have multible parts but still be *movies* this will fix this
             var isSeriesVisible = false
@@ -1118,6 +1177,17 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             }
 
             result_series_parent?.isVisible = isSeriesVisible
+            if (isSeriesVisible) {
+                val down = when {
+                    result_season_button?.isVisible == true -> result_season_button
+                    result_episode_select?.isVisible == true -> result_episode_select
+                    result_dub_select?.isVisible == true -> result_dub_select
+                    else -> null
+                }
+                setFocusUpAndDown(result_resume_series_button, down)
+                setFocusUpAndDown(result_bookmark_button, result_resume_series_button)
+            }
+
             result_resume_progress_holder?.isVisible = isProgressVisible
             context?.getString(if (isProgressVisible) R.string.resume else R.string.play_movie_button)
                 ?.let {
@@ -1150,28 +1220,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             startValue = null
         }
 
-        observe(viewModel.selectedSeason)
-        { season ->
-            result_season_button?.text = fromIndexToSeasonText(season)
-        }
-
-        observe(viewModel.seasonSelections)
-        { seasonList ->
-            result_season_button?.visibility = if (seasonList.size <= 1) GONE else VISIBLE
-            result_season_button?.setOnClickListener {
-                result_season_button?.popupMenuNoIconsAndNoStringRes(
-                    items = seasonList
-                        .map { Pair(it ?: -2, fromIndexToSeasonText(it)) },
-                ) {
-                    val id = this.itemId
-
-                    viewModel.changeSeason(if (id == -2) null else id)
-                }
-            }
-        }
-
-        observe(viewModel.publicEpisodes)
-        { episodes ->
+        observe(viewModel.publicEpisodes) { episodes ->
             when (episodes) {
                 is Resource.Failure -> {
                     result_episode_loading?.isVisible = false
@@ -1193,40 +1242,48 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             }
         }
 
-        observe(viewModel.dubStatus)
-        { status ->
+        observe(viewModel.dubStatus) { status ->
             result_dub_select?.text = status.toString()
         }
 
-        observe(viewModel.dubSubSelections)
-        { range ->
+        val preferDub = context?.getApiDubstatusSettings()?.all { it == DubStatus.Dubbed } == true
+
+        observe(viewModel.dubSubSelections) { range ->
             dubRange = range
+
+            if (preferDub && dubRange?.contains(DubStatus.Dubbed) == true){
+                viewModel.changeDubStatus(DubStatus.Dubbed)
+            }
+
             result_dub_select?.visibility = if (range.size <= 1) GONE else VISIBLE
+
+            if (result_season_button?.isVisible != true && result_episode_select?.isVisible != true) {
+                if (result_series_parent?.isVisible == true)
+                    setFocusUpAndDown(result_resume_series_button, result_dub_select)
+                else
+                    setFocusUpAndDown(result_bookmark_button, result_dub_select)
+            }
+        }
+
+        result_cast_items?.setOnFocusChangeListener { v, hasFocus ->
+            // Always escape focus
+            if (hasFocus) result_bookmark_button?.requestFocus()
         }
 
         result_dub_select.setOnClickListener {
             val ranges = dubRange
             if (ranges != null) {
-                it.popupMenuNoIconsAndNoStringRes(ranges.map { status ->
-                    Pair(
-                        status.ordinal,
-                        status.toString()
-                    )
-                }
+                it.popupMenuNoIconsAndNoStringRes(ranges
+                    .map { status ->
+                        Pair(
+                            status.ordinal,
+                            status.toString()
+                        )
+                    }
                     .toList()) {
                     viewModel.changeDubStatus(DubStatus.values()[itemId])
                 }
             }
-        }
-
-        observe(viewModel.selectedRange)
-        { range ->
-            result_episode_select?.text = range
-        }
-
-        observe(viewModel.rangeOptions) { range ->
-            episodeRanges = range
-            result_episode_select?.visibility = if (range.size <= 1) GONE else VISIBLE
         }
 
         result_episode_select.setOnClickListener {

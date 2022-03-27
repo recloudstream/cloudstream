@@ -333,7 +333,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         // this pulls the latest data so ppl don't have to update to simply change provider url
-        if(downloadFromGithub) {
+        if (downloadFromGithub) {
             try {
                 runBlocking {
                     withContext(Dispatchers.IO) {
@@ -379,10 +379,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 apis = allProviders.filter { api ->
                                     val name = api.javaClass.simpleName
                                     // if the provider does not exist in the json file, then it is shown by default
-                                    !providersJsonMap.containsKey(name) || acceptableProviders.contains(name) || restrictedApis.contains(name)
+                                    !providersJsonMap.containsKey(name) || acceptableProviders.contains(
+                                        name
+                                    ) || restrictedApis.contains(name)
                                 }
                             }
-                        } catch (e : Exception) {
+                        } catch (e: Exception) {
                             logError(e)
                         }
                     }

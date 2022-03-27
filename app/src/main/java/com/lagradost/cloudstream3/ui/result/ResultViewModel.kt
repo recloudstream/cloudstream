@@ -44,7 +44,6 @@ class ResultViewModel : ViewModel() {
     private var repo: APIRepository? = null
     private var generator: IGenerator? = null
 
-
     private val _resultResponse: MutableLiveData<Resource<Any?>> = MutableLiveData()
     private val _episodes: MutableLiveData<List<ResultEpisode>> = MutableLiveData()
     private val episodeById: MutableLiveData<HashMap<Int, Int>> =
@@ -190,7 +189,7 @@ class ResultViewModel : ViewModel() {
     }
 
     fun changeDubStatus(status: DubStatus?) {
-        if(status == null) return
+        if (status == null) return
         dubSubEpisodes.value?.get(status)?.let { episodes ->
             id.value?.let {
                 setDub(it, status)
@@ -220,7 +219,10 @@ class ResultViewModel : ViewModel() {
                 currentSubs.add(sub)
             })
 
-            return@safeApiCall Pair(currentLinks.toSet(), currentSubs.toSet()) as Pair<Set<ExtractorLink>, Set<SubtitleData>>
+            return@safeApiCall Pair(
+                currentLinks.toSet(),
+                currentSubs.toSet()
+            )
         }
     }
 
@@ -247,13 +249,15 @@ class ResultViewModel : ViewModel() {
         generator = RepoLinkGenerator(list)
 
         val set = HashMap<Int, Int>()
+        val range = selectedRangeInt.value
 
         list.withIndex().forEach { set[it.value.id] = it.index }
         episodeById.postValue(set)
 
         filterEpisodes(
             list,
-            if (selection == -1) getResultSeason(localId ?: id.value ?: return) else selection, null
+            if (selection == -1) getResultSeason(localId ?: id.value ?: return) else selection,
+            range
         )
     }
 
@@ -330,9 +334,7 @@ class ResultViewModel : ViewModel() {
                         val status = getDub(mainId)
                         val statuses = d.episodes.map { it.key }
                         val dubStatus = if (statuses.contains(status)) status else statuses.first()
-                        _dubStatus.postValue(dubStatus)
 
-                        _dubSubSelections.postValue(d.episodes.keys)
                         val fillerEpisodes =
                             if (showFillers) safeApiCall { getFillerEpisodes(d.name) } else null
 
@@ -366,10 +368,14 @@ class ResultViewModel : ViewModel() {
 
                             Pair(ep.key, episodes)
                         }.toMap()
+
+                        // These posts needs to be in this order as to make the preferDub in ResultFragment work
                         _dubSubEpisodes.postValue(res)
                         res[dubStatus]?.let { episodes ->
                             updateEpisodes(mainId, episodes, -1)
                         }
+                        _dubStatus.postValue(dubStatus)
+                        _dubSubSelections.postValue(d.episodes.keys)
                     }
 
                     is TvSeriesLoadResponse -> {
