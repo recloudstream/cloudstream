@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.util.*
+import kotlin.math.absoluteValue
 
 const val USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -903,3 +904,6 @@ fun fetchUrls(text: String?): List<String> {
         Regex("""(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))""")
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
 }
+
+fun String?.toRatingInt() : Int? =
+    this?.trim()?.toDoubleOrNull()?.absoluteValue?.times(1000f)?.toInt()

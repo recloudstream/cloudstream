@@ -129,6 +129,10 @@ open class SflixProvider() : MainAPI() {
         var year: Int? = null
         var tags: List<String>? = null
         var cast: List<String>? = null
+        val youtubeTrailer = document.selectFirst("iframe#iframe-trailer")?.attr("data-src")
+        val rating = document.selectFirst(".fs-item > .imdb")?.text()?.trim()
+            ?.removePrefix("IMDB:")?.toRatingInt()
+
         document.select("div.elements > .row > div > .row-line")?.forEach { element ->
             val type = element?.select(".type")?.text() ?: return@forEach
             when {
@@ -210,6 +214,8 @@ open class SflixProvider() : MainAPI() {
                 this.tags = tags
                 this.recommendations = recommendations
                 this.comingSoon = comingSoon
+                this.trailerUrl = youtubeTrailer
+                this.rating = rating
             }
         } else {
             val seasonsDocument = app.get("$mainUrl/ajax/v2/tv/seasons/$id").document
@@ -264,6 +270,8 @@ open class SflixProvider() : MainAPI() {
                 addActors(cast)
                 this.tags = tags
                 this.recommendations = recommendations
+                this.trailerUrl = youtubeTrailer
+                this.rating = rating
             }
         }
     }
