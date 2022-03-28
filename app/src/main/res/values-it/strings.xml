@@ -12,6 +12,7 @@
     <string name="rating_format" translatable="false" formatted="true">%.1f/10.0</string>
     <string name="year_format" translatable="false" formatted="true">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="cast_format" formatted="true">Cast: %s</string>
 
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -120,6 +121,7 @@
 
     <string name="action_remove_watching">Rimuovi</string>
     <string name="action_open_watching">Più info</string>
+    <string name="action_open_play">@string/home_play</string>
 
     <string name="vpn_might_be_needed">Potrebbe essere necessaria una VPN per far funzionare correttamente questo provider</string>
     <string name="vpn_torrent">Questo provider è un torrent, si raccomanda una VPN</string>
@@ -147,14 +149,15 @@
     <string name="swipe_to_change_settings_des">Passa il dito sul lato sinistro o destro per cambiare la luminosità o il volume</string>
     <string name="double_tap_to_seek_settings">Doppio tocco per mandare avanti/indietro</string>
     <string name="double_tap_to_pause_settings">Doppio tocco per mettere in pausa</string>
-    <string name="double_tap_to_seek_settings_des">Tocca due volte il lato destro o sinistro dello schermo per mandare avanti o indietro il video
-    </string>
+    <string name="double_tap_to_seek_settings_des">Tocca due volte il lato destro o sinistro dello schermo per mandare avanti o indietro il video</string>
     <string name="double_tap_to_pause_settings_des">Tocca due volte il centro dello schermo per mettere in pausa il video</string>
     <string name="use_system_brightness_settings">Utilizzare la luminosità del sistema</string>
-    <string name="use_system_brightness_settings_des">Utilizzare la luminosità del sistema al posto di una sovrapposizione scura
-    </string>
+    <string name="use_system_brightness_settings_des">Utilizzare la luminosità del sistema al posto di una sovrapposizione scura</string>
 
     <string name="restore_settings">Ripristinare i dati da backup</string>
+    <string name="killswitch_settings">Scarica gli ultimi metadata da GitHub</string>
+    <string name="killswitch_settings_des">Disattiva se vuoi l\'accesso a tutti i provider (anche quelli non funzionanti)</string>
+
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">File di backup caricato</string>
     <string name="restore_failed_format" formatted="true">Impossibile ripristinare i dati dal file %s</string>
@@ -173,7 +176,7 @@
     <string name="updates_settings_des">Cerca automaticamente nuovi aggiornamenti all\'avvio</string>
     <string name="uprereleases_settings">Aggiorna alle prerelease</string>
     <string name="uprereleases_settings_des">Cerca per aggiornamenti alle prerelease invice di cercare solo le release complete</string>
-    <string name="github">Github</string>
+    <string name="github">GitHub</string>
     <string name="lightnovel">App di light novel degli stessi sviluppatori</string>
     <string name="anim">App di anime dagli stessi sviluppatori</string>
     <string name="discord">Entra Discord</string>
@@ -187,8 +190,7 @@
     <string name="copy_link_toast">Link copiato negli appunti</string>
     <string name="play_episode_toast">Riproduci episodio</string>
     <string name="subs_default_reset_toast">Ripristina il valore predefinito</string>
-    <string name="acra_report_toast">Spiacente, l\'applicazione è andata in crash. Una segnalazione anonima di bug sarà inviata agli sviluppatori
-    </string>
+    <string name="acra_report_toast">Spiacente, l\'applicazione è andata in crash. Una segnalazione anonima di bug sarà inviata agli sviluppatori</string>
 
     <string name="season">Stagione</string>
     <string name="no_season">Nessuna stagione</string>
@@ -206,6 +208,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Stai per eliminare permanentemente %s\nSei sicuro?</string>
+    <string name="resume_time_left" formatted="true">%dm\nrimanenti</string>
 
     <string name="status_ongoing">In corso</string>
     <string name="status_completed">Completato</string>
@@ -227,25 +230,27 @@
     <!--plural-->
     <string name="movies">Film</string>
     <string name="tv_series">Serie TV</string>
-    <string name="cartoons">Cartoni</string>
+    <string name="cartoons">Cartone</string>
     <string name="anime">Anime</string>
+    <string name="ova">OVA</string>
     <string name="torrent">Torrent</string>
     <string name="documentaries">Documentari</string>
-    <string name="ova">OVA</string>
+    <string name="asian_drama">Drama Asiatici</string>
 
     <!--singular-->
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serie TV</string>
     <string name="cartoons_singular">Cartoni</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Torrent</string>
-    <string name="documentaries_singular">Documentari</string>
+    <string name="documentaries_singular">Documentario</string>
+    <string name="asian_drama_singular">Drama Asiatico</string>
 
     <string name="source_error">Source error</string>
     <string name="remote_error">Remote error</string>
     <string name="render_error">Renderer error</string>
-    <string name="unexpected_error">Unexpected player error</string>
+    <string name="unexpected_error">Errore inaspettato nel player video</string>
     <string name="storage_error">Errore download, controlla i permessi di archiviazione</string>
 
     <string name="episode_action_chromecast_episode">Chromecast</string>
@@ -270,6 +275,13 @@
     <string name="update">Aggiorna</string>
     <string name="watch_quality_pref">Risoluzione preferita</string>
     <string name="video_buffer_size_settings">Dimensione cache video</string>
+    <string name="video_buffer_length_settings">Lunghezza buffer video</string>
+    <string name="video_buffer_disk_settings">Dimensione cache video su disco</string>
+    <string name="video_buffer_clear_settings">Cancella cache immagini e video</string>
+
+    <string name="video_ram_description">Se impostato troppo alto può causare problemi su sistemi con poca RAM. Come dispositivi Android TV o vecchi telefoni</string>
+    <string name="video_disk_description">Se impostato troppo alto può causare problemi su sistemi con poca Archiviazione interna. Come i dispositivi Android TV</string>
+
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Utile per bypassare i blocchi ISP</string>
 
@@ -282,23 +294,6 @@
     <string name="resize_zoom">Zoom</string>
 
     <string name="legal_notice">Disclaimer</string>
-    <string name="legal_notice_key" translatable="false">legal_notice_key</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
-        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
-
-        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
-
-        The app is purely for educational and personal use.
-
-        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
-        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
-        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
-        user-friendly interface.
-
-        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
-        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
-        CloudStream 3 at your own risk.
-    </string>
     <string name="general">Generale</string>
     <string name="provider_lang_settings">Lingua provider</string>
     <string name="app_layout">Layout app</string>
@@ -312,16 +307,6 @@
     <string name="app_theme_settings">Tema</string>
 
     <!-- account stuff -->
-    <string name="anilist_key" translatable="false">anilist_key</string>
-    <string name="mal_key" translatable="false">mal_key</string>
-    <!--
-    <string name="mal_account_settings" translatable="false">MAL</string>
-    <string name="anilist_account_settings" translatable="false">AniList</string>
-    <string name="tmdb_account_settings" translatable="false">TMDB</string>
-    <string name="imdb_account_settings" translatable="false">IMDB</string>
-    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
-    <string name="trakt_account_settings" translatable="false">Trakt</string>
-    -->
     <string name="login_format" formatted="true">%s %s</string>
     <string name="account">account</string>
     <string name="logout">Logout</string>
@@ -330,6 +315,7 @@
     <string name="add_account">Aggiungi account</string>
     <string name="add_sync">Aggiungi tracking</string>
     <string name="added_sync_format" formatted="true">Aggiunto %s</string>
+    <string name="upload_sync">Sync</string>
     <!-- ============ -->
     <string name="none">Nessuno</string>
     <string name="normal">Normale</string>
@@ -364,4 +350,17 @@
     <string name="actor_background">Background</string>
 
     <string name="home_source">Sorgente</string>
+
+    <string name="coming_soon">In Arrivo</string>
+    <string name="quality_cam">Cam</string>
+    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="poster_image">Poster</string>
 </resources>
