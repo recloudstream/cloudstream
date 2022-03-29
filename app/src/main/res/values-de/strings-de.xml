@@ -103,8 +103,18 @@
     <string name="swipe_to_change_settings_des">Wische auf der linken oder rechten Seite, um die Helligkeit oder Lautstärke zu ändern</string>
     <string name="double_tap_to_seek_settings">Doppeltippen zum vor- und zurückspulen</string>
     <string name="double_tap_to_seek_settings_des">Tippe zweimal auf die rechte oder linke Seite, um vorwärts oder rückwärts zuspulen</string>
+    <string name="double_tap_to_pause_settings_des">Tippen zweimal in die Mitte, um zu pausieren</string>
     <string name="use_system_brightness_settings">Systemhelligkeit benutzen</string>
     <string name="use_system_brightness_settings_des">Benutze Systemhelligkeit im Player anstatt von einem Dunklem Overlay</string>
+    <string name="restore_settings">Daten aus der Sicherung wiederherstellen</string>
+    <string name="killswitch_settings">Aktuelle Metadaten von Github herunterladen</string>
+    <string name="killswitch_settings_des">Für Zugang zu allen Anbietern (auch zu defekten), deaktiviere diese Einstellung</string>
+    <string name="backup_settings">Daten sichern</string>
+    <string name="restore_success">Sicherungsdatei geladen</string>
+    <string name="restore_failed_format" formatted="true">Wiederherstellung der Daten aus der Datei %s fehlgeschlagen</string>
+    <string name="backup_success">Daten erfolgreich gespeichert</string>
+    <string name="backup_failed">Speicherberechtigungen fehlen, bitte erneut versuchen</string>
+    <string name="backup_failed_error_format">Fehler beim Sichern von %s</string>
     <string name="search">Suche</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Erweiterte Suche</string>
@@ -159,6 +169,17 @@
     <string name="cartoons">Zeichentrickfilme</string>
     <string name="anime">Anime</string>
     <string name="torrent">Torrent</string>
+    <string name="documentaries">Dokumentationen</string>
+    <string name="ova">OVA</string>
+    <string name="asian_drama">Asiatische Dramen</string>
+    <string name="movies_singular">Film</string>
+    <string name="tv_series_singular">Serie</string>
+    <string name="cartoons_singular">Zeichentrickfilm</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="documentaries_singular">Dokumentation</string>
+    <string name="asian_drama_singular">Asiatisches Drama</string>
     <string name="source_error">Quellenfehler</string>
     <string name="remote_error">Remotefehler</string>
     <string name="render_error">Renderfehler</string>
@@ -179,6 +200,12 @@
     <string name="video_aspect_ratio_resize">Größe anpassen</string>
     <string name="video_source">Quelle</string>
     <string name="video_skip_op">Intro überspringen</string>
+    <string name="video_buffer_size_settings">Videopuffergröße</string>
+    <string name="video_buffer_length_settings">Videopufferlänge</string>
+    <string name="video_buffer_disk_settings">Video-Cache auf Festplatte</string>
+    <string name="video_buffer_clear_settings">Video- und Bildcache löschen</string>
+    <string name="video_ram_description">Kann auf Systemen mit geringem Arbeitsspeicher, wie z. B. Android-TV-Geräten oder alten Handys, Probleme verursachen, wenn der Wert zu hoch eingestellt ist</string>
+    <string name="video_disk_description">Kann auf Systemen mit geringem Speicherplatz, wie z. B. Android TV-Geräten, zu Problemen führen, wenn der Wert zu hoch eingestellt ist</string>
     <string name="dont_show_again">Nicht mehr anzeigen</string>
     <string name="update">Aktualisieren</string>
     <string name="watch_quality_pref">Bevorzugte Videoqualität</string>
@@ -210,5 +237,21 @@
     <string name="subtitles_depressed">Gesenkt</string>
     <string name="subtitles_shadow">Schatten</string>
     <string name="subtitles_raised">Erhöht</string>
+    <string name="subtitle_offset">Synchronisiere Untertitel</string>
+    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_title">Untertitel Verzögerung</string>
+    <string name="subtitle_offset_extra_hint_later_format">Verwende diese Option, wenn die Untertitel %dms zu früh angezeigt werden</string>
+    <string name="subtitle_offset_extra_hint_before_format">Verwende diese Option, wenn die Untertitel %dms zu spät angezeigt werden</string>
+    <string name="subtitle_offset_extra_hint_none_format">Keine Verzögerung bei Untertiteln</string>
     <string name="subtitles_example_text">Kaufen Sie jede Woche vier gute bequeme Pelze</string>
+    <string name="recommended">Empfohlen</string>
+    <string name="player_loaded_subtitles" formatted="true">Geladen %s</string>
+    <string name="player_load_subtitles">Aus Datei laden</string>
+    <string name="downloaded_file">Datei herunterladen</string>
+    <string name="actor_main">Hauptdarsteller</string>
+    <string name="actor_supporting">Nebendarsteller</string>
+    <string name="actor_background">Hintergrunddarsteller</string>
+    <string name="home_source">Quelle</string>
+    <string name="coming_soon">Demnächst...</string>
+    <string name="poster_image">Vorschaubild</string>
 </resources>
