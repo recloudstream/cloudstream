@@ -353,8 +353,10 @@ class SearchFragment : Fragment() {
             override fun onQueryTextChange(newText: String): Boolean {
                 //searchViewModel.quickSearch(newText)
                 val showHistory = newText.isBlank()
-                searchViewModel.clearSearch()
-                searchViewModel.updateHistory()
+                if (showHistory) {
+                    searchViewModel.clearSearch()
+                    searchViewModel.updateHistory()
+                }
 
                 search_history_recycler?.isVisible = showHistory
 

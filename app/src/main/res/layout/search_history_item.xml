@@ -6,6 +6,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/home_history_tab"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         android:nextFocusRight="@id/home_history_remove">
 
     <TextView
@@ -24,6 +25,7 @@
             android:padding="10dp"
             android:id="@+id/home_history_remove"
             android:nextFocusLeft="@id/home_history_tab"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
 
             android:src="@drawable/ic_baseline_close_24"
             android:layout_width="wrap_content"
