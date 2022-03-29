@@ -312,33 +312,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                <FrameLayout
-                        android:nextFocusLeft="@id/nav_rail_view"
-                        android:nextFocusUp="@id/home_main_info"
-                        android:nextFocusDown="@id/home_watch_child_recyclerview"
 
-                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                        android:id="@+id/home_watch_child_more_info"
+                <TextView
+                        android:id="@+id/home_watch_parent_item_title"
                         android:padding="12dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                    <TextView
-                            android:layout_gravity="center_vertical"
-                            android:id="@+id/home_watch_parent_item_title"
-                            style="@style/WatchHeaderText"
-                            android:text="@string/continue_watching" />
-
-                    <ImageView
-                            app:tint="?attr/textColor"
-                            android:layout_marginEnd="5dp"
-                            android:layout_gravity="end|center_vertical"
-                            android:src="@drawable/ic_baseline_arrow_forward_24"
-                            android:layout_width="30dp"
-                            android:layout_height="match_parent"
-                            android:contentDescription="@string/home_more_info" />
-                </FrameLayout>
-
+                        android:layout_height="wrap_content"
+                        style="@style/WatchHeaderText"
+                        android:layout_marginEnd="0dp"
+                        android:text="@string/continue_watching">
+                </TextView>
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:paddingHorizontal="5dp"
@@ -361,7 +344,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                <FrameLayout
+                <HorizontalScrollView
                         android:nextFocusLeft="@id/nav_rail_view"
                         android:nextFocusUp="@id/home_watch_child_recyclerview"
                         android:nextFocusForward="@id/home_bookmarked_child_recyclerview"
@@ -373,16 +356,13 @@
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
 
-                    <HorizontalScrollView
-                            android:fadingEdge="horizontal"
-                            android:requiresFadingEdge="horizontal"
-                            android:layout_marginEnd="50dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
+                        android:fadingEdge="horizontal"
+                        android:requiresFadingEdge="horizontal">
 
                         <LinearLayout
+                                android:layout_gravity="center_vertical"
                                 android:orientation="horizontal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
@@ -426,17 +406,7 @@
                                     android:text="@string/type_completed"
                                     style="@style/RoundedSelectableButton" />
                         </LinearLayout>
-                    </HorizontalScrollView>
-
-                    <ImageView
-                            app:tint="?attr/textColor"
-                            android:layout_marginEnd="5dp"
-                            android:layout_gravity="end|center_vertical"
-                            android:src="@drawable/ic_baseline_arrow_forward_24"
-                            android:layout_width="30dp"
-                            android:layout_height="match_parent"
-                            android:contentDescription="@string/home_more_info" />
-                </FrameLayout>
+                </HorizontalScrollView>
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:paddingHorizontal="5dp"
@@ -457,7 +427,7 @@
                     android:id="@+id/home_master_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:listitem="@layout/homepage_parent" />
+                    tools:listitem="@layout/homepage_parent_tv" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
