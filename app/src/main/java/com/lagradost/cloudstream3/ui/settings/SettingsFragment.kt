@@ -72,7 +72,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         fun Context.isTrueTvSettings(): Boolean {
-            return getLayoutInt() == 1
+            var value = getLayoutInt()
+            if (value == -1) {
+                value = if (isAutoTv()) 1 else 0
+            }
+            return value == 1
         }
 
         fun Context.isEmulatorSettings(): Boolean {

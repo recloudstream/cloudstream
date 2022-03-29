@@ -60,6 +60,7 @@ import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getDownloadSubsLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
@@ -429,8 +430,18 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             2 -> {
                 result_bookmark_fab?.isGone = result_bookmark_fab?.context?.isTvSettings() == true
                 result_bookmark_fab?.extend()
-                if (result_bookmark_button?.context?.isTvSettings() == true) {
-                    result_bookmark_button?.requestFocus()
+                if (result_bookmark_button?.context?.isTrueTvSettings() == true) {
+                    when {
+                        result_play_movie?.isVisible == true -> {
+                            result_play_movie?.requestFocus()
+                        }
+                        result_resume_series_button?.isVisible == true -> {
+                            result_resume_series_button?.requestFocus()
+                        }
+                        else -> {
+                            result_bookmark_button?.requestFocus()
+                        }
+                    }
                 }
 
                 result_loading?.isVisible = false

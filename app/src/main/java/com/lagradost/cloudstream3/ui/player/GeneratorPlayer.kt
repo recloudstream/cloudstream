@@ -608,10 +608,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         observe(viewModel.currentLinks) {
             currentLinks = it
             val turnVisible = it.isNotEmpty()
-            if (turnVisible && overlay_loading_skip_button?.isGone == true) {
+            val wasGone = overlay_loading_skip_button?.isGone == true
+            overlay_loading_skip_button?.isVisible = turnVisible
+            if (turnVisible && wasGone) {
                 overlay_loading_skip_button?.requestFocus()
             }
-            overlay_loading_skip_button?.isVisible = turnVisible
         }
 
         observe(viewModel.currentSubs) { set ->
