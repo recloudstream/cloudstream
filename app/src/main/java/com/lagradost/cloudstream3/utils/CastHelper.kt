@@ -92,7 +92,7 @@ object CastHelper {
     ): Boolean {
         if (this == null) return false
         if (episodes.isEmpty()) return false
-        if (currentLinks.size <= currentEpisodeIndex) return false
+        if (currentEpisodeIndex >= episodes.size) return false
 
         val epData = episodes[currentEpisodeIndex]
 
