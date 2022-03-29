@@ -380,9 +380,9 @@ class GogoanimeProvider : MainAPI() {
                             loadExtractor(data, streamingResponse.url, callback)
                         }
                 }, {
-                    val iv = "31323835363732333833393339383532".decodeHex()
+                    val iv = "4770478969418267".toByteArray()
                     val secretKey =
-                        "3235373136353338353232393338333936313634363632323738383333323838".decodeHex()
+                        "63976882873559819639988080820907".toByteArray()
                     extractVidstream(iframe, this.name, callback, iv, secretKey)
                 })
             }
