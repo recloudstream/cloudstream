@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
@@ -164,7 +165,8 @@ class SearchFragment : Fragment() {
                     val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
                     val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)
 
-                    val pairList = HomeFragment.getPairList(anime, cartoons, tvs, docs, movies,asian)
+                    val pairList =
+                        HomeFragment.getPairList(anime, cartoons, tvs, docs, movies, asian)
 
                     cancelBtt?.setOnClickListener {
                         dialog.dismissSafe()
@@ -277,10 +279,21 @@ class SearchFragment : Fragment() {
             search_select_asian,
         )
 
+        val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
+        val isAdvancedSearch = settingsManager?.getBoolean("advanced_search", true) ?: true
+
         selectedSearchTypes = context?.getKey<List<String>>(SEARCH_PREF_TAGS)
             ?.mapNotNull { listName -> TvType.values().firstOrNull { it.name == listName } }
             ?.toMutableList()
             ?: mutableListOf(TvType.Movie, TvType.TvSeries)
+
+        fun updateSelectedList(list: MutableList<TvType>) {
+            selectedSearchTypes = list
+            for ((button, validTypes) in pairList) {
+                button?.isSelected = selectedSearchTypes.any { validTypes.contains(it) }
+            }
+        }
+
         context?.filterProviderByPreferredMedia()?.let { validAPIs ->
             for ((button, validTypes) in pairList) {
                 val isValid =
@@ -339,9 +352,24 @@ class SearchFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String): Boolean {
                 //searchViewModel.quickSearch(newText)
+                val showHistory = newText.isBlank()
+                searchViewModel.clearSearch()
+                searchViewModel.updateHistory()
+
+                search_history_recycler?.isVisible = showHistory
+
+                search_master_recycler?.isVisible = !showHistory && isAdvancedSearch
+                search_autofit_results?.isVisible = !showHistory && !isAdvancedSearch
+
                 return true
             }
         })
+
+        observe(searchViewModel.currentHistory) { list ->
+            (search_history_recycler.adapter as? SearchHistoryAdaptor?)?.updateList(list)
+        }
+
+        searchViewModel.updateHistory()
 
         observe(searchViewModel.searchResponse) {
             when (it) {
@@ -406,14 +434,30 @@ class SearchFragment : Fragment() {
                 activity?.loadHomepageList(item)
             })
 
+        val historyAdapter = SearchHistoryAdaptor(mutableListOf()) { click ->
+            val searchItem = click.item
+            when (click.clickAction) {
+                SEARCH_HISTORY_OPEN -> {
+                    searchViewModel.clearSearch()
+                    if (searchItem.type.isNotEmpty())
+                        updateSelectedList(searchItem.type.toMutableList())
+                    main_search?.setQuery(searchItem.searchText, true)
+                }
+                SEARCH_HISTORY_REMOVE -> {
+                    removeKey(SEARCH_HISTORY_KEY, searchItem.key)
+                    searchViewModel.updateHistory()
+                }
+                else -> {
+                    // wth are you doing???
+                }
+            }
+        }
+
+        search_history_recycler?.adapter = historyAdapter
+        search_history_recycler?.layoutManager = GridLayoutManager(context, 1)
+
         search_master_recycler?.adapter = masterAdapter
         search_master_recycler?.layoutManager = GridLayoutManager(context, 1)
-
-        val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
-        val isAdvancedSearch = settingsManager?.getBoolean("advanced_search", true) ?: true
-
-        search_master_recycler?.isVisible = isAdvancedSearch
-        search_autofit_results?.isVisible = !isAdvancedSearch
 
         // SubtitlesFragment.push(activity)
         //searchViewModel.search("iron man")

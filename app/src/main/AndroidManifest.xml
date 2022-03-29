@@ -27,7 +27,8 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:fullBackupContent="@xml/backup_descriptor"
-            tools:targetApi="m">
+            android:appCategory="video"
+            tools:targetApi="o">
         <meta-data
                 android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
                 android:value="com.lagradost.cloudstream3.utils.CastOptionsProvider"/>

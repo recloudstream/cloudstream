@@ -81,6 +81,7 @@
                 app:tint="?attr/textColor"
                 android:contentDescription="@string/change_providers_img_des" />
     </FrameLayout>
+
     <HorizontalScrollView
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
@@ -144,6 +145,7 @@
 
 
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+            android:visibility="gone"
             android:nextFocusLeft="@id/nav_rail_view"
             android:descendantFocusability="afterDescendants"
 
@@ -160,6 +162,7 @@
             android:orientation="vertical" />
 
     <androidx.recyclerview.widget.RecyclerView
+            android:visibility="gone"
             android:nextFocusLeft="@id/nav_rail_view"
             android:descendantFocusability="afterDescendants"
 
@@ -168,4 +171,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/homepage_parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:visibility="visible"
+            android:nextFocusLeft="@id/nav_rail_view"
+            android:descendantFocusability="afterDescendants"
+
+            android:background="?attr/primaryBlackBackground"
+            android:id="@+id/search_history_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/search_history_item" />
 </LinearLayout>
