@@ -79,84 +79,84 @@
                 android:layout_gravity="end|center_vertical"
                 tools:visibility="visible" />
 
+        <!--
+                <LinearLayout
+                        android:layout_marginBottom="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-        <LinearLayout
-                android:layout_marginBottom="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
+                    <TextView
+                            android:layout_gravity="center_vertical"
+                            android:padding="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/textColor"
+                            android:text="Status:"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-            <TextView
-                    android:layout_gravity="center_vertical"
-                    android:padding="10dp"
-                    android:textSize="17sp"
-                    android:textColor="?attr/textColor"
-                    android:text="Status:"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    <com.google.android.material.button.MaterialButton
+                            android:layout_height="30dp"
+                            android:text="Watching"
+                            android:minWidth="0dp"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="0dp"
+                            style="@style/BlackButton" />
+                </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                    android:layout_height="30dp"
-                    android:text="Watching"
-                    android:minWidth="0dp"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="0dp"
-                    style="@style/BlackButton" />
-        </LinearLayout>
+                <GridLayout
+                        android:orientation="horizontal"
+                        android:columnCount="2"
 
-        <GridLayout
-                android:orientation="horizontal"
-                android:columnCount="2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_completed"
+                            android:nextFocusRight="@id/sync_on_hold"
+                            android:nextFocusDown="@id/sync_plan_to_watch"
 
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/sync_completed"
-                    android:nextFocusRight="@id/sync_on_hold"
-                    android:nextFocusDown="@id/sync_plan_to_watch"
+                            android:layout_row="0"
+                            android:layout_column="0"
+                            android:text="@string/type_completed"
+                            style="@style/SyncButton" />
 
-                    android:layout_row="0"
-                    android:layout_column="0"
-                    android:text="@string/type_completed"
-                    style="@style/SyncButton" />
+                    <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_on_hold"
+                            android:nextFocusDown="@id/sync_watching"
+                            android:nextFocusLeft="@id/sync_completed"
 
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/sync_on_hold"
-                    android:nextFocusDown="@id/sync_watching"
-                    android:nextFocusLeft="@id/sync_completed"
+                            android:layout_row="0"
+                            android:layout_column="1"
+                            style="@style/SyncButton"
+                            android:text="@string/type_on_hold" />
 
-                    android:layout_row="0"
-                    android:layout_column="1"
-                    style="@style/SyncButton"
-                    android:text="@string/type_on_hold" />
+                    <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_plan_to_watch"
+                            android:nextFocusRight="@id/sync_plan_to_watch"
+                            android:nextFocusDown="@id/sync_dropped"
+                            android:nextFocusUp="@id/sync_completed"
 
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/sync_plan_to_watch"
-                    android:nextFocusRight="@id/sync_plan_to_watch"
-                    android:nextFocusDown="@id/sync_dropped"
-                    android:nextFocusUp="@id/sync_completed"
+                            android:layout_row="1"
+                            android:layout_column="0"
+                            android:text="@string/type_plan_to_watch"
+                            style="@style/SyncButton"
+                            />
 
-                    android:layout_row="1"
-                    android:layout_column="0"
-                    android:text="@string/type_plan_to_watch"
-                    style="@style/SyncButton"
-                    />
+                    <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_watching"
+                            android:nextFocusLeft="@id/sync_plan_to_watch"
+                            android:nextFocusDown="@id/sync_dropped"
+                            android:nextFocusUp="@id/sync_on_hold"
 
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/sync_watching"
-                    android:nextFocusLeft="@id/sync_plan_to_watch"
-                    android:nextFocusDown="@id/sync_dropped"
-                    android:nextFocusUp="@id/sync_on_hold"
+                            android:layout_row="1"
+                            android:layout_column="1"
 
-                    android:layout_row="1"
-                    android:layout_column="1"
+                            style="@style/SyncButton"
+                            android:text="@string/type_watching" />
 
-                    style="@style/SyncButton"
-                    android:text="@string/type_watching" />
-
-        </GridLayout>
+                </GridLayout>
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/sync_dropped"
@@ -165,7 +165,7 @@
                 android:layout_width="match_parent"
                 style="@style/SyncButton"
 
-                android:text="@string/type_dropped" />
+                android:text="@string/type_dropped" />-->
 
         <LinearLayout
                 android:orientation="horizontal"
@@ -180,7 +180,7 @@
                     android:text="Rated:"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
+<!--
             <com.google.android.material.button.MaterialButton
                     android:layout_height="30dp"
                     android:text="7/10"
@@ -188,7 +188,7 @@
                     android:layout_width="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="0dp"
-                    style="@style/BlackButton" />
+                    style="@style/BlackButton" />-->
         </LinearLayout>
 
         <com.google.android.material.slider.Slider
@@ -196,10 +196,12 @@
                 android:valueTo="10"
                 android:value="4"
                 android:stepSize="1"
-                android:paddingStart="-10dp"
-                android:paddingEnd="-10dp"
-
-                android:layout_width="match_parent"
+                app:tickVisible="false"
+                android:layout_marginStart="-5dp"
+                android:layout_marginEnd="-5dp"
+                app:thumbRadius="10dp"
+                app:labelStyle="@style/BlackLabel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
         <FrameLayout
@@ -225,10 +227,132 @@
                     android:contentDescription="@string/home_more_info" />
         </FrameLayout>
 
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                style="@style/AppTextViewStyle"
+                android:id="@android:id/text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?android:attr/listPreferredItemHeightSmall"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/text_selection_color"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="7dip"
+                android:text="@string/type_watching"
+                android:checkMark="?android:attr/listChoiceIndicatorSingle"
+                android:ellipsize="marquee"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                tools:drawableTint="?attr/textColor"
+                android:drawablePadding="20dp"
+                app:drawableTint="@color/check_selection_color"
+                app:drawableStartCompat="@drawable/ic_baseline_check_24" />
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                style="@style/AppTextViewStyle"
+                android:id="@android:id/text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?android:attr/listPreferredItemHeightSmall"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/text_selection_color"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="7dip"
+                android:text="@string/type_on_hold"
+                android:checkMark="?android:attr/listChoiceIndicatorSingle"
+                android:ellipsize="marquee"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                tools:drawableTint="?attr/textColor"
+                android:drawablePadding="20dp"
+                app:drawableTint="@color/check_selection_color"
+                app:drawableStartCompat="@drawable/ic_baseline_check_24" />
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                style="@style/AppTextViewStyle"
+                android:id="@android:id/text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?android:attr/listPreferredItemHeightSmall"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/text_selection_color"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="7dip"
+                android:text="@string/type_completed"
+                android:checkMark="?android:attr/listChoiceIndicatorSingle"
+                android:ellipsize="marquee"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                tools:drawableTint="?attr/textColor"
+                android:drawablePadding="20dp"
+                app:drawableTint="@color/check_selection_color"
+                app:drawableStartCompat="@drawable/ic_baseline_check_24" />
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                style="@style/AppTextViewStyle"
+                android:id="@android:id/text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?android:attr/listPreferredItemHeightSmall"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/text_selection_color"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="7dip"
+                android:text="@string/type_plan_to_watch"
+                android:checkMark="?android:attr/listChoiceIndicatorSingle"
+                android:ellipsize="marquee"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                tools:drawableTint="?attr/textColor"
+                android:drawablePadding="20dp"
+                app:drawableTint="@color/check_selection_color"
+                app:drawableStartCompat="@drawable/ic_baseline_check_24" />
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                style="@style/AppTextViewStyle"
+                android:id="@android:id/text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?android:attr/listPreferredItemHeightSmall"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/text_selection_color"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="7dip"
+                android:text="@string/type_dropped"
+                android:checkMark="?android:attr/listChoiceIndicatorSingle"
+                android:ellipsize="marquee"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                tools:drawableTint="?attr/textColor"
+                android:drawablePadding="20dp"
+                app:drawableTint="@color/check_selection_color"
+                app:drawableStartCompat="@drawable/ic_baseline_check_24" />
+
+        <com.google.android.material.button.MaterialButton
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                style="@style/WhiteButton"
+                android:text="@string/type_watching" />
         <com.google.android.material.button.MaterialButton
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
-                style="@style/SyncButton"
+                style="@style/BlackButton"
                 app:icon="@drawable/baseline_sync_24"
                 android:text="@string/upload_sync" />
     </LinearLayout>

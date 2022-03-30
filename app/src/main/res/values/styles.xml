@@ -365,6 +365,11 @@
         <item name="rippleColor">?attr/primaryBlackBackground</item>
     </style>
 
+    <style name="BlackLabel" parent="@style/Widget.MaterialComponents.Tooltip">
+        <item name="backgroundTint">?attr/iconGrayBackground</item>
+        <item name="android:textColor">?attr/textColor</item>
+    </style>
+
     <style name="BlackButton" parent="NiceButton">
         <item name="strokeColor">?attr/textColor</item>
         <item name="backgroundTint">?attr/iconGrayBackground</item>
