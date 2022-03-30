@@ -323,7 +323,6 @@
 
     <style name="SearchBox">
         <item name="android:textStyle">bold</item>
-        <item name="minWidth">50dp</item>
         <item name="android:minWidth">50dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
@@ -333,7 +332,9 @@
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">5dp</item>
         <item name="android:paddingBottom">5dp</item>
+        <item name="android:textSize">12sp</item>
         <item name="textColor">@color/textColor</item>
+        <item name="android:layout_margin">2dp</item>
     </style>
 
     <style name="NiceButton">
