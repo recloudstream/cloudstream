@@ -33,6 +33,7 @@ object SearchResultBuilder {
 
         val textIsDub: TextView? = itemView.text_is_dub
         val textIsSub: TextView? = itemView.text_is_sub
+        val textQuality: TextView? = itemView.text_quality
 
         val bg: CardView = itemView.backgroundCard
 
@@ -45,6 +46,28 @@ object SearchResultBuilder {
         playImg?.isVisible = false
         textIsDub?.isVisible = false
         textIsSub?.isVisible = false
+
+        when(card.quality) {
+            SearchQuality.BlueRay -> R.string.quality_blueray
+            SearchQuality.Cam -> R.string.quality_cam
+            SearchQuality.CamRip -> R.string.quality_cam_rip
+            SearchQuality.DVD -> R.string.quality_dvd
+            SearchQuality.HD -> R.string.quality_hd
+            SearchQuality.HQ -> R.string.quality_hq
+            SearchQuality.HdCam -> R.string.quality_cam_hd
+            SearchQuality.Telecine -> R.string.quality_tc
+            SearchQuality.Telesync -> R.string.quality_ts
+            SearchQuality.WorkPrint -> R.string.quality_workprint
+            SearchQuality.SD -> R.string.quality_sd
+            SearchQuality.FourK -> R.string.quality_4k
+            SearchQuality.UHD -> R.string.quality_uhd
+            else -> null
+        }?.let { textRes ->
+            textQuality?.setText(textRes)
+            textQuality?.isVisible = true
+        } ?: run {
+            textQuality?.isVisible = false
+        }
 
         cardText?.text = card.name
 

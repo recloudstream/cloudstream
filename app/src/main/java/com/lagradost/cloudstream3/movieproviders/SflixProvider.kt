@@ -25,12 +25,13 @@ class DopeboxProvider : SflixProvider() {
     override var mainUrl = "https://dopebox.to"
     override var name = "Dopebox"
 }
+
 class SolarmovieProvider : SflixProvider() {
     override var mainUrl = "https://solarmovie.pe"
     override var name = "Solarmovie"
 }
 
-open class SflixProvider() : MainAPI() {
+open class SflixProvider : MainAPI() {
     override var mainUrl = "https://sflix.to"
     override var name = "Sflix.to"
 
@@ -87,6 +88,10 @@ open class SflixProvider() : MainAPI() {
             val image = it.select("img").attr("data-src")
             val isMovie = href.contains("/movie/")
 
+            val metaInfo = it.select("div.fd-infor > span.fdi-item")
+            // val rating = metaInfo[0].text()
+            val quality = getQualityFromString(metaInfo?.getOrNull(1)?.text())
+
             if (isMovie) {
                 MovieSearchResponse(
                     title,
@@ -94,7 +99,8 @@ open class SflixProvider() : MainAPI() {
                     this.name,
                     TvType.Movie,
                     image,
-                    year
+                    year,
+                    quality = quality
                 )
             } else {
                 TvSeriesSearchResponse(
@@ -104,7 +110,8 @@ open class SflixProvider() : MainAPI() {
                     TvType.TvSeries,
                     image,
                     year,
-                    null
+                    null,
+                    quality = quality
                 )
             }
         }

@@ -556,6 +556,35 @@ enum class SearchQuality {
     HD,
     BlueRay,
     DVD,
+    SD,
+    FourK,
+    UHD,
+}
+
+/**Add anything to here if you find a site that uses some specific naming convention*/
+fun getQualityFromString(string: String?) : SearchQuality? {
+    val check = (string ?: return null).trim().lowercase().replace(" ","")
+
+    return when(check) {
+        "cam" -> SearchQuality.Cam
+        "hdcam" -> SearchQuality.HdCam
+        "hq" -> SearchQuality.HQ
+        "hdrip" -> SearchQuality.HD
+        "hd" -> SearchQuality.HD
+        "camrip" -> SearchQuality.CamRip
+        "rip" -> SearchQuality.CamRip
+        "tc" -> SearchQuality.Telecine
+        "ts" -> SearchQuality.Telesync
+        "dvd" -> SearchQuality.DVD
+        "blueray" ->  SearchQuality.BlueRay
+        "sd" -> SearchQuality.SD
+        "4k" -> SearchQuality.FourK
+        "uhd" -> SearchQuality.UHD // may also be 4k or 8k
+        "blue" -> SearchQuality.BlueRay
+        "wp" -> SearchQuality.WorkPrint
+        "workprint" -> SearchQuality.WorkPrint
+        else -> null
+    }
 }
 
 interface SearchResponse {

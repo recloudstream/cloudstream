@@ -433,6 +433,7 @@
     <string name="home_source">Source</string>
 
     <string name="coming_soon">Coming soon…</string>
+
     <string name="quality_cam">Cam</string>
     <string name="quality_cam_rip">Cam</string>
     <string name="quality_cam_hd">Cam</string>
@@ -443,5 +444,9 @@
     <string name="quality_blueray">BlueRay</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
+    <string name="quality_4k">4K</string>
+    <string name="quality_sd">SD</string>
+    <string name="quality_uhd">UHD</string>
+
     <string name="poster_image">Poster Image</string>
 </resources>

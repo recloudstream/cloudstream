@@ -55,81 +55,31 @@
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:ellipsize="end" />
-        <!--<View
-                android:id="@+id/search_result_lang"
-                android:layout_gravity="bottom"
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:alpha="0.9">
+        <TextView
+                tools:text="@string/quality_hd"
+                android:id="@+id/text_quality"
+                android:textColor="@color/textColor"
+                style="@style/SearchBox"
+                android:background="@drawable/type_bg_color" />
 
-        </View>-->
-        <!--<ImageView
-                android:src="@drawable/ic_baseline_bookmark_24"
-                android:id="@+id/search_result_lang"
-                android:layout_gravity="right"
-                android:layout_marginTop="-5dp"
-                android:layout_marginRight="-6.5dp"
-                android:layout_width="30dp"
-                android:layout_height="30dp">
-        </ImageView>-->
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_gravity="end"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-            <!-- <TextView
-                     android:text="Movie"
-                     android:textColor="?attr/textColor"
-                     android:paddingRight="10dp"
-                     android:paddingLeft="10dp"
-                     android:paddingTop="4dp"
-                     android:layout_marginBottom="5dp"
-                     android:layout_gravity="end"
-                     android:paddingBottom="8dp"
-                     android:minWidth="50dp"
-                     android:gravity="end"
-                     android:background="@drawable/type_bg_color"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content">
-             </TextView>-->
-
-            <!--
-                        <ImageView android:id="@+id/text_is_dub" android:tint="?attr/colorPrimary"
-                                   android:src="@drawable/ic_baseline_subtitles_24" android:layout_width="wrap_content"
-                                   android:layout_height="20dp">
-
-                        </ImageView>-->
             <TextView
                     android:text="@string/app_dubbed_text"
                     android:id="@+id/text_is_dub"
-                    android:textColor="@color/textColor"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="4dp"
-                    android:layout_marginBottom="5dp"
                     android:layout_gravity="end"
-                    android:paddingBottom="4dp"
-                    android:minWidth="50dp"
-                    android:gravity="center"
-                    android:background="@drawable/dub_bg_color"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    style="@style/SearchBox"
+                    android:background="@drawable/dub_bg_color" />
 
             <TextView
                     android:id="@+id/text_is_sub"
                     android:text="@string/app_subbed_text"
                     android:layout_gravity="end"
-                    android:textColor="@color/textColor"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:minWidth="50dp"
-                    android:gravity="center"
-                    android:background="@drawable/sub_bg_color"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    style="@style/SearchBox"
+                    android:background="@drawable/sub_bg_color" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
