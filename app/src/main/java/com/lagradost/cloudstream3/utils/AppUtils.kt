@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -23,6 +22,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.tvprovider.media.tv.PreviewChannelHelper
 import androidx.tvprovider.media.tv.TvContractCompat
 import androidx.tvprovider.media.tv.WatchNextProgram
@@ -33,7 +33,10 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.isMovieType
+import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -196,17 +199,10 @@ object AppUtils {
 
     fun Context.openBrowser(url: String) {
         try {
-            val components = arrayOf(ComponentName(applicationContext, MainActivity::class.java))
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                startActivity(
-                    Intent.createChooser(intent, null)
-                        .putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components)
-                )
-            else
-                startActivity(intent)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            ContextCompat.startActivity(this, intent, null)
         } catch (e: Exception) {
             logError(e)
         }

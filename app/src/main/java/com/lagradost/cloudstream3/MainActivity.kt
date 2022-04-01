@@ -266,7 +266,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (str.contains(appString)) {
                 for (api in OAuth2Apis) {
                     if (str.contains("/${api.redirectUrl}")) {
-                        api.handleRedirect(str)
+                        try {
+                            api.handleRedirect(str)
+                        } catch (e : Exception) {
+                            logError(e)
+                        }
                     }
                 }
             } else {

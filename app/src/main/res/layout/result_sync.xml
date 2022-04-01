@@ -7,9 +7,10 @@
         android:layout_height="match_parent">
 
     <LinearLayout
+            android:visibility="gone"
             android:padding="16dp"
             android:orientation="vertical"
-            android:id="@+id/sync_holder"
+            android:id="@+id/result_sync_holder"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -38,8 +39,9 @@
                     app:tint="?attr/textColor" />
 
             <EditText
+                    android:id="@+id/result_sync_current_episodes"
                     style="@style/AppEditStyle"
-                    android:hint="20"
+                    tools:hint="20"
                     android:textSize="20sp"
                     android:inputType="number"
                     android:layout_width="wrap_content"
@@ -47,11 +49,12 @@
                     tools:ignore="LabelFor" />
 
             <TextView
+                    android:id="@+id/result_sync_max_episodes"
                     android:layout_gravity="center_vertical"
                     android:paddingBottom="1dp"
                     android:textSize="20sp"
                     android:textColor="?attr/textColor"
-                    android:text="/30"
+                    tools:text="/30"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -64,10 +67,10 @@
                     android:layout_gravity="end|center_vertical"
                     android:contentDescription="@string/result_share"
                     app:tint="?attr/textColor" />
-
         </LinearLayout>
 
         <androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/result_sync_episodes"
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
@@ -192,6 +195,7 @@
         </LinearLayout>
 
         <com.google.android.material.slider.Slider
+                android:id="@+id/result_sync_rating"
                 android:valueFrom="0"
                 android:valueTo="10"
                 android:value="4"
@@ -350,6 +354,7 @@
                 style="@style/WhiteButton"
                 android:text="@string/type_watching" />
         <com.google.android.material.button.MaterialButton
+                android:id="@+id/result_sync_set_score"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 style="@style/BlackButton"
@@ -357,13 +362,48 @@
                 android:text="@string/upload_sync" />
     </LinearLayout>
 
-
-    <com.google.android.material.button.MaterialButton
-            android:visibility="gone"
-            android:id="@+id/sync_add_tracking"
-            android:layout_gravity="center"
+    <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/result_sync_loading_shimmer"
+            app:shimmer_base_alpha="0.2"
+            app:shimmer_highlight_alpha="0.3"
+            app:shimmer_duration="@integer/loading_time"
+            app:shimmer_auto_start="true"
+            android:padding="15dp"
             android:layout_width="match_parent"
-            style="@style/SyncButton"
-            app:icon="@drawable/ic_baseline_add_24"
-            android:text="@string/add_sync" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"/>
+            <include layout="@layout/loading_line_short" />
+
+            <include layout="@layout/loading_line" />
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"/>
+            <include layout="@layout/loading_line_short" />
+            <include layout="@layout/loading_line" />
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"/>
+            <include layout="@layout/loading_line_short" />
+            <include layout="@layout/loading_line_short" />
+            <include layout="@layout/loading_line_short" />
+            <include layout="@layout/loading_line_short" />
+            <include layout="@layout/loading_line_short" />
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"/>
+            <include layout="@layout/loading_line" />
+            <include layout="@layout/loading_line" />
+
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
 </FrameLayout>

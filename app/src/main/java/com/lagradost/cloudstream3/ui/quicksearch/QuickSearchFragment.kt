@@ -12,8 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
+import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -21,8 +20,11 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
-import com.lagradost.cloudstream3.ui.search.*
+import com.lagradost.cloudstream3.ui.search.SearchAdapter
+import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
+import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.ui.search.SearchViewModel
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -31,11 +33,10 @@ import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.quick_search.*
 import java.util.concurrent.locks.ReentrantLock
 
-class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
+class QuickSearchFragment : Fragment() {
     companion object {
         fun pushSearch(activity: Activity?, autoSearch: String? = null) {
             activity.navigate(R.id.global_to_navigation_quick_search, Bundle().apply {
-                putBoolean("mainapi", true)
                 autoSearch?.let {
                     putString(
                         "autosearch",
@@ -46,18 +47,6 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
                             .removeSuffix("(Sub)").trim()
                     )
                 }
-            })
-        }
-
-        fun pushSync(
-            activity: Activity?,
-            autoSearch: String? = null,
-            callback: (SearchClickCallback) -> Unit
-        ) {
-            clickCallback = callback
-            activity.navigate(R.id.global_to_navigation_quick_search, Bundle().apply {
-                putBoolean("mainapi", false)
-                putString("autosearch", autoSearch)
             })
         }
 
@@ -87,10 +76,6 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         context?.fixPaddingStatusbar(quick_search_root)
 
-        arguments?.getBoolean("mainapi", true)?.let {
-            isMainApis = it
-        }
-
         val listLock = ReentrantLock()
         observe(searchViewModel.currentSearch) { list ->
             try {
@@ -114,44 +99,38 @@ class QuickSearchFragment(var isMainApis: Boolean = false) : Fragment() {
 
         val masterAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             ParentItemAdapter(mutableListOf(), { callback ->
-                when (callback.action) {
-                    SEARCH_ACTION_LOAD -> {
-                        if (isMainApis) {
-                            activity?.popCurrentPage()
-
-                            SearchHelper.handleSearchClickCallback(activity, callback)
-                        } else {
-                            clickCallback?.invoke(callback)
-                        }
-                    }
-                    else -> SearchHelper.handleSearchClickCallback(activity, callback)
-                }
+                SearchHelper.handleSearchClickCallback(activity, callback)
+                //when (callback.action) {
+                    //SEARCH_ACTION_LOAD -> {
+                    //    clickCallback?.invoke(callback)
+                    //}
+                //    else -> SearchHelper.handleSearchClickCallback(activity, callback)
+                //}
             }, { item ->
                 activity?.loadHomepageList(item)
             })
 
         val searchExitIcon =
             quick_search?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+
         val searchMagIcon =
             quick_search?.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
 
         searchMagIcon?.scaleX = 0.65f
         searchMagIcon?.scaleY = 0.65f
+
         quick_search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                val active = if (isMainApis) {
-                    val langs = context?.getApiProviderLangSettings()
-                    apis.filter { langs?.contains(it.lang) == true }.map { it.name }.toSet()
-                } else emptySet()
-
-                searchViewModel.searchAndCancel(
-                    query = query,
-                    isMainApis = isMainApis,
-                    ignoreSettings = false,
-                    providersActive = active
-                )
-                quick_search?.let {
-                    UIHelper.hideKeyboard(it)
+                context?.filterProviderByPreferredMedia(hasHomePageIsRequired = false)
+                    ?.map { it.name }?.toSet()?.let { active ->
+                    searchViewModel.searchAndCancel(
+                        query = query,
+                        ignoreSettings = false,
+                        providersActive = active
+                    )
+                    quick_search?.let {
+                        UIHelper.hideKeyboard(it)
+                    }
                 }
 
                 return true

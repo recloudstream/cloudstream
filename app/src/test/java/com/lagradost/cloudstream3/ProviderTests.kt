@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -9,9 +10,7 @@ import org.junit.Test
 
 class ProviderTests {
     private fun getAllProviders(): List<MainAPI> {
-        val allApis = APIHolder.apis
-        allApis.addAll(APIHolder.restrictedApis)
-        return allApis.filter { !it.usesWebView }
+        return allProviders.filter { !it.usesWebView }
     }
 
     private suspend fun loadLinks(api: MainAPI, url: String?): Boolean {

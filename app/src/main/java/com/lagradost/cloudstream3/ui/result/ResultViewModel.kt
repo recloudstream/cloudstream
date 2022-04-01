@@ -12,7 +12,6 @@ import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
-import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.IGenerator
@@ -78,9 +77,6 @@ class ResultViewModel : ViewModel() {
 
     private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData()
     val watchStatus: LiveData<WatchType> get() = _watchStatus
-
-    private val _sync: MutableLiveData<List<Resource<SyncAPI.SyncResult?>>> = MutableLiveData()
-    val sync: LiveData<List<Resource<SyncAPI.SyncResult?>>> get() = _sync
 
     fun updateWatchStatus(status: WatchType) = viewModelScope.launch {
         val currentId = id.value ?: return@launch
@@ -231,17 +227,6 @@ class ResultViewModel : ViewModel() {
 
         generator?.goto(index)
         return generator
-    }
-
-    fun updateSync(context: Context?, sync: List<Pair<SyncAPI, String>>) = viewModelScope.launch {
-        if (context == null) return@launch
-
-        val list = ArrayList<Resource<SyncAPI.SyncResult?>>()
-        for (s in sync) {
-            val result = safeApiCall { s.first.getResult(s.second) }
-            list.add(result)
-            _sync.postValue(list)
-        }
     }
 
     private fun updateEpisodes(localId: Int?, list: List<ResultEpisode>, selection: Int?) {

@@ -55,23 +55,19 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     override fun handleRedirect(url: String) {
-        try {
-            val sanitizer =
-                splitQuery(URL(url.replace(appString, "https").replace("/#", "?"))) // FIX ERROR
-            val token = sanitizer["access_token"]!!
-            val expiresIn = sanitizer["expires_in"]!!
+        val sanitizer =
+            splitQuery(URL(url.replace(appString, "https").replace("/#", "?"))) // FIX ERROR
+        val token = sanitizer["access_token"]!!
+        val expiresIn = sanitizer["expires_in"]!!
 
-            val endTime = unixTime + expiresIn.toLong()
+        val endTime = unixTime + expiresIn.toLong()
 
-            switchToNewAccount()
-            setKey(accountId, ANILIST_UNIXTIME_KEY, endTime)
-            setKey(accountId, ANILIST_TOKEN_KEY, token)
-            setKey(ANILIST_SHOULD_UPDATE_LIST, true)
-            ioSafe {
-                getUser()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        switchToNewAccount()
+        setKey(accountId, ANILIST_UNIXTIME_KEY, endTime)
+        setKey(accountId, ANILIST_TOKEN_KEY, token)
+        setKey(ANILIST_SHOULD_UPDATE_LIST, true)
+        ioSafe {
+            getUser()
         }
     }
 
@@ -338,7 +334,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     fun initGetUser() {
-        if (getKey<String>(accountId, ANILIST_TOKEN_KEY, null) == null) return
+        if (getAuth() == null) return
         ioSafe {
             getUser()
         }
@@ -351,7 +347,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         )!!
     }
 
-    suspend fun getDataAboutId(id: Int): AniListTitleHolder? {
+    private suspend fun getDataAboutId(id: Int): AniListTitleHolder? {
         val q =
             """query (${'$'}id: Int = $id) { # Define which variables will be used in the query (id)
                 Media (id: ${'$'}id, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
@@ -369,71 +365,56 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     }
                 }
             }"""
-        try {
-            val data = postApi("https://graphql.anilist.co", q, true)
-            var d: GetDataRoot? = null
-            try {
-                d = mapper.readValue<GetDataRoot>(data)
-            } catch (e: Exception) {
-                logError(e)
-                println("AniList json failed")
-            }
-            if (d == null) {
-                return null
-            }
 
-            val main = d.data.Media
-            if (main.mediaListEntry != null) {
-                return AniListTitleHolder(
-                    title = main.title,
-                    id = id,
-                    isFavourite = main.isFavourite,
-                    progress = main.mediaListEntry.progress,
-                    episodes = main.episodes,
-                    score = main.mediaListEntry.score,
-                    type = fromIntToAnimeStatus(aniListStatusString.indexOf(main.mediaListEntry.status)),
-                )
-            } else {
-                return AniListTitleHolder(
-                    title = main.title,
-                    id = id,
-                    isFavourite = main.isFavourite,
-                    progress = 0,
-                    episodes = main.episodes,
-                    score = 0,
-                    type = AniListStatusType.None,
-                )
-            }
-        } catch (e: Exception) {
-            logError(e)
-            return null
+        val data = postApi(q, true)
+        val d = mapper.readValue<GetDataRoot>(data ?: return null)
+
+        val main = d.data.Media
+        if (main.mediaListEntry != null) {
+            return AniListTitleHolder(
+                title = main.title,
+                id = id,
+                isFavourite = main.isFavourite,
+                progress = main.mediaListEntry.progress,
+                episodes = main.episodes,
+                score = main.mediaListEntry.score,
+                type = fromIntToAnimeStatus(aniListStatusString.indexOf(main.mediaListEntry.status)),
+            )
+        } else {
+            return AniListTitleHolder(
+                title = main.title,
+                id = id,
+                isFavourite = main.isFavourite,
+                progress = 0,
+                episodes = main.episodes,
+                score = 0,
+                type = AniListStatusType.None,
+            )
         }
+
     }
 
-    private suspend fun postApi(url: String, q: String, cache: Boolean = false): String {
-        return try {
-            if (!checkToken()) {
-                // println("VARS_ " + vars)
-                app.post(
-                    "https://graphql.anilist.co/",
-                    headers = mapOf(
-                        "Authorization" to "Bearer " + getKey(
-                            accountId,
-                            ANILIST_TOKEN_KEY,
-                            ""
-                        )!!,
-                        if (cache) "Cache-Control" to "max-stale=$maxStale" else "Cache-Control" to "no-cache"
-                    ),
-                    cacheTime = 0,
-                    data = mapOf("query" to q),//(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
-                    timeout = 5 // REASONABLE TIMEOUT
-                ).text.replace("\\/", "/")
-            } else {
-                ""
-            }
-        } catch (e: Exception) {
-            logError(e)
-            ""
+    private fun getAuth(): String? {
+        return getKey(
+            accountId,
+            ANILIST_TOKEN_KEY
+        )
+    }
+
+    private suspend fun postApi(q: String, cache: Boolean = false): String? {
+        return if (!checkToken()) {
+            app.post(
+                "https://graphql.anilist.co/",
+                headers = mapOf(
+                    "Authorization" to "Bearer " + (getAuth() ?: return null),
+                    if (cache) "Cache-Control" to "max-stale=$maxStale" else "Cache-Control" to "no-cache"
+                ),
+                cacheTime = 0,
+                data = mapOf("query" to q),//(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
+                timeout = 5 // REASONABLE TIMEOUT
+            ).text.replace("\\/", "/")
+        } else {
+            null
         }
     }
 
@@ -515,12 +496,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     suspend fun getAnilistAnimeListSmart(): Array<Lists>? {
-        if (getKey<String>(
-                accountId,
-                ANILIST_TOKEN_KEY,
-                null
-            ) == null
-        ) return null
+        if (getAuth() == null) return null
 
         if (checkToken()) return null
         return if (getKey(ANILIST_SHOULD_UPDATE_LIST, true) == true) {
@@ -536,19 +512,18 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     private suspend fun getFullAnilistList(): FullAnilistList? {
-        try {
-            var userID: Int? = null
-            /** WARNING ASSUMES ONE USER! **/
-            getKeys(ANILIST_USER_KEY)?.forEach { key ->
-                getKey<AniListUser>(key, null)?.let {
-                    userID = it.id
-                }
+        var userID: Int? = null
+        /** WARNING ASSUMES ONE USER! **/
+        getKeys(ANILIST_USER_KEY)?.forEach { key ->
+            getKey<AniListUser>(key, null)?.let {
+                userID = it.id
             }
+        }
 
-            val fixedUserID = userID ?: return null
-            val mediaType = "ANIME"
+        val fixedUserID = userID ?: return null
+        val mediaType = "ANIME"
 
-            val query = """
+        val query = """
                 query (${'$'}userID: Int = $fixedUserID, ${'$'}MEDIA: MediaType = $mediaType) {
                     MediaListCollection (userId: ${'$'}userID, type: ${'$'}MEDIA) { 
                         lists {
@@ -588,13 +563,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     }
                     }
             """
-            val text = postApi("https://graphql.anilist.co", query)
-            return text.toKotlinObject()
-
-        } catch (e: Exception) {
-            logError(e)
-            return null
-        }
+        val text = postApi(query)
+        return text?.toKotlinObject()
     }
 
     suspend fun toggleLike(id: Int): Boolean {
@@ -610,7 +580,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 					}
 				}
 			}"""
-        val data = postApi("https://graphql.anilist.co", q)
+        val data = postApi(q)
         return data != ""
     }
 
@@ -620,14 +590,13 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         score: Int?,
         progress: Int?
     ): Boolean {
-        try {
-            val q =
-                """mutation (${'$'}id: Int = $id, ${'$'}status: MediaListStatus = ${
-                    aniListStatusString[maxOf(
-                        0,
-                        type.value
-                    )]
-                }, ${if (score != null) "${'$'}scoreRaw: Int = ${score * 10}" else ""} , ${if (progress != null) "${'$'}progress: Int = $progress" else ""}) {
+        val q =
+            """mutation (${'$'}id: Int = $id, ${'$'}status: MediaListStatus = ${
+                aniListStatusString[maxOf(
+                    0,
+                    type.value
+                )]
+            }, ${if (score != null) "${'$'}scoreRaw: Int = ${score * 10}" else ""} , ${if (progress != null) "${'$'}progress: Int = $progress" else ""}) {
                 SaveMediaListEntry (mediaId: ${'$'}id, status: ${'$'}status, scoreRaw: ${'$'}scoreRaw, progress: ${'$'}progress) {
                     id
                     status
@@ -635,12 +604,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     score
                 }
                 }"""
-            val data = postApi("https://graphql.anilist.co", q)
-            return data != ""
-        } catch (e: Exception) {
-            logError(e)
-            return false
-        }
+        val data = postApi(q)
+        return data != ""
     }
 
     private suspend fun getUser(setSettings: Boolean = true): AniListUser? {
@@ -661,29 +626,24 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                         }
   					}
 				}"""
-        try {
-            val data = postApi("https://graphql.anilist.co", q)
-            if (data == "") return null
-            val userData = mapper.readValue<AniListRoot>(data)
-            val u = userData.data.Viewer
-            val user = AniListUser(
-                u.id,
-                u.name,
-                u.avatar.large,
-            )
-            if (setSettings) {
-                setKey(accountId, ANILIST_USER_KEY, user)
-                registerAccount()
-            }
-            /* // TODO FIX FAVS
-            for(i in u.favourites.anime.nodes) {
-                println("FFAV:" + i.id)
-            }*/
-            return user
-        } catch (e: java.lang.Exception) {
-            logError(e)
-            return null
+        val data = postApi(q)
+        if (data == "") return null
+        val userData = mapper.readValue<AniListRoot>(data ?: return null)
+        val u = userData.data.Viewer
+        val user = AniListUser(
+            u.id,
+            u.name,
+            u.avatar.large,
+        )
+        if (setSettings) {
+            setKey(accountId, ANILIST_USER_KEY, user)
+            registerAccount()
         }
+        /* // TODO FIX FAVS
+        for(i in u.favourites.anime.nodes) {
+            println("FFAV:" + i.id)
+        }*/
+        return user
     }
 
     suspend fun getAllSeasons(id: Int): List<SeasonResponse?> {

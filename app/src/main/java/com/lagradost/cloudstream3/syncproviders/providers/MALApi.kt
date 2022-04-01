@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
@@ -45,20 +46,28 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override fun loginInfo(): OAuth2API.LoginInfo? {
         //getMalUser(true)?
         getKey<MalUser>(accountId, MAL_USER_KEY)?.let { user ->
-            return OAuth2API.LoginInfo(profilePicture = user.picture, name = user.name, accountIndex = accountIndex)
+            return OAuth2API.LoginInfo(
+                profilePicture = user.picture,
+                name = user.name,
+                accountIndex = accountIndex
+            )
         }
         return null
     }
 
-    override suspend fun search(name: String): List<SyncAPI.SyncSearchResult> {
-        val url = "https://api.myanimelist.net/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
-        val auth = getKey<String>(
+    private fun getAuth(): String? {
+        return getKey(
             accountId,
             MAL_TOKEN_KEY
-        ) ?: return emptyList()
+        )
+    }
+
+    override suspend fun search(name: String): List<SyncAPI.SyncSearchResult> {
+        val url = "https://api.myanimelist.net/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
+        val auth = getAuth() ?: return emptyList()
         val res = app.get(
             url, headers = mapOf(
-                "Authorization" to "Bearer " + auth,
+                "Authorization" to "Bearer $auth",
             ), cacheTime = 0
         ).text
         return mapper.readValue<MalSearch>(res).data.map {
@@ -73,7 +82,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override suspend fun score(id: String, status : SyncAPI.SyncStatus): Boolean {
+    override suspend fun score(id: String, status: SyncAPI.SyncStatus): Boolean {
         return setScoreRequest(
             id.toIntOrNull() ?: return false,
             fromIntToAnimeStatus(status.status),
@@ -82,25 +91,156 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
+    data class MalAnime(
+        @JsonProperty("id") val id: Int?,
+        @JsonProperty("title") val title: String?,
+        @JsonProperty("main_picture") val mainPicture: MainPicture?,
+        @JsonProperty("alternative_titles") val alternativeTitles: AlternativeTitles?,
+        @JsonProperty("start_date") val startDate: String?,
+        @JsonProperty("end_date") val endDate: String?,
+        @JsonProperty("synopsis") val synopsis: String?,
+        @JsonProperty("mean") val mean: Double?,
+        @JsonProperty("rank") val rank: Int?,
+        @JsonProperty("popularity") val popularity: Int?,
+        @JsonProperty("num_list_users") val numListUsers: Int?,
+        @JsonProperty("num_scoring_users") val numScoringUsers: Int?,
+        @JsonProperty("nsfw") val nsfw: String?,
+        @JsonProperty("created_at") val createdAt: String?,
+        @JsonProperty("updated_at") val updatedAt: String?,
+        @JsonProperty("media_type") val mediaType: String?,
+        @JsonProperty("status") val status: String?,
+        @JsonProperty("genres") val genres: ArrayList<Genres>,
+        @JsonProperty("my_list_status") val myListStatus: MyListStatus?,
+        @JsonProperty("num_episodes") val numEpisodes: Int?,
+        @JsonProperty("start_season") val startSeason: StartSeason?,
+        @JsonProperty("broadcast") val broadcast: Broadcast?,
+        @JsonProperty("source") val source: String?,
+        @JsonProperty("average_episode_duration") val averageEpisodeDuration: Int?,
+        @JsonProperty("rating") val rating: String?,
+        @JsonProperty("pictures") val pictures: ArrayList<MainPicture>,
+        @JsonProperty("background") val background: String?,
+        @JsonProperty("related_anime") val relatedAnime: ArrayList<RelatedAnime>,
+        @JsonProperty("related_manga") val relatedManga: ArrayList<String>,
+        @JsonProperty("recommendations") val recommendations: ArrayList<Recommendations>,
+        @JsonProperty("studios") val studios: ArrayList<Studios>,
+        @JsonProperty("statistics") val statistics: Statistics?,
+    )
+
+    data class Recommendations(
+        @JsonProperty("node") val node: Node? = null,
+        @JsonProperty("num_recommendations") val numRecommendations: Int? = null
+    )
+
+    data class Studios(
+        @JsonProperty("id") val id: Int? = null,
+        @JsonProperty("name") val name: String? = null
+    )
+
+
+    data class MyListStatus(
+        @JsonProperty("status") val status: String? = null,
+        @JsonProperty("score") val score: Int? = null,
+        @JsonProperty("num_episodes_watched") val numEpisodesWatched: Int? = null,
+        @JsonProperty("is_rewatching") val isRewatching: Boolean? = null,
+        @JsonProperty("updated_at") val updatedAt: String? = null
+    )
+
+    data class RelatedAnime(
+        @JsonProperty("node") val node: Node? = null,
+        @JsonProperty("relation_type") val relationType: String? = null,
+        @JsonProperty("relation_type_formatted") val relationTypeFormatted: String? = null
+    )
+
+    data class Status(
+        @JsonProperty("watching") val watching: String? = null,
+        @JsonProperty("completed") val completed: String? = null,
+        @JsonProperty("on_hold") val onHold: String? = null,
+        @JsonProperty("dropped") val dropped: String? = null,
+        @JsonProperty("plan_to_watch") val planToWatch: String? = null
+    )
+
+    data class Statistics(
+        @JsonProperty("status") val status: Status? = null,
+        @JsonProperty("num_list_users") val numListUsers: Int? = null
+    )
+
+    private fun parseDate(string: String?): Long? {
+        return try {
+            SimpleDateFormat("yyyy-MM-dd")?.parse(string ?: return null)?.time
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun toSearchResult(node : Node?) : SyncAPI.SyncSearchResult? {
+        return SyncAPI.SyncSearchResult(
+            name = node?.title ?: return null,
+            syncApiName = this.name,
+            id = node.id.toString(),
+            url = "https://myanimelist.net/anime/${node.id}",
+            posterUrl = node.main_picture?.large
+        )
+    }
+
     override suspend fun getResult(id: String): SyncAPI.SyncResult? {
         val internalId = id.toIntOrNull() ?: return null
-        TODO("Not yet implemented")
+        val url =
+            "https://api.myanimelist.net/v2/anime/$internalId?fields=id,title,main_picture,alternative_titles,start_date,end_date,synopsis,mean,rank,popularity,num_list_users,num_scoring_users,nsfw,created_at,updated_at,media_type,status,genres,my_list_status,num_episodes,start_season,broadcast,source,average_episode_duration,rating,pictures,background,related_anime,related_manga,recommendations,studios,statistics"
+        val res = app.get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer " + (getAuth() ?: return null)
+            )
+        ).text
+        return mapper.readValue<MalAnime>(res).let { malAnime ->
+            SyncAPI.SyncResult(
+                id = malAnime.id?.toString()!!,
+                totalEpisodes = malAnime.numEpisodes,
+                title = malAnime.title,
+                publicScore = malAnime.mean?.toFloat()?.times(100)?.toInt(),
+                duration = malAnime.averageEpisodeDuration,
+                synopsis = malAnime.synopsis,
+                airStatus = when (malAnime.status) {
+                    "finished_airing" -> ShowStatus.Completed
+                    "airing" -> ShowStatus.Ongoing
+                    else -> null
+                },
+                nextAiring = null,
+                studio = malAnime.studios.mapNotNull { it.name },
+                genres = malAnime.genres.map { it.name },
+                trailerUrl = null,
+                startDate = parseDate(malAnime.startDate),
+                endDate = parseDate(malAnime.endDate),
+                recommendations = malAnime.recommendations.mapNotNull { rec ->
+                    val node = rec.node ?: return@mapNotNull null
+                    toSearchResult(node)
+                },
+                nextSeason = malAnime.relatedAnime.firstOrNull {
+                    return@firstOrNull it.relationType == "sequel"
+                }?.let { toSearchResult(it.node)  },
+                prevSeason = malAnime.relatedAnime.firstOrNull {
+                    return@firstOrNull it.relationType == "prequel"
+                }?.let { toSearchResult(it.node) },
+                actors = null,
+                characters = null,
+            )
+        }
     }
 
     override suspend fun getStatus(id: String): SyncAPI.SyncStatus? {
         val internalId = id.toIntOrNull() ?: return null
 
-        val data = getDataAboutMalId(internalId)?.my_list_status ?: return null
+        val data = getDataAboutMalId(internalId)?.my_list_status //?: throw ErrorLoadingException("No my_list_status")
         return SyncAPI.SyncStatus(
-            score = data.score,
-            status = malStatusAsString.indexOf(data.status),
+            score = data?.score,
+            status = malStatusAsString.indexOf(data?.status),
             isFavorite = null,
-            watchedEpisodes = data.num_episodes_watched,
+            watchedEpisodes = data?.num_episodes_watched,
         )
     }
 
     companion object {
-        private val malStatusAsString = arrayOf("watching", "completed", "on_hold", "dropped", "plan_to_watch")
+        private val malStatusAsString =
+            arrayOf("watching", "completed", "on_hold", "dropped", "plan_to_watch")
 
         const val MAL_USER_KEY: String = "mal_user" // user data like profile
         const val MAL_CACHED_LIST: String = "mal_cached_list"
@@ -111,39 +251,35 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     override fun handleRedirect(url: String) {
-        try {
-            val sanitizer =
-                splitQuery(URL(url.replace(appString, "https").replace("/#", "?"))) // FIX ERROR
-            val state = sanitizer["state"]!!
-            if (state == "RequestID$requestId") {
-                val currentCode = sanitizer["code"]!!
-                ioSafe {
-                    var res = ""
-                    try {
-                        //println("cc::::: " + codeVerifier)
-                        res = app.post(
-                            "https://myanimelist.net/v1/oauth2/token",
-                            data = mapOf(
-                                "client_id" to key,
-                                "code" to currentCode,
-                                "code_verifier" to codeVerifier,
-                                "grant_type" to "authorization_code"
-                            )
-                        ).text
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+        val sanitizer =
+            splitQuery(URL(url.replace(appString, "https").replace("/#", "?"))) // FIX ERROR
+        val state = sanitizer["state"]!!
+        if (state == "RequestID$requestId") {
+            val currentCode = sanitizer["code"]!!
+            ioSafe {
+                var res = ""
+                try {
+                    //println("cc::::: " + codeVerifier)
+                    res = app.post(
+                        "https://myanimelist.net/v1/oauth2/token",
+                        data = mapOf(
+                            "client_id" to key,
+                            "code" to currentCode,
+                            "code_verifier" to codeVerifier,
+                            "grant_type" to "authorization_code"
+                        )
+                    ).text
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
 
-                    if (res != "") {
-                        switchToNewAccount()
-                        storeToken(res)
-                        getMalUser()
-                        setKey(MAL_SHOULD_UPDATE_LIST, true)
-                    }
+                if (res != "") {
+                    switchToNewAccount()
+                    storeToken(res)
+                    getMalUser()
+                    setKey(MAL_SHOULD_UPDATE_LIST, true)
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
@@ -277,44 +413,35 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("start_time") val start_time: String?
     )
 
-    fun getMalAnimeListCached(): Array<Data>? {
+    private fun getMalAnimeListCached(): Array<Data>? {
         return getKey(MAL_CACHED_LIST) as? Array<Data>
     }
 
     suspend fun getMalAnimeListSmart(): Array<Data>? {
-        if (getKey<String>(
-                accountId,
-                MAL_TOKEN_KEY
-            ) == null
-        ) return null
+        if (getAuth() == null) return null
         return if (getKey(MAL_SHOULD_UPDATE_LIST, true) == true) {
             val list = getMalAnimeList()
-            if (list != null) {
-                setKey(MAL_CACHED_LIST, list)
-                setKey(MAL_SHOULD_UPDATE_LIST, false)
-            }
+            setKey(MAL_CACHED_LIST, list)
+            setKey(MAL_SHOULD_UPDATE_LIST, false)
             list
         } else {
             getMalAnimeListCached()
         }
     }
 
-    private suspend fun getMalAnimeList(): Array<Data>? {
-        return try {
-            checkMalToken()
-            var offset = 0
-            val fullList = mutableListOf<Data>()
-            val offsetRegex = Regex("""offset=(\d+)""")
-            while (true) {
-                val data: MalList = getMalAnimeListSlice(offset) ?: break
-                fullList.addAll(data.data)
-                offset = data.paging.next?.let { offsetRegex.find(it)?.groupValues?.get(1)?.toInt() } ?: break
-            }
-            fullList.toTypedArray()
-            //mapper.readValue<MalAnime>(res)
-        } catch (e: Exception) {
-            null
+    private suspend fun getMalAnimeList(): Array<Data> {
+        checkMalToken()
+        var offset = 0
+        val fullList = mutableListOf<Data>()
+        val offsetRegex = Regex("""offset=(\d+)""")
+        while (true) {
+            val data: MalList = getMalAnimeListSlice(offset) ?: break
+            fullList.addAll(data.data)
+            offset =
+                data.paging.next?.let { offsetRegex.find(it)?.groupValues?.get(1)?.toInt() }
+                    ?: break
         }
+        return fullList.toTypedArray()
     }
 
     fun convertToStatus(string: String): MalStatusType {
@@ -323,43 +450,30 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
 
     private suspend fun getMalAnimeListSlice(offset: Int = 0): MalList? {
         val user = "@me"
-        val auth = getKey<String>(
-            accountId,
-            MAL_TOKEN_KEY
-        ) ?: return null
-        return try {
-            // Very lackluster docs
-            // https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_id_animelist_get
-            val url =
-                "https://api.myanimelist.net/v2/users/$user/animelist?fields=list_status,num_episodes,media_type,status,start_date,end_date,synopsis,alternative_titles,mean,genres,rank,num_list_users,nsfw,average_episode_duration,num_favorites,popularity,num_scoring_users,start_season,favorites_info,broadcast,created_at,updated_at&nsfw=1&limit=100&offset=$offset"
-            val res = app.get(
-                url, headers = mapOf(
-                    "Authorization" to "Bearer $auth",
-                ), cacheTime = 0
-            ).text
-            res.toKotlinObject()
-        } catch (e: Exception) {
-            logError(e)
-            null
-        }
+        val auth = getAuth() ?: return null
+        // Very lackluster docs
+        // https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_id_animelist_get
+        val url =
+            "https://api.myanimelist.net/v2/users/$user/animelist?fields=list_status,num_episodes,media_type,status,start_date,end_date,synopsis,alternative_titles,mean,genres,rank,num_list_users,nsfw,average_episode_duration,num_favorites,popularity,num_scoring_users,start_season,favorites_info,broadcast,created_at,updated_at&nsfw=1&limit=100&offset=$offset"
+        val res = app.get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer $auth",
+            ), cacheTime = 0
+        ).text
+        return res.toKotlinObject()
     }
 
-    private suspend fun getDataAboutMalId(id: Int): MalAnime? {
-        return try {
-            // https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get
-            val url = "https://api.myanimelist.net/v2/anime/$id?fields=id,title,num_episodes,my_list_status"
-            val res = app.get(
-                url, headers = mapOf(
-                    "Authorization" to "Bearer " + getKey<String>(
-                        accountId,
-                        MAL_TOKEN_KEY
-                    )!!
-                ), cacheTime = 0
-            ).text
-            mapper.readValue<MalAnime>(res)
-        } catch (e: Exception) {
-            null
-        }
+    private suspend fun getDataAboutMalId(id: Int): SmallMalAnime? {
+        // https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get
+        val url =
+            "https://api.myanimelist.net/v2/anime/$id?fields=id,title,num_episodes,my_list_status"
+        val res = app.get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer " + (getAuth() ?: return null)
+            ), cacheTime = 0
+        ).text
+
+        return mapper.readValue<SmallMalAnime>(res)
     }
 
     suspend fun setAllMalData() {
@@ -372,14 +486,12 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             val res = app.get(
                 "https://api.myanimelist.net/v2/users/$user/animelist?fields=list_status&limit=1000&offset=${index * 1000}",
                 headers = mapOf(
-                    "Authorization" to "Bearer " + getKey<String>(
-                        accountId,
-                        MAL_TOKEN_KEY
-                    )!!
+                    "Authorization" to "Bearer " + (getAuth() ?: return)
                 ), cacheTime = 0
             ).text
             val values = mapper.readValue<MalRoot>(res)
-            val titles = values.data.map { MalTitleHolder(it.list_status, it.node.id, it.node.title) }
+            val titles =
+                values.data.map { MalTitleHolder(it.list_status, it.node.id, it.node.title) }
             for (t in titles) {
                 allTitles[t.id] = t
             }
@@ -389,41 +501,37 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     fun convertJapanTimeToTimeRemaining(date: String, endDate: String? = null): String? {
+        // No time remaining if the show has already ended
         try {
-            // No time remaining if the show has already ended
-            try {
-                endDate?.let {
-                    if (SimpleDateFormat("yyyy-MM-dd").parse(it).time < System.currentTimeMillis()) return@convertJapanTimeToTimeRemaining null
-                }
-            } catch (e: ParseException) {
-                logError(e)
+            endDate?.let {
+                if (SimpleDateFormat("yyyy-MM-dd").parse(it).time < System.currentTimeMillis()) return@convertJapanTimeToTimeRemaining null
             }
-
-            // Unparseable date: "2021 7 4 other null"
-            // Weekday: other, date: null
-            if (date.contains("null") || date.contains("other")) {
-                return null
-            }
-
-            val currentDate = Calendar.getInstance()
-            val currentMonth = currentDate.get(Calendar.MONTH) + 1
-            val currentWeek = currentDate.get(Calendar.WEEK_OF_MONTH)
-            val currentYear = currentDate.get(Calendar.YEAR)
-
-            val dateFormat = SimpleDateFormat("yyyy MM W EEEE HH:mm")
-            dateFormat.timeZone = TimeZone.getTimeZone("Japan")
-            val parsedDate = dateFormat.parse("$currentYear $currentMonth $currentWeek $date") ?: return null
-            val timeDiff = (parsedDate.time - System.currentTimeMillis()) / 1000
-
-            // if it has already aired this week add a week to the timer
-            val updatedTimeDiff =
-                if (timeDiff > -60 * 60 * 24 * 7 && timeDiff < 0) timeDiff + 60 * 60 * 24 * 7 else timeDiff
-            return secondsToReadable(updatedTimeDiff.toInt(), "Now")
-
-        } catch (e: Exception) {
+        } catch (e: ParseException) {
             logError(e)
         }
-        return null
+
+        // Unparseable date: "2021 7 4 other null"
+        // Weekday: other, date: null
+        if (date.contains("null") || date.contains("other")) {
+            return null
+        }
+
+        val currentDate = Calendar.getInstance()
+        val currentMonth = currentDate.get(Calendar.MONTH) + 1
+        val currentWeek = currentDate.get(Calendar.WEEK_OF_MONTH)
+        val currentYear = currentDate.get(Calendar.YEAR)
+
+        val dateFormat = SimpleDateFormat("yyyy MM W EEEE HH:mm")
+        dateFormat.timeZone = TimeZone.getTimeZone("Japan")
+        val parsedDate =
+            dateFormat.parse("$currentYear $currentMonth $currentWeek $date") ?: return null
+        val timeDiff = (parsedDate.time - System.currentTimeMillis()) / 1000
+
+        // if it has already aired this week add a week to the timer
+        val updatedTimeDiff =
+            if (timeDiff > -60 * 60 * 24 * 7 && timeDiff < 0) timeDiff + 60 * 60 * 24 * 7 else timeDiff
+        return secondsToReadable(updatedTimeDiff.toInt(), "Now")
+
     }
 
     private suspend fun checkMalToken() {
@@ -438,27 +546,19 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
 
     private suspend fun getMalUser(setSettings: Boolean = true): MalUser? {
         checkMalToken()
-        return try {
-            val res = app.get(
-                "https://api.myanimelist.net/v2/users/@me",
-                headers = mapOf(
-                    "Authorization" to "Bearer " + getKey<String>(
-                        accountId,
-                        MAL_TOKEN_KEY
-                    )!!
-                ), cacheTime = 0
-            ).text
+        val res = app.get(
+            "https://api.myanimelist.net/v2/users/@me",
+            headers = mapOf(
+                "Authorization" to "Bearer " + (getAuth() ?: return null)
+            ), cacheTime = 0
+        ).text
 
-            val user = mapper.readValue<MalUser>(res)
-            if (setSettings) {
-                setKey(accountId, MAL_USER_KEY, user)
-                registerAccount()
-            }
-            user
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+        val user = mapper.readValue<MalUser>(res)
+        if (setSettings) {
+            setKey(accountId, MAL_USER_KEY, user)
+            registerAccount()
         }
+        return user
     }
 
     enum class MalStatusType(var value: Int) {
@@ -483,7 +583,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    suspend fun setScoreRequest(
+    private suspend fun setScoreRequest(
         id: Int,
         status: MalStatusType? = null,
         score: Int? = null,
@@ -495,22 +595,18 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             score,
             num_watched_episodes
         )
-        if (res != "") {
-            return try {
-                val malStatus = mapper.readValue<MalStatus>(res)
-                if (allTitles.containsKey(id)) {
-                    val currentTitle = allTitles[id]!!
-                    allTitles[id] = MalTitleHolder(malStatus, id, currentTitle.name)
-                } else {
-                    allTitles[id] = MalTitleHolder(malStatus, id, "")
-                }
-                true
-            } catch (e: Exception) {
-                logError(e)
-                false
-            }
+
+        return if (res.isNullOrBlank()) {
+            false
         } else {
-            return false
+            val malStatus = mapper.readValue<MalStatus>(res)
+            if (allTitles.containsKey(id)) {
+                val currentTitle = allTitles[id]!!
+                allTitles[id] = MalTitleHolder(malStatus, id, currentTitle.name)
+            } else {
+                allTitles[id] = MalTitleHolder(malStatus, id, "")
+            }
+            true
         }
     }
 
@@ -519,26 +615,18 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         status: String? = null,
         score: Int? = null,
         num_watched_episodes: Int? = null,
-    ): String {
-        return try {
-            app.put(
-                "https://api.myanimelist.net/v2/anime/$id/my_list_status",
-                headers = mapOf(
-                    "Authorization" to "Bearer " + getKey<String>(
-                        accountId,
-                        MAL_TOKEN_KEY
-                    )!!
-                ),
-                data = mapOf(
-                    "status" to status,
-                    "score" to score?.toString(),
-                    "num_watched_episodes" to num_watched_episodes?.toString()
-                )
-            ).text
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return ""
-        }
+    ): String? {
+        return app.put(
+            "https://api.myanimelist.net/v2/anime/$id/my_list_status",
+            headers = mapOf(
+                "Authorization" to "Bearer " + (getAuth() ?: return null)
+            ),
+            data = mapOf(
+                "status" to status,
+                "score" to score?.toString(),
+                "num_watched_episodes" to num_watched_episodes?.toString()
+            )
+        ).text
     }
 
 
@@ -591,7 +679,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     // Used for getDataAboutId()
-    data class MalAnime(
+    data class SmallMalAnime(
         @JsonProperty("id") val id: Int,
         @JsonProperty("title") val title: String?,
         @JsonProperty("num_episodes") val num_episodes: Int,

@@ -88,7 +88,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
         }
 
-        private const val accountEnabled = false
+        const val accountEnabled = false
     }
 
     private var beneneCount = 0
@@ -155,7 +155,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val dialog = builder.show()
 
         dialog.findViewById<TextView>(R.id.account_add)?.setOnClickListener {
-            api.authenticate()
+            try {
+                api.authenticate()
+            } catch (e: Exception) {
+                logError(e)
+            }
         }
 
         val ogIndex = api.accountIndex
@@ -325,10 +329,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val syncApis =
             listOf(Pair(R.string.mal_key, malApi), Pair(R.string.anilist_key, aniListApi))
-        for (sync in syncApis) {
-            getPref(sync.first)?.apply {
+        for ((key, api) in syncApis) {
+            getPref(key)?.apply {
                 isVisible = accountEnabled
-                val api = sync.second
                 title =
                     getString(R.string.login_format).format(api.name, getString(R.string.account))
                 setOnPreferenceClickListener { _ ->
@@ -336,7 +339,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     if (info != null) {
                         showLoginInfo(api, info)
                     } else {
-                        api.authenticate()
+                        try {
+                            api.authenticate()
+                        } catch (e: Exception) {
+                            logError(e)
+                        }
                     }
                     return@setOnPreferenceClickListener true
                 }
