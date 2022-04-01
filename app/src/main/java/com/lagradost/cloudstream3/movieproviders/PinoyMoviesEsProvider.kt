@@ -1,12 +1,13 @@
 package com.lagradost.cloudstream3.movieproviders
 
+import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.FEmbed
 import com.lagradost.cloudstream3.extractors.helper.VstreamhubHelper
 import com.lagradost.cloudstream3.network.DdosGuardKiller
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.select.Elements
@@ -55,6 +56,8 @@ class PinoyMoviesEsProvider : MainAPI() {
                     val rex = Regex("\\((\\d+)")
                     year = rex.find(name)?.value?.replace("(", "")?.toIntOrNull()
                 }
+                //Log.i(this.name, "ApiError -> ${it.selectFirst("span.quality")?.text()}")
+                val searchQual = getQualityFromString(it.selectFirst("span.quality")?.text())
 
                 MovieSearchResponse(
                     name = name,
@@ -62,7 +65,8 @@ class PinoyMoviesEsProvider : MainAPI() {
                     apiName = this.name,
                     type = TvType.Movie,
                     posterUrl = image,
-                    year = year
+                    year = year,
+                    quality = searchQual
                 )
             }?.distinctBy { c -> c.url } ?: listOf()
             //Add to list of homepages
@@ -116,14 +120,16 @@ class PinoyMoviesEsProvider : MainAPI() {
             val title = urlTitle.text()?.trim() ?: "<No Title>"
             val year = urlTitle.select("span.year")?.text()?.toIntOrNull()
             val image = it.select("div.poster > img")?.attr("src")
+            val searchQual = getQualityFromString(it.selectFirst("span.quality")?.text())
 
             MovieSearchResponse(
-                title,
-                link,
-                this.name,
-                TvType.Movie,
-                image,
-                year
+                name = title,
+                url = link,
+                apiName = this.name,
+                type = TvType.Movie,
+                posterUrl = image,
+                year = year,
+                quality = searchQual
             )
         }?.distinctBy { it.url } ?: listOf()
     }
@@ -177,10 +183,10 @@ class PinoyMoviesEsProvider : MainAPI() {
             )
             val innerPage = app.post("https://pinoymovies.es/wp-admin/admin-ajax.php ",
                 referer = url, data = content).document.select("body")?.text()?.trim()
-            if (!innerPage.isNullOrEmpty()) {
-                val embedData = mapper.readValue<EmbedUrl>(innerPage)
-                //Log.i(this.name, "Result => (embed_url) ${embedData.embed_url}")
-                listOfLinks.add(embedData.embed_url)
+            if (!innerPage.isNullOrBlank()) {
+                tryParseJson<EmbedUrl>(innerPage)?.let {
+                    listOfLinks.add(it.embed_url)
+                }
             }
         }
         return MovieLoadResponse(
@@ -205,7 +211,7 @@ class PinoyMoviesEsProvider : MainAPI() {
     ): Boolean {
         // parse movie servers
         var count = 0
-        mapper.readValue<List<String>>(data).forEach { link ->
+        tryParseJson<List<String>>(data)?.forEach { link ->
             //Log.i(this.name, "Result => (link) $link")
             if (link.startsWith("https://vstreamhub.com")) {
                 VstreamhubHelper.getUrls(link, callback)

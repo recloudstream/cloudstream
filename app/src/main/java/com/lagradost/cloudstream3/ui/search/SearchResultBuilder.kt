@@ -61,6 +61,9 @@ object SearchResultBuilder {
             SearchQuality.SD -> R.string.quality_sd
             SearchQuality.FourK -> R.string.quality_4k
             SearchQuality.UHD -> R.string.quality_uhd
+            SearchQuality.SDR -> R.string.quality_sdr
+            SearchQuality.HDR -> R.string.quality_hdr
+            SearchQuality.WebRip -> R.string.quality_webrip
             else -> null
         }?.let { textRes ->
             textQuality?.setText(textRes)

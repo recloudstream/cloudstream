@@ -554,11 +554,14 @@ enum class SearchQuality {
     Telecine, // TC
     HQ,
     HD,
+    HDR, // high dynamic range
     BlueRay,
     DVD,
     SD,
     FourK,
     UHD,
+    SDR, // standard dynamic range
+    WebRip
 }
 
 /**Add anything to here if you find a site that uses some specific naming convention*/
@@ -567,22 +570,33 @@ fun getQualityFromString(string: String?) : SearchQuality? {
 
     return when(check) {
         "cam" -> SearchQuality.Cam
+        "camrip" -> SearchQuality.CamRip
         "hdcam" -> SearchQuality.HdCam
+        "highquality" -> SearchQuality.HQ
         "hq" -> SearchQuality.HQ
+        "highdefinition" -> SearchQuality.HD
         "hdrip" -> SearchQuality.HD
         "hd" -> SearchQuality.HD
-        "camrip" -> SearchQuality.CamRip
         "rip" -> SearchQuality.CamRip
+        "telecine" -> SearchQuality.Telecine
         "tc" -> SearchQuality.Telecine
+        "telesync" -> SearchQuality.Telesync
         "ts" -> SearchQuality.Telesync
         "dvd" -> SearchQuality.DVD
         "blueray" ->  SearchQuality.BlueRay
+        "bluray" -> SearchQuality.BlueRay
+        "br" -> SearchQuality.BlueRay
+        "standard" -> SearchQuality.SD
         "sd" -> SearchQuality.SD
         "4k" -> SearchQuality.FourK
         "uhd" -> SearchQuality.UHD // may also be 4k or 8k
         "blue" -> SearchQuality.BlueRay
         "wp" -> SearchQuality.WorkPrint
         "workprint" -> SearchQuality.WorkPrint
+        "webrip" -> SearchQuality.WebRip
+        "web" -> SearchQuality.WebRip
+        "hdr" -> SearchQuality.HDR
+        "sdr" -> SearchQuality.SDR
         else -> null
     }
 }

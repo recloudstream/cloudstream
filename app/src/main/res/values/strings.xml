@@ -447,6 +447,9 @@
     <string name="quality_4k">4K</string>
     <string name="quality_sd">SD</string>
     <string name="quality_uhd">UHD</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="quality_webrip">Web</string>
 
     <string name="poster_image">Poster Image</string>
 </resources>

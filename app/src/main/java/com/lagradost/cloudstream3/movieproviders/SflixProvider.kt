@@ -59,7 +59,7 @@ open class SflixProvider : MainAPI() {
         map.forEach {
             all.add(HomePageList(
                 it.key,
-                document.select(it.value).select("div.film-poster").map { element ->
+                document.select(it.value).select("div.flw-item").map { element ->
                     element.toSearchResult()
                 }
             ))
@@ -67,7 +67,7 @@ open class SflixProvider : MainAPI() {
 
         document.select("section.block_area.block_area_home.section-id-02").forEach {
             val title = it.select("h2.cat-heading").text().trim()
-            val elements = it.select("div.film-poster").map { element ->
+            val elements = it.select("div.flw-item").map { element ->
                 element.toSearchResult()
             }
             all.add(HomePageList(title, elements))
@@ -500,19 +500,39 @@ open class SflixProvider : MainAPI() {
     }
 
     private fun Element.toSearchResult(): SearchResponse {
-        val img = this.select("img")
+        val inner = this.selectFirst("div.film-poster")
+        val img = inner.select("img")
         val title = img.attr("title")
-        val posterUrl = img.attr("data-src")
-        val href = fixUrl(this.select("a").attr("href"))
+        val posterUrl = img.attr("data-src") ?: img.attr("src")
+        val href = fixUrl(inner.select("a").attr("href"))
         val isMovie = href.contains("/movie/")
+        val otherInfo = this.selectFirst("div.film-detail > div.fd-infor")?.select("span")?.toList() ?: listOf()
+        var rating: Int? = null
+        var year: Int? = null
+        var quality: SearchQuality? = null
+        when (otherInfo.size) {
+            1 -> {
+                year = otherInfo[0]?.text()?.trim()?.toIntOrNull()
+            }
+            2 -> {
+                year = otherInfo[0]?.text()?.trim()?.toIntOrNull()
+            }
+            3 -> {
+                rating = otherInfo[0]?.text()?.toRatingInt()
+                quality = getQualityFromString(otherInfo[1]?.text())
+                year = otherInfo[2]?.text()?.trim()?.toIntOrNull()
+            }
+        }
+
         return if (isMovie) {
             MovieSearchResponse(
                 title,
                 href,
                 this@SflixProvider.name,
                 TvType.Movie,
-                posterUrl,
-                null
+                posterUrl = posterUrl,
+                year = year,
+                quality = quality
             )
         } else {
             TvSeriesSearchResponse(
@@ -521,8 +541,9 @@ open class SflixProvider : MainAPI() {
                 this@SflixProvider.name,
                 TvType.Movie,
                 posterUrl,
-                null,
-                null
+                year = null,
+                episodes = year,
+                quality = quality
             )
         }
     }
