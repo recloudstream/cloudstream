@@ -70,7 +70,9 @@ interface SyncAPI : OAuth2API {
         var nextAiring: SyncNextAiring? = null,
         var studio: List<String>? = null,
         var genres: List<String>? = null,
+        var synonyms: List<String>? = null,
         var trailerUrl: String? = null,
+        var isAdult : Boolean? = null,
 
         /** In unixtime */
         var startDate: Long? = null,

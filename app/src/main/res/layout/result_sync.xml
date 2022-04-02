@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content">
 
             <TextView
-                    android:visibility="gone"
+                    android:id="@+id/result_sync_names"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:layout_marginBottom="10dp"

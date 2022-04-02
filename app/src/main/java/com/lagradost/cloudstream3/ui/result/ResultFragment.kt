@@ -1191,19 +1191,24 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 syncModel.setEpisodesDelta(-1)
             }
 
-            result_sync_current_episodes?.doOnTextChanged { text, start, before, count ->
-                if(count == before) return@doOnTextChanged
+            result_sync_current_episodes?.doOnTextChanged { text, _, before, count ->
+                if (count == before) return@doOnTextChanged
                 text?.toString()?.toIntOrNull()?.let { ep ->
                     syncModel.setEpisodes(ep)
                 }
             }
         }
 
+        observe(syncModel.synced) { list ->
+            result_sync_names?.text =
+                list.filter { it.isSynced && it.hasAccount }.joinToString { it.name }
+        }
+
         observe(syncModel.metadata) { meta ->
             when (meta) {
                 is Resource.Success -> {
                     val d = meta.value
-                    result_sync_episodes?.max = (d.totalEpisodes ?: 0)*1000
+                    result_sync_episodes?.max = (d.totalEpisodes ?: 0) * 1000
                     normalSafeApiCall {
                         val ctx = result_sync_max_episodes?.context
                         result_sync_max_episodes?.text =
