@@ -541,8 +541,8 @@ open class SflixProvider : MainAPI() {
                 this@SflixProvider.name,
                 TvType.Movie,
                 posterUrl,
-                year = null,
-                episodes = year,
+                year = year,
+                episodes = null,
                 quality = quality
             )
         }
