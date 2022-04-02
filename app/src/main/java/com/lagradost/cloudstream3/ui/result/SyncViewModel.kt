@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.SyncApis
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.utils.SyncUtil
 import kotlinx.coroutines.launch
 
 
@@ -28,12 +29,22 @@ class SyncViewModel : ViewModel() {
     // prefix, id
     private val syncIds = hashMapOf<String, String>()
 
-    fun setMalId(id: String) {
-        syncIds[malApi.idPrefix] = id
+    fun setMalId(id: String?) {
+        syncIds[malApi.idPrefix] = id ?: return
     }
 
-    fun setAniListId(id: String) {
-        syncIds[aniListApi.idPrefix] = id
+    fun setAniListId(id: String?) {
+        syncIds[aniListApi.idPrefix] = id ?: return
+    }
+
+    fun addFromUrl(url : String?) = viewModelScope.launch {
+        SyncUtil.getIdsFromUrl(url)?.let { (malId, aniListId) ->
+            setMalId(malId)
+            setAniListId(aniListId)
+            if(malId != null || aniListId != null) {
+                updateMetaAndUser()
+            }
+        }
     }
 
     fun setEpisodesDelta(delta: Int) {
@@ -123,5 +134,10 @@ class SyncViewModel : ViewModel() {
         }
         _metaResponse.postValue(lastError)
         setEpisodesDelta(0)
+    }
+
+    fun updateMetaAndUser() {
+        updateMetadata()
+        updateUserData()
     }
 }

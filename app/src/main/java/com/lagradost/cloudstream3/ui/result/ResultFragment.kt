@@ -518,13 +518,13 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000f))
     }
 
-    private fun setMalSync(id: String?): Boolean {
-        syncModel.setMalId(id ?: return false)
+    private fun setMalSync(id: Int?): Boolean {
+        syncModel.setMalId(id?.toString() ?: return false)
         return true
     }
 
-    private fun setAniListSync(id: String?): Boolean {
-        syncModel.setAniListId(id ?: return false)
+    private fun setAniListSync(id: Int?): Boolean {
+        syncModel.setAniListId(id?.toString() ?: return false)
         return true
     }
 
@@ -637,6 +637,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         startAction = arguments?.getInt("startAction") ?: START_ACTION_NORMAL
         startValue = arguments?.getInt("startValue") ?: START_VALUE_NORMAL
 
+        syncModel.addFromUrl(url)
 
         val api = getApiFromName(apiName)
         if (media_route_button != null) {
@@ -1036,7 +1037,6 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 }
             }
         }
-
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             EpisodeAdapter(
@@ -1523,12 +1523,11 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         if (SettingsFragment.accountEnabled)
                             if (d is AnimeLoadResponse) {
                                 if (
-                                    setMalSync(d.malId?.toString())
+                                    setMalSync(d.malId)
                                     ||
-                                    setAniListSync(d.anilistId?.toString())
+                                    setAniListSync(d.anilistId)
                                 ) {
-                                    syncModel.updateMetadata()
-                                    syncModel.updateUserData()
+                                    syncModel.updateMetaAndUser()
                                 }
                             }
 
