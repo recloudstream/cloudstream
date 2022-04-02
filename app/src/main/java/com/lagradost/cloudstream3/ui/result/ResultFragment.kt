@@ -11,15 +11,15 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
@@ -27,6 +27,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -1149,7 +1150,79 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             }
         }
 
-        observe(syncModel.status) { status ->
+        context?.let { ctx ->
+            val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+            /*
+            -1 -> None
+            0 -> Watching
+            1 -> Completed
+            2 -> OnHold
+            3 -> Dropped
+            4 -> PlanToWatch
+            5 -> ReWatching
+            */
+            val items = listOf(
+                R.string.none,
+                R.string.type_watching,
+                R.string.type_completed,
+                R.string.type_on_hold,
+                R.string.type_dropped,
+                R.string.type_plan_to_watch,
+                R.string.type_re_watching
+            ).map { ctx.getString(it) }
+            arrayAdapter.addAll(items)
+            result_sync_check?.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+            result_sync_check?.adapter = arrayAdapter
+            UIHelper.setListViewHeightBasedOnItems(result_sync_check)
+
+            result_sync_check?.setOnItemClickListener { _, _, which, _ ->
+                syncModel.setStatus(which - 1)
+            }
+
+            result_sync_rating?.addOnChangeListener { _, value, _ ->
+                syncModel.setScore(value.toInt())
+            }
+
+            result_sync_add_episode?.setOnClickListener {
+                syncModel.setEpisodesDelta(1)
+            }
+
+            result_sync_sub_episode?.setOnClickListener {
+                syncModel.setEpisodesDelta(-1)
+            }
+
+            result_sync_current_episodes?.doOnTextChanged { text, start, before, count ->
+                if(count == before) return@doOnTextChanged
+                text?.toString()?.toIntOrNull()?.let { ep ->
+                    syncModel.setEpisodes(ep)
+                }
+            }
+        }
+
+        observe(syncModel.metadata) { meta ->
+            when (meta) {
+                is Resource.Success -> {
+                    val d = meta.value
+                    result_sync_episodes?.max = (d.totalEpisodes ?: 0)*1000
+                    normalSafeApiCall {
+                        val ctx = result_sync_max_episodes?.context
+                        result_sync_max_episodes?.text =
+                            d.totalEpisodes?.let {
+                                ctx?.getString(R.string.sync_total_episodes_some)?.format(it)
+                            } ?: run {
+                                ctx?.getString(R.string.sync_total_episodes_none)
+                            }
+                    }
+                }
+                is Resource.Loading -> {
+                    result_sync_max_episodes?.text =
+                        result_sync_max_episodes?.context?.getString(R.string.sync_total_episodes_none)
+                }
+                else -> {}
+            }
+        }
+
+        observe(syncModel.userData) { status ->
             var closed = false
             when (status) {
                 is Resource.Failure -> {
@@ -1169,17 +1242,20 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
                     val d = status.value
                     result_sync_rating?.value = d.score?.toFloat() ?: 0.0f
-
-                    /*when(d.status) {
-                        -1 -> None
-                        0 -> Watching
-                        1 -> Completed
-                        2 -> OnHold
-                        3 -> Dropped
-                        4 -> PlanToWatch
-                        5 -> ReWatching
-                    }*/
-                    //d.status
+                    result_sync_check?.setItemChecked(d.status + 1, true)
+                    val watchedEpisodes = d.watchedEpisodes ?: 0
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        result_sync_episodes?.setProgress(watchedEpisodes * 1000, true)
+                    } else {
+                        result_sync_episodes?.progress = watchedEpisodes * 1000
+                    }
+                    result_sync_current_episodes?.text =
+                        Editable.Factory.getInstance()?.newEditable(watchedEpisodes.toString())
+                    normalSafeApiCall { // format might fail
+                        context?.getString(R.string.sync_score_format)?.format(d.score ?: 0)?.let {
+                            result_sync_score_text?.text = it
+                        }
+                    }
                 }
                 null -> {
                     closed = false
@@ -1349,10 +1425,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         }
 
         result_sync_set_score?.setOnClickListener {
-            // TODO set score
-            //syncModel.setScore(SyncAPI.SyncStatus(
-            //    status =
-            //))
+            syncModel.publishUserData()
         }
 
         observe(viewModel.publicEpisodesCount) { count ->
@@ -1455,7 +1528,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                                     setAniListSync(d.anilistId?.toString())
                                 ) {
                                     syncModel.updateMetadata()
-                                    syncModel.updateStatus()
+                                    syncModel.updateUserData()
                                 }
                             }
 

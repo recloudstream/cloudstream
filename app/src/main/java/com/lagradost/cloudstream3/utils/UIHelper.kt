@@ -12,12 +12,11 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.view.Gravity
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.ListAdapter
+import android.widget.ListView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
@@ -71,6 +70,36 @@ object UIHelper {
         )
     }
 
+
+    /**
+     * Sets ListView height dynamically based on the height of the items.
+     *
+     * @param listView to be resized
+     * @return true if the listView is successfully resized, false otherwise
+     */
+    fun setListViewHeightBasedOnItems(listView: ListView?) {
+        val listAdapter: ListAdapter = listView?.adapter ?: return
+        val numberOfItems: Int = listAdapter.count
+
+        // Get total height of all items.
+        var totalItemsHeight = 0
+        for (itemPos in 0 until numberOfItems) {
+            val item: View = listAdapter.getView(itemPos, null, listView)
+            item.measure(0, 0)
+            totalItemsHeight += item.measuredHeight
+        }
+
+        // Get total height of all item dividers.
+        val totalDividersHeight: Int = listView.dividerHeight *
+                (numberOfItems - 1)
+
+        // Set list height.
+        val params: ViewGroup.LayoutParams = listView.layoutParams
+        params.height = totalItemsHeight + totalDividersHeight
+        listView.layoutParams = params
+        listView.requestLayout()
+    }
+
     fun Activity?.getSpanCount(): Int? {
         val compactView = this?.getGridIsCompact() ?: return null
         val spanCountLandscape = if (compactView) 2 else 6
@@ -120,7 +149,7 @@ object UIHelper {
         return color
     }
 
-    fun ImageView?.setImage(url: String?) : Boolean {
+    fun ImageView?.setImage(url: String?): Boolean {
         if (this == null || url.isNullOrBlank()) return false
         return try {
             GlideApp.with(this.context)
@@ -316,7 +345,7 @@ object UIHelper {
     fun Activity.showSystemUI() {
         window.decorView.systemUiVisibility =
 
-                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
 
         changeStatusBarState(isEmulatorSettings())
 

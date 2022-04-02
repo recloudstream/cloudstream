@@ -88,7 +88,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
         }
 
-        const val accountEnabled = false
+        const val accountEnabled = true
     }
 
     private var beneneCount = 0

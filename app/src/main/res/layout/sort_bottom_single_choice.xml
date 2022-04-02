@@ -14,25 +14,7 @@
 -->
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        style="@style/AppTextViewStyle"
-        android:id="@android:id/text1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/text_selection_color"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="7dip"
-        tools:text="TEST"
-        android:checkMark="?android:attr/listChoiceIndicatorSingle"
-        android:ellipsize="marquee"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        tools:drawableTint="?attr/textColor"
-        android:drawablePadding="20dp"
-        app:drawableTint="@color/check_selection_color"
-        app:drawableStartCompat="@drawable/ic_baseline_check_24" />
+        style="@style/CheckLabel"
+        tools:text="hello"
+        android:id="@android:id/text1" />

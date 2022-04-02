@@ -109,7 +109,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("updated_at") val updatedAt: String?,
         @JsonProperty("media_type") val mediaType: String?,
         @JsonProperty("status") val status: String?,
-        @JsonProperty("genres") val genres: ArrayList<Genres>,
+        @JsonProperty("genres") val genres: ArrayList<Genres>?,
         @JsonProperty("my_list_status") val myListStatus: MyListStatus?,
         @JsonProperty("num_episodes") val numEpisodes: Int?,
         @JsonProperty("start_season") val startSeason: StartSeason?,
@@ -117,12 +117,12 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("source") val source: String?,
         @JsonProperty("average_episode_duration") val averageEpisodeDuration: Int?,
         @JsonProperty("rating") val rating: String?,
-        @JsonProperty("pictures") val pictures: ArrayList<MainPicture>,
+        @JsonProperty("pictures") val pictures: ArrayList<MainPicture>?,
         @JsonProperty("background") val background: String?,
-        @JsonProperty("related_anime") val relatedAnime: ArrayList<RelatedAnime>,
-        @JsonProperty("related_manga") val relatedManga: ArrayList<String>,
-        @JsonProperty("recommendations") val recommendations: ArrayList<Recommendations>,
-        @JsonProperty("studios") val studios: ArrayList<Studios>,
+        @JsonProperty("related_anime") val relatedAnime: ArrayList<RelatedAnime>?,
+        @JsonProperty("related_manga") val relatedManga: ArrayList<String>?,
+        @JsonProperty("recommendations") val recommendations: ArrayList<Recommendations>?,
+        @JsonProperty("studios") val studios: ArrayList<Studios>?,
         @JsonProperty("statistics") val statistics: Statistics?,
     )
 
@@ -135,7 +135,6 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("id") val id: Int? = null,
         @JsonProperty("name") val name: String? = null
     )
-
 
     data class MyListStatus(
         @JsonProperty("status") val status: String? = null,
@@ -172,7 +171,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    private fun toSearchResult(node : Node?) : SyncAPI.SyncSearchResult? {
+    private fun toSearchResult(node: Node?): SyncAPI.SyncSearchResult? {
         return SyncAPI.SyncSearchResult(
             name = node?.title ?: return null,
             syncApiName = this.name,
@@ -205,19 +204,19 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                     else -> null
                 },
                 nextAiring = null,
-                studio = malAnime.studios.mapNotNull { it.name },
-                genres = malAnime.genres.map { it.name },
+                studio = malAnime.studios?.mapNotNull { it.name },
+                genres = malAnime.genres?.map { it.name },
                 trailerUrl = null,
                 startDate = parseDate(malAnime.startDate),
                 endDate = parseDate(malAnime.endDate),
-                recommendations = malAnime.recommendations.mapNotNull { rec ->
+                recommendations = malAnime.recommendations?.mapNotNull { rec ->
                     val node = rec.node ?: return@mapNotNull null
                     toSearchResult(node)
                 },
-                nextSeason = malAnime.relatedAnime.firstOrNull {
+                nextSeason = malAnime.relatedAnime?.firstOrNull {
                     return@firstOrNull it.relationType == "sequel"
-                }?.let { toSearchResult(it.node)  },
-                prevSeason = malAnime.relatedAnime.firstOrNull {
+                }?.let { toSearchResult(it.node) },
+                prevSeason = malAnime.relatedAnime?.firstOrNull {
                     return@firstOrNull it.relationType == "prequel"
                 }?.let { toSearchResult(it.node) },
                 actors = null,
@@ -229,7 +228,8 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override suspend fun getStatus(id: String): SyncAPI.SyncStatus? {
         val internalId = id.toIntOrNull() ?: return null
 
-        val data = getDataAboutMalId(internalId)?.my_list_status //?: throw ErrorLoadingException("No my_list_status")
+        val data =
+            getDataAboutMalId(internalId)?.my_list_status //?: throw ErrorLoadingException("No my_list_status")
         return SyncAPI.SyncStatus(
             score = data?.score,
             status = malStatusAsString.indexOf(data?.status),

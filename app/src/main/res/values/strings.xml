@@ -395,7 +395,10 @@
     <string name="add_sync">Add tracking</string>
     <string name="added_sync_format" formatted="true">Added %s</string>
     <string name="upload_sync">Sync</string>
-
+    <string name="sync_score">Rated</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <!-- ============ -->
     <string name="none">None</string>
     <string name="normal">Normal</string>

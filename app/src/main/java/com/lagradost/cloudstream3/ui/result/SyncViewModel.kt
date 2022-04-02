@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import kotlinx.coroutines.launch
 
+
 class SyncViewModel : ViewModel() {
     private val repos = SyncApis
 
@@ -19,10 +20,10 @@ class SyncViewModel : ViewModel() {
 
     val metadata: LiveData<Resource<SyncAPI.SyncResult>> get() = _metaResponse
 
-    private val _statusResponse: MutableLiveData<Resource<SyncAPI.SyncStatus>?> =
+    private val _userDataResponse: MutableLiveData<Resource<SyncAPI.SyncStatus>?> =
         MutableLiveData(null)
 
-    val status: LiveData<Resource<SyncAPI.SyncStatus>?> get() = _statusResponse
+    val userData: LiveData<Resource<SyncAPI.SyncStatus>?> get() = _userDataResponse
 
     // prefix, id
     private val syncIds = hashMapOf<String, String>()
@@ -35,29 +36,75 @@ class SyncViewModel : ViewModel() {
         syncIds[aniListApi.idPrefix] = id
     }
 
-    fun setScore(status: SyncAPI.SyncStatus) = viewModelScope.launch {
-        for ((prefix, id) in syncIds) {
-            repos.firstOrNull { it.idPrefix == prefix }?.score(id, status)
+    fun setEpisodesDelta(delta: Int) {
+        val user = userData.value
+        if (user is Resource.Success) {
+            user.value.watchedEpisodes?.plus(
+                delta
+            )?.let { episode ->
+                setEpisodes(episode)
+            }
         }
-
-        updateStatus()
     }
 
-    fun updateStatus() = viewModelScope.launch {
-        _statusResponse.postValue(Resource.Loading())
+    fun setEpisodes(episodes: Int) {
+        if (episodes < 0) return
+        val meta = metadata.value
+        if (meta is Resource.Success) {
+            meta.value.totalEpisodes?.let { max ->
+                if (episodes > max) {
+                    setEpisodes(max)
+                    return
+                }
+            }
+        }
+
+        val user = userData.value
+        if (user is Resource.Success) {
+            _userDataResponse.postValue(Resource.Success(user.value.copy(watchedEpisodes = episodes)))
+        }
+    }
+
+    fun setScore(score: Int) {
+        val user = userData.value
+        if (user is Resource.Success) {
+            _userDataResponse.postValue(Resource.Success(user.value.copy(score = score)))
+        }
+    }
+
+    fun setStatus(which: Int) {
+        if (which < -1 || which > 5) return // validate input
+        val user = userData.value
+        if (user is Resource.Success) {
+            _userDataResponse.postValue(Resource.Success(user.value.copy(status = which)))
+        }
+    }
+
+    fun publishUserData() = viewModelScope.launch {
+        val user = userData.value
+        if (user is Resource.Success) {
+            for ((prefix, id) in syncIds) {
+                repos.firstOrNull { it.idPrefix == prefix }?.score(id, user.value)
+            }
+        }
+        updateUserData()
+    }
+
+    fun updateUserData() = viewModelScope.launch {
+        _userDataResponse.postValue(Resource.Loading())
         var lastError: Resource<SyncAPI.SyncStatus> = Resource.Failure(false, null, null, "No data")
         for ((prefix, id) in syncIds) {
             repos.firstOrNull { it.idPrefix == prefix }?.let {
                 val result = it.getStatus(id)
                 if (result is Resource.Success) {
-                    _statusResponse.postValue(result)
+                    _userDataResponse.postValue(result)
                     return@launch
                 } else if (result is Resource.Failure) {
                     lastError = result
                 }
             }
         }
-        _statusResponse.postValue(lastError)
+        _userDataResponse.postValue(lastError)
     }
 
     fun updateMetadata() = viewModelScope.launch {
@@ -75,5 +122,6 @@ class SyncViewModel : ViewModel() {
             }
         }
         _metaResponse.postValue(lastError)
+        setEpisodesDelta(0)
     }
 }
