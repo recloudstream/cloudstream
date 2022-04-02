@@ -282,6 +282,6 @@
     "ZoroProvider": {
         "name": "Zoro",
         "url": "https://zoro.to",
-        "status": 0
+        "status": 1
     }
 }
