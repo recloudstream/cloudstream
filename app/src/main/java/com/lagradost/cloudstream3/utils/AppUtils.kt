@@ -229,9 +229,9 @@ object AppUtils {
         return mapper.readValue(value)
     }
 
-    inline fun <reified T> tryParseJson(value: String): T? {
+    inline fun <reified T> tryParseJson(value: String?): T? {
         return try {
-            parseJson(value)
+            parseJson(value ?: return null)
         } catch (_: Exception) {
             null
         }

@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.extractRabbitStream
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.runSflixExtractorVerifierJob
 import com.lagradost.cloudstream3.network.Requests.Companion.await
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -183,9 +184,16 @@ class ZoroProvider : MainAPI() {
         return Actor(name = name, image = image)
     }
 
+    data class ZoroSyncData(
+        @JsonProperty("mal_id") val malId : String?,
+        @JsonProperty("anilist_id") val aniListId : String?,
+    )
+
     override suspend fun load(url: String): LoadResponse {
         val html = app.get(url).text
         val document = Jsoup.parse(html)
+
+        val syncData = tryParseJson<ZoroSyncData>(document.selectFirst("#syncData")?.data())
 
         val title = document.selectFirst(".anisc-detail > .film-name")?.text().toString()
         val poster = document.selectFirst(".anisc-poster img")?.attr("src")
@@ -283,6 +291,8 @@ class ZoroProvider : MainAPI() {
             this.tags = tags
             this.recommendations = recommendations
             this.actors = actors
+            this.malId = syncData?.malId?.toIntOrNull()
+            this.anilistId = syncData?.aniListId?.toIntOrNull()
         }
     }
 
