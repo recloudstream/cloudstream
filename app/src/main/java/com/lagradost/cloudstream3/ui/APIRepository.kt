@@ -19,7 +19,7 @@ class APIRepository(val api: MainAPI) {
             override val supportedTypes = emptySet<TvType>()
         }
 
-        fun isInvalidData(data : String): Boolean {
+        fun isInvalidData(data: String): Boolean {
             return data.isEmpty() || data == "[]" || data == "about:blank"
         }
     }
@@ -30,7 +30,7 @@ class APIRepository(val api: MainAPI) {
     val hasQuickSearch = api.hasQuickSearch
 
     suspend fun load(url: String): Resource<LoadResponse> {
-        if(isInvalidData(url)) throw ErrorLoadingException()
+        if (isInvalidData(url)) throw ErrorLoadingException()
 
         return safeApiCall {
             api.load(api.fixUrl(url)) ?: throw ErrorLoadingException()
@@ -61,6 +61,12 @@ class APIRepository(val api: MainAPI) {
     suspend fun getMainPage(): Resource<HomePageResponse?> {
         return safeApiCall {
             api.getMainPage() ?: throw ErrorLoadingException()
+        }
+    }
+
+    suspend fun extractorVerifierJob(extractorData: String?) {
+        safeApiCall {
+            api.extractorVerifierJob(extractorData)
         }
     }
 

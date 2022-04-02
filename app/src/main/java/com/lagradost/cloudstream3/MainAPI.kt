@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.metaproviders.CrossTmdbProvider
 import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import okhttp3.Interceptor
 import java.util.*
 import kotlin.math.absoluteValue
 
@@ -393,6 +394,11 @@ abstract class MainAPI {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         throw NotImplementedError()
+    }
+
+    /** An okhttp interceptor for used in OkHttpDataSource */
+    open fun getVideoInterceptor(extractorLink: ExtractorLink) : Interceptor? {
+        return null
     }
 }
 
