@@ -82,7 +82,6 @@ import kotlinx.android.synthetic.main.fragment_home.home_type_completed_btt
 import kotlinx.android.synthetic.main.fragment_home.home_type_dropped_btt
 import kotlinx.android.synthetic.main.fragment_home.home_type_on_hold_btt
 import kotlinx.android.synthetic.main.fragment_home.home_type_watching_btt
-import kotlinx.android.synthetic.main.fragment_home.home_watch_child_more_info
 import kotlinx.android.synthetic.main.fragment_home.home_watch_child_recyclerview
 import kotlinx.android.synthetic.main.fragment_home.home_watch_holder
 import kotlinx.android.synthetic.main.fragment_home.home_watch_parent_item_title
@@ -823,9 +822,8 @@ class HomeFragment : Fragment() {
             for (syncApi in OAuth2API.OAuth2Apis) {
                 val login = syncApi.loginInfo()
                 val pic = login?.profilePicture
-                if (pic != null) {
-                    home_profile_picture.setImage(pic)
-                    home_profile_picture_holder.isVisible = true
+                if (home_profile_picture?.setImage(pic) == true) {
+                    home_profile_picture_holder?.isVisible = true
                     break
                 }
             }
