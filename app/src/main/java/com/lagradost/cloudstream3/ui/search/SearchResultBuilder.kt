@@ -64,7 +64,7 @@ object SearchResultBuilder {
             SearchQuality.SDR -> R.string.quality_sdr
             SearchQuality.HDR -> R.string.quality_hdr
             SearchQuality.WebRip -> R.string.quality_webrip
-            else -> null
+            null -> null
         }?.let { textRes ->
             textQuality?.setText(textRes)
             textQuality?.isVisible = true
