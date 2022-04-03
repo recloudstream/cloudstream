@@ -123,7 +123,9 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                         )
                     }
                 )
-            }
+            },
+            publicScore = season.averageScore?.times(100),
+            //recommendations = season.
             //TODO REST
         )
     }

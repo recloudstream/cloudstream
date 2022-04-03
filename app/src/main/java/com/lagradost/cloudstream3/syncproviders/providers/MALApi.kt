@@ -265,7 +265,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 )
             ).text
 
-            if (!res.isNullOrBlank()) {
+            if (res.isNotBlank()) {
                 switchToNewAccount()
                 storeToken(res)
                 val user = getMalUser()
