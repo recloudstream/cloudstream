@@ -349,7 +349,6 @@
                         android:nextFocusForward="@id/home_bookmarked_child_recyclerview"
 
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                        android:id="@+id/home_bookmarked_child_more_info"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:paddingStart="12dp"
