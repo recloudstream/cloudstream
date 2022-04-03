@@ -17,7 +17,7 @@ class SflixProProvider : BflixProvider() {
 }
 
 open class BflixProvider() : MainAPI() {
-    override var mainUrl = "https://bflix.ru"
+    override var mainUrl = "https://bflix.to"
     override var name = "Bflix"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -43,7 +43,8 @@ open class BflixProvider() : MainAPI() {
             val test = soup.select(element).map {
                 val title = it.selectFirst("h3 a").text()
                 val link = fixUrl(it.selectFirst("a").attr("href"))
-                // val quality = it.selectFirst("div.quality").text()
+                val qualityInfo = it.selectFirst("div.quality").text()
+                val quality = getQualityFromString(qualityInfo)
                 TvSeriesSearchResponse(
                     title,
                     link,
@@ -52,6 +53,7 @@ open class BflixProvider() : MainAPI() {
                     it.selectFirst("a.poster img").attr("src"),
                     null,
                     null,
+                    quality = quality
                 )
             }
             items.add(HomePageList(name, test))
@@ -178,6 +180,8 @@ open class BflixProvider() : MainAPI() {
             val href = fixUrl(it.selectFirst("a").attr("href"))
             val image = it.selectFirst("a.poster img").attr("src")
             val isMovie = href.contains("/movie/")
+            val qualityInfo = it.selectFirst("div.quality").text()
+            val quality = getQualityFromString(qualityInfo)
 
             if (isMovie) {
                 MovieSearchResponse(
@@ -186,7 +190,8 @@ open class BflixProvider() : MainAPI() {
                     this.name,
                     TvType.Movie,
                     image,
-                    null
+                    null,
+                    quality = quality
                 )
             } else {
                 TvSeriesSearchResponse(
@@ -196,7 +201,8 @@ open class BflixProvider() : MainAPI() {
                     TvType.TvSeries,
                     image,
                     null,
-                    null
+                    null,
+                    quality = quality
                 )
             }
         }
