@@ -226,6 +226,24 @@ fun putRequestCreator(
         .build()
 }
 
+fun optionsRequestCreator(
+    url: String,
+    headers: Map<String, String>,
+    referer: String?,
+    params: Map<String, String?>,
+    cookies: Map<String, String>,
+    data: Map<String, String?>,
+    cacheTime: Int,
+    cacheUnit: TimeUnit
+): Request {
+    return Request.Builder()
+        .url(addParamsToUrl(url, params))
+        .cacheControl(getCache(cacheTime, cacheUnit))
+        .headers(getHeaders(headers, referer, cookies))
+        .method("OPTIONS", getData(data))
+        .build()
+}
+
 // https://stackoverflow.com/a/59322754
 // Issues with Akwam otherwise
 fun OkHttpClient.Builder.ignoreAllSSLErrors(): OkHttpClient.Builder {
@@ -366,6 +384,40 @@ open class Requests {
             .build()
         val request =
             postRequestCreator(url, headers, referer, params, cookies, data, cacheTime, cacheUnit)
+        val response = client.newCall(request).await()
+        return AppResponse(response)
+    }
+
+    suspend fun options(
+        url: String,
+        headers: Map<String, String> = mapOf(),
+        referer: String? = null,
+        params: Map<String, String> = mapOf(),
+        cookies: Map<String, String> = mapOf(),
+        data: Map<String, String?> = DEFAULT_DATA,
+        allowRedirects: Boolean = true,
+        cacheTime: Int = DEFAULT_TIME,
+        cacheUnit: TimeUnit = DEFAULT_TIME_UNIT,
+        timeout: Long = 0L
+    ): AppResponse {
+        Log.i("OPTIONS", url)
+        val client = baseClient
+            .newBuilder()
+            .followRedirects(allowRedirects)
+            .followSslRedirects(allowRedirects)
+            .callTimeout(timeout, TimeUnit.SECONDS)
+            .build()
+        val request =
+            optionsRequestCreator(
+                url,
+                headers,
+                referer,
+                params,
+                cookies,
+                data,
+                cacheTime,
+                cacheUnit
+            )
         val response = client.newCall(request).await()
         return AppResponse(response)
     }

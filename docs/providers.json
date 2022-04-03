@@ -237,7 +237,7 @@
     "TheFlixToProvider": {
         "name": "TheFlix.to",
         "url": "https://theflix.to",
-        "status": 1
+        "status": 0
     },
     "TwoEmbedProvider": {
         "name": "2Embed",
