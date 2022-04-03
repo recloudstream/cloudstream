@@ -450,7 +450,7 @@ class TheFlixToProvider : MainAPI() {
 
         val available = metadata?.available
 
-        val comingsoon = available!!
+        val comingsoon = !available!!
 
         val movieId = metadata.id
 
