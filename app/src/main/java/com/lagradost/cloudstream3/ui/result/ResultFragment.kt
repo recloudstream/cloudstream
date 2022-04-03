@@ -519,13 +519,11 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
     }
 
     private fun setMalSync(id: Int?): Boolean {
-        syncModel.setMalId(id?.toString() ?: return false)
-        return true
+        return syncModel.setMalId(id?.toString())
     }
 
     private fun setAniListSync(id: Int?): Boolean {
-        syncModel.setAniListId(id?.toString() ?: return false)
-        return true
+        return syncModel.setAniListId(id?.toString())
     }
 
     private fun setActors(actors: List<ActorData>?) {
@@ -1547,12 +1545,16 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
                     if (SettingsFragment.accountEnabled)
                         if (d is AnimeLoadResponse) {
+                            // don't inline these variables as it will cause them to not be called
+                            val addedMal = setMalSync(d.malId)
+                            val addedAniList = setAniListSync(d.anilistId)
                             if (
-                                setMalSync(d.malId)
+                                addedMal
                                 ||
-                                setAniListSync(d.anilistId)
+                                addedAniList
                             ) {
                                 syncModel.updateMetaAndUser()
+                                syncModel.updateSynced()
                             } else {
                                 syncModel.addFromUrl(d.url)
                             }

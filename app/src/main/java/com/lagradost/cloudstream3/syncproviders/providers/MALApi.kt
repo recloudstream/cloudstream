@@ -219,7 +219,6 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                     return@firstOrNull it.relationType == "prequel"
                 }?.let { toSearchResult(it.node) },
                 actors = null,
-                characters = null,
             )
         }
     }

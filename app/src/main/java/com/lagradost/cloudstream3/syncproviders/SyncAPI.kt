@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders
 
+import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ShowStatus
 
 interface SyncAPI : OAuth2API {
@@ -34,16 +35,6 @@ interface SyncAPI : OAuth2API {
     data class SyncNextAiring(
         val episode: Int,
         val unixTime: Long,
-    )
-
-    data class SyncActor(
-        val name: String,
-        val posterUrl: String?,
-    )
-
-    data class SyncCharacter(
-        val name: String,
-        val posterUrl: String?,
     )
 
     data class SyncStatus(
@@ -84,7 +75,6 @@ interface SyncAPI : OAuth2API {
         var recommendations: List<SyncSearchResult>? = null,
         var nextSeason: SyncSearchResult? = null,
         var prevSeason: SyncSearchResult? = null,
-        var actors: List<SyncActor>? = null,
-        var characters: List<SyncCharacter>? = null,
+        var actors: List<ActorData>? = null,
     )
 }

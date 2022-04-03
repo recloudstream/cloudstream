@@ -15,7 +15,7 @@ object SyncUtil {
         Regex("""(twist\.moe)/a/([^/?]*)"""),
     )
 
-    private const val TAG = "SNC"
+    private const val TAG = "SYNCUTIL"
 
     private const val GOGOANIME = "Gogoanime"
     private const val NINE_ANIME = "9anime"

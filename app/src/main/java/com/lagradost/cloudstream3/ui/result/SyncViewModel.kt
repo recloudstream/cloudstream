@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,10 +19,14 @@ data class CurrentSynced(
     val idPrefix: String,
     val isSynced: Boolean,
     val hasAccount: Boolean,
-    val icon : Int,
+    val icon: Int,
 )
 
 class SyncViewModel : ViewModel() {
+    companion object {
+        const val TAG = "SYNCVM"
+    }
+
     private val repos = SyncApis
 
     private val _metaResponse: MutableLiveData<Resource<SyncAPI.SyncResult>> =
@@ -55,36 +60,47 @@ class SyncViewModel : ViewModel() {
         }
     }
 
-    private fun updateSynced() {
+    fun updateSynced() {
+        Log.i(TAG, "updateSynced")
         _currentSynced.postValue(getMissing())
     }
 
-    fun setMalId(id: String?) {
-        syncIds[malApi.idPrefix] = id ?: return
-        updateSynced()
+    fun setMalId(id: String?) : Boolean {
+        if(syncIds[malApi.idPrefix] == id ?: return false) return false
+        syncIds[malApi.idPrefix] = id
+        Log.i(TAG, "setMalId = $id")
+        return true
     }
 
-    fun setAniListId(id: String?) {
-        syncIds[aniListApi.idPrefix] = id ?: return
-        updateSynced()
+    fun setAniListId(id: String?) : Boolean {
+        if(syncIds[aniListApi.idPrefix] == id ?: return false) return false
+        syncIds[aniListApi.idPrefix] = id
+        Log.i(TAG, "setAniListId = $id")
+        return true
     }
 
-    var hasAddedFromUrl : HashSet<String> = hashSetOf()
+    var hasAddedFromUrl: HashSet<String> = hashSetOf()
 
     fun addFromUrl(url: String?) = viewModelScope.launch {
-        if(url == null || hasAddedFromUrl.contains(url)) return@launch
+        Log.i(TAG, "addFromUrl = $url")
+
+        if (url == null || hasAddedFromUrl.contains(url)) return@launch
         SyncUtil.getIdsFromUrl(url)?.let { (malId, aniListId) ->
             hasAddedFromUrl.add(url)
 
             setMalId(malId)
             setAniListId(aniListId)
+            updateSynced()
             if (malId != null || aniListId != null) {
+                Log.i(TAG, "addFromUrl->updateMetaAndUser $malId $aniListId")
                 updateMetaAndUser()
             }
         }
     }
 
     fun setEpisodesDelta(delta: Int) {
+        Log.i(TAG, "setEpisodesDelta = $delta")
+
         val user = userData.value
         if (user is Resource.Success) {
             user.value.watchedEpisodes?.plus(
@@ -96,6 +112,8 @@ class SyncViewModel : ViewModel() {
     }
 
     fun setEpisodes(episodes: Int) {
+        Log.i(TAG, "setEpisodes = $episodes")
+
         if (episodes < 0) return
         val meta = metadata.value
         if (meta is Resource.Success) {
@@ -114,6 +132,7 @@ class SyncViewModel : ViewModel() {
     }
 
     fun setScore(score: Int) {
+        Log.i(TAG, "setScore = $score")
         val user = userData.value
         if (user is Resource.Success) {
             _userDataResponse.postValue(Resource.Success(user.value.copy(score = score)))
@@ -121,6 +140,7 @@ class SyncViewModel : ViewModel() {
     }
 
     fun setStatus(which: Int) {
+        Log.i(TAG, "setStatus = $which")
         if (which < -1 || which > 5) return // validate input
         val user = userData.value
         if (user is Resource.Success) {
@@ -129,6 +149,7 @@ class SyncViewModel : ViewModel() {
     }
 
     fun publishUserData() = viewModelScope.launch {
+        Log.i(TAG, "publishUserData")
         val user = userData.value
         if (user is Resource.Success) {
             for ((prefix, id) in syncIds) {
@@ -139,6 +160,7 @@ class SyncViewModel : ViewModel() {
     }
 
     private fun updateUserData() = viewModelScope.launch {
+        Log.i(TAG, "updateUserData")
         _userDataResponse.postValue(Resource.Loading())
         var lastError: Resource<SyncAPI.SyncStatus> = Resource.Failure(false, null, null, "No data")
         for ((prefix, id) in syncIds) {
@@ -156,6 +178,8 @@ class SyncViewModel : ViewModel() {
     }
 
     private fun updateMetadata() = viewModelScope.launch {
+        Log.i(TAG, "updateMetadata")
+
         _metaResponse.postValue(Resource.Loading())
         var lastError: Resource<SyncAPI.SyncResult> = Resource.Failure(false, null, null, "No data")
         for ((prefix, id) in syncIds) {
@@ -174,6 +198,7 @@ class SyncViewModel : ViewModel() {
     }
 
     fun updateMetaAndUser() {
+        Log.i(TAG, "updateMetaAndUser")
         updateMetadata()
         updateUserData()
     }

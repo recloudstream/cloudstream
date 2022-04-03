@@ -125,14 +125,7 @@ class ResultViewModel : ViewModel() {
             plot = if (plot.isNullOrBlank()) meta.synopsis else plot
             trailerUrl = trailerUrl ?: meta.trailerUrl
             posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
-            actors = actors ?: meta.actors?.map {
-                ActorData(
-                    Actor(
-                        name = it.name,
-                        image = it.posterUrl
-                    )
-                )
-            }
+            actors = actors ?: meta.actors
         }
     }
 
