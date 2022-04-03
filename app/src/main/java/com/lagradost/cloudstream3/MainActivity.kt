@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -31,6 +32,7 @@ import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.Requests
@@ -48,6 +50,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
@@ -87,6 +90,10 @@ var app = Requests()
 
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
+    companion object {
+        const val TAG = "MAINACT"
+    }
+
     override fun onColorSelected(dialogId: Int, color: Int) {
         onColorSelectedEvent.invoke(Pair(dialogId, color))
     }
@@ -266,10 +273,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (str.contains(appString)) {
                 for (api in OAuth2Apis) {
                     if (str.contains("/${api.redirectUrl}")) {
-                        try {
-                            api.handleRedirect(str)
-                        } catch (e : Exception) {
-                            logError(e)
+                        ioSafe {
+                            Log.i(TAG, "handleAppIntent $str")
+                            if (api.handleRedirect(str)) {
+                                Log.i(TAG, "authenticated ${api.name}")
+                                this.runOnUiThread {
+                                    try {
+                                        showToast(
+                                            this,
+                                            getString(R.string.authenticated_user).format(api.name)
+                                        )
+                                    } catch (e: Exception) {
+                                        logError(e) // format might fail
+                                    }
+                                }
+                            } else {
+                                Log.i(TAG, "failed to authenticate ${api.name}")
+                            }
                         }
                     }
                 }

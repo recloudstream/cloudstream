@@ -56,7 +56,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         openBrowser(request)
     }
 
-    override fun handleRedirect(url: String) {
+    override suspend fun handleRedirect(url: String) : Boolean {
         val sanitizer =
             splitQuery(URL(url.replace(appString, "https").replace("/#", "?"))) // FIX ERROR
         val token = sanitizer["access_token"]!!
@@ -68,9 +68,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         setKey(accountId, ANILIST_UNIXTIME_KEY, endTime)
         setKey(accountId, ANILIST_TOKEN_KEY, token)
         setKey(ANILIST_SHOULD_UPDATE_LIST, true)
-        ioSafe {
-            getUser()
-        }
+        val user = getUser()
+        return user != null
     }
 
     override suspend fun search(name: String): List<SyncAPI.SyncSearchResult>? {
@@ -114,9 +113,10 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
         return SyncAPI.SyncStatus(
             score = data.score,
-            watchedEpisodes = data.episodes,
+            watchedEpisodes = data.progress,
             status = data.type?.value ?: return null,
             isFavorite = data.isFavourite,
+            maxEpisodes = data.episodes,
         )
     }
 

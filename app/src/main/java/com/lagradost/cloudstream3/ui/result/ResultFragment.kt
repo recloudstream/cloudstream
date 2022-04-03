@@ -1210,22 +1210,27 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         }
 
         var currentSyncProgress = 0
+
+        fun setSyncMaxEpisodes(totalEpisodes: Int?) {
+            result_sync_episodes?.max = (totalEpisodes ?: 0) * 1000
+
+            normalSafeApiCall {
+                val ctx = result_sync_max_episodes?.context
+                result_sync_max_episodes?.text =
+                    totalEpisodes?.let { episodes ->
+                        ctx?.getString(R.string.sync_total_episodes_some)?.format(episodes)
+                    } ?: run {
+                        ctx?.getString(R.string.sync_total_episodes_none)
+                    }
+            }
+        }
+
         observe(syncModel.metadata) { meta ->
             when (meta) {
                 is Resource.Success -> {
                     val d = meta.value
-                    result_sync_episodes?.max = (d.totalEpisodes ?: 0) * 1000
                     result_sync_episodes?.progress = currentSyncProgress * 1000
-
-                    normalSafeApiCall {
-                        val ctx = result_sync_max_episodes?.context
-                        result_sync_max_episodes?.text =
-                            d.totalEpisodes?.let {
-                                ctx?.getString(R.string.sync_total_episodes_some)?.format(it)
-                            } ?: run {
-                                ctx?.getString(R.string.sync_total_episodes_none)
-                            }
-                    }
+                    setSyncMaxEpisodes(d.totalEpisodes)
                     viewModel.setMeta(d)
                 }
                 is Resource.Loading -> {
@@ -1259,6 +1264,12 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     result_sync_check?.setItemChecked(d.status + 1, true)
                     val watchedEpisodes = d.watchedEpisodes ?: 0
                     currentSyncProgress = watchedEpisodes
+
+                    d.maxEpisodes?.let {
+                        // don't directly call it because we don't want to override metadata observe
+                        setSyncMaxEpisodes(it)
+                    }
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         result_sync_episodes?.setProgress(watchedEpisodes * 1000, true)
                     } else {

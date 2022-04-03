@@ -12,7 +12,7 @@ interface OAuth2API {
     // don't change this as all keys depend on it
     val idPrefix: String
 
-    fun handleRedirect(url: String)
+    suspend fun handleRedirect(url: String) : Boolean
     fun authenticate()
 
     fun loginInfo(): LoginInfo?

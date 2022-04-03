@@ -52,6 +52,7 @@ interface SyncAPI : OAuth2API {
         val score: Int?,
         val watchedEpisodes: Int?,
         var isFavorite: Boolean? = null,
+        var maxEpisodes : Int? = null,
     )
 
     data class SyncResult(

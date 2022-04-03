@@ -13,7 +13,7 @@ class Dropbox : OAuth2API {
         TODO("Not yet implemented")
     }
 
-    override fun handleRedirect(url: String) {
+    override suspend fun handleRedirect(url: String): Boolean {
         TODO("Not yet implemented")
     }
 

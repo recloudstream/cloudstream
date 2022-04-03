@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
+import android.util.Log
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
@@ -47,13 +48,20 @@ object CommonActivity {
         showToast(act, act.getString(message), duration)
     }
 
+    const val TAG = "COMPACT"
+
     /** duration is Toast.LENGTH_SHORT if null*/
     fun showToast(act: Activity?, message: String?, duration: Int? = null) {
-        if (act == null || message == null) return
+        if (act == null || message == null) {
+            Log.w(TAG, "invalid showToast act = $act message = $message")
+            return
+        }
+        Log.i(TAG, "showToast = $message")
+
         try {
             currentToast?.cancel()
         } catch (e: Exception) {
-            e.printStackTrace()
+            logError(e)
         }
         try {
             val inflater =
@@ -74,7 +82,7 @@ object CommonActivity {
             toast.show()
             currentToast = toast
         } catch (e: Exception) {
-
+            logError(e)
         }
     }
 
