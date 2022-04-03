@@ -22,7 +22,7 @@
     "AnimePaheProvider": {
         "name": "AnimePahe",
         "url": "https://animepahe.com",
-        "status": 1
+        "status": 0
     },
     "AnimeWorldProvider": {
         "name": "AnimeWorld",
