@@ -693,13 +693,13 @@ interface LoadResponse {
     val url: String
     val apiName: String
     val type: TvType
-    val posterUrl: String?
+    var posterUrl: String?
     val year: Int?
-    val plot: String?
-    val rating: Int? // 1-1000
-    val tags: List<String>?
+    var plot: String?
+    var rating: Int? // 1-1000
+    var tags: List<String>?
     var duration: Int? // in minutes
-    val trailerUrl: String?
+    var trailerUrl: String?
     var recommendations: List<SearchResponse>?
     var actors: List<ActorData>?
     var comingSoon: Boolean

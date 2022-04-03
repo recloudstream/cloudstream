@@ -375,6 +375,7 @@
                         </LinearLayout>
                     </LinearLayout>
 
+
                     <com.google.android.material.button.MaterialButton
                             android:id="@+id/result_bookmark_button"
                             style="@style/BlackButton"

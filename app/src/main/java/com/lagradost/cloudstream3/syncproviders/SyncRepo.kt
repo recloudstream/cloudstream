@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.mvvm.safeApiCall
 class SyncRepo(private val repo: SyncAPI) {
     val idPrefix = repo.idPrefix
     val name = repo.name
+    val icon = repo.icon
 
     suspend fun score(id: String, status: SyncAPI.SyncStatus): Resource<Boolean> {
         return safeApiCall { repo.score(id, status) }

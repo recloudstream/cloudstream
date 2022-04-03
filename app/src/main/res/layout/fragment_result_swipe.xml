@@ -12,22 +12,45 @@
             android:paddingEnd="@dimen/result_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+        <LinearLayout
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <ImageView
+                    android:nextFocusDown="@id/result_bookmark_button"
+                    android:nextFocusRight="@id/result_share"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
 
-        <ImageView
-                android:nextFocusDown="@id/result_bookmark_button"
-                android:nextFocusRight="@id/result_share"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/result_back"
+                    android:clickable="true"
+                    android:focusable="true"
 
-                android:id="@+id/result_back"
-                android:clickable="true"
-                android:focusable="true"
-
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical|start"
-                android:src="@drawable/ic_baseline_arrow_back_24"
-                android:contentDescription="@string/go_back"
-                app:tint="?attr/white" />
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:src="@drawable/ic_baseline_arrow_back_24"
+                    android:contentDescription="@string/go_back"
+                    app:tint="?attr/white" />
+            <androidx.recyclerview.widget.RecyclerView
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:id="@+id/result_mini_sync"
+                    android:layout_width="match_parent"
+                    android:descendantFocusability="afterDescendants"
+                    android:layout_height="wrap_content"
+                    android:fadingEdge="horizontal"
+                    android:focusableInTouchMode="false"
+                    android:focusable="false"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingTop="5dp"
+                    android:requiresFadingEdge="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/result_mini_image" />
+        </LinearLayout>
 
         <LinearLayout
                 android:gravity="end"

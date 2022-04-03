@@ -636,7 +636,6 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         val apiName = arguments?.getString("apiName") ?: return
         startAction = arguments?.getInt("startAction") ?: START_ACTION_NORMAL
         startValue = arguments?.getInt("startValue") ?: START_VALUE_NORMAL
-
         syncModel.addFromUrl(url)
 
         val api = getApiFromName(apiName)
@@ -1198,17 +1197,26 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 }
             }
         }
+        val imgAdapter = ImageAdapter(R.layout.result_mini_image)
+        result_mini_sync?.adapter = imgAdapter
 
         observe(syncModel.synced) { list ->
             result_sync_names?.text =
                 list.filter { it.isSynced && it.hasAccount }.joinToString { it.name }
+
+            val newList = list.filter { it.isSynced }
+            result_mini_sync?.isVisible = newList.isNotEmpty()
+            (result_mini_sync?.adapter as? ImageAdapter?)?.updateList(newList.map { it.icon })
         }
 
+        var currentSyncProgress = 0
         observe(syncModel.metadata) { meta ->
             when (meta) {
                 is Resource.Success -> {
                     val d = meta.value
                     result_sync_episodes?.max = (d.totalEpisodes ?: 0) * 1000
+                    result_sync_episodes?.progress = currentSyncProgress * 1000
+
                     normalSafeApiCall {
                         val ctx = result_sync_max_episodes?.context
                         result_sync_max_episodes?.text =
@@ -1218,6 +1226,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                                 ctx?.getString(R.string.sync_total_episodes_none)
                             }
                     }
+                    viewModel.setMeta(d)
                 }
                 is Resource.Loading -> {
                     result_sync_max_episodes?.text =
@@ -1249,6 +1258,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     result_sync_rating?.value = d.score?.toFloat() ?: 0.0f
                     result_sync_check?.setItemChecked(d.status + 1, true)
                     val watchedEpisodes = d.watchedEpisodes ?: 0
+                    currentSyncProgress = watchedEpisodes
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         result_sync_episodes?.setProgress(watchedEpisodes * 1000, true)
                     } else {
@@ -1447,372 +1457,369 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             currentId = it
         }
 
-        observe(viewModel.resultResponse) { data ->
+        observe(viewModel.result) { data ->
             when (data) {
                 is Resource.Success -> {
                     val d = data.value
-                    if (d is LoadResponse) {
-                        if (d !is AnimeLoadResponse && result_episode_loading.isVisible) { // no episode loading when not anime
-                            result_episode_loading.isVisible = false
+                    if (d !is AnimeLoadResponse && result_episode_loading.isVisible) { // no episode loading when not anime
+                        result_episode_loading.isVisible = false
+                    }
+
+                    updateVisStatus(2)
+
+                    result_vpn?.text = when (api.vpnStatus) {
+                        VPNStatus.MightBeNeeded -> getString(R.string.vpn_might_be_needed)
+                        VPNStatus.Torrent -> getString(R.string.vpn_torrent)
+                        else -> ""
+                    }
+                    result_vpn?.isGone = api.vpnStatus == VPNStatus.None
+
+                    result_info?.text = when (api.providerType) {
+                        ProviderType.MetaProvider -> getString(R.string.provider_info_meta)
+                        else -> ""
+                    }
+                    result_info?.isVisible = api.providerType == ProviderType.MetaProvider
+
+                    if (d.type.isEpisodeBased()) {
+                        val ep = d as? TvSeriesLoadResponse
+                        val epCount = ep?.episodes?.size ?: 1
+                        if (epCount < 1) {
+                            result_info?.text = getString(R.string.no_episodes_found)
+                            result_info?.isVisible = true
                         }
+                    }
 
-                        updateVisStatus(2)
+                    currentHeaderName = d.name
+                    currentType = d.type
 
-                        result_vpn?.text = when (api.vpnStatus) {
-                            VPNStatus.MightBeNeeded -> getString(R.string.vpn_might_be_needed)
-                            VPNStatus.Torrent -> getString(R.string.vpn_torrent)
-                            else -> ""
+                    currentPoster = d.posterUrl
+                    currentIsMovie = !d.isEpisodeBased()
+
+                    result_open_in_browser?.setOnClickListener {
+                        val i = Intent(ACTION_VIEW)
+                        i.data = Uri.parse(d.url)
+                        try {
+                            startActivity(i)
+                        } catch (e: Exception) {
+                            logError(e)
                         }
-                        result_vpn?.isGone = api.vpnStatus == VPNStatus.None
+                    }
 
-                        result_info?.text = when (api.providerType) {
-                            ProviderType.MetaProvider -> getString(R.string.provider_info_meta)
-                            else -> ""
+                    result_search?.setOnClickListener {
+                        QuickSearchFragment.pushSearch(activity, d.name)
+                    }
+
+                    result_share?.setOnClickListener {
+                        try {
+                            val i = Intent(ACTION_SEND)
+                            i.type = "text/plain"
+                            i.putExtra(EXTRA_SUBJECT, d.name)
+                            i.putExtra(EXTRA_TEXT, d.url)
+                            startActivity(createChooser(i, d.name))
+                        } catch (e: Exception) {
+                            logError(e)
                         }
-                        result_info?.isVisible = api.providerType == ProviderType.MetaProvider
+                    }
 
-                        if (d.type.isEpisodeBased()) {
-                            val ep = d as? TvSeriesLoadResponse
-                            val epCount = ep?.episodes?.size ?: 1
-                            if (epCount < 1) {
-                                result_info?.text = getString(R.string.no_episodes_found)
-                                result_info?.isVisible = true
+                    val showStatus = when (d) {
+                        is TvSeriesLoadResponse -> d.showStatus
+                        is AnimeLoadResponse -> d.showStatus
+                        else -> null
+                    }
+
+                    setShow(showStatus)
+                    setDuration(d.duration)
+                    setYear(d.year)
+                    setRating(d.rating)
+                    setRecommendations(d.recommendations)
+                    setActors(d.actors)
+
+                    if (SettingsFragment.accountEnabled)
+                        if (d is AnimeLoadResponse) {
+                            if (
+                                setMalSync(d.malId)
+                                ||
+                                setAniListSync(d.anilistId)
+                            ) {
+                                syncModel.updateMetaAndUser()
+                            } else {
+                                syncModel.addFromUrl(d.url)
                             }
                         }
 
-                        currentHeaderName = d.name
-                        currentType = d.type
+                    result_meta_site?.text = d.apiName
 
-                        currentPoster = d.posterUrl
-                        currentIsMovie = !d.isEpisodeBased()
-
-                        result_open_in_browser?.setOnClickListener {
-                            val i = Intent(ACTION_VIEW)
-                            i.data = Uri.parse(d.url)
+                    val posterImageLink = d.posterUrl
+                    if (!posterImageLink.isNullOrEmpty()) {
+                        result_poster?.setImage(posterImageLink)
+                        result_poster_blur?.setImageBlur(posterImageLink, 10, 3)
+                        //Full screen view of Poster image
+                        result_poster_holder?.setOnClickListener {
                             try {
-                                startActivity(i)
-                            } catch (e: Exception) {
-                                logError(e)
-                            }
-                        }
+                                context?.let { ctx ->
+                                    val bitmap = result_poster.drawable.toBitmap()
+                                    val sourceBuilder = AlertDialog.Builder(ctx)
+                                    sourceBuilder.setView(R.layout.result_poster)
 
-                        result_search?.setOnClickListener {
-                            QuickSearchFragment.pushSearch(activity, d.name)
-                        }
+                                    val sourceDialog = sourceBuilder.create()
+                                    sourceDialog.show()
 
-                        result_share?.setOnClickListener {
-                            try {
-                                val i = Intent(ACTION_SEND)
-                                i.type = "text/plain"
-                                i.putExtra(EXTRA_SUBJECT, d.name)
-                                i.putExtra(EXTRA_TEXT, d.url)
-                                startActivity(createChooser(i, d.name))
-                            } catch (e: Exception) {
-                                logError(e)
-                            }
-                        }
-
-                        val showStatus = when (d) {
-                            is TvSeriesLoadResponse -> d.showStatus
-                            is AnimeLoadResponse -> d.showStatus
-                            else -> null
-                        }
-
-                        setShow(showStatus)
-                        setDuration(d.duration)
-                        setYear(d.year)
-                        setRating(d.rating)
-                        setRecommendations(d.recommendations)
-                        setActors(d.actors)
-
-                        if (SettingsFragment.accountEnabled)
-                            if (d is AnimeLoadResponse) {
-                                if (
-                                    setMalSync(d.malId)
-                                    ||
-                                    setAniListSync(d.anilistId)
-                                ) {
-                                    syncModel.updateMetaAndUser()
-                                }
-                            }
-
-                        result_meta_site?.text = d.apiName
-
-                        val posterImageLink = d.posterUrl
-                        if (!posterImageLink.isNullOrEmpty()) {
-                            result_poster?.setImage(posterImageLink)
-                            result_poster_blur?.setImageBlur(posterImageLink, 10, 3)
-                            //Full screen view of Poster image
-                            result_poster_holder?.setOnClickListener {
-                                try {
-                                    context?.let { ctx ->
-                                        val bitmap = result_poster.drawable.toBitmap()
-                                        val sourceBuilder = AlertDialog.Builder(ctx)
-                                        sourceBuilder.setView(R.layout.result_poster)
-
-                                        val sourceDialog = sourceBuilder.create()
-                                        sourceDialog.show()
-
-                                        sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
-                                            ?.apply {
-                                                setImageBitmap(bitmap)
-                                                setOnClickListener {
-                                                    sourceDialog.dismissSafe()
-                                                }
+                                    sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
+                                        ?.apply {
+                                            setImageBitmap(bitmap)
+                                            setOnClickListener {
+                                                sourceDialog.dismissSafe()
                                             }
-                                    }
-                                } catch (e: Exception) {
-                                    logError(e)
+                                        }
                                 }
+                            } catch (e: Exception) {
+                                logError(e)
                             }
-                        } else {
-                            result_poster?.setImageResource(R.drawable.default_cover)
-                            result_poster_blur?.setImageResource(R.drawable.default_cover)
                         }
+                    } else {
+                        result_poster?.setImageResource(R.drawable.default_cover)
+                        result_poster_blur?.setImageResource(R.drawable.default_cover)
+                    }
 
-                        result_poster_holder?.visibility = VISIBLE
+                    result_poster_holder?.visibility = VISIBLE
 
-                        /*result_play_movie?.text =
-                            if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(
-                                R.string.play_movie_button
-                            )*/
-                        //result_plot_header?.text =
-                        //    if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
-                        if (!d.plot.isNullOrEmpty()) {
-                            var syno = d.plot!!
-                            if (syno.length > MAX_SYNO_LENGH) {
-                                syno = syno.substring(0, MAX_SYNO_LENGH) + "..."
-                            }
-                            result_descript.setOnClickListener {
-                                val builder: AlertDialog.Builder =
-                                    AlertDialog.Builder(requireContext())
-                                builder.setMessage(d.plot)
-                                    .setTitle(if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
-                                    .show()
-                            }
-                            result_descript.text = syno
-                        } else {
-                            result_descript.text =
-                                if (d.type == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(
-                                    R.string.normal_no_plot
-                                )
+                    /*result_play_movie?.text =
+                        if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(
+                            R.string.play_movie_button
+                        )*/
+                    //result_plot_header?.text =
+                    //    if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
+                    if (!d.plot.isNullOrEmpty()) {
+                        var syno = d.plot!!
+                        if (syno.length > MAX_SYNO_LENGH) {
+                            syno = syno.substring(0, MAX_SYNO_LENGH) + "..."
                         }
+                        result_descript.setOnClickListener {
+                            val builder: AlertDialog.Builder =
+                                AlertDialog.Builder(requireContext())
+                            builder.setMessage(d.plot)
+                                .setTitle(if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
+                                .show()
+                        }
+                        result_descript.text = syno
+                    } else {
+                        result_descript.text =
+                            if (d.type == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(
+                                R.string.normal_no_plot
+                            )
+                    }
 
-                        result_tag?.removeAllViews()
+                    result_tag?.removeAllViews()
+                    //result_tag_holder?.visibility = GONE
+                    // result_status.visibility = GONE
+
+                    d.comingSoon.let { soon ->
+                        result_coming_soon?.isVisible = soon
+                        result_data_holder?.isGone = soon
+                    }
+
+                    val tags = d.tags
+                    if (tags.isNullOrEmpty()) {
                         //result_tag_holder?.visibility = GONE
-                        // result_status.visibility = GONE
+                    } else {
+                        //result_tag_holder?.visibility = VISIBLE
 
-                        d.comingSoon.let { soon ->
-                            result_coming_soon?.isVisible = soon
-                            result_data_holder?.isGone = soon
+                        for ((index, tag) in tags.withIndex()) {
+                            val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
+                            val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
+                            btt.text = tag
+
+                            result_tag?.addView(viewBtt, index)
+                        }
+                    }
+
+                    if (d.type.isMovieType()) {
+                        val hasDownloadSupport = api.hasDownloadSupport
+                        lateFixDownloadButton(true)
+
+                        result_play_movie?.setOnClickListener {
+                            val card =
+                                currentEpisodes?.firstOrNull() ?: return@setOnClickListener
+                            handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                         }
 
-                        val tags = d.tags
-                        if (tags.isNullOrEmpty()) {
-                            //result_tag_holder?.visibility = GONE
-                        } else {
-                            //result_tag_holder?.visibility = VISIBLE
-
-                            for ((index, tag) in tags.withIndex()) {
-                                val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
-                                val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
-                                btt.text = tag
-
-                                result_tag?.addView(viewBtt, index)
-                            }
+                        result_play_movie?.setOnLongClickListener {
+                            val card = currentEpisodes?.firstOrNull()
+                                ?: return@setOnLongClickListener true
+                            handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
+                            return@setOnLongClickListener true
                         }
 
-                        if (d.type.isMovieType()) {
-                            val hasDownloadSupport = api.hasDownloadSupport
-                            lateFixDownloadButton(true)
-
-                            result_play_movie?.setOnClickListener {
-                                val card =
-                                    currentEpisodes?.firstOrNull() ?: return@setOnClickListener
-                                handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
-                            }
-
-                            result_play_movie?.setOnLongClickListener {
-                                val card = currentEpisodes?.firstOrNull()
-                                    ?: return@setOnLongClickListener true
-                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
-                                return@setOnLongClickListener true
-                            }
-
-                            result_download_movie?.setOnLongClickListener {
-                                val card = currentEpisodes?.firstOrNull()
-                                    ?: return@setOnLongClickListener true
-                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
-                                return@setOnLongClickListener true
-                            }
+                        result_download_movie?.setOnLongClickListener {
+                            val card = currentEpisodes?.firstOrNull()
+                                ?: return@setOnLongClickListener true
+                            handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
+                            return@setOnLongClickListener true
+                        }
 
 //                            result_options.setOnClickListener {
 //                                val card = currentEpisodes?.first() ?: return@setOnClickListener
 //                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
 //                            }
 
-                            result_download_movie?.visibility =
-                                if (hasDownloadSupport) VISIBLE else GONE
-                            if (hasDownloadSupport) {
-                                val localId = d.getId()
-                                val file =
-                                    VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
-                                        requireContext(),
-                                        localId
-                                    )
-                                downloadButton?.dispose()
-                                downloadButton = EasyDownloadButton()
-                                downloadButton?.setUpMoreButton(
-                                    file?.fileLength,
-                                    file?.totalBytes,
-                                    result_movie_progress_downloaded,
-                                    result_movie_download_icon,
-                                    result_movie_download_text,
-                                    result_movie_download_text_precentage,
-                                    result_download_movie,
-                                    true,
-                                    VideoDownloadHelper.DownloadEpisodeCached(
-                                        d.name,
-                                        d.posterUrl,
-                                        0,
-                                        null,
-                                        localId,
-                                        localId,
-                                        d.rating,
-                                        d.plot,
-                                        System.currentTimeMillis(),
-                                    )
-                                ) { downloadClickEvent ->
-                                    if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                                        currentEpisodes?.firstOrNull()?.let { episode ->
-                                            handleAction(
-                                                EpisodeClickEvent(
-                                                    ACTION_DOWNLOAD_EPISODE,
-                                                    ResultEpisode(
-                                                        d.name,
-                                                        d.name,
-                                                        null,
-                                                        0,
-                                                        null,
-                                                        episode.data,
-                                                        d.apiName,
-                                                        localId,
-                                                        0,
-                                                        0L,
-                                                        0L,
-                                                        null,
-                                                        null,
-                                                        null,
-                                                        d.type,
-                                                        localId,
-                                                    )
+                        result_download_movie?.visibility =
+                            if (hasDownloadSupport) VISIBLE else GONE
+                        if (hasDownloadSupport) {
+                            val localId = d.getId()
+                            val file =
+                                VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
+                                    requireContext(),
+                                    localId
+                                )
+                            downloadButton?.dispose()
+                            downloadButton = EasyDownloadButton()
+                            downloadButton?.setUpMoreButton(
+                                file?.fileLength,
+                                file?.totalBytes,
+                                result_movie_progress_downloaded,
+                                result_movie_download_icon,
+                                result_movie_download_text,
+                                result_movie_download_text_precentage,
+                                result_download_movie,
+                                true,
+                                VideoDownloadHelper.DownloadEpisodeCached(
+                                    d.name,
+                                    d.posterUrl,
+                                    0,
+                                    null,
+                                    localId,
+                                    localId,
+                                    d.rating,
+                                    d.plot,
+                                    System.currentTimeMillis(),
+                                )
+                            ) { downloadClickEvent ->
+                                if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
+                                    currentEpisodes?.firstOrNull()?.let { episode ->
+                                        handleAction(
+                                            EpisodeClickEvent(
+                                                ACTION_DOWNLOAD_EPISODE,
+                                                ResultEpisode(
+                                                    d.name,
+                                                    d.name,
+                                                    null,
+                                                    0,
+                                                    null,
+                                                    episode.data,
+                                                    d.apiName,
+                                                    localId,
+                                                    0,
+                                                    0L,
+                                                    0L,
+                                                    null,
+                                                    null,
+                                                    null,
+                                                    d.type,
+                                                    localId,
                                                 )
                                             )
-                                        }
-                                    } else {
-                                        handleDownloadClick(
-                                            activity,
-                                            currentHeaderName,
-                                            downloadClickEvent
                                         )
                                     }
-                                }
-
-                                result_download_movie?.setOnLongClickListener {
-                                    val card =
-                                        currentEpisodes?.firstOrNull()
-                                            ?: return@setOnLongClickListener false
-                                    handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, card))
-                                    return@setOnLongClickListener true
-                                }
-
-                                /*downloadButton?.setUpMaterialButton(
-                                    file?.fileLength,
-                                    file?.totalBytes,
-                                    result_movie_progress_downloaded,
-                                    result_download_movie,
-                                    null, //result_movie_text_progress
-                                    VideoDownloadHelper.DownloadEpisodeCached(
-                                        d.name,
-                                        d.posterUrl,
-                                        0,
-                                        null,
-                                        localId,
-                                        localId,
-                                        d.rating,
-                                        d.plot,
-                                        System.currentTimeMillis(),
+                                } else {
+                                    handleDownloadClick(
+                                        activity,
+                                        currentHeaderName,
+                                        downloadClickEvent
                                     )
-                                ) { downloadClickEvent ->
-                                    if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                                        currentEpisodes?.firstOrNull()?.let { episode ->
-                                            handleAction(
-                                                EpisodeClickEvent(
-                                                    ACTION_DOWNLOAD_EPISODE,
-                                                    ResultEpisode(
-                                                        d.name,
-                                                        d.name,
-                                                        null,
-                                                        0,
-                                                        null,
-                                                        episode.data,
-                                                        d.apiName,
-                                                        localId,
-                                                        0,
-                                                        0L,
-                                                        0L,
-                                                        null,
-                                                        null,
-                                                        null,
-                                                        d.type,
-                                                        localId,
-                                                    )
+                                }
+                            }
+
+                            result_download_movie?.setOnLongClickListener {
+                                val card =
+                                    currentEpisodes?.firstOrNull()
+                                        ?: return@setOnLongClickListener false
+                                handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, card))
+                                return@setOnLongClickListener true
+                            }
+
+                            /*downloadButton?.setUpMaterialButton(
+                                file?.fileLength,
+                                file?.totalBytes,
+                                result_movie_progress_downloaded,
+                                result_download_movie,
+                                null, //result_movie_text_progress
+                                VideoDownloadHelper.DownloadEpisodeCached(
+                                    d.name,
+                                    d.posterUrl,
+                                    0,
+                                    null,
+                                    localId,
+                                    localId,
+                                    d.rating,
+                                    d.plot,
+                                    System.currentTimeMillis(),
+                                )
+                            ) { downloadClickEvent ->
+                                if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
+                                    currentEpisodes?.firstOrNull()?.let { episode ->
+                                        handleAction(
+                                            EpisodeClickEvent(
+                                                ACTION_DOWNLOAD_EPISODE,
+                                                ResultEpisode(
+                                                    d.name,
+                                                    d.name,
+                                                    null,
+                                                    0,
+                                                    null,
+                                                    episode.data,
+                                                    d.apiName,
+                                                    localId,
+                                                    0,
+                                                    0L,
+                                                    0L,
+                                                    null,
+                                                    null,
+                                                    null,
+                                                    d.type,
+                                                    localId,
                                                 )
                                             )
-                                        }
-                                    } else {
-                                        handleDownloadClick(
-                                            activity,
-                                            currentHeaderName,
-                                            downloadClickEvent
                                         )
                                     }
-                                }*/
-                            }
-                        } else {
-                            lateFixDownloadButton(false)
-                        }
-
-                        context?.getString(
-                            when (d.type) {
-                                TvType.TvSeries -> R.string.tv_series_singular
-                                TvType.Anime -> R.string.anime_singular
-                                TvType.OVA -> R.string.ova_singular
-                                TvType.AnimeMovie -> R.string.movies_singular
-                                TvType.Cartoon -> R.string.cartoons_singular
-                                TvType.Documentary -> R.string.documentaries_singular
-                                TvType.Movie -> R.string.movies_singular
-                                TvType.Torrent -> R.string.torrent_singular
-                                TvType.AsianDrama -> R.string.asian_drama_singular
-                            }
-                        )?.let {
-                            result_meta_type?.text = it
-                        }
-
-
-                        when (d) {
-                            is AnimeLoadResponse -> {
-
-                                // val preferEnglish = true
-                                //val titleName = (if (preferEnglish) d.engName else d.japName) ?: d.name
-                                val titleName = d.name
-                                result_title.text = titleName
-                                //result_toolbar.title = titleName
-                            }
-                            else -> result_title.text = d.name
+                                } else {
+                                    handleDownloadClick(
+                                        activity,
+                                        currentHeaderName,
+                                        downloadClickEvent
+                                    )
+                                }
+                            }*/
                         }
                     } else {
-                        updateVisStatus(1)
+                        lateFixDownloadButton(false)
+                    }
+
+                    context?.getString(
+                        when (d.type) {
+                            TvType.TvSeries -> R.string.tv_series_singular
+                            TvType.Anime -> R.string.anime_singular
+                            TvType.OVA -> R.string.ova_singular
+                            TvType.AnimeMovie -> R.string.movies_singular
+                            TvType.Cartoon -> R.string.cartoons_singular
+                            TvType.Documentary -> R.string.documentaries_singular
+                            TvType.Movie -> R.string.movies_singular
+                            TvType.Torrent -> R.string.torrent_singular
+                            TvType.AsianDrama -> R.string.asian_drama_singular
+                        }
+                    )?.let {
+                        result_meta_type?.text = it
+                    }
+
+                    when (d) {
+                        is AnimeLoadResponse -> {
+
+                            // val preferEnglish = true
+                            //val titleName = (if (preferEnglish) d.engName else d.japName) ?: d.name
+                            val titleName = d.name
+                            result_title.text = titleName
+                            //result_toolbar.title = titleName
+                        }
+                        else -> result_title.text = d.name
                     }
                 }
                 is Resource.Failure -> {
@@ -1873,7 +1880,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     it.context?.openBrowser(tempUrl)
                 }
 
-                if (restart || viewModel.resultResponse.value == null) {
+                if (restart || viewModel.result.value == null) {
                     //viewModel.clear()
                     viewModel.load(tempUrl, apiName, showFillers)
                 }

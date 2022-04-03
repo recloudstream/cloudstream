@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.app
@@ -13,6 +14,8 @@ object SyncUtil {
         Regex("""(gogoanime|gogoanimes)\..*?/category/([^/?]*)"""),
         Regex("""(twist\.moe)/a/([^/?]*)"""),
     )
+
+    private const val TAG = "SNC"
 
     private const val GOGOANIME = "Gogoanime"
     private const val NINE_ANIME = "9anime"
@@ -28,6 +31,7 @@ object SyncUtil {
 
     suspend fun getIdsFromUrl(url: String?): Pair<String?, String?>? {
         if (url == null) return null
+        Log.i(TAG, "getIdsFromUrl $url")
 
         for (regex in regexs) {
             regex.find(url)?.let { match ->
@@ -51,6 +55,7 @@ object SyncUtil {
         slug: String,
         site: String = "GogoanimeGogoanime"
     ): Pair<String?, String?>? {
+        Log.i(TAG, "getIdsFromSlug $slug $site")
         try {
             //Gogoanime, Twistmoe and 9anime
             val url =

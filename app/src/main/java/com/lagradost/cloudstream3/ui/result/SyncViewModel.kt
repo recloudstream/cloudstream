@@ -18,6 +18,7 @@ data class CurrentSynced(
     val idPrefix: String,
     val isSynced: Boolean,
     val hasAccount: Boolean,
+    val icon : Int,
 )
 
 class SyncViewModel : ViewModel() {
@@ -48,7 +49,8 @@ class SyncViewModel : ViewModel() {
                 it.name,
                 it.idPrefix,
                 syncIds.containsKey(it.idPrefix),
-                it.hasAccount()
+                it.hasAccount(),
+                it.icon,
             )
         }
     }
@@ -67,8 +69,13 @@ class SyncViewModel : ViewModel() {
         updateSynced()
     }
 
+    var hasAddedFromUrl : HashSet<String> = hashSetOf()
+
     fun addFromUrl(url: String?) = viewModelScope.launch {
+        if(url == null || hasAddedFromUrl.contains(url)) return@launch
         SyncUtil.getIdsFromUrl(url)?.let { (malId, aniListId) ->
+            hasAddedFromUrl.add(url)
+
             setMalId(malId)
             setAniListId(aniListId)
             if (malId != null || aniListId != null) {

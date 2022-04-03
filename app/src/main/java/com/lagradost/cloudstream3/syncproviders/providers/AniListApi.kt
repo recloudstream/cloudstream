@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
@@ -20,6 +21,7 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.unixTime
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import java.net.URL
@@ -86,7 +88,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     override suspend fun getResult(id: String): SyncAPI.SyncResult? {
         val internalId = id.toIntOrNull() ?: return null
-        val season = getSeason(internalId)?.data?.Media ?: return null
+        val season = getSeason(internalId).data?.Media ?: throw ErrorLoadingException("No media")
 
         return SyncAPI.SyncResult(
             season.id.toString(),
@@ -100,7 +102,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
             synonyms = season.synonyms,
             isAdult = season.isAdult,
             totalEpisodes = season.episodes,
-            //synopsis = season.
+            synopsis = season.description,
+
             //TODO REST
         )
     }
@@ -295,28 +298,42 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
             return fromIntToAnimeStatus(aniListStatusString.indexOf(string))
         }
 
-
-        private suspend fun getSeason(id: Int): SeasonResponse? {
+        private suspend fun getSeason(id: Int): SeasonResponse {
             val q = """
                query (${'$'}id: Int = $id) {
                    Media (id: ${'$'}id, type: ANIME) {
                        id
                        idMal
-                       coverImage
+                       coverImage {
+                           extraLarge
+                           large
+                           medium
+                           color
+                       }
                        duration
                        episodes
                        genres
                        synonyms
                        averageScore
                        isAdult
-                       trailer
+                       description(asHtml: false)
+                       trailer {
+                           id
+                           site
+                           thumbnail
+                       }
                        relations {
                             edges {
                                  id
                                  relationType(version: 2)
                                  node {
                                       id
-                                      coverImage
+                                      coverImage {
+                                          extraLarge
+                                          large
+                                          medium
+                                          color
+                                      }
                                  }
                             }
                        }
@@ -328,19 +345,13 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                    }
                }
         """
-
             val data = app.post(
                 "https://graphql.anilist.co",
                 data = mapOf("query" to q),
                 cacheTime = 0,
             ).text
-            if (data == "") return null
-            return try {
-                mapper.readValue(data)
-            } catch (e: Exception) {
-                logError(e)
-                null
-            }
+
+            return tryParseJson(data) ?: throw ErrorLoadingException("Error parsing $data")
         }
     }
 
@@ -661,15 +672,13 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         val seasons = mutableListOf<SeasonResponse?>()
         suspend fun getSeasonRecursive(id: Int) {
             val season = getSeason(id)
-            if (season != null) {
-                seasons.add(season)
-                if (season.data?.Media?.format?.startsWith("TV") == true) {
-                    season.data.Media.relations?.edges?.forEach {
-                        if (it.node?.format != null) {
-                            if (it.relationType == "SEQUEL" && it.node.format.startsWith("TV")) {
-                                getSeasonRecursive(it.node.id)
-                                return@forEach
-                            }
+            seasons.add(season)
+            if (season.data?.Media?.format?.startsWith("TV") == true) {
+                season.data.Media.relations?.edges?.forEach {
+                    if (it.node?.format != null) {
+                        if (it.relationType == "SEQUEL" && it.node.format.startsWith("TV")) {
+                            getSeasonRecursive(it.node.id)
+                            return@forEach
                         }
                     }
                 }
@@ -701,8 +710,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("averageScore") val averageScore: Int?,
         @JsonProperty("isAdult") val isAdult: Boolean?,
         @JsonProperty("trailer") val trailer: MediaTrailer?,
-
-        )
+        @JsonProperty("description") val description: String?,
+    )
 
     data class MediaTrailer(
         @JsonProperty("id") val id: String?,
