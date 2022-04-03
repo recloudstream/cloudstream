@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.R
 import kotlin.math.max
 
 class FlowLayout : ViewGroup {
-    var itemSpacing : Int = 0
+    var itemSpacing: Int = 0
 
     constructor(context: Context?) : super(context)
 
@@ -36,7 +36,7 @@ class FlowLayout : ViewGroup {
             val childHeight = child.measuredHeight
 
             //check if child can be placed in the current row, else go to next line
-            if (currentChildHookPointx + childWidth > realWidth) {
+            if (currentChildHookPointx + childWidth > realWidth && i + 1 < childCount) {
                 //new line
                 currentWidth = max(currentWidth, currentChildHookPointx)
 
@@ -44,7 +44,8 @@ class FlowLayout : ViewGroup {
                 currentChildHookPointx = 0
                 currentChildHookPointy += childHeight
             }
-            val nextChildHookPointx = currentChildHookPointx + childWidth + if(childWidth == 0) 0 else itemSpacing
+            val nextChildHookPointx =
+                currentChildHookPointx + childWidth + if (childWidth == 0) 0 else itemSpacing
             val nextChildHookPointy = currentChildHookPointy
             currentHeight = max(currentHeight, currentChildHookPointy + childHeight)
             val lp = child.layoutParams as LayoutParams
@@ -54,8 +55,10 @@ class FlowLayout : ViewGroup {
             currentChildHookPointy = nextChildHookPointy
         }
         currentWidth = max(currentChildHookPointx, currentWidth)
-        setMeasuredDimension(resolveSize(currentWidth, widthMeasureSpec),
-            resolveSize(currentHeight, heightMeasureSpec))
+        setMeasuredDimension(
+            resolveSize(currentWidth, widthMeasureSpec),
+            resolveSize(currentHeight, heightMeasureSpec)
+        )
     }
 
     override fun onLayout(b: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -73,7 +76,10 @@ class FlowLayout : ViewGroup {
     }
 
     override fun generateDefaultLayoutParams(): LayoutParams {
-        return LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        return LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     override fun generateLayoutParams(p: ViewGroup.LayoutParams): LayoutParams {

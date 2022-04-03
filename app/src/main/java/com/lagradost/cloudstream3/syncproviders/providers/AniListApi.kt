@@ -343,6 +343,18 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                        characters(sort: ROLE page: 1 perPage: 20) {
                            edges {
                                role
+                               voiceActors {
+                                   name {
+                                       userPreferred
+                                       full
+                                       native
+                                   }
+                                   age
+                                   image {
+                                       large
+                                       medium
+                                   }
+                               }
                                node {
                                    name {
                                        userPreferred
