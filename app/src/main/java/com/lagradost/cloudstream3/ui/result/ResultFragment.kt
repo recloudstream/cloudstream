@@ -606,13 +606,15 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         result_recommendations_btt?.isGone = isInvalid
         result_recommendations_btt?.setOnClickListener {
             if (result_overlapping_panels?.getSelectedPanel()?.ordinal == 1) {
+                result_recommendations_btt?.nextFocusDownId = R.id.result_recommendations
                 result_overlapping_panels?.openEndPanel()
             } else {
+                result_recommendations_btt?.nextFocusDownId = R.id.result_description
                 result_overlapping_panels?.closePanels()
             }
         }
         result_overlapping_panels?.setEndPanelLockState(if (isInvalid) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
-        result_recommendations.post {
+        result_recommendations?.post {
             rec?.let { list ->
                 (result_recommendations?.adapter as SearchAdapter?)?.updateList(list)
             }
@@ -1337,6 +1339,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     result_sync_loading_shimmer?.stopShimmer()
                     result_sync_loading_shimmer?.isVisible = false
                     result_sync_holder?.isVisible = false
+                    closed = true
                 }
                 is Resource.Loading -> {
                     result_sync_loading_shimmer?.startShimmer()
@@ -1420,6 +1423,10 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             }
 
             result_series_parent?.isVisible = isSeriesVisible
+            if (isSeriesVisible && activity?.currentFocus?.id == R.id.result_back && context?.isTrueTvSettings() == true) {
+                result_resume_series_button?.requestFocus()
+            }
+
             if (isSeriesVisible) {
                 val down = when {
                     result_season_button?.isVisible == true -> result_season_button
@@ -1634,22 +1641,19 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     setRecommendations(d.recommendations)
                     setActors(d.actors)
 
-                    if (SettingsFragment.accountEnabled)
-                        if (d is AnimeLoadResponse) {
-                            // don't inline these variables as it will cause them to not be called
-                            val addedMal = setMalSync(d.malId)
-                            val addedAniList = setAniListSync(d.anilistId)
-                            if (
-                                addedMal
-                                ||
-                                addedAniList
-                            ) {
-                                syncModel.updateMetaAndUser()
-                                syncModel.updateSynced()
-                            } else {
-                                syncModel.addFromUrl(d.url)
-                            }
+                    if (SettingsFragment.accountEnabled) {
+                        var isValid = false
+                        for ((prefix, id) in d.syncData) {
+                            isValid = isValid || syncModel.addSync(prefix, id)
                         }
+
+                        if (isValid) {
+                            syncModel.updateMetaAndUser()
+                            syncModel.updateSynced()
+                        } else {
+                            syncModel.addFromUrl(d.url)
+                        }
+                    }
 
                     result_meta_site?.text = d.apiName
 
@@ -1658,28 +1662,30 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         result_poster?.setImage(posterImageLink)
                         result_poster_blur?.setImageBlur(posterImageLink, 10, 3)
                         //Full screen view of Poster image
-                        result_poster_holder?.setOnClickListener {
-                            try {
-                                context?.let { ctx ->
-                                    val bitmap = result_poster.drawable.toBitmap()
-                                    val sourceBuilder = AlertDialog.Builder(ctx)
-                                    sourceBuilder.setView(R.layout.result_poster)
+                        if (context?.isTrueTvSettings() == false) // Poster not clickable on tv
+                            result_poster_holder?.setOnClickListener {
+                                try {
+                                    context?.let { ctx ->
+                                        val bitmap = result_poster.drawable.toBitmap()
+                                        val sourceBuilder = AlertDialog.Builder(ctx)
+                                        sourceBuilder.setView(R.layout.result_poster)
 
-                                    val sourceDialog = sourceBuilder.create()
-                                    sourceDialog.show()
+                                        val sourceDialog = sourceBuilder.create()
+                                        sourceDialog.show()
 
-                                    sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
-                                        ?.apply {
-                                            setImageBitmap(bitmap)
-                                            setOnClickListener {
-                                                sourceDialog.dismissSafe()
+                                        sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
+                                            ?.apply {
+                                                setImageBitmap(bitmap)
+                                                setOnClickListener {
+                                                    sourceDialog.dismissSafe()
+                                                }
                                             }
-                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    logError(e)
                                 }
-                            } catch (e: Exception) {
-                                logError(e)
                             }
-                        }
+
                     } else {
                         result_poster?.setImageResource(R.drawable.default_cover)
                         result_poster_blur?.setImageResource(R.drawable.default_cover)
@@ -1698,16 +1704,16 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         if (syno.length > MAX_SYNO_LENGH) {
                             syno = syno.substring(0, MAX_SYNO_LENGH) + "..."
                         }
-                        result_descript.setOnClickListener {
+                        result_description.setOnClickListener {
                             val builder: AlertDialog.Builder =
                                 AlertDialog.Builder(requireContext())
                             builder.setMessage(d.plot)
                                 .setTitle(if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
                                 .show()
                         }
-                        result_descript.text = syno
+                        result_description.text = syno
                     } else {
-                        result_descript.text =
+                        result_description.text =
                             if (d.type == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(
                                 R.string.normal_no_plot
                             )
@@ -1727,12 +1733,13 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         //result_tag_holder?.visibility = GONE
                     } else {
                         //result_tag_holder?.visibility = VISIBLE
-
+                        val isOnTv = context?.isTrueTvSettings() == true
                         for ((index, tag) in tags.withIndex()) {
                             val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
                             val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
                             btt.text = tag
-
+                            btt.isFocusable = !isOnTv
+                            btt.isClickable = !isOnTv
                             result_tag?.addView(viewBtt, index)
                         }
                     }
@@ -1980,8 +1987,14 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     }
                 }
 
-                result_meta_site?.setOnClickListener {
-                    it.context?.openBrowser(tempUrl)
+                // bloats the navigation on tv
+                if (context?.isTrueTvSettings() == false) {
+                    result_meta_site?.setOnClickListener {
+                        it.context?.openBrowser(tempUrl)
+                    }
+                    result_meta_site?.isFocusable = true
+                } else {
+                    result_meta_site?.isFocusable = false
                 }
 
                 if (restart || viewModel.result.value == null) {

@@ -160,7 +160,6 @@ class SeriesflixProvider : MainAPI() {
                 year?.toIntOrNull(),
                 descipt,
                 null,
-                null,
                 rating
             )
         } else {

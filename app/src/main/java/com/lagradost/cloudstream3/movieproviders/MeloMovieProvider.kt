@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbUrl
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -144,17 +145,17 @@ class MeloMovieProvider : MainAPI() {
         if (type == 1) { // MOVIE
             val serialize = document.selectFirst("table.accordion__list")
                 ?: throw ErrorLoadingException("No links found")
-            return MovieLoadResponse(
+            return newMovieLoadResponse(
                 title,
                 url,
-                this.name,
                 TvType.Movie,
-                serializeData(serialize),
-                poster,
-                year,
-                plot,
-                imdbUrlToIdNullable(imdbUrl)
-            )
+                serializeData(serialize)
+            ) {
+                this.posterUrl = poster
+                this.year = year
+                this.plot = plot
+                addImdbUrl(imdbUrl)
+            }
         } else if (type == 2) {
             val episodes = ArrayList<TvSeriesEpisode>()
             val seasons = document.select("div.accordion__card")
@@ -175,18 +176,17 @@ class MeloMovieProvider : MainAPI() {
                 }
             }
             episodes.reverse()
-            return TvSeriesLoadResponse(
+            return newTvSeriesLoadResponse(
                 title,
                 url,
-                this.name,
                 TvType.TvSeries,
-                episodes,
-                poster,
-                year,
-                plot,
-                null,
-                imdbUrlToIdNullable(imdbUrl)
-            )
+                episodes
+            ) {
+                this.posterUrl = poster
+                this.year = year
+                this.plot = plot
+                addImdbUrl(imdbUrl)
+            }
         }
         return null
     }

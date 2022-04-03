@@ -401,6 +401,8 @@
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">Authenticated %s</string>
+    <string name="authenticated_user_fail" formatted="true">Failed to authenticate to %s</string>
+
     <!-- ============ -->
     <string name="none">None</string>
     <string name="normal">Normal</string>

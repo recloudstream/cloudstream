@@ -78,7 +78,6 @@ class FrenchStreamProvider : MainAPI() {
                 poster,
                 date,
                 description,
-                null,
                 ratingAverage,
                 tagsList,
                 null,

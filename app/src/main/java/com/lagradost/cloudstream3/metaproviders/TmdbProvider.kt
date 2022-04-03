@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.metaproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
+import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.*
@@ -135,7 +136,8 @@ open class TmdbProvider : MainAPI() {
                 }.get(Calendar.YEAR)
             }
             plot = overview
-            imdbId = external_ids?.imdb_id
+            addImdbId(external_ids?.imdb_id)
+
             tags = genres?.mapNotNull { it.name }
             duration = episode_run_time?.average()?.toInt()
             rating = this@toLoadResponse.rating
@@ -163,7 +165,7 @@ open class TmdbProvider : MainAPI() {
                 }.get(Calendar.YEAR)
             }
             plot = overview
-            imdbId = external_ids?.imdb_id
+            addImdbId(external_ids?.imdb_id)
             tags = genres?.mapNotNull { it.name }
             duration = runtime
             rating = this@toLoadResponse.rating
@@ -251,7 +253,8 @@ open class TmdbProvider : MainAPI() {
         val found = idRegex.find(url)
 
         val isTvSeries = found?.groupValues?.getOrNull(1).equals("tv", ignoreCase = true)
-        val id = found?.groupValues?.getOrNull(2)?.toIntOrNull() ?: throw ErrorLoadingException("No id found")
+        val id = found?.groupValues?.getOrNull(2)?.toIntOrNull()
+            ?: throw ErrorLoadingException("No id found")
 
         return if (useMetaLoadResponse) {
             return if (isTvSeries) {
@@ -263,8 +266,8 @@ open class TmdbProvider : MainAPI() {
                             ?.let {
                                 it.results?.map { res -> res.toSearchResponse() }
                             }?.let { list ->
-                            response.recommendations = list
-                        }
+                                response.recommendations = list
+                            }
 
                     if (response.actors.isNullOrEmpty())
                         tmdb.tvService().credits(id, "en-US").awaitResponse().body()?.let {

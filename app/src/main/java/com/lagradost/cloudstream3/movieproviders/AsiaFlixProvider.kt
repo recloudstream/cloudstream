@@ -107,7 +107,6 @@ class AsiaFlixProvider : MainAPI() {
             synopsis,
             getStatus(tvStatus ?: ""),
             null,
-            null,
             genre?.split(",")?.map { it.trim() }
         )
     }

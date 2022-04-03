@@ -235,7 +235,6 @@ class LookMovieProvider : MainAPI() {
                 poster,
                 year,
                 descript,
-                null,
                 rating
             )
         } else {
@@ -291,7 +290,6 @@ class LookMovieProvider : MainAPI() {
                 poster,
                 year,
                 descript,
-                null,
                 null,
                 rating
             )

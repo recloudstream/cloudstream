@@ -160,7 +160,6 @@ class VfSerieProvider : MainAPI() {
             year,
             descript,
             null,
-            null,
             rating
         )
     }

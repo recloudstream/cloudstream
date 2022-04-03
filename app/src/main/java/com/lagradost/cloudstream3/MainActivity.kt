@@ -275,20 +275,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     if (str.contains("/${api.redirectUrl}")) {
                         ioSafe {
                             Log.i(TAG, "handleAppIntent $str")
-                            if (api.handleRedirect(str)) {
+                            val isSuccessful = api.handleRedirect(str)
+
+                            if (isSuccessful) {
                                 Log.i(TAG, "authenticated ${api.name}")
-                                this.runOnUiThread {
-                                    try {
-                                        showToast(
-                                            this,
-                                            getString(R.string.authenticated_user).format(api.name)
-                                        )
-                                    } catch (e: Exception) {
-                                        logError(e) // format might fail
-                                    }
-                                }
                             } else {
                                 Log.i(TAG, "failed to authenticate ${api.name}")
+                            }
+
+                            this.runOnUiThread {
+                                try {
+                                    showToast(
+                                        this,
+                                        getString(if (isSuccessful) R.string.authenticated_user else R.string.authenticated_user_fail).format(
+                                            api.name
+                                        )
+                                    )
+                                } catch (e: Exception) {
+                                    logError(e) // format might fail
+                                }
                             }
                         }
                     }

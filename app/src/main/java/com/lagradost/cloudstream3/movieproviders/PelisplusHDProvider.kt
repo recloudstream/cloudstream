@@ -1,9 +1,9 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
-import java.util.*
 
 class PelisplusHDProvider:MainAPI() {
     override var mainUrl = "https://pelisplushd.net"
@@ -137,7 +137,6 @@ class PelisplusHDProvider:MainAPI() {
                     description,
                     null,
                     null,
-                    null,
                     tags,
                 )
             }
@@ -151,7 +150,6 @@ class PelisplusHDProvider:MainAPI() {
                     poster,
                     year,
                     description,
-                    null,
                     null,
                     tags,
                 )

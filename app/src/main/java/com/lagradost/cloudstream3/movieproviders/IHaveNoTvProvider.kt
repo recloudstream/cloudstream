@@ -182,7 +182,6 @@ class IHaveNoTvProvider : MainAPI() {
                 )?.destructured?.component1()?.toIntOrNull(),
                 description,
                 null,
-                null,
                 soup.selectFirst(".videoDetails").select("a[href*=\"/category/\"]")
                     .map { it.text().trim() }
             ))
@@ -202,7 +201,6 @@ class IHaveNoTvProvider : MainAPI() {
             poster,
             year,
             description,
-            null,
             null,
             null,
             categories.toList()

@@ -1,11 +1,13 @@
 package com.lagradost.cloudstream3.animeproviders
 
-import java.util.*
-import org.json.JSONObject
-import org.jsoup.nodes.Element
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.addMalId
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import org.json.JSONObject
+import org.jsoup.nodes.Element
+import java.util.*
 
 class AnimeWorldProvider : MainAPI() {
     override var mainUrl = "https://www.animeworld.tv"
@@ -170,8 +172,8 @@ class AnimeWorldProvider : MainAPI() {
             showStatus = status
             plot = description
             tags = genres
-            this.malId = malId
-            this.anilistId = anlId
+            addMalId(malId)
+            addAniListId(anlId)
             this.rating = rating
             this.duration = duration
             this.trailerUrl = trailerUrl

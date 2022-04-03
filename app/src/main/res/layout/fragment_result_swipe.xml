@@ -70,7 +70,7 @@
 
             <ImageView
                     android:nextFocusUp="@id/result_back"
-                    android:nextFocusDown="@id/result_descript"
+                    android:nextFocusDown="@id/result_description"
                     android:nextFocusLeft="@id/result_add_sync"
                     android:nextFocusRight="@id/result_open_in_browser"
 
@@ -88,7 +88,7 @@
 
             <ImageView
                     android:nextFocusUp="@id/result_back"
-                    android:nextFocusDown="@id/result_descript"
+                    android:nextFocusDown="@id/result_description"
                     android:nextFocusLeft="@id/result_share"
                     android:nextFocusRight="@id/result_search"
 
@@ -106,7 +106,7 @@
 
             <ImageView
                     android:nextFocusUp="@id/result_back"
-                    android:nextFocusDown="@id/result_descript"
+                    android:nextFocusDown="@id/result_description"
                     android:nextFocusLeft="@id/result_open_in_browser"
                     android:nextFocusRight="@id/result_recommendations_btt"
 
@@ -122,9 +122,10 @@
                     android:contentDescription="@string/result_open_in_browser"
                     app:tint="?attr/textColor" />
             <ImageView
+                    tools:visibility="visible"
                     android:visibility="gone"
                     android:nextFocusUp="@id/result_back"
-                    android:nextFocusDown="@id/result_descript"
+                    android:nextFocusDown="@id/result_description"
                     android:nextFocusLeft="@id/result_search"
                     android:nextFocusRight="@id/result_bookmark_button"
 

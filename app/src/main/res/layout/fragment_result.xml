@@ -352,7 +352,7 @@
                                     android:layout_height="match_parent">
 
                                 <TextView
-                                        android:id="@+id/result_descript"
+                                        android:id="@+id/result_description"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:foreground="@drawable/outline_drawable"
@@ -390,7 +390,7 @@
                             android:minWidth="100dp"
                             android:nextFocusLeft="@id/result_back"
                             android:nextFocusRight="@id/result_search"
-                            android:nextFocusUp="@id/result_descript"
+                            android:nextFocusUp="@id/result_description"
 
                             android:nextFocusDown="@id/result_play_movie"
                             android:paddingTop="0dp"
@@ -751,7 +751,7 @@
                                         android:layout_marginStart="0dp"
                                         android:nextFocusLeft="@id/result_episode_select"
                                         android:nextFocusRight="@id/result_episode_select"
-                                        android:nextFocusUp="@id/result_descript"
+                                        android:nextFocusUp="@id/result_description"
                                         android:nextFocusDown="@id/result_episodes"
                                         android:visibility="gone"
                                         tools:text="Season 1"
@@ -766,7 +766,7 @@
                                         android:nextFocusLeft="@id/result_season_button"
                                         android:nextFocusRight="@id/result_season_button"
 
-                                        android:nextFocusUp="@id/result_descript"
+                                        android:nextFocusUp="@id/result_description"
                                         android:nextFocusDown="@id/result_episodes"
                                         android:visibility="gone"
                                         tools:text="50-100"
@@ -781,7 +781,7 @@
                                         android:nextFocusLeft="@id/result_season_button"
                                         android:nextFocusRight="@id/result_season_button"
 
-                                        android:nextFocusUp="@id/result_descript"
+                                        android:nextFocusUp="@id/result_description"
                                         android:nextFocusDown="@id/result_episodes"
                                         android:visibility="gone"
                                         tools:text="Dubbed"

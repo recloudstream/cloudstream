@@ -65,18 +65,19 @@ class SyncViewModel : ViewModel() {
         _currentSynced.postValue(getMissing())
     }
 
-    fun setMalId(id: String?) : Boolean {
-        if(syncIds[malApi.idPrefix] == id ?: return false) return false
-        syncIds[malApi.idPrefix] = id
-        Log.i(TAG, "setMalId = $id")
+    fun addSync(idPrefix: String, id : String) : Boolean {
+        if(syncIds[idPrefix] == id) return false
+        Log.i(TAG, "addSync $idPrefix = $id")
+        syncIds[idPrefix] = id
         return true
     }
 
+    fun setMalId(id: String?) : Boolean {
+        return addSync(malApi.idPrefix,id ?: return false)
+    }
+
     fun setAniListId(id: String?) : Boolean {
-        if(syncIds[aniListApi.idPrefix] == id ?: return false) return false
-        syncIds[aniListApi.idPrefix] = id
-        Log.i(TAG, "setAniListId = $id")
-        return true
+        return addSync(aniListApi.idPrefix,id ?: return false)
     }
 
     var hasAddedFromUrl: HashSet<String> = hashSetOf()
@@ -164,13 +165,15 @@ class SyncViewModel : ViewModel() {
         _userDataResponse.postValue(Resource.Loading())
         var lastError: Resource<SyncAPI.SyncStatus> = Resource.Failure(false, null, null, "No data")
         for ((prefix, id) in syncIds) {
-            repos.firstOrNull { it.idPrefix == prefix }?.let {
-                val result = it.getStatus(id)
-                if (result is Resource.Success) {
-                    _userDataResponse.postValue(result)
-                    return@launch
-                } else if (result is Resource.Failure) {
-                    lastError = result
+            repos.firstOrNull { it.idPrefix == prefix }?.let { repo ->
+                if(repo.hasAccount()) {
+                    val result = repo.getStatus(id)
+                    if (result is Resource.Success) {
+                        _userDataResponse.postValue(result)
+                        return@launch
+                    } else if (result is Resource.Failure) {
+                        lastError = result
+                    }
                 }
             }
         }
@@ -183,13 +186,15 @@ class SyncViewModel : ViewModel() {
         _metaResponse.postValue(Resource.Loading())
         var lastError: Resource<SyncAPI.SyncResult> = Resource.Failure(false, null, null, "No data")
         for ((prefix, id) in syncIds) {
-            repos.firstOrNull { it.idPrefix == prefix }?.let {
-                val result = it.getResult(id)
-                if (result is Resource.Success) {
-                    _metaResponse.postValue(result)
-                    return@launch
-                } else if (result is Resource.Failure) {
-                    lastError = result
+            repos.firstOrNull { it.idPrefix == prefix }?.let { repo ->
+                if(repo.hasAccount()) {
+                    val result = repo.getResult(id)
+                    if (result is Resource.Success) {
+                        _metaResponse.postValue(result)
+                        return@launch
+                    } else if (result is Resource.Failure) {
+                        lastError = result
+                    }
                 }
             }
         }
