@@ -71,6 +71,9 @@ class DownloadFileGenerator(
                             .removeSuffix(".vtt")
                             .removeSuffix(".srt")
                             .removeSuffix(".txt")
+                            .trim()
+                            .removePrefix("(")
+                            .removeSuffix(")")
 
                         subtitleCallback(
                             SubtitleData(

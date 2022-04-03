@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.services.VideoDownloadService
@@ -116,7 +117,8 @@ object VideoDownloadManager {
         @JsonProperty("poster") val poster: String?,
         @JsonProperty("name") val name: String?,
         @JsonProperty("season") val season: Int?,
-        @JsonProperty("episode") val episode: Int?
+        @JsonProperty("episode") val episode: Int?,
+        @JsonProperty("type") val type: TvType?,
     )
 
     data class DownloadItem(
@@ -1335,6 +1337,33 @@ object VideoDownloadManager {
         return SUCCESS_DOWNLOAD_DONE
     }
 
+    fun getFileName(context: Context, metadata: DownloadEpisodeMetadata): String {
+        return getFileName(context, metadata.name, metadata.episode, metadata.season)
+    }
+
+    private fun getFileName(context: Context, epName: String?, episode: Int?, season: Int?): String {
+        // kinda ugly ik
+        return sanitizeFilename(
+            if (epName == null) {
+                if (season != null) {
+                    "${context.getString(R.string.season)} $season ${context.getString(R.string.episode)} $episode"
+                } else {
+                    "${context.getString(R.string.episode)} $episode"
+                }
+            } else {
+                if (episode != null) {
+                    if (season != null) {
+                        "${context.getString(R.string.season)} $season ${context.getString(R.string.episode)} $episode - $epName"
+                    } else {
+                        "${context.getString(R.string.episode)} $episode - $epName"
+                    }
+                } else {
+                    epName
+                }
+            }
+        )
+    }
+
     private fun downloadSingleEpisode(
         context: Context,
         source: String?,
@@ -1344,19 +1373,7 @@ object VideoDownloadManager {
         notificationCallback: (Int, Notification) -> Unit,
         tryResume: Boolean = false,
     ): Int {
-        val name =
-            // kinda ugly ik
-            sanitizeFilename(
-                if (ep.name == null) {
-                    "${context.getString(R.string.episode)} ${ep.episode}"
-                } else {
-                    if (ep.episode != null) {
-                        "${context.getString(R.string.episode)} ${ep.episode} - ${ep.name}"
-                    } else {
-                        ep.name
-                    }
-                }
-            )
+        val name = getFileName(context, ep)
 
         // Make sure this is cancelled when download is done or cancelled.
         val extractorJob = ioSafe {

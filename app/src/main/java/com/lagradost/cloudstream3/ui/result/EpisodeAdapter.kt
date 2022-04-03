@@ -48,6 +48,9 @@ const val ACTION_SHOW_OPTIONS = 10
 const val ACTION_CLICK_DEFAULT = 11
 const val ACTION_SHOW_TOAST = 12
 
+const val ACTION_DOWNLOAD_EPISODE_SUBTITLE = 13
+const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
+
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
