@@ -194,7 +194,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 id = malAnime.id?.toString()!!,
                 totalEpisodes = malAnime.numEpisodes,
                 title = malAnime.title,
-                publicScore = malAnime.mean?.toFloat()?.times(100)?.toInt(),
+                publicScore = malAnime.mean?.toFloat()?.times(1000)?.toInt(),
                 duration = malAnime.averageEpisodeDuration,
                 synopsis = malAnime.synopsis,
                 airStatus = when (malAnime.status) {
