@@ -47,6 +47,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -124,27 +125,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
     // idk, if you find a way of automating this it would be great
     // https://www.iemoji.com/view/emoji/1794/flags/antarctica
     // Emoji Character Encoding Data --> C/C++/Java Src
+    // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
     private val languages = arrayListOf(
-        Triple("\uD83C\uDDEA\uD83C\uDDF8", "Spanish", "es"),
-        Triple("\uD83C\uDDEC\uD83C\uDDE7", "English", "en"),
-        Triple("\uD83C\uDDFB\uD83C\uDDF3", "Viet Nam", "vi"),
-        Triple("\uD83C\uDDF3\uD83C\uDDF1", "Dutch", "nl"),
-        Triple("\uD83C\uDDEB\uD83C\uDDF7", "French", "fr"),
-        Triple("\uD83C\uDDEC\uD83C\uDDF7", "Greek", "gr"),
-        Triple("\uD83C\uDDF8\uD83C\uDDEA", "Swedish", "sv"),
-        Triple("\uD83C\uDDF5\uD83C\uDDED", "Tagalog", "tl"),
-        Triple("\uD83C\uDDF5\uD83C\uDDF1", "Polish", "pl"),
-        Triple("\uD83C\uDDEE\uD83C\uDDF3", "Hindi", "hi"),
-        Triple("\uD83C\uDDEE\uD83C\uDDF3", "Malayalam", "ml"),
-        Triple("\uD83C\uDDF3\uD83C\uDDF4", "Norsk", "no"),
-        Triple("\ud83c\udde9\ud83c\uddea", "German", "de"),
-        Triple("\ud83c\uddf1\ud83c\udde7", "Arabic", "ar"),
-        Triple("\ud83c\uddf9\ud83c\uddf7", "Turkish", "tr"),
-        Triple("\ud83c\uddf2\ud83c\uddf0", "Macedonian", "mk"),
-        Triple("\ud83c\udde7\ud83c\uddf7", "Portuguese (Brazil)", "pt"),
-        Triple("\ud83c\uddf7\ud83c\uddf4", "Romanian", "ro"),
-        Triple("\uD83C\uDDEE\uD83C\uDDF9", "Italian", "it"),
-        Triple("\uD83C\uDDE8\uD83C\uDDF3", "Chinese", "cn"),
+        Triple("", "Spanish", "es"),
+        Triple("", "English", "en"),
+        Triple("", "Viet Nam", "vi"),
+        Triple("", "Dutch", "nl"),
+        Triple("", "French", "fr"),
+        Triple("", "Greek", "el"),
+        Triple("", "Swedish", "sv"),
+        Triple("", "Tagalog", "tl"),
+        Triple("", "Polish", "pl"),
+        Triple("", "Hindi", "hi"),
+        Triple("", "Malayalam", "ml"),
+        Triple("", "Norsk", "no"),
+        Triple("", "German", "de"),
+        Triple("", "Arabic", "ar"),
+        Triple("", "Turkish", "tr"),
+        Triple("", "Macedonian", "mk"),
+        Triple("", "Portuguese (Brazil)", "pt"),
+        Triple("", "Romanian", "ro"),
+        Triple("", "Italian", "it"),
+        Triple("", "Chinese", "zh"),
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
     private fun showAccountSwitch(context: Context, api: AccountManager) {
@@ -213,7 +215,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    fun getFolderSize(dir: File): Long {
+    private fun getFolderSize(dir: File): Long {
         var size: Long = 0
         dir.listFiles()?.let {
             for (file in it) {
@@ -397,12 +399,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     currentList.add(allLangs.indexOf(i))
                 }
 
-                val names = allLangs.mapNotNull {
-                    val fullName = SubtitleHelper.fromTwoLettersToLanguage(it)
-                    if (fullName.isNullOrEmpty()) {
-                        return@mapNotNull null
-                    }
-
+                val names = allLangs.map {
+                    val emoji = getFlagFromIso(it)
+                    val name = SubtitleHelper.fromTwoLettersToLanguage(it)
+                    val fullName = "$emoji $name"
                     Pair(it, fullName)
                 }
 
@@ -671,7 +671,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             val current = getCurrentLocale()
             val languageCodes = tempLangs.map { it.third }
-            val languageNames = tempLangs.map { "${it.first}  ${it.second}" }
+            val languageNames = tempLangs.map { (emoji, name, iso) ->
+                val flag = emoji.ifBlank { getFlagFromIso(iso) ?: "ERROR" }
+
+                "$flag $name"
+            }
             val index = languageCodes.indexOf(current)
 
             activity?.showDialog(

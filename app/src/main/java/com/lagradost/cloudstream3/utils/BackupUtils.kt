@@ -180,16 +180,21 @@ object BackupUtils {
 
     fun FragmentActivity.restorePrompt() {
         runOnUiThread {
-            restoreFileSelector?.launch(
-                arrayOf(
-                    "text/plain",
-                    "text/str",
-                    "text/x-unknown",
-                    "application/json",
-                    "unknown/unknown",
-                    "content/unknown",
+            try {
+                restoreFileSelector?.launch(
+                    arrayOf(
+                        "text/plain",
+                        "text/str",
+                        "text/x-unknown",
+                        "application/json",
+                        "unknown/unknown",
+                        "content/unknown",
+                    )
                 )
-            )
+            } catch (e : Exception) {
+                showToast(this,e.message)
+                logError(e)
+            }
         }
     }
 

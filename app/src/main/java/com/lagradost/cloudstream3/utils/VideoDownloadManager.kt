@@ -1341,7 +1341,12 @@ object VideoDownloadManager {
         return getFileName(context, metadata.name, metadata.episode, metadata.season)
     }
 
-    private fun getFileName(context: Context, epName: String?, episode: Int?, season: Int?): String {
+    private fun getFileName(
+        context: Context,
+        epName: String?,
+        episode: Int?,
+        season: Int?
+    ): String {
         // kinda ugly ik
         return sanitizeFilename(
             if (epName == null) {
@@ -1489,27 +1494,33 @@ object VideoDownloadManager {
     }
 
     private fun getDownloadFileInfo(context: Context, id: Int): DownloadedFileInfoResult? {
-        val info =
-            context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return null
-        val base = basePathToFile(context, info.basePath)
+        try {
+            val info =
+                context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return null
+            val base = basePathToFile(context, info.basePath)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && base.isDownloadDir()) {
-            val cr = context.contentResolver ?: return null
-            val fileUri =
-                cr.getExistingDownloadUriOrNullQ(info.relativePath, info.displayName) ?: return null
-            val fileLength = cr.getFileLength(fileUri) ?: return null
-            if (fileLength == 0L) return null
-            return DownloadedFileInfoResult(fileLength, info.totalBytes, fileUri)
-        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && base.isDownloadDir()) {
+                val cr = context.contentResolver ?: return null
+                val fileUri =
+                    cr.getExistingDownloadUriOrNullQ(info.relativePath, info.displayName)
+                        ?: return null
+                val fileLength = cr.getFileLength(fileUri) ?: return null
+                if (fileLength == 0L) return null
+                return DownloadedFileInfoResult(fileLength, info.totalBytes, fileUri)
+            } else {
 
-            val file = base?.gotoDir(info.relativePath, false)?.findFile(info.displayName)
+                val file = base?.gotoDir(info.relativePath, false)?.findFile(info.displayName)
 
 //            val normalPath = context.getNormalPath(getFile(info.relativePath), info.displayName)
 //            val dFile = File(normalPath)
 
-            if (file?.exists() != true) return null
+                if (file?.exists() != true) return null
 
-            return DownloadedFileInfoResult(file.size(), info.totalBytes, file.uri)
+                return DownloadedFileInfoResult(file.size(), info.totalBytes, file.uri)
+            }
+        } catch (e: Exception) {
+            logError(e)
+            return null
         }
     }
 

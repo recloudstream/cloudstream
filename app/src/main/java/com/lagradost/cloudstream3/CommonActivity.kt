@@ -79,6 +79,7 @@ object CommonActivity {
             toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
             toast.duration = duration ?: Toast.LENGTH_SHORT
             toast.view = layout
+            //https://github.com/PureWriter/ToastCompat
             toast.show()
             currentToast = toast
         } catch (e: Exception) {

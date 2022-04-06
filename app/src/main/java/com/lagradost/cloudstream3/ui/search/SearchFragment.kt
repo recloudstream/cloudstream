@@ -22,6 +22,7 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
+import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -35,6 +36,7 @@ import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
@@ -156,6 +158,8 @@ class SearchFragment : Fragment() {
                 builder.setContentView(R.layout.home_select_mainpage)
                 builder.show()
                 builder.let { dialog ->
+                    val isMultiLang = ctx.getApiProviderLangSettings().size > 1
+
                     val anime = dialog.findViewById<MaterialButton>(R.id.home_select_anime)
                     val cartoons = dialog.findViewById<MaterialButton>(R.id.home_select_cartoons)
                     val tvs = dialog.findViewById<MaterialButton>(R.id.home_select_tv_series)
@@ -219,9 +223,13 @@ class SearchFragment : Fragment() {
                             api.supportedTypes.any {
                                 selectedSearchTypes.contains(it)
                             }
-                        }.sortedBy { it.name }
+                        }.sortedBy { it.name.lowercase() }
 
-                        val names = currentValidApis.map { it.name }
+                        val names = currentValidApis.map {  if(isMultiLang) "${
+                            SubtitleHelper.getFlagFromIso(
+                                it.lang
+                            )?.plus(" ") ?: ""
+                        }${it.name}" else it.name }
 
                         for ((index, api) in names.withIndex()) {
                             listView?.setItemChecked(index, currentSelectedApis.contains(api))
