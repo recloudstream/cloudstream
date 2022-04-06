@@ -1,0 +1,126 @@
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
+    <string name="app_name">CloudStream</string>
+    <string name="title_home">Αρχική</string>
+    <string name="title_search">Αναζήτηση</string>
+    <string name="title_downloads">Λήψεις</string>
+    <string name="title_settings">Ρυθμίσεις</string>
+    <string name="search_hint">Ψάξε…</string>
+    <string name="search_poster_img_des">Πόστερ</string>
+    <string name="no_data">Χωρίς δεδομένα</string>
+    <string name="episode_more_options_des">Περισσότερες Επιλογές</string>
+    <string name="go_back_img_des">Πίσω</string>
+    <string name="next_episode">Επόμενο Επισόδειο</string>
+    <string name="result_poster_img_des">Πόστερ</string>
+    <string name="synopsis">Πλοκή</string>
+    <string name="result_tags">Genres</string>
+    <string name="result_share">Μοίρασε</string>
+    <string name="result_open_in_browser">Άνοιγμα στον περιηγητή</string>
+    <string name="skip_loading">Προσπέραση φορτώματος</string>
+    <string name="loading_chromecast">Φόρτωση…</string>
+
+    <string name="type_watching">Watching</string>
+    <string name="type_on_hold">On-Hold</string>
+    <string name="type_completed">Completed</string>
+    <string name="type_dropped">Dropped</string>
+    <string name="type_plan_to_watch">Plan to Watch</string>
+    <string name="type_none">None</string>
+
+    <string name="play_movie_button">Αναπαραγωγή Ταινείας</string>
+    <string name="play_torrent_button">Μετάδοση Torrent</string>
+    <string name="pick_source">Πηγές</string>
+    <string name="pick_subtitle">Υπότιτλοι</string>
+    <string name="reload_error">Ξανά φόρτωσε…</string>
+    <string name="go_back">Πίσω</string>
+    <string name="episode_poster_img_des">Πόστερ</string>
+    <string name="play_episode">Αναπαραγωγή Επισοδείου</string>
+    <!--<string name="need_storage">Δώσε άδεια για την λήψη επισοδείου</string>-->
+    <string name="download">Λήξη</string>
+    <string name="error_loading_links_toast">Σφάλμα φόρτωσεις συνδέσμων</string>
+    <string name="download_storage_text">Εσωτερικός χώρος</string>
+    <!--<string name="options">Επιλογές</string>-->
+
+    <string name="app_dubbed_text">Dub</string>
+    <string name="app_subbed_text">Sub</string>
+
+    <string name="popup_delete_file">Διαγραφή Αρχείου</string>
+    <string name="popup_play_file">Αναπαραγωγή Αρχείου</string>
+    <string name="popup_resume_download">Συνέχιση Λήψης</string>
+    <string name="popup_pause_download">Παύση Λήψης</string>
+
+    <string name="acra_report_toast">Λυπούμαστε, η εφαρμογή κατέρρευσε. Μια ανώνυμη αναφορά σφαλμάτων θα σταλεί στους προγραμματιστές</string>
+    <string name="pref_disable_acra">Απενεργοποιήστε την αυτόματη αναφορά σφαλμάτων</string>
+    <string name="home_more_info">Παραπάνω πληροφορίες</string>
+    <string name="home_expanded_hide">Κρύψιμο</string>
+    <string name="home_main_poster_img_des">Κύριο Πόστερ</string>
+    <string name="home_play">Αναπαραγωγή</string>
+    <string name="home_info">Πληροφορίες</string>
+    <string name="home_next_random_img_des">Next Random</string>
+    <string name="home_change_provider_img_des">Change Provider</string>
+    <string name="filter_bookmarks">Filter Bookmarks</string>
+    <string name="error_bookmarks_text">Bookmarks</string>
+    <string name="action_remove_from_bookmarks">Remove</string>
+    <string name="play_episode_toast">Αναπαραγωγή Episode</string>
+    <string name="sort_apply">Υποβολή</string>
+    <string name="sort_cancel">Ακύρωση</string>
+    <string name="player_speed">Ταχύτητα αναπαραγωγής</string>
+    <string name="subtitles_settings">Ρυθμίσεις υπότιτλων</string>
+    <string name="subs_text_color">Χρώμα κείμενου</string>
+    <string name="subs_outline_color">Χρώμα περιγράμματος</string>
+    <string name="subs_background_color">Χρώμα φόντου</string>
+    <string name="subs_window_color">Χρώμα παραθύρου</string>
+    <string name="subs_edge_type">Τύπος άκρων</string>
+    <string name="subs_subtitle_elevation">Ύψωση υπότιτλων</string>
+    <string name="subs_default_reset_toast">Επαναφορά στην προεπιλεγμένη τιμή</string>
+    <string name="preview_background_img_des">Προεπισκόπηση φόντου</string>
+    <string name="subs_font">Γραμματοσειρά</string>
+    <string name="search_provider_text_providers">Αναζήτηση με τους παρόχους</string>
+    <string name="search_provider_text_types">Αναζήτηση με τύπους</string>
+    <string name="benene_count_text">%d Benenes given to devs</string>
+    <string name="benene_count_text_none">No Benenes given</string>
+
+    <string name="subs_auto_select_language">Αυτόματη επιλογή γλώσσας</string>
+    <string name="subs_download_languages">Λήψη γλωσσών</string>
+    <string name="subs_hold_to_reset_to_default">Κρατήστε πατημένο για επαναφορά στα προεπιλεγμένα</string>
+    <string name="continue_watching">Συνέχεια Παρακολούθησης</string>
+
+    <string name="action_remove_watching">Αφαίρεση</string>
+    <string name="action_open_watching">Παραπάνω Πληροφορίες</string>
+
+    <string name="vpn_might_be_needed">A VPN might be needed for this provider to work correctly</string>
+    <string name="vpn_torrent">This providers is a torrent, a VPN is recommended</string>
+    <string name="torrent_plot">Περιγραφή</string>
+    <string name="normal_no_plot">Δεν βρέθηκε περιγραφή</string>
+    <string name="torrent_no_plot">Δεν βρέθηκε περιγραφή</string>
+    
+    <string name="picture_in_picture">Picture-in-picture</string>
+    <string name="picture_in_picture_des">Συνεχίζει την αναπαραγωγή σε ένα μίνι παίκτη πάνω από άλλες εφαρμογές</string>
+    <string name="player_size_settings">Αλλαγή μεγέθους παίκτη</string>
+    <string name="player_size_settings_des">Αφαίρεση μαύρων περιγραμμάτων</string>
+    <string name="player_subtitles_settings">Υπότιτλοι</string>
+    <string name="player_subtitles_settings_des">Ρυθμίσεις υποτίτλων του παίκτη</string>
+    <string name="eigengraumode_settings">Eigengrau Mode</string>
+    <string name="eigengraumode_settings_des">Προσθέτει την επιλογή ταχύτητας στον παίκτη</string>
+    <string name="swipe_to_seek_settings">Σύρετε για seek</string>
+    <string name="swipe_to_seek_settings_des">Σύρετε αριστερά ή δεξιά για να ελέγξετε τον χρόνο στον παίκτη</string>
+    <string name="swipe_to_change_settings">Σύρετε για να αλλάξετε ρυθμίσεις</string>
+    <string name="swipe_to_change_settings_des">Σύρετε αριστερά ή δεξιά για να αλλάξετε τη φωτεινότητα ή την ένταση</string>
+    <string name="double_tap_to_seek_settings">Διπλό πάτημα για seek</string>
+    <string name="double_tap_to_seek_settings_des">Διπλό πάτημα στα αριστερά ή δεξιά για seek μπροστά ή πίσω</string>
+    <string name="search">Αναζήτηση</string>
+    <string name="settings_info">Πληροφορείες</string>
+    <string name="advanced_search">Προχωρημένη Αναζήτηση</string>
+    <string name="advanced_search_des">Δίνει τα αποτελέσματα αναζήτησης χωρισμένα ανά πάροχο</string>
+    <string name="bug_report_settings_off">Αποστέλλει δεδομένα μόνο για σφάλματα</string>
+    <string name="bug_report_settings_on">Δεν στέλνει δεδομένα</string>
+    <string name="updates_settings">Εμφάνιση ενημερώσεων</string>
+    <string name="updates_settings_des">Αυτόματη αναζήτηση νέων ενημερώσεων</string>
+    <string name="uprereleases_settings">Ενημέρωση σε προ-εκδόσεις</string>
+    <string name="uprereleases_settings_des">Αναζητήστε ενημερώσεις προ-εκδόσεων αντί για κανονικές εκδόσεις</string>
+    <string name="github">Github</string>
+    <string name="lightnovel">Light novel app by the same devs</string>
+    <string name="anim">Anime app by the same devs</string>
+    <string name="discord">Join Discord</string>
+    <string name="benene">Δώσε benene στους devs</string>
+    <string name="benene_des">Βenene δώθηκε</string>
+</resources>
