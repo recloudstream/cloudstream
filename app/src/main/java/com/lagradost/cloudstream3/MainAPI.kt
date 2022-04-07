@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.metaproviders.CrossTmdbProvider
+import com.lagradost.cloudstream3.metaproviders.MultiAnimeProvider
 import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
@@ -103,6 +104,7 @@ object APIHolder {
             DubbedAnimeProvider(),
             MonoschinosProvider(),
             KawaiifuProvider(), // disabled due to cloudflare
+            //MultiAnimeProvider(),
         )
     }
 
@@ -268,7 +270,8 @@ object APIHolder {
         } else {
             // Filter API depending on preferred media type
             val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.OVA)
-            val listEnumMovieTv = listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon, TvType.AsianDrama)
+            val listEnumMovieTv =
+                listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon, TvType.AsianDrama)
             val listEnumDoc = listOf(TvType.Documentary)
             val mediaTypeList = when (currentPrefMedia) {
                 2 -> listEnumAnime
@@ -741,7 +744,7 @@ interface LoadResponse {
             this.syncData[aniListIdPrefix] = (id ?: return).toString()
         }
 
-        fun LoadResponse.addImdbUrl(url : String?) {
+        fun LoadResponse.addImdbUrl(url: String?) {
             addImdbId(imdbUrlToIdNullable(url))
         }
 

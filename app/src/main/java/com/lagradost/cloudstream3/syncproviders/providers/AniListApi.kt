@@ -84,7 +84,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     override suspend fun getResult(id: String): SyncAPI.SyncResult? {
-        val internalId = id.toIntOrNull() ?: return null
+        val internalId = (Regex("anilist\\.co/anime/(\\d*)").find(id)?.groupValues?.getOrNull(1)
+            ?: id).toIntOrNull() ?: return null
         val season = getSeason(internalId).data.Media
 
         return SyncAPI.SyncResult(
@@ -95,7 +96,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     (it.timeUntilAiring ?: return@let null) + unixTime
                 )
             },
-            genres = season.genres,
+            title = season.title?.userPreferred,
             synonyms = season.synonyms,
             isAdult = season.isAdult,
             totalEpisodes = season.episodes,
@@ -332,6 +333,12 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                            large
                            medium
                            color
+                       }
+                       title {
+                            romaji
+                            english
+                            native
+                            userPreferred
                        }
                        duration
                        episodes
@@ -750,6 +757,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     data class SeasonMedia(
         @JsonProperty("id") val id: Int?,
+        @JsonProperty("title") val title: MediaTitle?,
         @JsonProperty("idMal") val idMal: Int?,
         @JsonProperty("format") val format: String?,
         @JsonProperty("nextAiringEpisode") val nextAiringEpisode: SeasonNextAiringEpisode?,
@@ -869,6 +877,13 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     data class AniListFavourites(
         @JsonProperty("anime") val anime: AniListFavoritesMediaConnection,
+    )
+
+    data class MediaTitle(
+        @JsonProperty("romaji") val romaji: String?,
+        @JsonProperty("english") val english: String?,
+        @JsonProperty("native") val native: String?,
+        @JsonProperty("userPreferred") val userPreferred: String?,
     )
 
     data class SeasonNode(
