@@ -100,7 +100,7 @@ https://lagradost.github.io/CloudStream-3/
 - [animeflick.net](https://animeflick.net) 
 - [tenshi.moe](https://tenshi.moe) 
 - [wcostream.cc](https://wcostream.cc) 
-- [9anime.center](https://9anime.center) 
+- [9anime.id](https://9anime.id) 
 - [animeworld.tv](https://www.animeworld.tv) 
 - [zoro.to](https://zoro.to) 
 - [bestdubbedanime.com](https://bestdubbedanime.com) 
