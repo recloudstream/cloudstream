@@ -63,6 +63,14 @@
                 android:title="@string/double_tap_to_pause_settings"
                 android:summary="@string/double_tap_to_pause_settings_des"
                 app:defaultValue="false" />
+
+        <SwitchPreference
+                android:icon="@drawable/baseline_sync_24"
+                app:key="@string/episode_sync_enabled_key"
+                android:title="@string/episode_sync_settings"
+                android:summary="@string/episode_sync_settings_des"
+                app:defaultValue="true" />
+
         <Preference
                 android:key="@string/video_buffer_disk_key"
                 android:title="@string/video_buffer_disk_settings"

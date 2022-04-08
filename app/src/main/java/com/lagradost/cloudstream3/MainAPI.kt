@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.metaproviders.CrossTmdbProvider
-import com.lagradost.cloudstream3.metaproviders.MultiAnimeProvider
 import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
@@ -310,7 +309,7 @@ abstract class MainAPI {
         var overrideData: HashMap<String, ProvidersInfoJson>? = null
     }
 
-    public fun overrideWithNewData(data: ProvidersInfoJson) {
+    fun overrideWithNewData(data: ProvidersInfoJson) {
         this.name = data.name
         this.mainUrl = data.url
     }
@@ -760,6 +759,10 @@ interface LoadResponse {
             // TODO add kitsu sync
         }
 
+        fun LoadResponse.addTMDbId(id: String?) {
+
+        }
+
         fun LoadResponse.setDuration(input: String?) {
             val cleanInput = input?.trim()?.replace(" ", "") ?: return
             Regex("([0-9]*)h.*?([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
@@ -985,7 +988,7 @@ fun fetchUrls(text: String?): List<String> {
         return listOf()
     }
     val linkRegex =
-        Regex("""(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))""")
+        Regex("""(https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))""")
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
 }
 

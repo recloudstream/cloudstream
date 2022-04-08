@@ -56,7 +56,10 @@ const val SKIP_OP_VIDEO_PERCENTAGE = 50
 const val PRELOAD_NEXT_EPISODE_PERCENTAGE = 80
 
 // when the player should mark the episode as watched and resume watching the next
-const val NEXT_WATCH_EPISODE_PERCENTAGE = 95
+const val NEXT_WATCH_EPISODE_PERCENTAGE = 90
+
+// when the player should sync the progress of "watched", TODO MAKE SETTING
+const val UPDATE_SYNC_PROGRESS_PERCENTAGE = 80
 
 abstract class AbstractPlayerFragment(
     val player: IPlayer = CS3IPlayer()
@@ -329,6 +332,7 @@ abstract class AbstractPlayerFragment(
                 SKIP_OP_VIDEO_PERCENTAGE,
                 PRELOAD_NEXT_EPISODE_PERCENTAGE,
                 NEXT_WATCH_EPISODE_PERCENTAGE,
+                UPDATE_SYNC_PROGRESS_PERCENTAGE,
             ), subtitlesUpdates = ::subtitlesChanged
         )
 

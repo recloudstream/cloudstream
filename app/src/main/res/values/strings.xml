@@ -39,6 +39,7 @@
     <string name="backup_key" translatable="false">backup_key</string>
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
+    <string name="episode_sync_enabled_key" translatable="false">episode_sync_enabled_key</string>
 
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
@@ -201,6 +202,9 @@
     <string name="use_system_brightness_settings_des">Use system brightness in the app player instead of a dark
         overlay
     </string>
+
+    <string name="episode_sync_settings">Update watch progress</string>
+    <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
 
     <string name="restore_settings">Restore data from backup</string>
     <string name="killswitch_settings">Download latest metadata from github</string>

@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.player
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.material.button.MaterialButton
 import com.hippo.unifile.UniFile
@@ -25,6 +27,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.*
@@ -39,13 +42,18 @@ import kotlinx.coroutines.Job
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
         private var lastUsedGenerator: IGenerator? = null
-        fun newInstance(generator: IGenerator): Bundle {
+        fun newInstance(generator: IGenerator, syncData: HashMap<String, String>? = null): Bundle {
+            Log.i(TAG, "newInstance = $syncData")
             lastUsedGenerator = generator
-            return Bundle()
+            return Bundle().apply {
+                if (syncData != null)
+                    putSerializable("syncData", syncData)
+            }
         }
     }
 
     private lateinit var viewModel: PlayerGeneratorViewModel //by activityViewModels()
+    private lateinit var sync: SyncViewModel
     private var currentLinks: Set<Pair<ExtractorLink?, ExtractorUri?>> = setOf()
     private var currentSubs: Set<SubtitleData> = setOf()
 
@@ -123,7 +131,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                     if (isNextEpisode) 0L else getPos()
                 },
                 currentSubs,
-                (if(sameEpisode) currentSelectedSubtitles else null) ?: getAutoSelectSubtitle(currentSubs, settings = true, downloads = true),
+                (if (sameEpisode) currentSelectedSubtitles else null) ?: getAutoSelectSubtitle(
+                    currentSubs,
+                    settings = true,
+                    downloads = true
+                ),
             )
         }
     }
@@ -422,6 +434,18 @@ class GeneratorPlayer : FullScreenPlayer() {
         var isOpVisible = false
         when (val meta = currentMeta) {
             is ResultEpisode -> {
+                if (percentage >= UPDATE_SYNC_PROGRESS_PERCENTAGE) {
+                    context?.let { ctx ->
+                        val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                        if (settingsManager.getBoolean(
+                                ctx.getString(R.string.episode_sync_enabled_key),
+                                true
+                            )
+                        )
+                            sync.modifyMaxEpisode(meta.episode)
+                    }
+                }
+
                 if (meta.tvType.isAnimeOp())
                     isOpVisible = percentage < SKIP_OP_VIDEO_PERCENTAGE
             }
@@ -429,7 +453,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         player_skip_op?.isVisible = isOpVisible
         player_skip_episode?.isVisible = !isOpVisible && viewModel.hasNextEpisode() == true
 
-        if (percentage > PRELOAD_NEXT_EPISODE_PERCENTAGE) {
+        if (percentage >= PRELOAD_NEXT_EPISODE_PERCENTAGE) {
             viewModel.preLoadNextLinks()
         }
     }
@@ -554,6 +578,13 @@ class GeneratorPlayer : FullScreenPlayer() {
         setPlayerDimen(widthHeight)
     }
 
+    private fun unwrapBundle(savedInstanceState: Bundle?) {
+        Log.i(TAG, "unwrapBundle = $savedInstanceState")
+        savedInstanceState?.let { bundle ->
+            sync.addSyncs(bundle.getSerializable("syncData") as? HashMap<String, String>?)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -564,12 +595,22 @@ class GeneratorPlayer : FullScreenPlayer() {
             if (context?.isTvSettings() == true) R.layout.fragment_player_tv else R.layout.fragment_player
 
         viewModel = ViewModelProvider(this)[PlayerGeneratorViewModel::class.java]
+        sync = ViewModelProvider(this)[SyncViewModel::class.java]
+
         viewModel.attachGenerator(lastUsedGenerator)
+        unwrapBundle(savedInstanceState)
+        unwrapBundle(arguments)
+
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        unwrapBundle(savedInstanceState)
+        unwrapBundle(arguments)
+
+        sync.updateUserData()
 
         preferredAutoSelectSubtitles = SubtitlesFragment.getAutoSelectLanguageISO639_1()
 
