@@ -230,8 +230,7 @@ class SearchFragment : Fragment() {
                                 it.lang
                             )?.plus(" ") ?: ""
                         }${it.name}" else it.name }
-
-                        for ((index, api) in names.withIndex()) {
+                        for ((index, api) in currentValidApis.map { it.name }.withIndex()) {
                             listView?.setItemChecked(index, currentSelectedApis.contains(api))
                         }
 

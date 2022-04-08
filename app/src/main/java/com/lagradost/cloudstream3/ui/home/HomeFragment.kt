@@ -229,9 +229,8 @@ class HomeFragment : Fragment() {
                     currentValidApis.addAll(0, validAPIs.subList(0, 2))
 
                     val names = currentValidApis.map { if(isMultiLang) "${getFlagFromIso(it.lang)?.plus(" ") ?: ""}${it.name}" else it.name }
-                    val index = names.indexOf(currentApiName)
+                    val index = currentValidApis.map { it.name }.indexOf(currentApiName)
                     listView?.setItemChecked(index, true)
-                    arrayAdapter.notifyDataSetChanged()
                     arrayAdapter.addAll(names)
                     arrayAdapter.notifyDataSetChanged()
                 }
