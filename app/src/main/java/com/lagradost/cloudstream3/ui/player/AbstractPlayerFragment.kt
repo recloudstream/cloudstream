@@ -92,6 +92,10 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
+    open fun exitedPipMode() {
+        throw NotImplementedError()
+    }
+
     private fun keepScreenOn(on: Boolean) {
         if (on) {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -160,7 +164,7 @@ abstract class AbstractPlayerFragment(
             isInPIPMode = isInPictureInPictureMode
             if (isInPictureInPictureMode) {
                 // Hide the full-screen UI (controls, etc.) while in picture-in-picture mode.
-                player_holder.alpha = 0f
+                player_holder?.alpha = 0f
                 pipReceiver = object : BroadcastReceiver() {
                     override fun onReceive(
                         context: Context,
@@ -188,7 +192,8 @@ abstract class AbstractPlayerFragment(
                 updateIsPlaying(Pair(isPlayingValue, isPlayingValue))
             } else {
                 // Restore the full-screen UI.
-                player_holder.alpha = 1f
+                player_holder?.alpha = 1f
+                exitedPipMode()
                 pipReceiver?.let {
                     activity?.unregisterReceiver(it)
                 }

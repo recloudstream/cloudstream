@@ -146,6 +146,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         return rawY > statusHeight && rawX < screenWidth //- navHeight
     }
 
+    override fun exitedPipMode() {
+        animateLayoutChanges()
+    }
+
     private fun animateLayoutChanges() {
         if (isShowing) {
             updateUIVisibility()
