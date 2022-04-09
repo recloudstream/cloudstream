@@ -175,6 +175,76 @@
         <item name="android:colorAccent">@color/colorPrimaryPink</item>
     </style>
 
+    <style name="OverlayPrimaryColorCarnationPink">
+        <item name="colorPrimary">@color/colorPrimaryCarnationPink</item>
+        <item name="android:colorPrimary">@color/colorPrimaryCarnationPink</item>
+        <item name="colorPrimaryDark">#83366f</item>
+        <item name="colorAccent">#BD5DA5</item>
+        <item name="colorOnPrimary">#BD5DA5</item>
+        <!--   Needed for leanback fuckery   -->
+        <item name="android:colorAccent">@color/colorPrimaryCarnationPink</item>
+    </style>
+
+    <style name="OverlayPrimaryColorMaroon">
+        <item name="colorPrimary">@color/colorPrimaryMaroon</item>
+        <item name="android:colorPrimary">@color/colorPrimaryMaroon</item>
+        <item name="colorPrimaryDark">#370C0C</item>
+        <item name="colorAccent">#451010</item>
+        <item name="colorOnPrimary">#451010</item>
+        <!--   Needed for leanback fuckery   -->
+        <item name="android:colorAccent">@color/colorPrimaryMaroon</item>
+    </style>
+
+    <style name="OverlayPrimaryColorDarkGreen">
+        <item name="colorPrimary">@color/colorPrimaryDarkGreen</item>
+        <item name="android:colorPrimary">@color/colorPrimaryDarkGreen</item>
+        <item name="colorPrimaryDark">#003d00</item>
+        <item name="colorAccent">#004500</item>
+        <item name="colorOnPrimary">#004500</item>
+        <!--   Needed for leanback fuckery   -->
+        <item name="android:colorAccent">@color/colorPrimaryDarkGreen</item>
+    </style>
+
+    <style name="OverlayPrimaryColorNavyBlue">
+        <item name="colorPrimary">@color/colorPrimaryNavyBlue</item>
+        <item name="android:colorPrimary">@color/colorPrimaryNavyBlue</item>
+        <item name="colorPrimaryDark">#000073</item>
+        <item name="colorAccent">#000080</item>
+        <item name="colorOnPrimary">#000080</item>
+        <!--   Needed for leanback fuckery   -->
+        <item name="android:colorAccent">@color/colorPrimaryNavyBlue</item>
+    </style>
+
+    <style name="OverlayPrimaryColorGrey">
+        <item name="colorPrimary">@color/colorPrimaryGrey</item>
+        <item name="android:colorPrimary">@color/colorPrimaryGrey</item>
+        <item name="colorPrimaryDark">#484848</item>
+        <item name="colorAccent">#515151</item>
+        <item name="colorOnPrimary">#515151</item>
+        <!--   Needed for leanback fuckery   -->
+        <item name="android:colorAccent">@color/colorPrimaryGrey</item>
+    </style>
+
+    <style name="OverlayPrimaryColorWhite">
+        <item name="colorPrimary">@color/colorPrimaryWhite</item>
+        <item name="android:colorPrimary">@color/colorPrimaryWhite</item>
+        <item name="colorPrimaryDark">#CCCCCC</item>
+        <item name="colorAccent">#FFFFFF</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <!--   Needed for leanback fuckery   -->
+        <item name="android:colorAccent">@color/colorPrimaryWhite</item>
+    </style>
+
+    <style name="OverlayPrimaryColorBrown">
+        <item name="colorPrimary">@color/colorPrimaryBrown</item>
+        <item name="android:colorPrimary">@color/colorPrimaryBrown</item>
+        <item name="colorPrimaryDark">#582700</item>
+        <item name="colorAccent">#622C00</item>
+        <item name="colorOnPrimary">#622C00</item>
+        <!--   Needed for leanback fuckery   -->
+        <item name="android:colorAccent">@color/colorPrimaryBrown</item>
+    </style>
+
     <style name="customRatingBar" parent="@style/Widget.AppCompat.RatingBar">
 
         <item name="android:progressDrawable">@drawable/abc_ratingbar_indicator_material</item>

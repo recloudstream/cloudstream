@@ -63,4 +63,12 @@
     <color name="colorPrimaryBanana">#E4D448</color>
     <color name="colorPrimaryParty">#ea596e</color>
     <color name="colorPrimaryPink">#ff1493</color>
+
+    <color name="colorPrimaryCarnationPink">#BD5DA5</color>
+    <color name="colorPrimaryDarkGreen">#004500</color>
+    <color name="colorPrimaryMaroon">#451010</color>
+    <color name="colorPrimaryNavyBlue">#000080</color>
+    <color name="colorPrimaryGrey">#515151</color>
+    <color name="colorPrimaryWhite">#FFFFFF</color>
+    <color name="colorPrimaryBrown">#622C00</color>
 </resources>

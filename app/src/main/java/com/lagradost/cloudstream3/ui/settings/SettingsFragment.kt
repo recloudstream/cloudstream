@@ -542,7 +542,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val currentLayout =
                 settingsManager.getString(getString(R.string.primary_color_key), prefValues.first())
 
-            activity?.showBottomDialog(
+            activity?.showDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentLayout),
                 getString(R.string.primary_color_settings),
