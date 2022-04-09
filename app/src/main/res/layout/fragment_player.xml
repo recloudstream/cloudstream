@@ -21,7 +21,8 @@
             app:auto_show="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
+            app:backgroundTint="@android:color/black"
+            android:background="@android:color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
