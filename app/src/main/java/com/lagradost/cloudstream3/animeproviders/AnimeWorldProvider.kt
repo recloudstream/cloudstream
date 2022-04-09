@@ -152,7 +152,7 @@ class AnimeWorldProvider : MainAPI() {
         val episodes = servers.select(".server[data-name=\"9\"] .episode").map {
             val id = it.select("a").attr("data-id")
             val number = it.select("a").attr("data-episode-num").toIntOrNull()
-            AnimeEpisode(
+            Episode(
                 fixUrl("$mainUrl/api/episode/info?id=$id"),
                 episode = number
             )

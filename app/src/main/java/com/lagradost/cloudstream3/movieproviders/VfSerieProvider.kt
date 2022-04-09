@@ -28,7 +28,8 @@ class VfSerieProvider : MainAPI() {
         for (item in items) {
             val href = item.attr("href")
 
-            val poster = item.selectFirst("> div.Image > figure > img").attr("src").replace("//image", "https://image")
+            val poster = item.selectFirst("> div.Image > figure > img").attr("src")
+                .replace("//image", "https://image")
 
             if (poster == "$mainUrl/wp-content/themes/toroplay/img/cnt/noimg-thumbnail.png") {  // if the poster is missing (the item is just a redirect to something like https://vf-serie.org/series-tv/)
                 continue
@@ -37,7 +38,17 @@ class VfSerieProvider : MainAPI() {
 
             val year = item.selectFirst("> span.Year").text()?.toIntOrNull()
 
-            returnValue.add(TvSeriesSearchResponse(name, href, this.name, TvType.TvSeries, poster, year, null))
+            returnValue.add(
+                TvSeriesSearchResponse(
+                    name,
+                    href,
+                    this.name,
+                    TvType.TvSeries,
+                    poster,
+                    year,
+                    null
+                )
+            )
         }
         return returnValue
     }
@@ -99,7 +110,8 @@ class VfSerieProvider : MainAPI() {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         val title =
-            document?.selectFirst(".Title")?.text()?.replace("Regarder Serie ", "")?.replace(" En Streaming", "")
+            document?.selectFirst(".Title")?.text()?.replace("Regarder Serie ", "")
+                ?.replace(" En Streaming", "")
                 ?: throw ErrorLoadingException("Service might be unavailable")
 
 
@@ -109,7 +121,8 @@ class VfSerieProvider : MainAPI() {
         //val duration = document.select("span.Time").text()?.toIntOrNull()
 
         val backgroundPoster =
-            document.selectFirst("div.Image > figure > img").attr("src").replace("//image", "https://image")
+            document.selectFirst("div.Image > figure > img").attr("src")
+                .replace("//image", "https://image")
 
         val descript = document.selectFirst("div.Description > p").text()
 
@@ -124,7 +137,7 @@ class VfSerieProvider : MainAPI() {
         }
         if (list.isEmpty()) throw ErrorLoadingException("No Seasons Found")
 
-        val episodeList = ArrayList<TvSeriesEpisode>()
+        val episodeList = ArrayList<Episode>()
 
         for (season in list) {
             val episodes = document.select("table > tbody > tr")
@@ -132,20 +145,20 @@ class VfSerieProvider : MainAPI() {
                 episodes.forEach { episode ->
                     val epNum = episode.selectFirst("> span.Num")?.text()?.toIntOrNull()
                     val poster =
-                        episode.selectFirst("> td.MvTbImg > a > img")?.attr("src")?.replace("//image", "https://image")
+                        episode.selectFirst("> td.MvTbImg > a > img")?.attr("src")
+                            ?.replace("//image", "https://image")
                     val aName = episode.selectFirst("> td.MvTbTtl > a")
                     val date = episode.selectFirst("> td.MvTbTtl > span")?.text()?.toString()
                     val name = aName.text()
                     val href = aName.attr("href")
                     episodeList.add(
-                        TvSeriesEpisode(
-                            name,
-                            season,
-                            epNum,
-                            href,
-                            poster,
-                            date
-                        )
+                        newEpisode(href) {
+                            this.name = name
+                            this.season = season
+                            this.episode = epNum
+                            this.posterUrl = poster
+                            addDate(date)
+                        }
                     )
                 }
             }

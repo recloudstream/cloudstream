@@ -125,16 +125,15 @@ class TenshiProvider : MainAPI() {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun dateParser(dateString: String?): String? {
+    private fun dateParser(dateString: String?): Date? {
         if (dateString == null) return null
         try {
             val format = SimpleDateFormat("dd 'of' MMM',' yyyy")
-            val newFormat = SimpleDateFormat("dd-MM-yyyy")
             val data = format.parse(
                 dateString.replace("th ", " ").replace("st ", " ").replace("nd ", " ")
                     .replace("rd ", " ")
             ) ?: return null
-            return newFormat.format(data)
+            return data
         } catch (e: Exception) {
             return null
         }
@@ -246,14 +245,12 @@ class TenshiProvider : MainAPI() {
 
         val episodes = ArrayList(episodeNodes.map {
             val title = it.selectFirst(".episode-title")?.text()?.trim()
-            AnimeEpisode(
-                it.attr("href"),
-                if(title == "No Title") null else title,
-                it.selectFirst("img")?.attr("src"),
-                dateParser(it?.selectFirst(".episode-date")?.text()?.trim()),
-                null,
-                it.attr("data-content").trim(),
-            )
+            newEpisode(it.attr("href")) {
+                this.name = if (title == "No Title") null else title
+                this.posterUrl = it.selectFirst("img")?.attr("src")
+                addDate(dateParser(it?.selectFirst(".episode-date")?.text()?.trim()))
+                this.description = it.attr("data-content").trim()
+            }
         })
 
         val similarAnime = document.select("ul.anime-loop > li > a")?.mapNotNull { element ->

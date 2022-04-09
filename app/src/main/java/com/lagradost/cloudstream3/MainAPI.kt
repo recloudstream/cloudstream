@@ -13,11 +13,14 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.metaproviders.CrossTmdbProvider
 import com.lagradost.cloudstream3.movieproviders.*
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import okhttp3.Interceptor
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
 
@@ -800,16 +803,6 @@ fun TvType?.isEpisodeBased(): Boolean {
     return (this == TvType.TvSeries || this == TvType.Anime)
 }
 
-data class AnimeEpisode(
-    val url: String,
-    var name: String? = null,
-    var posterUrl: String? = null,
-    var date: String? = null,
-    var rating: Int? = null,
-    var description: String? = null,
-    var episode: Int? = null,
-)
-
 data class TorrentLoadResponse(
     override var name: String,
     override var url: String,
@@ -841,7 +834,7 @@ data class AnimeLoadResponse(
     override var posterUrl: String? = null,
     override var year: Int? = null,
 
-    var episodes: MutableMap<DubStatus, List<AnimeEpisode>> = mutableMapOf(),
+    var episodes: MutableMap<DubStatus, List<Episode>> = mutableMapOf(),
     var showStatus: ShowStatus? = null,
 
     override var plot: String? = null,
@@ -857,7 +850,7 @@ data class AnimeLoadResponse(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
 ) : LoadResponse
 
-fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<AnimeEpisode>?) {
+fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<Episode>?) {
     if (episodes == null) return
     this.episodes[status] = episodes
 }
@@ -912,6 +905,26 @@ data class MovieLoadResponse(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
 ) : LoadResponse
 
+fun <T> MainAPI.newMovieLoadResponse(
+    name: String,
+    url: String,
+    type: TvType,
+    data: T?,
+    initializer: MovieLoadResponse.() -> Unit = { }
+): MovieLoadResponse {
+    val dataUrl = data?.toJson() ?: ""
+    val builder = MovieLoadResponse(
+        name = name,
+        url = url,
+        apiName = this.name,
+        type = type,
+        dataUrl = dataUrl,
+        comingSoon = dataUrl.isBlank()
+    )
+    builder.initializer()
+    return builder
+}
+
 fun MainAPI.newMovieLoadResponse(
     name: String,
     url: String,
@@ -931,23 +944,58 @@ fun MainAPI.newMovieLoadResponse(
     return builder
 }
 
-data class TvSeriesEpisode(
-    val name: String? = null,
-    val season: Int? = null,
-    val episode: Int? = null,
-    val data: String,
-    val posterUrl: String? = null,
-    val date: String? = null,
-    val rating: Int? = null,
-    val description: String? = null,
+data class Episode(
+    var data: String,
+    var name: String? = null,
+    var season: Int? = null,
+    var episode: Int? = null,
+    var posterUrl: String? = null,
+    var rating: Int? = null,
+    var description: String? = null,
+    var date: Long? = null,
 )
+
+fun Episode.addDate(date: String?, fomat: String = "yyyy-MM-dd") {
+    try {
+        this.date = SimpleDateFormat(fomat)?.parse(date ?: return)?.time
+    } catch (e: Exception) {
+        logError(e)
+    }
+}
+
+fun Episode.addDate(date: Date?) {
+    this.date = date?.time
+}
+
+fun <T> MainAPI.newEpisode(
+    url: String,
+    initializer: Episode.() -> Unit = { },
+    fix: Boolean = true,
+): Episode {
+    val builder = Episode(
+        data = if (fix) fixUrl(url) else url
+    )
+    builder.initializer()
+    return builder
+}
+
+fun <T> MainAPI.newEpisode(
+    data: T,
+    initializer: Episode.() -> Unit = { }
+): Episode {
+    val builder = Episode(
+        data = data?.toJson() ?: throw ErrorLoadingException("invalid newEpisode")
+    )
+    builder.initializer()
+    return builder
+}
 
 data class TvSeriesLoadResponse(
     override var name: String,
     override var url: String,
     override var apiName: String,
     override var type: TvType,
-    var episodes: List<TvSeriesEpisode>,
+    var episodes: List<Episode>,
 
     override var posterUrl: String? = null,
     override var year: Int? = null,
@@ -968,7 +1016,7 @@ fun MainAPI.newTvSeriesLoadResponse(
     name: String,
     url: String,
     type: TvType,
-    episodes: List<TvSeriesEpisode>,
+    episodes: List<Episode>,
     initializer: TvSeriesLoadResponse.() -> Unit = { }
 ): TvSeriesLoadResponse {
     val builder = TvSeriesLoadResponse(

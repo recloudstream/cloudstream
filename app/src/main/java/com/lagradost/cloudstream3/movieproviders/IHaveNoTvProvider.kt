@@ -139,7 +139,7 @@ class IHaveNoTvProvider : MainAPI() {
         val episodes = if (isSeries) {
             container?.select(".episode")?.map { ep ->
                 val thumb = ep.selectFirst("img").attr("src")
-                val epTitle = ep.selectFirst("a[title]").attr("title")
+
                 val epLink = fixUrl(ep.selectFirst("a[title]").attr("href"))
                 val (season, epNum) = if (ep.selectFirst(".episodeMeta > strong") != null &&
                     ep.selectFirst(".episodeMeta > strong").html().contains("S")
@@ -150,7 +150,7 @@ class IHaveNoTvProvider : MainAPI() {
                         split?.get(1)?.toIntOrNull()
                     )
                 } else Pair<Int?, Int?>(null, null)
-                val epDescription = ep.selectFirst(".episodeSynopsis")?.text()
+
                 year = Regex("""•?\s+(\d{4})\s+•""").find(
                     ep.selectFirst(".episodeMeta").text()
                 )?.destructured?.component1()?.toIntOrNull()
@@ -158,16 +158,13 @@ class IHaveNoTvProvider : MainAPI() {
                 categories.addAll(
                     ep.select(".episodeMeta > a[href*=\"/category/\"]").map { it.text().trim() })
 
-                TvSeriesEpisode(
-                    epTitle,
-                    season,
-                    epNum,
-                    epLink,
-                    thumb,
-                    null,
-                    null,
-                    epDescription
-                )
+                newEpisode(epLink) {
+                    this.name = ep.selectFirst("a[title]").attr("title")
+                    this.season = season
+                    this.episode = epNum
+                    this.posterUrl = thumb
+                    this.description = ep.selectFirst(".episodeSynopsis")?.text()
+                }
             }
         } else {
             listOf(MovieLoadResponse(
@@ -188,7 +185,7 @@ class IHaveNoTvProvider : MainAPI() {
         }
 
         val poster = episodes?.firstOrNull().let {
-            if (isSeries && it != null) (it as TvSeriesEpisode).posterUrl
+            if (isSeries && it != null) (it as Episode).posterUrl
             else null
         }
 
@@ -197,7 +194,7 @@ class IHaveNoTvProvider : MainAPI() {
             url,
             this.name,
             TvType.TvSeries,
-            episodes!!.map { it as TvSeriesEpisode },
+            episodes!!.map { it as Episode },
             poster,
             year,
             description,

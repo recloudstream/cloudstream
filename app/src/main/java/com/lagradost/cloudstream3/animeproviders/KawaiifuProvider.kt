@@ -94,7 +94,7 @@ class KawaiifuProvider : MainAPI() {
         val episodes = Jsoup.parse(
             app.get(episodesLink).text
         ).selectFirst(".list-ep").select("li").map {
-            AnimeEpisode(
+            Episode(
                 it.selectFirst("a").attr("href"),
                 if (it.text().trim().toIntOrNull() != null) "Episode ${it.text().trim()}" else it.text().trim()
             )

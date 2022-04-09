@@ -75,7 +75,7 @@ class SoaptwoDayProvider:MainAPI() {
         val episodes = soup.select("div.alert > div > div > a").mapNotNull {
             val link = fixUrlNull(it?.attr("href")) ?: return@mapNotNull null
             val name = it?.text()?.replace(Regex("(^(\\d+)\\.)"),"")
-            TvSeriesEpisode(
+            Episode(
                 name = name,
                 data = link
             )

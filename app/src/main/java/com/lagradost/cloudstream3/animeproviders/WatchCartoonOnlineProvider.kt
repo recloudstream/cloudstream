@@ -113,28 +113,26 @@ class WatchCartoonOnlineProvider : MainAPI() {
                 val href = it.attr("href")
                 if (match != null) {
                     val last = match.groupValues[3]
-                    return@map TvSeriesEpisode(
+                    return@map Episode(
+                        href,
                         if (last.startsWith("English")) null else last,
                         match.groupValues[1].toIntOrNull(),
                         match.groupValues[2].toIntOrNull(),
-                        href
                     )
                 }
                 val match2 = Regex("Episode ([0-9]*).*? (.*)").find(text)
                 if (match2 != null) {
                     val last = match2.groupValues[2]
-                    return@map TvSeriesEpisode(
+                    return@map Episode(
+                        href,
                         if (last.startsWith("English")) null else last,
                         null,
                         match2.groupValues[1].toIntOrNull(),
-                        href
                     )
                 }
-                return@map TvSeriesEpisode(
-                    text,
-                    null,
-                    null,
-                    href
+                return@map Episode(
+                    href,
+                    text
                 )
             }
             TvSeriesLoadResponse(
@@ -162,7 +160,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
                 url,
                 this.name,
                 TvType.TvSeries,
-                listOf(TvSeriesEpisode(title, null, null, url)),
+                listOf(Episode(url,title)),
                 null,
                 null,
                 description,

@@ -156,7 +156,7 @@ class WatchAsianProvider : MainAPI() {
             val regex = "(?<=episode-).*?(?=.html)".toRegex()
             val count = regex.find(epLink, mainUrl.length)?.value?.toIntOrNull() ?: 0
             //Log.i(this.name, "Result => $epLink (regexYear) ${count}")
-            TvSeriesEpisode(
+            Episode(
                 name = null,
                 season = null,
                 episode = count,

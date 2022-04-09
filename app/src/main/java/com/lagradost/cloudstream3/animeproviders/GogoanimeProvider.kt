@@ -303,7 +303,7 @@ class GogoanimeProvider : MainAPI() {
         val params = mapOf("ep_start" to "0", "ep_end" to "2000", "id" to animeId)
 
         val episodes = app.get(episodeloadApi, params = params).document.select("a").map {
-            AnimeEpisode(
+            Episode(
                 fixUrl(it.attr("href").trim()),
                 "Episode " + it.selectFirst(".name").text().replace("EP", "").trim()
             )

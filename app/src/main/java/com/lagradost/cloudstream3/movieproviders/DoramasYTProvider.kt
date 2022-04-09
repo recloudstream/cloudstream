@@ -133,7 +133,7 @@ class DoramasYTProvider : MainAPI() {
             val name = it.selectFirst(".dtlsflim p").text()
             val link = it.selectFirst("a").attr("href")
             val epThumb = it.selectFirst(".flimimg img.img1").attr("src")
-            AnimeEpisode(link, name, posterUrl = epThumb)
+            Episode(link, name, posterUrl = epThumb)
         }
         return newAnimeLoadResponse(title, url, getType(type)) {
             posterUrl = poster

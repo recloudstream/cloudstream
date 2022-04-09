@@ -112,7 +112,7 @@ class DubbedAnimeProvider : MainAPI() {
     }
 
 
-    private suspend fun getAnimeEpisode(slug: String, isMovie: Boolean): EpisodeInfo {
+    private suspend fun getEpisode(slug: String, isMovie: Boolean): EpisodeInfo {
         val url =
             mainUrl + (if (isMovie) "/movies/jsonMovie" else "/xz/v3/jsonEpi") + ".php?slug=$slug&_=$unixTime"
         val response = app.get(url).text
@@ -196,7 +196,7 @@ class DubbedAnimeProvider : MainAPI() {
     ): Boolean {
         val serversHTML = (if (data.startsWith(mainUrl)) { // CLASSIC EPISODE
             val slug = getSlug(data)
-            getAnimeEpisode(slug, false).serversHTML
+            getEpisode(slug, false).serversHTML
         } else data).replace("\\", "")
 
         val hls = ArrayList("hl=\"(.*?)\"".toRegex().findAll(serversHTML).map {
@@ -228,7 +228,7 @@ class DubbedAnimeProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         if (getIsMovie(url)) {
             val realSlug = url.replace("movies/", "")
-            val episode = getAnimeEpisode(realSlug, true)
+            val episode = getEpisode(realSlug, true)
             val poster = episode.previewImg ?: episode.wideImg
             return MovieLoadResponse(
                 episode.title,
@@ -253,7 +253,7 @@ class DubbedAnimeProvider : MainAPI() {
 
             val episodes = document.select("a.epibloks").map {
                 val epTitle = it.selectFirst("> div.inwel > span.isgrxx")?.text()
-                AnimeEpisode(fixUrl(it.attr("href")), epTitle)
+                Episode(fixUrl(it.attr("href")), epTitle)
             }
 
             val img = fixUrl(document.select("div.fkimgs > img").attr("src"))

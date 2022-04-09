@@ -100,11 +100,11 @@ class FilmanProvider : MainAPI() {
             val e = episode.text()
             val regex = Regex("""\[s(\d{1,3})e(\d{1,3})]""").find(e) ?: return@mapNotNull null
             val eid = regex.groups
-            TvSeriesEpisode(
+            Episode(
+                episode.attr("href"),
                 e.split("]")[1].trim(),
                 eid[1]?.value?.toInt(),
                 eid[2]?.value?.toInt(),
-                episode.attr("href"),
             )
         }.toMutableList()
 

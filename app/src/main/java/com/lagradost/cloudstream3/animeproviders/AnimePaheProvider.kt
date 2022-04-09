@@ -189,7 +189,7 @@ class AnimePaheProvider : MainAPI() {
     )
 
 
-    private suspend fun generateListOfEpisodes(link: String): ArrayList<AnimeEpisode> {
+    private suspend fun generateListOfEpisodes(link: String): ArrayList<Episode> {
         try {
             val attrs = link.split('/')
             val id = attrs[attrs.size - 1].split("?")[0]
@@ -204,7 +204,7 @@ class AnimePaheProvider : MainAPI() {
             val perPage = data.perPage
             val total = data.total
             var ep = 1
-            val episodes = ArrayList<AnimeEpisode>()
+            val episodes = ArrayList<Episode>()
 
             fun getEpisodeTitle(k: AnimeData): String {
                 return k.title.ifEmpty {
@@ -215,14 +215,11 @@ class AnimePaheProvider : MainAPI() {
             if (lastPage == 1 && perPage > total) {
                 data.data.forEach {
                     episodes.add(
-                        AnimeEpisode(
-                            "$mainUrl/api?m=links&id=${it.animeId}&session=${it.session}&p=kwik!!TRUE!!",
-                            getEpisodeTitle(it),
-                            it.snapshot.ifEmpty {
-                                null
-                            },
-                            it.createdAt
-                        )
+                        newEpisode("$mainUrl/api?m=links&id=${it.animeId}&session=${it.session}&p=kwik!!TRUE!!") {
+                            addDate(it.createdAt)
+                            this.name = getEpisodeTitle(it)
+                            this.posterUrl = it.snapshot
+                        }
                     )
                 }
             } else {
@@ -230,7 +227,7 @@ class AnimePaheProvider : MainAPI() {
                     for (i in 0 until perPage) {
                         if (ep <= total) {
                             episodes.add(
-                                AnimeEpisode(
+                                Episode(
                                     "$mainUrl/api?m=release&id=${id}&sort=episode_asc&page=${page + 1}&ep=${ep}!!FALSE!!"
                                 )
                             )

@@ -1,8 +1,12 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper
+import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
+
 
 /** Needs to inherit from MainAPI() to
  * make the app know what functions to call
@@ -74,6 +78,7 @@ open class PelisplusProviderTemplate : MainAPI() {
         val description = soup.selectFirst(".post-entry")?.text()?.trim()
         val poster = soup.selectFirst("head meta[property=og:image]").attr("content")
 
+        var year : Int? = null
         val episodes = soup.select(".listing.items.lists > .video-block").map { li ->
             val href = fixUrl(li.selectFirst("a").attr("href"))
             val regexseason = Regex("(-[Tt]emporada-(\\d+)-[Cc]apitulo-(\\d+))")
@@ -87,19 +92,17 @@ open class PelisplusProviderTemplate : MainAPI() {
             val epThumb = fixUrl(li.selectFirst("img").attr("src"))
             val epDate = li.selectFirst(".meta > .date").text()
 
+            if(year == null) {
+                year = epDate?.split("-")?.get(0)?.toIntOrNull()
+            }
 
-
-            TvSeriesEpisode(
-                null,
-                season,
-                episode,
-                fixUrl(li.selectFirst("a").attr("href")),
-                epThumb,
-                epDate
-            )
+            newEpisode(li.selectFirst("a").attr("href")) {
+                this.season = season
+                this.episode = episode
+                this.posterUrl = epThumb
+                addDate(epDate)
+            }
         }.reversed()
-
-        val year = episodes.first().date?.split("-")?.get(0)?.toIntOrNull()
 
         // Make sure to get the type right to display the correct UI.
         val tvType = if (episodes.size == 1 && episodes[0].name == title) TvType.Movie else TvType.TvSeries
@@ -224,7 +227,7 @@ open class PelisplusProviderTemplate : MainAPI() {
     }
 
     // loadLinks gets the raw .mp4 or .m3u8 urls from the data parameter in the episodes class generated in load()
-    // See TvSeriesEpisode(...) in this provider.
+    // See Episode(...) in this provider.
     // The data are usually links, but can be any other string to help aid loading the links.
     override suspend fun loadLinks(
         data: String,

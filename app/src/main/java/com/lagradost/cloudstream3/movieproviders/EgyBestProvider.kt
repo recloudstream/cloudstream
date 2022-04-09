@@ -1,9 +1,9 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import org.jsoup.nodes.Element
 
 class EgyBestProvider : MainAPI() {
@@ -109,7 +109,7 @@ class EgyBestProvider : MainAPI() {
                 this.actors = actors
             }
         } else {
-            val episodes = ArrayList<TvSeriesEpisode>()
+            val episodes = ArrayList<Episode>()
             doc.select("#mainLoad > div:nth-child(2) > div.h_scroll > div a").map {
                 it.attr("href")
             }.apmap {
@@ -118,13 +118,11 @@ class EgyBestProvider : MainAPI() {
                 d.select("#mainLoad > div:nth-child(3) > div.movies_small a").map { eit ->
                     val ep = Regex("ep-(.....)").find(eit.attr("href"))?.groupValues?.getOrNull(1)?.getIntFromText()
                     episodes.add(
-                        TvSeriesEpisode(
+                        Episode(
+                            eit.attr("href"),
                             eit.select("span.title").text(),
                             season,
                             ep,
-                            eit.attr("href"),
-                            null,
-                            null
                         )
                     )
                 }

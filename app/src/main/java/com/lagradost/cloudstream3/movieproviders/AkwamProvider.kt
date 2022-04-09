@@ -63,20 +63,18 @@ class AkwamProvider : MainAPI() {
         return Regex("""\d+""").find(this)?.groupValues?.firstOrNull()?.toIntOrNull()
     }
 
-    private fun Element.toTvSeriesEpisode(): TvSeriesEpisode {
+    private fun Element.toEpisode(): Episode {
         val a = select("a.text-white")
         val url = a.attr("href")
         val title = a.text()
         val thumbUrl = select("picture > img").attr("src")
         val date = select("p.entry-date").text()
-        return TvSeriesEpisode(
-            title,
-            null,
-            title.getIntFromText(),
-            url,
-            thumbUrl,
-            date
-        )
+        return newEpisode(url) {
+            name = title
+            episode = title.getIntFromText()
+            posterUrl = thumbUrl
+            addDate(date)
+        }
     }
 
 
@@ -142,7 +140,7 @@ class AkwamProvider : MainAPI() {
             }
         } else {
             val episodes = doc.select("div.bg-primary2.p-4.col-lg-4.col-md-6.col-12").map {
-                it.toTvSeriesEpisode()
+                it.toEpisode()
             }.let {
                 val isReversed = it.lastOrNull()?.episode ?: 1 < it.firstOrNull()?.episode ?: 0
                 if (isReversed)

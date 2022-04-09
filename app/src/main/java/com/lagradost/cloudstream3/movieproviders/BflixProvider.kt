@@ -242,11 +242,11 @@ open class BflixProvider() : MainAPI() {
             val eptitle = it.selectFirst(".episode a span.name").text()
             val secondtitle = it.selectFirst(".episode a span").text()
                 .replace(Regex("(Episode (\\d+):|Episode (\\d+)-|Episode (\\d+))"),"") ?: ""
-            TvSeriesEpisode(
+            Episode(
+                href,
                 secondtitle+eptitle,
                 season,
                 episode,
-                href,
             )
         }
         val tvType = if (url.contains("/movie/") && episodes.size == 1) TvType.Movie else TvType.TvSeries

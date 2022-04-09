@@ -231,16 +231,10 @@ class ZoroProvider : MainAPI() {
                 ).text
             ).html
         ).select(".ss-list > a[href].ssl-item.ep-item").map {
-            val name = it?.attr("title")
-            AnimeEpisode(
-                fixUrl(it.attr("href")),
-                name,
-                null,
-                null,
-                null,
-                null,
-                it.selectFirst(".ssli-order")?.text()?.toIntOrNull()
-            )
+            newEpisode(it.attr("href")) {
+                this.name = it?.attr("title")
+                this.episode = it.selectFirst(".ssli-order")?.text()?.toIntOrNull()
+            }
         }
 
         val actors = document.select("div.block-actors-content > div.bac-list-wrap > div.bac-item")

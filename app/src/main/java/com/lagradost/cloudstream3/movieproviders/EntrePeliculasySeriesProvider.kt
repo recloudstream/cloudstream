@@ -2,8 +2,8 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.*
-import java.util.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 
 class EntrepeliculasyseriesProvider:MainAPI() {
     override var mainUrl = "https://entrepeliculasyseries.nu"
@@ -102,11 +102,11 @@ class EntrepeliculasyseriesProvider:MainAPI() {
             val isValid = seasonid.size == 2
             val episode = if (isValid) seasonid.getOrNull(1) else null
             val season = if (isValid) seasonid.getOrNull(0) else null
-            TvSeriesEpisode(
+            Episode(
+                href,
                 null,
                 season,
                 episode,
-                href,
                 fixUrl(epThumb)
             )
         }

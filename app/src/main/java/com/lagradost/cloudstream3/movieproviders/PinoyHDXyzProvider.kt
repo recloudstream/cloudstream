@@ -138,7 +138,7 @@ class PinoyHDXyzProvider : MainAPI() {
         }
 
         // Try looking for episodes, for series
-        val episodeList = ArrayList<TvSeriesEpisode>()
+        val episodeList = ArrayList<Episode>()
         val bodyText = body?.select("div.section-cotent1.col-md-12")?.select("section")
             ?.select("script")?.toString() ?: ""
         //Log.i(this.name, "Result => (bodyText) ${bodyText}")
@@ -151,7 +151,7 @@ class PinoyHDXyzProvider : MainAPI() {
                     val listEpStream = listOf(ep.trim()).toJson()
                     //Log.i(this.name, "Result => (ep $count) $listEpStream")
                     episodeList.add(
-                        TvSeriesEpisode(
+                        Episode(
                             name = null,
                             season = null,
                             episode = count,

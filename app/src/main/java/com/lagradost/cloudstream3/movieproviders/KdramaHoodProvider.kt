@@ -173,7 +173,7 @@ class KdramaHoodProvider : MainAPI() {
                     }
                 }
             }
-            TvSeriesEpisode(
+            Episode(
                 name = null,
                 season = null,
                 episode = count,

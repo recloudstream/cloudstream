@@ -31,7 +31,7 @@ class MyCimaProvider : MainAPI() {
         val title = select("div.Thumb--GridItem strong").text()
             .replace("$year", "")
             .replace("مشاهدة|فيلم|مسلسل|مترجم".toRegex(), "")
-            .replace("( نسخة مدبلجة )"," ( نسخة مدبلجة ) ")
+            .replace("( نسخة مدبلجة )", " ( نسخة مدبلجة ) ")
         // If you need to differentiate use the url.
         return MovieSearchResponse(
             title,
@@ -47,8 +47,8 @@ class MyCimaProvider : MainAPI() {
     override suspend fun getMainPage(): HomePageResponse {
         // Title, Url
         val moviesUrl = listOf(
-            "Movies" to "$mainUrl/movies/page/"+(0..25).random(),
-            "Series" to "$mainUrl/seriestv/new/page/"+(0..25).random()
+            "Movies" to "$mainUrl/movies/page/" + (0..25).random(),
+            "Series" to "$mainUrl/seriestv/new/page/" + (0..25).random()
         )
         val pages = moviesUrl.apmap {
             val doc = app.get(it.second).document
@@ -61,21 +61,23 @@ class MyCimaProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        val q = query.replace(" ","%20")
+        val q = query.replace(" ", "%20")
         val result = arrayListOf<SearchResponse>()
-        listOf("$mainUrl/search/$q",
+        listOf(
+            "$mainUrl/search/$q",
             "$mainUrl/search/$q/list/series/",
-            "$mainUrl/search/$q/list/anime/").apmap { url ->
+            "$mainUrl/search/$q/list/anime/"
+        ).apmap { url ->
             val d = app.get(url).document
             d.select("div.Grid--MycimaPosts div.GridItem").mapNotNull {
-                if(it.text().contains("اعلان")) return@mapNotNull null
-                    it.toSearchResponse()?.let { it1 -> result.add(it1) }
-                }
+                if (it.text().contains("اعلان")) return@mapNotNull null
+                it.toSearchResponse()?.let { it1 -> result.add(it1) }
+            }
         }
         return result.distinct().sortedBy { it.name }
     }
 
-    data class MoreEPS (
+    data class MoreEPS(
         val output: String
     )
 
@@ -86,7 +88,8 @@ class MyCimaProvider : MainAPI() {
             doc.select("mycima.separated--top")?.attr("data-lazy-style")?.getImageURL()
                 ?.ifEmpty { doc.select("meta[itemprop=\"thumbnailUrl\"]")?.attr("content") }
                 ?.ifEmpty { doc.select("mycima.separated--top")?.attr("style")?.getImageURL() }
-        val year = doc.select("div.Title--Content--Single-begin h1 a.unline")?.text()?.getIntFromText()
+        val year =
+            doc.select("div.Title--Content--Single-begin h1 a.unline")?.text()?.getIntFromText()
         val title = doc.select("div.Title--Content--Single-begin h1").text()
             .replace("($year)", "")
             .replace("مشاهدة|فيلم|مسلسل|مترجم|انمي".toRegex(), "")
@@ -96,7 +99,8 @@ class MyCimaProvider : MainAPI() {
                 it.text().contains("المدة")
             }?.text()?.getIntFromText()
 
-        val synopsis = doc.select("div.StoryMovieContent").text().ifEmpty { doc.select("div.PostItemContent").text() }
+        val synopsis = doc.select("div.StoryMovieContent").text()
+            .ifEmpty { doc.select("div.PostItemContent").text() }
 
         val tags = doc.select("li:nth-child(3) > p > a").map { it.text() }
 
@@ -107,9 +111,10 @@ class MyCimaProvider : MainAPI() {
                 ?: return@mapNotNull null
             Actor(name, image)
         }
-        val recommendations = doc.select("div.Grid--MycimaPosts div.GridItem")?.mapNotNull { element ->
-            element.toSearchResponse()
-        }
+        val recommendations =
+            doc.select("div.Grid--MycimaPosts div.GridItem")?.mapNotNull { element ->
+                element.toSearchResponse()
+            }
 
         return if (isMovie) {
             newMovieLoadResponse(
@@ -127,55 +132,165 @@ class MyCimaProvider : MainAPI() {
                 addActors(actors)
             }
         } else {
-            val episodes = ArrayList<TvSeriesEpisode>()
+            val episodes = ArrayList<Episode>()
             val seasons = doc.select("div.List--Seasons--Episodes a").not(".selected").map {
                 it.attr("href")
             }
             val moreButton = doc.select("div.MoreEpisodes--Button")
-            val season = doc.select("div.List--Seasons--Episodes a.selected").text().getIntFromText()
+            val season =
+                doc.select("div.List--Seasons--Episodes a.selected").text().getIntFromText()
             doc.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a")
-                .apmap { episodes.add(TvSeriesEpisode(it.text(), season, it.text().getIntFromText(), it.attr("href"), null, null))}
-            if(moreButton.isNotEmpty()) {
+                .apmap {
+                    episodes.add(
+                        Episode(
+                            it.attr("href"),
+                            it.text(),
+                            season,
+                            it.text().getIntFromText(),
+                        )
+                    )
+                }
+            if (moreButton.isNotEmpty()) {
                 val n = doc.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a").size
-                val totals = doc.select("div.Episodes--Seasons--Episodes a").first().text().getIntFromText()
-                val mEPS = arrayListOf(n, n+40, n+80, n+120, n+160, n+200, n+240, n+280, n+320, n+360, n+400, n+440, n+480, n+520, n+660, n+700, n+740, n+780, n+820, n+860, n+900, n+940, n+980, n+1020, n+1060, n+1100, n+1140, n+1180, n+1220, totals)
+                val totals =
+                    doc.select("div.Episodes--Seasons--Episodes a").first().text().getIntFromText()
+                val mEPS = arrayListOf(
+                    n,
+                    n + 40,
+                    n + 80,
+                    n + 120,
+                    n + 160,
+                    n + 200,
+                    n + 240,
+                    n + 280,
+                    n + 320,
+                    n + 360,
+                    n + 400,
+                    n + 440,
+                    n + 480,
+                    n + 520,
+                    n + 660,
+                    n + 700,
+                    n + 740,
+                    n + 780,
+                    n + 820,
+                    n + 860,
+                    n + 900,
+                    n + 940,
+                    n + 980,
+                    n + 1020,
+                    n + 1060,
+                    n + 1100,
+                    n + 1140,
+                    n + 1180,
+                    n + 1220,
+                    totals
+                )
                 mEPS.apmap { it ->
-                        if (it != null) {
-                            if(it > totals!!) return@apmap
-                            val ajaxURL = "$mainUrl/AjaxCenter/MoreEpisodes/${moreButton.attr("data-term")}/$it"
-                            val jsonResponse = app.get(ajaxURL)
-                            val json = parseJson<MoreEPS>(jsonResponse.text)
-                            val document = Jsoup.parse(json.output?.replace("""\""", ""))
-                            document.select("a").map { episodes.add(TvSeriesEpisode(it.text(), season, it.text().getIntFromText(), it.attr("href"), null, null)) }
+                    if (it != null) {
+                        if (it > totals!!) return@apmap
+                        val ajaxURL =
+                            "$mainUrl/AjaxCenter/MoreEpisodes/${moreButton.attr("data-term")}/$it"
+                        val jsonResponse = app.get(ajaxURL)
+                        val json = parseJson<MoreEPS>(jsonResponse.text)
+                        val document = Jsoup.parse(json.output?.replace("""\""", ""))
+                        document.select("a").map {
+                            episodes.add(
+                                Episode(
+                                    it.attr("href"),
+                                    it.text(),
+                                    season,
+                                    it.text().getIntFromText(),
+                                )
+                            )
                         }
                     }
-            }
-            if(seasons.isNotEmpty()) {
-                    seasons.apmap { surl ->
-                        if(surl.contains("%d9%85%d8%af%d8%a8%d9%84%d8%ac")) return@apmap
-                            val seasonsite = app.get(surl).document
-                            val fmoreButton = seasonsite.select("div.MoreEpisodes--Button")
-                            val fseason = seasonsite.select("div.List--Seasons--Episodes a.selected").text().getIntFromText() ?: 1
-                            seasonsite.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a")
-                                        .apmap { episodes.add(TvSeriesEpisode(it.text(), fseason, it.text().getIntFromText(), it.attr("href"), null, null))}
-                            if(fmoreButton.isNotEmpty()) {
-                                val n = seasonsite.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a").size
-                                val totals = seasonsite.select("div.Episodes--Seasons--Episodes a").first().text().getIntFromText()
-                                val mEPS = arrayListOf(n, n+40, n+80, n+120, n+160, n+200, n+240, n+280, n+320, n+360, n+400, n+440, n+480, n+520, n+660, n+700, n+740, n+780, n+820, n+860, n+900, n+940, n+980, n+1020, n+1060, n+1100, n+1140, n+1180, n+1220, totals)
-                                mEPS.apmap { it ->
-                                        if (it != null) {
-                                            if(it > totals!!) return@apmap
-                                            val ajaxURL = "$mainUrl/AjaxCenter/MoreEpisodes/${fmoreButton.attr("data-term")}/$it"
-                                            val jsonResponse = app.get(ajaxURL)
-                                            val json = parseJson<MoreEPS>(jsonResponse.text)
-                                            val document = Jsoup.parse(json.output?.replace("""\""", ""))
-                                            document.select("a").map { episodes.add(TvSeriesEpisode(it.text(), fseason, it.text().getIntFromText(), it.attr("href"), null, null)) }
-                                        }
-                                }
-                            } else return@apmap
-                    }
                 }
-            newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes.distinct().sortedBy { it.episode }) {
+            }
+            if (seasons.isNotEmpty()) {
+                seasons.apmap { surl ->
+                    if (surl.contains("%d9%85%d8%af%d8%a8%d9%84%d8%ac")) return@apmap
+                    val seasonsite = app.get(surl).document
+                    val fmoreButton = seasonsite.select("div.MoreEpisodes--Button")
+                    val fseason = seasonsite.select("div.List--Seasons--Episodes a.selected").text()
+                        .getIntFromText() ?: 1
+                    seasonsite.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a")
+                        .map {
+                            episodes.add(
+                                Episode(
+                                    it.attr("href"),
+                                    it.text(),
+                                    fseason,
+                                    it.text().getIntFromText(),
+                                )
+                            )
+                        }
+                    if (fmoreButton.isNotEmpty()) {
+                        val n =
+                            seasonsite.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a").size
+                        val totals =
+                            seasonsite.select("div.Episodes--Seasons--Episodes a").first().text()
+                                .getIntFromText()
+                        val mEPS = arrayListOf(
+                            n,
+                            n + 40,
+                            n + 80,
+                            n + 120,
+                            n + 160,
+                            n + 200,
+                            n + 240,
+                            n + 280,
+                            n + 320,
+                            n + 360,
+                            n + 400,
+                            n + 440,
+                            n + 480,
+                            n + 520,
+                            n + 660,
+                            n + 700,
+                            n + 740,
+                            n + 780,
+                            n + 820,
+                            n + 860,
+                            n + 900,
+                            n + 940,
+                            n + 980,
+                            n + 1020,
+                            n + 1060,
+                            n + 1100,
+                            n + 1140,
+                            n + 1180,
+                            n + 1220,
+                            totals
+                        )
+                        mEPS.apmap { it ->
+                            if (it != null) {
+                                if (it > totals!!) return@apmap
+                                val ajaxURL =
+                                    "$mainUrl/AjaxCenter/MoreEpisodes/${fmoreButton.attr("data-term")}/$it"
+                                val jsonResponse = app.get(ajaxURL)
+                                val json = parseJson<MoreEPS>(jsonResponse.text)
+                                val document = Jsoup.parse(json.output?.replace("""\""", ""))
+                                document.select("a").map {
+                                    episodes.add(
+                                        Episode(
+                                            it.attr("href"),
+                                            it.text(),
+                                            fseason,
+                                            it.text().getIntFromText(),
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    } else return@apmap
+                }
+            }
+            newTvSeriesLoadResponse(
+                title,
+                url,
+                TvType.TvSeries,
+                episodes.distinct().sortedBy { it.episode }) {
                 this.duration = duration
                 this.posterUrl = posterUrl
                 this.tags = tags
@@ -186,6 +301,7 @@ class MyCimaProvider : MainAPI() {
             }
         }
     }
+
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
@@ -194,18 +310,20 @@ class MyCimaProvider : MainAPI() {
     ): Boolean {
         app.get(data).document
             .select("ul.List--Download--Mycima--Single:nth-child(2) li").map {
-            it.select("a").map { linkElement ->
-                callback.invoke(
-                    ExtractorLink(
-                        this.name,
-                        this.name + " - ${linkElement.select("resolution").text().getIntFromText()}p",
-                        linkElement.attr("href"),
-                        this.mainUrl,
-                        2
+                it.select("a").map { linkElement ->
+                    callback.invoke(
+                        ExtractorLink(
+                            this.name,
+                            this.name + " - ${
+                                linkElement.select("resolution").text().getIntFromText()
+                            }p",
+                            linkElement.attr("href"),
+                            this.mainUrl,
+                            2
+                        )
                     )
-                )
-            }
-        }.flatten()
+                }
+            }.flatten()
         return true
     }
 }

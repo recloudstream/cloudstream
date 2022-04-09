@@ -130,7 +130,7 @@ class AllMoviesForYouProvider : MainAPI() {
             }
             if (list.isEmpty()) throw ErrorLoadingException("No Seasons Found")
 
-            val episodeList = ArrayList<TvSeriesEpisode>()
+            val episodeList = ArrayList<Episode>()
 
             for (season in list) {
                 val seasonResponse = app.get(season.second).text
@@ -144,15 +144,15 @@ class AllMoviesForYouProvider : MainAPI() {
                         val name = aName.text()
                         val href = aName.attr("href")
                         val date = episode.selectFirst("> td.MvTbTtl > span")?.text()
+
                         episodeList.add(
-                            TvSeriesEpisode(
-                                name,
-                                season.first,
-                                epNum,
-                                fixUrl(href),
-                                fixUrlNull(poster),
-                                date
-                            )
+                            newEpisode(href) {
+                                this.name = name
+                                this.season = season.first
+                                this.episode = epNum
+                                this.posterUrl = fixUrlNull(poster)
+                                addDate(date)
+                            }
                         )
                     }
                 }
@@ -197,7 +197,7 @@ class AllMoviesForYouProvider : MainAPI() {
             if (id.contains("trembed")) {
                 val soup = app.get(id).document
                 soup.select("body iframe").map {
-                    val link = fixUrl(it.attr("src").replace("streamhub.to/d/","streamhub.to/e/"))
+                    val link = fixUrl(it.attr("src").replace("streamhub.to/d/", "streamhub.to/e/"))
                     loadExtractor(link, data, callback)
                 }
             } else loadExtractor(id, data, callback)

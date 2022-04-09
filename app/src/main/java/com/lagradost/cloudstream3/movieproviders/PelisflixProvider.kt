@@ -127,7 +127,7 @@ class PelisflixProvider : MainAPI() {
             }
             if (list.isEmpty()) throw ErrorLoadingException("No Seasons Found")
 
-            val episodeList = ArrayList<TvSeriesEpisode>()
+            val episodeList = ArrayList<Episode>()
 
             for ((seasonInt, seasonUrl) in list) {
                 val seasonDocument = app.get(seasonUrl).document
@@ -141,14 +141,13 @@ class PelisflixProvider : MainAPI() {
                         val href = aName.attr("href")
                         val date = episode.selectFirst("> td.MvTbTtl > span")?.text()
                         episodeList.add(
-                            TvSeriesEpisode(
-                                name,
-                                seasonInt,
-                                epNum,
-                                href,
-                                fixUrlNull(epthumb),
-                                date
-                            )
+                            newEpisode(href) {
+                                this.name = name
+                                this.season = seasonInt
+                                this.episode =  epNum
+                                this.posterUrl = fixUrlNull(epthumb)
+                                addDate(date)
+                            }
                         )
                     }
                 }

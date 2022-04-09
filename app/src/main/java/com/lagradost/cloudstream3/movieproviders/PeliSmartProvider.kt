@@ -2,9 +2,7 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.loadExtractor
-import kotlin.collections.ArrayList
 
 class PeliSmartProvider: MainAPI() {
     override var mainUrl = "https://pelismart.com"
@@ -105,11 +103,11 @@ class PeliSmartProvider: MainAPI() {
             val isValid = seasonid?.size == 2
             val episode = if (isValid) seasonid?.getOrNull(1) else null
             val season = if (isValid) seasonid?.getOrNull(0) else null
-                TvSeriesEpisode(
+                Episode(
+                    href,
                     name,
                     season,
                     episode,
-                    href,
                 )
         }
         return when (val tvType = if (episodes.isEmpty()) TvType.Movie else TvType.TvSeries) {

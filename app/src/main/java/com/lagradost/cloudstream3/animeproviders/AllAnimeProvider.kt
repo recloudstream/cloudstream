@@ -232,11 +232,11 @@ class AllAnimeProvider : MainAPI() {
         val episodes = showData.availableEpisodes.let {
             if (it == null) return@let Pair(null, null)
             Pair(if (it.sub != 0) ((1..it.sub).map { epNum ->
-                AnimeEpisode(
+                Episode(
                     "$mainUrl/anime/${showData.Id}/episodes/sub/$epNum", episode = epNum
                 )
             }) else null, if (it.dub != 0) ((1..it.dub).map { epNum ->
-                AnimeEpisode(
+                Episode(
                     "$mainUrl/anime/${showData.Id}/episodes/dub/$epNum", episode = epNum
                 )
             }) else null)

@@ -94,23 +94,23 @@ open class TmdbProvider : MainAPI() {
         val episodes = this.seasons?.filter { !disableSeasonZero || (it.season_number ?: 0) != 0 }
             ?.mapNotNull { season ->
                 season.episodes?.map { episode ->
-                    TvSeriesEpisode(
-                        episode.name,
-                        episode.season_number,
-                        episode.episode_number,
+                    Episode(
                         TmdbLink(
                             episode.external_ids?.imdb_id ?: this.external_ids?.imdb_id,
                             this.id,
                             episode.episode_number,
                             episode.season_number,
                         ).toJson(),
+                        episode.name,
+                        episode.season_number,
+                        episode.episode_number,
                         getImageUrl(episode.still_path),
-                        episode.air_date?.toString(),
                         episode.rating,
                         episode.overview,
+                        episode.air_date?.time,
                     )
                 } ?: (1..(season.episode_count ?: 1)).map { episodeNum ->
-                    TvSeriesEpisode(
+                    Episode(
                         episode = episodeNum,
                         data = TmdbLink(
                             this.external_ids?.imdb_id,

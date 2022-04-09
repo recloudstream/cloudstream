@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbUrl
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -87,7 +86,7 @@ class MeloMovieProvider : MainAPI() {
         return url
     }
 
-    private fun serializeData(element: Element): String {
+    private fun serializeData(element: Element): List<MeloMovieProvider.MeloMovieLink> {
         val eps = element.select("> tbody > tr")
         val parsed = eps.map {
             try {
@@ -99,7 +98,7 @@ class MeloMovieProvider : MainAPI() {
                 MeloMovieLink("", "")
             }
         }.filter { it.link != "" && it.name != "" }
-        return parsed.toJson()
+        return parsed
     }
 
     override suspend fun loadLinks(
@@ -157,7 +156,7 @@ class MeloMovieProvider : MainAPI() {
                 addImdbUrl(imdbUrl)
             }
         } else if (type == 2) {
-            val episodes = ArrayList<TvSeriesEpisode>()
+            val episodes = ArrayList<Episode>()
             val seasons = document.select("div.accordion__card")
                 ?: throw ErrorLoadingException("No episodes found")
             for (s in seasons) {
@@ -172,7 +171,10 @@ class MeloMovieProvider : MainAPI() {
                     val links =
                         e.selectFirst("> div.collapse > div > table.accordion__list") ?: continue
                     val data = serializeData(links)
-                    episodes.add(TvSeriesEpisode(null, season, episode, data))
+                    episodes.add(newEpisode(data) {
+                        this.season = season
+                        this.episode = episode
+                    })
                 }
             }
             episodes.reverse()

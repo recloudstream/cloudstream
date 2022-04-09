@@ -112,11 +112,11 @@ class FrenchStreamProvider : MainAPI() {
                 if (poster == null) {
                     poster = a.selectFirst("div.fposter > img")?.attr("src")
                 }
-                TvSeriesEpisode(
+                Episode(
+                    fixUrl(url).plus("-episodenumber:$epNum"),
                     epTitle,
                     null,
                     epNum,
-                    fixUrl(url).plus("-episodenumber:$epNum"),
                     null,  // episode Thumbnail
                     null // episode date
                 )

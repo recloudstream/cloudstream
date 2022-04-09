@@ -118,7 +118,7 @@ class DramaSeeProvider : MainAPI() {
         }
 
         // Episodes Links
-        val episodeList = ArrayList<TvSeriesEpisode>()
+        val episodeList = ArrayList<Episode>()
         body?.select("ul.episodes > li")?.forEach { ep ->
             val innerA = ep.select("a") ?: return@forEach
             val count = innerA.select("span.episode")?.text()?.toIntOrNull() ?: 0
@@ -141,7 +141,7 @@ class DramaSeeProvider : MainAPI() {
 
                     //Log.i(this.name, "Result => (listOfLinks) ${listOfLinks.toJson()}")
                     episodeList.add(
-                        TvSeriesEpisode(
+                        Episode(
                             name = null,
                             season = null,
                             episode = count,

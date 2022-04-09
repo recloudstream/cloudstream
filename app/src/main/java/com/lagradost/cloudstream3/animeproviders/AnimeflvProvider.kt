@@ -115,7 +115,7 @@ class AnimeflvnetProvider:MainAPI() {
 
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
-        val episodes = ArrayList<AnimeEpisode>()
+        val episodes = ArrayList<Episode>()
         val title = doc.selectFirst("h1.Title").text()
         val poster = doc.selectFirst("div.AnimeCover div.Image figure img").attr("src")
         val description = doc.selectFirst("div.Description p").text()
@@ -137,7 +137,7 @@ class AnimeflvnetProvider:MainAPI() {
                     val animeid = doc.selectFirst("div.Strs.RateIt").attr("data-id")
                     val epthumb = "https://cdn.animeflv.net/screenshots/$animeid/$epNum/th_3.jpg"
                     val link = url.replace("/anime/","/ver/")+"-$epNum"
-                    episodes.add( AnimeEpisode(
+                    episodes.add( Episode(
                         link,
                         null,
                         posterUrl = epthumb,

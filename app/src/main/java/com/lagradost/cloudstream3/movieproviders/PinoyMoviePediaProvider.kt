@@ -159,7 +159,7 @@ class PinoyMoviePediaProvider : MainAPI() {
 
         // Parse episodes if series
         if (isTvSeries) {
-            val episodeList = ArrayList<TvSeriesEpisode>()
+            val episodeList = ArrayList<Episode>()
             val epLinks = playcontainer?.select("div > div > div.source-box")
             //Log.i(this.name, "Result => (epList) ${epList}")
             body?.select("div#playeroptions > ul > li")?.forEach { ep ->
@@ -175,7 +175,7 @@ class PinoyMoviePediaProvider : MainAPI() {
                     val streamEpLink = listOf(href.trim()).toJson()
                     //Log.i(this.name, "Result => (streamEpLink $epNum) $streamEpLink")
                     episodeList.add(
-                        TvSeriesEpisode(
+                        Episode(
                             name = null,
                             season = null,
                             episode = epNum,

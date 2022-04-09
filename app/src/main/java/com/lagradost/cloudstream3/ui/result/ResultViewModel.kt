@@ -364,8 +364,8 @@ class ResultViewModel : ViewModel() {
                                     filterName(i.name),
                                     i.posterUrl,
                                     episode,
-                                    null, // TODO FIX SEASON
-                                    i.url,
+                                    i.season,
+                                    i.data,
                                     apiName,
                                     mainId + index + 1 + idIndex * 100000,
                                     index,

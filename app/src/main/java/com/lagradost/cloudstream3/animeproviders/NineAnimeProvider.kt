@@ -203,7 +203,7 @@ class NineAnimeProvider : MainAPI() {
         )?.select("ul.episodes li a")?.mapNotNull {
             val link = it?.attr("href") ?: return@mapNotNull null
             val name = "Episode ${it.text()}"
-            AnimeEpisode(link, name)
+            Episode(link, name)
         } ?: return null
 
 

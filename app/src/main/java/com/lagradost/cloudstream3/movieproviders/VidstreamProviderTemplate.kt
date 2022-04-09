@@ -85,6 +85,7 @@ open class VidstreamProviderTemplate : MainAPI() {
 
         val description = soup.selectFirst(".post-entry")?.text()?.trim()
         var poster: String? = null
+        var year : Int? = null
 
         val episodes =
             soup.select(".listing.items.lists > .video-block").withIndex().map { (_, li) ->
@@ -104,18 +105,15 @@ open class VidstreamProviderTemplate : MainAPI() {
 
                 val epNum = Regex("""Episode (\d+)""").find(epTitle)?.destructured?.component1()
                     ?.toIntOrNull()
-
-                TvSeriesEpisode(
-                    epTitle,
-                    null,
-                    epNum,
-                    fixUrl(li.selectFirst("a").attr("href")),
-                    epThumb,
-                    epDate
-                )
+                if(year == null) {
+                    year = epDate?.split("-")?.get(0)?.toIntOrNull()
+                }
+                newEpisode(li.selectFirst("a").attr("href")) {
+                    this.episode = epNum
+                    this.posterUrl = epThumb
+                    addDate(epDate)
+                }
             }.reversed()
-
-        val year = episodes.first().date?.split("-")?.get(0)?.toIntOrNull()
 
         // Make sure to get the type right to display the correct UI.
         val tvType =
@@ -208,7 +206,7 @@ open class VidstreamProviderTemplate : MainAPI() {
     }
 
     // loadLinks gets the raw .mp4 or .m3u8 urls from the data parameter in the episodes class generated in load()
-    // See TvSeriesEpisode(...) in this provider.
+    // See Episode(...) in this provider.
     // The data are usually links, but can be any other string to help aid loading the links.
     override suspend fun loadLinks(
         data: String,

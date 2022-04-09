@@ -106,7 +106,7 @@ class AnimekisaProvider : MainAPI() {
         ) ShowStatus.Ongoing else ShowStatus.Completed
         val episodes = doc.select("div.tab-content ul li.nav-item").map {
             val link = it.selectFirst("a").attr("href")
-            AnimeEpisode(link)
+            Episode(link)
         }
         val type = if (doc.selectFirst(".dp-i-stats").toString()
                 .contains("Movies")

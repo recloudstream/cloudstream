@@ -65,7 +65,7 @@ class AnimeFlickProvider : MainAPI() {
         val episodes = doc.select("#collapseOne .block-space > .row > div:nth-child(2)").map {
             val name = it.selectFirst("a").text()
             val link = mainUrl + it.selectFirst("a").attr("href")
-            AnimeEpisode(link, name)
+            Episode(link, name)
         }.reversed()
 
         return newAnimeLoadResponse(title, url, getType(title)) {

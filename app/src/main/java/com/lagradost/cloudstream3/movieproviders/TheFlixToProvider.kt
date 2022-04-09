@@ -420,13 +420,15 @@ class TheFlixToProvider : MainAPI() {
                 )
                 //{"affiliateCode":"","pathname":"/movie/696806-the-adam-project"}
                 val data = mapOf("affiliateCode" to "", "pathname" to url.removePrefix(mainUrl))
-                val resp = app.post(optionsUrl, headers = mapOf(
-                    "User-Agent" to USER_AGENT,
-                    "Content-Type" to "application/json;charset=UTF-8",
-                    "Accept" to "application/json, text/plain, */*",
-                    "Origin" to url,
-                    "Referer" to mainUrl,
-                ), data = data)
+                val resp = app.post(
+                    optionsUrl, headers = mapOf(
+                        "User-Agent" to USER_AGENT,
+                        "Content-Type" to "application/json;charset=UTF-8",
+                        "Accept" to "application/json, text/plain, */*",
+                        "Origin" to url,
+                        "Referer" to mainUrl,
+                    ), data = data
+                )
 
                 latestCookies = resp.cookies
                 val newData = getLoadMan(url)
@@ -442,7 +444,7 @@ class TheFlixToProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse? {
         val tvtype = if (url.contains("movie")) TvType.Movie else TvType.TvSeries
         val json = getLoadMainRetry(url)
-        val episodes = ArrayList<TvSeriesEpisode>()
+        val episodes = ArrayList<Episode>()
         val isMovie = tvtype == TvType.Movie
         val pageMain = json.props.pageProps
 
@@ -471,11 +473,11 @@ class TheFlixToProvider : MainAPI() {
                     val test = epi.videos
                     val ratinginfo = (epi.voteAverage)?.times(10)?.toInt()
                     val rating = if (ratinginfo?.equals(0) == true) null else ratinginfo
-                    val eps = TvSeriesEpisode(
+                    val eps = Episode(
+                        "$mainUrl/tv-show/$movieId-${cleanTitle(movietitle)}/season-$seasonum/episode-$episodenu",
                         title,
                         seasonum,
                         episodenu,
-                        "$mainUrl/tv-show/$movieId-${cleanTitle(movietitle)}/season-$seasonum/episode-$episodenu",
                         description = epDesc!!,
                         posterUrl = seasonPoster,
                         rating = rating,

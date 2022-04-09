@@ -273,11 +273,11 @@ class LookMovieProvider : MainAPI() {
                     ).toJson()
 
 
-                TvSeriesEpisode(
+                Episode(
+                    localData,
                     it.title,
                     it.season.toIntOrNull(),
                     it.episode.toIntOrNull(),
-                    localData
                 )
             }.toList()
 

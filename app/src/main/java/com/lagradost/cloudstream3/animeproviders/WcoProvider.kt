@@ -181,7 +181,7 @@ class WcoProvider : MainAPI() {
         val episodeNodes = document.select(".tab-content .nav-item > a")
 
         val episodes = ArrayList(episodeNodes?.map {
-            AnimeEpisode(it.attr("href"))
+            Episode(it.attr("href"))
         } ?: ArrayList())
 
         val statusElem =
