@@ -65,6 +65,7 @@ https://lagradost.github.io/CloudStream-3/
 - [pelismart.com](https://pelismart.com) 
 - [melomovie.com](https://melomovie.com) 
 - [doramasyt.com](https://doramasyt.com) 
+- [cuevana3.me](https://cuevana3.me) 
 - [pelisflix.li](https://pelisflix.li) 
 - [seriesflix.video](https://seriesflix.video) 
 - [ihavenotv.com](https://ihavenotv.com) 
