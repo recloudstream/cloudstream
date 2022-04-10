@@ -23,6 +23,7 @@
     </ScrollView>
 
     <HorizontalScrollView
+            android:scrollbars="none"
             android:id="@+id/apply_btt_holder"
             android:layout_gravity="bottom"
             android:gravity="bottom|end"
