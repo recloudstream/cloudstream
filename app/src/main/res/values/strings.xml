@@ -40,6 +40,8 @@
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
     <string name="episode_sync_enabled_key" translatable="false">episode_sync_enabled_key</string>
+    <string name="log_enabled_key" translatable="false">log_enabled_key</string>
+    <string name="show_logcat_key" translatable="false">show_logcat_key</string>
 
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
@@ -142,6 +144,11 @@
     <string name="action_add_to_bookmarks">Set watch status</string>
     <string name="sort_apply">Apply</string>
     <string name="sort_cancel">Cancel</string>
+    <string name="sort_copy">Copy</string>
+    <string name="sort_close">Close</string>
+    <string name="sort_clear">Clear</string>
+    <string name="sort_save">Save</string>
+
     <string name="player_speed">Player Speed</string>
 
     <string name="subtitles_settings">Subtitle Settings</string>
@@ -177,6 +184,8 @@
     <string name="torrent_plot">Description</string>
     <string name="normal_no_plot">No Plot Found</string>
     <string name="torrent_no_plot">No Description Found</string>
+
+    <string name="show_log_cat">Show logcat</string>
 
     <string name="picture_in_picture">Picture-in-picture</string>
     <string name="picture_in_picture_des">Continues playback in a miniature player on top of other apps</string>

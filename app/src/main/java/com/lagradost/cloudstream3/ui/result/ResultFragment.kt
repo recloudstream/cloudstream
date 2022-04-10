@@ -699,27 +699,21 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
             media_route_button?.alpha = if (chromecastSupport) 1f else 0.3f
             if (!chromecastSupport) {
-                media_route_button.setOnClickListener {
+                media_route_button?.setOnClickListener {
                     showToast(activity, R.string.no_chromecast_support_toast, Toast.LENGTH_LONG)
                 }
             }
 
-            activity?.let {
-                if (it.isCastApiAvailable()) {
+            activity?.let { act ->
+                if (act.isCastApiAvailable()) {
                     try {
-                        CastButtonFactory.setUpMediaRouteButton(it, media_route_button)
-                        val castContext = CastContext.getSharedInstance(it.applicationContext)
+                        CastButtonFactory.setUpMediaRouteButton(act, media_route_button)
+                        val castContext = CastContext.getSharedInstance(act.applicationContext)
 
-                        if (castContext.castState != CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility =
-                            VISIBLE
+                        media_route_button?.isGone = castContext.castState == CastState.NO_DEVICES_AVAILABLE
+
                         castContext.addCastStateListener { state ->
-                            if (media_route_button != null) {
-                                if (state == CastState.NO_DEVICES_AVAILABLE) media_route_button.visibility =
-                                    GONE else {
-                                    if (media_route_button.visibility == GONE) media_route_button.visibility =
-                                        VISIBLE
-                                }
-                            }
+                            media_route_button?.isGone = state == CastState.NO_DEVICES_AVAILABLE
                         }
                     } catch (e: Exception) {
                         logError(e)

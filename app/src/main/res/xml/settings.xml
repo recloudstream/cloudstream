@@ -206,6 +206,18 @@
                 android:key="@string/restore_key"
                 android:title="@string/restore_settings" />
 
+        <Preference
+                android:key="@string/show_logcat_key"
+                android:title="@string/show_log_cat"
+                android:icon="@drawable/baseline_description_24" />
+
+        <!--<SwitchPreference
+                android:defaultValue="false"
+                android:key="@string/log_enabled_key"
+                android:title="@string/toggle_logcat"
+                android:summary="@string/toggle_logcat_des"
+                android:icon="@drawable/baseline_description_24" />-->
+
         <SwitchPreference
                 android:icon="@drawable/netflix_download"
                 android:key="@string/killswitch_key"

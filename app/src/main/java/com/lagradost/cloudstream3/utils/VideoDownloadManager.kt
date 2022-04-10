@@ -581,7 +581,7 @@ object VideoDownloadManager {
      * Sets up the appropriate file and creates a data stream from the file.
      * Used for initializing downloads.
      * */
-    private fun setupStream(
+    fun setupStream(
         context: Context,
         name: String,
         folder: String?,
