@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.metaproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
 
 class MultiAnimeProvider : MainAPI() {
@@ -36,7 +37,7 @@ class MultiAnimeProvider : MainAPI() {
                 plot = res.synopsis
                 tags = res.genres
                 rating = res.publicScore
-                trailerUrl = res.trailerUrl
+                addTrailer(res.trailerUrl)
                 addAniListId(res.id.toIntOrNull())
             }
         }

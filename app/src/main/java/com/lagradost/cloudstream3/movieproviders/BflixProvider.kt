@@ -265,8 +265,7 @@ open class BflixProvider() : MainAPI() {
                         year = null
                     )
                 }
-        val rating = soup.selectFirst(".info span.imdb").text().toFloatOrNull()
-            ?.times(1000)?.toInt()
+        val rating = soup.selectFirst(".info span.imdb")?.text()?.toRatingInt()
         val durationdoc = soup.selectFirst("div.info div.meta").toString()
         val durationregex = Regex("((\\d+) min)")
         val yearegex = Regex("<span>(\\d+)<\\/span>")

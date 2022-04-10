@@ -97,9 +97,7 @@ class AkwamProvider : MainAPI() {
 
         val synopsis = doc.select("div.widget-body p:first-child").text()
 
-        val rating = doc.select("span.mx-2").text().split("/").lastOrNull()?.replace(" ", "")
-            ?.toDoubleOrNull()
-            ?.times(1000)?.toInt()
+        val rating = doc.select("span.mx-2").text().split("/").lastOrNull()?.toRatingInt()
 
         val tags = doc.select("div.font-size-16.d-flex.align-items-center.mt-3 > a").map {
             it.text()

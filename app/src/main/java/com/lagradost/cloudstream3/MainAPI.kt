@@ -698,25 +698,25 @@ data class TvSeriesSearchResponse(
 ) : SearchResponse
 
 interface LoadResponse {
-    val name: String
-    val url: String
-    val apiName: String
-    val type: TvType
+    var name: String
+    var url: String
+    var apiName: String
+    var type: TvType
     var posterUrl: String?
-    val year: Int?
+    var year: Int?
     var plot: String?
     var rating: Int? // 1-1000
     var tags: List<String>?
     var duration: Int? // in minutes
-    var trailerUrl: String?
+    var trailers: List<String>?
     var recommendations: List<SearchResponse>?
     var actors: List<ActorData>?
     var comingSoon: Boolean
     var syncData: MutableMap<String, String>
 
     companion object {
-        val malIdPrefix = malApi.idPrefix
-        val aniListIdPrefix = aniListApi.idPrefix
+        private val malIdPrefix = malApi.idPrefix
+        private val aniListIdPrefix = aniListApi.idPrefix
 
         @JvmName("addActorNames")
         fun LoadResponse.addActors(actors: List<String>?) {
@@ -750,6 +750,18 @@ interface LoadResponse {
             addImdbId(imdbUrlToIdNullable(url))
         }
 
+        /**better to set trailers directly instead of calling this multiple times*/
+        fun LoadResponse.addTrailer(trailerUrl: String?) {
+            if (trailerUrl == null) return
+            if (this.trailers == null) {
+                this.trailers = listOf(trailerUrl)
+            } else {
+                val update = this.trailers?.toMutableList()
+                update?.add(trailerUrl)
+                this.trailers = update
+            }
+        }
+
         fun LoadResponse.addImdbId(id: String?) {
             // TODO add imdb sync
         }
@@ -763,10 +775,21 @@ interface LoadResponse {
         }
 
         fun LoadResponse.addTMDbId(id: String?) {
-
+            // TODO add TMDb sync
         }
 
-        fun LoadResponse.setDuration(input: String?) {
+        fun LoadResponse.addRating(text: String?) {
+            addRating(text.toRatingInt())
+        }
+
+        fun LoadResponse.addRating(value: Int?) {
+            if (value ?: return < 0 || value > 1000) {
+                return
+            }
+            this.rating = value
+        }
+
+        fun LoadResponse.addDuration(input: String?) {
             val cleanInput = input?.trim()?.replace(" ", "") ?: return
             Regex("([0-9]*)h.*?([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
                 if (values.size == 3) {
@@ -816,7 +839,7 @@ data class TorrentLoadResponse(
     override var rating: Int? = null,
     override var tags: List<String>? = null,
     override var duration: Int? = null,
-    override var trailerUrl: String? = null,
+    override var trailers: List<String>? = null,
     override var recommendations: List<SearchResponse>? = null,
     override var actors: List<ActorData>? = null,
     override var comingSoon: Boolean = false,
@@ -843,7 +866,7 @@ data class AnimeLoadResponse(
 
     override var rating: Int? = null,
     override var duration: Int? = null,
-    override var trailerUrl: String? = null,
+    override var trailers: List<String>? = null,
     override var recommendations: List<SearchResponse>? = null,
     override var actors: List<ActorData>? = null,
     override var comingSoon: Boolean = false,
@@ -898,7 +921,7 @@ data class MovieLoadResponse(
     override var rating: Int? = null,
     override var tags: List<String>? = null,
     override var duration: Int? = null,
-    override var trailerUrl: String? = null,
+    override var trailers: List<String>? = null,
     override var recommendations: List<SearchResponse>? = null,
     override var actors: List<ActorData>? = null,
     override var comingSoon: Boolean = false,
@@ -912,6 +935,14 @@ fun <T> MainAPI.newMovieLoadResponse(
     data: T?,
     initializer: MovieLoadResponse.() -> Unit = { }
 ): MovieLoadResponse {
+    // just in case
+    if (data is String) return newMovieLoadResponse(
+        name,
+        url,
+        type,
+        dataUrl = data,
+        initializer = initializer
+    )
     val dataUrl = data?.toJson() ?: ""
     val builder = MovieLoadResponse(
         name = name,
@@ -955,9 +986,9 @@ data class Episode(
     var date: Long? = null,
 )
 
-fun Episode.addDate(date: String?, fomat: String = "yyyy-MM-dd") {
+fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     try {
-        this.date = SimpleDateFormat(fomat)?.parse(date ?: return)?.time
+        this.date = SimpleDateFormat(format)?.parse(date ?: return)?.time
     } catch (e: Exception) {
         logError(e)
     }
@@ -967,7 +998,7 @@ fun Episode.addDate(date: Date?) {
     this.date = date?.time
 }
 
-fun <T> MainAPI.newEpisode(
+fun MainAPI.newEpisode(
     url: String,
     initializer: Episode.() -> Unit = { },
     fix: Boolean = true,
@@ -983,6 +1014,11 @@ fun <T> MainAPI.newEpisode(
     data: T,
     initializer: Episode.() -> Unit = { }
 ): Episode {
+    if (data is String) return newEpisode(
+        url = data,
+        initializer = initializer
+    ) // just in case java is wack
+
     val builder = Episode(
         data = data?.toJson() ?: throw ErrorLoadingException("invalid newEpisode")
     )
@@ -1005,7 +1041,7 @@ data class TvSeriesLoadResponse(
     override var rating: Int? = null,
     override var tags: List<String>? = null,
     override var duration: Int? = null,
-    override var trailerUrl: String? = null,
+    override var trailers: List<String>? = null,
     override var recommendations: List<SearchResponse>? = null,
     override var actors: List<ActorData>? = null,
     override var comingSoon: Boolean = false,
@@ -1041,4 +1077,4 @@ fun fetchUrls(text: String?): List<String> {
 }
 
 fun String?.toRatingInt(): Int? =
-    this?.trim()?.toDoubleOrNull()?.absoluteValue?.times(1000f)?.toInt()
+    this?.replace(" ", "")?.trim()?.toDoubleOrNull()?.absoluteValue?.times(1000f)?.toInt()

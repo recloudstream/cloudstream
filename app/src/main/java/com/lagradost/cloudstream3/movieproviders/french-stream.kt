@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addRating
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.extractorApis
 
@@ -61,33 +63,24 @@ class FrenchStreamProvider : MainAPI() {
         val listEpisode = soup.select("div.elink")
 
         if (isMovie) {
-            val trailer = soup.selectFirst("div.fleft > span > a")?.attr("href")
-            val date = soup.select("ul.flist-col > li")?.getOrNull(2)?.text()?.toIntOrNull()
-            val ratingAverage = soup.select("div.fr-count > div")?.text()?.toIntOrNull()
             val tags = soup.select("ul.flist-col > li")?.getOrNull(1)
             val tagsList = tags?.select("a")
                 ?.mapNotNull {   // all the tags like action, thriller ...; unused variable
                     it?.text()
                 }
-            return MovieLoadResponse(
-                title,
-                url,
-                this.name,
-                TvType.Movie,
-                url,
-                poster,
-                date,
-                description,
-                ratingAverage,
-                tagsList,
-                null,
-                trailer
-            )
+            return newMovieLoadResponse(title,url,TvType.Movie,url) {
+                this.posterUrl = poster
+                addRating(soup.select("div.fr-count > div")?.text())
+                this.year = soup.select("ul.flist-col > li")?.getOrNull(2)?.text()?.toIntOrNull()
+                this.tags = tagsList
+                this.plot = description
+                addTrailer(soup.selectFirst("div.fleft > span > a")?.attr("href"))
+            }
         } else  // a tv serie
         {
             //println(listEpisode)
             //println("listeEpisode:")
-            val episode_list = if ("<a" !in (listEpisode[0]).toString()) {  // check if VF is empty
+            val episodeList = if ("<a" !in (listEpisode[0]).toString()) {  // check if VF is empty
                 listEpisode[1]  // no vf, return vostfr
             }
             else {
@@ -96,7 +89,7 @@ class FrenchStreamProvider : MainAPI() {
 
             //println(url)
 
-            val episodes = episode_list.select("a").map { a ->
+            val episodes = episodeList.select("a").map { a ->
                 val epNum = a.text().split("Episode")[1].trim().toIntOrNull()
                 val epTitle = if (a.text()?.toString() != null)
                     if (a.text().contains("Episode")) {
@@ -131,8 +124,6 @@ class FrenchStreamProvider : MainAPI() {
                 null,
                 description,
                 ShowStatus.Ongoing,
-                null,
-                null
             )
         }
     }

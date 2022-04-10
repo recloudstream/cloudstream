@@ -6,7 +6,8 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getCaptchaToken
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
-import com.lagradost.cloudstream3.LoadResponse.Companion.setDuration
+import com.lagradost.cloudstream3.LoadResponse.Companion.addDuration
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.animeproviders.ZoroProvider
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.network.AppResponse
@@ -217,12 +218,12 @@ open class SflixProvider : MainAPI() {
                 this.year = year
                 this.posterUrl = posterUrl
                 this.plot = plot
-                setDuration(duration)
+                addDuration(duration)
                 addActors(cast)
                 this.tags = tags
                 this.recommendations = recommendations
                 this.comingSoon = comingSoon
-                this.trailerUrl = youtubeTrailer
+                addTrailer(youtubeTrailer)
                 this.rating = rating
             }
         } else {
@@ -273,11 +274,11 @@ open class SflixProvider : MainAPI() {
                 this.posterUrl = posterUrl
                 this.year = year
                 this.plot = plot
-                setDuration(duration)
+                addDuration(duration)
                 addActors(cast)
                 this.tags = tags
                 this.recommendations = recommendations
-                this.trailerUrl = youtubeTrailer
+                addTrailer(youtubeTrailer)
                 this.rating = rating
             }
         }
