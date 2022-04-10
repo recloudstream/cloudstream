@@ -111,7 +111,7 @@ object CommonActivity {
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
         //https://developer.android.com/guide/topics/ui/picture-in-picture
         canShowPipMode =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && // OS SUPPORT
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && // OS SUPPORT
                     act.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) && // HAS FEATURE, MIGHT BE BLOCKED DUE TO POWER DRAIN
                     act.hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
 
