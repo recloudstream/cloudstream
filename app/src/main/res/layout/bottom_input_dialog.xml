@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:nextFocusDown="@id/nginx_text_input"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_rowWeight="1"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:textColor="?attr/textColor"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Test" />
+
+    <EditText
+            android:id="@+id/nginx_text_input"
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusLeft="@id/apply_btt"
+            android:layout_marginBottom="60dp"
+            android:layout_marginHorizontal="10dp"
+            android:paddingTop="10dp"
+            android:requiresFadingEdge="vertical"
+            tools:text="nginx.com"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_rowWeight="1"
+            android:autofillHints="Autofill Hint"
+            android:inputType="text"
+            tools:ignore="LabelFor" />
+
+    <LinearLayout
+            android:id="@+id/apply_btt_holder"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|end"
+            android:layout_marginTop="-60dp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+        <com.google.android.material.button.MaterialButton
+                style="@style/WhiteButton"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/sort_apply"
+                android:id="@+id/apply_btt"
+                android:layout_width="wrap_content" />
+
+        <com.google.android.material.button.MaterialButton
+                style="@style/BlackButton"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/sort_cancel"
+                android:id="@+id/cancel_btt"
+                android:layout_width="wrap_content" />
+    </LinearLayout>
+</LinearLayout>
