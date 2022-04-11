@@ -90,7 +90,7 @@ https://lagradost.github.io/CloudStream-3/
 - [kdramahood.com](https://kdramahood.com) 
 - [akwam.to](https://akwam.to) 
 - [mycima.tv](https://mycima.tv) 
-- [egy.best](https://egy.best) 
+- [egy.best](https://www.egy.best) 
 - [hdm.to](https://hdm.to) 
 - [theflix.to](https://theflix.to) 
 - [v2.apimdb.net](https://v2.apimdb.net) 
