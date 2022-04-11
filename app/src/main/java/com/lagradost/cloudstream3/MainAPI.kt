@@ -587,17 +587,22 @@ fun getQualityFromString(string: String?): SearchQuality? {
         "cam" -> SearchQuality.Cam
         "camrip" -> SearchQuality.CamRip
         "hdcam" -> SearchQuality.HdCam
+        "hdtc" -> SearchQuality.HdCam
+        "hdts" -> SearchQuality.HdCam
         "highquality" -> SearchQuality.HQ
         "hq" -> SearchQuality.HQ
         "highdefinition" -> SearchQuality.HD
         "hdrip" -> SearchQuality.HD
         "hd" -> SearchQuality.HD
+        "hdtv" -> SearchQuality.HD
         "rip" -> SearchQuality.CamRip
         "telecine" -> SearchQuality.Telecine
         "tc" -> SearchQuality.Telecine
         "telesync" -> SearchQuality.Telesync
         "ts" -> SearchQuality.Telesync
         "dvd" -> SearchQuality.DVD
+        "dvdrip" -> SearchQuality.DVD
+        "dvdscr" -> SearchQuality.DVD
         "blueray" -> SearchQuality.BlueRay
         "bluray" -> SearchQuality.BlueRay
         "br" -> SearchQuality.BlueRay
@@ -609,6 +614,7 @@ fun getQualityFromString(string: String?): SearchQuality? {
         "wp" -> SearchQuality.WorkPrint
         "workprint" -> SearchQuality.WorkPrint
         "webrip" -> SearchQuality.WebRip
+        "webdl" -> SearchQuality.WebRip
         "web" -> SearchQuality.WebRip
         "hdr" -> SearchQuality.HDR
         "sdr" -> SearchQuality.SDR
