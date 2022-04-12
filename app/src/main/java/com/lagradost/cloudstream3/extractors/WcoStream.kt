@@ -34,6 +34,10 @@ class VizcloudInfo : WcoStream() {
     override var mainUrl = "https://vizcloud.info"
 }
 
+class MwvnVizcloudInfo : WcoStream() {
+    override var mainUrl = "https://mwvn.vizcloud.info"
+}
+
 open class WcoStream : ExtractorApi() {
     override var name = "VidStream" //Cause works for animekisa and wco
     override var mainUrl = "https://vidstream.pro"
@@ -107,8 +111,9 @@ open class WcoStream : ExtractorApi() {
                     }
                 }
                 if (mainUrl == "https://vidstream.pro" || mainUrl == "https://vidstreamz.online" || mainUrl == "https://vizcloud2.online"
-                    || mainUrl == "https://vizcloud.xyz" || mainUrl == "https://vizcloud.live" || mainUrl == "https://vizcloud.info") {
-                if (it.file.contains("m3u8")) {
+                    || mainUrl == "https://vizcloud.xyz" || mainUrl == "https://vizcloud.live" || mainUrl == "https://vizcloud.info"
+                     || mainUrl == "https://mwvn.vizcloud.info") {
+                 if (it.file.contains("m3u8")) {
                     hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(it.file.replace("#.mp4",""), null,
                     headers = mapOf("Referer" to url)), true)
                         .forEach { stream ->
