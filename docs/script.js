@@ -1,6 +1,6 @@
 const count = document.getElementById("count")
 const mainContainer = document.getElementById("siteList");
-fetch("/providers.json" + "?v=" + Date.now())
+fetch("providers.json" + "?v=" + Date.now())
     .then(r => r.json())
     .then(function (data) {
         count.innerHTML = Object.keys(data).length;
