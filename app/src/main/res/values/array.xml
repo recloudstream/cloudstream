@@ -32,7 +32,7 @@
     </array>
 
     <array name="dns_pref">
-        <item>None</item>
+        <item>@string/none</item>
         <item>Google</item>
         <item>Cloudflare</item>
         <!--        <item>OpenDns</item>-->
