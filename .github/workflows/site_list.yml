@@ -4,10 +4,10 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'README.md'
       - 'app/src/main/java/com/lagradost/cloudstream3/*providers/*Provider.kt'
       - '.github/workflows/site_list.yml'
       - '.github/site-list.py'
+      - 'docs/providers.json'
       - 'app/src/main/java/com/lagradost/cloudstream3/MainAPI.kt'
 
 concurrency: 
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Edit README.md
+    - name: Edit providers.json
       run: |
         python3 .github/site-list.py
     - name: Commit to the repo
