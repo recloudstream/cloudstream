@@ -59,6 +59,21 @@
         <item>3</item>
     </array>
 
+    <array name="limit_title_pref_names">
+        <item>@string/none</item>
+        <item>16 characters</item>
+        <item>32 characters</item>
+        <item>64 characters</item>
+        <item>128 characters</item>
+    </array>
+    <array name="limit_title_pref_values">
+        <item>0</item>
+        <item>16</item>
+        <item>32</item>
+        <item>64</item>
+        <item>128</item>
+    </array>
+
     <array name="video_buffer_length_names">
         <item>@string/automatic</item>
         <item>1min</item>

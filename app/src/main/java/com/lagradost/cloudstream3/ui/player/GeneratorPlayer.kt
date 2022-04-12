@@ -545,10 +545,14 @@ class GeneratorPlayer : FullScreenPlayer() {
                 tvType = meta.tvType
             }
         }
-
-        player_episode_filler_holder?.isVisible = isFiller ?: false
-
-        player_video_title?.text = if (headerName != null) {
+        //Get limit of characters on Video Title
+        var limitTitle = 0
+        context?.let {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
+            limitTitle = settingsManager.getInt(getString(R.string.prefer_limit_title_key), 0)
+        }
+        //Generate video title
+        var playerVideoTitle = if (headerName != null) {
             (headerName +
                     if (tvType.isEpisodeBased() && episode != null)
                         if (season == null)
@@ -559,6 +563,15 @@ class GeneratorPlayer : FullScreenPlayer() {
         } else {
             ""
         }
+        //Truncate video title if it exceeds limit
+        val differenceInLength = playerVideoTitle.length - limitTitle
+        val margin = 3 //If the difference is smaller than or equal to this value, ignore it
+        if (limitTitle > 0 && differenceInLength > margin) {
+            playerVideoTitle = playerVideoTitle.substring(0, limitTitle-1) + "..."
+        }
+
+        player_episode_filler_holder?.isVisible = isFiller ?: false
+        player_video_title?.text = playerVideoTitle
     }
 
     @SuppressLint("SetTextI18n")

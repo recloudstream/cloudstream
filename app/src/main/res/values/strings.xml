@@ -13,6 +13,7 @@
     <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
     <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
+    <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
     <string name="video_buffer_size_key" translatable="false">video_buffer_size_key</string>
     <string name="video_buffer_length_key" translatable="false">video_buffer_length_key</string>
     <string name="video_buffer_clear_key" translatable="false">video_buffer_clear_key</string>
@@ -348,6 +349,7 @@
     <string name="dont_show_again">Don\'t show again</string>
     <string name="update">Update</string>
     <string name="watch_quality_pref">Preferred watch quality</string>
+    <string name="limit_title">Limit title characters on player</string>
     <string name="video_buffer_size_settings">Video buffer size</string>
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>

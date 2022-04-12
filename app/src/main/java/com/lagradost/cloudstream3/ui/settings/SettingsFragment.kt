@@ -705,6 +705,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.prefer_limit_title_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.limit_title_pref_names)
+            val prefValues = resources.getIntArray(R.array.limit_title_pref_values)
+            val current = settingsManager.getInt(getString(R.string.prefer_limit_title_key), 0)
+
+            activity?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(current),
+                getString(R.string.limit_title),
+                true,
+                {}) {
+                settingsManager.edit()
+                    .putInt(getString(R.string.prefer_limit_title_key), prefValues[it])
+                    .apply()
+            }
+            return@setOnPreferenceClickListener true
+        }
+
         getPref(R.string.dns_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.dns_pref)
             val prefValues = resources.getIntArray(R.array.dns_pref_values)
