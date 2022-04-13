@@ -663,7 +663,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("name") val name: String,
         @JsonProperty("location") val location: String,
         @JsonProperty("joined_at") val joined_at: String,
-        @JsonProperty("picture") val picture: String,
+        @JsonProperty("picture") val picture: String?,
     )
 
     data class MalMainPicture(

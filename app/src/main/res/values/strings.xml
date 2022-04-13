@@ -13,6 +13,7 @@
     <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
     <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
+    <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
     <string name="video_buffer_size_key" translatable="false">video_buffer_size_key</string>
     <string name="video_buffer_length_key" translatable="false">video_buffer_length_key</string>
     <string name="video_buffer_clear_key" translatable="false">video_buffer_clear_key</string>
@@ -31,6 +32,9 @@
     <string name="provider_lang_key" translatable="false">provider_lang_key</string>
     <string name="dns_key" translatable="false">dns_key</string>
     <string name="download_path_key" translatable="false">download_path_key</string>
+    <string name="nginx_url_key" translatable="false">nginx_url_key</string>
+    <string name="nginx_credentials" translatable="false">nginx_credentials</string>
+    <string name="nginx_info" translatable="false">nginx_info</string>
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
@@ -227,6 +231,12 @@
     <string name="backup_failed_error_format">Error backing up %s</string>
 
     <string name="search">Search</string>
+    <string name="nginx_category">Nginx Settings</string>
+    <string name="nginx_credentials_title">Nginx Credential</string>
+    <string name="nginx_credentials_summary">You have to use the following format mycoolusername:mysecurepassword123</string>
+    <string name="nginx_info_title">What is Nginx ?</string>
+    <string name="nginx_info_summary">Nginx is a software that can be used to display files from a server that you own. Click to see a Nginx setup guide</string>
+
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
@@ -339,6 +349,7 @@
     <string name="dont_show_again">Don\'t show again</string>
     <string name="update">Update</string>
     <string name="watch_quality_pref">Preferred watch quality</string>
+    <string name="limit_title">Limit title characters on player</string>
     <string name="video_buffer_size_settings">Video buffer size</string>
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
@@ -351,6 +362,8 @@
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
 
     <string name="download_path_pref">Download path</string>
+
+    <string name="nginx_url_pref">Nginx server url</string>
 
     <string name="display_subbed_dubbed_settings">Display Dubbed/Subbed Anime</string>
 

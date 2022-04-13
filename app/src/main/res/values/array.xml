@@ -32,7 +32,7 @@
     </array>
 
     <array name="dns_pref">
-        <item>None</item>
+        <item>@string/none</item>
         <item>Google</item>
         <item>Cloudflare</item>
         <!--        <item>OpenDns</item>-->
@@ -57,6 +57,21 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
+    </array>
+
+    <array name="limit_title_pref_names">
+        <item>@string/none</item>
+        <item>16 characters</item>
+        <item>32 characters</item>
+        <item>64 characters</item>
+        <item>128 characters</item>
+    </array>
+    <array name="limit_title_pref_values">
+        <item>0</item>
+        <item>16</item>
+        <item>32</item>
+        <item>64</item>
+        <item>128</item>
     </array>
 
     <array name="video_buffer_length_names">

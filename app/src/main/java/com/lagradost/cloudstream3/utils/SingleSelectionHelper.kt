@@ -144,6 +144,46 @@ object SingleSelectionHelper {
         }
     }
 
+
+
+    private fun Activity.showInputDialog(
+        dialog: Dialog,
+        value: String,
+        name: String,
+        textInputType: Int?,
+        callback: (String) -> Unit,
+        dismissCallback: () -> Unit
+    ) {
+        val inputView = dialog.findViewById<EditText>(R.id.nginx_text_input)!!
+        val textView = dialog.findViewById<TextView>(R.id.text1)!!
+        val applyButton = dialog.findViewById<TextView>(R.id.apply_btt)!!
+        val cancelButton = dialog.findViewById<TextView>(R.id.cancel_btt)!!
+        val applyHolder = dialog.findViewById<LinearLayout>(R.id.apply_btt_holder)!!
+
+        applyHolder.isVisible = true
+        textView.text = name
+
+        if (textInputType != null) {
+            inputView.inputType = textInputType // 16 for website url input type
+        }
+        inputView.setText(value, TextView.BufferType.EDITABLE)
+
+
+        applyButton.setOnClickListener {
+            callback.invoke(inputView.text.toString())  // try to save the setting, using callback
+            dialog.dismissSafe(this)
+        }
+
+        cancelButton.setOnClickListener {  // just dismiss
+            dialog.dismissSafe(this)
+        }
+
+        dialog.setOnDismissListener {
+            dismissCallback.invoke()
+        }
+
+    }
+
     fun Activity.showMultiDialog(
         items: List<String>,
         selectedIndex: List<Int>,
@@ -192,7 +232,7 @@ object SingleSelectionHelper {
         selectedIndex: Int,
         name: String,
         showApply: Boolean,
-        dismissCallback: () -> Unit,
+         dismissCallback: () -> Unit,
         callback: (Int) -> Unit,
     ) {
         val builder =
@@ -208,6 +248,27 @@ object SingleSelectionHelper {
             showApply,
             false,
             { if (it.isNotEmpty()) callback.invoke(it.first()) },
+            dismissCallback
+        )
+    }
+
+        fun Activity.showNginxTextInputDialog(
+            name: String,
+            value: String,
+            textInputType: Int?,
+            dismissCallback: () -> Unit,
+            callback: (String) -> Unit,
+    ) {
+        val builder = BottomSheetDialog(this)  // probably the stuff at the bottom
+        builder.setContentView(R.layout.bottom_input_dialog)  // input layout
+
+        builder.show()
+        showInputDialog(
+            builder,
+            value,
+            name,
+            textInputType,  // type is a uri
+            callback,
             dismissCallback
         )
     }
