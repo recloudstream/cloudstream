@@ -17,7 +17,6 @@ import okhttp3.Interceptor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
-import java.util.*
 
 private const val OPTIONS = "OPTIONS"
 
@@ -52,29 +51,30 @@ class ZoroProvider : MainAPI() {
         }
     }
 
+    val epRegex = Regex("Ep (\\d+)/")
     private fun Element.toSearchResult(): SearchResponse? {
         val href = fixUrl(this.select("a").attr("href"))
         val title = this.select("h3.film-name").text()
-        /*val episodes = this.select("div.fd-infor > span.fdi-item")?.get(1)?.text()?.let { eps ->
+            val dubSub = this.select(".film-poster > .tick.ltr").text()
+        //val episodes = this.selectFirst(".film-poster > .tick-eps")?.text()?.toIntOrNull()
+
+        val dubExist = dubSub.contains("dub", ignoreCase = true)
+        val subExist = dubSub.contains("sub", ignoreCase = true)
+        val episodes = this.selectFirst(".film-poster > .tick.rtl > .tick-eps")?.text()?.let { eps ->
+            //println("REGEX:::: $eps")
             // current episode / max episode
-            val epRegex = Regex("Ep (\\d+)/")//Regex("Ep (\\d+)/(\\d+)")
+            //Regex("Ep (\\d+)/(\\d+)")
             epRegex.find(eps)?.groupValues?.get(1)?.toIntOrNull()
-        }*/
+        }
         if (href.contains("/news/") || title.trim().equals("News", ignoreCase = true)) return null
         val posterUrl = fixUrl(this.select("img").attr("data-src"))
         val type = getType(this.select("div.fd-infor > span.fdi-item").text())
 
-        return AnimeSearchResponse(
-            title,
-            href,
-            this@ZoroProvider.name,
-            type,
-            posterUrl,
-            null,
-            null,
-        )
+        return newAnimeSearchResponse(title, href, type) {
+            this.posterUrl = posterUrl
+            addDubStatus(dubExist, subExist, episodes, episodes)
+        }
     }
-
 
     override suspend fun getMainPage(): HomePageResponse {
         val html = app.get("$mainUrl/home").text
@@ -152,30 +152,14 @@ class ZoroProvider : MainAPI() {
             val dubExist = dubsub?.contains("DUB") ?: false
             val subExist = dubsub?.contains("SUB") ?: false || dubsub?.contains("RAW") ?: false
 
-            val set = if (dubExist && subExist) {
-                EnumSet.of(DubStatus.Dubbed, DubStatus.Subbed)
-            } else if (dubExist) {
-                EnumSet.of(DubStatus.Dubbed)
-            } else {
-                EnumSet.of(DubStatus.Subbed)
-            }
-
             val tvType =
                 getType(it.selectFirst(".film-detail > .fd-infor > .fdi-item")?.text().toString())
             val href = fixUrl(it.selectFirst(".film-name a").attr("href"))
 
-            AnimeSearchResponse(
-                title,
-                href,
-                name,
-                tvType,
-                poster,
-                null,
-                set,
-                null,
-                if (dubExist) episodes else null,
-                if (subExist) episodes else null,
-            )
+            newAnimeSearchResponse(title, href, tvType) {
+                this.posterUrl = poster
+                addDubStatus(dubExist, subExist, episodes, episodes)
+            }
         }
     }
 
@@ -187,8 +171,8 @@ class ZoroProvider : MainAPI() {
     }
 
     data class ZoroSyncData(
-        @JsonProperty("mal_id") val malId : String?,
-        @JsonProperty("anilist_id") val aniListId : String?,
+        @JsonProperty("mal_id") val malId: String?,
+        @JsonProperty("anilist_id") val aniListId: String?,
     )
 
     override suspend fun load(url: String): LoadResponse {

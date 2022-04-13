@@ -14,6 +14,12 @@ class MonoschinosProvider : MainAPI() {
             else if (t.contains("Pelicula")) TvType.AnimeMovie
             else TvType.Anime
         }
+
+        fun getDubStatus(title: String): DubStatus {
+            return if (title.contains("Latino") || title.contains("Castellano"))
+                DubStatus.Dubbed
+            else DubStatus.Subbed
+        }
     }
 
     override var mainUrl = "https://monoschinos2.com"
@@ -50,19 +56,10 @@ class MonoschinosProvider : MainAPI() {
                     val url = it.selectFirst("a").attr("href").replace("ver/", "anime/")
                         .replace(epRegex, "sub-espanol")
                     val epNum = it.selectFirst(".positioning h5").text().toIntOrNull()
-                    AnimeSearchResponse(
-                        title,
-                        url,
-                        this.name,
-                        TvType.Anime,
-                        poster,
-                        null,
-                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
-                            DubStatus.Dubbed
-                        ) else EnumSet.of(DubStatus.Subbed),
-                        subEpisodes = epNum,
-                        dubEpisodes = epNum,
-                    )
+                    newAnimeSearchResponse(title, url) {
+                        this.posterUrl = fixUrl(poster)
+                        addDubStatus(getDubStatus(title), epNum)
+                    }
                 })
         )
 
@@ -71,17 +68,10 @@ class MonoschinosProvider : MainAPI() {
                 val home = app.get(i.first, timeout = 120).document.select(".col-6").map {
                     val title = it.selectFirst(".seristitles").text()
                     val poster = it.selectFirst("img.animemainimg").attr("src")
-                    AnimeSearchResponse(
-                        title,
-                        fixUrl(it.selectFirst("a").attr("href")),
-                        this.name,
-                        TvType.Anime,
-                        fixUrl(poster),
-                        null,
-                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
-                            DubStatus.Dubbed
-                        ) else EnumSet.of(DubStatus.Subbed),
-                    )
+                    newAnimeSearchResponse(title, fixUrl(it.selectFirst("a").attr("href"))) {
+                        this.posterUrl = fixUrl(poster)
+                        addDubStatus(getDubStatus(title))
+                    }
                 }
 
                 items.add(HomePageList(i.second, home))

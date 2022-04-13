@@ -16,7 +16,8 @@ class SyncSearchViewModel {
         override var type: TvType?,
         override var posterUrl: String?,
         override var id: Int?,
-        override var quality: SearchQuality? = null
+        override var quality: SearchQuality? = null,
+        override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse
 
     private fun SyncAPI.SyncSearchResult.toSearchResponse(): SyncSearchResultSearchResponse {

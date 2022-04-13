@@ -17,12 +17,25 @@ class NineAnimeProvider : MainAPI() {
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Anime)
 
+    companion object {
+        fun getDubStatus(title: String): DubStatus {
+            return if (title.contains("(dub)", ignoreCase = true)) {
+                DubStatus.Dubbed
+            } else {
+                DubStatus.Subbed
+            }
+        }
+    }
+
     override suspend fun getMainPage(): HomePageResponse {
         val items = listOf(
             Pair("$mainUrl/ajax/home/widget?name=trending", "Trending"),
             Pair("$mainUrl/ajax/home/widget?name=updated_all", "All"),
             Pair("$mainUrl/ajax/home/widget?name=updated_sub&page=1", "Recently Updated (SUB)"),
-            Pair("$mainUrl/ajax/home/widget?name=updated_dub&page=1", "Recently Updated (DUB)"),
+            Pair(
+                "$mainUrl/ajax/home/widget?name=updated_dub&page=1",
+                "Recently Updated (DUB)(DUB)"
+            ),
             Pair(
                 "$mainUrl/ajax/home/widget?name=updated_chinese&page=1",
                 "Recently Updated (Chinese)"
@@ -37,17 +50,11 @@ class NineAnimeProvider : MainAPI() {
                 val title = it.selectFirst("a.name").text()
                 val link = it.selectFirst("a").attr("href")
                 val poster = it.selectFirst("a.poster img").attr("src")
-                AnimeSearchResponse(
-                    title,
-                    link,
-                    this.name,
-                    TvType.Anime,
-                    poster,
-                    null,
-                    if (title.contains("(DUB)") || title.contains("(Dub)")) EnumSet.of(
-                        DubStatus.Dubbed
-                    ) else EnumSet.of(DubStatus.Subbed),
-                )
+
+                newAnimeSearchResponse(title, link) {
+                    this.posterUrl = poster
+                    addDubStatus(getDubStatus(title))
+                }
             }
 
             HomePageList(name, home)
@@ -206,24 +213,18 @@ class NineAnimeProvider : MainAPI() {
             Episode(link, name)
         } ?: return null
 
-
         val recommendations =
-            doc.select("div.container aside.main section div.body ul.anime-list li")?.mapNotNull { element ->
-                val recTitle = element.select("a.name").text() ?: return@mapNotNull null
-                val image = element.select("a.poster img")?.attr("src")
-                val recUrl = fixUrl(element.select("a").attr("href"))
-                AnimeSearchResponse(
-                    recTitle,
-                    fixUrl(recUrl),
-                    this.name,
-                    TvType.Anime,
-                    image,
-                    dubStatus =
-                    if (recTitle.contains("(DUB)") || recTitle.contains("(Dub)")) EnumSet.of(
-                        DubStatus.Dubbed
-                    ) else EnumSet.of(DubStatus.Subbed),
-                )
-            }
+            doc.select("div.container aside.main section div.body ul.anime-list li")
+                ?.mapNotNull { element ->
+                    val recTitle = element.select("a.name")?.text() ?: return@mapNotNull null
+                    val image = element.select("a.poster img")?.attr("src")
+                    val recUrl = fixUrl(element.select("a").attr("href"))
+                    newAnimeSearchResponse(recTitle, recUrl) {
+                        this.posterUrl = image
+                        addDubStatus(getDubStatus(recTitle))
+                    }
+                }
+
         val infodoc = doc.selectFirst("div.info .meta .col1").text()
         val tvType = if (infodoc.contains("Movie")) TvType.AnimeMovie else TvType.Anime
         val status =
@@ -231,13 +232,14 @@ class NineAnimeProvider : MainAPI() {
             else if (infodoc.contains("Airing")) ShowStatus.Ongoing
             else null
         val tags = doc.select("div.info .meta .col1 div:contains(Genre) a").map { it.text() }
+
         return newAnimeLoadResponse(title, url, tvType) {
-            posterUrl = poster
-            addEpisodes(DubStatus.Subbed, episodes)
-            plot = description
+            this.posterUrl = poster
+            this.plot = description
             this.recommendations = recommendations
-            showStatus = status
+            this.showStatus = status
             this.tags = tags
+            addEpisodes(DubStatus.Subbed, episodes)
         }
     }
 
@@ -260,7 +262,8 @@ class NineAnimeProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val document = app.get(data).document
-        val animeid = document.selectFirst("div.player-wrapper.watchpage").attr("data-id") ?: return false
+        val animeid =
+            document.selectFirst("div.player-wrapper.watchpage").attr("data-id") ?: return false
         val animeidencoded = encode(getVrf(animeid) ?: return false)
 
         Jsoup.parse(
@@ -287,7 +290,7 @@ class NineAnimeProvider : MainAPI() {
                         parseJson<Links>(epserver)
                     } else null)?.url?.let { it1 -> getLink(it1.replace("=", "")) }
                         ?.replace("/embed/", "/e/")
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     logError(e)
                     null
                 }

@@ -47,7 +47,7 @@ object SearchResultBuilder {
         textIsDub?.isVisible = false
         textIsSub?.isVisible = false
 
-        when(card.quality) {
+        when (card.quality) {
             SearchQuality.BlueRay -> R.string.quality_blueray
             SearchQuality.Cam -> R.string.quality_cam
             SearchQuality.CamRip -> R.string.quality_cam_rip
@@ -75,7 +75,7 @@ object SearchResultBuilder {
         cardText?.text = card.name
 
         cardView.isVisible = true
-        if (!cardView.setImage(card.posterUrl)) {
+        if (!cardView.setImage(card.posterUrl, card.posterHeaders)) {
             cardView.setImageResource(R.drawable.default_cover)
         }
 
@@ -182,20 +182,24 @@ object SearchResultBuilder {
                 }
             }
             is AnimeSearchResponse -> {
-                if (card.dubStatus != null && card.dubStatus.size > 0) {
-                    if (card.dubStatus.contains(DubStatus.Dubbed)) {
+                val dubStatus = card.dubStatus
+                if (!dubStatus.isNullOrEmpty()) {
+                    if (dubStatus.contains(DubStatus.Dubbed)) {
                         textIsDub?.visibility = View.VISIBLE
                     }
-                    if (card.dubStatus.contains(DubStatus.Subbed)) {
+                    if (dubStatus.contains(DubStatus.Subbed)) {
                         textIsSub?.visibility = View.VISIBLE
                     }
                 }
 
+                val dubEpisodes = card.episodes[DubStatus.Dubbed]
+                val subEpisodes = card.episodes[DubStatus.Subbed]
+
                 textIsDub?.apply {
                     val dubText = context.getString(R.string.app_dubbed_text)
-                    text = if (card.dubEpisodes != null && card.dubEpisodes > 0) {
+                    text = if (dubEpisodes != null && dubEpisodes > 0) {
                         context.getString(R.string.app_dub_sub_episode_text_format)
-                            .format(dubText, card.dubEpisodes)
+                            .format(dubText, dubEpisodes)
                     } else {
                         dubText
                     }
@@ -203,9 +207,9 @@ object SearchResultBuilder {
 
                 textIsSub?.apply {
                     val subText = context.getString(R.string.app_subbed_text)
-                    text = if (card.subEpisodes != null && card.subEpisodes > 0) {
+                    text = if (subEpisodes != null && subEpisodes > 0) {
                         context.getString(R.string.app_dub_sub_episode_text_format)
-                            .format(subText, card.subEpisodes)
+                            .format(subText, subEpisodes)
                     } else {
                         subText
                     }

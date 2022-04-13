@@ -148,11 +148,11 @@ object UIHelper {
         return color
     }
 
-    fun ImageView?.setImage(url: String?): Boolean {
+    fun ImageView?.setImage(url: String?, headers: Map<String, String>? = null): Boolean {
         if (this == null || url.isNullOrBlank()) return false
         return try {
             GlideApp.with(this.context)
-                .load(GlideUrl(url)).transition(
+                .load(GlideUrl(url) { headers ?: emptyMap() }).transition(
                     DrawableTransitionOptions.withCrossFade()
                 )
                 .into(this)
@@ -163,11 +163,17 @@ object UIHelper {
         }
     }
 
-    fun ImageView?.setImageBlur(url: String?, radius: Int, sample: Int = 3) {
+    fun ImageView?.setImageBlur(
+        url: String?,
+        radius: Int,
+        sample: Int = 3,
+        headers: Map<String, String>? = null
+    ) {
         if (this == null || url.isNullOrBlank()) return
         try {
             GlideApp.with(this.context)
-                .load(GlideUrl(url)).apply(bitmapTransform(BlurTransformation(radius, sample)))
+                .load(GlideUrl(url) { headers ?: emptyMap() })
+                .apply(bitmapTransform(BlurTransformation(radius, sample)))
                 .transition(
                     DrawableTransitionOptions.withCrossFade()
                 )

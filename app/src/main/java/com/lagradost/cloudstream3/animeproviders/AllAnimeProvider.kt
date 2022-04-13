@@ -14,7 +14,6 @@ import org.mozilla.javascript.Context
 import org.mozilla.javascript.Scriptable
 import java.net.URI
 import java.net.URLDecoder
-import java.util.*
 
 
 class AllAnimeProvider : MainAPI() {
@@ -88,49 +87,48 @@ class AllAnimeProvider : MainAPI() {
         @JsonProperty("data") val data: Data
     )
 
-    data class RandomMain (
-        @JsonProperty("data" ) var data : DataRan? = DataRan()
+    data class RandomMain(
+        @JsonProperty("data") var data: DataRan? = DataRan()
     )
 
-    data class DataRan (
-        @JsonProperty("queryRandomRecommendation" ) var queryRandomRecommendation : ArrayList<QueryRandomRecommendation> = arrayListOf()
+    data class DataRan(
+        @JsonProperty("queryRandomRecommendation") var queryRandomRecommendation: ArrayList<QueryRandomRecommendation> = arrayListOf()
     )
 
-    data class QueryRandomRecommendation (
-        @JsonProperty("_id"               ) val Id                : String? = null,
-        @JsonProperty("name"              ) val name              : String? = null,
-        @JsonProperty("englishName"       ) val englishName       : String? = null,
-        @JsonProperty("nativeName"        ) val nativeName        : String? = null,
-        @JsonProperty("thumbnail"         ) val thumbnail         : String? = null,
-        @JsonProperty("airedStart"        ) val airedStart        : String? = null,
-        @JsonProperty("availableChapters" ) val availableChapters : String? = null,
-        @JsonProperty("availableEpisodes" ) val availableEpisodes : String? = null,
-        @JsonProperty("__typename"        ) val _typename         : String? = null
+    data class QueryRandomRecommendation(
+        @JsonProperty("_id") val Id: String? = null,
+        @JsonProperty("name") val name: String? = null,
+        @JsonProperty("englishName") val englishName: String? = null,
+        @JsonProperty("nativeName") val nativeName: String? = null,
+        @JsonProperty("thumbnail") val thumbnail: String? = null,
+        @JsonProperty("airedStart") val airedStart: String? = null,
+        @JsonProperty("availableChapters") val availableChapters: String? = null,
+        @JsonProperty("availableEpisodes") val availableEpisodes: String? = null,
+        @JsonProperty("__typename") val _typename: String? = null
     )
 
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
-            Pair("Top Anime",
-                "$mainUrl/graphql?variables=%7B%22search%22%3A%7B%22allowAdult%22%3Afalse%2C%22sortBy%22%3A%22Top%22%7D%2C%22limit%22%3A26%2C%22page%22%3A1%2C%22translationType%22%3A%22sub%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%229343797cc3d9e3f444e2d3b7db9a84d759b816a4d84512ea72d079f85bb96e98%22%7D%7D"),
-            Pair("Animes",
-                "$mainUrl/graphql?variables=%7B%22search%22%3A%7B%22allowAdult%22%3Afalse%7D%2C%22limit%22%3A26%2C%22page%22%3A1%2C%22translationType%22%3A%22sub%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%229343797cc3d9e3f444e2d3b7db9a84d759b816a4d84512ea72d079f85bb96e98%22%7D%7D"),
+            Pair(
+                "Top Anime",
+                "$mainUrl/graphql?variables=%7B%22search%22%3A%7B%22allowAdult%22%3Afalse%2C%22sortBy%22%3A%22Top%22%7D%2C%22limit%22%3A26%2C%22page%22%3A1%2C%22translationType%22%3A%22sub%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%229343797cc3d9e3f444e2d3b7db9a84d759b816a4d84512ea72d079f85bb96e98%22%7D%7D"
+            ),
+            Pair(
+                "Animes",
+                "$mainUrl/graphql?variables=%7B%22search%22%3A%7B%22allowAdult%22%3Afalse%7D%2C%22limit%22%3A26%2C%22page%22%3A1%2C%22translationType%22%3A%22sub%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%229343797cc3d9e3f444e2d3b7db9a84d759b816a4d84512ea72d079f85bb96e98%22%7D%7D"
+            ),
         )
 
-        val random = "$mainUrl/graphql?variables=%7B%22format%22%3A%22anime%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%2221ac672633498a3698e8f6a93ce6c2b3722b29a216dcca93363bf012c360cd54%22%7D%7D"
+        val random =
+            "$mainUrl/graphql?variables=%7B%22format%22%3A%22anime%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%2221ac672633498a3698e8f6a93ce6c2b3722b29a216dcca93363bf012c360cd54%22%7D%7D"
         val ranlink = app.get(random).text
         val jsonran = parseJson<RandomMain>(ranlink)
         val ranhome = jsonran.data?.queryRandomRecommendation?.map {
-            AnimeSearchResponse(
-                it.name!!,
-                "$mainUrl/anime/${it.Id}",
-                this.name,
-                TvType.Anime,
-                it.thumbnail,
-                null,
-                EnumSet.of(DubStatus.Subbed, DubStatus.Dubbed),
-                it.nativeName,
-            )
+            newAnimeSearchResponse(it.name!!,"$mainUrl/anime/${it.Id}", fix = false) {
+                this.posterUrl = it.thumbnail
+                this.otherName = it.nativeName
+            }
         }
 
         items.add(HomePageList("Random", ranhome!!))
@@ -144,18 +142,14 @@ class AllAnimeProvider : MainAPI() {
                 !(it.availableEpisodes?.raw == 0 && it.availableEpisodes.sub == 0 && it.availableEpisodes.dub == 0)
             }
             results.map {
-                home.add(AnimeSearchResponse(
-                    it.name,
-                    "$mainUrl/anime/${it.Id}",
-                    this.name,
-                    TvType.Anime,
-                    it.thumbnail,
-                    it.airedStart?.year,
-                    EnumSet.of(DubStatus.Subbed, DubStatus.Dubbed),
-                    it.englishName,
-                    it.availableEpisodes?.dub,
-                    it.availableEpisodes?.sub
-                ))
+                home.add(
+                    newAnimeSearchResponse(it.name, "$mainUrl/anime/${it.Id}", fix = false) {
+                        this.posterUrl = it.thumbnail
+                        this.year = it.airedStart?.year
+                        this.otherName = it.englishName
+                        addDub(it.availableEpisodes?.dub)
+                        addSub(it.availableEpisodes?.sub)
+                    })
             }
             items.add(HomePageList(HomeName, home))
         }
@@ -180,18 +174,13 @@ class AllAnimeProvider : MainAPI() {
         }
 
         return results.map {
-            AnimeSearchResponse(
-                it.name,
-                "$mainUrl/anime/${it.Id}",
-                this.name,
-                TvType.Anime,
-                it.thumbnail,
-                it.airedStart?.year,
-                EnumSet.of(DubStatus.Subbed, DubStatus.Dubbed),
-                it.englishName,
-                it.availableEpisodes?.dub,
-                it.availableEpisodes?.sub
-            )
+            newAnimeSearchResponse(it.name, "$mainUrl/anime/${it.Id}", fix = false) {
+                this.posterUrl = it.thumbnail
+                this.year = it.airedStart?.year
+                this.otherName = it.englishName
+                addDub(it.availableEpisodes?.dub)
+                addSub(it.availableEpisodes?.sub)
+            }
         }
     }
 

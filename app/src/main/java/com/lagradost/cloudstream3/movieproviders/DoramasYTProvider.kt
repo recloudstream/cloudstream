@@ -14,6 +14,11 @@ class DoramasYTProvider : MainAPI() {
             else if (t.contains("Pelicula")) TvType.Movie
             else TvType.TvSeries
         }
+        fun getDubStatus(title: String): DubStatus {
+            return if (title.contains("Latino") || title.contains("Castellano"))
+                DubStatus.Dubbed
+            else DubStatus.Subbed
+        }
     }
 
     override var mainUrl = "https://doramasyt.com"
@@ -53,39 +58,22 @@ class DoramasYTProvider : MainAPI() {
                     val url = it.selectFirst("a").attr("href").replace("ver/", "dorama/")
                         .replace(epRegex, "sub-espanol")
                     val epNum = it.selectFirst("h3").text().toIntOrNull()
-                    AnimeSearchResponse(
-                        title,
-                        url,
-                        this.name,
-                        TvType.Anime,
-                        poster,
-                        null,
-                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
-                            DubStatus.Dubbed
-                        ) else EnumSet.of(DubStatus.Subbed),
-                        subEpisodes = epNum,
-                        dubEpisodes = epNum,
-                    )
+                    newAnimeSearchResponse(title,url) {
+                        this.posterUrl = fixUrl(poster)
+                        addDubStatus(getDubStatus(title), epNum)
+                    }
                 })
         )
 
         for (i in urls) {
             try {
-
                 val home = app.get(i.first, timeout = 120).document.select(".col-6").map {
                     val title = it.selectFirst(".animedtls p").text()
                     val poster = it.selectFirst(".anithumb img").attr("src")
-                    AnimeSearchResponse(
-                        title,
-                        it.selectFirst("a").attr("href"),
-                        this.name,
-                        TvType.Anime,
-                        poster,
-                        null,
-                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
-                            DubStatus.Dubbed
-                        ) else EnumSet.of(DubStatus.Subbed),
-                    )
+                    newAnimeSearchResponse(title, fixUrl(it.selectFirst("a").attr("href"))) {
+                        this.posterUrl = fixUrl(poster)
+                        addDubStatus(getDubStatus(title))
+                    }
                 }
 
                 items.add(HomePageList(i.second, home))

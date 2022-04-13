@@ -85,7 +85,7 @@ open class VidstreamProviderTemplate : MainAPI() {
 
         val description = soup.selectFirst(".post-entry")?.text()?.trim()
         var poster: String? = null
-        var year : Int? = null
+        var year: Int? = null
 
         val episodes =
             soup.select(".listing.items.lists > .video-block").withIndex().map { (_, li) ->
@@ -105,7 +105,7 @@ open class VidstreamProviderTemplate : MainAPI() {
 
                 val epNum = Regex("""Episode (\d+)""").find(epTitle)?.destructured?.component1()
                     ?.toIntOrNull()
-                if(year == null) {
+                if (year == null) {
                     year = epDate?.split("-")?.get(0)?.toIntOrNull()
                 }
                 newEpisode(li.selectFirst("a").attr("href")) {
@@ -173,25 +173,13 @@ open class VidstreamProviderTemplate : MainAPI() {
                     val isSeries = (name.contains("Season") || name.contains("Episode"))
 
                     if (isSeries) {
-                        TvSeriesSearchResponse(
-                            name,
-                            link,
-                            this.name,
-                            TvType.TvSeries,
-                            image,
-                            null,
-                            null,
-                        )
+                        newTvSeriesSearchResponse(name, link) {
+                            posterUrl = image
+                        }
                     } else {
-                        MovieSearchResponse(
-                            name,
-                            link,
-                            this.name,
-                            TvType.Movie,
-                            image,
-                            null,
-                            null,
-                        )
+                        newMovieSearchResponse(name, link) {
+                            posterUrl = image
+                        }
                     }
                 }
 

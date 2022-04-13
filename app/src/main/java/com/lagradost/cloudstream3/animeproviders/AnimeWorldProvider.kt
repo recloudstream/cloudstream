@@ -9,7 +9,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.json.JSONObject
 import org.jsoup.nodes.Element
-import java.util.*
 
 class AnimeWorldProvider : MainAPI() {
     override var mainUrl = "https://www.animeworld.tv"
@@ -31,6 +30,7 @@ class AnimeWorldProvider : MainAPI() {
                 else -> TvType.Anime
             }
         }
+
         fun getStatus(t: String?): ShowStatus? {
             return when (t?.lowercase()) {
                 "finito" -> ShowStatus.Completed
@@ -54,25 +54,20 @@ class AnimeWorldProvider : MainAPI() {
 
         val statusElement = this.select("div.status") // .first()
         val dub = statusElement.select(".dub").isNotEmpty()
-        val dubStatus = if (dub) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed)
-        val episode = statusElement.select(".ep").text().split(' ').last().toIntOrNull()
+
+        val episode = if (showEpisode) statusElement.select(".ep").text().split(' ').last()
+            .toIntOrNull() else null
         val type = when {
             statusElement.select(".movie").isNotEmpty() -> TvType.AnimeMovie
             statusElement.select(".ova").isNotEmpty() -> TvType.OVA
             else -> TvType.Anime
         }
 
-        return AnimeSearchResponse(
-            title,
-            url,
-            name,
-            type,
-            poster,
-            dubStatus = dubStatus,
-            otherName = if (otherTitle != title) otherTitle else null,
-            dubEpisodes = if (showEpisode && type != TvType.AnimeMovie && dub) episode else null,
-            subEpisodes = if (showEpisode && type != TvType.AnimeMovie && !dub) episode else null
-        )
+        return newAnimeSearchResponse(title, url, type) {
+            addDubStatus(dub, episode)
+            this.otherName = otherTitle
+            this.posterUrl = poster
+        }
     }
 
     override suspend fun getMainPage(): HomePageResponse {
@@ -113,14 +108,17 @@ class AnimeWorldProvider : MainAPI() {
                 arr[0].split(' ')[0].toIntOrNull()
             else
                 arr[1].split(' ')[0].toIntOrNull()?.let {
-                    arr[0].removeSuffix("h").toIntOrNull()?.times(60)!!.plus(it) }
+                    arr[0].removeSuffix("h").toIntOrNull()?.times(60)!!.plus(it)
+                }
         }
+
         val document = app.get(url).document
 
         val widget = document.select("div.widget.info")
         val title = widget.select(".info .title").text().removeSuffix(" (ITA)")
         val otherTitle = widget.select(".info .title").attr("data-jtitle").removeSuffix(" (ITA)")
-        val description = widget.select(".desc .long").first()?.text() ?: widget.select(".desc").text()
+        val description =
+            widget.select(".desc .long").first()?.text() ?: widget.select(".desc").text()
         val poster = document.select(".thumb img").attr("src")
 
         val type: TvType = getType(widget.select("dd").first()?.text())

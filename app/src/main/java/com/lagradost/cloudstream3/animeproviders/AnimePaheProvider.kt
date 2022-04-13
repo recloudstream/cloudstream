@@ -12,7 +12,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.JsUnpacker
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
-import java.util.*
 import kotlin.math.pow
 
 class AnimePaheProvider : MainAPI() {
@@ -84,19 +83,14 @@ class AnimePaheProvider : MainAPI() {
             try {
                 val response = app.get(i.first).text
                 val episodes = mapper.readValue<AnimePaheLatestReleases>(response).data.map {
-
-                    AnimeSearchResponse(
+                    newAnimeSearchResponse(
                         it.animeTitle,
                         "https://pahe.win/a/${it.animeId}?slug=${it.animeTitle}",
-                        this.name,
-                        TvType.Anime,
-                        it.snapshot,
-                        null,
-                        EnumSet.of(DubStatus.Subbed),
-                        null,
-                        null,
-                        it.episode
-                    )
+                        fix = false
+                    ) {
+                        this.posterUrl = it.snapshot
+                        addDubStatus(DubStatus.Subbed, it.episode)
+                    }
                 }
 
                 items.add(HomePageList(i.second, episodes))
@@ -151,18 +145,14 @@ class AnimePaheProvider : MainAPI() {
         val data = req.let { mapper.readValue<AnimePaheSearch>(it) }
 
         return data.data.map {
-            AnimeSearchResponse(
+            newAnimeSearchResponse(
                 it.title,
                 "https://pahe.win/a/${it.id}?slug=${it.title}",
-                this.name,
-                TvType.Anime,
-                it.poster,
-                it.year,
-                EnumSet.of(DubStatus.Subbed),
-                null,
-                null,
-                it.episodes
-            )
+                fix = false
+            ) {
+                this.posterUrl = it.poster
+                addDubStatus(DubStatus.Subbed, it.episodes)
+            }
         }
     }
 
@@ -188,7 +178,6 @@ class AnimePaheProvider : MainAPI() {
         @JsonProperty("to") val to: Int,
         @JsonProperty("data") val data: List<AnimeData>
     )
-
 
     private suspend fun generateListOfEpisodes(link: String): ArrayList<Episode> {
         try {

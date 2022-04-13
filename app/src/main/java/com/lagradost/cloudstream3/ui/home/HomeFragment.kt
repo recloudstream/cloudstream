@@ -770,7 +770,7 @@ class HomeFragment : Fragment() {
 
                     home_main_text?.text =
                         random.name + if (random is AnimeSearchResponse && !random.dubStatus.isNullOrEmpty()) {
-                            random.dubStatus.joinToString(
+                            random.dubStatus?.joinToString(
                                 prefix = " • ",
                                 separator = " | "
                             ) { it.name }

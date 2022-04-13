@@ -201,20 +201,10 @@ class GogoanimeProvider : MainAPI() {
                 items.add(HomePageList(i.second, (parseRegex.findAll(html.text).map {
                     val (link, epNum, title, poster) = it.destructured
                     val isSub = listOf(1, 3).contains(i.first.toInt())
-                    AnimeSearchResponse(
-                        title,
-                        link,
-                        this.name,
-                        TvType.Anime,
-                        poster,
-                        null,
-                        if (isSub) EnumSet.of(DubStatus.Subbed) else EnumSet.of(
-                            DubStatus.Dubbed
-                        ),
-                        null,
-                        if (!isSub) epNum.toIntOrNull() else null,
-                        if (isSub) epNum.toIntOrNull() else null,
-                    )
+                    newAnimeSearchResponse(title, link) {
+                        this.posterUrl = poster
+                        addDubStatus(!isSub, epNum.toIntOrNull())
+                    }
                 }).toList()))
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -52,7 +52,8 @@ class SearchFragment : Fragment() {
         fun List<SearchResponse>.filterSearchResponse(): List<SearchResponse> {
             return this.filter { response ->
                 if (response is AnimeSearchResponse) {
-                    (response.dubStatus.isNullOrEmpty()) || (response.dubStatus.any {
+                    val status = response.dubStatus
+                    (status.isNullOrEmpty()) || (status.any {
                         APIRepository.dubStatusActive.contains(it)
                     })
                 } else {
@@ -225,11 +226,13 @@ class SearchFragment : Fragment() {
                             }
                         }.sortedBy { it.name.lowercase() }
 
-                        val names = currentValidApis.map {  if(isMultiLang) "${
-                            SubtitleHelper.getFlagFromIso(
-                                it.lang
-                            )?.plus(" ") ?: ""
-                        }${it.name}" else it.name }
+                        val names = currentValidApis.map {
+                            if (isMultiLang) "${
+                                SubtitleHelper.getFlagFromIso(
+                                    it.lang
+                                )?.plus(" ") ?: ""
+                            }${it.name}" else it.name
+                        }
                         for ((index, api) in currentValidApis.map { it.name }.withIndex()) {
                             listView?.setItemChecked(index, currentSelectedApis.contains(api))
                         }

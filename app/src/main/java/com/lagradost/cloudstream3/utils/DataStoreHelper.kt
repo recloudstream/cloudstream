@@ -43,7 +43,8 @@ object DataStoreHelper {
         @JsonProperty("type") override var type: TvType? = null,
         @JsonProperty("posterUrl") override var posterUrl: String?,
         @JsonProperty("year") val year: Int?,
-        @JsonProperty("quality") override var quality: SearchQuality? = null
+        @JsonProperty("quality") override var quality: SearchQuality? = null,
+        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse
 
     data class ResumeWatchingResult(
@@ -60,7 +61,8 @@ object DataStoreHelper {
         @JsonProperty("episode") val episode: Int?,
         @JsonProperty("season") val season: Int?,
         @JsonProperty("isFromDownload") val isFromDownload: Boolean,
-        @JsonProperty("quality") override var quality: SearchQuality? = null
+        @JsonProperty("quality") override var quality: SearchQuality? = null,
+        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse
 
     var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION

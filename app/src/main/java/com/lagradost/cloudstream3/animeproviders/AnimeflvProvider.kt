@@ -2,8 +2,9 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 import java.util.*
 
 class AnimeflvnetProvider:MainAPI() {
@@ -12,6 +13,11 @@ class AnimeflvnetProvider:MainAPI() {
             return if (t.contains("OVA") || t.contains("Especial")) TvType.OVA
             else if (t.contains("Película")) TvType.AnimeMovie
             else TvType.Anime
+        }
+        fun getDubStatus(title: String): DubStatus {
+            return if (title.contains("Latino") || title.contains("Castellano"))
+                DubStatus.Dubbed
+            else DubStatus.Subbed
         }
     }
     override var mainUrl = "https://www3.animeflv.net"
@@ -43,19 +49,10 @@ class AnimeflvnetProvider:MainAPI() {
                     val url = it.selectFirst("a").attr("href").replace(epRegex,"")
                         .replace("ver/","anime/")
                     val epNum = it.selectFirst("span.Capi").text().replace("Episodio ","").toIntOrNull()
-                    AnimeSearchResponse(
-                        title,
-                        fixUrl(url),
-                        this.name,
-                        TvType.Anime,
-                        fixUrl(poster),
-                        null,
-                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(
-                            DubStatus.Dubbed
-                        ) else EnumSet.of(DubStatus.Subbed),
-                        subEpisodes = epNum,
-                        dubEpisodes = epNum,
-                    )
+                    newAnimeSearchResponse(title, url) {
+                        this.posterUrl = fixUrl(poster)
+                        addDubStatus(getDubStatus(title), epNum)
+                    }
                 })
         )
         for ((url, name) in urls) {
@@ -64,15 +61,10 @@ class AnimeflvnetProvider:MainAPI() {
                 val home = doc.select("ul.ListAnimes li article").map {
                     val title = it.selectFirst("h3.Title").text()
                     val poster = it.selectFirst("figure img").attr("src")
-                    AnimeSearchResponse(
-                        title,
-                        fixUrl(it.selectFirst("a").attr("href")),
-                        this.name,
-                        TvType.Anime,
-                        fixUrl(poster),
-                        null,
-                        if (title.contains("Latino") || title.contains("Castellano")) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(DubStatus.Subbed),
-                    )
+                    newAnimeSearchResponse(title, fixUrl(it.selectFirst("a").attr("href"))) {
+                        this.posterUrl = fixUrl(poster)
+                        addDubStatus(MonoschinosProvider.getDubStatus(title))
+                    }
                 }
 
                 items.add(HomePageList(name, home))
