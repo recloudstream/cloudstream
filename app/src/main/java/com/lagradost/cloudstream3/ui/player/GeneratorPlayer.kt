@@ -387,6 +387,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         super.onDestroy()
     }
 
+    var maxEpisodeSet: Int? = null
+
     override fun playerPositionChanged(posDur: Pair<Long, Long>) {
         val (position, duration) = posDur
         viewModel.getId()?.let {
@@ -434,7 +436,9 @@ class GeneratorPlayer : FullScreenPlayer() {
         var isOpVisible = false
         when (val meta = currentMeta) {
             is ResultEpisode -> {
-                if (percentage >= UPDATE_SYNC_PROGRESS_PERCENTAGE) {
+                if (percentage >= UPDATE_SYNC_PROGRESS_PERCENTAGE && (maxEpisodeSet
+                        ?: -1) < meta.episode
+                ) {
                     context?.let { ctx ->
                         val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
                         if (settingsManager.getBoolean(
@@ -442,7 +446,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                                 true
                             )
                         )
-                            sync.modifyMaxEpisode(meta.episode)
+                            maxEpisodeSet = meta.episode
+                        sync.modifyMaxEpisode(meta.episode)
                     }
                 }
 
@@ -567,7 +572,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         val differenceInLength = playerVideoTitle.length - limitTitle
         val margin = 3 //If the difference is smaller than or equal to this value, ignore it
         if (limitTitle > 0 && differenceInLength > margin) {
-            playerVideoTitle = playerVideoTitle.substring(0, limitTitle-1) + "..."
+            playerVideoTitle = playerVideoTitle.substring(0, limitTitle - 1) + "..."
         }
 
         player_episode_filler_holder?.isVisible = isFiller ?: false
