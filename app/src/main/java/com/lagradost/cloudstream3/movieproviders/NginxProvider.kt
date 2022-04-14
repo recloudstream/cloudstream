@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addDuration
 import com.lagradost.cloudstream3.LoadResponse.Companion.addRating
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.TvType
@@ -65,23 +66,19 @@ class NginxProvider : MainAPI() {
 
             val data = url + dataList.firstNotNullOf { item -> item.takeIf { (!it.attr("href").contains(".nfo") &&  !it.attr("href").contains(".jpg"))} }.attr("href").toString()  // exclude poster and nfo (metadata) file
 
-
-            return MovieLoadResponse(
+            return newMovieLoadResponse(
                 title,
-                data,
-                this.name,
+                url,
                 TvType.Movie,
-                data,
-                poster,
-                date,
-                description,
-                ratingAverage,
-                tagsList,
-                null,
-                trailer,
-                null,
-                null,
-            )
+                data
+            ) {
+                this.year = date
+                this.plot = description
+                this.rating = ratingAverage
+                this.tags = tagsList
+                this.trailers = trailer
+                addPoster(poster, authHeader)
+            }
         } else  // a tv serie
         {
 
@@ -144,9 +141,9 @@ class NginxProvider : MainAPI() {
                                     this.name = name
                                     this.season = seasonInt
                                     this.episode = epNum
-                                    this.posterUrl = poster
-                                    addDate(date)
+                                    this.posterUrl = poster  // will require headers too
                                     this.description = plot
+                                    addDate(date)
                             }
                         )
                     }
@@ -154,10 +151,10 @@ class NginxProvider : MainAPI() {
             return newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodeList) {
                 this.name = title
                 this.url = url
-                this.posterUrl = posterUrl
                 this.episodes = episodeList
                 this.plot = description
                 this.tags = tagsList
+                addPoster(posterUrl, authHeader)
             }
         }
 
@@ -189,7 +186,7 @@ class NginxProvider : MainAPI() {
 
 
 
-    override suspend fun getMainPage(): HomePageResponse? {
+    override suspend fun getMainPage(): HomePageResponse {
         val authHeader = getAuthHeader(storedCredentials)  // call again because it isn't reloaded if in main class and storedCredentials loads after
         if (mainUrl == "NONE"){
             throw ErrorLoadingException("No nginx url specified in the settings: Nginx Settigns > Nginx server url, try again in a few seconds")
