@@ -96,6 +96,11 @@
     <string name="action_add_to_bookmarks">Imposta stato riproduzione</string>
     <string name="sort_apply">Applica</string>
     <string name="sort_cancel">Cancella</string>
+    <string name="sort_copy">Copia</string>
+    <string name="sort_close">Chiudi</string>
+    <string name="sort_clear">Cancella</string>
+    <string name="sort_save">Salva</string>
+
     <string name="player_speed">Velocità video</string>
 
     <string name="subtitles_settings">Impostazioni sottotitoli</string>
@@ -132,8 +137,10 @@
     <string name="normal_no_plot">Nessuna trama trovata</string>
     <string name="torrent_no_plot">Nessuna descrizione trovata</string>
 
+    <string name="show_log_cat">Mostra Logcat 🐈</string>
+
     <string name="picture_in_picture">Picture-in-Picture</string>
-    <string name="picture_in_picture_des">Continua la riproduzione in un lettore in miniatura sopra altre applicazioni</string>
+    <string name="picture_in_picture_des">Continua la riproduzione in un player in miniatura sopra altre applicazioni</string>
     <string name="player_size_settings">Pulsante di ridimensionamento del video</string>
     <string name="player_size_settings_des">Rimuovi bordi neri</string>
     <string name="player_subtitles_settings">Sottotitoli</string>
@@ -273,8 +280,10 @@
     <string name="video_skip_op">Salta intro</string>
 
     <string name="dont_show_again">Non mostrare di nuovo</string>
+    <string name="skip_update">Salta questo aggiornamento</string>
     <string name="update">Aggiorna</string>
     <string name="watch_quality_pref">Risoluzione preferita</string>
+    <string name="limit_title">Limita i caratteri del titolo nel player</string>
     <string name="video_buffer_size_settings">Dimensione cache video</string>
     <string name="video_buffer_length_settings">Lunghezza buffer video</string>
     <string name="video_buffer_disk_settings">Dimensione cache video su disco</string>
