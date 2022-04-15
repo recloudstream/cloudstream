@@ -48,7 +48,7 @@ open class XStreamCdn : ExtractorApi() {
                         extractedLinksList.add(
                             ExtractorLink(
                                 name,
-                                "$name ${data.label}",
+                                name = name,
                                 data.file,
                                 url,
                                 getQualityFromName(data.label),

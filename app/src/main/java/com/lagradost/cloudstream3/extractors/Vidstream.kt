@@ -61,7 +61,7 @@ class Vidstream(val mainUrl: String) {
                         callback.invoke(
                             ExtractorLink(
                                 this.name,
-                                if (qual == "null") this.name else "${this.name} - " + qual + "p",
+                                name = this.name,
                                 href,
                                 page.url,
                                 getQualityFromName(qual),

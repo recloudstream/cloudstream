@@ -99,7 +99,7 @@ open class WcoStream : ExtractorApi() {
                                 sources.add(
                                     ExtractorLink(
                                         "VidStream",
-                                        "VidStream $quality",
+                                        "VidStream",
                                         serverurl,
                                         url,
                                         getQualityFromName(quality),
@@ -117,15 +117,13 @@ open class WcoStream : ExtractorApi() {
                     hlsHelper.m3u8Generation(M3u8Helper.M3u8Stream(it.file.replace("#.mp4",""), null,
                     headers = mapOf("Referer" to url)), true)
                         .forEach { stream ->
-                            val qualityString =
-                                if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
                             sources.add(
                                 ExtractorLink(
                                     name,
-                                    "$name $qualityString",
+                                    name = name,
                                     stream.streamUrl,
                                     url,
-                                    getQualityFromName(stream.quality.toString()),
+                                    getQualityFromName(stream.quality?.toString()),
                                     true,
                                 )
                             )
@@ -134,7 +132,7 @@ open class WcoStream : ExtractorApi() {
                     sources.add(
                         ExtractorLink(
                             name,
-                            name + if (it.label != null) " - ${it.label}" else "",
+                            name = name,
                             it.file,
                             "",
                             Qualities.P720.value,

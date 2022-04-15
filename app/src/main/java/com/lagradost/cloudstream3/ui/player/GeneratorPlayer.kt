@@ -265,7 +265,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                         ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
                     sourcesArrayAdapter.addAll(sortedUrls.map {
-                        it.first?.name ?: it.second?.name ?: "NULL"
+                        val name = it.first?.name ?: it.second?.name ?: "NULL"
+                        "$name ${Qualities.getStringByInt(it.first?.quality)}"
                     })
 
                     providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE

@@ -111,13 +111,12 @@ open class StreamSB : ExtractorApi() {
         )
             .map { stream ->
                // val cleanstreamurl = stream.streamUrl.replace(Regex("https://.*/hls/"), "$urlmain/hls/")
-                val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
                 ExtractorLink(
                     name,
-                    "$name $qualityString",
+                    name = name,
                     stream.streamUrl,
                     url,
-                    getQualityFromName(stream.quality.toString()),
+                    getQualityFromName(stream.quality?.toString()),
                     true
                 )
             }

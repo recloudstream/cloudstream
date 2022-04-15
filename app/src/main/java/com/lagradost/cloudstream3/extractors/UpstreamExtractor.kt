@@ -48,7 +48,7 @@ class UpstreamExtractor: ExtractorApi() {
                     source = this.name,
                     url = linkUrl,
                     quality = Qualities.Unknown.value,
-                    referer = referer!!,
+                    referer = referer ?: linkUrl,
                     isM3u8 = true
                     )
                 )

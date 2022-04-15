@@ -51,10 +51,27 @@ enum class Qualities(var value: Int) {
     P720(1), // 720p
     P1080(2), // 1080p
     P1440(3), // 1440p
-    P2160(4) // 4k or 2160p
+    P2160(4); // 4k or 2160p
+
+    companion object {
+        fun getStringByInt(qual: Int?) : String {
+            return when (qual) {
+                P360.value -> "360p"
+                P480.value -> "480p"
+                P720.value -> "720p"
+                P1080.value -> "1080p"
+                P1440.value -> "1440p"
+                P2160.value -> "2160p/4k"
+                else -> ""
+            }
+        }
+    }
 }
 
-fun getQualityFromName(qualityName: String): Int {
+fun getQualityFromName(qualityName: String?): Int {
+    if (qualityName == null) {
+        return Qualities.Unknown.value
+    }
     return when (qualityName.replace("p", "").replace("P", "").trim()) {
         "360" -> Qualities.P360
         "480" -> Qualities.P480
