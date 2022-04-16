@@ -31,7 +31,7 @@ class MultiQuality : ExtractorApi() {
                             extractedLinksList.add(
                                 ExtractorLink(
                                     name,
-                                    "$name ${match.groupValues[1]}p",
+                                    name = name,
                                     urlRegex.find(this.url)!!.groupValues[1] + match.groupValues[0],
                                     url,
                                     getQualityFromName(match.groupValues[1]),

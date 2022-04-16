@@ -21,13 +21,12 @@ open class Jawcloud : ExtractorApi() {
             ), true
         )
             .map { stream ->
-                val qualityString = if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
                 sources.add(  ExtractorLink(
                     name,
-                    "$name $qualityString",
+                    name = name,
                     stream.streamUrl,
                     url,
-                    getQualityFromName(stream.quality.toString()),
+                    getQualityFromName(stream.quality?.toString()),
                     true
                 ))
             }

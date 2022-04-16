@@ -50,7 +50,7 @@ open class OkRu : ExtractorApi() {
                 val extractedurl = it.url.replace("\\\\u0026", "&")
                 sources.add(ExtractorLink(
                     name,
-                    "$name $quality",
+                    name = this.name,
                     extractedurl,
                     url,
                     getQualityFromName(quality),
