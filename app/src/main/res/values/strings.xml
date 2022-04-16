@@ -175,6 +175,7 @@
     <string name="subs_auto_select_language">Auto-Select Language</string>
     <string name="subs_download_languages">Download Languages</string>
     <string name="subs_hold_to_reset_to_default">Hold to reset to default</string>
+    <string name="subs_import_text" formatted="true">Import fonts by placing them in %s</string>
     <string name="continue_watching">Continue Watching</string>
 
     <string name="action_remove_watching">Remove</string>

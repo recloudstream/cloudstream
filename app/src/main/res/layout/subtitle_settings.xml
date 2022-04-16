@@ -1,185 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/subs_root"
-        android:background="?attr/primaryBlackBackground">
+    android:id="@+id/subs_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/primaryBlackBackground">
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:textStyle="bold"
-                android:text="@string/subtitles_settings"
-                android:textSize="20sp"
-                android:textColor="?attr/textColor"
-                android:layout_width="match_parent"
-                android:layout_rowWeight="1"
-                android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/subtitles_settings"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="75sp">
+            android:layout_width="match_parent"
+            android:layout_height="75sp">
 
             <ImageView
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/subtitles_preview_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/preview_background_img_des" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/preview_background_img_des"
+                android:scaleType="centerCrop"
+                android:src="@drawable/subtitles_preview_background" />
 
             <com.google.android.exoplayer2.ui.SubtitleView
-                    android:id="@+id/subtitle_text"
+                android:id="@+id/subtitle_text"
 
-                    android:layout_width="match_parent"
-                    android:layout_gravity="center"
-                    android:foregroundGravity="center"
-                    android:layout_height="match_parent" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:foregroundGravity="center" />
         </FrameLayout>
 
         <TextView
-                android:nextFocusDown="@id/subs_font_size"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
+            android:id="@+id/subs_font"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
 
-                android:id="@+id/subs_font"
-                android:text="@string/subs_font"
-                style="@style/SettingsItem" />
-
-        <TextView
-                android:nextFocusUp="@id/subs_font"
-                android:nextFocusDown="@id/subs_text_color"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
-
-                android:id="@+id/subs_font_size"
-                android:text="@string/subs_font_size"
-                style="@style/SettingsItem" />
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusDown="@id/subs_font_size"
+            android:text="@string/subs_font" />
 
         <TextView
-                android:nextFocusUp="@id/subs_font_size"
-                android:nextFocusDown="@id/subs_outline_color"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
+            android:id="@+id/subs_font_size"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
 
-                android:id="@+id/subs_text_color"
-                android:text="@string/subs_text_color"
-                style="@style/SettingsItem" />
-
-        <TextView
-                android:nextFocusUp="@id/subs_text_color"
-                android:nextFocusDown="@id/subs_background_color"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
-
-                android:id="@+id/subs_outline_color"
-                android:text="@string/subs_outline_color"
-                style="@style/SettingsItem" />
+            android:nextFocusUp="@id/subs_font"
+            android:nextFocusDown="@id/subs_text_color"
+            android:text="@string/subs_font_size" />
 
         <TextView
-                android:nextFocusUp="@id/subs_outline_color"
-                android:nextFocusDown="@id/subs_window_color"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
+            android:id="@+id/subs_text_color"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
 
-                android:id="@+id/subs_background_color"
-                android:text="@string/subs_background_color"
-                style="@style/SettingsItem" />
-
-        <TextView
-                android:nextFocusUp="@id/subs_background_color"
-                android:nextFocusDown="@id/subs_edge_type"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
-
-                android:id="@+id/subs_window_color"
-                android:text="@string/subs_window_color"
-                style="@style/SettingsItem" />
+            android:nextFocusUp="@id/subs_font_size"
+            android:nextFocusDown="@id/subs_outline_color"
+            android:text="@string/subs_text_color" />
 
         <TextView
-                android:nextFocusUp="@id/subs_window_color"
-                android:nextFocusDown="@id/subs_subtitle_elevation"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
+            android:id="@+id/subs_outline_color"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
 
-                android:id="@+id/subs_edge_type"
-                android:text="@string/subs_edge_type"
-                style="@style/SettingsItem" />
-
-        <TextView
-                android:nextFocusUp="@id/subs_edge_type"
-                android:nextFocusDown="@id/subs_auto_select_language"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
-
-                android:id="@+id/subs_subtitle_elevation"
-                android:text="@string/subs_subtitle_elevation"
-                style="@style/SettingsItem" />
+            android:nextFocusUp="@id/subs_text_color"
+            android:nextFocusDown="@id/subs_background_color"
+            android:text="@string/subs_outline_color" />
 
         <TextView
-                android:nextFocusUp="@id/subs_subtitle_elevation"
-                android:nextFocusDown="@id/subs_download_languages"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
+            android:id="@+id/subs_background_color"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
 
-                android:id="@+id/subs_auto_select_language"
-                android:text="@string/subs_auto_select_language"
-                style="@style/SettingsItem" />
-
-        <TextView
-                android:nextFocusUp="@id/subs_auto_select_language"
-                android:nextFocusDown="@id/apply_btt"
-                android:nextFocusLeft="@id/apply_btt"
-                android:nextFocusRight="@id/cancel_btt"
-
-                android:id="@+id/subs_download_languages"
-                android:text="@string/subs_download_languages"
-                style="@style/SettingsItem" />
+            android:nextFocusUp="@id/subs_outline_color"
+            android:nextFocusDown="@id/subs_window_color"
+            android:text="@string/subs_background_color" />
 
         <TextView
-                android:gravity="center"
-                android:text="@string/subs_hold_to_reset_to_default"
-                android:textSize="14sp"
+            android:id="@+id/subs_window_color"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
 
-                android:textColor="?attr/textColor"
-                android:layout_width="match_parent"
-                android:layout_rowWeight="1"
-                android:layout_height="wrap_content" />
+            android:nextFocusUp="@id/subs_background_color"
+            android:nextFocusDown="@id/subs_edge_type"
+            android:text="@string/subs_window_color" />
+
+        <TextView
+            android:id="@+id/subs_edge_type"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+
+            android:nextFocusUp="@id/subs_window_color"
+            android:nextFocusDown="@id/subs_subtitle_elevation"
+            android:text="@string/subs_edge_type" />
+
+        <TextView
+            android:id="@+id/subs_subtitle_elevation"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+
+            android:nextFocusUp="@id/subs_edge_type"
+            android:nextFocusDown="@id/subs_auto_select_language"
+            android:text="@string/subs_subtitle_elevation" />
+
+        <TextView
+            android:id="@+id/subs_auto_select_language"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+
+            android:nextFocusUp="@id/subs_subtitle_elevation"
+            android:nextFocusDown="@id/subs_download_languages"
+            android:text="@string/subs_auto_select_language" />
+
+        <TextView
+            android:id="@+id/subs_download_languages"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+
+            android:nextFocusUp="@id/subs_auto_select_language"
+            android:nextFocusDown="@id/apply_btt"
+            android:text="@string/subs_download_languages" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+
+            android:gravity="center"
+            android:text="@string/subs_hold_to_reset_to_default"
+            android:textColor="?attr/textColor"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/subs_import_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:gravity="center"
+            android:text="@string/subs_import_text"
+            android:textColor="?attr/textColor"
+            android:textSize="14sp" />
 
         <LinearLayout
-                android:orientation="horizontal"
-                android:layout_gravity="bottom"
-                android:gravity="bottom|end"
-                android:layout_width="match_parent"
-                android:layout_height="60dp">
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|end"
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                    android:nextFocusUp="@id/subs_download_languages"
-                    android:nextFocusRight="@id/cancel_btt"
-                    style="@style/WhiteButton"
-                    android:layout_gravity="center_vertical|end"
-                    android:visibility="visible"
-                    android:text="@string/sort_apply"
-                    android:id="@+id/apply_btt"
-                    android:layout_width="wrap_content">
+                android:id="@+id/apply_btt"
+                style="@style/WhiteButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusUp="@id/subs_download_languages"
+                android:text="@string/sort_apply"
+                android:visibility="visible">
 
                 <requestFocus />
             </com.google.android.material.button.MaterialButton>
 
             <com.google.android.material.button.MaterialButton
-                    android:nextFocusUp="@id/subs_download_languages"
-                    android:nextFocusLeft="@id/apply_btt"
-                    style="@style/BlackButton"
-                    android:layout_gravity="center_vertical|end"
-                    android:text="@string/sort_cancel"
-                    android:id="@+id/cancel_btt"
-                    android:layout_width="wrap_content" />
+                android:id="@+id/cancel_btt"
+                style="@style/BlackButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusUp="@id/subs_download_languages"
+                android:text="@string/sort_cancel" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

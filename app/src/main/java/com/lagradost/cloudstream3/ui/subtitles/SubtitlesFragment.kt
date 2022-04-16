@@ -37,6 +37,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import kotlinx.android.synthetic.main.subtitle_settings.*
+import java.io.File
 
 const val SUBTITLE_KEY = "subtitle_settings"
 const val SUBTITLE_AUTO_SELECT_KEY = "subs_auto_select"
@@ -48,9 +49,10 @@ data class SaveCaptionStyle(
     @JsonProperty("windowColor") var windowColor: Int,
     @CaptionStyleCompat.EdgeType
     @JsonProperty("edgeType") var edgeType: Int,
-    @JsonProperty("edgeColor")  var edgeColor: Int,
+    @JsonProperty("edgeColor") var edgeColor: Int,
     @FontRes
     @JsonProperty("typeface") var typeface: Int?,
+    @JsonProperty("typefaceFilePath") var typefaceFilePath: String?,
     /**in dp**/
     @JsonProperty("elevation") var elevation: Int,
     /**in sp**/
@@ -64,17 +66,26 @@ class SubtitlesFragment : Fragment() {
         val applyStyleEvent = Event<SaveCaptionStyle>()
 
         fun Context.fromSaveToStyle(data: SaveCaptionStyle): CaptionStyleCompat {
-            val typeface = data.typeface
             return CaptionStyleCompat(
                 data.foregroundColor,
                 data.backgroundColor,
                 data.windowColor,
                 data.edgeType,
                 data.edgeColor,
-                if (typeface == null) Typeface.SANS_SERIF else ResourcesCompat.getFont(
-                    this,
-                    typeface
-                )
+                data.typefaceFilePath?.let {
+                    try {
+                        // RuntimeException: Font asset not found
+                        Typeface.createFromFile(File(it))
+                    } catch (e: Exception) {
+                        null
+                    }
+                } ?: data.typeface?.let {
+                    ResourcesCompat.getFont(
+                        this,
+                        it
+                    )
+                }
+                ?: Typeface.SANS_SERIF
             )
         }
 
@@ -106,9 +117,22 @@ class SubtitlesFragment : Fragment() {
                 CaptionStyleCompat.EDGE_TYPE_OUTLINE,
                 getDefColor(1),
                 null,
+                null,
                 DEF_SUBS_ELEVATION,
                 null,
             )
+        }
+
+        private fun Context.getSavedFonts(): List<File> {
+            val externalFiles = getExternalFilesDir(null) ?: return emptyList()
+            val fontDir = File(externalFiles.absolutePath + "/Fonts").also {
+                it.mkdir()
+            }
+            return fontDir.list()?.mapNotNull {
+                if (it.endsWith(".ttf")) {
+                    File(fontDir.absolutePath + "/" + it)
+                } else null
+            } ?: listOf()
         }
 
         private fun Context.getCurrentStyle(): CaptionStyleCompat {
@@ -191,6 +215,10 @@ class SubtitlesFragment : Fragment() {
         hide = arguments?.getBoolean("hide") ?: true
         onColorSelectedEvent += ::onColorSelected
         onDialogDismissedEvent += ::onDialogDismissed
+        subs_import_text?.text = getString(R.string.subs_import_text).format(
+            context?.getExternalFilesDir(null)?.absolutePath.toString() + "/Fonts"
+        )
+
 
         context?.fixPaddingStatusbar(subs_root)
 
@@ -395,22 +423,38 @@ class SubtitlesFragment : Fragment() {
                 Pair(R.font.comic_sans, "Comic Sans"),
                 Pair(R.font.poppins_regular, "Poppins"),
             )
+            val savedFontTypes = textView.context.getSavedFonts()
+
+            val currentIndex =
+                savedFontTypes.indexOfFirst { it.absolutePath == state.typefaceFilePath }
+                    .let { index ->
+                        if (index == -1)
+                            fontTypes.indexOfFirst { it.first == state.typeface }
+                        else index + fontTypes.size
+                    }
 
             //showBottomDialog
             activity?.showDialog(
-                fontTypes.map { it.second },
-                fontTypes.map { it.first }.indexOf(state.typeface),
+                fontTypes.map { it.second } + savedFontTypes.map { it.name },
+                currentIndex,
                 (textView as TextView).text.toString(),
                 false,
                 dismissCallback
             ) { index ->
-                state.typeface = fontTypes.map { it.first }[index]
+                if (index < fontTypes.size) {
+                    state.typeface = fontTypes[index].first
+                    state.typefaceFilePath = null
+                } else {
+                    state.typefaceFilePath = savedFontTypes[index - fontTypes.size].absolutePath
+                    state.typeface = null
+                }
                 textView.context.updateState()
             }
         }
 
         subs_font.setOnLongClickListener { textView ->
             state.typeface = null
+            state.typefaceFilePath = null
             textView.context.updateState()
             showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
