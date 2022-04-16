@@ -61,20 +61,22 @@ class GogoanimeProvider : MainAPI() {
          * @param mainApiName used for ExtractorLink names and source
          * @param iv secret iv from site, required non-null
          * @param secretKey secret key for decryption from site, required non-null
+         * @param secretDecryptKey secret key to decrypt the response json, required non-null
          * */
         suspend fun extractVidstream(
             iframeUrl: String,
             mainApiName: String,
             callback: (ExtractorLink) -> Unit,
             iv: ByteArray?,
-            secretKey: ByteArray?
+            secretKey: ByteArray?,
+            secretDecryptKey: ByteArray?
         ) = safeApiCall {
             // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt
             // No Licence on the following code
             // Also modified of https://github.com/jmir1/aniyomi-extensions/blob/master/src/en/gogoanime/src/eu/kanade/tachiyomi/animeextension/en/gogoanime/extractors/GogoCdnExtractor.kt
             // License on the code above  https://github.com/jmir1/aniyomi-extensions/blob/master/LICENSE
 
-            if (iv == null || secretKey == null)
+            if (iv == null || secretKey == null || secretDecryptKey == null)
                 return@safeApiCall
 
             val uri = URI(iframeUrl)
@@ -84,12 +86,12 @@ class GogoanimeProvider : MainAPI() {
             val encryptedId = cryptoHandler(id, iv, secretKey)
             val jsonResponse =
                 app.get(
-                    "$mainUrl/encrypt-ajax.php?id=$encryptedId",
+                    "$mainUrl/encrypt-ajax.php?id=$encryptedId&alias=$id",
                     headers = mapOf("X-Requested-With" to "XMLHttpRequest")
                 )
             val dataencrypted =
                 jsonResponse.text.substringAfter("{\"data\":\"").substringBefore("\"}")
-            val datadecrypted = cryptoHandler(dataencrypted, iv, secretKey, false)
+            val datadecrypted = cryptoHandler(dataencrypted, iv, secretDecryptKey, false)
             val sources = AppUtils.parseJson<GogoSources>(datadecrypted)
 
             fun invokeGogoSource(
@@ -370,10 +372,12 @@ class GogoanimeProvider : MainAPI() {
                             loadExtractor(data, streamingResponse.url, callback)
                         }
                 }, {
-                    val iv = "4786443969418267".toByteArray()
+                    val iv = "8244002440089157".toByteArray()
                     val secretKey =
-                        "63976882873536819639922083275907".toByteArray()
-                    extractVidstream(iframe, this.name, callback, iv, secretKey)
+                        "93106165734640459728346589106791".toByteArray()
+                    val secretDecryptKey =
+                        "97952160493714852094564712118349".toByteArray()
+                    extractVidstream(iframe, this.name, callback, iv, secretKey, secretDecryptKey)
                 })
             }
         )

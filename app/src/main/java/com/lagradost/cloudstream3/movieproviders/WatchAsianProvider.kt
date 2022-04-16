@@ -216,7 +216,7 @@ class WatchAsianProvider : MainAPI() {
                 url.startsWith("https://asianembed.io") || url.startsWith("https://asianload.io") -> {
                     val iv = "9262859232435825".toByteArray()
                     val secretKey = "93422192433952489752342908585752".toByteArray()
-                    extractVidstream(url, this.name, callback, iv, secretKey)
+                    extractVidstream(url, this.name, callback, iv, secretKey, secretKey)
                     AsianEmbedHelper.getUrls(url, callback)
                 }
                 url.startsWith("https://embedsito.com") -> {
