@@ -218,31 +218,26 @@ class NginxProvider : MainAPI() {
 
                             if (isMovieType) {
                                 val movieName = nfoContent.select("title").text()
-
                                 val posterUrl = mediaRootUrl + "poster.jpg"
-
-                                return@mapNotNull MovieSearchResponse(
+                                return@mapNotNull newMovieSearchResponse(
                                     movieName,
                                     mediaRootUrl,
-                                    this.name,
                                     TvType.Movie,
-                                    posterUrl,
-                                    null,
-                                )
+                                ) {
+                                    addPoster(posterUrl, authHeader)
+                                }
                             } else {  // tv serie
                                 val serieName = nfoContent.select("title").text()
 
                                 val posterUrl = mediaRootUrl + "poster.jpg"
 
-                                TvSeriesSearchResponse(
+                                newTvSeriesSearchResponse(
                                     serieName,
                                     nfoPath,
-                                    this.name,
                                     TvType.TvSeries,
-                                    posterUrl,
-                                    null,
-                                    null,
-                                )
+                                ) {
+                                    addPoster(posterUrl, authHeader)
+                                }
 
 
                             }
