@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.Jsoup
@@ -27,18 +28,31 @@ class GogoanimeProvider : MainAPI() {
             }
         }
 
+        /**
+         * @param id base64Decode(show_id) + IV
+         * @return the encryption key
+         * */
+        private fun getKey(id: String): String? {
+            return normalSafeApiCall {
+                 id.map {
+                    it.code.toString(16)
+                }.joinToString("").substring(0, 32)
+            }
+        }
+
         val qualityRegex = Regex("(\\d+)P")
 
         // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt#L60
         // No Licence on the function
         private fun cryptoHandler(
             string: String,
-            iv: ByteArray,
-            secretKeyString: ByteArray,
+            iv: String,
+            secretKeyString: String,
             encrypt: Boolean = true
         ): String {
-            val ivParameterSpec = IvParameterSpec(iv)
-            val secretKey = SecretKeySpec(secretKeyString, "AES")
+            println("IV: $iv, Key: $secretKeyString, encrypt: $encrypt, Message: $string")
+            val ivParameterSpec = IvParameterSpec(iv.toByteArray())
+            val secretKey = SecretKeySpec(secretKeyString.toByteArray(), "AES")
             val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
             return if (!encrypt) {
                 cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec)
@@ -59,31 +73,41 @@ class GogoanimeProvider : MainAPI() {
         /**
          * @param iframeUrl something like https://gogoplay4.com/streaming.php?id=XXXXXX
          * @param mainApiName used for ExtractorLink names and source
-         * @param iv secret iv from site, required non-null
-         * @param secretKey secret key for decryption from site, required non-null
-         * @param secretDecryptKey secret key to decrypt the response json, required non-null
+         * @param iv secret iv from site, required non-null if isUsingAdaptiveKeys is off
+         * @param secretKey secret key for decryption from site, required non-null if isUsingAdaptiveKeys is off
+         * @param secretDecryptKey secret key to decrypt the response json, required non-null if isUsingAdaptiveKeys is off
+         * @param isUsingAdaptiveKeys generates keys from IV and ID, see getKey()
          * */
         suspend fun extractVidstream(
             iframeUrl: String,
             mainApiName: String,
             callback: (ExtractorLink) -> Unit,
-            iv: ByteArray?,
-            secretKey: ByteArray?,
-            secretDecryptKey: ByteArray?
+            iv: String?,
+            secretKey: String?,
+            secretDecryptKey: String?,
+            // This could be removed, but i prefer it verbose
+            isUsingAdaptiveKeys: Boolean
         ) = safeApiCall {
             // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt
             // No Licence on the following code
             // Also modified of https://github.com/jmir1/aniyomi-extensions/blob/master/src/en/gogoanime/src/eu/kanade/tachiyomi/animeextension/en/gogoanime/extractors/GogoCdnExtractor.kt
             // License on the code above  https://github.com/jmir1/aniyomi-extensions/blob/master/LICENSE
 
-            if (iv == null || secretKey == null || secretDecryptKey == null)
+            if ((iv == null || secretKey == null || secretDecryptKey == null) && !isUsingAdaptiveKeys)
                 return@safeApiCall
+
+            val id = Regex("id=([^&]+)").find(iframeUrl)!!.value.removePrefix("id=")
+
+            val foundIv =
+                iv ?: app.get(iframeUrl).document.select("""div.wrapper[class*=container]""")
+                    .attr("class").split("-").lastOrNull() ?: return@safeApiCall
+            val foundKey = secretKey ?: getKey(base64Decode(id) + foundIv) ?: return@safeApiCall
+            val foundDecryptKey = secretDecryptKey ?: foundKey
 
             val uri = URI(iframeUrl)
             val mainUrl = "https://" + uri.host
 
-            val id = Regex("id=([^&]+)").find(iframeUrl)!!.value.removePrefix("id=")
-            val encryptedId = cryptoHandler(id, iv, secretKey)
+            val encryptedId = cryptoHandler(id, foundIv, foundKey)
             val jsonResponse =
                 app.get(
                     "$mainUrl/encrypt-ajax.php?id=$encryptedId&alias=$id",
@@ -91,7 +115,7 @@ class GogoanimeProvider : MainAPI() {
                 )
             val dataencrypted =
                 jsonResponse.text.substringAfter("{\"data\":\"").substringBefore("\"}")
-            val datadecrypted = cryptoHandler(dataencrypted, iv, secretDecryptKey, false)
+            val datadecrypted = cryptoHandler(dataencrypted, foundIv, foundDecryptKey, false)
             val sources = AppUtils.parseJson<GogoSources>(datadecrypted)
 
             fun invokeGogoSource(
@@ -372,12 +396,18 @@ class GogoanimeProvider : MainAPI() {
                             loadExtractor(data, streamingResponse.url, callback)
                         }
                 }, {
-                    val iv = "8244002440089157".toByteArray()
-                    val secretKey =
-                        "93106165734640459728346589106791".toByteArray()
-                    val secretDecryptKey =
-                        "97952160493714852094564712118349".toByteArray()
-                    extractVidstream(iframe, this.name, callback, iv, secretKey, secretDecryptKey)
+                    val iv = null //"2094564712118349"
+                    val secretKey = null
+                    val secretDecryptKey = null
+                    extractVidstream(
+                        iframe,
+                        this.name,
+                        callback,
+                        iv,
+                        secretKey,
+                        secretDecryptKey,
+                        true
+                    )
                 })
             }
         )

@@ -17,8 +17,8 @@ class AsianLoadProvider : VidstreamProviderTemplate() {
         "$mainUrl/ongoing-series"
     )
 
-    override val iv = "9262859232435825".toByteArray()
-    override val secretKey = "93422192433952489752342908585752".toByteArray()
+    override val iv = "9262859232435825"
+    override val secretKey = "93422192433952489752342908585752"
 
     override val supportedTypes = setOf(TvType.AsianDrama)
 }

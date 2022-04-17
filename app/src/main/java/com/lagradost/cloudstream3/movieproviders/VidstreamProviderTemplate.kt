@@ -64,9 +64,12 @@ open class VidstreamProviderTemplate : MainAPI() {
      */
      */
 
-    open val iv: ByteArray? = null
-    open val secretKey: ByteArray? = null
-    open val secretDecryptKey: ByteArray? = null
+    open val iv: String? = null
+    open val secretKey: String? = null
+    open val secretDecryptKey: String? = null
+    /** Generated the key from IV and ID */
+    open val isUsingAdaptiveKeys: Boolean = false
+
 
 //    // mainUrl is good to have as a holder for the url to make future changes easier.
 //    override val mainUrl: String
@@ -252,7 +255,7 @@ open class VidstreamProviderTemplate : MainAPI() {
         val iframeLink =
             Jsoup.parse(app.get(data).text).selectFirst("iframe")?.attr("src") ?: return false
 
-        extractVidstream(iframeLink, this.name, callback, iv, secretKey, secretDecryptKey)
+        extractVidstream(iframeLink, this.name, callback, iv, secretKey, secretDecryptKey, isUsingAdaptiveKeys)
         // In this case the video player is a vidstream clone and can be handled by the vidstream extractor.
         // This case is a both unorthodox and you normally do not call extractors as they detect the url returned and does the rest.
         val vidstreamObject = Vidstream(vidstreamExtractorUrl ?: mainUrl)

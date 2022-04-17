@@ -20,8 +20,9 @@ class VidEmbedProvider : VidstreamProviderTemplate() {
         "$mainUrl/cinema-movies"
     )
 
-    override val iv = "9225679083961858".toByteArray()
-    override val secretKey = "25742532592138496744665879883281".toByteArray()
+    override val iv = "9225679083961858"
+    override val secretKey = "25742532592138496744665879883281"
+    override val secretDecryptKey = secretKey
 
     // This is just extra metadata about what type of movies the provider has.
     // Needed for search functionality.
