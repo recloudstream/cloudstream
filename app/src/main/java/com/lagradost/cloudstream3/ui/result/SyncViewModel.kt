@@ -82,16 +82,16 @@ class SyncViewModel : ViewModel() {
         var isValid = false
 
         map?.forEach { (prefix, id) ->
-            isValid = isValid || addSync(prefix, id)
+            isValid = addSync(prefix, id) || isValid
         }
         return isValid
     }
 
-    fun setMalId(id: String?): Boolean {
+    private fun setMalId(id: String?): Boolean {
         return addSync(malApi.idPrefix, id ?: return false)
     }
 
-    fun setAniListId(id: String?): Boolean {
+    private fun setAniListId(id: String?): Boolean {
         return addSync(aniListApi.idPrefix, id ?: return false)
     }
 

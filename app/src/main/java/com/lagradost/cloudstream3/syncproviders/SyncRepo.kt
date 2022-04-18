@@ -9,6 +9,7 @@ class SyncRepo(private val repo: SyncAPI) {
     val idPrefix = repo.idPrefix
     val name = repo.name
     val icon = repo.icon
+    val mainUrl = repo.mainUrl
 
     suspend fun score(id: String, status: SyncAPI.SyncStatus): Resource<Boolean> {
         return safeApiCall { repo.score(id, status) }
@@ -29,4 +30,6 @@ class SyncRepo(private val repo: SyncAPI) {
     fun hasAccount() : Boolean {
         return normalSafeApiCall { repo.loginInfo() != null } ?: false
     }
+
+    fun getIdFromUrl(url : String) : String = repo.getIdFromUrl(url)
 }

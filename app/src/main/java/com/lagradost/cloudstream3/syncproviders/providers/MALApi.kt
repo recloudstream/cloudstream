@@ -81,6 +81,10 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
+    override fun getIdFromUrl(url: String): String {
+        return Regex("""/anime/((.*)/|(.*))""").find(url)!!.groupValues.first()
+    }
+
     override suspend fun score(id: String, status: SyncAPI.SyncStatus): Boolean {
         return setScoreRequest(
             id.toIntOrNull() ?: return false,
@@ -173,8 +177,8 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     private fun toSearchResult(node: Node?): SyncAPI.SyncSearchResult? {
         return SyncAPI.SyncSearchResult(
             name = node?.title ?: return null,
-            syncApiName = this.name,
-            id = node.id.toString(),
+            apiName = this.name,
+            syncId = node.id.toString(),
             url = "https://myanimelist.net/anime/${node.id}",
             posterUrl = node.main_picture?.large
         )

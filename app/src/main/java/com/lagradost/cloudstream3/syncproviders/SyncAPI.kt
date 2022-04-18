@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders
 
-import com.lagradost.cloudstream3.ActorData
-import com.lagradost.cloudstream3.ShowStatus
+import com.lagradost.cloudstream3.*
 
 interface SyncAPI : OAuth2API {
     val icon: Int
@@ -24,13 +23,19 @@ interface SyncAPI : OAuth2API {
 
     suspend fun search(name: String): List<SyncSearchResult>?
 
+    fun getIdFromUrl(url : String) : String
+
     data class SyncSearchResult(
-        val name: String,
-        val syncApiName: String,
-        val id: String,
-        val url: String,
-        val posterUrl: String?,
-    )
+        override val name: String,
+        override val apiName: String,
+        var syncId: String,
+        override val url: String,
+        override var posterUrl: String?,
+        override var type: TvType? = null,
+        override var quality: SearchQuality? = null,
+        override var posterHeaders: Map<String, String>? = null,
+        override var id: Int? = null,
+    ) : SearchResponse
 
     data class SyncNextAiring(
         val episode: Int,

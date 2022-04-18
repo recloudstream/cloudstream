@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+                style="@style/BlackButton"
+                android:layout_gravity="center_vertical|end"
+                android:text="GogoAnime"
+                android:id="@+id/result_recommendations_filter_button"
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                app:layout_constraintBottom_toTopOf="@id/result_recommendations" />
+
+        <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+                android:descendantFocusability="afterDescendants"
+
+                android:background="?attr/primaryBlackBackground"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                app:spanCount="3"
+                android:id="@+id/result_recommendations"
+                tools:listitem="@layout/search_result_grid"
+                android:orientation="vertical" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

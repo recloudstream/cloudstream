@@ -70,6 +70,14 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         return user != null
     }
 
+    override fun getIdFromUrl(url : String): String {
+        return url.removePrefix("$mainUrl/anime/").removeSuffix("/")
+    }
+
+    private fun getUrlFromId(id: Int): String {
+        return "$mainUrl/anime/$id"
+    }
+
     override suspend fun search(name: String): List<SyncAPI.SyncSearchResult>? {
         val data = searchShows(name) ?: return null
         return data.data?.Page?.media?.map {
@@ -77,7 +85,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 it.title.romaji ?: return null,
                 this.name,
                 it.id.toString(),
-                "$mainUrl/anime/${it.id}",
+                getUrlFromId(it.id),
                 it.bannerImage
             )
         }
@@ -126,7 +134,16 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 )
             },
             publicScore = season.averageScore?.times(100),
-            //recommendations = season.
+            recommendations = season.recommendations?.edges?.mapNotNull { rec ->
+                val recMedia = rec.node.mediaRecommendation
+                SyncAPI.SyncSearchResult(
+                    name = recMedia.title?.userPreferred ?: return@mapNotNull null,
+                    this.name,
+                    recMedia.id?.toString() ?: return@mapNotNull null,
+                    getUrlFromId(recMedia.id),
+                    recMedia.coverImage?.large ?: recMedia.coverImage?.medium
+                )
+            }
             //TODO REST
         )
     }
@@ -335,10 +352,10 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                            color
                        }
                        title {
-                            romaji
-                            english
-                            native
-                            userPreferred
+                           romaji
+                           english
+                           native
+                           userPreferred
                        }
                        duration
                        episodes
@@ -382,23 +399,44 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                            thumbnail
                        }
                        relations {
-                            edges {
-                                 id
-                                 relationType(version: 2)
-                                 node {
-                                      id
-                                      coverImage {
-                                          extraLarge
-                                          large
-                                          medium
-                                          color
-                                      }
-                                 }
-                            }
+                           edges {
+                                id
+                                relationType(version: 2)
+                                node {
+                                     id
+                                     coverImage {
+                                         extraLarge
+                                         large
+                                         medium
+                                         color
+                                     }
+                                }
+                           }
+                       }
+                       recommendations {
+                           edges {
+                               node {
+                                   mediaRecommendation {
+                                       id
+                                       coverImage {
+                                           extraLarge
+                                           large
+                                           medium
+                                           color
+                                       }
+                                       title {
+                                           romaji
+                                           english
+                                           native
+                                           userPreferred
+                                       }
+                                   }
+                               }
+                           }
                        }
                        nextAiringEpisode {
-                            timeUntilAiring
-                            episode
+                           timeUntilAiring
+                           episode
                        }
                        format
                    }
@@ -772,6 +810,21 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("trailer") val trailer: MediaTrailer?,
         @JsonProperty("description") val description: String?,
         @JsonProperty("characters") val characters: CharacterConnection?,
+        @JsonProperty("recommendations") val recommendations: RecommendationConnection?,
+    )
+
+    data class RecommendationConnection(
+        @JsonProperty("edges") val edges: List<RecommendationEdge> = emptyList(),
+        @JsonProperty("nodes") val nodes: List<Recommendation> = emptyList(),
+        //@JsonProperty("pageInfo") val pageInfo: PageInfo,
+    )
+
+    data class RecommendationEdge(
+        //@JsonProperty("rating") val rating: Int,
+        @JsonProperty("node") val node: Recommendation,
+    )
+    data class Recommendation(
+        @JsonProperty("mediaRecommendation") val mediaRecommendation: SeasonMedia,
     )
 
     data class CharacterName(
@@ -953,13 +1006,6 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     data class LikeRoot(
         @JsonProperty("data") val data: LikeData?,
-    )
-
-    data class Recommendation(
-        @JsonProperty("title") val title: String?,
-        @JsonProperty("idMal") val idMal: Int?,
-        @JsonProperty("poster") val poster: String?,
-        @JsonProperty("averageScore") val averageScore: Int?
     )
 
     data class AniListTitleHolder(
