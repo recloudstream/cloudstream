@@ -605,14 +605,12 @@ open class SflixProvider : MainAPI() {
                     M3u8Helper().m3u8Generation(M3u8Helper.M3u8Stream(this.file, null), true)
                         .map { stream ->
                             //println("stream: ${stream.quality} at ${stream.streamUrl}")
-                            val qualityString = if ((stream.quality ?: 0) == 0) label
-                                ?: "" else "${stream.quality}p"
                             ExtractorLink(
                                 caller.name,
-                                "${caller.name} $qualityString $name",
+                                "${caller.name} $name",
                                 stream.streamUrl,
                                 caller.mainUrl,
-                                getQualityFromName(stream.quality.toString()),
+                                getQualityFromName(stream.quality?.toString()),
                                 true,
                                 extractorData = extractorData
                             )
