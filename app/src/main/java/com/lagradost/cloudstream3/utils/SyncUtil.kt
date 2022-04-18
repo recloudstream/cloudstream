@@ -53,7 +53,7 @@ object SyncUtil {
      * valid sites are: Gogoanime, Twistmoe and 9anime*/
     private suspend fun getIdsFromSlug(
         slug: String,
-        site: String = "GogoanimeGogoanime"
+        site: String = "Gogoanime"
     ): Pair<String?, String?>? {
         Log.i(TAG, "getIdsFromSlug $slug $site")
         try {
@@ -75,6 +75,28 @@ object SyncUtil {
         }
         return null
     }
+
+    suspend fun getUrlsFromId(id: String, type: String = "anilist") : List<String> {
+        val url =
+            "https://raw.githubusercontent.com/MALSync/MAL-Sync-Backup/master/data/$type/anime/$id.json"
+        val response = app.get(url, cacheTime = 1, cacheUnit = TimeUnit.DAYS).mapped<SyncPage>()
+        val pages = response.pages ?: return emptyList()
+        return pages.gogoanime.values.union(pages.nineanime.values).union(pages.twistmoe.values).mapNotNull { it.url }
+    }
+
+    data class SyncPage(
+        @JsonProperty("Pages") val pages: SyncPages?,
+    )
+
+    data class SyncPages(
+        @JsonProperty("9anime") val nineanime: Map<String, ProviderPage> = emptyMap(),
+        @JsonProperty("Gogoanime") val gogoanime: Map<String, ProviderPage> = emptyMap(),
+        @JsonProperty("Twistmoe") val twistmoe: Map<String, ProviderPage> = emptyMap(),
+    )
+
+    data class ProviderPage(
+        @JsonProperty("url") val url: String?,
+    )
 
     data class MalSyncPage(
         @JsonProperty("identifier") val identifier: String?,

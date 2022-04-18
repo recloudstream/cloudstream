@@ -180,17 +180,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="end">
 
-                <com.lagradost.cloudstream3.ui.AutofitRecyclerView
-                        android:descendantFocusability="afterDescendants"
-
-                        android:background="?attr/primaryBlackBackground"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false"
-                        app:spanCount="3"
-                        android:id="@+id/result_recommendations"
-                        tools:listitem="@layout/search_result_grid"
-                        android:orientation="vertical" />
+                <include layout="@layout/result_recommendations" />
             </FrameLayout>
         </com.discord.panels.OverlappingPanelsLayout>
 

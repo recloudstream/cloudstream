@@ -93,6 +93,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFileName
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
+import kotlinx.android.synthetic.main.result_recommendations.*
 import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -572,14 +573,6 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000f))
     }
 
-    private fun setMalSync(id: Int?): Boolean {
-        return syncModel.setMalId(id?.toString())
-    }
-
-    private fun setAniListSync(id: Int?): Boolean {
-        return syncModel.setAniListId(id?.toString())
-    }
-
     private fun setActors(actors: List<ActorData>?) {
         if (actors.isNullOrEmpty()) {
             result_cast_text?.isVisible = false
@@ -601,23 +594,47 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         }
     }
 
-    private fun setRecommendations(rec: List<SearchResponse>?) {
+    private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         val isInvalid = rec.isNullOrEmpty()
         result_recommendations?.isGone = isInvalid
         result_recommendations_btt?.isGone = isInvalid
         result_recommendations_btt?.setOnClickListener {
-            if (result_overlapping_panels?.getSelectedPanel()?.ordinal == 1) {
-                result_recommendations_btt?.nextFocusDownId = R.id.result_recommendations
+            val nextFocusDown = if (result_overlapping_panels?.getSelectedPanel()?.ordinal == 1) {
                 result_overlapping_panels?.openEndPanel()
+                R.id.result_recommendations
             } else {
-                result_recommendations_btt?.nextFocusDownId = R.id.result_description
                 result_overlapping_panels?.closePanels()
+                R.id.result_description
             }
+
+            result_recommendations_btt?.nextFocusDownId = nextFocusDown
+            result_search?.nextFocusDownId = nextFocusDown
+            result_open_in_browser?.nextFocusDownId = nextFocusDown
+            result_share?.nextFocusDownId = nextFocusDown
         }
         result_overlapping_panels?.setEndPanelLockState(if (isInvalid) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
+
+        val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
+        rec?.map { it.apiName }?.distinct()?.let { apiNames ->
+            // very dirty selection
+            result_recommendations_filter_button?.isVisible = apiNames.size > 1
+            result_recommendations_filter_button?.text = matchAgainst
+            result_recommendations_filter_button?.setOnClickListener { _ ->
+                activity?.showBottomDialog(
+                    apiNames,
+                    apiNames.indexOf(matchAgainst),
+                    getString(R.string.home_change_provider_img_des), false, {}
+                ) {
+                    setRecommendations(rec, apiNames[it])
+                }
+            }
+        } ?: run {
+            result_recommendations_filter_button?.isVisible = false
+        }
+
         result_recommendations?.post {
             rec?.let { list ->
-                (result_recommendations?.adapter as SearchAdapter?)?.updateList(list)
+                (result_recommendations?.adapter as SearchAdapter?)?.updateList(list.filter { it.apiName == matchAgainst })
             }
         }
     }
@@ -1086,7 +1103,6 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 ACTION_PLAY_EPISODE_IN_PLAYER -> {
                     viewModel.getGenerator(episodeClick.data)
                         ?.let { generator ->
-                            println("LANUCJ:::: $syncdata")
                             activity?.navigate(
                                 R.id.global_to_navigation_player,
                                 GeneratorPlayer.newInstance(
@@ -1641,7 +1657,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     setDuration(d.duration)
                     setYear(d.year)
                     setRating(d.rating)
-                    setRecommendations(d.recommendations)
+                    setRecommendations(d.recommendations, null)
                     setActors(d.actors)
 
                     if (SettingsFragment.accountEnabled) {
@@ -1950,7 +1966,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             }
         }
 
-        result_recommendations.adapter = recAdapter
+        result_recommendations?.adapter = recAdapter
 
         context?.let { ctx ->
             result_bookmark_button?.isVisible = ctx.isTvSettings()

@@ -7,6 +7,7 @@ import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.api.PendingResult
 import com.google.android.gms.common.images.WebImage
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.MetadataHolder
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
@@ -64,7 +65,10 @@ object CastHelper {
         return builder.build()
     }
 
-    fun awaitLinks(pending: PendingResult<RemoteMediaClient.MediaChannelResult>?, callback: (Boolean) -> Unit) {
+    fun awaitLinks(
+        pending: PendingResult<RemoteMediaClient.MediaChannelResult>?,
+        callback: (Boolean) -> Unit
+    ) {
         if (pending == null) return
         main {
             val res = withContext(Dispatchers.IO) { pending.await() }
@@ -90,27 +94,15 @@ object CastHelper {
         startIndex: Int? = null,
         startTime: Long? = null,
     ): Boolean {
-        if (this == null) return false
-        if (episodes.isEmpty()) return false
-        if (currentEpisodeIndex >= episodes.size) return false
+        try {
+            if (this == null) return false
+            if (episodes.isEmpty()) return false
+            if (currentEpisodeIndex >= episodes.size) return false
 
-        val epData = episodes[currentEpisodeIndex]
+            val epData = episodes[currentEpisodeIndex]
 
-        val holder =
-            MetadataHolder(apiName, isMovie, title, poster, currentEpisodeIndex, episodes, currentLinks, subtitles)
-
-        val index = if (startIndex == null || startIndex < 0) 0 else startIndex
-
-        val mediaItem =
-            getMediaInfo(epData, holder, index, JSONObject(holder.toJson()), subtitles)
-
-        awaitLinks(
-            this.remoteMediaClient?.load(
-                MediaLoadRequestData.Builder().setMediaInfo(mediaItem).setCurrentTime(startTime ?: 0L).build()
-            )
-        ) {
-            if (currentLinks.size > index + 1)
-                startCast(
+            val holder =
+                MetadataHolder(
                     apiName,
                     isMovie,
                     title,
@@ -118,11 +110,38 @@ object CastHelper {
                     currentEpisodeIndex,
                     episodes,
                     currentLinks,
-                    subtitles,
-                    index + 1,
-                    startTime
+                    subtitles
                 )
+
+            val index = if (startIndex == null || startIndex < 0) 0 else startIndex
+
+            val mediaItem =
+                getMediaInfo(epData, holder, index, JSONObject(holder.toJson()), subtitles)
+
+            awaitLinks(
+                this.remoteMediaClient?.load(
+                    MediaLoadRequestData.Builder().setMediaInfo(mediaItem)
+                        .setCurrentTime(startTime ?: 0L).build()
+                )
+            ) {
+                if (currentLinks.size > index + 1)
+                    startCast(
+                        apiName,
+                        isMovie,
+                        title,
+                        poster,
+                        currentEpisodeIndex,
+                        episodes,
+                        currentLinks,
+                        subtitles,
+                        index + 1,
+                        startTime
+                    )
+            }
+            return true
+        } catch (e: Exception) {
+            logError(e)
+            return false
         }
-        return true
     }
 }

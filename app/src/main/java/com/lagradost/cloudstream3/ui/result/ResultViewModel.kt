@@ -11,6 +11,9 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromUrlNull
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
+import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider
+import com.lagradost.cloudstream3.animeproviders.NineAnimeProvider
+import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
@@ -127,6 +130,17 @@ class ResultViewModel : ViewModel() {
             addTrailer(meta.trailerUrl)
             posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
             actors = actors ?: meta.actors
+
+            val realRecommendations = ArrayList<SearchResponse>()
+            val apiNames = listOf(GogoanimeProvider().name, NineAnimeProvider().name)
+            meta.recommendations?.forEach { rec ->
+                apiNames.forEach { name ->
+                    realRecommendations.add(rec.copy(apiName = name))
+                }
+            }
+
+            recommendations = recommendations?.union(realRecommendations)?.toList()
+                ?: realRecommendations
         }
     }
 
@@ -296,10 +310,9 @@ class ResultViewModel : ViewModel() {
     }
 
     fun load(url: String, apiName: String, showFillers: Boolean) = viewModelScope.launch {
-        _resultResponse.postValue(Resource.Loading(url))
         _publicEpisodes.postValue(Resource.Loading())
+        _resultResponse.postValue(Resource.Loading(url))
 
-        _apiName.postValue(apiName)
         val api = getApiFromNameNull(apiName) ?: getApiFromUrlNull(url)
         if (api == null) {
             _resultResponse.postValue(
@@ -312,9 +325,31 @@ class ResultViewModel : ViewModel() {
             )
             return@launch
         }
+
+        val validUrlResource = safeApiCall {
+            SyncRedirector.redirect(
+                url,
+                api.mainUrl.replace(NineAnimeProvider().mainUrl, "9anime")
+                    .replace(GogoanimeProvider().mainUrl, "gogoanime")
+            )
+        }
+
+        if (validUrlResource !is Resource.Success) {
+            if (validUrlResource is Resource.Failure) {
+                _resultResponse.postValue(validUrlResource)
+            }
+
+            return@launch
+        }
+        val validUrl = validUrlResource.value
+
+        _resultResponse.postValue(Resource.Loading(validUrl))
+
+        _apiName.postValue(apiName)
+
         repo = APIRepository(api)
 
-        val data = repo?.load(url) ?: return@launch
+        val data = repo?.load(validUrl) ?: return@launch
 
         _resultResponse.postValue(data)
 
@@ -331,7 +366,7 @@ class ResultViewModel : ViewModel() {
                     mainId.toString(),
                     VideoDownloadHelper.DownloadHeaderCached(
                         apiName,
-                        url,
+                        validUrl,
                         d.type,
                         d.name,
                         d.posterUrl,

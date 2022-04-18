@@ -197,7 +197,8 @@ class NineAnimeProvider : MainAPI() {
     )
 
     override suspend fun load(url: String): LoadResponse? {
-        val doc = app.get(url).document
+        val validUrl = url.replace("https://9anime.to", mainUrl)
+        val doc = app.get(validUrl).document
         val animeid = doc.selectFirst("div.player-wrapper.watchpage").attr("data-id") ?: return null
         val animeidencoded = encode(getVrf(animeid) ?: return null)
         val poster = doc.selectFirst("aside.main div.thumb div img").attr("src")
@@ -233,7 +234,7 @@ class NineAnimeProvider : MainAPI() {
             else null
         val tags = doc.select("div.info .meta .col1 div:contains(Genre) a").map { it.text() }
 
-        return newAnimeLoadResponse(title, url, tvType) {
+        return newAnimeLoadResponse(title, validUrl, tvType) {
             this.posterUrl = poster
             this.plot = description
             this.recommendations = recommendations
