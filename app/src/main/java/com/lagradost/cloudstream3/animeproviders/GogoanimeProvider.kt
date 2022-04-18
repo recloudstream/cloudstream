@@ -396,9 +396,9 @@ class GogoanimeProvider : MainAPI() {
                             loadExtractor(data, streamingResponse.url, callback)
                         }
                 }, {
-                    val iv = null //"2094564712118349"
-                    val secretKey = null
-                    val secretDecryptKey = null
+                    val iv = "4968442212618524"
+                    val secretKey = "34541577475429958244002440089157"
+                    val secretDecryptKey = "20945647121183498244002440089157"
                     extractVidstream(
                         iframe,
                         this.name,
@@ -406,7 +406,7 @@ class GogoanimeProvider : MainAPI() {
                         iv,
                         secretKey,
                         secretDecryptKey,
-                        true
+                        false
                     )
                 })
             }
