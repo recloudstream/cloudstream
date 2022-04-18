@@ -1,14 +1,10 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
-import com.lagradost.cloudstream3.utils.getQualityFromName
-
-
 
 
 open class GenericM3U8 : ExtractorApi() {
@@ -23,21 +19,14 @@ open class GenericM3U8 : ExtractorApi() {
             )
         )
         val sources = mutableListOf<ExtractorLink>()
-        if (response.url.contains("m3u8")) M3u8Helper().m3u8Generation(
-            M3u8Helper.M3u8Stream(
+        if (response.url.contains("m3u8"))
+            M3u8Helper.generateM3u8(
+                name,
                 response.url,
+                url,
                 headers = response.headers.toMap()
-            ), true
-        )
-            .map { stream ->
-                sources.add( ExtractorLink(
-                    name,
-                    name = name,
-                    stream.streamUrl,
-                    url,
-                    getQualityFromName(stream.quality?.toString()),
-                    true
-                ))
+            ).forEach { link ->
+                sources.add(link)
             }
         return sources
     }

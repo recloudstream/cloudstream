@@ -4,8 +4,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.M3u8Helper
-import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 
 open class WatchSB : ExtractorApi() {
     override var name = "WatchSB"
@@ -19,21 +18,6 @@ open class WatchSB : ExtractorApi() {
             )
         )
 
-        return M3u8Helper().m3u8Generation(
-            M3u8Helper.M3u8Stream(
-                response.url,
-                headers = response.headers.toMap()
-            ), true
-        )
-            .map { stream ->
-                ExtractorLink(
-                    name,
-                    name = name,
-                    stream.streamUrl,
-                    url,
-                    getQualityFromName(stream.quality?.toString()),
-                    true
-                )
-            }
+        return generateM3u8(name, response.url, url, headers = response.headers.toMap())
     }
 }

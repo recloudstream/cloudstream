@@ -124,35 +124,21 @@ class GogoanimeProvider : MainAPI() {
             ) {
                 when {
                     source.file.contains("m3u8") -> {
-                        M3u8Helper().m3u8Generation(
-                            M3u8Helper.M3u8Stream(
-                                source.file,
-                                headers = mapOf("Referer" to "https://gogoplay4.com")
-                            ), true
-                        )
-                            .map { stream ->
-                                val qualityString =
-                                    if ((stream.quality ?: 0) == 0) "" else "${stream.quality}p"
-                                sourceCallback(
-                                    ExtractorLink(
-                                        mainApiName,
-                                        "$mainApiName $qualityString",
-                                        stream.streamUrl,
-                                        mainUrl,
-                                        getQualityFromName(stream.quality.toString()),
-                                        true
-                                    )
-                                )
-                            }
+                        M3u8Helper.generateM3u8(
+                            mainApiName,
+                            source.file,
+                            mainUrl,
+                            headers = mapOf("Referer" to "https://gogoplay4.com")
+                        ).forEach (sourceCallback)
                     }
                     source.file.contains("vidstreaming") -> {
                         sourceCallback.invoke(
                             ExtractorLink(
                                 mainApiName,
-                                "$mainApiName ${source.label?.replace("0 P", "0p") ?: ""}",
+                                mainApiName,
                                 source.file,
                                 mainUrl,
-                                getQualityFromName(source.label ?: ""),
+                                getQualityFromName(source.label),
                                 isM3u8 = source.type == "hls"
                             )
                         )
@@ -161,10 +147,10 @@ class GogoanimeProvider : MainAPI() {
                         sourceCallback.invoke(
                             ExtractorLink(
                                 mainApiName,
-                                "$mainApiName ${source.label?.replace("0 P", "0p") ?: ""}",
+                                mainApiName,
                                 source.file,
                                 mainUrl,
-                                getQualityFromName(source.label ?: ""),
+                                getQualityFromName(source.label),
                                 isM3u8 = source.type == "hls"
                             )
                         )
@@ -372,7 +358,7 @@ class GogoanimeProvider : MainAPI() {
                         callback(
                             ExtractorLink(
                                 "Gogoanime",
-                                if (qual == "null") "Gogoanime" else "Gogoanime - " + qual + "p",
+                                "Gogoanime",
                                 it.attr("href"),
                                 page.url,
                                 getQualityFromName(qual),

@@ -1,8 +1,9 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.apmap
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper
 
 
 open class PlayerVoxzer : ExtractorApi() {
@@ -16,21 +17,14 @@ open class PlayerVoxzer : ExtractorApi() {
         val m3u8regex = Regex("((https:|http:)\\/\\/.*\\.m3u8)")
         val sources = mutableListOf<ExtractorLink>()
         val listm3 = m3u8regex.find(urltext)?.value
-        if (listm3?.contains("m3u8") == true)  M3u8Helper().m3u8Generation(
-            M3u8Helper.M3u8Stream(
+        if (listm3?.contains("m3u8") == true)
+            M3u8Helper.generateM3u8(
+                name,
                 listm3,
+                url,
                 headers = app.get(url).headers.toMap()
-            ), true
-        )
-            .map { stream ->
-                sources.add(  ExtractorLink(
-                    name,
-                    name = name,
-                    stream.streamUrl,
-                    url,
-                    getQualityFromName(stream.quality?.toString()),
-                    true
-                ))
+            ).forEach { link ->
+                sources.add(link)
             }
         return sources
     }

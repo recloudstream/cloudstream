@@ -8,7 +8,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
-import com.lagradost.cloudstream3.utils.getQualityFromName
 
 open class Mcloud : ExtractorApi() {
     override var name = "Mcloud"
@@ -56,24 +55,14 @@ open class Mcloud : ExtractorApi() {
         if (mapped.success)
             mapped.media.sources.apmap {
                 if (it.file.contains("m3u8")) {
-                    M3u8Helper().m3u8Generation(
-                        M3u8Helper.M3u8Stream(
-                            it.file,
-                            headers = app.get(url).headers.toMap()
-                        ), true
-                    )
-                        .map { stream ->
-                            sources.add(
-                                ExtractorLink(
-                                    name,
-                                    name = name,
-                                    stream.streamUrl,
-                                    url,
-                                    getQualityFromName(stream.quality?.toString()),
-                                    true
-                                )
-                            )
-                        }
+                    M3u8Helper.generateM3u8(
+                        name,
+                        it.file,
+                        url,
+                        headers = app.get(url).headers.toMap()
+                    ).forEach { link ->
+                        sources.add(link)
+                    }
                 }
             }
         return sources

@@ -1,8 +1,9 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.apmap
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper
 
 
 open class Jawcloud : ExtractorApi() {
@@ -14,22 +15,13 @@ open class Jawcloud : ExtractorApi() {
         val doc = app.get(url).document
         val urlString = doc.select("html body div source").attr("src")
         val sources = mutableListOf<ExtractorLink>()
-        if (urlString.contains("m3u8"))  M3u8Helper().m3u8Generation(
-            M3u8Helper.M3u8Stream(
+        if (urlString.contains("m3u8"))
+            M3u8Helper.generateM3u8(
+                name,
                 urlString,
+                url,
                 headers = app.get(url).headers.toMap()
-            ), true
-        )
-            .map { stream ->
-                sources.add(  ExtractorLink(
-                    name,
-                    name = name,
-                    stream.streamUrl,
-                    url,
-                    getQualityFromName(stream.quality?.toString()),
-                    true
-                ))
-            }
+            ).forEach { link -> sources.add(link) }
         return sources
     }
 }

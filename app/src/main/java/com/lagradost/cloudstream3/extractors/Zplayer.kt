@@ -2,7 +2,10 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper
+import com.lagradost.cloudstream3.utils.getAndUnpack
 
 class Zplayer: ZplayerV2() {
     override var name: String = "Zplayer"
@@ -37,22 +40,14 @@ open class ZplayerV2 : ExtractorApi() {
                     if (urlm3u8.contains("m3u8")) {
                         val testurl = app.get(urlm3u8, headers = mapOf("Referer" to url)).text
                         if (testurl.contains("EXTM3U")) {
-                            M3u8Helper().m3u8Generation(
-                                M3u8Helper.M3u8Stream(
-                                    urlm3u8,
-                                    headers = mapOf("Referer" to url)
-                                ), true
-                            )
-                                .map { stream ->
-                                    sources.add(  ExtractorLink(
-                                        source = name,
-                                        name = name,
-                                        stream.streamUrl,
-                                        url,
-                                        getQualityFromName(stream.quality?.toString()),
-                                        true
-                                    ))
-                                }
+                            M3u8Helper.generateM3u8(
+                                name,
+                                urlm3u8,
+                                url,
+                                headers = mapOf("Referer" to url)
+                            ).forEach { link ->
+                                sources.add(link)
+                            }
                         }
                     }
                 }

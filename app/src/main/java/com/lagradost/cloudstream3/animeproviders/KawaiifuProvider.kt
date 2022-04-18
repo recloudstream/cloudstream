@@ -150,7 +150,7 @@ class KawaiifuProvider : MainAPI() {
                 callback(
                     ExtractorLink(
                         "Kawaiifu",
-                        "${it.first} - ${source.second}",
+                        it.first,
                         source.first,
                         "",
                         getQualityFromName(source.second),

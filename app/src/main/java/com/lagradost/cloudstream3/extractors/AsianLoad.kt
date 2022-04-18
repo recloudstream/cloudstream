@@ -1,7 +1,10 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper
+import com.lagradost.cloudstream3.utils.getQualityFromName
 import java.net.URI
 
 class AsianLoad : ExtractorApi() {
@@ -17,32 +20,22 @@ class AsianLoad : ExtractorApi() {
                 val extractedUrl = sourceMatch.groupValues[1]
                 // Trusting this isn't mp4, may fuck up stuff
                 if (URI(extractedUrl).path.endsWith(".m3u8")) {
-                    M3u8Helper().m3u8Generation(
-                        M3u8Helper.M3u8Stream(
-                            extractedUrl,
-                            headers = mapOf("referer" to this.url)
-                        ), true
-                    )
-                        .forEach { stream ->
-                            extractedLinksList.add(
-                                ExtractorLink(
-                                    name,
-                                    name = name,
-                                    stream.streamUrl,
-                                    url,
-                                    getQualityFromName(stream.quality?.toString()),
-                                    true
-                                )
-                            )
-                        }
+                    M3u8Helper.generateM3u8(
+                        name,
+                        extractedUrl,
+                        url,
+                        headers = mapOf("referer" to this.url)
+                    ).forEach { link ->
+                        extractedLinksList.add(link)
+                    }
                 } else if (extractedUrl.endsWith(".mp4")) {
                     extractedLinksList.add(
                         ExtractorLink(
                             name,
-                            "$name ${sourceMatch.groupValues[2]}",
+                            name,
                             extractedUrl,
                             url.replace(" ", "%20"),
-                            Qualities.Unknown.value,
+                            getQualityFromName(sourceMatch.groupValues[2]),
                         )
                     )
                 }

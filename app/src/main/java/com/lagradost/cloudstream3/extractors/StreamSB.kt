@@ -1,11 +1,11 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.USER_AGENT
-import com.lagradost.cloudstream3.apmap
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper
 
 
 class StreamSB1 : StreamSB() {
@@ -103,23 +103,13 @@ open class StreamSB : ExtractorApi() {
         val mapped = urltext.let { parseJson<Main>(it) }
         val testurl = app.get(mapped.streamData.file, headers = headers).text
         // val urlmain = mapped.streamData.file.substringBefore("/hls/")
-        if (urltext.contains("m3u8") && testurl.contains("EXTM3U")) return  M3u8Helper().m3u8Generation(
-            M3u8Helper.M3u8Stream(
+        if (urltext.contains("m3u8") && testurl.contains("EXTM3U"))
+            return M3u8Helper.generateM3u8(
+                name,
                 mapped.streamData.file,
+                url,
                 headers = headers
-            ), true
-        )
-            .map { stream ->
-               // val cleanstreamurl = stream.streamUrl.replace(Regex("https://.*/hls/"), "$urlmain/hls/")
-                ExtractorLink(
-                    name,
-                    name = name,
-                    stream.streamUrl,
-                    url,
-                    getQualityFromName(stream.quality?.toString()),
-                    true
-                )
-            }
+            )
         return null
     }
 }
