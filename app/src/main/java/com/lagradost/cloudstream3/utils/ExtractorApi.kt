@@ -58,6 +58,7 @@ enum class Qualities(var value: Int) {
     companion object {
         fun getStringByInt(qual: Int?): String {
             return when (qual) {
+                0 -> "Auto"
                 Unknown.value -> ""
                 P2160.value -> "4K"
                 else -> "${qual}p"
