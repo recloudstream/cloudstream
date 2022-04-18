@@ -799,7 +799,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
 
                 builder.setTitle(title)
-                builder.setItems(links.map { it.name }.toTypedArray()) { dia, which ->
+                builder.setItems(links.map { "${it.name} ${Qualities.getStringByInt(it.quality)}" }.toTypedArray()) { dia, which ->
                     callback.invoke(links[which])
                     dia?.dismiss()
                 }
