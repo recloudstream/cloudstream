@@ -65,6 +65,7 @@
         <item>32 characters</item>
         <item>64 characters</item>
         <item>128 characters</item>
+        <item>Hide Title</item>
     </array>
     <array name="limit_title_pref_values">
         <item>0</item>
@@ -72,6 +73,7 @@
         <item>32</item>
         <item>64</item>
         <item>128</item>
+        <item>-1</item>
     </array>
 
     <array name="video_buffer_length_names">

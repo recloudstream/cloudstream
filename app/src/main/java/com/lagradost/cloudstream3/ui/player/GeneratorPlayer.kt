@@ -569,11 +569,17 @@ class GeneratorPlayer : FullScreenPlayer() {
         } else {
             ""
         }
-        //Truncate video title if it exceeds limit
-        val differenceInLength = playerVideoTitle.length - limitTitle
-        val margin = 3 //If the difference is smaller than or equal to this value, ignore it
-        if (limitTitle > 0 && differenceInLength > margin) {
-            playerVideoTitle = playerVideoTitle.substring(0, limitTitle - 1) + "..."
+
+        //Hide title, if set in setting
+        if (limitTitle < 0) {
+            player_video_title?.visibility = View.GONE
+        } else {
+            //Truncate video title if it exceeds limit
+            val differenceInLength = playerVideoTitle.length - limitTitle
+            val margin = 3 //If the difference is smaller than or equal to this value, ignore it
+            if (limitTitle > 0 && differenceInLength > margin) {
+                playerVideoTitle = playerVideoTitle.substring(0, limitTitle-1) + "..."
+            }
         }
 
         player_episode_filler_holder?.isVisible = isFiller ?: false

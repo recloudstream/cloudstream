@@ -499,13 +499,21 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun updateUIVisibility() {
         val isGone = isLocked || !isShowing
+        var togglePlayerTitleGone = isGone
+        context?.let {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
+            val limitTitle = settingsManager.getInt(getString(R.string.prefer_limit_title_key), 0)
+            if (limitTitle < 0) {
+                togglePlayerTitleGone = true
+            }
+        }
         player_lock_holder?.isGone = isGone
         player_video_bar?.isGone = isGone
         player_pause_play_holder?.isGone = isGone
         player_pause_play?.isGone = isGone
         //player_buffering?.isGone = isGone
         player_top_holder?.isGone = isGone
-        player_video_title?.isGone = isGone
+        player_video_title?.isGone = togglePlayerTitleGone
         player_video_title_rez?.isGone = isGone
         player_episode_filler?.isGone = isGone
         player_center_menu?.isGone = isGone

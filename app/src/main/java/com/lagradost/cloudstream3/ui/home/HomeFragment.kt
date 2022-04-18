@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -97,6 +98,7 @@ class HomeFragment : Fragment() {
     companion object {
         val configEvent = Event<Int>()
         var currentSpan = 1
+        val listHomepageItems = mutableListOf<SearchResponse>()
 
         fun Activity.loadHomepageList(item: HomePageList) {
             val context = this
@@ -358,6 +360,7 @@ class HomeFragment : Fragment() {
     }
 
     private var currentApiName: String? = null
+    private var toggleRandomButton = false
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -367,6 +370,21 @@ class HomeFragment : Fragment() {
         home_change_api?.setOnClickListener(apiChangeClickListener)
         home_change_api_loading?.setOnClickListener(apiChangeClickListener)
         home_api_fab?.setOnClickListener(apiChangeClickListener)
+        home_random?.setOnClickListener {
+            if (listHomepageItems.isNotEmpty()) {
+                activity.loadSearchResult(listHomepageItems.random())
+            }
+        }
+
+        //Disable Random button, if its toggled off on settings
+        context?.let {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
+            toggleRandomButton = settingsManager.getBoolean(getString(R.string.random_button_key), false)
+            home_random?.isVisible = toggleRandomButton
+            if (!toggleRandomButton) {
+                home_random?.visibility = View.GONE
+            }
+        }
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
@@ -441,11 +459,13 @@ class HomeFragment : Fragment() {
                     home_loading_shimmer?.stopShimmer()
 
                     val d = data.value
+                    listHomepageItems.clear()
 
                     currentHomePage = d
                     (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(
                         d?.items?.mapNotNull {
                             try {
+                                listHomepageItems.addAll(it.list.filterSearchResponse())
                                 HomePageList(it.name, it.list.filterSearchResponse())
                             } catch (e: Exception) {
                                 logError(e)
@@ -456,6 +476,9 @@ class HomeFragment : Fragment() {
                     home_loading?.isVisible = false
                     home_loading_error?.isVisible = false
                     home_loaded?.isVisible = true
+                    if (toggleRandomButton) {
+                        home_random?.isVisible = listHomepageItems.isNotEmpty()
+                    }
                 }
                 is Resource.Failure -> {
                     home_loading_shimmer?.stopShimmer()
@@ -791,9 +814,11 @@ class HomeFragment : Fragment() {
             val dy = scrollY - oldScrollY
             if (dy > 0) { //check for scroll down
                 home_api_fab?.shrink() // hide
+                home_random?.shrink()
             } else if (dy < -5) {
                 if (view?.context?.isTvSettings() == false) {
                     home_api_fab?.extend() // show
+                    home_random?.extend()
                 }
             }
         })

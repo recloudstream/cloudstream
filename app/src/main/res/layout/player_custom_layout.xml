@@ -133,6 +133,7 @@
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textStyle="bold"
+                    android:visibility="visible"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Hello world" />
