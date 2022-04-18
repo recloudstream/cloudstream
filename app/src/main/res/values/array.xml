@@ -14,23 +14,6 @@
         <item>@id/cast_button_type_forward_30_seconds</item>
     </array>
 
-    <array name="quality_pref">
-        <item>2160p</item>
-        <item>1440p</item>
-        <item>1080p</item>
-        <item>720p</item>
-        <item>480p</item>
-        <item>360p</item>
-    </array>
-    <array name="quality_pref_values">
-        <item>4</item>
-        <item>3</item>
-        <item>2</item>
-        <item>1</item>
-        <item>-1</item>
-        <item>-2</item>
-    </array>
-
     <array name="dns_pref">
         <item>@string/none</item>
         <item>Google</item>

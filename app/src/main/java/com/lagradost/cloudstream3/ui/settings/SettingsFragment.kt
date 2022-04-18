@@ -47,8 +47,8 @@ import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showNginxTextInputDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showNginxTextInputDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -684,8 +684,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.quality_pref_key)?.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.quality_pref)
-            val prefValues = resources.getIntArray(R.array.quality_pref_values)
+            val prefValues = Qualities.values().map { it.value }.reversed().toMutableList()
+            prefValues.remove(Qualities.Unknown.value)
+
+            val prefNames = prefValues.map { Qualities.getStringByInt(it) }
 
             val currentQuality =
                 settingsManager.getInt(
