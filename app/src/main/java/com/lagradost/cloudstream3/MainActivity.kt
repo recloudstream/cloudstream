@@ -533,10 +533,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             .setPopUpTo(navController.graph.startDestination, false)
             .build()*/
         nav_view?.setupWithNavController(navController)
-        val navRail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
-        navRail?.setupWithNavController(navController)
+        val nav_rail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
+        nav_rail?.setupWithNavController(navController)
 
-        navRail?.setOnItemSelectedListener { item ->
+        nav_rail?.setOnItemSelectedListener { item ->
             onNavDestinationSelected(
                 item,
                 navController
@@ -574,7 +574,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         val rippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
         nav_view?.itemRippleColor = rippleColor
-        navRail?.itemRippleColor = rippleColor
+        nav_rail?.itemRippleColor = rippleColor
+        nav_rail?.itemActiveIndicatorColor = rippleColor
+        nav_view?.itemActiveIndicatorColor = rippleColor
 
         if (!checkWrite()) {
             requestRW()

@@ -1,6 +1,6 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+    <!-- Base application theme. Material3 -->
+    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:colorEdgeEffect">?attr/textColor</item>
@@ -404,6 +404,7 @@
         <item name="android:paddingBottom">5dp</item>
         <item name="android:textSize">12sp</item>
         <item name="textColor">@color/textColor</item>
+        <item name="android:textColor">@color/textColor</item>
         <item name="android:layout_margin">2dp</item>
     </style>
 

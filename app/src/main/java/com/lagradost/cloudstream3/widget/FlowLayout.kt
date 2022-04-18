@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
+import androidx.core.view.marginEnd
 import com.lagradost.cloudstream3.R
 import kotlin.math.max
 
@@ -36,7 +37,7 @@ class FlowLayout : ViewGroup {
             val childHeight = child.measuredHeight
 
             //check if child can be placed in the current row, else go to next line
-            if (currentChildHookPointx + childWidth > realWidth && i + 1 < childCount) {
+            if (currentChildHookPointx + childWidth - child.marginEnd - child.paddingEnd - itemSpacing > realWidth) {
                 //new line
                 currentWidth = max(currentWidth, currentChildHookPointx)
 

@@ -18,6 +18,7 @@
                 android:id="@+id/nav_rail_view"
                 android:background="?attr/primaryGrayBackground"
                 app:itemTextColor="@color/item_select_color"
+
                 app:itemIconTint="@color/item_select_color"
                 app:menuGravity="center"
                 app:layout_constraintStart_toStartOf="parent"
