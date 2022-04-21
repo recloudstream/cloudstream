@@ -23,16 +23,6 @@ import org.jsoup.nodes.Element
 import java.net.URI
 import kotlin.system.measureTimeMillis
 
-class DopeboxProvider : SflixProvider() {
-    override var mainUrl = "https://dopebox.to"
-    override var name = "Dopebox"
-}
-
-class SolarmovieProvider : SflixProvider() {
-    override var mainUrl = "https://solarmovie.pe"
-    override var name = "Solarmovie"
-}
-
 open class SflixProvider : MainAPI() {
     override var mainUrl = "https://sflix.to"
     override var name = "Sflix.to"
