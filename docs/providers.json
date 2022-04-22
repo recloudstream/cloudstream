@@ -62,7 +62,7 @@
     "BflixProvider": {
         "name": "Bflix",
         "status": 1,
-        "url": "https://fmovies.to"
+        "url": "https://bflix.to"
     },
     "CinecalidadProvider": {
         "name": "Cinecalidad",
@@ -242,7 +242,7 @@
     "SflixProvider": {
         "name": "Sflix.to",
         "status": 1,
-        "url": "https://dopebox.to"
+        "url": "https://sflix.to"
     },
     "SoaptwoDayProvider": {
         "name": "Soap2Day",
