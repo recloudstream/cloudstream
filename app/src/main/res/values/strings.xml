@@ -359,7 +359,7 @@
     <string name="video_buffer_disk_settings">Video cache on disk</string>
     <string name="video_buffer_clear_settings">Clear video and image cache</string>
 
-    <string name="video_ram_description">May cause problems on systems with low ram such as Android TV devices or old phones if you set it too high</string>
+    <string name="video_ram_description">Will cause random crashes if set too high. Don\'t change if you have a low amount of ram such as an Android TV or old phone</string>
     <string name="video_disk_description">May cause problems on systems with low storage space such as Android TV devices if you set it too high</string>
 
     <string name="dns_pref">DNS over HTTPS</string>
