@@ -21,6 +21,7 @@ import com.google.android.gms.cast.framework.media.uicontroller.UIController
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.sortSubs
 import com.lagradost.cloudstream3.sortUrls
@@ -33,6 +34,7 @@ import com.lagradost.cloudstream3.utils.CastHelper.awaitLinks
 import com.lagradost.cloudstream3.utils.CastHelper.getMediaInfo
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import org.json.JSONObject
@@ -268,24 +270,33 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
             if (meta != null && meta.episodes.size > meta.currentEpisodeIndex + 1) {
                 val currentIdIndex = remoteMediaClient?.getItemIndex() ?: return
                 val itemCount = remoteMediaClient?.mediaQueue?.itemCount
+                val index = meta.currentEpisodeIndex + 1
+                val epData = meta.episodes[index]
+
+                try {
+                    val currentDuration = remoteMediaClient?.streamDuration
+                    val currentPosition = remoteMediaClient?.approximateStreamPosition
+                    if (currentDuration != null && currentPosition != null)
+                        DataStoreHelper.setViewPos(epData.id, currentPosition, currentDuration)
+                } catch (e : Exception) {
+                    logError(e)
+                }
 
                 if (itemCount != null && itemCount - currentIdIndex == 1 && !isLoadingMore) {
                     isLoadingMore = true
                     ioSafe {
-                        val index = meta.currentEpisodeIndex + 1
-                        val epData = meta.episodes[index]
                         val currentLinks = mutableSetOf<ExtractorLink>()
                         val currentSubs = mutableSetOf<SubtitleData>()
 
                         val generator = RepoLinkGenerator(listOf(epData))
 
                         val isSuccessful = safeApiCall {
-                            generator.generateLinks(false, true,
-                                {
+                            generator.generateLinks(clearCache = false, isCasting = true,
+                                callback = {
                                     it.first?.let { link ->
                                         currentLinks.add(link)
                                     }
-                                }, {
+                                }, subtitleCallback = {
                                     currentSubs.add(it)
                                 })
                         }

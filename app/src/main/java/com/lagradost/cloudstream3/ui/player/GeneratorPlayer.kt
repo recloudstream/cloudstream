@@ -393,7 +393,6 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun playerPositionChanged(posDur: Pair<Long, Long>) {
         val (position, duration) = posDur
         viewModel.getId()?.let {
-            println("SET VIEW ID: $it ($position/$duration)")
             DataStoreHelper.setViewPos(it, position, duration)
         }
         val percentage = position * 100L / duration
