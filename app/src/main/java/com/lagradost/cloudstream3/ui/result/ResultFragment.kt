@@ -799,7 +799,8 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
 
                 builder.setTitle(title)
-                builder.setItems(links.map { "${it.name} ${Qualities.getStringByInt(it.quality)}" }.toTypedArray()) { dia, which ->
+                builder.setItems(links.map { "${it.name} ${Qualities.getStringByInt(it.quality)}" }
+                    .toTypedArray()) { dia, which ->
                     callback.invoke(links[which])
                     dia?.dismiss()
                 }
@@ -1302,7 +1303,18 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 }
             }
         }
-        val imgAdapter = ImageAdapter(R.layout.result_mini_image)
+        val imgAdapter = ImageAdapter(
+            R.layout.result_mini_image,
+            nextFocusDown = R.id.result_sync_set_score,
+            clickCallback = { action ->
+                if (action == IMAGE_CLICK || action == IMAGE_LONG_CLICK) {
+                    if (result_overlapping_panels?.getSelectedPanel()?.ordinal == 1) {
+                        result_overlapping_panels?.openStartPanel()
+                    } else {
+                        result_overlapping_panels?.closePanels()
+                    }
+                }
+            })
         result_mini_sync?.adapter = imgAdapter
 
         observe(syncModel.synced) { list ->

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 
 /*
 class ImageAdapter(context: Context, val resource: Int) : ArrayAdapter<Int>(context, resource) {
@@ -19,9 +20,14 @@ class ImageAdapter(context: Context, val resource: Int) : ArrayAdapter<Int>(cont
         return newConvertView
     }
 }*/
+const val IMAGE_CLICK = 0
+const val IMAGE_LONG_CLICK = 1
 
 class ImageAdapter(
     val layout: Int,
+    val clickCallback: ((Int) -> Unit)? = null,
+    val nextFocusUp: Int? = null,
+    val nextFocusDown: Int? = null,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val images: MutableList<Int> = mutableListOf()
@@ -35,7 +41,7 @@ class ImageAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ImageViewHolder -> {
-                holder.bind(images[position])
+                holder.bind(images[position], clickCallback, nextFocusUp, nextFocusDown)
             }
         }
     }
@@ -62,8 +68,36 @@ class ImageAdapter(
     class ImageViewHolder
     constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        fun bind(img: Int) {
-            (itemView as? ImageView?)?.setImageResource(img)
+        fun bind(
+            img: Int,
+            clickCallback: ((Int) -> Unit)?,
+            nextFocusUp: Int?,
+            nextFocusDown: Int?,
+        ) {
+            (itemView as? ImageView?)?.apply {
+                setImageResource(img)
+                if (nextFocusDown != null) {
+                    this.nextFocusDownId = nextFocusDown
+                }
+                if (nextFocusUp != null) {
+                    this.nextFocusUpId = nextFocusUp
+                }
+                if (clickCallback != null) {
+                    if (context.isTrueTvSettings()) {
+                        isClickable = true
+                        isLongClickable = true
+                        isFocusable = true
+                        isFocusableInTouchMode = true
+                    }
+                    setOnClickListener {
+                        clickCallback.invoke(IMAGE_CLICK)
+                    }
+                    setOnLongClickListener {
+                        clickCallback.invoke(IMAGE_LONG_CLICK)
+                        return@setOnLongClickListener true
+                    }
+                }
+            }
         }
     }
 }
