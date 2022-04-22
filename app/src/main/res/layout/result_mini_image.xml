@@ -6,5 +6,6 @@
         android:layout_height="35dp"
         android:layout_gravity="center"
         tools:src="@drawable/ic_anilist_icon"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         app:tint="?attr/white">
 </ImageView>

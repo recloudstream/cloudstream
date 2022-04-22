@@ -18,7 +18,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
@@ -34,6 +34,7 @@ import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
+import com.lagradost.cloudstream3.movieproviders.NginxProvider
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.Requests
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
@@ -64,14 +65,12 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.movieproviders.NginxProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
-import kotlin.collections.HashMap
 import kotlin.concurrent.thread
 
 
@@ -107,7 +106,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         updateLocale() // android fucks me by chaining lang when rotating the phone
-        findNavController(R.id.nav_host_fragment).currentDestination?.let { updateNavBar(it) }
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment.navController.currentDestination?.let { updateNavBar(it) }
     }
 
     private fun updateNavBar(destination: NavDestination) {
@@ -521,8 +522,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         setUpBackup()
 
         CommonActivity.init(this)
-
-        val navController = findNavController(R.id.nav_host_fragment)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        //val navController = findNavController(R.id.nav_host_fragment)
 
         /*navOptions = NavOptions.Builder()
             .setLaunchSingleTop(true)

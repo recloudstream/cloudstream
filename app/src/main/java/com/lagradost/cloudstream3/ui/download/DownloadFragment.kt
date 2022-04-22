@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
@@ -113,8 +113,8 @@ class DownloadFragment : Fragment() {
                                 //wont be called
                             } else {
                                 val folder = DataStore.getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
-                                val navController = activity?.findNavController(R.id.nav_host_fragment)
-                                navController?.navigate(
+                                val navHostFragment = activity?.supportFragmentManager?.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?
+                                navHostFragment?.navController?.navigate(
                                     R.id.navigation_download_child,
                                     DownloadChildFragment.newInstance(click.data.name, folder)
                                 )

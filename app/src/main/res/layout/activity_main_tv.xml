@@ -12,22 +12,7 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-        <com.google.android.material.navigationrail.NavigationRailView
-                android:layout_width="62dp"
-                android:layout_height="match_parent"
-                android:id="@+id/nav_rail_view"
-                android:background="?attr/primaryGrayBackground"
-                app:itemTextColor="@color/item_select_color"
-                app:itemIconTint="@color/item_select_color"
-                app:menuGravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:labelVisibilityMode="unlabeled"
-                app:menu="@menu/bottom_nav_menu">
-
-        </com.google.android.material.navigationrail.NavigationRailView>
-
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/nav_host_fragment"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="0dp"
@@ -39,6 +24,22 @@
                 app:navGraph="@navigation/mobile_navigation"
                 app:layout_constraintStart_toEndOf="@id/nav_rail_view"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.navigationrail.NavigationRailView
+                android:layout_width="62dp"
+                android:layout_height="match_parent"
+                android:id="@+id/nav_rail_view"
+                android:background="?attr/primaryGrayBackground"
+                app:itemTextColor="@color/item_select_color"
+                app:itemIconTint="@color/item_select_color"
+
+                app:menuGravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:labelVisibilityMode="unlabeled"
+                app:menu="@menu/bottom_nav_menu">
+
+        </com.google.android.material.navigationrail.NavigationRailView>
 
         <LinearLayout
                 app:layout_constraintStart_toEndOf="@+id/nav_rail_view"

@@ -1321,7 +1321,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             result_sync_names?.text =
                 list.filter { it.isSynced && it.hasAccount }.joinToString { it.name }
 
-            val newList = list.filter { it.isSynced }
+            val newList = list.filter { it.isSynced && it.hasAccount }
 
             result_mini_sync?.isVisible = newList.isNotEmpty()
             (result_mini_sync?.adapter as? ImageAdapter?)?.updateList(newList.map { it.icon })
