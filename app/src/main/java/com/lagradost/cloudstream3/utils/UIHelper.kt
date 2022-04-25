@@ -100,10 +100,10 @@ object UIHelper {
     }
 
     fun Activity?.getSpanCount(): Int? {
-        val compactView = this?.getGridIsCompact() ?: return null
+        val compactView = false
         val spanCountLandscape = if (compactView) 2 else 6
         val spanCountPortrait = if (compactView) 1 else 3
-        val orientation = this.resources?.configuration?.orientation ?: return null
+        val orientation = this?.resources?.configuration?.orientation ?: return null
 
         return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             spanCountLandscape
@@ -315,21 +315,10 @@ object UIHelper {
         return result
     }
 
-    private fun Context.getGridFormat(): String {
+    fun Context?.IsBottomLayout(): Boolean {
+        if(this == null) return true
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        return settingsManager.getString(getString(R.string.grid_format_key), "grid")!!
-    }
-
-    fun Context.getGridFormatId(): Int {
-        return when (getGridFormat()) {
-            "list" -> R.layout.search_result_compact
-            "compact_list" -> R.layout.search_result_super_compact
-            else -> R.layout.search_result_grid
-        }
-    }
-
-    fun Context.getGridIsCompact(): Boolean {
-        return getGridFormat() != "grid"
+        return settingsManager.getBoolean(getString(R.string.bottom_title_key), true)
     }
 
     fun Activity.changeStatusBarState(hide: Boolean): Int {

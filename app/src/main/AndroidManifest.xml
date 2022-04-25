@@ -16,6 +16,7 @@
     <uses-feature android:name="android.software.leanback"
                   android:required="false"/>
 
+    <!--TODO https://stackoverflow.com/questions/41799732/chromecast-button-not-visible-in-android-->
     <application
             android:name=".AcraApplication"
             android:allowBackup="true"

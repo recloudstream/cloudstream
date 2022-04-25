@@ -7,10 +7,10 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
-import com.lagradost.cloudstream3.utils.UIHelper.getGridFormatId
-import com.lagradost.cloudstream3.utils.UIHelper.getGridIsCompact
+import com.lagradost.cloudstream3.utils.UIHelper.IsBottomLayout
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.search_result_compact.view.*
 import kotlin.math.roundToInt
@@ -29,7 +29,7 @@ class SearchAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layout = parent.context.getGridFormatId()
+        val layout = if(parent.context.IsBottomLayout()) R.layout.search_result_grid_expanded else R.layout.search_result_grid
         return CardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
             clickCallback,
@@ -69,7 +69,7 @@ class SearchAdapter(
         RecyclerView.ViewHolder(itemView) {
         val cardView: ImageView = itemView.imageView
 
-        private val compactView = itemView.context.getGridIsCompact()
+        private val compactView = false//itemView.context.getGridIsCompact()
         private val coverHeight: Int = if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
 
         fun bind(card: SearchResponse, position: Int) {
