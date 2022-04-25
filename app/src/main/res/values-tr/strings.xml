@@ -4,7 +4,6 @@
     <string name="search_providers_list_key" translatable="false">search_providers_list</string>
     <string name="locale_key" translatable="false">app_locale</string>
     <string name="search_types_list_key" translatable="false">search_type_list</string>
-    <string name="grid_format_key" translatable="false">grid_format</string>
     <string name="auto_update_key" translatable="false">auto_update</string>
     <string name="prerelease_update_key" translatable="false">prerelease_update</string>
     <string name="manual_check_update_key" translatable="false">manual_check_update</string>

@@ -35,8 +35,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
 
-        versionCode 45
-        versionName "2.9.21"
+        versionCode 46
+        versionName "2.9.22"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"

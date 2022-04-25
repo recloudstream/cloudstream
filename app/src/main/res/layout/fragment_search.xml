@@ -15,7 +15,7 @@
             android:layout_margin="10dp"
             android:background="@drawable/search_background"
             android:layout_width="match_parent"
-            android:layout_height="45dp">
+            android:layout_height="40dp">
 
         <FrameLayout
                 android:layout_gravity="center_vertical"

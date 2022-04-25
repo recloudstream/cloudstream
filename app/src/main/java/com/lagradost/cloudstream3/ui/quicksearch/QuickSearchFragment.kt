@@ -113,11 +113,11 @@ class QuickSearchFragment : Fragment() {
         val searchExitIcon =
             quick_search?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
 
-        val searchMagIcon =
-            quick_search?.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
+        //val searchMagIcon =
+        //    quick_search?.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
 
-        searchMagIcon?.scaleX = 0.65f
-        searchMagIcon?.scaleY = 0.65f
+        //searchMagIcon?.scaleX = 0.65f
+        //searchMagIcon?.scaleY = 0.65f
 
         quick_search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {

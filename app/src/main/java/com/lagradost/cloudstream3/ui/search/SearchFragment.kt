@@ -134,10 +134,10 @@ class SearchFragment : Fragment() {
 
         val searchExitIcon =
             main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
-        val searchMagIcon =
-            main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
-        searchMagIcon.scaleX = 0.65f
-        searchMagIcon.scaleY = 0.65f
+        // val searchMagIcon =
+        //    main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
+        //searchMagIcon.scaleX = 0.65f
+        //searchMagIcon.scaleY = 0.65f
 
         context?.let { ctx ->
             val validAPIs = ctx.filterProviderByPreferredMedia()

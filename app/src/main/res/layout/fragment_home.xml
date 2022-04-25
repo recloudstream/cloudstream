@@ -179,7 +179,6 @@
                     android:layout_height="70dp">
 
                 <LinearLayout
-                        android:layout_marginEnd="50dp"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
 
@@ -195,8 +194,8 @@
                             android:layout_marginEnd="20dp"
                             app:cardCornerRadius="100dp"
                             android:layout_gravity="center_vertical"
-                            android:layout_width="35dp"
-                            android:layout_height="35dp">
+                            android:layout_width="40dp"
+                            android:layout_height="40dp">
 
                         <ImageView
                                 android:id="@+id/home_profile_picture"
@@ -205,7 +204,30 @@
                                 tools:ignore="ContentDescription" />
                     </androidx.cardview.widget.CardView>
 
+                    <FrameLayout
+                            android:layout_gravity="center_vertical"
+                            android:visibility="visible"
+                            android:background="@drawable/search_background"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+
+                        <androidx.appcompat.widget.SearchView
+                                android:id="@+id/home_search"
+                                app:queryBackground="@color/transparent"
+
+                                app:searchIcon="@drawable/search_icon"
+                                android:paddingStart="-10dp"
+                                android:iconifiedByDefault="false"
+                                app:queryHint="@string/search_hint"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_vertical"
+                                app:iconifiedByDefault="false"
+                                tools:ignore="RtlSymmetry" />
+                    </FrameLayout>
+
                     <LinearLayout
+                            android:visibility="gone"
                             android:gravity="center"
 
                             android:orientation="vertical"
@@ -235,24 +257,24 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!--
+                                <ImageView
+                                        android:nextFocusDown="@id/home_main_poster_recyclerview"
+                                        android:nextFocusUp="@id/nav_rail_view"
+                                        android:nextFocusLeft="@id/nav_rail_view"
 
-                <ImageView
-                        android:nextFocusDown="@id/home_main_poster_recyclerview"
-                        android:nextFocusUp="@id/nav_rail_view"
-                        android:nextFocusLeft="@id/nav_rail_view"
+                                        android:id="@+id/home_change_api"
+                                        android:layout_margin="10dp"
+                                        android:layout_gravity="center|end"
+                                        android:background="?android:attr/selectableItemBackgroundBorderless"
 
-                        android:id="@+id/home_change_api"
-                        android:layout_margin="10dp"
-                        android:layout_gravity="center|end"
-                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                                        android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+                                        android:contentDescription="@string/home_change_provider_img_des">
 
-                        android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:contentDescription="@string/home_change_provider_img_des">
-
-                    <requestFocus />
-                </ImageView>
+                                    <requestFocus />
+                                </ImageView>-->
             </FrameLayout>
 
             <LinearLayout
@@ -512,14 +534,15 @@
             style="@style/ExtendedFloatingActionButton"
             android:textColor="?attr/textColor"
             tools:ignore="ContentDescription" />
+
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:text="@string/home_random"
-        android:id="@+id/home_random"
-        android:layout_gravity="bottom|start"
-        app:icon="@drawable/ic_baseline_play_arrow_24"
-        style="@style/ExtendedFloatingActionButton"
-        android:textColor="?attr/textColor"
-        tools:ignore="ContentDescription" />
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:text="@string/home_random"
+            android:id="@+id/home_random"
+            android:layout_gravity="bottom|start"
+            app:icon="@drawable/ic_baseline_play_arrow_24"
+            style="@style/ExtendedFloatingActionButton"
+            android:textColor="?attr/textColor"
+            tools:ignore="ContentDescription" />
 </FrameLayout>
