@@ -437,7 +437,8 @@ class ResultViewModel : ViewModel() {
                         for ((index, i) in d.episodes.sortedBy {
                             (it.season?.times(10000) ?: 0) + (it.episode ?: 0)
                         }.withIndex()) {
-                            val id = mainId + (i.season?.times(100000) ?: 0) + (i.episode ?: 0) + 1
+                            val episode = i.episode ?: (index + 1)
+                            val id = mainId + (i.season?.times(100000) ?: 0) + episode + 1
                             if (!existingEpisodes.contains(id)) {
                                 existingEpisodes.add(id)
                                 episodes.add(
@@ -445,7 +446,7 @@ class ResultViewModel : ViewModel() {
                                         d.name,
                                         filterName(i.name),
                                         i.posterUrl,
-                                        i.episode ?: (index + 1),
+                                        episode,
                                         i.season,
                                         i.data,
                                         apiName,
