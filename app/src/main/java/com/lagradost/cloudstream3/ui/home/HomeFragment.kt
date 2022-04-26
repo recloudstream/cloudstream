@@ -101,6 +101,21 @@ class HomeFragment : Fragment() {
         var currentSpan = 1
         val listHomepageItems = mutableListOf<SearchResponse>()
 
+        private val errorProfilePics = listOf(
+            R.drawable.monke_benene,
+            R.drawable.monke_burrito,
+            R.drawable.monke_coco,
+            R.drawable.monke_cookie,
+            R.drawable.monke_flusdered,
+            R.drawable.monke_funny,
+            R.drawable.monke_like,
+            R.drawable.monke_party,
+            R.drawable.monke_sob,
+            R.drawable.monke_drink,
+        )
+
+        val errorProfilePic = errorProfilePics.random()
+
         fun Activity.loadHomepageList(item: HomePageList) {
             val context = this
             val bottomSheetDialogBuilder = BottomSheetDialog(context)
@@ -865,7 +880,7 @@ class HomeFragment : Fragment() {
             for (syncApi in OAuth2API.OAuth2Apis) {
                 val login = syncApi.loginInfo()
                 val pic = login?.profilePicture
-                if (home_profile_picture?.setImage(pic) == true) {
+                if (home_profile_picture?.setImage(pic, errorImageDrawable = errorProfilePic) == true) {
                     home_profile_picture_holder?.isVisible = true
                     break
                 }

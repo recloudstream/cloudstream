@@ -97,7 +97,7 @@ class ProviderTests {
                             continue
                         }
 
-                        val url = (load.episodes[load.episodes.keys.first()])?.first()?.url
+                        val url = (load.episodes[load.episodes.keys.first()])?.first()?.data
                         validResults = loadLinks(api, url)
                         if (!validResults) continue
                     }

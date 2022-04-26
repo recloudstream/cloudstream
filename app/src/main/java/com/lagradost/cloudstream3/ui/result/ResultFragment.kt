@@ -145,17 +145,17 @@ fun ResultEpisode.getDisplayPosition(): Long {
 
 fun buildResultEpisode(
     headerName: String,
-    name: String?,
-    poster: String?,
+    name: String? = null,
+    poster: String? = null,
     episode: Int,
-    season: Int?,
+    season: Int? = null,
     data: String,
     apiName: String,
     id: Int,
     index: Int,
-    rating: Int?,
-    description: String?,
-    isFiller: Boolean?,
+    rating: Int? = null,
+    description: String? = null,
+    isFiller: Boolean? = null,
     tvType: TvType,
     parentId: Int,
 ): ResultEpisode {
@@ -1478,6 +1478,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             when (startAction) {
                 START_ACTION_RESUME_LATEST -> {
                     for (ep in episodeList) {
+                        println("WATCH STATUS::: S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
                         if (ep.getWatchProgress() > 0.90f) { // watched too much
                             continue
                         }
@@ -1488,6 +1489,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 START_ACTION_LOAD_EP -> {
                     for (ep in episodeList) {
                         if (ep.id == startValue) { // watched too much
+                            println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
                             handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
                             break
                         }

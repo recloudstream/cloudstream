@@ -19,7 +19,6 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import okhttp3.Headers
 import okhttp3.Interceptor
 import java.text.SimpleDateFormat
 import java.util.*
@@ -530,9 +529,9 @@ enum class ShowStatus {
     Ongoing,
 }
 
-enum class DubStatus {
-    Dubbed,
-    Subbed,
+enum class DubStatus(val id: Int) {
+    Dubbed(1),
+    Subbed(0),
 }
 
 enum class TvType {

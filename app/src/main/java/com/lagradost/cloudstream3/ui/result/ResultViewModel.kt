@@ -389,33 +389,35 @@ class ResultViewModel : ViewModel() {
                         val fillerEpisodes =
                             if (showFillers) safeApiCall { getFillerEpisodes(d.name) } else null
 
-                        var idIndex = 0
+                        val existingEpisodes = HashSet<Int>()
                         val res = d.episodes.map { ep ->
                             val episodes = ArrayList<ResultEpisode>()
+                            val idIndex = ep.key.id
                             for ((index, i) in ep.value.withIndex()) {
-
                                 val episode = i.episode ?: (index + 1)
-                                episodes.add(buildResultEpisode(
-                                    d.name,
-                                    filterName(i.name),
-                                    i.posterUrl,
-                                    episode,
-                                    i.season,
-                                    i.data,
-                                    apiName,
-                                    mainId + index + 1 + idIndex * 100000,
-                                    index,
-                                    i.rating,
-                                    i.description,
-                                    if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
-                                        it.contains(episode) && it[episode] == true
-                                    } ?: false else false,
-                                    d.type,
-                                    mainId
-                                ))
+                                val id = mainId + episode + idIndex * 1000000
+                                if (!existingEpisodes.contains(episode)) {
+                                    existingEpisodes.add(id)
+                                    episodes.add(buildResultEpisode(
+                                        d.name,
+                                        filterName(i.name),
+                                        i.posterUrl,
+                                        episode,
+                                        i.season,
+                                        i.data,
+                                        apiName,
+                                        id,
+                                        index,
+                                        i.rating,
+                                        i.description,
+                                        if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
+                                            it.contains(episode) && it[episode] == true
+                                        } ?: false else false,
+                                        d.type,
+                                        mainId
+                                    ))
+                                }
                             }
-                            idIndex++
-                            episodes.sortBy { it.episode }
 
                             Pair(ep.key, episodes)
                         }.toMap()
@@ -431,27 +433,33 @@ class ResultViewModel : ViewModel() {
 
                     is TvSeriesLoadResponse -> {
                         val episodes = ArrayList<ResultEpisode>()
-                        for ((index, i) in d.episodes.withIndex()) {
-                            episodes.add(
-                                buildResultEpisode(
-                                    d.name,
-                                    filterName(i.name),
-                                    i.posterUrl,
-                                    i.episode ?: (index + 1),
-                                    i.season,
-                                    i.data,
-                                    apiName,
-                                    (mainId + index + 1).hashCode(),
-                                    index,
-                                    i.rating,
-                                    i.description,
-                                    null,
-                                    d.type,
-                                    mainId
+                        val existingEpisodes = HashSet<Int>()
+                        for ((index, i) in d.episodes.sortedBy {
+                            (it.season?.times(10000) ?: 0) + (it.episode ?: 0)
+                        }.withIndex()) {
+                            val id = mainId + (i.season?.times(100000) ?: 0) + (i.episode ?: 0) + 1
+                            if (!existingEpisodes.contains(id)) {
+                                existingEpisodes.add(id)
+                                episodes.add(
+                                    buildResultEpisode(
+                                        d.name,
+                                        filterName(i.name),
+                                        i.posterUrl,
+                                        i.episode ?: (index + 1),
+                                        i.season,
+                                        i.data,
+                                        apiName,
+                                        id,
+                                        index,
+                                        i.rating,
+                                        i.description,
+                                        null,
+                                        d.type,
+                                        mainId
+                                    )
                                 )
-                            )
+                            }
                         }
-                        episodes.sortBy { (it.season?.times(10000) ?: 0) + it.episode }
                         updateEpisodes(mainId, episodes, -1)
                     }
                     is MovieLoadResponse -> {

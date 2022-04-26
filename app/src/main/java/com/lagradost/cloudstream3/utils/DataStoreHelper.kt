@@ -14,7 +14,7 @@ import com.lagradost.cloudstream3.ui.WatchType
 const val VIDEO_POS_DUR = "video_pos_dur"
 const val RESULT_WATCH_STATE = "result_watch_state"
 const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
-const val RESULT_RESUME_WATCHING = "result_resume_watching"
+const val RESULT_RESUME_WATCHING = "result_resume_watching_2" // changed due to id changes
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 

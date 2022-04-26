@@ -19,6 +19,7 @@ import android.widget.ListAdapter
 import android.widget.ListView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
@@ -148,14 +149,24 @@ object UIHelper {
         return color
     }
 
-    fun ImageView?.setImage(url: String?, headers: Map<String, String>? = null): Boolean {
+    fun ImageView?.setImage(
+        url: String?,
+        headers: Map<String, String>? = null,
+        @DrawableRes
+        errorImageDrawable: Int? = null
+    ): Boolean {
         if (this == null || url.isNullOrBlank()) return false
         return try {
-            GlideApp.with(this.context)
+            val builder = GlideApp.with(this.context)
                 .load(GlideUrl(url) { headers ?: emptyMap() }).transition(
                     DrawableTransitionOptions.withCrossFade()
                 )
-                .into(this)
+
+            if (errorImageDrawable != null)
+                builder.error(errorImageDrawable).into(this)
+            else
+                builder.into(this)
+
             true
         } catch (e: Exception) {
             logError(e)
@@ -316,7 +327,7 @@ object UIHelper {
     }
 
     fun Context?.IsBottomLayout(): Boolean {
-        if(this == null) return true
+        if (this == null) return true
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         return settingsManager.getBoolean(getString(R.string.bottom_title_key), true)
     }
