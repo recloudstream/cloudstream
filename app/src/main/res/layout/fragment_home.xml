@@ -191,7 +191,7 @@
 
                     <androidx.cardview.widget.CardView
                             android:id="@+id/home_profile_picture_holder"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginEnd="10dp"
                             app:cardCornerRadius="100dp"
                             android:layout_gravity="center_vertical"
                             android:layout_width="40dp"
@@ -324,6 +324,7 @@
                         android:layout_height="40sp" />
 
                 <LinearLayout
+                        android:visibility="visible"
                         android:padding="5dp"
                         android:layout_gravity="center"
                         android:gravity="center"

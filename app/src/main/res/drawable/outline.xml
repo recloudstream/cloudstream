@@ -3,8 +3,8 @@
     <stroke android:width="2dp"
             android:color="?attr/white"/>
     <corners
-            android:bottomLeftRadius="2dp"
-            android:bottomRightRadius="2dp"
-            android:topLeftRadius="2dp"
-            android:topRightRadius="2dp" />
+            android:bottomLeftRadius="@dimen/rounded_image_radius"
+            android:bottomRightRadius="@dimen/rounded_image_radius"
+            android:topLeftRadius="@dimen/rounded_image_radius"
+            android:topRightRadius="@dimen/rounded_image_radius" />
 </shape>
