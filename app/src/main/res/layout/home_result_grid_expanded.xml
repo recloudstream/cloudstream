@@ -9,6 +9,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:backgroundTint="@color/transparent"
         android:foreground="@drawable/outline_drawable"
+        app:cardElevation="0dp"
         android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/rounded_image_radius"
         android:layout_margin="2dp"
