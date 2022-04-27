@@ -35,7 +35,7 @@ object SearchResultBuilder {
         val textIsSub: TextView? = itemView.text_is_sub
         val textQuality: TextView? = itemView.text_quality
 
-        val bg: CardView = itemView.backgroundCard
+        val bg: CardView = itemView.background_card
 
         val bar: ProgressBar? = itemView.watchProgress
         val playImg: ImageView? = itemView.search_item_download_play

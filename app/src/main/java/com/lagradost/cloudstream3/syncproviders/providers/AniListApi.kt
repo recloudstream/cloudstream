@@ -70,7 +70,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         return user != null
     }
 
-    override fun getIdFromUrl(url : String): String {
+    override fun getIdFromUrl(url: String): String {
         return url.removePrefix("$mainUrl/anime/").removeSuffix("/")
     }
 
@@ -746,8 +746,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
   					}
 				}"""
         val data = postApi(q)
-        if (data == "") return null
-        val userData = mapper.readValue<AniListRoot>(data ?: return null)
+        if (data.isNullOrBlank()) return null
+        val userData = mapper.readValue<AniListRoot>(data)
         val u = userData.data?.Viewer
         val user = AniListUser(
             u?.id,
@@ -823,6 +823,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         //@JsonProperty("rating") val rating: Int,
         @JsonProperty("node") val node: Recommendation,
     )
+
     data class Recommendation(
         @JsonProperty("mediaRecommendation") val mediaRecommendation: SeasonMedia,
     )

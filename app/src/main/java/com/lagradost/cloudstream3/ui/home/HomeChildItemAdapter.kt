@@ -92,7 +92,7 @@ class HomeChildItemAdapter(
             itemView.tag = position
 
             if (position == 0) { // to fix tv
-                itemView.backgroundCard?.nextFocusLeftId = R.id.nav_rail_view
+                itemView.background_card?.nextFocusLeftId = R.id.nav_rail_view
             }
             //val ani = ScaleAnimation(0.9f, 1.0f, 0.9f, 1f)
             //ani.fillAfter = true

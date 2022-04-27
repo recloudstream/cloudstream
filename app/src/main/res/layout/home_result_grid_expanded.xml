@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/rounded_image_radius"
         android:layout_margin="2dp"
+        android:id="@+id/background_card"
         android:layout_width="wrap_content">
 
     <LinearLayout
@@ -25,7 +26,6 @@
                 android:layout_height="180dp"
                 android:elevation="10dp"
                 app:cardCornerRadius="@dimen/rounded_image_radius"
-                android:id="@+id/backgroundCard"
                 app:cardBackgroundColor="?attr/primaryGrayBackground">
 
             <ImageView

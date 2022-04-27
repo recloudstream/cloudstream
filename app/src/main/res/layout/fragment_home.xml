@@ -198,6 +198,7 @@
                             android:layout_height="40dp">
 
                         <ImageView
+                                android:scaleType="centerCrop"
                                 android:id="@+id/home_profile_picture"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
