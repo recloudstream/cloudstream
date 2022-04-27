@@ -14,9 +14,13 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.cast_item.view.*
 
-class ActorAdaptor(
-    private val actors: MutableList<ActorData>,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ActorAdaptor() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    data class ActorMetaData(
+        var isInverted: Boolean,
+        val actor: ActorData,
+    )
+
+    private val actors: MutableList<ActorMetaData> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return CardViewHolder(
@@ -27,7 +31,10 @@ class ActorAdaptor(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is CardViewHolder -> {
-                holder.bind(actors[position])
+                holder.bind(actors[position].actor, actors[position].isInverted, position) {
+                    actors[position].isInverted = !actors[position].isInverted
+                    this.notifyItemChanged(position)
+                }
             }
         }
     }
@@ -36,7 +43,7 @@ class ActorAdaptor(
         return actors.size
     }
 
-    fun updateList(newList: List<ActorData>) {
+    private fun updateActorList(newList: List<ActorMetaData>) {
         val diffResult = DiffUtil.calculateDiff(
             ActorDiffCallback(this.actors, newList)
         )
@@ -45,6 +52,18 @@ class ActorAdaptor(
         actors.addAll(newList)
 
         diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun updateList(newList: List<ActorData>) {
+        if (actors.size >= newList.size) {
+            updateActorList(newList.mapIndexed { i, data -> actors[i].copy(actor = data) })
+        } else {
+            updateActorList(newList.mapIndexed { i, data ->
+                if (i < actors.size)
+                    actors[i].copy(actor = data)
+                else ActorMetaData(isInverted = false, actor = data)
+            })
+        }
     }
 
     private class CardViewHolder
@@ -59,10 +78,21 @@ class ActorAdaptor(
         private val voiceActorImageHolder: View = itemView.voice_actor_image_holder
         private val voiceActorName: TextView = itemView.voice_actor_name
 
-        fun bind(card: ActorData) {
-            actorImage.setImage(card.actor.image)
-            actorName.text = card.actor.name
-            card.role?.let {
+        fun bind(actor: ActorData, isInverted: Boolean, position: Int, callback: (Int) -> Unit) {
+            val (mainImg, vaImage) = if (!isInverted || actor.voiceActor?.image.isNullOrBlank()) {
+                Pair(actor.actor.image, actor.voiceActor?.image)
+            } else {
+                Pair(actor.voiceActor?.image, actor.actor.image)
+            }
+
+            itemView.setOnClickListener {
+                callback(position)
+            }
+
+            actorImage.setImage(mainImg)
+
+            actorName.text = actor.actor.name
+            actor.role?.let {
                 actorExtra.context?.getString(
                     when (it) {
                         ActorRole.Main -> {
@@ -79,31 +109,31 @@ class ActorAdaptor(
                     actorExtra.isVisible = true
                     actorExtra.text = text
                 }
-            } ?: card.roleString?.let {
+            } ?: actor.roleString?.let {
                 actorExtra.isVisible = true
                 actorExtra.text = it
             } ?: run {
                 actorExtra.isVisible = false
             }
 
-            if (card.voiceActor == null) {
+            if (actor.voiceActor == null) {
                 voiceActorImageHolder.isVisible = false
                 voiceActorName.isVisible = false
             } else {
-                voiceActorName.text = card.voiceActor.name
-                voiceActorImageHolder.isVisible = voiceActorImage.setImage(card.voiceActor.image)
+                voiceActorName.text = actor.voiceActor.name
+                voiceActorImageHolder.isVisible = voiceActorImage.setImage(vaImage)
             }
         }
     }
 }
 
 class ActorDiffCallback(
-    private val oldList: List<ActorData>,
-    private val newList: List<ActorData>
+    private val oldList: List<ActorAdaptor.ActorMetaData>,
+    private val newList: List<ActorAdaptor.ActorMetaData>
 ) :
     DiffUtil.Callback() {
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-        oldList[oldItemPosition].actor.name == newList[newItemPosition].actor.name
+        oldList[oldItemPosition].actor.actor.name == newList[newItemPosition].actor.actor.name
 
     override fun getOldListSize() = oldList.size
 

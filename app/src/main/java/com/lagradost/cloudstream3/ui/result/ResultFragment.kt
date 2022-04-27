@@ -673,7 +673,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         result_cast_items?.let {
             PanelsChildGestureRegionObserver.Provider.get().register(it)
         }
-        result_cast_items?.adapter = ActorAdaptor(mutableListOf())
+        result_cast_items?.adapter = ActorAdaptor()
         fixGrid()
         result_recommendations?.spanCount = 3
         result_overlapping_panels?.setStartPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)

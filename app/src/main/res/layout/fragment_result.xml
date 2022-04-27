@@ -392,7 +392,7 @@
                             android:nextFocusRight="@id/result_search"
                             android:nextFocusUp="@id/result_description"
 
-                            android:nextFocusDown="@id/result_play_movie"
+                            android:nextFocusDown="@id/result_cast_items"
                             android:paddingTop="0dp"
                             app:cornerRadius="4dp"
                             app:icon="@drawable/ic_baseline_bookmark_24"
@@ -411,6 +411,9 @@
                             tools:text="Cast: Joe Ligma" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                            android:nextFocusUp="@id/result_bookmark_button"
+                            android:nextFocusDown="@id/result_play_movie"
+
                             android:id="@+id/result_cast_items"
                             android:layout_width="match_parent"
                             android:descendantFocusability="afterDescendants"

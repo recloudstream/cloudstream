@@ -6,15 +6,16 @@
         android:nextFocusLeft="@id/episode_poster"
         android:nextFocusRight="@id/result_episode_download"
         android:id="@+id/episode_holder"
-
+        app:cardElevation="0dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/rounded_image_radius"
-        app:cardBackgroundColor="?attr/primaryBlackBackground"
+        app:cardBackgroundColor="@color/transparent"
 
         android:foreground="@drawable/outline_drawable"
-        android:layout_marginEnd="10dp">
+        android:layout_margin="5dp">
     <LinearLayout
+            android:padding="5dp"
             android:layout_width="100dp"
             android:orientation="vertical"
             android:layout_height="wrap_content">
