@@ -109,9 +109,9 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-                tools:text="The Perfect Run\nThe Perfect Run"
+                tools:text="The Perfect Run\nThe Perfect Run\nhello"
                 android:layout_width="match_parent"
-                android:layout_height="40sp"
+                android:layout_height="wrap_content"
                 android:textSize="13sp"
                 android:gravity="center"
                 android:layout_gravity="bottom"
@@ -119,6 +119,7 @@
                 android:paddingTop="5dp"
                 android:textColor="@color/textColor"
                 android:id="@+id/imageText"
+                android:minLines="2"
                 android:maxLines="2"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
