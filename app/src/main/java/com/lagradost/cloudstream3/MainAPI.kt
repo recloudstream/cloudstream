@@ -83,6 +83,8 @@ object APIHolder {
             SoaptwoDayProvider(),
             HDMProvider(),// disabled due to cloudflare
             TheFlixToProvider(),
+            StreamingcommunityProvider(),
+            TantifilmProvider(),
 
             // Metadata providers
             //TmdbProvider(),
