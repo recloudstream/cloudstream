@@ -267,13 +267,14 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         }
 
         private fun getFolder(currentType: TvType, titleName: String): String {
+            val sanitizedFileName = sanitizeFilename(titleName)
             return when (currentType) {
-                TvType.Anime -> "Anime/$titleName"
+                TvType.Anime -> "Anime/$sanitizedFileName"
                 TvType.Movie -> "Movies"
                 TvType.AnimeMovie -> "Movies"
-                TvType.TvSeries -> "TVSeries/$titleName"
+                TvType.TvSeries -> "TVSeries/$sanitizedFileName"
                 TvType.OVA -> "OVA"
-                TvType.Cartoon -> "Cartoons/$titleName"
+                TvType.Cartoon -> "Cartoons/$sanitizedFileName"
                 TvType.Torrent -> "Torrent"
                 TvType.Documentary -> "Documentaries"
                 TvType.AsianDrama -> "AsianDrama"
