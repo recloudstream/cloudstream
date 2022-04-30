@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.net.URI
 import java.util.*
 import javax.crypto.Cipher
@@ -34,7 +35,7 @@ class GogoanimeProvider : MainAPI() {
          * */
         private fun getKey(id: String): String? {
             return normalSafeApiCall {
-                 id.map {
+                id.map {
                     it.code.toString(16)
                 }.joinToString("").substring(0, 32)
             }
@@ -77,6 +78,7 @@ class GogoanimeProvider : MainAPI() {
          * @param secretKey secret key for decryption from site, required non-null if isUsingAdaptiveKeys is off
          * @param secretDecryptKey secret key to decrypt the response json, required non-null if isUsingAdaptiveKeys is off
          * @param isUsingAdaptiveKeys generates keys from IV and ID, see getKey()
+         * @param isUsingAdaptiveData generate encrypt-ajax data based on $("script[data-name='episode']")[0].dataset.value
          * */
         suspend fun extractVidstream(
             iframeUrl: String,
@@ -86,7 +88,8 @@ class GogoanimeProvider : MainAPI() {
             secretKey: String?,
             secretDecryptKey: String?,
             // This could be removed, but i prefer it verbose
-            isUsingAdaptiveKeys: Boolean
+            isUsingAdaptiveKeys: Boolean,
+            isUsingAdaptiveData: Boolean
         ) = safeApiCall {
             // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt
             // No Licence on the following code
@@ -98,8 +101,10 @@ class GogoanimeProvider : MainAPI() {
 
             val id = Regex("id=([^&]+)").find(iframeUrl)!!.value.removePrefix("id=")
 
+            var document: Document? = null
             val foundIv =
-                iv ?: app.get(iframeUrl).document.select("""div.wrapper[class*=container]""")
+                iv ?: app.get(iframeUrl).document.also { document = it }
+                    .select("""div.wrapper[class*=container]""")
                     .attr("class").split("-").lastOrNull() ?: return@safeApiCall
             val foundKey = secretKey ?: getKey(base64Decode(id) + foundIv) ?: return@safeApiCall
             val foundDecryptKey = secretDecryptKey ?: foundKey
@@ -108,9 +113,19 @@ class GogoanimeProvider : MainAPI() {
             val mainUrl = "https://" + uri.host
 
             val encryptedId = cryptoHandler(id, foundIv, foundKey)
+            val encryptRequestData = if (isUsingAdaptiveData) {
+                // Only fetch the document if necessary
+                val realDocument = document ?: app.get(iframeUrl).document
+                val dataEncrypted = realDocument.select("script[data-name='episode']").attr("data-value")
+                val headers = cryptoHandler(dataEncrypted, foundIv, foundKey, false)
+                "id=$encryptedId&alias=$id&" + headers.substringAfter("&")
+            } else {
+                "id=$encryptedId&alias=$id"
+            }
+
             val jsonResponse =
                 app.get(
-                    "$mainUrl/encrypt-ajax.php?id=$encryptedId&alias=$id",
+                    "$mainUrl/encrypt-ajax.php?$encryptRequestData",
                     headers = mapOf("X-Requested-With" to "XMLHttpRequest")
                 )
             val dataencrypted =
@@ -129,7 +144,7 @@ class GogoanimeProvider : MainAPI() {
                             source.file,
                             mainUrl,
                             headers = mapOf("Referer" to "https://gogoplay4.com")
-                        ).forEach (sourceCallback)
+                        ).forEach(sourceCallback)
                     }
                     source.file.contains("vidstreaming") -> {
                         sourceCallback.invoke(
@@ -382,9 +397,9 @@ class GogoanimeProvider : MainAPI() {
                             loadExtractor(data, streamingResponse.url, callback)
                         }
                 }, {
-                    val iv = "4968442212618524"
-                    val secretKey = "34541577475429958244002440089157"
-                    val secretDecryptKey = "20945647121183498244002440089157"
+                    val iv = "3134003223491201"
+                    val secretKey = "37911490979715163134003223491201"
+                    val secretDecryptKey = "54674138327930866480207815084989"
                     extractVidstream(
                         iframe,
                         this.name,
@@ -392,7 +407,8 @@ class GogoanimeProvider : MainAPI() {
                         iv,
                         secretKey,
                         secretDecryptKey,
-                        false
+                        isUsingAdaptiveKeys = false,
+                        isUsingAdaptiveData = true
                     )
                 })
             }

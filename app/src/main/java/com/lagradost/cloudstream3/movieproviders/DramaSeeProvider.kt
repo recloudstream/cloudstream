@@ -199,7 +199,10 @@ class DramaSeeProvider : MainAPI() {
                     url.startsWith("https://asianembed.io") || url.startsWith("https://asianload.io") -> {
                         val iv = "9262859232435825"
                         val secretKey = "93422192433952489752342908585752"
-                        extractVidstream(url, this.name, callback, iv, secretKey, secretKey, false)
+                        extractVidstream(url, this.name, callback, iv, secretKey, secretKey,
+                            isUsingAdaptiveKeys = false,
+                            isUsingAdaptiveData = false
+                        )
                         AsianEmbedHelper.getUrls(url, callback)
                     }
                     url.startsWith("https://embedsito.com") -> {

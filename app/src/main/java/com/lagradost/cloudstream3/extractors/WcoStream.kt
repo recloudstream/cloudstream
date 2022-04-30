@@ -1,10 +1,8 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
@@ -48,7 +46,7 @@ class VizcloudDigital : WcoStream() {
 }
 
 open class WcoStream : ExtractorApi() {
-    override var name = "VidStream" //Cause works for animekisa and wco
+    override var name = "VidStream" // Cause works for animekisa and wco
     override var mainUrl = "https://vidstream.pro"
     override val requiresReferer = false
 
@@ -65,8 +63,6 @@ open class WcoStream : ExtractorApi() {
         val apiLink = "$baseUrl/info/$Id?domain=wcostream.cc&skey=$skey"
         val referrer = "$baseUrl/e/$Id?domain=wcostream.cc"
 
-        val response = app.get(apiLink, headers = mapOf("Referer" to referrer)).text
-
         data class Sources(
             @JsonProperty("file") val file: String,
             @JsonProperty("label") val label: String?
@@ -81,14 +77,14 @@ open class WcoStream : ExtractorApi() {
             @JsonProperty("media") val media: Media
         )
 
-        val mapped = response.let { mapper.readValue<WcoResponse>(it) }
+        val mapped = app.get(apiLink, headers = mapOf("Referer" to referrer)).mapped<WcoResponse>()
         val sources = mutableListOf<ExtractorLink>()
 
         if (mapped.success) {
             mapped.media.sources.forEach {
                 if (mainUrl == "https://vizcloud2.ru" || mainUrl == "https://vizcloud.online") {
                     if (it.file.contains("vizcloud2.ru") || it.file.contains("vizcloud.online")) {
-                        //Had to do this thing 'cause "list.m3u8#.mp4" gives 404 error so no quality is added
+                        // Had to do this thing 'cause "list.m3u8#.mp4" gives 404 error so no quality is added
                         val link1080 = it.file.replace("list.m3u8#.mp4", "H4/v.m3u8")
                         val link720 = it.file.replace("list.m3u8#.mp4", "H3/v.m3u8")
                         val link480 = it.file.replace("list.m3u8#.mp4", "H2/v.m3u8")
@@ -123,17 +119,26 @@ open class WcoStream : ExtractorApi() {
                             }
                         }
                     }
-                }
-                if (mainUrl == "https://vidstream.pro" || mainUrl == "https://vidstreamz.online" || mainUrl == "https://vizcloud2.online"
-                    || mainUrl == "https://vizcloud.xyz" || mainUrl == "https://vizcloud.live" || mainUrl == "https://vizcloud.info"
-                    || mainUrl == "https://mwvn.vizcloud.info" || mainUrl == "https://vizcloud.digital"
+                } else if (
+                    arrayOf(
+                        "https://vidstream.pro",
+                        "https://vidstreamz.online",
+                        "https://vizcloud2.online",
+                        "https://vizcloud.xyz",
+                        "https://vizcloud.live",
+                        "https://vizcloud.info",
+                        "https://mwvn.vizcloud.info",
+                        "https://vizcloud.digital"
+                    ).contains(mainUrl)
                 ) {
                     if (it.file.contains("m3u8")) {
-                        generateM3u8(
-                            name,
-                            it.file.replace("#.mp4", ""),
-                            url,
-                            headers = mapOf("Referer" to url)
+                        sources.addAll(
+                            generateM3u8(
+                                name,
+                                it.file.replace("#.mp4", ""),
+                                url,
+                                headers = mapOf("Referer" to url)
+                            )
                         )
                     } else {
                         sources.add(
