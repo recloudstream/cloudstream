@@ -62,7 +62,7 @@
     "BflixProvider": {
         "name": "Bflix",
         "status": 1,
-        "url": "https://bflix.to"
+        "url": "https://bflix.ru"
     },
     "CinecalidadProvider": {
         "name": "Cinecalidad",
