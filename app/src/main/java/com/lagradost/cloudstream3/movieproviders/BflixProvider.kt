@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 
 open class BflixProvider : MainAPI() {
-    override var mainUrl = "https://bflix.to"
+    override var mainUrl = "https://bflix.ru"
     override var name = "Bflix"
     override val hasMainPage = true
     override val hasChromecastSupport = true

@@ -409,6 +409,11 @@ class HomeFragment : Fragment() {
             setKey(HOMEPAGE_API, apiName)
             home_api_fab?.text = apiName
             home_provider_name?.text = apiName
+            try {
+                home_search?.queryHint = getString(R.string.search_hint_site).format(apiName)
+            } catch (e: Exception) {
+                logError(e)
+            }
             home_provider_meta_info?.isVisible = false
 
             getApiFromNameNull(apiName)?.let { currentApi ->
@@ -880,7 +885,11 @@ class HomeFragment : Fragment() {
             for (syncApi in OAuth2API.OAuth2Apis) {
                 val login = syncApi.loginInfo()
                 val pic = login?.profilePicture
-                if (home_profile_picture?.setImage(pic, errorImageDrawable = errorProfilePic) == true) {
+                if (home_profile_picture?.setImage(
+                        pic,
+                        errorImageDrawable = errorProfilePic
+                    ) == true
+                ) {
                     home_profile_picture_holder?.isVisible = true
                     break
                 }

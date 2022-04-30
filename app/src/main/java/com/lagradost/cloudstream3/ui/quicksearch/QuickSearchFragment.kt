@@ -140,6 +140,11 @@ class QuickSearchFragment : Fragment() {
                     SearchHelper.handleSearchClickCallback(activity, callback)
                 }
             }
+            try {
+                quick_search?.queryHint = getString(R.string.search_hint_site).format(providers?.first())
+            } catch (e: Exception) {
+                logError(e)
+            }
         } else {
             quick_search_master_recycler?.adapter =
                 ParentItemAdapter(mutableListOf(), { callback ->

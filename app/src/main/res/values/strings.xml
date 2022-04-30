@@ -90,6 +90,8 @@
     <string name="title_settings">Settings</string>
 
     <string name="search_hint">Search…</string>
+    <string name="search_hint_site" formatted="true">Search %s…</string>
+
     <string name="no_data">No Data</string>
     <string name="episode_more_options_des">More Options</string>
     <string name="next_episode">Next episode</string>
