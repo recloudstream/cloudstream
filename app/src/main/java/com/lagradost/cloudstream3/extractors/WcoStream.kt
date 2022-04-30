@@ -103,11 +103,13 @@ open class WcoStream : ExtractorApi() {
                         ).apmap { serverurl ->
                             val testurl = app.get(serverurl, headers = mapOf("Referer" to url)).text
                             if (testurl.contains("EXTM3")) {
-                                val quality = if (serverurl.contains("H4")) "1080p"
-                                else if (serverurl.contains("H3")) "720p"
-                                else if (serverurl.contains("H2")) "480p"
-                                else if (serverurl.contains("H1")) "360p"
-                                else "Auto"
+                                val quality = when {
+                                    serverurl.contains("H4") -> "1080p"
+                                    serverurl.contains("H3") -> "720p"
+                                    serverurl.contains("H2") -> "480p"
+                                    serverurl.contains("H1") -> "360p"
+                                    else -> "Auto"
+                                }
                                 sources.add(
                                     ExtractorLink(
                                         "VidStream",

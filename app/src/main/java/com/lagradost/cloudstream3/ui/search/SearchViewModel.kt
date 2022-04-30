@@ -47,10 +47,11 @@ class SearchViewModel : ViewModel() {
     fun searchAndCancel(
         query: String,
         providersActive: Set<String> = setOf(),
-        ignoreSettings: Boolean = false
+        ignoreSettings: Boolean = false,
+        isQuickSearch: Boolean = false,
     ) {
         onGoingSearch?.cancel()
-        onGoingSearch = search(query, providersActive, ignoreSettings)
+        onGoingSearch = search(query, providersActive, ignoreSettings, isQuickSearch)
     }
 
     fun updateHistory() = viewModelScope.launch {
@@ -65,7 +66,8 @@ class SearchViewModel : ViewModel() {
     private fun search(
         query: String,
         providersActive: Set<String>,
-        ignoreSettings: Boolean = false
+        ignoreSettings: Boolean = false,
+        isQuickSearch: Boolean = false,
     ) =
         viewModelScope.launch {
             if (query.length <= 1) {
@@ -73,17 +75,19 @@ class SearchViewModel : ViewModel() {
                 return@launch
             }
 
-            val key = query.hashCode().toString()
-            setKey(
-                SEARCH_HISTORY_KEY,
-                key,
-                SearchHistoryItem(
-                    searchedAt = System.currentTimeMillis(),
-                    searchText = query,
-                    type = emptyList(), // TODO implement tv type
-                    key = key,
+            if (!isQuickSearch) {
+                val key = query.hashCode().toString()
+                setKey(
+                    SEARCH_HISTORY_KEY,
+                    key,
+                    SearchHistoryItem(
+                        searchedAt = System.currentTimeMillis(),
+                        searchText = query,
+                        type = emptyList(), // TODO implement tv type
+                        key = key,
+                    )
                 )
-            )
+            }
 
             _searchResponse.postValue(Resource.Loading())
 
@@ -93,9 +97,9 @@ class SearchViewModel : ViewModel() {
 
             withContext(Dispatchers.IO) { // This interrupts UI otherwise
                 repos.filter { a ->
-                    ignoreSettings || (providersActive.isEmpty() || providersActive.contains(a.name))
+                    (ignoreSettings || (providersActive.isEmpty() || providersActive.contains(a.name))) && (!isQuickSearch || a.hasQuickSearch)
                 }.apmap { a -> // Parallel
-                    val search = a.search(query)
+                    val search = if (isQuickSearch) a.quickSearch(query) else a.search(query)
                     currentList.add(OnGoingSearch(a.name, search))
                     _currentSearch.postValue(currentList)
                 }

@@ -474,7 +474,7 @@ class HomeFragment : Fragment() {
 
         home_search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                QuickSearchFragment.pushSearch(activity, query)
+                QuickSearchFragment.pushSearch(activity, query, currentApiName?.let { arrayOf(it) })
 
                 return true
             }

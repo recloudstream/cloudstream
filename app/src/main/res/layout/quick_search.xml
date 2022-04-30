@@ -83,4 +83,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/homepage_parent" />
+
+    <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+            android:visibility="gone"
+            android:nextFocusLeft="@id/nav_rail_view"
+            android:descendantFocusability="afterDescendants"
+
+            android:background="?attr/primaryBlackBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="8dp"
+            android:paddingTop="5dp"
+            app:spanCount="3"
+            android:paddingEnd="8dp"
+            android:id="@+id/quick_search_autofit_results"
+            tools:listitem="@layout/search_result_grid"
+            android:orientation="vertical" />
 </LinearLayout>

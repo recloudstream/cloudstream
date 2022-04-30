@@ -384,7 +384,9 @@ object UIHelper {
         }
     }
 
-    fun hideKeyboard(view: View) {
+    fun hideKeyboard(view: View?) {
+        if(view == null) return
+
         val inputMethodManager =
             view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
