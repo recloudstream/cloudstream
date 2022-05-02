@@ -224,7 +224,7 @@ class StreamingcommunityProvider : MainAPI() {
         val document = app.get(url).document
 
         val films =
-            document.selectFirst("the-search-page").attr("records-json").replace("&quot;", """"""")
+            document.selectFirst("the-search-page")!!.attr("records-json").replace("&quot;", """"""")
 
         val searchresults = parseJson<List<VideoElement>>(films)
         return searchresults.map { result ->
@@ -289,7 +289,7 @@ class StreamingcommunityProvider : MainAPI() {
 
         val year = datajs.releaseDate.substringBefore("-")
 
-        val correlatijs = document.selectFirst("slider-title").attr("titles-json")
+        val correlatijs = document.selectFirst("slider-title")!!.attr("titles-json")
         val listacorr = mutableListOf<MovieSearchResponse>()
         val correlatidata = parseJson<List<VideoElement>>(correlatijs)
         val number : Int = if (correlatidata.size<=15) {correlatidata.size} else correlatidata.size-15
@@ -332,7 +332,7 @@ class StreamingcommunityProvider : MainAPI() {
             val episodeList = arrayListOf<Episode>()
 
             val episodes =
-                Html.fromHtml(document.selectFirst("season-select").attr("seasons")).toString()
+                Html.fromHtml(document.selectFirst("season-select")!!.attr("seasons")).toString()
             val jsonEpisodes = parseJson<List<Season>>(episodes)
 
             jsonEpisodes.map { seasons ->
@@ -365,7 +365,7 @@ class StreamingcommunityProvider : MainAPI() {
             return newTvSeriesLoadResponse(name, url, type, episodeList) {
                 this.posterUrl = poster
                 this.year = year.filter { it.isDigit() }.toInt()
-                this.plot = document.selectFirst("div.plot-wrap > p").text()
+                this.plot = document.selectFirst("div.plot-wrap > p")!!.text()
                 this.duration = datajs.runtime?.toInt()
                 this.rating = (datajs.votes[0].average.toFloatOrNull()?.times(1000))?.toInt()
                 this.tags = datajs.genres.map { it.name }
@@ -377,14 +377,14 @@ class StreamingcommunityProvider : MainAPI() {
         } else {
 
             return newMovieLoadResponse(
-                document.selectFirst("div > div > h1").text(),
+                document.selectFirst("div > div > h1")!!.text(),
                 document.select("a.play-hitzone").attr("href"),
                 type,
                 document.select("a.play-hitzone").attr("href")
             ) {
                 posterUrl = fixUrlNull(poster)
                 this.year = year.filter { it.isDigit() }.toInt()
-                this.plot = document.selectFirst("p.plot").text()
+                this.plot = document.selectFirst("p.plot")!!.text()
                 this.rating = datajs.votes[0].average.toFloatOrNull()?.times(1000)?.toInt()
                 this.tags = datajs.genres.map { it.name }
                 this.duration = datajs.runtime?.toInt()

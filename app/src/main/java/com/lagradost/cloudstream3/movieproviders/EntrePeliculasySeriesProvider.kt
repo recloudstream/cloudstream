@@ -30,14 +30,14 @@ class EntrepeliculasyseriesProvider:MainAPI() {
             try {
                 val soup = app.get(url).document
                 val home = soup.select("ul.list-movie li").map {
-                    val title = it.selectFirst("a.link-title h2").text()
-                    val link = it.selectFirst("a").attr("href")
+                    val title = it.selectFirst("a.link-title h2")!!.text()
+                    val link = it.selectFirst("a")!!.attr("href")
                     TvSeriesSearchResponse(
                         title,
                         link,
                         this.name,
                         if (link.contains("/pelicula/")) TvType.Movie else TvType.TvSeries,
-                        it.selectFirst("a.poster img").attr("src"),
+                        it.selectFirst("a.poster img")!!.attr("src"),
                         null,
                         null,
                     )
@@ -58,9 +58,9 @@ class EntrepeliculasyseriesProvider:MainAPI() {
         val document = app.get(url).document
 
         return document.select("li.xxx.TPostMv").map {
-            val title = it.selectFirst("h2.Title").text()
-            val href = it.selectFirst("a").attr("href")
-            val image = it.selectFirst("img.lazy").attr("data-src")
+            val title = it.selectFirst("h2.Title")!!.text()
+            val href = it.selectFirst("a")!!.attr("href")
+            val image = it.selectFirst("img.lazy")!!.attr("data-src")
             val isMovie = href.contains("/pelicula/")
 
             if (isMovie) {
@@ -90,13 +90,13 @@ class EntrepeliculasyseriesProvider:MainAPI() {
     override suspend fun load(url: String): LoadResponse? {
         val soup = app.get(url, timeout = 120).document
 
-        val title = soup.selectFirst("h1.title-post").text()
+        val title = soup.selectFirst("h1.title-post")!!.text()
         val description = soup.selectFirst("p.text-content:nth-child(3)")?.text()?.trim()
-        val poster: String? = soup.selectFirst("article.TPost img.lazy").attr("data-src")
+        val poster: String? = soup.selectFirst("article.TPost img.lazy")!!.attr("data-src")
         val episodes = soup.select(".TPostMv article").map { li ->
             val href = (li.select("a") ?: li.select(".C a") ?: li.select("article a")).attr("href")
-            val epThumb = li.selectFirst("div.Image img").attr("data-src")
-            val seasonid = li.selectFirst("span.Year").text().let { str ->
+            val epThumb = li.selectFirst("div.Image img")!!.attr("data-src")
+            val seasonid = li.selectFirst("span.Year")!!.text().let { str ->
                 str.split("x").mapNotNull { subStr -> subStr.toIntOrNull() }
             }
             val isValid = seasonid.size == 2
@@ -169,7 +169,7 @@ class EntrepeliculasyseriesProvider:MainAPI() {
                     //params = mapOf(Pair("h", postkey)),
                     data =  mapOf(Pair("h", postkey)),
                     allowRedirects = false
-                ).response.headers.values("location").apmap {
+                ).okhttpResponse.headers.values("location").apmap {
                     loadExtractor(it, data, callback)
                 }
             }

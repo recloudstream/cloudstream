@@ -79,7 +79,7 @@ object SyncUtil {
     suspend fun getUrlsFromId(id: String, type: String = "anilist") : List<String> {
         val url =
             "https://raw.githubusercontent.com/MALSync/MAL-Sync-Backup/master/data/$type/anime/$id.json"
-        val response = app.get(url, cacheTime = 1, cacheUnit = TimeUnit.DAYS).mapped<SyncPage>()
+        val response = app.get(url, cacheTime = 1, cacheUnit = TimeUnit.DAYS).parsed<SyncPage>()
         val pages = response.pages ?: return emptyList()
         return pages.gogoanime.values.union(pages.nineanime.values).union(pages.twistmoe.values).mapNotNull { it.url }
     }

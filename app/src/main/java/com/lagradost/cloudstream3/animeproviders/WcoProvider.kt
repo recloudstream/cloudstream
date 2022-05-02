@@ -50,15 +50,15 @@ class WcoProvider : MainAPI() {
                 val results = document.select("div.flw-item").map {
                     val filmPoster = it.selectFirst("> div.film-poster")
                     val filmDetail = it.selectFirst("> div.film-detail")
-                    val nameHeader = filmDetail.selectFirst("> h3.film-name > a")
-                    val title = nameHeader.text().replace(" (Dub)", "")
+                    val nameHeader = filmDetail!!.selectFirst("> h3.film-name > a")
+                    val title = nameHeader!!.text().replace(" (Dub)", "")
                     val href =
                         nameHeader.attr("href").replace("/watch/", "/anime/")
                             .replace(Regex("-episode-.*"), "/")
                     val isDub =
-                        filmPoster.selectFirst("> div.film-poster-quality")?.text()?.contains("DUB")
+                        filmPoster!!.selectFirst("> div.film-poster-quality")?.text()?.contains("DUB")
                             ?: false
-                    val poster = filmPoster.selectFirst("> img").attr("data-src")
+                    val poster = filmPoster.selectFirst("> img")!!.attr("data-src")
                     val set: EnumSet<DubStatus> =
                         EnumSet.of(if (isDub) DubStatus.Dubbed else DubStatus.Subbed)
                     AnimeSearchResponse(title, href, this.name, TvType.Anime, poster, null, set)
@@ -83,15 +83,15 @@ class WcoProvider : MainAPI() {
         val items = soup.select(".film_list-wrap > .flw-item")
         if (items.isEmpty()) return ArrayList()
         return items.map { i ->
-            val href = fixAnimeLink(i.selectFirst("a").attr("href"))
-            val img = fixUrl(i.selectFirst("img").attr("data-src"))
-            val title = i.selectFirst("img").attr("title")
+            val href = fixAnimeLink(i.selectFirst("a")!!.attr("href"))
+            val img = fixUrl(i.selectFirst("img")!!.attr("data-src"))
+            val title = i.selectFirst("img")!!.attr("title")
             val isDub = !i.select(".pick.film-poster-quality").isEmpty()
             val year =
-                i.selectFirst(".film-detail.film-detail-fix > div > span:nth-child(1)").text()
+                i.selectFirst(".film-detail.film-detail-fix > div > span:nth-child(1)")!!.text()
                     .toIntOrNull()
             val type =
-                i.selectFirst(".film-detail.film-detail-fix > div > span:nth-child(3)").text()
+                i.selectFirst(".film-detail.film-detail-fix > div > span:nth-child(3)")!!.text()
 
             if (getType(type) == TvType.AnimeMovie) {
                 MovieSearchResponse(

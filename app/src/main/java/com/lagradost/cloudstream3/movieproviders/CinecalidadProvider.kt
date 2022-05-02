@@ -31,14 +31,14 @@ class CinecalidadProvider:MainAPI() {
             try {
                 val soup = app.get(url).document
                 val home = soup.select(".item.movies").map {
-                    val title = it.selectFirst("div.in_title").text()
-                    val link = it.selectFirst("a").attr("href")
+                    val title = it.selectFirst("div.in_title")!!.text()
+                    val link = it.selectFirst("a")!!.attr("href")
                     TvSeriesSearchResponse(
                         title,
                         link,
                         this.name,
                         if (link.contains("/ver-pelicula/")) TvType.Movie else TvType.TvSeries,
-                        it.selectFirst(".poster.custom img").attr("data-src"),
+                        it.selectFirst(".poster.custom img")!!.attr("data-src"),
                         null,
                         null,
                     )
@@ -59,9 +59,9 @@ class CinecalidadProvider:MainAPI() {
         val document = app.get(url).document
 
         return document.select("article").map {
-            val title = it.selectFirst("div.in_title").text()
-            val href = it.selectFirst("a").attr("href")
-            val image = it.selectFirst(".poster.custom img").attr("data-src")
+            val title = it.selectFirst("div.in_title")!!.text()
+            val href = it.selectFirst("a")!!.attr("href")
+            val image = it.selectFirst(".poster.custom img")!!.attr("data-src")
             val isMovie = href.contains("/ver-pelicula/")
 
             if (isMovie) {
@@ -91,14 +91,14 @@ class CinecalidadProvider:MainAPI() {
     override suspend fun load(url: String): LoadResponse? {
         val soup = app.get(url, timeout = 120).document
 
-        val title = soup.selectFirst(".single_left h1").text()
+        val title = soup.selectFirst(".single_left h1")!!.text()
         val description = soup.selectFirst("div.single_left table tbody tr td p")?.text()?.trim()
-        val poster: String? = soup.selectFirst(".alignnone").attr("data-src")
+        val poster: String? = soup.selectFirst(".alignnone")!!.attr("data-src")
         val episodes = soup.select("div.se-c div.se-a ul.episodios li").map { li ->
-            val href = li.selectFirst("a").attr("href")
-            val epThumb = li.selectFirst("img.lazy").attr("data-src")
-            val name = li.selectFirst(".episodiotitle a").text()
-            val seasonid = li.selectFirst(".numerando").text().replace(Regex("(S|E)"),"").let { str ->
+            val href = li.selectFirst("a")!!.attr("href")
+            val epThumb = li.selectFirst("img.lazy")!!.attr("data-src")
+            val name = li.selectFirst(".episodiotitle a")!!.text()
+            val seasonid = li.selectFirst(".numerando")!!.text().replace(Regex("(S|E)"),"").let { str ->
                 str.split("-").mapNotNull { subStr -> subStr.toIntOrNull() }
             }
             val isValid = seasonid.size == 2
@@ -182,7 +182,7 @@ class CinecalidadProvider:MainAPI() {
                             "Sec-Fetch-Site" to "same-origin",
                             "Sec-Fetch-User" to "?1",
                         ),
-                        allowRedirects = false).response.headers.values("location").apmap { extractedurl ->
+                        allowRedirects = false).okhttpResponse.headers.values("location").apmap { extractedurl ->
                         if (extractedurl.contains("cinestart"))   {
                             loadExtractor(extractedurl, mainUrl, callback)
                         }
@@ -221,7 +221,7 @@ class CinecalidadProvider:MainAPI() {
                             "Sec-Fetch-Site" to "same-origin",
                             "Sec-Fetch-User" to "?1",
                         ),
-                        allowRedirects = false).response.headers.values("location").apmap { extractedurl ->
+                        allowRedirects = false).okhttpResponse.headers.values("location").apmap { extractedurl ->
                         if (extractedurl.contains("cinestart"))   {
                             loadExtractor(extractedurl, mainUrl, callback)
                         }
@@ -238,7 +238,7 @@ class CinecalidadProvider:MainAPI() {
                 val validsub = docsub.text
                 if (validsub.contains("Subtítulo") || validsub.contains("Forzados")) {
                     val langregex = Regex("(Subtítulo.*\$|Forzados.*\$)")
-                    val langdoc = linksub.selectFirst("div.titulo h3").text()
+                    val langdoc = linksub.selectFirst("div.titulo h3")!!.text()
                     val reallang = langregex.find(langdoc)?.destructured?.component1()
                     linksub.select("a.link").apmap {
                         val sublink = if (data.contains("serie") || data.contains("episodio")) "${data}${it.attr("href")}"

@@ -88,11 +88,11 @@ class MeloMovieProvider : MainAPI() {
 
     private fun serializeData(element: Element): List<MeloMovieProvider.MeloMovieLink> {
         val eps = element.select("> tbody > tr")
-        val parsed = eps.map {
+        val parsed = eps.mapNotNull {
             try {
                 val tds = it.select("> td")
                 val name = tds[if (tds.size == 5) 1 else 0].text()
-                val url = fixUrl(tds.last().selectFirst("> a").attr("data-lnk").replace(" ", "%20"))
+                val url = fixUrl(tds.last()!!.selectFirst("> a")!!.attr("data-lnk").replace(" ", "%20"))
                 MeloMovieLink(name, url)
             } catch (e: Exception) {
                 MeloMovieLink("", "")
@@ -133,13 +133,13 @@ class MeloMovieProvider : MainAPI() {
 
         val imdbUrl = findUsingRegex("var imdb = \"(.*?)\"")
         val document = Jsoup.parse(response)
-        val poster = document.selectFirst("img.img-fluid").attr("src")
+        val poster = document.selectFirst("img.img-fluid")!!.attr("src")
         val type = findUsingRegex("var posttype = ([0-9]*)")?.toInt() ?: return null
         val titleInfo = document.selectFirst("div.movie_detail_title > div > div > h1")
-        val title = titleInfo.ownText()
+        val title = titleInfo!!.ownText()
         val year =
             titleInfo.selectFirst("> a")?.text()?.replace("(", "")?.replace(")", "")?.toIntOrNull()
-        val plot = document.selectFirst("div.col-lg-12 > p").text()
+        val plot = document.selectFirst("div.col-lg-12 > p")!!.text()
 
         if (type == 1) { // MOVIE
             val serialize = document.selectFirst("table.accordion__list")
@@ -161,12 +161,12 @@ class MeloMovieProvider : MainAPI() {
                 ?: throw ErrorLoadingException("No episodes found")
             for (s in seasons) {
                 val season =
-                    s.selectFirst("> div.card-header > button > span").text()
+                    s.selectFirst("> div.card-header > button > span")!!.text()
                         .replace("Season: ", "").toIntOrNull()
                 val localEpisodes = s.select("> div.collapse > div > div > div.accordion__card")
                 for (e in localEpisodes) {
                     val episode =
-                        e.selectFirst("> div.card-header > button > span").text()
+                        e.selectFirst("> div.card-header > button > span")!!.text()
                             .replace("Episode: ", "").toIntOrNull()
                     val links =
                         e.selectFirst("> div.collapse > div > table.accordion__list") ?: continue

@@ -37,13 +37,13 @@ class NginxProvider : MainAPI() {
 
         val isMovie = !nfoUrl.contains("tvshow.nfo")
 
-        val title = metadataDocument.selectFirst("title").text()
+        val title = metadataDocument.selectFirst("title")!!.text()
 
-        val description = metadataDocument.selectFirst("plot").text()
+        val description = metadataDocument.selectFirst("plot")!!.text()
 
         if (isMovie) {
-            val poster = metadataDocument.selectFirst("thumb").text()
-            val trailer = metadataDocument.select("trailer")?.mapNotNull {
+            val poster = metadataDocument.selectFirst("thumb")!!.text()
+            val trailer = metadataDocument.select("trailer").mapNotNull {
                it?.text()?.replace(
                    "plugin://plugin.video.youtube/play/?video_id=",
                    "https://www.youtube.com/watch?v="
@@ -125,7 +125,7 @@ class NginxProvider : MainAPI() {
                         val epNum = nfoDocument.selectFirst("episode")?.text()?.toIntOrNull()
                         val poster =
                             seasonString + episode.attr("href").replace(".nfo", "-thumb.jpg")
-                        val name = nfoDocument.selectFirst("title").text()
+                        val name = nfoDocument.selectFirst("title")!!.text()
                         // val seasonInt = nfoDocument.selectFirst("season").text().toIntOrNull()
                         val date = nfoDocument.selectFirst("aired")?.text()
                         val plot = nfoDocument.selectFirst("plot")?.text()

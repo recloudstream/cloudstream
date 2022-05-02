@@ -57,9 +57,9 @@ class DubbedAnimeProvider : MainAPI() {
     private suspend fun parseDocumentTrending(url: String): List<SearchResponse> {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
-        return document.select("li > a").map {
+        return document.select("li > a").mapNotNull {
             val href = fixUrl(it.attr("href"))
-            val title = it.selectFirst("> div > div.cittx").text()
+            val title = it.selectFirst("> div > div.cittx")?.text() ?: return@mapNotNull null
             val poster = fixUrlNull(it.selectFirst("> div > div.imghddde > img")?.attr("src"))
             AnimeSearchResponse(
                 title,
@@ -79,10 +79,11 @@ class DubbedAnimeProvider : MainAPI() {
     ): List<SearchResponse> {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
-        return document.select("a.grid__link").map {
+        return document.select("a.grid__link").mapNotNull {
             val href = fixUrl(it.attr("href"))
-            val title = it.selectFirst("> div.gridtitlek").text()
-            val poster = fixUrl(it.selectFirst("> img.grid__img").attr("src"))
+            val title = it.selectFirst("> div.gridtitlek")?.text() ?: return@mapNotNull null
+            val poster =
+                fixUrl(it.selectFirst("> img.grid__img")?.attr("src") ?: return@mapNotNull null)
             AnimeSearchResponse(
                 title,
                 if (trimEpisode) href.removeRange(href.lastIndexOf('/'), href.length) else href,
@@ -135,9 +136,9 @@ class DubbedAnimeProvider : MainAPI() {
         val document = Jsoup.parse(response)
         val items = document.select("div.grid__item > a")
         if (items.isEmpty()) return emptyList()
-        return items.map { i ->
+        return items.mapNotNull { i ->
             val href = fixUrl(i.attr("href"))
-            val title = i.selectFirst("div.gridtitlek").text()
+            val title = i.selectFirst("div.gridtitlek")?.text() ?: return@mapNotNull null
             val img = fixUrlNull(i.selectFirst("img.grid__img")?.attr("src"))
 
             if (getIsMovie(href)) {
@@ -164,11 +165,11 @@ class DubbedAnimeProvider : MainAPI() {
         val document = Jsoup.parse(response)
         val items = document.select("div.resultinner > a.resulta")
         if (items.isEmpty()) return ArrayList()
-        return items.map { i ->
+        return items.mapNotNull { i ->
             val innerDiv = i.selectFirst("> div.result")
             val href = fixUrl(i.attr("href"))
-            val img = fixUrl(innerDiv.selectFirst("> div.imgkz > img").attr("src"))
-            val title = innerDiv.selectFirst("> div.titleresults").text()
+            val img = fixUrl(innerDiv?.selectFirst("> div.imgkz > img")?.attr("src") ?: return@mapNotNull null)
+            val title = innerDiv.selectFirst("> div.titleresults")?.text() ?: return@mapNotNull null
 
             if (getIsMovie(href)) {
                 MovieSearchResponse(
@@ -244,12 +245,13 @@ class DubbedAnimeProvider : MainAPI() {
         } else {
             val response = app.get(url).text
             val document = Jsoup.parse(response)
-            val title = document.selectFirst("h4").text()
+            val title = document.selectFirst("h4")!!.text()
             val descriptHeader = document.selectFirst("div.animeDescript")
-            val descript = descriptHeader.selectFirst("> p").text()
-            val year = descriptHeader.selectFirst("> div.distatsx > div.sroverd").text()
-                .replace("Released: ", "")
-                .toIntOrNull()
+            val descript = descriptHeader?.selectFirst("> p")?.text()
+            val year = descriptHeader?.selectFirst("> div.distatsx > div.sroverd")
+                ?.text()
+                ?.replace("Released: ", "")
+                ?.toIntOrNull()
 
             val episodes = document.select("a.epibloks").map {
                 val epTitle = it.selectFirst("> div.inwel > span.isgrxx")?.text()

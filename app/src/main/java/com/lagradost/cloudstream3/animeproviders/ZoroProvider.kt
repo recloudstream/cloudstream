@@ -8,11 +8,11 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addMalId
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.extractRabbitStream
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.runSflixExtractorVerifierJob
-import com.lagradost.cloudstream3.network.Requests.Companion.await
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.nicehttp.Requests.Companion.await
 import okhttp3.Interceptor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -141,7 +141,7 @@ class ZoroProvider : MainAPI() {
         return document.select(".flw-item").map {
             val title = it.selectFirst(".film-detail > .film-name > a")?.attr("title").toString()
             val filmPoster = it.selectFirst(".film-poster")
-            val poster = filmPoster.selectFirst("img")?.attr("data-src")
+            val poster = filmPoster!!.selectFirst("img")?.attr("data-src")
 
             val episodes = filmPoster.selectFirst("div.rtl > div.tick-eps")?.text()?.let { eps ->
                 // current episode / max episode
@@ -154,7 +154,7 @@ class ZoroProvider : MainAPI() {
 
             val tvType =
                 getType(it.selectFirst(".film-detail > .fd-infor > .fdi-item")?.text().toString())
-            val href = fixUrl(it.selectFirst(".film-name a").attr("href"))
+            val href = fixUrl(it.selectFirst(".film-name a")!!.attr("href"))
 
             newAnimeSearchResponse(title, href, tvType) {
                 this.posterUrl = poster
@@ -327,11 +327,11 @@ class ZoroProvider : MainAPI() {
 
         val servers: List<Pair<DubStatus, String>> = Jsoup.parse(
             app.get("$mainUrl/ajax/v2/episode/servers?episodeId=" + data.split("=")[1])
-                .mapped<Response>().html
+                .parsed<Response>().html
         ).select(".server-item[data-type][data-id]").map {
             Pair(
                 if (it.attr("data-type") == "sub") DubStatus.Subbed else DubStatus.Dubbed,
-                it.attr("data-id")!!
+                it.attr("data-id")
             )
         }
 
@@ -344,7 +344,7 @@ class ZoroProvider : MainAPI() {
                 "$mainUrl/ajax/v2/episode/sources?id=${it.second}"
             val extractorLink = app.get(
                 link,
-            ).mapped<RapidCloudResponse>().link
+            ).parsed<RapidCloudResponse>().link
             val hasLoadedExtractorLink =
                 loadExtractor(extractorLink, "https://rapid-cloud.ru/", callback)
 

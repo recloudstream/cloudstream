@@ -2,6 +2,9 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -31,23 +34,20 @@ class AnimekisaProvider : MainAPI() {
             Pair("$mainUrl/ajax/list/views?type=day", "Trending now"),
             Pair("$mainUrl/ajax/list/views?type=week", "Trending by week"),
             Pair("$mainUrl/ajax/list/views?type=month", "Trending by month"),
+        )
 
-            )
-
-        val items = ArrayList<HomePageList>()
-
-        for ((url, name) in urls) {
-            try {
+        val items = urls.mapNotNull  {
+            suspendSafeApiCall {
                 val home = Jsoup.parse(
                     parseJson<Response>(
                         app.get(
-                            url
+                            it.first
                         ).text
                     ).html
-                ).select("div.flw-item").map {
-                    val title = it.selectFirst("h3.title a").text()
-                    val link = it.selectFirst("a").attr("href")
-                    val poster = it.selectFirst("img.lazyload").attr("data-src")
+                ).select("div.flw-item").mapNotNull secondMap@ {
+                    val title = it.selectFirst("h3.title a")?.text() ?: return@secondMap null
+                    val link = it.selectFirst("a")?.attr("href")  ?: return@secondMap null
+                    val poster = it.selectFirst("img.lazyload")?.attr("data-src")
                     AnimeSearchResponse(
                         title,
                         link,
@@ -60,52 +60,50 @@ class AnimekisaProvider : MainAPI() {
                         ) else EnumSet.of(DubStatus.Subbed),
                     )
                 }
-
-                items.add(HomePageList(name, home))
-            } catch (e: Exception) {
-                e.printStackTrace()
+                HomePageList(name, home)
             }
         }
 
-        if (items.size <= 0) throw ErrorLoadingException()
+        if (items.isEmpty()) throw ErrorLoadingException()
         return HomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        return app.get("$mainUrl/search/?keyword=$query").document.select("div.flw-item").map {
-            val title = it.selectFirst("h3 a").text()
-            val url = it.selectFirst("a.film-poster-ahref").attr("href")
-                .replace("watch/", "anime/").replace(
-                    Regex("(-episode-(\\d+)\\/\$|-episode-(\\d+)\$|-episode-full|-episode-.*-.(\\/|))"),
-                    ""
+        return app.get("$mainUrl/search/?keyword=$query").document.select("div.flw-item")
+            .mapNotNull {
+                val title = it.selectFirst("h3 a")?.text() ?: ""
+                val url = it.selectFirst("a.film-poster-ahref")?.attr("href")
+                    ?.replace("watch/", "anime/")?.replace(
+                        Regex("(-episode-(\\d+)\\/\$|-episode-(\\d+)\$|-episode-full|-episode-.*-.(\\/|))"),
+                        ""
+                    ) ?: return@mapNotNull null
+                val poster = it.selectFirst(".film-poster img")?.attr("data-src")
+                AnimeSearchResponse(
+                    title,
+                    url,
+                    this.name,
+                    TvType.Anime,
+                    poster,
+                    null,
+                    if (title.contains("(DUB)") || title.contains("(Dub)")) EnumSet.of(
+                        DubStatus.Dubbed
+                    ) else EnumSet.of(DubStatus.Subbed),
                 )
-            val poster = it.selectFirst(".film-poster img").attr("data-src")
-            AnimeSearchResponse(
-                title,
-                url,
-                this.name,
-                TvType.Anime,
-                poster,
-                null,
-                if (title.contains("(DUB)") || title.contains("(Dub)")) EnumSet.of(
-                    DubStatus.Dubbed
-                ) else EnumSet.of(DubStatus.Subbed),
-            )
-        }.toList()
+            }.toList()
     }
 
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url, timeout = 120).document
-        val poster = doc.selectFirst(".mb-2 img").attr("src")
-            ?: doc.selectFirst("head meta[property=og:image]").attr("content")
-        val title = doc.selectFirst("h1.heading-name a").text()
-        val description = doc.selectFirst("div.description p").text().trim()
+        val poster = doc.selectFirst(".mb-2 img")?.attr("src")
+            ?: doc.selectFirst("head meta[property=og:image]")?.attr("content")
+        val title = doc.selectFirst("h1.heading-name a")!!.text()
+        val description = doc.selectFirst("div.description p")?.text()?.trim()
         val genres = doc.select("div.row-line a").map { it.text() }
         val test = if (doc.selectFirst("div.dp-i-c-right").toString()
                 .contains("Airing")
         ) ShowStatus.Ongoing else ShowStatus.Completed
-        val episodes = doc.select("div.tab-content ul li.nav-item").map {
-            val link = it.selectFirst("a").attr("href")
+        val episodes = doc.select("div.tab-content ul li.nav-item").mapNotNull {
+            val link = it.selectFirst("a")?.attr("href") ?: return@mapNotNull null
             Episode(link)
         }
         val type = if (doc.selectFirst(".dp-i-stats").toString()

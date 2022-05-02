@@ -38,11 +38,11 @@ class WatchCartoonOnlineProvider : MainAPI() {
 
         for (item in items) {
             val header = item.selectFirst("> div.iccerceve")
-            val titleHeader = header.selectFirst("> div.aramadabaslik > a")
-            val title = titleHeader.text()
+            val titleHeader = header!!.selectFirst("> div.aramadabaslik > a")
+            val title = titleHeader!!.text()
             val href = fixUrl(titleHeader.attr("href"))
-            val poster = fixUrl(header.selectFirst("> a > img").attr("src"))
-            val genreText = item.selectFirst("div.cerceve-tur-ve-genre").ownText()
+            val poster = fixUrl(header.selectFirst("> a > img")!!.attr("src"))
+            val genreText = item.selectFirst("div.cerceve-tur-ve-genre")!!.ownText()
             if (genreText.contains("cartoon")) {
                 returnValue.add(TvSeriesSearchResponse(title, href, this.name, TvType.Cartoon, poster, null, null))
             } else {
@@ -76,7 +76,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
 
         for (item in items) {
             val titleHeader = item.selectFirst("a")
-            val title = titleHeader.text()
+            val title = titleHeader!!.text()
             val href = fixUrl(titleHeader.attr("href"))
             //val isDubbed = title.contains("dubbed")
             //val set: EnumSet<DubStatus> =
@@ -103,9 +103,9 @@ class WatchCartoonOnlineProvider : MainAPI() {
         val document = Jsoup.parse(response)
 
         return if (!isMovie) {
-            val title = document.selectFirst("td.vsbaslik > h2").text()
+            val title = document.selectFirst("td.vsbaslik > h2")!!.text()
             val poster = fixUrlNull(document.selectFirst("div#cat-img-desc > div > img")?.attr("src"))
-            val plot = document.selectFirst("div.iltext").text()
+            val plot = document.selectFirst("div.iltext")!!.text()
             val genres = document.select("div#cat-genre > div.wcobtn > a").map { it.text() }
             val episodes = document.select("div#catlist-listview > ul > li > a").reversed().map {
                 val text = it.text()
@@ -152,7 +152,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
             val title = document.selectFirst(".iltext .Apple-style-span")?.text().toString()
             val b = document.select(".iltext b")
             val description = if (b.isNotEmpty()) {
-                b.last().html().split("<br>")[0]
+                b.last()!!.html().split("<br>")[0]
             } else null
 
             TvSeriesLoadResponse(

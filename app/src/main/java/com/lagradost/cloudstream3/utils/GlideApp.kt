@@ -13,7 +13,8 @@ import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.lagradost.cloudstream3.network.DdosGuardKiller
-import com.lagradost.cloudstream3.network.Requests
+import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.nicehttp.Requests
 import java.io.InputStream
 
 @GlideModule

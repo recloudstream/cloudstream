@@ -6,10 +6,10 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addRating
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
-import com.lagradost.cloudstream3.network.AppResponse
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.nicehttp.NiceResponse
 import org.jsoup.nodes.Element
 
 class AnimeWorldProvider : MainAPI() {
@@ -29,7 +29,7 @@ class AnimeWorldProvider : MainAPI() {
         private val cookieRegex = Regex("$cookieName=(.+?)(\\s?);")
         private val cookies = mutableMapOf(cookieName to "")
 
-        private suspend fun request(url: String): AppResponse {
+        private suspend fun request(url: String): NiceResponse {
             val response = app.get(url, cookies = cookies)
             return cookieRegex.find(response.text)?.let {
                 val verify = it.groups[1]?.value ?: throw ErrorLoadingException("Can't bypass protection")

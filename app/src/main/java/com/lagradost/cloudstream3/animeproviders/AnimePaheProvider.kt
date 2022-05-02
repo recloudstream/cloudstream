@@ -7,10 +7,10 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
-import com.lagradost.cloudstream3.network.AppResponse
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.JsUnpacker
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.nicehttp.NiceResponse
 import org.jsoup.Jsoup
 import kotlin.math.pow
 
@@ -242,7 +242,7 @@ class AnimePaheProvider : MainAPI() {
             val doc = Jsoup.parse(html)
 
             val japTitle = doc.selectFirst("h2.japanese")?.text()
-            val poster = doc.selectFirst(".anime-poster a").attr("href")
+            val poster = doc.selectFirst(".anime-poster a")?.attr("href")
 
             val tvType = doc.selectFirst("""a[href*="/anime/type/"]""")?.text()
 
@@ -263,7 +263,7 @@ class AnimePaheProvider : MainAPI() {
                     "completed" -> ShowStatus.Completed
                     else -> null
                 }
-            val synopsis = doc.selectFirst(".anime-synopsis").text()
+            val synopsis = doc.selectFirst(".anime-synopsis")?.text()
 
             var anilistId: Int? = null
             var malId: Int? = null
@@ -431,7 +431,7 @@ class AnimePaheProvider : MainAPI() {
         }
 
         var responseCode = 302
-        var adflyContent: AppResponse? = null
+        var adflyContent: NiceResponse? = null
         var tries = 0
 
         while (responseCode != 200 && tries < 20) {
@@ -481,7 +481,7 @@ class AnimePaheProvider : MainAPI() {
         val decrypted = decrypt(fullString, key, v1.toInt(), v2.toInt())
         val uri = KWIK_D_URL.find(decrypted)!!.destructured.component1()
         val tok = KWIK_D_TOKEN.find(decrypted)!!.destructured.component1()
-        var content: AppResponse? = null
+        var content: NiceResponse? = null
 
         var code = 419
         var tries = 0

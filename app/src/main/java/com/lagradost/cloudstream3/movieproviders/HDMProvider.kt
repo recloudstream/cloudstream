@@ -23,9 +23,9 @@ class HDMProvider : MainAPI() {
 
         return items.map { i ->
             val href = i.attr("href")
-            val data = i.selectFirst("> div.item")
-            val img = data.selectFirst("> img").attr("src")
-            val name = data.selectFirst("> div.movie-details").text()
+            val data = i.selectFirst("> div.item")!!
+            val img = data.selectFirst("> img")!!.attr("src")
+            val name = data.selectFirst("> div.movie-details")!!.text()
             MovieSearchResponse(name, href, this.name, TvType.Movie, img, null)
         }
     }
@@ -57,9 +57,9 @@ class HDMProvider : MainAPI() {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
         val title = document.selectFirst("h2.movieTitle")?.text() ?: throw ErrorLoadingException("No Data Found")
-        val poster = document.selectFirst("div.post-thumbnail > img").attr("src")
-        val descript = document.selectFirst("div.synopsis > p").text()
-        val year = document.select("div.movieInfoAll > div.row > div.col-md-6")?.get(1)?.selectFirst("> p > a")?.text()
+        val poster = document.selectFirst("div.post-thumbnail > img")!!.attr("src")
+        val descript = document.selectFirst("div.synopsis > p")!!.text()
+        val year = document.select("div.movieInfoAll > div.row > div.col-md-6").getOrNull(1)?.selectFirst("> p > a")?.text()
             ?.toIntOrNull()
         val data = "src/player/\\?v=(.*?)\"".toRegex().find(response)?.groupValues?.get(1) ?: return null
 

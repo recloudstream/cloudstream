@@ -118,10 +118,10 @@ class LookMovieProvider : MainAPI() {
             val items = document.select("div.flex-wrap-movielist > div.movie-item-style-1")
             return items.map { item ->
                 val titleHolder = item.selectFirst("> div.mv-item-infor > h6 > a")
-                val href = fixUrl(titleHolder.attr("href"))
+                val href = fixUrl(titleHolder!!.attr("href"))
                 val name = titleHolder.text()
                 val posterHolder = item.selectFirst("> div.image__placeholder > a")
-                val poster = posterHolder.selectFirst("> img")?.attr("data-src")
+                val poster = posterHolder!!.selectFirst("> img")?.attr("data-src")
                 val year = posterHolder.selectFirst("> p.year")?.text()?.toIntOrNull()
                 if (isMovie) {
                     MovieSearchResponse(
@@ -199,17 +199,17 @@ class LookMovieProvider : MainAPI() {
         val isMovie = url.contains("/movies/")
 
         val watchHeader = document.selectFirst("div.watch-heading")
-        val nameHeader = watchHeader.selectFirst("> h1.bd-hd")
-        val year = nameHeader.selectFirst("> span")?.text()?.toIntOrNull()
+        val nameHeader = watchHeader!!.selectFirst("> h1.bd-hd")
+        val year = nameHeader!!.selectFirst("> span")?.text()?.toIntOrNull()
         val title = nameHeader.ownText()
         val rating =
-            parseRating(watchHeader.selectFirst("> div.movie-rate > div.rate > p > span").text())
+            parseRating(watchHeader.selectFirst("> div.movie-rate > div.rate > p > span")!!.text())
         val imgElement = document.selectFirst("div.movie-img > p.movie__poster")
         val img = imgElement?.attr("style")
         var poster = if (img.isNullOrEmpty()) null else "url\\((.*?)\\)".toRegex()
             .find(img)?.groupValues?.get(1)
         if (poster.isNullOrEmpty()) poster = imgElement?.attr("data-background-image")
-        val descript = document.selectFirst("p.description-short").text()
+        val descript = document.selectFirst("p.description-short")!!.text()
         val id = "${if (isMovie) "id_movie" else "id_show"}:(.*?),".toRegex()
             .find(response)?.groupValues?.get(1)
             ?.replace(" ", "")

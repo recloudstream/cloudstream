@@ -37,14 +37,14 @@ class AllMoviesForYouProvider : MainAPI() {
         for ((name, element) in urls) {
             try {
                 val home = soup.select(element).map {
-                    val title = it.selectFirst("h2.title").text()
-                    val link = it.selectFirst("a").attr("href")
+                    val title = it.selectFirst("h2.title")!!.text()
+                    val link = it.selectFirst("a")!!.attr("href")
                     TvSeriesSearchResponse(
                         title,
                         link,
                         this.name,
                         TvType.Movie,
-                        fixUrl(it.selectFirst("figure img").attr("data-src")),
+                        fixUrl(it.selectFirst("figure img")!!.attr("data-src")),
                         null,
                         null,
                     )
@@ -66,8 +66,8 @@ class AllMoviesForYouProvider : MainAPI() {
         val items = document.select("ul.MovieList > li > article > a")
         return items.map { item ->
             val href = item.attr("href")
-            val title = item.selectFirst("> h2.Title").text()
-            val img = fixUrl(item.selectFirst("> div.Image > figure > img").attr("data-src"))
+            val title = item.selectFirst("> h2.Title")!!.text()
+            val img = fixUrl(item.selectFirst("> div.Image > figure > img")!!.attr("data-src"))
             val type = getType(href)
             if (type == TvType.Movie) {
                 MovieSearchResponse(title, href, this.name, type, img, null)
@@ -108,12 +108,12 @@ class AllMoviesForYouProvider : MainAPI() {
 
         val document = app.get(url).document
 
-        val title = document.selectFirst("h1.Title").text()
-        val descipt = document.selectFirst("div.Description > p").text()
+        val title = document.selectFirst("h1.Title")!!.text()
+        val descipt = document.selectFirst("div.Description > p")!!.text()
         val rating =
             document.selectFirst("div.Vote > div.post-ratings > span")?.text()?.toRatingInt()
         val year = document.selectFirst("span.Date")?.text()
-        val duration = document.selectFirst("span.Time").text()
+        val duration = document.selectFirst("span.Time")!!.text()
         val backgroundPoster =
             fixUrlNull(document.selectFirst("div.Image > figure > img")?.attr("data-src"))
 
@@ -140,7 +140,7 @@ class AllMoviesForYouProvider : MainAPI() {
                         val epNum = episode.selectFirst("> td > span.Num")?.text()?.toIntOrNull()
                         val poster = episode.selectFirst("> td.MvTbImg > a > img")?.attr("data-src")
                         val aName = episode.selectFirst("> td.MvTbTtl > a")
-                        val name = aName.text()
+                        val name = aName!!.text()
                         val href = aName.attr("href")
                         val date = episode.selectFirst("> td.MvTbTtl > span")?.text()
 

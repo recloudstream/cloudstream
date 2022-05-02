@@ -10,13 +10,13 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addDuration
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.animeproviders.ZoroProvider
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
-import com.lagradost.cloudstream3.network.AppResponse
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.nicehttp.NiceResponse
 import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -82,7 +82,7 @@ open class SflixProvider : MainAPI() {
 
             val metaInfo = it.select("div.fd-infor > span.fdi-item")
             // val rating = metaInfo[0].text()
-            val quality = getQualityFromString(metaInfo?.getOrNull(1)?.text())
+            val quality = getQualityFromString(metaInfo.getOrNull(1)?.text())
 
             if (isMovie) {
                 MovieSearchResponse(
@@ -113,9 +113,9 @@ open class SflixProvider : MainAPI() {
         val document = app.get(url).document
 
         val details = document.select("div.detail_page-watch")
-        val img = details?.select("img.film-poster-img")
-        val posterUrl = img?.attr("src")
-        val title = img?.attr("title") ?: throw ErrorLoadingException("No Title")
+        val img = details.select("img.film-poster-img")
+        val posterUrl = img.attr("src")
+        val title = img.attr("title") ?: throw ErrorLoadingException("No Title")
 
         /*
         val year = Regex("""[Rr]eleased:\s*(\d{4})""").find(
@@ -132,7 +132,7 @@ open class SflixProvider : MainAPI() {
         val rating = document.selectFirst(".fs-item > .imdb")?.text()?.trim()
             ?.removePrefix("IMDB:")?.toRatingInt()
 
-        document.select("div.elements > .row > div > .row-line")?.forEach { element ->
+        document.select("div.elements > .row > div > .row-line").forEach { element ->
             val type = element?.select(".type")?.text() ?: return@forEach
             when {
                 type.contains("Released") -> {
@@ -141,17 +141,17 @@ open class SflixProvider : MainAPI() {
                     )?.groupValues?.firstOrNull()?.toIntOrNull()
                 }
                 type.contains("Genre") -> {
-                    tags = element.select("a")?.mapNotNull { it.text() }
+                    tags = element.select("a").mapNotNull { it.text() }
                 }
                 type.contains("Cast") -> {
-                    cast = element.select("a")?.mapNotNull { it.text() }
+                    cast = element.select("a").mapNotNull { it.text() }
                 }
                 type.contains("Duration") -> {
-                    duration = duration ?: element.ownText()?.trim()
+                    duration = duration ?: element.ownText().trim()
                 }
             }
         }
-        val plot = details.select("div.description")?.text()?.replace("Overview:", "")?.trim()
+        val plot = details.select("div.description").text().replace("Overview:", "").trim()
 
         val isMovie = url.contains("/movie/")
 
@@ -164,12 +164,12 @@ open class SflixProvider : MainAPI() {
         else dataId
 
         val recommendations =
-            document.select("div.film_list-wrap > div.flw-item")?.mapNotNull { element ->
+            document.select("div.film_list-wrap > div.flw-item").mapNotNull { element ->
                 val titleHeader =
                     element.select("div.film-detail > .film-name > a") ?: return@mapNotNull null
                 val recUrl = fixUrlNull(titleHeader.attr("href")) ?: return@mapNotNull null
                 val recTitle = titleHeader.text() ?: return@mapNotNull null
-                val poster = element.select("div.film-poster > img")?.attr("data-src")
+                val poster = element.select("div.film-poster > img").attr("data-src")
                 MovieSearchResponse(
                     recTitle,
                     recUrl,
@@ -191,7 +191,7 @@ open class SflixProvider : MainAPI() {
                 if (sourceId.isNullOrEmpty())
                     sourceId = element.attr("data-linkid")
 
-                if (element.select("span")?.text()?.trim()?.isValidServer() == true) {
+                if (element.select("span").text().trim().isValidServer()) {
                     if (sourceId.isNullOrEmpty()) {
                         fixUrlNull(element.attr("href"))
                     } else {
@@ -222,7 +222,7 @@ open class SflixProvider : MainAPI() {
             var seasonItems = seasonsDocument.select("div.dropdown-menu.dropdown-menu-model > a")
             if (seasonItems.isNullOrEmpty())
                 seasonItems = seasonsDocument.select("div.dropdown-menu > a.dropdown-item")
-            seasonItems?.forEachIndexed { season, element ->
+            seasonItems.forEachIndexed { season, element ->
                 val seasonId = element.attr("data-id")
                 if (seasonId.isNullOrBlank()) return@forEachIndexed
 
@@ -243,7 +243,7 @@ open class SflixProvider : MainAPI() {
                     episode++
 
                     val episodeNum =
-                        (it.select("div.episode-number")?.text()
+                        (it.select("div.episode-number").text()
                             ?: episodeTitle).let { str ->
                             Regex("""\d+""").find(str)?.groupValues?.firstOrNull()
                                 ?.toIntOrNull()
@@ -314,7 +314,7 @@ open class SflixProvider : MainAPI() {
             // Supported streams, they're identical
             app.get(episodesUrl).document.select("a").mapNotNull { element ->
                 val id = element?.attr("data-id") ?: return@mapNotNull null
-                if (element.select("span")?.text()?.trim()?.isValidServer() == true) {
+                if (element.select("span").text().trim().isValidServer()) {
                     "$prefix.$id".replace("/tv/", "/watch-tv/")
                 } else {
                     null
@@ -334,7 +334,7 @@ open class SflixProvider : MainAPI() {
 
                 val serverId = url.substringAfterLast(".")
                 val iframeLink =
-                    app.get("${this.mainUrl}/ajax/get_link/$serverId").mapped<IframeJson>().link
+                    app.get("${this.mainUrl}/ajax/get_link/$serverId").parsed<IframeJson>().link
                         ?: return@suspendSafeApiCall
 
                 // Some smarter ws11 or w10 selection might be required in the future.
@@ -354,7 +354,7 @@ open class SflixProvider : MainAPI() {
 
     private fun Element.toSearchResult(): SearchResponse {
         val inner = this.selectFirst("div.film-poster")
-        val img = inner.select("img")
+        val img = inner!!.select("img")
         val title = img.attr("title")
         val posterUrl = img.attr("data-src") ?: img.attr("src")
         val href = fixUrl(inner.select("a").attr("href"))
@@ -454,11 +454,11 @@ open class SflixProvider : MainAPI() {
          * @return the data and if it is new.
          * */
         private suspend fun getUpdatedData(
-            response: AppResponse,
+            response: NiceResponse,
             data: PollingData,
             baseUrl: String
         ): Pair<PollingData, Boolean> {
-            if (!response.response.isSuccessful) {
+            if (!response.okhttpResponse.isSuccessful) {
                 return negotiateNewSid(baseUrl)?.let {
                     it to true
                 } ?: data to false
@@ -688,7 +688,7 @@ open class SflixProvider : MainAPI() {
 //                        "Cache-Control" to "no-cache",
                     "TE" to "trailers"
                 )
-            ).mapped<SourceObject>()
+            ).parsed<SourceObject>()
 
             mapped.tracks?.forEach { track ->
                 track?.toSubtitleFile()?.let { subtitleFile ->

@@ -28,14 +28,14 @@ class SoaptwoDayProvider:MainAPI() {
             try {
                 val soup = app.get(url).document
                 val home = soup.select("div.container div.row div.col-sm-12.col-lg-12 div.row div.col-sm-12.col-lg-12 .col-xs-6").map {
-                    val title = it.selectFirst("h5 a").text()
-                    val link = it.selectFirst("a").attr("href")
+                    val title = it.selectFirst("h5 a")!!.text()
+                    val link = it.selectFirst("a")!!.attr("href")
                     TvSeriesSearchResponse(
                         title,
                         link,
                         this.name,
                         TvType.TvSeries,
-                        fixUrl(it.selectFirst("img").attr("src")),
+                        fixUrl(it.selectFirst("img")!!.attr("src")),
                         null,
                         null,
                     )
@@ -52,9 +52,9 @@ class SoaptwoDayProvider:MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         val doc = app.get("$mainUrl/search/keyword/$query").document
         return doc.select("div.container div.row div.col-sm-12.col-lg-12 div.row div.col-sm-12.col-lg-12 .col-xs-6").map {
-            val title = it.selectFirst("h5 a").text()
-            val image = fixUrl(it.selectFirst("img").attr("src"))
-            val href = fixUrl(it.selectFirst("a").attr("href"))
+            val title = it.selectFirst("h5 a")!!.text()
+            val image = fixUrl(it.selectFirst("img")!!.attr("src"))
+            val href = fixUrl(it.selectFirst("a")!!.attr("href"))
             TvSeriesSearchResponse(
                 title,
                 href,
@@ -80,34 +80,33 @@ class SoaptwoDayProvider:MainAPI() {
                 data = link
             )
         }
-        val otherInfoBody = soup.select("div.col-sm-8 div.panel-body")?.toString()
+        val otherInfoBody = soup.select("div.col-sm-8 div.panel-body").toString()
         //Fetch casts
-        val casts = otherInfoBody?.substringAfter("Stars : ")
-            ?.substringBefore("Genre : ")?.let {
-            Jsoup.parse(it)?.select("a")
-        }?.mapNotNull {
-            val castName = it?.text() ?: return@mapNotNull null
-            ActorData(
-                Actor(
-                    name = castName
+        val casts = otherInfoBody.substringAfter("Stars : ")
+            .substringBefore("Genre : ").let {
+                Jsoup.parse(it).select("a")
+            }.mapNotNull {
+                val castName = it?.text() ?: return@mapNotNull null
+                ActorData(
+                    Actor(
+                        name = castName
+                    )
                 )
-            )
-        }
+            }
         //Fetch year
-        val year = otherInfoBody?.substringAfter("<h4>Release : </h4>")
-            ?.substringBefore("<div")?.let {
+        val year = otherInfoBody.substringAfter("<h4>Release : </h4>")
+            .substringBefore("<div").let {
                 //Log.i(this.name, "Result => year string: $it")
-                Jsoup.parse(it)?.select("p")?.get(1)
+                Jsoup.parse(it).select("p")[1]
             }?.text()?.take(4)?.toIntOrNull()
         //Fetch genres
-        val genre = otherInfoBody?.substringAfter("<h4>Genre : </h4>")
-            ?.substringBefore("<h4>Release : </h4>")?.let {
+        val genre = otherInfoBody.substringAfter("<h4>Genre : </h4>")
+            .substringBefore("<h4>Release : </h4>").let {
                 //Log.i(this.name, "Result => genre string: $it")
-                Jsoup.parse(it)?.select("a")
-            }?.mapNotNull { it?.text()?.trim() ?: return@mapNotNull null }
+                Jsoup.parse(it).select("a")
+            }.mapNotNull { it?.text()?.trim() ?: return@mapNotNull null }
 
-        val tvType = if (episodes.isEmpty()) TvType.Movie else TvType.TvSeries
-        return when (tvType) {
+        return when (val tvType = if (episodes.isEmpty()) TvType.Movie else TvType.TvSeries) {
             TvType.TvSeries -> {
                 TvSeriesLoadResponse(
                     title,
@@ -177,9 +176,9 @@ class SoaptwoDayProvider:MainAPI() {
         val doc = app.get(data).document
         val idplayer = doc.selectFirst("#divU")?.text()
         val idplayer2 = doc.selectFirst("#divP")?.text()
-        val movieid = doc.selectFirst("div.row input#hId").attr("value")
+        val movieid = doc.selectFirst("div.row input#hId")!!.attr("value")
         val tvType = try {
-            doc.selectFirst(".col-md-5 > div:nth-child(1) > div:nth-child(1) > img").attr("src") ?: ""
+            doc.selectFirst(".col-md-5 > div:nth-child(1) > div:nth-child(1) > img")!!.attr("src") ?: ""
         } catch (e: Exception) {
             ""
         }

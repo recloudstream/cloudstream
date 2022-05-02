@@ -46,7 +46,7 @@ class EgyBestProvider : MainAPI() {
         val pages = arrayListOf<HomePageList>()
         doc.select("#mainLoad div.mbox").apmap {
             val name = it.select(".bdb.pda > strong").text()
-            if (it.select(".movie").first().attr("href").contains("season-(.....)|ep-(.....)".toRegex())) return@apmap
+            if (it.select(".movie").first()?.attr("href")?.contains("season-(.....)|ep-(.....)".toRegex()) == true) return@apmap
             val list = arrayListOf<SearchResponse>()
             it.select(".movie").map { element ->
                 list.add(element.toSearchResponse()!!)
@@ -87,16 +87,16 @@ class EgyBestProvider : MainAPI() {
             it.text().contains("النوع")
         }?.select("a")?.map { it.text() }
 
-        val actors = doc.select("div.cast_list .cast_item")?.mapNotNull {
+        val actors = doc.select("div.cast_list .cast_item").mapNotNull {
             val name = it.selectFirst("div > a > img")?.attr("alt") ?: return@mapNotNull null
             val image = it.selectFirst("div > a > img")?.attr("src") ?: return@mapNotNull null
-            val roleString = it.selectFirst("div > span").text()
+            val roleString = it.selectFirst("div > span")!!.text()
             val mainActor = Actor(name, image)
             ActorData(actor = mainActor, roleString = roleString)
         }
 
         return if (isMovie) {
-            val recommendations = doc.select(".movies_small .movie")?.mapNotNull { element ->
+            val recommendations = doc.select(".movies_small .movie").mapNotNull { element ->
                 element.toSearchResponse()
             }
 

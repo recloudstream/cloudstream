@@ -116,7 +116,8 @@ class GogoanimeProvider : MainAPI() {
             val encryptRequestData = if (isUsingAdaptiveData) {
                 // Only fetch the document if necessary
                 val realDocument = document ?: app.get(iframeUrl).document
-                val dataEncrypted = realDocument.select("script[data-name='episode']").attr("data-value")
+                val dataEncrypted =
+                    realDocument.select("script[data-name='episode']").attr("data-value")
                 val headers = cryptoHandler(dataEncrypted, foundIv, foundKey, false)
                 "id=$encryptedId&alias=$id&" + headers.substringAfter("&")
             } else {
@@ -246,17 +247,17 @@ class GogoanimeProvider : MainAPI() {
         val html = app.get(link).text
         val doc = Jsoup.parse(html)
 
-        val episodes = doc.select(""".last_episodes li""").map {
+        val episodes = doc.select(""".last_episodes li""").mapNotNull {
             AnimeSearchResponse(
-                it.selectFirst(".name").text().replace(" (Dub)", ""),
-                fixUrl(it.selectFirst(".name > a").attr("href")),
+                it.selectFirst(".name")?.text()?.replace(" (Dub)", "") ?: return@mapNotNull null,
+                fixUrl(it.selectFirst(".name > a")?.attr("href") ?: return@mapNotNull null),
                 this.name,
                 TvType.Anime,
-                it.selectFirst("img").attr("src"),
+                it.selectFirst("img")?.attr("src"),
                 it.selectFirst(".released")?.text()?.split(":")?.getOrNull(1)?.trim()
                     ?.toIntOrNull(),
-                if (it.selectFirst(".name").text()
-                        .contains("Dub")
+                if (it.selectFirst(".name")?.text()
+                        ?.contains("Dub") == true
                 ) EnumSet.of(DubStatus.Dubbed) else EnumSet.of(
                     DubStatus.Subbed
                 ),
@@ -282,8 +283,8 @@ class GogoanimeProvider : MainAPI() {
         val doc = Jsoup.parse(html)
 
         val animeBody = doc.selectFirst(".anime_info_body_bg")
-        val title = animeBody.selectFirst("h1").text()
-        val poster = animeBody.selectFirst("img").attr("src")
+        val title = animeBody?.selectFirst("h1")!!.text()
+        val poster = animeBody.selectFirst("img")?.attr("src")
         var description: String? = null
         val genre = ArrayList<String>()
         var year: Int? = null
@@ -292,7 +293,7 @@ class GogoanimeProvider : MainAPI() {
         var type: String? = null
 
         animeBody.select("p.type").forEach { pType ->
-            when (pType.selectFirst("span").text().trim()) {
+            when (pType.selectFirst("span")?.text()?.trim()) {
                 "Plot Summary:" -> {
                     description = pType.text().replace("Plot Summary:", "").trim()
                 }
@@ -316,13 +317,13 @@ class GogoanimeProvider : MainAPI() {
             }
         }
 
-        val animeId = doc.selectFirst("#movie_id").attr("value")
+        val animeId = doc.selectFirst("#movie_id")!!.attr("value")
         val params = mapOf("ep_start" to "0", "ep_end" to "2000", "id" to animeId)
 
         val episodes = app.get(episodeloadApi, params = params).document.select("a").map {
             Episode(
                 fixUrl(it.attr("href").trim()),
-                "Episode " + it.selectFirst(".name").text().replace("EP", "").trim()
+                "Episode " + it.selectFirst(".name")?.text()?.replace("EP", "")?.trim()
             )
         }.reversed()
 
@@ -357,7 +358,7 @@ class GogoanimeProvider : MainAPI() {
     private suspend fun extractVideos(uri: String, callback: (ExtractorLink) -> Unit) {
         val doc = app.get(uri).document
 
-        val iframe = fixUrlNull(doc.selectFirst("div.play-video > iframe").attr("src")) ?: return
+        val iframe = fixUrlNull(doc.selectFirst("div.play-video > iframe")?.attr("src")) ?: return
 
         argamap(
             {

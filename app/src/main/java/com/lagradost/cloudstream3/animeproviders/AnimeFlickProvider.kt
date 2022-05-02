@@ -32,10 +32,10 @@ class AnimeFlickProvider : MainAPI() {
         val html = app.get(link).text
         val doc = Jsoup.parse(html)
 
-        return doc.select(".row.mt-2").map {
-            val href = mainUrl + it.selectFirst("a").attr("href")
-            val title = it.selectFirst("h5 > a").text()
-            val poster = mainUrl + it.selectFirst("img").attr("src").replace("70x110", "225x320")
+        return doc.select(".row.mt-2").mapNotNull {
+            val href = mainUrl + it.selectFirst("a")?.attr("href")
+            val title = it.selectFirst("h5 > a")?.text() ?: return@mapNotNull null
+            val poster = mainUrl + it.selectFirst("img")?.attr("src")?.replace("70x110", "225x320")
             AnimeSearchResponse(
                 title,
                 href,
@@ -52,19 +52,19 @@ class AnimeFlickProvider : MainAPI() {
         val html = app.get(url).text
         val doc = Jsoup.parse(html)
 
-        val poster = mainUrl + doc.selectFirst("img.rounded").attr("src")
-        val title = doc.selectFirst("h2.title").text()
+        val poster = mainUrl + doc.selectFirst("img.rounded")?.attr("src")
+        val title = doc.selectFirst("h2.title")!!.text()
 
         val yearText = doc.selectFirst(".trending-year")?.text()
         val year = if (yearText != null) Regex("""(\d{4})""").find(yearText)?.destructured?.component1()
             ?.toIntOrNull() else null
-        val description = doc.selectFirst("p").text()
+        val description = doc.selectFirst("p")?.text()
 
         val genres = doc.select("a[href*=\"genre-\"]").map { it.text() }
 
         val episodes = doc.select("#collapseOne .block-space > .row > div:nth-child(2)").map {
-            val name = it.selectFirst("a").text()
-            val link = mainUrl + it.selectFirst("a").attr("href")
+            val name = it.selectFirst("a")?.text()
+            val link = mainUrl + it.selectFirst("a")?.attr("href")
             Episode(link, name)
         }.reversed()
 

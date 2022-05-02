@@ -77,7 +77,7 @@ open class WcoStream : ExtractorApi() {
             @JsonProperty("media") val media: Media
         )
 
-        val mapped = app.get(apiLink, headers = mapOf("Referer" to referrer)).mapped<WcoResponse>()
+        val mapped = app.get(apiLink, headers = mapOf("Referer" to referrer)).parsed<WcoResponse>()
         val sources = mutableListOf<ExtractorLink>()
 
         if (mapped.success) {

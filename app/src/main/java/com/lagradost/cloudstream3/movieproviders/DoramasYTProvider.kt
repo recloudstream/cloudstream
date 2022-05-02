@@ -52,12 +52,12 @@ class DoramasYTProvider : MainAPI() {
             HomePageList(
                 "Capítulos actualizados",
                 app.get(mainUrl, timeout = 120).document.select(".col-6").map {
-                    val title = it.selectFirst("p").text()
-                    val poster = it.selectFirst(".chapter img").attr("src")
+                    val title = it.selectFirst("p")!!.text()
+                    val poster = it.selectFirst(".chapter img")!!.attr("src")
                     val epRegex = Regex("episodio-(\\d+)")
-                    val url = it.selectFirst("a").attr("href").replace("ver/", "dorama/")
+                    val url = it.selectFirst("a")!!.attr("href").replace("ver/", "dorama/")
                         .replace(epRegex, "sub-espanol")
-                    val epNum = it.selectFirst("h3").text().toIntOrNull()
+                    val epNum = it.selectFirst("h3")!!.text().toIntOrNull()
                     newAnimeSearchResponse(title,url) {
                         this.posterUrl = fixUrl(poster)
                         addDubStatus(getDubStatus(title), epNum)
@@ -68,9 +68,9 @@ class DoramasYTProvider : MainAPI() {
         for (i in urls) {
             try {
                 val home = app.get(i.first, timeout = 120).document.select(".col-6").map {
-                    val title = it.selectFirst(".animedtls p").text()
-                    val poster = it.selectFirst(".anithumb img").attr("src")
-                    newAnimeSearchResponse(title, fixUrl(it.selectFirst("a").attr("href"))) {
+                    val title = it.selectFirst(".animedtls p")!!.text()
+                    val poster = it.selectFirst(".anithumb img")!!.attr("src")
+                    newAnimeSearchResponse(title, fixUrl(it.selectFirst("a")!!.attr("href"))) {
                         this.posterUrl = fixUrl(poster)
                         addDubStatus(getDubStatus(title))
                     }
@@ -88,9 +88,9 @@ class DoramasYTProvider : MainAPI() {
 
     override suspend fun search(query: String): List<SearchResponse> {
         return app.get("$mainUrl/buscar?q=$query", timeout = 120).document.select(".col-6").map {
-            val title = it.selectFirst(".animedtls p").text()
-            val href = it.selectFirst("a").attr("href")
-            val image = it.selectFirst(".animes img").attr("src")
+            val title = it.selectFirst(".animedtls p")!!.text()
+            val href = it.selectFirst("a")!!.attr("href")
+            val image = it.selectFirst(".animes img")!!.attr("src")
             AnimeSearchResponse(
                 title,
                 href,
@@ -107,10 +107,10 @@ class DoramasYTProvider : MainAPI() {
 
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url, timeout = 120).document
-        val poster = doc.selectFirst("div.flimimg img.img1").attr("src")
-        val title = doc.selectFirst("h1").text()
-        val type = doc.selectFirst("h4").text()
-        val description = doc.selectFirst("p.textComplete").text().replace("Ver menos", "")
+        val poster = doc.selectFirst("div.flimimg img.img1")!!.attr("src")
+        val title = doc.selectFirst("h1")!!.text()
+        val type = doc.selectFirst("h4")!!.text()
+        val description = doc.selectFirst("p.textComplete")!!.text().replace("Ver menos", "")
         val genres = doc.select(".nobel a").map { it.text() }
         val status = when (doc.selectFirst(".state h6")?.text()) {
             "Estreno" -> ShowStatus.Ongoing
@@ -118,9 +118,9 @@ class DoramasYTProvider : MainAPI() {
             else -> null
         }
         val episodes = doc.select(".heromain .col-item").map {
-            val name = it.selectFirst(".dtlsflim p").text()
-            val link = it.selectFirst("a").attr("href")
-            val epThumb = it.selectFirst(".flimimg img.img1").attr("src")
+            val name = it.selectFirst(".dtlsflim p")!!.text()
+            val link = it.selectFirst("a")!!.attr("href")
+            val epThumb = it.selectFirst(".flimimg img.img1")!!.attr("src")
             Episode(link, name, posterUrl = epThumb)
         }
         return newAnimeLoadResponse(title, url, getType(type)) {

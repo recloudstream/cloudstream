@@ -24,15 +24,15 @@ class VMoveeProvider : MainAPI() {
             val details = item.selectFirst("> div.details")
             val imgHolder = item.selectFirst("> div.image > div.thumbnail > a")
             // val href = imgHolder.attr("href")
-            val poster = imgHolder.selectFirst("> img").attr("data-lazy-src")
-            val isTV = imgHolder.selectFirst("> span").text() == "TV"
+            val poster = imgHolder!!.selectFirst("> img")!!.attr("data-lazy-src")
+            val isTV = imgHolder.selectFirst("> span")!!.text() == "TV"
             if (isTV) continue // no TV support yet
 
-            val titleHolder = details.selectFirst("> div.title > a")
-            val title = titleHolder.text()
+            val titleHolder = details!!.selectFirst("> div.title > a")
+            val title = titleHolder!!.text()
             val href = titleHolder.attr("href")
             val meta = details.selectFirst("> div.meta")
-            val year = meta.selectFirst("> span.year").text().toIntOrNull()
+            val year = meta!!.selectFirst("> span.year")!!.text().toIntOrNull()
             // val rating = parseRating(meta.selectFirst("> span.rating").text().replace("IMDb ", ""))
             // val descript = details.selectFirst("> div.contenido").text()
             returnValue.add(
@@ -114,10 +114,10 @@ class VMoveeProvider : MainAPI() {
 
         val sheader = document.selectFirst("div.sheader")
 
-        val poster = sheader.selectFirst("> div.poster > img").attr("data-lazy-src")
+        val poster = sheader!!.selectFirst("> div.poster > img")!!.attr("data-lazy-src")
         val data = sheader.selectFirst("> div.data")
-        val title = data.selectFirst("> h1").text()
-        val descript = document.selectFirst("div#info > div").text()
+        val title = data!!.selectFirst("> h1")!!.text()
+        val descript = document.selectFirst("div#info > div")!!.text()
         val id = document.select("div.starstruck").attr("data-id")
 
         return MovieLoadResponse(title, url, this.name, TvType.Movie, id, poster, null, descript, null, null)

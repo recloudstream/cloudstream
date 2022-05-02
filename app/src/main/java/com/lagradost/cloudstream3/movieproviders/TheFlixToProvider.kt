@@ -98,7 +98,7 @@ class TheFlixToProvider : MainAPI() {
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val doc = app.get(mainUrl).document
-        val scriptText = doc.selectFirst("script[type=application/json]").data()
+        val scriptText = doc.selectFirst("script[type=application/json]")!!.data()
         if (scriptText.contains("moviesListTrending")) {
             val json = parseJson<HomeJson>(scriptText)
             val homePageProps = json.props.pageProps
@@ -181,7 +181,7 @@ class TheFlixToProvider : MainAPI() {
         )
         urls.apmap { url ->
             val doc = app.get(url).document
-            val scriptText = doc.selectFirst("script[type=application/json]").data()
+            val scriptText = doc.selectFirst("script[type=application/json]")!!.data()
             if (scriptText.contains("pageProps")) {
                 val json = parseJson<SearchJson>(scriptText)
                 val searchPageProps = json.props.pageProps.mainList
@@ -397,7 +397,7 @@ class TheFlixToProvider : MainAPI() {
     private suspend fun getLoadMan(url: String): LoadMain {
         val og = app.get(url, cookies = latestCookies)
         val soup = og.document
-        val script = soup.selectFirst("script[type=application/json]").data()
+        val script = soup.selectFirst("script[type=application/json]")!!.data()
         return parseJson(script)
     }
 

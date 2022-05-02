@@ -104,11 +104,11 @@ open class VidstreamProviderTemplate : MainAPI() {
 
         return ArrayList(soup.select(".listing.items > .video-block").map { li ->
             // Selects the href in <a href="...">
-            val href = fixUrl(li.selectFirst("a").attr("href"))
+            val href = fixUrl(li.selectFirst("a")!!.attr("href"))
             val poster = li.selectFirst("img")?.attr("src")
 
             // .text() selects all the text in the element, be careful about doing this while too high up in the html hierarchy
-            val title = li.selectFirst(".name").text()
+            val title = li.selectFirst(".name")!!.text()
             // Use get(0) and toIntOrNull() to prevent any possible crashes, [0] or toInt() will error the search on unexpected values.
             val year = li.selectFirst(".date")?.text()?.split("-")?.get(0)?.toIntOrNull()
 
@@ -133,7 +133,7 @@ open class VidstreamProviderTemplate : MainAPI() {
         val html = app.get(url).text
         val soup = Jsoup.parse(html)
 
-        var title = soup.selectFirst("h1,h2,h3").text()
+        var title = soup.selectFirst("h1,h2,h3")!!.text()
         title = if (!title.contains("Episode")) title else title.split("Episode")[0].trim()
 
         val description = soup.selectFirst(".post-entry")?.text()?.trim()
@@ -143,13 +143,13 @@ open class VidstreamProviderTemplate : MainAPI() {
         val episodes =
             soup.select(".listing.items.lists > .video-block").withIndex().map { (_, li) ->
                 val epTitle = if (li.selectFirst(".name") != null)
-                    if (li.selectFirst(".name").text().contains("Episode"))
-                        "Episode " + li.selectFirst(".name").text().split("Episode")[1].trim()
+                    if (li.selectFirst(".name")!!.text().contains("Episode"))
+                        "Episode " + li.selectFirst(".name")!!.text().split("Episode")[1].trim()
                     else
-                        li.selectFirst(".name").text()
+                        li.selectFirst(".name")!!.text()
                 else ""
                 val epThumb = li.selectFirst("img")?.attr("src")
-                val epDate = li.selectFirst(".meta > .date").text()
+                val epDate = li.selectFirst(".meta > .date")!!.text()
 
                 if (poster == null) {
                     poster = li.selectFirst("img")?.attr("onerror")?.split("=")?.get(1)
@@ -159,9 +159,9 @@ open class VidstreamProviderTemplate : MainAPI() {
                 val epNum = Regex("""Episode (\d+)""").find(epTitle)?.destructured?.component1()
                     ?.toIntOrNull()
                 if (year == null) {
-                    year = epDate?.split("-")?.get(0)?.toIntOrNull()
+                    year = epDate.split("-")[0].toIntOrNull()
                 }
-                newEpisode(li.selectFirst("a").attr("href")) {
+                newEpisode(li.selectFirst("a")!!.attr("href")) {
                     this.episode = epNum
                     this.posterUrl = epThumb
                     addDate(epDate)
@@ -215,7 +215,7 @@ open class VidstreamProviderTemplate : MainAPI() {
         urls.apmap { url ->
             val response = app.get(url, timeout = 20).text
             val document = Jsoup.parse(response)
-            document.select("div.main-inner")?.forEach { inner ->
+            document.select("div.main-inner").forEach { inner ->
                 // Always trim your text unless you want the risk of spaces at the start or end.
                 val title = inner.select(".widget-title").text().trim()
                 val elements = inner.select(".video-block").map {

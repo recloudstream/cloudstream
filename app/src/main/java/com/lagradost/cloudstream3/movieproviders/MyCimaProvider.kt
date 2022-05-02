@@ -153,7 +153,7 @@ class MyCimaProvider : MainAPI() {
             if (moreButton.isNotEmpty()) {
                 val n = doc.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a").size
                 val totals =
-                    doc.select("div.Episodes--Seasons--Episodes a").first().text().getIntFromText()
+                    doc.select("div.Episodes--Seasons--Episodes a").first()!!.text().getIntFromText()
                 val mEPS = arrayListOf(
                     n,
                     n + 40,
@@ -229,7 +229,7 @@ class MyCimaProvider : MainAPI() {
                         val n =
                             seasonsite.select("div.Seasons--Episodes div.Episodes--Seasons--Episodes a").size
                         val totals =
-                            seasonsite.select("div.Episodes--Seasons--Episodes a").first().text()
+                            seasonsite.select("div.Episodes--Seasons--Episodes a").first()!!.text()
                                 .getIntFromText()
                         val mEPS = arrayListOf(
                             n,

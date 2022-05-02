@@ -20,9 +20,9 @@ class FrenchStreamProvider : MainAPI() {
         val soup = app.post(link).document
 
         return soup.select("div.short-in.nl").map { li ->
-            val href = fixUrl(li.selectFirst("a.short-poster").attr("href"))
+            val href = fixUrl(li.selectFirst("a.short-poster")!!.attr("href"))
             val poster = li.selectFirst("img")?.attr("src")
-            val title = li.selectFirst("> a.short-poster").text().toString().replace(". ", "")
+            val title = li.selectFirst("> a.short-poster")!!.text().toString().replace(". ", "")
             val year = li.selectFirst(".date")?.text()?.split("-")?.get(0)?.toIntOrNull()
             if (title.contains(
                     "saison",
@@ -54,24 +54,24 @@ class FrenchStreamProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val soup = app.get(url).document
 
-        val title = soup.selectFirst("h1#s-title").text().toString()
+        val title = soup.selectFirst("h1#s-title")!!.text().toString()
         val isMovie = !title.contains("saison", ignoreCase = true)
         val description =
-            soup.selectFirst("div.fdesc").text().toString()
+            soup.selectFirst("div.fdesc")!!.text().toString()
                 .split("streaming", ignoreCase = true)[1].replace(" :  ", "")
         var poster = fixUrlNull(soup.selectFirst("div.fposter > img")?.attr("src"))
         val listEpisode = soup.select("div.elink")
 
         if (isMovie) {
-            val tags = soup.select("ul.flist-col > li")?.getOrNull(1)
+            val tags = soup.select("ul.flist-col > li").getOrNull(1)
             val tagsList = tags?.select("a")
                 ?.mapNotNull {   // all the tags like action, thriller ...; unused variable
                     it?.text()
                 }
             return newMovieLoadResponse(title,url,TvType.Movie,url) {
                 this.posterUrl = poster
-                addRating(soup.select("div.fr-count > div")?.text())
-                this.year = soup.select("ul.flist-col > li")?.getOrNull(2)?.text()?.toIntOrNull()
+                addRating(soup.select("div.fr-count > div").text())
+                this.year = soup.select("ul.flist-col > li").getOrNull(2)?.text()?.toIntOrNull()
                 this.tags = tagsList
                 this.plot = description
                 addTrailer(soup.selectFirst("div.fleft > span > a")?.attr("href"))
@@ -91,17 +91,16 @@ class FrenchStreamProvider : MainAPI() {
 
             val episodes = episodeList.select("a").map { a ->
                 val epNum = a.text().split("Episode")[1].trim().toIntOrNull()
-                val epTitle = if (a.text()?.toString() != null)
-                    if (a.text().contains("Episode")) {
-                        val type = if ("honey" in a.attr("id")) {
-                            "VF"
-                        } else {
-                            "VOSTFR"
-                        }
-                        "Episode " + epNum?.toString() + " en " + type
+                val epTitle = if (a.text().contains("Episode")) {
+                    val type = if ("honey" in a.attr("id")) {
+                        "VF"
                     } else {
-                        a.text()
-                    } else ""
+                        "VOSTFR"
+                    }
+                    "Episode " + epNum?.toString() + " en " + type
+                } else {
+                    a.text()
+                }
                 if (poster == null) {
                     poster = a.selectFirst("div.fposter > img")?.attr("src")
                 }
@@ -133,13 +132,14 @@ class FrenchStreamProvider : MainAPI() {
         episodeNumber: String,
         is_vf_available: Boolean,
     ): String {
-        if (episodeNumber == "1") {
+        return if (episodeNumber == "1") {
             if (is_vf_available) {  // 1 translate differently if vf is available or not
-                return "FGHIJK"
-            } else { return "episode033" }
-        }
-        else {
-            return "episode" + (episodeNumber.toInt() + 32).toString()
+                "FGHIJK"
+            } else {
+                "episode033"
+            }
+        } else {
+            "episode" + (episodeNumber.toInt() + 32).toString()
         }
     }
 
@@ -173,7 +173,7 @@ class FrenchStreamProvider : MainAPI() {
                 val serversvf =// French version servers
                     soup.select("div#$wantedEpisode > div.selink > ul.btnss $div> li")
                         .mapNotNull { li ->  // list of all french version servers
-                            val serverUrl = fixUrl(li.selectFirst("a").attr("href"))
+                            val serverUrl = fixUrl(li.selectFirst("a")!!.attr("href"))
 //                            val litext = li.text()
                             if (serverUrl.isNotBlank()) {
                                 if (li.text().replace("&nbsp;", "").replace(" ", "").isNotBlank()) {
@@ -208,7 +208,7 @@ class FrenchStreamProvider : MainAPI() {
                         .mapNotNull { a ->
                             val serverurl = fixUrlNull(a.attr("href")) ?: return@mapNotNull null
                             val parent = a.parents()[2]
-                            val element = parent.selectFirst("a").text().plus(" ")
+                            val element = parent.selectFirst("a")!!.text().plus(" ")
                             if (a.text().replace("&nbsp;", "").isNotBlank()) {
                                 Pair(element.plus(a.text()), fixUrl(serverurl))
                             } else {
@@ -239,14 +239,14 @@ class FrenchStreamProvider : MainAPI() {
         val returnList = docs.mapNotNull {
             val epList = it.selectFirst("> div.sect-c.floats.clearfix") ?: return@mapNotNull null
             val title =
-                it.selectFirst("> div.sect-t.fx-row.icon-r > div.st-left > a.st-capt").text()
+                it.selectFirst("> div.sect-t.fx-row.icon-r > div.st-left > a.st-capt")!!.text()
             val list = epList.select("> div.short")
             val isMovieType = title.contains("Films")  // if truen type is Movie
             val currentList = list.map { head ->
                 val hrefItem = head.selectFirst("> div.short-in.nl > a")
-                val href = fixUrl(hrefItem.attr("href"))
+                val href = fixUrl(hrefItem!!.attr("href"))
                 val img = hrefItem.selectFirst("> img")
-                val posterUrl = img.attr("src")
+                val posterUrl = img!!.attr("src")
                 val name = img.attr("> div.short-title").toString()
                 return@map if (isMovieType) MovieSearchResponse(
                     name,

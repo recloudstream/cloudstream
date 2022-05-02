@@ -26,7 +26,7 @@ class NyaaProvider : MainAPI() {
             if (tds.size < 2) continue
             val type = tds[0].select("> a").attr("title")
             val titleHeader = tds[1].select("> a").last()
-            val href = titleHeader.attr("href")
+            val href = titleHeader!!.attr("href")
             val title = titleHeader.text()
             if (title.contains("[Batch]") || !type.contains("Anime")) continue
             returnValues.add(TorrentSearchResponse(title, fixUrl(href), this.name, TvType.Torrent, null))
@@ -38,8 +38,8 @@ class NyaaProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
-        val title = document.selectFirst("h3.panel-title").text()
-        val description = document.selectFirst("div#torrent-description").text()
+        val title = document.selectFirst("h3.panel-title")!!.text()
+        val description = document.selectFirst("div#torrent-description")!!.text()
         val downloadLinks = document.select("div.panel-footer > a")
         val magnet = downloadLinks[1].attr("href")
         val torrent = downloadLinks[0].attr("href")
