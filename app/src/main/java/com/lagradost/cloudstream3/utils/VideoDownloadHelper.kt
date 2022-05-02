@@ -29,7 +29,7 @@ object VideoDownloadHelper {
 
     data class ResumeWatching(
         @JsonProperty("parentId") val parentId: Int,
-        @JsonProperty("episodeId") val episodeId: Int,
+        @JsonProperty("episodeId") val episodeId: Int?,
         @JsonProperty("episode") val episode: Int?,
         @JsonProperty("season") val season: Int?,
         @JsonProperty("updateTime") val updateTime: Long,

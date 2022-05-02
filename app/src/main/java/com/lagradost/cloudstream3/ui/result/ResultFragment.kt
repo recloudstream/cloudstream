@@ -187,6 +187,33 @@ fun ResultEpisode.getWatchProgress(): Float {
 
 class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegionsListener {
     companion object {
+        const val URL_BUNDLE = "url"
+        const val API_NAME_BUNDLE = "apiName"
+        const val SEASON_BUNDLE = "season"
+        const val EPISODE_BUNDLE = "episode"
+        const val START_ACTION_BUNDLE = "startAction"
+        const val START_VALUE_BUNDLE = "startValue"
+        const val RESTART_BUNDLE = "restart"
+        fun newInstance(
+            card: SearchResponse, startAction: Int = 0, startValue: Int? = null
+        ): Bundle {
+            return Bundle().apply {
+                putString(URL_BUNDLE, card.url)
+                putString(API_NAME_BUNDLE, card.apiName)
+                if (card is DataStoreHelper.ResumeWatchingResult) {
+                    println("CARD::::: $card")
+                    if (card.season != null)
+                        putInt(SEASON_BUNDLE, card.season)
+                    if (card.episode != null)
+                        putInt(EPISODE_BUNDLE, card.episode)
+                }
+                putInt(START_ACTION_BUNDLE, startAction)
+                if (startValue != null)
+                    putInt(START_VALUE_BUNDLE, startValue)
+                putBoolean(RESTART_BUNDLE, true)
+            }
+        }
+
         fun newInstance(
             url: String,
             apiName: String,
@@ -194,11 +221,11 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             startValue: Int = 0
         ): Bundle {
             return Bundle().apply {
-                putString("url", url)
-                putString("apiName", apiName)
-                putInt("startAction", startAction)
-                putInt("startValue", startValue)
-                putBoolean("restart", true)
+                putString(URL_BUNDLE, url)
+                putString(API_NAME_BUNDLE, apiName)
+                putInt(START_ACTION_BUNDLE, startAction)
+                putInt(START_VALUE_BUNDLE, startValue)
+                putBoolean(RESTART_BUNDLE, true)
             }
         }
 
@@ -682,9 +709,9 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
         updateUIListener = ::updateUI
 
-        val restart = arguments?.getBoolean("restart") ?: false
+        val restart = arguments?.getBoolean(RESTART_BUNDLE) ?: false
         if (restart) {
-            arguments?.putBoolean("restart", false)
+            arguments?.putBoolean(RESTART_BUNDLE, false)
         }
 
         activity?.window?.decorView?.clearFocus()
@@ -705,10 +732,12 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
         // activity?.fixPaddingStatusbar(result_toolbar)
 
-        url = arguments?.getString("url")
-        val apiName = arguments?.getString("apiName") ?: return
-        startAction = arguments?.getInt("startAction") ?: START_ACTION_NORMAL
-        startValue = arguments?.getInt("startValue") ?: START_VALUE_NORMAL
+        url = arguments?.getString(URL_BUNDLE)
+        val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
+        startAction = arguments?.getInt(START_ACTION_BUNDLE) ?: START_ACTION_NORMAL
+        startValue = arguments?.getInt(START_VALUE_BUNDLE)
+        val resumeEpisode = arguments?.getInt(EPISODE_BUNDLE)
+        val resumeSeason = arguments?.getInt(SEASON_BUNDLE)
         syncModel.addFromUrl(url)
 
         val api = getApiFromName(apiName)
@@ -1165,9 +1194,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     .map { watchType -> Pair(watchType.internalId, watchType.stringRes) },
                 //.map { watchType -> Triple(watchType.internalId, watchType.iconRes, watchType.stringRes) },
             ) {
-                context?.let { localContext ->
-                    viewModel.updateWatchStatus(WatchType.fromInternalId(this.itemId))
-                }
+                viewModel.updateWatchStatus(WatchType.fromInternalId(this.itemId))
             }
         }
 
@@ -1475,6 +1502,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 ?.let {
                     result_play_movie?.text = it
                 }
+            println("startAction = $startAction")
 
             when (startAction) {
                 START_ACTION_RESUME_LATEST -> {
@@ -1488,13 +1516,28 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     }
                 }
                 START_ACTION_LOAD_EP -> {
-                    for (ep in episodeList) {
-                        if (ep.id == startValue) { // watched too much
-                            println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
-                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
-                            break
+                    if(episodeList.size == 1) {
+                        handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, episodeList.first()))
+                    } else {
+                        var found = false
+                        for (ep in episodeList) {
+                            if (ep.id == startValue) { // watched too much
+                                println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
+                                handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
+                                found = true
+                                break
+                            }
                         }
+                        if (!found)
+                            for (ep in episodeList) {
+                                if (ep.episode == resumeEpisode && ep.season == resumeSeason) {
+                                    println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
+                                    handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
+                                    break
+                                }
+                            }
                     }
+
                 }
                 else -> Unit
             }

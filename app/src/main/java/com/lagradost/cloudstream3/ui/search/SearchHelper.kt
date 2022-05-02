@@ -19,7 +19,7 @@ object SearchHelper {
                 activity.loadSearchResult(card)
             }
             SEARCH_ACTION_PLAY_FILE -> {
-                if (card is DataStoreHelper.ResumeWatchingResult && card.id != null) {
+                if (card is DataStoreHelper.ResumeWatchingResult) {
                     if (card.isFromDownload) {
                         handleDownloadClick(
                             activity, card.name, DownloadClickEvent(
@@ -38,7 +38,7 @@ object SearchHelper {
                             )
                         )
                     } else {
-                        activity.loadSearchResult(card, START_ACTION_LOAD_EP, card.id!!)
+                        activity.loadSearchResult(card, START_ACTION_LOAD_EP, card.id)
                     }
                 } else {
                     handleSearchClickCallback(

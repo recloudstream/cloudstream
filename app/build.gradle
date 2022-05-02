@@ -36,7 +36,7 @@ android {
         targetSdkVersion 30
 
         versionCode 46
-        versionName "2.9.22"
+        versionName "2.9.23"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"

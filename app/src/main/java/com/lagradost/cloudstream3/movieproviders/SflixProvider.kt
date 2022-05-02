@@ -222,9 +222,9 @@ open class SflixProvider : MainAPI() {
             var seasonItems = seasonsDocument.select("div.dropdown-menu.dropdown-menu-model > a")
             if (seasonItems.isNullOrEmpty())
                 seasonItems = seasonsDocument.select("div.dropdown-menu > a.dropdown-item")
-            seasonItems.forEachIndexed { season, element ->
+            seasonItems.apmapIndexed { season, element ->
                 val seasonId = element.attr("data-id")
-                if (seasonId.isNullOrBlank()) return@forEachIndexed
+                if (seasonId.isNullOrBlank()) return@apmapIndexed
 
                 var episode = 0
                 val seasonEpisodes = app.get("$mainUrl/ajax/v2/season/episodes/$seasonId").document

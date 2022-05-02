@@ -141,10 +141,13 @@ object APIHolder {
         return null
     }
 
-    fun LoadResponse.getId(): Int {
+    fun getLoadResponseIdFromUrl(url : String, apiName: String) : Int {
         return url.replace(getApiFromName(apiName).mainUrl, "").replace("/", "").hashCode()
     }
 
+    fun LoadResponse.getId(): Int {
+        return getLoadResponseIdFromUrl(url,apiName)
+    }
 
     /**
      * Gets the website captcha token

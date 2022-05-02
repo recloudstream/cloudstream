@@ -15,6 +15,8 @@ const val VIDEO_POS_DUR = "video_pos_dur"
 const val RESULT_WATCH_STATE = "result_watch_state"
 const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
 const val RESULT_RESUME_WATCHING = "result_resume_watching_2" // changed due to id changes
+const val RESULT_RESUME_WATCHING_OLD = "result_resume_watching"
+const val RESULT_RESUME_WATCHING_HAS_MIGRATED = "result_resume_watching_migrated"
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 
@@ -65,7 +67,7 @@ object DataStoreHelper {
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse
 
-    var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
+    private var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
 
     fun getAllWatchStateIds(): List<Int>? {
         val folder = "$currentAccount/$RESULT_WATCH_STATE"
@@ -81,14 +83,41 @@ object DataStoreHelper {
         }
     }
 
+    private fun getAllResumeStateIdsOld(): List<Int>? {
+        val folder = "$currentAccount/$RESULT_RESUME_WATCHING_OLD"
+        return getKeys(folder)?.mapNotNull {
+            it.removePrefix("$folder/").toIntOrNull()
+        }
+    }
+
+    fun migrateResumeWatching() {
+        // if (getKey(RESULT_RESUME_WATCHING_HAS_MIGRATED, false) != true) {
+        setKey(RESULT_RESUME_WATCHING_HAS_MIGRATED, true)
+        getAllResumeStateIdsOld()?.forEach { id ->
+            getLastWatchedOld(id)?.let {
+                setLastWatched(
+                    it.parentId,
+                    null,
+                    it.episode,
+                    it.season,
+                    it.isFromDownload,
+                    it.updateTime
+                )
+                removeLastWatchedOld(it.parentId)
+            }
+        }
+        //}
+    }
+
     fun setLastWatched(
         parentId: Int?,
         episodeId: Int?,
         episode: Int?,
         season: Int?,
-        isFromDownload: Boolean = false
+        isFromDownload: Boolean = false,
+        updateTime: Long? = null,
     ) {
-        if (parentId == null || episodeId == null) return
+        if (parentId == null) return
         setKey(
             "$currentAccount/$RESULT_RESUME_WATCHING",
             parentId.toString(),
@@ -97,10 +126,15 @@ object DataStoreHelper {
                 episodeId,
                 episode,
                 season,
-                System.currentTimeMillis(),
+                updateTime ?: System.currentTimeMillis(),
                 isFromDownload
             )
         )
+    }
+
+    fun removeLastWatchedOld(parentId: Int?) {
+        if (parentId == null) return
+        removeKey("$currentAccount/$RESULT_RESUME_WATCHING_OLD", parentId.toString())
     }
 
     fun removeLastWatched(parentId: Int?) {
@@ -112,6 +146,14 @@ object DataStoreHelper {
         if (id == null) return null
         return getKey(
             "$currentAccount/$RESULT_RESUME_WATCHING",
+            id.toString(),
+        )
+    }
+
+    fun getLastWatchedOld(id: Int?): VideoDownloadHelper.ResumeWatching? {
+        if (id == null) return null
+        return getKey(
+            "$currentAccount/$RESULT_RESUME_WATCHING_OLD",
             id.toString(),
         )
     }
