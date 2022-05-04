@@ -72,13 +72,23 @@ class SoaptwoDayProvider:MainAPI() {
         val title = soup.selectFirst(".hidden-lg > div:nth-child(1) > h4")?.text() ?: ""
         val description = soup.selectFirst("p#wrap")?.text()?.trim()
         val poster = soup.selectFirst(".col-md-5 > div:nth-child(1) > div:nth-child(1) > img")?.attr("src")
-        val episodes = soup.select("div.alert > div > div > a").mapNotNull {
-            val link = fixUrlNull(it?.attr("href")) ?: return@mapNotNull null
-            val name = it?.text()?.replace(Regex("(^(\\d+)\\.)"),"")
-            Episode(
-                name = name,
-                data = link
-            )
+        val episodes = mutableListOf<Episode>()
+        soup.select("div.alert").forEach {
+            val season = it?.selectFirst("h4")?.text()?.filter { c -> c.isDigit() }?.toIntOrNull()
+            it?.select("div > div > a")?.forEach { entry ->
+                val link = fixUrlNull(entry?.attr("href")) ?: return@forEach
+                val text = entry?.text() ?: ""
+                val name = text.replace(Regex("(^(\\d+)\\.)"),"")
+                val epNum = text.substring(0, text.indexOf(".")).toIntOrNull()
+                episodes.add(
+                    Episode(
+                        name = name,
+                        data = link,
+                        season = season,
+                        episode = epNum
+                    )
+                )
+            }
         }
         val otherInfoBody = soup.select("div.col-sm-8 div.panel-body").toString()
         //Fetch casts

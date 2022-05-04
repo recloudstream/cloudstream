@@ -94,6 +94,11 @@
         "status": 1,
         "url": "https://dramasee.net"
     },
+    "DreamSubProvider": {
+        "name": "DreamSub",
+        "status": 1,
+        "url": "https://dreamsub.me"
+    },
     "DubbedAnimeProvider": {
         "name": "DubbedAnime",
         "status": 1,

@@ -102,6 +102,7 @@ object APIHolder {
             TenshiProvider(),
             WcoProvider(),
             AnimePaheProvider(),
+            DreamSubProvider(),
             NineAnimeProvider(),
             AnimeWorldProvider(),
             ZoroProvider(),
