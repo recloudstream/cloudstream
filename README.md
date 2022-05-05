@@ -19,6 +19,7 @@ https://github.com/LagradOst/CloudStream-3/releases
 + Chromecast
 
 ***Screenshots:***
+(All the images are blurred because of DMCA reasons, but are actually not blurred in the app)
 
 <img src="./.github/home.jpg" height="400"/><img src="./.github/search.jpg" height="400"/><img src="./.github/downloads.jpg" height="400"/><img src="./.github/results.jpg" height="400"/>
 <img src="./.github/player.jpg" height="200"/>
