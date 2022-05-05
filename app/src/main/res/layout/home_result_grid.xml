@@ -30,6 +30,7 @@
             android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:id="@+id/title_shadow"
             android:src="@drawable/title_shadow"
             android:layout_gravity="bottom"
             tools:ignore="ContentDescription" />

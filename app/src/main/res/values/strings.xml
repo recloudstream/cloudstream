@@ -48,6 +48,7 @@
     <string name="log_enabled_key" translatable="false">log_enabled_key</string>
     <string name="show_logcat_key" translatable="false">show_logcat_key</string>
     <string name="bottom_title_key" translatable="false">bottom_title_key</string>
+    <string name="poster_ui_key" translatable="false">poster_ui_key</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
@@ -341,6 +342,16 @@
     <string name="episode_action_download_mirror">Download mirror</string>
     <string name="episode_action_reload_links">Reload links</string>
     <string name="episode_action_download_subtitle">Download subtitles</string>
+
+    <string name="show_hd">Quality label</string>
+    <string name="show_dub">Dub label</string>
+    <string name="show_sub">Sub label</string>
+    <string name="show_title">Title</string>
+    <string name="show_hd_key" translatable="false">show_hd_key</string>
+    <string name="show_dub_key" translatable="false">show_dub_key</string>
+    <string name="show_sub_key" translatable="false">show_sub_key</string>
+    <string name="show_title_key" translatable="false">show_title_key</string>
+    <string name="poster_ui_settings">Toggle UI elements on poster</string>
 
     <string name="no_update_found">No Update Found</string>
     <string name="check_for_update">Check for Update</string>

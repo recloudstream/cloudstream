@@ -1,11 +1,13 @@
 package com.lagradost.cloudstream3.ui.search
 
+import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
@@ -15,6 +17,17 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.home_result_grid.view.*
 
 object SearchResultBuilder {
+    private val showCache: MutableMap<String, Boolean> = mutableMapOf()
+
+    fun updateCache(context: Context?) {
+        if (context == null) return
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+        for (k in context.resources.getStringArray(R.array.poster_ui_options_values)) {
+            showCache[k] = settingsManager.getBoolean(k, showCache[k] ?: true)
+        }
+    }
+
     /**
      * @param nextFocusBehavior True if first, False if last, Null if between.
      * Used to prevent escaping the adapter horizontally (focus wise).
@@ -34,6 +47,7 @@ object SearchResultBuilder {
         val textIsDub: TextView? = itemView.text_is_dub
         val textIsSub: TextView? = itemView.text_is_sub
         val textQuality: TextView? = itemView.text_quality
+        val shadow: View? = itemView.title_shadow
 
         val bg: CardView = itemView.background_card
 
@@ -46,6 +60,13 @@ object SearchResultBuilder {
         playImg?.isVisible = false
         textIsDub?.isVisible = false
         textIsSub?.isVisible = false
+
+        val showSub = showCache[textIsDub?.context?.getString(R.string.show_sub_key)] ?: false
+        val showDub = showCache[textIsDub?.context?.getString(R.string.show_dub_key)] ?: false
+        val showTitle = showCache[cardText?.context?.getString(R.string.show_title_key)] ?: false
+        val showHd = showCache[textQuality?.context?.getString(R.string.show_title_key)] ?: false
+
+        shadow?.isVisible = showTitle
 
         when (card.quality) {
             SearchQuality.BlueRay -> R.string.quality_blueray
@@ -67,14 +88,15 @@ object SearchResultBuilder {
             null -> null
         }?.let { textRes ->
             textQuality?.setText(textRes)
-            textQuality?.isVisible = true
+            textQuality?.isVisible = showHd
         } ?: run {
             textQuality?.isVisible = false
         }
 
         cardText?.text = card.name
-
+        cardText?.isVisible = showTitle
         cardView.isVisible = true
+
         if (!cardView.setImage(card.posterUrl, card.posterHeaders)) {
             cardView.setImageResource(R.drawable.default_cover)
         }
@@ -185,10 +207,10 @@ object SearchResultBuilder {
                 val dubStatus = card.dubStatus
                 if (!dubStatus.isNullOrEmpty()) {
                     if (dubStatus.contains(DubStatus.Dubbed)) {
-                        textIsDub?.visibility = View.VISIBLE
+                        textIsDub?.isVisible = showDub
                     }
                     if (dubStatus.contains(DubStatus.Subbed)) {
-                        textIsSub?.visibility = View.VISIBLE
+                        textIsSub?.isVisible = showSub
                     }
                 }
 

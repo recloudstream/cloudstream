@@ -44,6 +44,7 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
@@ -109,7 +110,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         super.onConfigurationChanged(newConfig)
         updateLocale() // android fucks me by chaining lang when rotating the phone
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navHostFragment.navController.currentDestination?.let { updateNavBar(it) }
     }
 
@@ -349,6 +351,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             api.init()
         }
 
+        SearchResultBuilder.updateCache(this)
+
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val downloadFromGithub = try {
             settingsManager.getBoolean(getString(R.string.killswitch_key), true)
@@ -365,57 +369,68 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             e.printStackTrace()
             false
         }
-    fun addNginxToJson(data: java.util.HashMap<String, ProvidersInfoJson>): java.util.HashMap<String, ProvidersInfoJson>? {
-        try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-            val nginxUrl =
-                settingsManager.getString(getString(R.string.nginx_url_key), "nginx_url_key").toString()
-            val nginxCredentials =
-                settingsManager.getString(getString(R.string.nginx_credentials), "nginx_credentials")
-                    .toString()
-            val StoredNginxProvider = NginxProvider()
-            if (nginxUrl == "nginx_url_key" || nginxUrl == "") { // if key is default value, or empty:
-                data[StoredNginxProvider.javaClass.simpleName] = ProvidersInfoJson(
-                    url = nginxUrl,
-                    name = StoredNginxProvider.name,
-                    status = PROVIDER_STATUS_DOWN,  // the provider will not be display
-                    credentials = nginxCredentials
-                )
-            } else {  // valid url
-                data[StoredNginxProvider.javaClass.simpleName] = ProvidersInfoJson(
-                    url = nginxUrl,
-                    name = StoredNginxProvider.name,
-                    status = PROVIDER_STATUS_OK,
-                    credentials = nginxCredentials
-                )
-            }
 
-            return data
-        } catch (e: Exception) {
-            logError(e)
-            return data
-        }
-    }
-    fun createNginxJson() : ProvidersInfoJson? { //java.util.HashMap<String, ProvidersInfoJson>
-        return try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-            val nginxUrl = settingsManager.getString(getString(R.string.nginx_url_key), "nginx_url_key").toString()
-            val nginxCredentials = settingsManager.getString(getString(R.string.nginx_credentials), "nginx_credentials").toString()
-            if (nginxUrl == "nginx_url_key" || nginxUrl == "") { // if key is default value or empty:
-                null // don't overwrite anything
-            } else {
-                ProvidersInfoJson(
-                    url = nginxUrl,
-                    name = NginxProvider().name,
-                    status = PROVIDER_STATUS_OK,
-                    credentials = nginxCredentials
-                )
+        fun addNginxToJson(data: java.util.HashMap<String, ProvidersInfoJson>): java.util.HashMap<String, ProvidersInfoJson>? {
+            try {
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+                val nginxUrl =
+                    settingsManager.getString(getString(R.string.nginx_url_key), "nginx_url_key")
+                        .toString()
+                val nginxCredentials =
+                    settingsManager.getString(
+                        getString(R.string.nginx_credentials),
+                        "nginx_credentials"
+                    )
+                        .toString()
+                val StoredNginxProvider = NginxProvider()
+                if (nginxUrl == "nginx_url_key" || nginxUrl == "") { // if key is default value, or empty:
+                    data[StoredNginxProvider.javaClass.simpleName] = ProvidersInfoJson(
+                        url = nginxUrl,
+                        name = StoredNginxProvider.name,
+                        status = PROVIDER_STATUS_DOWN,  // the provider will not be display
+                        credentials = nginxCredentials
+                    )
+                } else {  // valid url
+                    data[StoredNginxProvider.javaClass.simpleName] = ProvidersInfoJson(
+                        url = nginxUrl,
+                        name = StoredNginxProvider.name,
+                        status = PROVIDER_STATUS_OK,
+                        credentials = nginxCredentials
+                    )
+                }
+
+                return data
+            } catch (e: Exception) {
+                logError(e)
+                return data
             }
-        } catch (e: Exception) {
-            logError(e)
-            null
         }
-    }
+
+        fun createNginxJson(): ProvidersInfoJson? { //java.util.HashMap<String, ProvidersInfoJson>
+            return try {
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+                val nginxUrl =
+                    settingsManager.getString(getString(R.string.nginx_url_key), "nginx_url_key")
+                        .toString()
+                val nginxCredentials = settingsManager.getString(
+                    getString(R.string.nginx_credentials),
+                    "nginx_credentials"
+                ).toString()
+                if (nginxUrl == "nginx_url_key" || nginxUrl == "") { // if key is default value or empty:
+                    null // don't overwrite anything
+                } else {
+                    ProvidersInfoJson(
+                        url = nginxUrl,
+                        name = NginxProvider().name,
+                        status = PROVIDER_STATUS_OK,
+                        credentials = nginxCredentials
+                    )
+                }
+            } catch (e: Exception) {
+                logError(e)
+                null
+            }
+        }
 
         // this pulls the latest data so ppl don't have to update to simply change provider url
         if (downloadFromGithub) {
@@ -435,13 +450,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                             tryParseJson<HashMap<String, ProvidersInfoJson>>(txt)
                                         setKey(PROVIDER_STATUS_KEY, txt)
                                         MainAPI.overrideData = newCache // update all new providers
-                                        
-                                        val newUpdatedCache = newCache?.let { addNginxToJson(it) ?: it }
 
-					                    for (api in apis) { // update current providers
-                                            newUpdatedCache?.get(api.javaClass.simpleName)?.let { data ->
-                                                api.overrideWithNewData(data)
-                                            }
+                                        val newUpdatedCache =
+                                            newCache?.let { addNginxToJson(it) ?: it }
+
+                                        for (api in apis) { // update current providers
+                                            newUpdatedCache?.get(api.javaClass.simpleName)
+                                                ?.let { data ->
+                                                    api.overrideWithNewData(data)
+                                                }
                                         }
                                     } catch (e: Exception) {
                                         logError(e)
@@ -456,7 +473,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 newCache
                             }?.let { providersJsonMap ->
                                 MainAPI.overrideData = providersJsonMap
-                                val providersJsonMapUpdated = addNginxToJson(providersJsonMap)?: providersJsonMap // if return null, use unchanged one
+                                val providersJsonMapUpdated = addNginxToJson(providersJsonMap)
+                                    ?: providersJsonMap // if return null, use unchanged one
                                 val acceptableProviders =
                                     providersJsonMapUpdated.filter { it.value.status == PROVIDER_STATUS_OK || it.value.status == PROVIDER_STATUS_SLOW }
                                         .map { it.key }.toSet()
@@ -524,7 +542,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         setUpBackup()
 
         CommonActivity.init(this)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         //val navController = findNavController(R.id.nav_host_fragment)
 

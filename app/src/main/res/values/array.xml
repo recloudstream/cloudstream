@@ -143,6 +143,20 @@
         <item>500</item>
     </array>
 
+    <array name="poster_ui_options">
+        <item>@string/show_hd</item>
+        <item>@string/show_dub</item>
+        <item>@string/show_sub</item>
+        <item>@string/show_title</item>
+    </array>
+
+    <array name="poster_ui_options_values">
+        <item>@string/show_hd_key</item>
+        <item>@string/show_dub_key</item>
+        <item>@string/show_sub_key</item>
+        <item>@string/show_title_key</item>
+    </array>
+
     <array name="episode_long_click_options">
         <item>@string/episode_action_chromecast_episode</item>
         <item>@string/episode_action_chromecast_mirror</item>

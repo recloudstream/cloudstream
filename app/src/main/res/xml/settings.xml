@@ -166,6 +166,10 @@
                 android:key="@string/bottom_title_key"
                 android:summary="@string/bottom_title_settings_des"
                 android:title="@string/bottom_title_settings" />
+        <Preference
+                android:icon="@drawable/ic_baseline_tv_24"
+                android:key="@string/poster_ui_key"
+                android:title="@string/poster_ui_settings" />
     </PreferenceCategory>
     <PreferenceCategory
             android:key="search"

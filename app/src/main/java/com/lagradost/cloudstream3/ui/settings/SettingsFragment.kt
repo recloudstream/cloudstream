@@ -39,6 +39,7 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
@@ -339,6 +340,34 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.poster_ui_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.poster_ui_options)
+            val keys = resources.getStringArray(R.array.poster_ui_options_values)
+            val prefValues = keys.map {
+                settingsManager.getBoolean(it, true)
+            }.mapIndexedNotNull { index, b ->
+                if (b) {
+                    index
+                } else null
+            }
+
+            activity?.showMultiDialog(
+                prefNames.toList(),
+                prefValues,
+                getString(R.string.poster_ui_settings),
+                {}) { list ->
+                val edit = settingsManager.edit()
+                for ((i, key) in keys.withIndex()) {
+                    edit.putBoolean(key, list.contains(i))
+                }
+                edit.apply()
+                SearchResultBuilder.updateCache(it.context)
+            }
+
+            return@setOnPreferenceClickListener true
+        }
+
+
         val syncApis =
             listOf(Pair(R.string.mal_key, malApi), Pair(R.string.anilist_key, aniListApi))
         for ((key, api) in syncApis) {
@@ -487,28 +516,34 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-	getPref(R.string.nginx_url_key)?.setOnPreferenceClickListener {
-
+        getPref(R.string.nginx_url_key)?.setOnPreferenceClickListener {
             activity?.showNginxTextInputDialog(
-                settingsManager.getString(getString(R.string.nginx_url_pref), "Nginx server url").toString(),
-                settingsManager.getString(getString(R.string.nginx_url_key), "").toString(),  // key: the actual you use rn
+                settingsManager.getString(getString(R.string.nginx_url_pref), "Nginx server url")
+                    .toString(),
+                settingsManager.getString(getString(R.string.nginx_url_key), "")
+                    .toString(),  // key: the actual you use rn
                 android.text.InputType.TYPE_TEXT_VARIATION_URI,  // uri
                 {}) {
                 settingsManager.edit()
-                    .putString(getString(R.string.nginx_url_key), it).apply()  // change the stored url in nginx_url_key to it
+                    .putString(getString(R.string.nginx_url_key), it)
+                    .apply()  // change the stored url in nginx_url_key to it
             }
             return@setOnPreferenceClickListener true
         }
 
         getPref(R.string.nginx_credentials)?.setOnPreferenceClickListener {
-
             activity?.showNginxTextInputDialog(
-                settingsManager.getString(getString(R.string.nginx_credentials_title), "Nginx Credentials").toString(),
-                settingsManager.getString(getString(R.string.nginx_credentials), "").toString(),  // key: the actual you use rn
+                settingsManager.getString(
+                    getString(R.string.nginx_credentials_title),
+                    "Nginx Credentials"
+                ).toString(),
+                settingsManager.getString(getString(R.string.nginx_credentials), "")
+                    .toString(),  // key: the actual you use rn
                 android.text.InputType.TYPE_TEXT_VARIATION_URI,
                 {}) {
                 settingsManager.edit()
-                    .putString(getString(R.string.nginx_credentials), it).apply()  // change the stored url in nginx_url_key to it
+                    .putString(getString(R.string.nginx_credentials), it)
+                    .apply()  // change the stored url in nginx_url_key to it
             }
             return@setOnPreferenceClickListener true
         }
