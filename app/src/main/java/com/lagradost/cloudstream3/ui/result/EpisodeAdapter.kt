@@ -208,8 +208,8 @@ class EpisodeAdapter(
                 return@setOnLongClickListener true
             }
 
-            episodeDownloadImage.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
-            episodeDownloadBar.visibility = if (hasDownloadSupport) View.VISIBLE else View.GONE
+            episodeDownloadImage.isVisible = hasDownloadSupport
+            episodeDownloadBar.isVisible = hasDownloadSupport
         }
 
         override fun reattachDownloadButton() {

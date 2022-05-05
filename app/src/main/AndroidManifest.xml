@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools" package="com.lagradost.cloudstream3">
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.lagradost.cloudstream3">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
-    <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- I dont remember, probs has to do with downloads -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Downloads -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Downloads on low api devices-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- some dependency needs this -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Used for player vertical slide-->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!--Used for app update-->
+    <!--<uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" /> not used atm, but code exist that requires it that are not run-->
+    <permission android:name="android.permission.QUERY_ALL_PACKAGES" /> <!-- Used for getting if vlc is installed -->
 
-    <uses-feature android:name="android.hardware.touchscreen"
-                  android:required="false"/>
-    <uses-feature android:name="android.software.leanback"
-                  android:required="false"/>
+    <!-- Fixes android tv fuckery -->
+    <uses-feature
+            android:name="android.hardware.touchscreen"
+            android:required="false" />
+    <uses-feature
+            android:name="android.software.leanback"
+            android:required="false" />
 
     <!--TODO https://stackoverflow.com/questions/41799732/chromecast-button-not-visible-in-android-->
     <application
@@ -32,19 +37,21 @@
             tools:targetApi="o">
         <meta-data
                 android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-                android:value="com.lagradost.cloudstream3.utils.CastOptionsProvider"/>
+                android:value="com.lagradost.cloudstream3.utils.CastOptionsProvider" />
 
-        <activity android:name=".ui.player.DownloadedPlayerActivity"
+        <activity
+                android:name=".ui.player.DownloadedPlayerActivity"
                 android:screenOrientation="userLandscape"
                 android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation"
                 android:resizeableActivity="true"
                 android:supportsPictureInPicture="true"
                 android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:scheme="content"/>
-                <data android:mimeType="video/*"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="content" />
+                <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
 
@@ -55,22 +62,62 @@
                 android:label="@string/app_name"
                 android:resizeableActivity="true"
                 android:supportsPictureInPicture="true">
-            <intent-filter
-                    android:exported="true">
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+            <intent-filter android:exported="true">
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
-            <intent-filter
-                    android:exported="true">
-                <action android:name="android.intent.action.VIEW"/>
+            <intent-filter android:exported="true">
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="https" android:host="pelisplus.icu" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="pelisplushd.net" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="pelismart.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="melomovie.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="doramasyt.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="cinecalidad.lol" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="cuevana3.me" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="entrepeliculasyseries.nu" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="pelisflix.li" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="seriesflix.video" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="ihavenotv.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="lookmovie.io" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.vmovee.watch" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="allmoviesforyou.net" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="vidembed.cc" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="vf-film.me" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="vf-serie.org" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="french-stream.re" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="asianembed.io" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="asiaflix.app" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="bflix.ru" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="fmovies.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="sflix.pro" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="filman.cc" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="sflix.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="dopebox.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="solarmovie.pe" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="pinoymoviepedia.ru" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.pinoy-hd.xyz" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="pinoymovies.es" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="trailers.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.2embed.ru" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="dramasee.net" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="watchasian.sh" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="kdramahood.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="akwam.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="mycima.tv" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.egy.best" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="secretlink.xyz" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="hdm.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="theflix.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="streamingcommunity.top" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.tantifilm.rodeo" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="v2.apimdb.net" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.wcostream.com" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="gogoanime.film" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="allanime.site" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="animekisa.in" android:pathPrefix="/"/>
@@ -78,45 +125,22 @@
                 <data android:scheme="https" android:host="www3.animeflv.net" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="tenshi.moe" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="wcostream.cc" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="bestdubbedanime.com" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="doramasyt.com" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="cinecalidad.lol" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="cuevana3.io" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="entrepeliculasyseries.nu" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="pelisflix.li" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="seriesflix.video" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="ihavenotv.com" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="www.vmovee.watch" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="www.wcostream.com" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="allmoviesforyou.net" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="monoschinos2.com" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="vidembed.cc" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="vf-film.me" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="vf-serie.org" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="french-stream.re" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="asianembed.io" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="bflix.ru" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="fmovies.to" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="sflix.pro" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="filman.cc" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="zoro.to" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="pinoymoviepedia.ru" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="www.pinoy-hd.xyz" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="pinoymovies.es" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="trailers.to" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="dramasee.net" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="watchasian.sh" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="kdramahood.com" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="akwam.io" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="animepahe.com" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="9anime.center" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="asiaflix.app" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="dreamsub.me" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="9anime.id" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="www.animeworld.tv" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="zoro.to" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="bestdubbedanime.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="monoschinos2.com" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="kawaiifu.com" android:pathPrefix="/"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="cloudstreamapp"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="cloudstreamapp" />
             </intent-filter>
         </activity>
 
@@ -125,19 +149,17 @@
                 android:enabled="false"
                 android:exported="true">
             <intent-filter android:exported="true">
-                <action android:name="restart_service"/>
+                <action android:name="restart_service" />
             </intent-filter>
         </receiver>
         <service
                 android:name=".services.VideoDownloadService"
                 android:enabled="true"
-                android:exported="false">
-        </service>
+                android:exported="false"></service>
 
         <activity
                 android:exported="false"
-                android:name=".ui.ControllerActivity">
-        </activity>
+                android:name=".ui.ControllerActivity"></activity>
 
         <provider
                 android:name="androidx.core.content.FileProvider"
@@ -147,7 +169,7 @@
                 android:grantUriPermissions="true">
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/provider_paths"/>
+                    android:resource="@xml/provider_paths" />
         </provider>
     </application>
 </manifest>

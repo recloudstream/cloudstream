@@ -1845,8 +1845,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 //                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
 //                            }
 
-                        result_download_movie?.visibility =
-                            if (hasDownloadSupport) VISIBLE else GONE
+                        result_movie_progress_downloaded_holder?.isVisible = hasDownloadSupport
                         if (hasDownloadSupport) {
                             val localId = d.getId()
                             val file =

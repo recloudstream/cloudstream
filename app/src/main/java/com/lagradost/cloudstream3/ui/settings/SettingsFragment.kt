@@ -97,7 +97,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         private fun Context.isAutoTv(): Boolean {
             val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager?
-            return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+            // AFT = Fire TV
+            return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION || Build.MODEL.contains("AFT")
         }
 
         const val accountEnabled = true
