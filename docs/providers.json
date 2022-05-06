@@ -119,6 +119,11 @@
         "status": 1,
         "url": "https://entrepeliculasyseries.nu"
     },
+    "FaselHDProvider": {
+        "name": "FaselHD",
+        "status": 1,
+        "url": "https://faselhd.io"
+    },
     "FilmanProvider": {
         "name": "filman.cc",
         "status": 1,
