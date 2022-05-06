@@ -269,11 +269,11 @@ class CS3IPlayer : IPlayer {
             updatedTime()
 
         exoPlayer?.release()
-        simpleCache?.release()
+        //simpleCache?.release()
         currentTextRenderer = null
 
         exoPlayer = null
-        simpleCache = null
+        //simpleCache = null
     }
 
     override fun onStop() {
