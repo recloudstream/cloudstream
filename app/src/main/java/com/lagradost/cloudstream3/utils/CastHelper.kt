@@ -30,9 +30,9 @@ object CastHelper {
         movieMetadata.putString(
             MediaMetadata.KEY_SUBTITLE,
             if (holder.isMovie)
-                link.name
+                "${link.name} ${Qualities.getStringByInt(link.quality)}"
             else
-                (epData.name ?: "Episode ${epData.episode}") + " - ${link.name}"
+                (epData.name ?: "Episode ${epData.episode}") + " - ${link.name} ${Qualities.getStringByInt(link.quality)}"
         )
 
         holder.title?.let {

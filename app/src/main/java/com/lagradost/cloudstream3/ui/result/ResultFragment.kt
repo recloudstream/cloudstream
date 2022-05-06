@@ -872,7 +872,6 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 )
             }
 
-
             suspend fun requireLinks(isCasting: Boolean, displayLoading: Boolean = true): Boolean {
                 val skipLoading = getApiFromName(apiName).instantLinkLoading
 

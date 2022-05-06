@@ -1113,13 +1113,7 @@ object VideoDownloadManager {
         logcatPrint("initialised the HLS downloader.")
 
         val m3u8 = M3u8Helper.M3u8Stream(
-            link.url, when (link.quality) {
-                -2 -> 360
-                -1 -> 480
-                1 -> 720
-                2 -> 1080
-                else -> null
-            }, mapOf("referer" to link.referer)
+            link.url, link.quality, mapOf("referer" to link.referer)
         )
 
         var realIndex = startIndex ?: 0

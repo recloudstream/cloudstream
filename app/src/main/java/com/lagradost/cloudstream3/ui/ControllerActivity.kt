@@ -36,6 +36,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import org.json.JSONObject
 
@@ -182,7 +183,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     val contentUrl = (remoteMediaClient?.currentItem?.media?.contentUrl
                         ?: remoteMediaClient?.currentItem?.media?.contentId)
 
-                    val sortingMethods = items.map { it.name }.toTypedArray()
+                    val sortingMethods = items.map { "${it.name} ${Qualities.getStringByInt(it.quality)}" }.toTypedArray()
                     val sotringIndex = items.indexOfFirst { it.url == contentUrl }
 
                     val arrayAdapter =

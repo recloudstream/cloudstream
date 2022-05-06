@@ -48,7 +48,6 @@ class CS3IPlayer : IPlayer {
     private val seekActionTime = 30000L
 
     private var ignoreSSL: Boolean = true
-    private var simpleCache: SimpleCache? = null
     private var playBackSpeed: Float = 1.0f
 
     private var lastMuteVolume: Float = 1.0f
@@ -306,6 +305,8 @@ class CS3IPlayer : IPlayer {
     }
 
     companion object {
+        private var simpleCache: SimpleCache? = null
+
         var requestSubtitleUpdate: (() -> Unit)? = null
 
         private fun createOnlineSource(link: ExtractorLink): DataSource.Factory {
