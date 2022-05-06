@@ -80,6 +80,7 @@ object APIHolder {
             AkwamProvider(),
             MyCimaProvider(),
             EgyBestProvider(),
+            FaselHDProvider(),
             SoaptwoDayProvider(),
             HDMProvider(),// disabled due to cloudflare
             TheFlixToProvider(),

@@ -24,7 +24,7 @@ class MyCimaProvider : MainAPI() {
     }
 
     private fun Element.toSearchResponse(): SearchResponse? {
-        val url = select("div.Thumb--GridItem a")?.attr("href") ?: return null
+        val url = select("div.Thumb--GridItem a")
         val posterUrl = select("span.BG--GridItem")?.attr("data-lazy-style")
             ?.getImageURL()
         val year = select("div.GridItem span.year")?.text()
@@ -35,9 +35,9 @@ class MyCimaProvider : MainAPI() {
         // If you need to differentiate use the url.
         return MovieSearchResponse(
             title,
-            url,
+            url.attr("href"),
             this@MyCimaProvider.name,
-            TvType.TvSeries,
+            if(url.attr("title").contains("فيلم")) TvType.Movie else TvType.TvSeries,
             posterUrl,
             year?.getIntFromText(),
             null,
@@ -314,12 +314,10 @@ class MyCimaProvider : MainAPI() {
                     callback.invoke(
                         ExtractorLink(
                             this.name,
-                            this.name + " - ${
-                                linkElement.select("resolution").text().getIntFromText()
-                            }p",
+                            this.name,
                             linkElement.attr("href"),
                             this.mainUrl,
-                            2
+                            quality = linkElement.select("resolution").text().getIntFromText() ?: 0
                         )
                     )
                 }
