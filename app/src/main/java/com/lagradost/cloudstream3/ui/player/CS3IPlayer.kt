@@ -315,7 +315,9 @@ class CS3IPlayer : IPlayer {
             val interceptor = provider.getVideoInterceptor(link)
 
             val source = if (interceptor == null) {
-                DefaultHttpDataSource.Factory().setUserAgent(USER_AGENT)
+                DefaultHttpDataSource.Factory() //TODO USE app.baseClient
+                    .setUserAgent(USER_AGENT)
+                    .setAllowCrossProtocolRedirects(true)   //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
             } else {
                 val client = app.baseClient.newBuilder()
                     .addInterceptor(interceptor)
@@ -335,9 +337,6 @@ class CS3IPlayer : IPlayer {
 
             return source.apply {
                 setDefaultRequestProperties(headers)
-
-                //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
-//                setAllowCrossProtocolRedirects(true)
             }
         }
 
