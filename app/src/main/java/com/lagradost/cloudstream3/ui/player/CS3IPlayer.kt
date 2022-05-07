@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.SubtitleView
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -313,26 +314,26 @@ class CS3IPlayer : IPlayer {
             val provider = getApiFromName(link.source)
             val interceptor = provider.getVideoInterceptor(link)
 
-            val client = app.baseClient
-                .let {
-                    if (interceptor != null)
-                        it.newBuilder()
-                            .addInterceptor(interceptor)
-                            .build()
-                    else it
-                }
+            val source = if (interceptor == null) {
+                DefaultHttpDataSource.Factory().setUserAgent(USER_AGENT)
+            } else {
+                val client = app.baseClient.newBuilder()
+                    .addInterceptor(interceptor)
+                    .build()
+                OkHttpDataSource.Factory(client).setUserAgent(USER_AGENT)
+            }
 
-            return OkHttpDataSource.Factory(client).apply {
-                setUserAgent(USER_AGENT)
-                val headers = mapOf(
-                    "referer" to link.referer,
-                    "accept" to "*/*",
-                    "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
-                    "sec-ch-ua-mobile" to "?0",
-                    "sec-fetch-user" to "?1",
-                    "sec-fetch-mode" to "navigate",
-                    "sec-fetch-dest" to "video"
-                ) + link.headers // Adds the headers from the provider, e.g Authorization
+            val headers = mapOf(
+                "referer" to link.referer,
+                "accept" to "*/*",
+                "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
+                "sec-ch-ua-mobile" to "?0",
+                "sec-fetch-user" to "?1",
+                "sec-fetch-mode" to "navigate",
+                "sec-fetch-dest" to "video"
+            ) + link.headers // Adds the headers from the provider, e.g Authorization
+
+            return source.apply {
                 setDefaultRequestProperties(headers)
 
                 //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
@@ -468,7 +469,7 @@ class CS3IPlayer : IPlayer {
                     .setLoadControl(
                         DefaultLoadControl.Builder()
                             .setTargetBufferBytes(
-                                if(cacheSize <= 0) {
+                                if (cacheSize <= 0) {
                                     DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES
                                 } else {
                                     if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt()
@@ -476,7 +477,7 @@ class CS3IPlayer : IPlayer {
                             )
                             .setBufferDurationsMs(
                                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                                if(videoBufferMs <= 0) {
+                                if (videoBufferMs <= 0) {
                                     DefaultLoadControl.DEFAULT_MAX_BUFFER_MS
                                 } else {
                                     videoBufferMs.toInt()
