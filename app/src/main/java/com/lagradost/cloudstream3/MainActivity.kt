@@ -90,8 +90,9 @@ const val VLC_EXTRA_DURATION_OUT = "extra_duration"
 const val VLC_LAST_ID_KEY = "vlc_last_open_id"
 
 // Short name for requests client to make it nicer to use
-var app = Requests()
-
+var app = Requests().apply {
+    defaultHeaders = mapOf("user-agent" to USER_AGENT)
+}
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     companion object {
