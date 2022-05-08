@@ -1,110 +1,120 @@
 {
     "AkwamProvider": {
+        "language": "ar",
         "name": "Akwam",
         "status": 1,
         "url": "https://akwam.to"
     },
     "AllAnimeProvider": {
+        "language": "en",
         "name": "AllAnime",
         "status": 1,
         "url": "https://allanime.site"
     },
     "AllMoviesForYouProvider": {
+        "language": "en",
         "name": "AllMoviesForYou",
         "status": 1,
         "url": "https://allmoviesforyou.net"
     },
     "AnimeFlickProvider": {
+        "language": "en",
         "name": "AnimeFlick",
         "status": 1,
         "url": "https://animeflick.net"
     },
     "AnimePaheProvider": {
+        "language": "en",
         "name": "AnimePahe",
         "status": 0,
         "url": "https://animepahe.com"
     },
     "AnimeWorldProvider": {
+        "language": "it",
         "name": "AnimeWorld",
         "status": 1,
         "url": "https://www.animeworld.tv"
     },
-    "AnimeflvProvider": {
-        "name": "Animeflv",
-        "status": 1,
-        "url": "https://www3.animeflv.net"
-    },
     "AnimeflvnetProvider": {
+        "language": "es",
         "name": "Animeflv.net",
         "status": 1,
         "url": "https://www3.animeflv.net"
     },
     "AnimekisaProvider": {
+        "language": "en",
         "name": "Animekisa",
         "status": 1,
         "url": "https://animekisa.in"
     },
     "ApiMDBProvider": {
+        "language": "en",
         "name": "ApiMDB",
         "status": 1,
         "url": "https://v2.apimdb.net"
     },
     "AsiaFlixProvider": {
+        "language": "en",
         "name": "AsiaFlix",
         "status": 3,
         "url": "https://asiaflix.app"
     },
     "AsianLoadProvider": {
+        "language": "en",
         "name": "AsianLoad",
         "status": 1,
         "url": "https://asianembed.io"
     },
     "BflixProvider": {
+        "language": "en",
         "name": "Bflix",
         "status": 1,
         "url": "https://bflix.ru"
     },
     "CinecalidadProvider": {
+        "language": "es",
         "name": "Cinecalidad",
         "status": 1,
         "url": "https://cinecalidad.lol"
     },
-    "CrossTmdbProvider": {
-        "name": "MultiMovie",
-        "status": 1,
-        "url": "NONE"
-    },
     "CuevanaProvider": {
+        "language": "es",
         "name": "Cuevana",
         "status": 1,
         "url": "https://cuevana3.me"
     },
     "DopeboxProvider": {
+        "language": "en",
         "name": "Dopebox",
         "status": 1,
         "url": "https://dopebox.to"
     },
     "DoramasYTProvider": {
+        "language": "es",
         "name": "DoramasYT",
         "status": 1,
         "url": "https://doramasyt.com"
     },
     "DramaSeeProvider": {
+        "language": "en",
         "name": "DramaSee",
         "status": 1,
         "url": "https://dramasee.net"
     },
     "DreamSubProvider": {
+        "language": "it",
         "name": "DreamSub",
         "status": 1,
         "url": "https://dreamsub.me"
     },
     "DubbedAnimeProvider": {
+        "language": "en",
         "name": "DubbedAnime",
         "status": 1,
         "url": "https://bestdubbedanime.com"
     },
     "EgyBestProvider": {
+        "language": "ar",
         "name": "EgyBest",
         "status": 1,
         "url": "https://www.egy.best"
@@ -115,226 +125,253 @@
         "url": "https://entrepeliculasyseries.nu"
     },
     "EntrepeliculasyseriesProvider": {
+        "language": "es",
         "name": "EntrePeliculasySeries",
         "status": 1,
         "url": "https://entrepeliculasyseries.nu"
     },
     "FaselHDProvider": {
+        "language": "ar",
         "name": "FaselHD",
         "status": 1,
         "url": "https://faselhd.io"
     },
     "FilmanProvider": {
+        "language": "pl",
         "name": "filman.cc",
         "status": 1,
         "url": "https://filman.cc"
     },
     "FmoviesToProvider": {
+        "language": "en",
         "name": "Fmovies.to",
         "status": 1,
         "url": "https://fmovies.to"
     },
     "FrenchStreamProvider": {
+        "language": "fr",
         "name": "French Stream",
         "status": 1,
         "url": "https://french-stream.re"
     },
     "GogoanimeProvider": {
+        "language": "en",
         "name": "GogoAnime",
         "status": 1,
         "url": "https://gogoanime.film"
     },
     "HDMProvider": {
+        "language": "en",
         "name": "HD Movies",
         "status": 0,
         "url": "https://hdm.to"
     },
     "IHaveNoTvProvider": {
+        "language": "en",
         "name": "I Have No TV",
         "status": 1,
         "url": "https://ihavenotv.com"
     },
     "KawaiifuProvider": {
+        "language": "en",
         "name": "Kawaiifu",
         "status": 0,
         "url": "https://kawaiifu.com"
     },
     "KdramaHoodProvider": {
+        "language": "en",
         "name": "KDramaHood",
         "status": 1,
         "url": "https://kdramahood.com"
     },
     "LookMovieProvider": {
+        "language": "en",
         "name": "LookMovie",
         "status": 0,
         "url": "https://lookmovie.io"
     },
     "MeloMovieProvider": {
+        "language": "en",
         "name": "MeloMovie",
         "status": 0,
         "url": "https://melomovie.com"
     },
     "MonoschinosProvider": {
+        "language": "es",
         "name": "Monoschinos",
         "status": 1,
         "url": "https://monoschinos2.com"
     },
-    "MultiAnimeProvider": {
-        "name": "MultiAnime",
-        "status": 1,
-        "url": ""
-    },
     "MyCimaProvider": {
+        "language": "ar",
         "name": "MyCima",
         "status": 1,
         "url": "https://mycima.tv"
     },
     "NginxProvider": {
+        "language": "en",
         "name": "Nginx",
         "status": 1,
         "url": ""
     },
     "NineAnimeProvider": {
+        "language": "en",
         "name": "9Anime",
         "status": 1,
         "url": "https://9anime.id"
     },
-    "NyaaProvider": {
-        "name": "Nyaa",
-        "status": 1,
-        "url": "https://nyaa.si"
-    },
     "PeliSmartProvider": {
+        "language": "es",
         "name": "PeliSmart",
         "status": 1,
         "url": "https://pelismart.com"
     },
     "PelisflixProvider": {
+        "language": "es",
         "name": "Pelisflix",
         "status": 1,
         "url": "https://pelisflix.li"
     },
     "PelisplusHDProvider": {
+        "language": "es",
         "name": "PelisplusHD",
         "status": 1,
         "url": "https://pelisplushd.net"
     },
     "PelisplusProvider": {
+        "language": "en",
         "name": "Pelisplus",
         "status": 1,
         "url": "https://pelisplus.icu"
     },
     "PinoyHDXyzProvider": {
+        "language": "tl",
         "name": "Pinoy-HD",
         "status": 1,
         "url": "https://www.pinoy-hd.xyz"
     },
     "PinoyMoviePediaProvider": {
+        "language": "tl",
         "name": "Pinoy Moviepedia",
         "status": 1,
         "url": "https://pinoymoviepedia.ru"
     },
     "PinoyMoviesEsProvider": {
+        "language": "tl",
         "name": "Pinoy Movies",
         "status": 1,
         "url": "https://pinoymovies.es"
     },
     "SeriesflixProvider": {
+        "language": "es",
         "name": "Seriesflix",
         "status": 1,
         "url": "https://seriesflix.video"
     },
     "SflixProProvider": {
+        "language": "en",
         "name": "Sflix.pro",
         "status": 1,
         "url": "https://sflix.pro"
     },
     "SflixProvider": {
+        "language": "en",
         "name": "Sflix.to",
         "status": 1,
         "url": "https://sflix.to"
     },
     "SoaptwoDayProvider": {
+        "language": "en",
         "name": "Soap2Day",
         "status": 1,
         "url": "https://secretlink.xyz"
     },
     "SolarmovieProvider": {
+        "language": "en",
         "name": "Solarmovie",
         "status": 1,
         "url": "https://solarmovie.pe"
     },
     "StreamingcommunityProvider": {
+        "language": "it",
         "name": "Streamingcommunity",
         "status": 1,
         "url": "https://streamingcommunity.top"
     },
-    "TantiFilmProvider": {
-        "name": "TantiFilm",
+    "TantifilmProvider": {
+        "language": "it",
+        "name": "Tantifilm",
         "status": 1,
         "url": "https://www.tantifilm.rodeo"
     },
     "TenshiProvider": {
+        "language": "en",
         "name": "Tenshi.moe",
         "status": 1,
         "url": "https://tenshi.moe"
     },
     "TheFlixToProvider": {
+        "language": "en",
         "name": "TheFlix.to",
         "status": 0,
         "url": "https://theflix.to"
     },
-    "TmdbProvider": {
-        "name": "Tmdb",
-        "status": 1,
-        "url": ""
-    },
     "TrailersTwoProvider": {
+        "language": "en",
         "name": "Trailers.to",
         "status": 1,
         "url": "https://trailers.to"
     },
     "TwoEmbedProvider": {
+        "language": "en",
         "name": "2Embed",
         "status": 1,
         "url": "https://www.2embed.ru"
     },
     "VMoveeProvider": {
+        "language": "en",
         "name": "VMovee",
         "status": 1,
         "url": "https://www.vmovee.watch"
     },
     "VfFilmProvider": {
+        "language": "fr",
         "name": "vf-film.me",
         "status": 1,
         "url": "https://vf-film.me"
     },
     "VfSerieProvider": {
+        "language": "fr",
         "name": "vf-serie.org",
         "status": 1,
         "url": "https://vf-serie.org"
     },
     "VidEmbedProvider": {
+        "language": "en",
         "name": "VidEmbed",
         "status": 1,
         "url": "https://vidembed.cc"
     },
     "WatchAsianProvider": {
+        "language": "en",
         "name": "WatchAsian",
         "status": 1,
         "url": "https://watchasian.sh"
     },
     "WatchCartoonOnlineProvider": {
+        "language": "en",
         "name": "WatchCartoonOnline",
         "status": 1,
         "url": "https://www.wcostream.com"
     },
     "WcoProvider": {
+        "language": "en",
         "name": "WCO Stream",
         "status": 1,
         "url": "https://wcostream.cc"
     },
     "ZoroProvider": {
+        "language": "en",
         "name": "Zoro",
         "status": 1,
         "url": "https://zoro.to"
