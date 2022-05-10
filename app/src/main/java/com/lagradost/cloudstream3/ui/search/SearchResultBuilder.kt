@@ -64,7 +64,7 @@ object SearchResultBuilder {
         val showSub = showCache[textIsDub?.context?.getString(R.string.show_sub_key)] ?: false
         val showDub = showCache[textIsDub?.context?.getString(R.string.show_dub_key)] ?: false
         val showTitle = showCache[cardText?.context?.getString(R.string.show_title_key)] ?: false
-        val showHd = showCache[textQuality?.context?.getString(R.string.show_title_key)] ?: false
+        val showHd = showCache[textQuality?.context?.getString(R.string.show_hd_key)] ?: false
 
         shadow?.isVisible = showTitle
 
