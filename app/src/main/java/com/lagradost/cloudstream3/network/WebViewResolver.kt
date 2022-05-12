@@ -211,12 +211,6 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
             this.method,
             webViewUrl,
             this.requestHeaders,
-            null,
-            emptyMap(),
-            emptyMap(),
-            null,
-            10,
-            TimeUnit.MINUTES
         )
     }
 

@@ -613,16 +613,18 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         score: Int? = null,
         num_watched_episodes: Int? = null,
     ): String? {
+        val data = mapOf(
+            "status" to status,
+            "score" to score?.toString(),
+            "num_watched_episodes" to num_watched_episodes?.toString()
+        ).filter { it.value != null } as Map<String, String>
+
         return app.put(
             "https://api.myanimelist.net/v2/anime/$id/my_list_status",
             headers = mapOf(
                 "Authorization" to "Bearer " + (getAuth() ?: return null)
             ),
-            data = mapOf(
-                "status" to status,
-                "score" to score?.toString(),
-                "num_watched_episodes" to num_watched_episodes?.toString()
-            )
+            data = data
         ).text
     }
 
