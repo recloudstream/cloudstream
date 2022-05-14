@@ -429,7 +429,9 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 })
 
                 if (currentLinks.isEmpty()) {
-                    showToast(activity, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+                    main {
+                        showToast(activity, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+                    }
                     return@safeApiCall
                 }
 
@@ -1515,8 +1517,13 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     }
                 }
                 START_ACTION_LOAD_EP -> {
-                    if(episodeList.size == 1) {
-                        handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, episodeList.first()))
+                    if (episodeList.size == 1) {
+                        handleAction(
+                            EpisodeClickEvent(
+                                ACTION_PLAY_EPISODE_IN_PLAYER,
+                                episodeList.first()
+                            )
+                        )
                     } else {
                         var found = false
                         for (ep in episodeList) {
@@ -1531,7 +1538,12 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                             for (ep in episodeList) {
                                 if (ep.episode == resumeEpisode && ep.season == resumeSeason) {
                                     println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
-                                    handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
+                                    handleAction(
+                                        EpisodeClickEvent(
+                                            ACTION_PLAY_EPISODE_IN_PLAYER,
+                                            ep
+                                        )
+                                    )
                                     break
                                 }
                             }

@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.nicehttp.NiceResponse
 import kotlinx.coroutines.delay
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
@@ -478,7 +479,8 @@ open class SflixProvider : MainAPI() {
             val data = negotiateNewSid(extractorData) ?: return null to null
             app.post(
                 "$extractorData&t=${generateTimeStamp()}&sid=${data.sid}",
-                json = "40", headers = headers
+                requestBody = "40".toRequestBody(),
+                headers = headers
             )
 
             // This makes the second get request work, and re-connect work.
@@ -634,9 +636,9 @@ open class SflixProvider : MainAPI() {
             subtitleCallback: (SubtitleFile) -> Unit,
             callback: (ExtractorLink) -> Unit,
             /** Used for extractorLink name, input: Source name */
-            extractorData: String? = null,
+            extractorData: String,
             nameTransformer: (String) -> String
-        ) {
+        ) = suspendSafeApiCall {
             // https://rapid-cloud.ru/embed-6/dcPOVRE57YOT?z= -> https://rapid-cloud.ru/embed-6
             val mainIframeUrl =
                 url.substringBeforeLast("/")
@@ -652,10 +654,10 @@ open class SflixProvider : MainAPI() {
 
             var sid: String? = null
 
-            extractorData?.let { negotiateNewSid(it) }?.also {
+            negotiateNewSid(extractorData)?.also {
                 app.post(
                     "$extractorData&t=${generateTimeStamp()}&sid=${it.sid}",
-                    json = "40",
+                    requestBody = "40".toRequestBody(),
                     timeout = 60
                 )
                 val text = app.get(
@@ -673,7 +675,7 @@ open class SflixProvider : MainAPI() {
                         "/embed",
                         "/ajax/embed"
                     )
-                }/getSources?id=$mainIframeId&_token=$iframeToken&_number=$number${sid?.let { "&sid=$it" } ?: ""}",
+                }/getSources?id=$mainIframeId&_token=$iframeToken&_number=$number$&sId=${sid!!}",
                 referer = mainUrl,
                 headers = mapOf(
                     "X-Requested-With" to "XMLHttpRequest",
