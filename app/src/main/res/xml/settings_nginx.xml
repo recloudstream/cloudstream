@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:icon="@color/transparent" />
+
+    <Preference
+            android:key="@string/nginx_url_key"
+            android:title="@string/nginx_url_pref"
+            android:icon="@drawable/ic_baseline_play_arrow_24" />
+    <Preference
+            android:key="@string/nginx_credentials"
+            android:title="@string/nginx_credentials_title"
+            android:icon="@drawable/video_locked"
+            android:summary="@string/nginx_credentials_summary" />
+    <Preference
+            android:key="@string/nginx_info"
+            android:title="@string/nginx_info_title"
+            android:icon="@drawable/ic_baseline_play_arrow_24"
+            android:summary="@string/nginx_info_summary">
+        <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.sarlays.com/use-nginx-with-cloudstream/" />
+    </Preference>
+</PreferenceScreen>

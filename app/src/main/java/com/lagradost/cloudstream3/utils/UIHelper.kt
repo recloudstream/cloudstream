@@ -302,7 +302,8 @@ object UIHelper {
         return result
     }
 
-    fun Context.fixPaddingStatusbar(v: View) {
+    fun Context?.fixPaddingStatusbar(v: View?) {
+        if (v == null || this == null) return
         v.setPadding(
             v.paddingLeft,
             v.paddingTop + getStatusBarHeight(),
@@ -385,7 +386,7 @@ object UIHelper {
     }
 
     fun hideKeyboard(view: View?) {
-        if(view == null) return
+        if (view == null) return
 
         val inputMethodManager =
             view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?

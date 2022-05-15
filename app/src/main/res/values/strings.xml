@@ -14,6 +14,7 @@
     <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
     <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
+    <string name="prefer_limit_title_rez_key" translatable="false">prefer_limit_title_rez_key</string>
     <string name="video_buffer_size_key" translatable="false">video_buffer_size_key</string>
     <string name="video_buffer_length_key" translatable="false">video_buffer_length_key</string>
     <string name="video_buffer_clear_key" translatable="false">video_buffer_clear_key</string>
@@ -26,6 +27,7 @@
     <string name="pip_enabled_key" translatable="false">pip_enabled_key</string>
     <string name="double_tap_enabled_key" translatable="false">double_tap_enabled_key</string>
     <string name="double_tap_pause_enabled_key" translatable="false">double_tap_pause_enabled_key</string>
+    <string name="double_tap_seek_time_key" translatable="false">double_tap_seek_time_key</string>
     <string name="swipe_vertical_enabled_key" translatable="false">swipe_vertical_enabled_key</string>
     <string name="display_sub_key" translatable="false">display_sub_key</string>
     <string name="show_fillers_key" translatable="false">show_fillers_key</string>
@@ -213,6 +215,7 @@
     <string name="swipe_to_change_settings_des">Swipe on the left or right side to change brightness or volume</string>
     <string name="double_tap_to_seek_settings">Double tap to seek</string>
     <string name="double_tap_to_pause_settings">Double tap to pause</string>
+    <string name="double_tap_to_seek_amount_settings">Player seek amount</string>
     <string name="double_tap_to_seek_settings_des">Tap twice on the right or left side to seek forwards or backwards
     </string>
     <string name="double_tap_to_pause_settings_des">Tap in the middle to pause</string>
@@ -236,7 +239,9 @@
     <string name="backup_failed_error_format">Error backing up %s</string>
 
     <string name="search">Search</string>
-    <string name="nginx_category">Nginx Settings</string>
+    <string name="category_nginx">Nginx</string>
+    <string name="category_credits">Credits and account</string>
+    <string name="category_updates">Updates and backup</string>
     <string name="nginx_credentials_title">Nginx Credential</string>
     <string name="nginx_credentials_summary">You have to use the following format mycoolusername:mysecurepassword123</string>
     <string name="nginx_info_title">What is Nginx ?</string>
@@ -365,7 +370,9 @@
     <string name="skip_update">Skip this Update</string>
     <string name="update">Update</string>
     <string name="watch_quality_pref">Preferred watch quality</string>
-    <string name="limit_title">Video player title max chars.</string>
+    <string name="limit_title">Video player title max chars</string>
+    <string name="limit_title_rez">Video player resolution</string>
+
     <string name="video_buffer_size_settings">Video buffer size</string>
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
@@ -408,9 +415,11 @@
     <string name="general">General</string>
     <string name="random_button_settings">Random Button</string>
     <string name="random_button_settings_desc">Show random button on Homepage</string>
-    <string name="provider_lang_settings">Provider Languages</string>
+    <string name="provider_lang_settings">Provider languages</string>
     <string name="app_layout">App Layout</string>
-    <string name="preferred_media_settings">Preferred Media</string>
+    <string name="preferred_media_settings">Preferred media</string>
+    <string name="category_preferred_media_and_lang">Preferred media and language</string>
+    <string name="category_ui">User interface</string>
 
     <string name="automatic">Auto</string>
     <string name="tv_layout">TV layout</string>
@@ -507,4 +516,8 @@
     <string name="quality_webrip">Web</string>
 
     <string name="poster_image">Poster Image</string>
+    <string name="category_player">Player</string>
+    <string name="resolution_and_title">Resolution and title</string>
+    <string name="title">Title</string>
+    <string name="resolution">Resolution</string>
 </resources>

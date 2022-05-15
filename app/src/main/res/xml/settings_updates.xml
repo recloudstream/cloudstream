@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:icon="@color/transparent" />
+
+    <Preference
+            android:title="@string/check_for_update"
+            app:summary="@string/app_version"
+            app:key="@string/manual_check_update_key"
+            app:icon="@drawable/ic_baseline_system_update_24" />
+
+    <Preference
+            android:icon="@drawable/baseline_save_as_24"
+            android:key="@string/backup_key"
+            android:title="@string/backup_settings" />
+
+    <Preference
+            android:icon="@drawable/baseline_restore_page_24"
+            android:key="@string/restore_key"
+            android:title="@string/restore_settings" />
+
+    <Preference
+            android:key="@string/show_logcat_key"
+            android:title="@string/show_log_cat"
+            android:icon="@drawable/baseline_description_24" />
+    <SwitchPreference
+            android:key="acra.disable"
+            android:icon="@drawable/ic_baseline_bug_report_24"
+            android:title="@string/pref_disable_acra"
+            android:summaryOff="@string/bug_report_settings_off"
+            android:summaryOn="@string/bug_report_settings_on"
+            android:defaultValue="false" />
+    <SwitchPreference
+            app:key="@string/auto_update_key"
+            android:title="@string/updates_settings"
+            android:summary="@string/updates_settings_des"
+            app:defaultValue="true"
+            android:icon="@drawable/ic_baseline_notifications_active_24" />
+    <SwitchPreference
+            app:key="@string/prerelease_update_key"
+            android:title="@string/uprereleases_settings"
+            android:summary="@string/uprereleases_settings_des"
+            app:defaultValue="false"
+            android:icon="@drawable/ic_baseline_developer_mode_24" />
+    <SwitchPreference
+            android:icon="@drawable/netflix_download"
+            android:key="@string/killswitch_key"
+            android:defaultValue="true"
+            android:summary="@string/killswitch_settings_des"
+            android:title="@string/killswitch_settings" />
+</PreferenceScreen>

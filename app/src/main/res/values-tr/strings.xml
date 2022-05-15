@@ -182,7 +182,7 @@
     <string name="backup_failed_error_format">Yedekleme hatası %s</string>
 
     <string name="search">Ara</string>
-    <string name="nginx_category">Nginx Ayarları</string>
+    <string name="category_nginx">Nginx Ayarları</string>
     <string name="nginx_credentials_title">Nginx Kimlik Bilgileri</string>
     <string name="nginx_credentials_summary">Örnekteki formatta yazmalısın havalıkullanıcıadım:güvenlişifrem123</string>
     <string name="nginx_info_title">Nginx nedir?</string>

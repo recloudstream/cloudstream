@@ -42,6 +42,20 @@
         <item>3</item>
     </array>
 
+    <array name="limit_title_rez_pref_names">
+        <item>@string/resolution_and_title</item>
+        <item>@string/title</item>
+        <item>@string/resolution</item>
+        <item>@string/none</item>
+    </array>
+
+    <array name="limit_title_rez_pref_values">
+        <item>3</item>
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+    </array>
+
     <array name="limit_title_pref_names">
         <item>@string/none</item>
         <item>16 characters</item>
@@ -57,6 +71,15 @@
         <item>64</item>
         <item>128</item>
         <item>-1</item>
+    </array>
+
+    <array name="skip_sec_values">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
     </array>
 
     <array name="video_buffer_length_names">

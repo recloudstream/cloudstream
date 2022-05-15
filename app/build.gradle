@@ -36,7 +36,7 @@ android {
         targetSdkVersion 30
 
         versionCode 47
-        versionName "2.9.25"
+        versionName "2.10.25"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
@@ -89,12 +89,13 @@ repositories {
 
 dependencies {
     implementation 'com.google.android.mediahome:video:1.0.0'
+    implementation 'androidx.test.ext:junit-ktx:1.1.3'
     testImplementation 'org.json:json:20180813'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.5.0' // dont change this to 1.6.0 it looks ugly af
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.0-beta01'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.0-beta01'
@@ -107,8 +108,6 @@ dependencies {
     //implementation "io.karn:khttp-android:0.1.2" //okhttp instead
 //    implementation 'org.jsoup:jsoup:1.13.1'
 //    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3"
-
-    implementation "com.google.android.material:material:1.5.0"
 
     implementation "androidx.preference:preference-ktx:1.2.0"
 

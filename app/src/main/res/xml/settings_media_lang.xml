@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:icon="@color/transparent" />
+
+    <Preference
+            android:key="@string/locale_key"
+            android:title="@string/app_language"
+            android:icon="@drawable/ic_baseline_language_24" />
+    <Preference
+            android:icon="@drawable/ic_baseline_language_24"
+            android:key="@string/provider_lang_key"
+            android:title="@string/provider_lang_settings" />
+
+    <Preference
+            android:key="@string/prefer_media_type_key"
+            android:title="@string/preferred_media_settings"
+            android:icon="@drawable/ic_baseline_play_arrow_24" />
+    <Preference
+            android:key="@string/display_sub_key"
+            android:title="@string/display_subbed_dubbed_settings"
+            android:icon="@drawable/ic_outline_voice_over_off_24" />
+</PreferenceScreen>

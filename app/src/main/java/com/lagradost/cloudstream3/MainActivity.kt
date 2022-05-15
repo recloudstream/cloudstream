@@ -128,7 +128,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_search,
             R.id.navigation_downloads,
             R.id.navigation_settings,
-            R.id.navigation_download_child
+            R.id.navigation_download_child,
+            R.id.navigation_subtitles,
+            R.id.navigation_chrome_subtitles,
+            R.id.navigation_settings_nginx,
+            R.id.navigation_settings_player,
+            R.id.navigation_settings_updates,
+            R.id.navigation_settings_ui,
+            R.id.navigation_settings_account,
+            R.id.navigation_settings_lang,
         ).contains(destination.id)
 
         val landscape = when (resources.configuration.orientation) {

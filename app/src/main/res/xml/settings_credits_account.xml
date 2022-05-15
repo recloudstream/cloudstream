@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:icon="@color/transparent" />
+    <Preference
+            android:key="@string/mal_key"
+            android:icon="@drawable/mal_logo" />
+
+    <Preference
+            android:key="@string/anilist_key"
+            android:icon="@drawable/ic_anilist_icon" />
+    <Preference
+            android:key="@string/legal_notice_key"
+            android:title="@string/legal_notice"
+            android:icon="@drawable/ic_baseline_warning_24" />
+
+    <Preference
+            android:title="@string/github"
+            android:icon="@drawable/ic_github_logo"
+            app:summary="https://github.com/LagradOst/CloudStream-3">
+        <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/LagradOst/CloudStream-3" />
+    </Preference>
+
+    <Preference
+            android:title="@string/lightnovel"
+            android:icon="@drawable/quick_novel_icon"
+            app:summary="https://github.com/LagradOst/QuickNovel">
+        <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/LagradOst/QuickNovel" />
+    </Preference>
+    <Preference
+            android:title="@string/discord"
+            android:icon="@drawable/ic_baseline_discord_24"
+            app:summary="https://discord.gg/5Hus6fM">
+        <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://discord.gg/5Hus6fM" />
+    </Preference>
+    <Preference
+            android:key="@string/benene_count"
+            android:title="@string/benene"
+            android:icon="@drawable/benene"
+            app:summary="@string/benene_des" />
+</PreferenceScreen>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:background="?attr/primaryBlackBackground"
+        android:layout_height="match_parent">
+
+    <ScrollView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:nextFocusDown="@id/settings_lang"
+
+                    android:id="@+id/settings_player"
+                    style="@style/SettingsItem"
+                    android:text="@string/category_player" />
+
+            <TextView
+                    android:nextFocusUp="@id/settings_player"
+                    android:nextFocusDown="@id/settings_ui"
+
+                    android:id="@+id/settings_lang"
+                    style="@style/SettingsItem"
+                    android:text="@string/category_preferred_media_and_lang" />
+
+            <TextView
+                    android:nextFocusUp="@id/settings_lang"
+                    android:nextFocusDown="@id/settings_nginx"
+
+                    android:id="@+id/settings_ui"
+                    style="@style/SettingsItem"
+                    android:text="@string/category_ui" />
+
+            <TextView
+                    android:nextFocusUp="@id/settings_ui"
+                    android:nextFocusDown="@id/settings_updates"
+
+                    android:id="@+id/settings_nginx"
+                    style="@style/SettingsItem"
+                    android:text="@string/category_nginx" />
+
+            <TextView
+                    android:nextFocusUp="@id/settings_nginx"
+                    android:nextFocusDown="@id/settings_credits"
+
+                    android:id="@+id/settings_updates"
+                    style="@style/SettingsItem"
+                    android:text="@string/category_updates" />
+
+            <TextView
+                    android:nextFocusUp="@id/settings_updates"
+
+                    android:id="@+id/settings_credits"
+                    style="@style/SettingsItem"
+                    android:text="@string/category_credits" />
+
+            <TextView
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="?attr/textColor"
+                    android:text="@string/app_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

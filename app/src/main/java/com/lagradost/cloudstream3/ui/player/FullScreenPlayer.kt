@@ -1027,7 +1027,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // init variables
         setPlayBackSpeed(getKey(PLAYBACK_SPEED_KEY) ?: 1.0f)
-        fastForwardTime = getKey(PLAYBACK_FASTFORWARD) ?: 10000L
 
         // handle tv controls
         playerEventListener = { eventType ->
@@ -1085,6 +1084,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         try {
             context?.let { ctx ->
                 val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+
+                fastForwardTime =
+                    settingsManager.getInt(ctx.getString(R.string.double_tap_seek_time_key), 10)
+                        .toLong() * 1000L
 
                 navigationBarHeight = ctx.getNavigationBarHeight()
                 statusBarHeight = ctx.getStatusBarHeight()

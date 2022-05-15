@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:icon="@color/transparent" />
+
+    <Preference
+            android:icon="@drawable/ic_baseline_color_lens_24"
+            android:key="@string/primary_color_key"
+            android:title="@string/primary_color_settings" />
+    <Preference
+            android:icon="@drawable/ic_baseline_color_lens_24"
+            android:key="@string/app_theme_key"
+            android:title="@string/app_theme_settings" />
+    <Preference
+            android:icon="@drawable/ic_baseline_tv_24"
+            android:key="@string/app_layout_key"
+            android:title="@string/app_layout" />
+    <Preference
+            android:icon="@drawable/ic_baseline_tv_24"
+            android:key="@string/poster_ui_key"
+            android:title="@string/poster_ui_settings" />
+    <SwitchPreference
+            android:icon="@drawable/search_icon"
+            app:key="advanced_search"
+            android:title="@string/advanced_search"
+            android:summary="@string/advanced_search_des"
+            app:defaultValue="true" />
+    <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/baseline_grid_view_24"
+            android:key="@string/bottom_title_key"
+            android:summary="@string/bottom_title_settings_des"
+            android:title="@string/bottom_title_settings" />
+    <SwitchPreference
+            android:key="@string/show_fillers_key"
+            android:icon="@drawable/ic_baseline_skip_next_24"
+            android:title="@string/show_fillers_settings"
+            android:defaultValue="false" />
+    <SwitchPreference
+            android:icon="@drawable/ic_baseline_play_arrow_24"
+            app:key="@string/random_button_key"
+            android:title="@string/random_button_settings"
+            android:summary="@string/random_button_settings_desc"
+            app:defaultValue="false" />
+</PreferenceScreen>

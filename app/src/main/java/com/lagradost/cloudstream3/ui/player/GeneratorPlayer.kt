@@ -52,6 +52,9 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    private var titleRez = 3
+    private var limitTitle = 0
+
     private lateinit var viewModel: PlayerGeneratorViewModel //by activityViewModels()
     private lateinit var sync: SyncViewModel
     private var currentLinks: Set<Pair<ExtractorLink?, ExtractorUri?>> = setOf()
@@ -550,12 +553,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 tvType = meta.tvType
             }
         }
-        //Get limit of characters on Video Title
-        var limitTitle = 0
-        context?.let {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
-            limitTitle = settingsManager.getInt(getString(R.string.prefer_limit_title_key), 0)
-        }
+
         //Generate video title
         var playerVideoTitle = if (headerName != null) {
             (headerName +
@@ -577,7 +575,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             val differenceInLength = playerVideoTitle.length - limitTitle
             val margin = 3 //If the difference is smaller than or equal to this value, ignore it
             if (limitTitle > 0 && differenceInLength > margin) {
-                playerVideoTitle = playerVideoTitle.substring(0, limitTitle-1) + "..."
+                playerVideoTitle = playerVideoTitle.substring(0, limitTitle - 1) + "..."
             }
         }
 
@@ -589,13 +587,21 @@ class GeneratorPlayer : FullScreenPlayer() {
     fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
         val extra = if (widthHeight != null) {
             val (width, height) = widthHeight
-            " - ${width}x${height}"
+            "${width}x${height}"
         } else {
             ""
         }
-        player_video_title_rez?.text =
-            (currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name
-            ?: "NULL") + extra
+
+        val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name
+        ?: "NULL"
+
+        player_video_title_rez?.text = when (titleRez) {
+            0 -> ""
+            1 -> extra
+            2 -> source
+            3 -> "$source - $extra"
+            else -> ""
+        }
     }
 
     override fun playerDimensionsLoaded(widthHeight: Pair<Int, Int>) {
@@ -630,6 +636,12 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        context?.let { ctx ->
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+            titleRez = settingsManager.getInt(getString(R.string.prefer_limit_title_rez_key), 3)
+            limitTitle = settingsManager.getInt(getString(R.string.prefer_limit_title_key), 0)
+        }
 
         unwrapBundle(savedInstanceState)
         unwrapBundle(arguments)

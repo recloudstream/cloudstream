@@ -86,6 +86,69 @@
                 android:defaultValue="true" />
     </action>
 
+    <fragment
+            android:id="@+id/navigation_settings_player"
+            android:name="com.lagradost.cloudstream3.ui.settings.SettingsPlayer"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim">
+        <action
+                android:id="@+id/action_navigation_settings_player_to_navigation_subtitles"
+                app:destination="@id/navigation_subtitles"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+        <action
+                android:id="@+id/action_navigation_settings_player_to_navigation_chrome_subtitles"
+                app:destination="@id/navigation_chrome_subtitles"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+    </fragment>
+
+    <fragment
+            android:id="@+id/navigation_settings_ui"
+            android:name="com.lagradost.cloudstream3.ui.settings.SettingsUI"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+
+    <fragment
+            android:id="@+id/navigation_settings_lang"
+            android:name="com.lagradost.cloudstream3.ui.settings.SettingsLang"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+
+    <fragment
+            android:id="@+id/navigation_settings_nginx"
+            android:name="com.lagradost.cloudstream3.ui.settings.SettingsNginx"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+
+    <fragment
+            android:id="@+id/navigation_settings_updates"
+            android:name="com.lagradost.cloudstream3.ui.settings.SettingsUpdates"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+
+    <fragment
+            android:id="@+id/navigation_settings_account"
+            android:name="com.lagradost.cloudstream3.ui.settings.SettingsAccount"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+
     <action
             android:id="@+id/global_to_navigation_quick_search"
             app:destination="@id/navigation_quick_search"
@@ -103,30 +166,6 @@
                 android:defaultValue="@null" />
     </action>
 
-    <action
-            android:id="@+id/global_to_navigation_settings"
-            app:destination="@id/navigation_settings"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-
-    <action
-            android:id="@+id/global_to_navigation_downloads"
-            app:destination="@id/navigation_downloads"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-
-    <action
-            android:id="@+id/global_to_navigation_search"
-            app:destination="@id/navigation_search"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-
     <fragment
             android:id="@+id/navigation_home"
             android:name="com.lagradost.cloudstream3.ui.home.HomeFragment"
@@ -135,7 +174,22 @@
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
+            app:popExitAnim="@anim/exit_anim">
+        <action
+                android:id="@+id/action_navigation_home_to_navigation_results"
+                app:destination="@id/navigation_results"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+        <action
+                android:id="@+id/action_navigation_home_to_navigation_quick_search"
+                app:destination="@id/navigation_quick_search"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+    </fragment>
 
     <fragment
             android:id="@+id/navigation_search"
@@ -145,7 +199,15 @@
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
+            app:popExitAnim="@anim/exit_anim">
+        <action
+                android:id="@+id/action_navigation_search_to_navigation_results"
+                app:destination="@id/navigation_results"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+    </fragment>
 
     <fragment
             android:id="@+id/navigation_downloads"
@@ -159,7 +221,11 @@
 
         <action
                 android:id="@+id/action_navigation_downloads_to_navigation_download_child"
-                app:destination="@id/navigation_download_child">
+                app:destination="@id/navigation_download_child"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim">
             <argument
                     android:name="name"
                     app:argType="string" />
@@ -167,6 +233,20 @@
                     android:name="folder"
                     app:argType="string" />
         </action>
+        <action
+                android:id="@+id/action_navigation_downloads_to_navigation_results"
+                app:destination="@id/navigation_results"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+        <action
+                android:id="@+id/action_navigation_downloads_to_navigation_player"
+                app:destination="@id/navigation_player"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
     </fragment>
     <fragment
             android:id="@+id/navigation_settings"
@@ -176,7 +256,50 @@
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
+            app:popExitAnim="@anim/exit_anim">
+        <action
+                android:id="@+id/action_navigation_settings_to_navigation_settings_nginx"
+                app:destination="@id/navigation_settings_nginx"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+        <action
+                android:id="@+id/action_navigation_settings_to_navigation_settings_ui"
+                app:destination="@id/navigation_settings_ui"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+        <action
+                android:id="@+id/action_navigation_settings_to_navigation_settings_lang"
+                app:destination="@id/navigation_settings_lang"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+        <action
+                android:id="@+id/action_navigation_settings_to_navigation_settings_player"
+                app:destination="@id/navigation_settings_player"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+        <action
+                android:id="@+id/action_navigation_settings_to_navigation_settings_updates"
+                app:destination="@id/navigation_settings_updates"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+        <action
+                android:id="@+id/action_navigation_settings_to_navigation_settings_account"
+                app:destination="@id/navigation_settings_account"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+    </fragment>
 
     <fragment
             android:id="@+id/navigation_subtitles"
@@ -215,8 +338,15 @@
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim"
-            android:label="@string/title_settings" />
+            app:popExitAnim="@anim/exit_anim">
+        <action
+                android:id="@+id/action_navigation_download_child_to_navigation_player"
+                app:destination="@id/navigation_player"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+    </fragment>
 
     <fragment
             android:id="@+id/navigation_results"
@@ -225,7 +355,22 @@
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
+            app:popExitAnim="@anim/exit_anim">
+        <action
+                android:id="@+id/action_navigation_results_to_navigation_quick_search"
+                app:destination="@id/navigation_quick_search"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+        <action
+                android:id="@+id/action_navigation_results_to_navigation_player"
+                app:destination="@id/navigation_player"
+                app:enterAnim="@anim/enter_anim"
+                app:exitAnim="@anim/exit_anim"
+                app:popEnterAnim="@anim/enter_anim"
+                app:popExitAnim="@anim/exit_anim" />
+    </fragment>
 
     <fragment
             android:id="@+id/navigation_player"

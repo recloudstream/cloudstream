@@ -57,7 +57,7 @@ const val PLAYBACK_SPEED = "playback_speed"
 const val RESIZE_MODE_KEY = "resize_mode" // Last used resize mode
 const val PLAYBACK_SPEED_KEY = "playback_speed" // Last used playback speed
 const val PREFERRED_SUBS_KEY = "preferred_subtitles" // Last used resize mode
-const val PLAYBACK_FASTFORWARD = "playback_fastforward" // Last used resize mode
+//const val PLAYBACK_FASTFORWARD = "playback_fastforward" // Last used resize mode
 
 /** Abstract Exoplayer logic, can be expanded to other players */
 interface IPlayer {

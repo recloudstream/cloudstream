@@ -1729,13 +1729,11 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     setRecommendations(d.recommendations, null)
                     setActors(d.actors)
 
-                    if (SettingsFragment.accountEnabled) {
-                        if (syncModel.addSyncs(d.syncData)) {
-                            syncModel.updateMetaAndUser()
-                            syncModel.updateSynced()
-                        } else {
-                            syncModel.addFromUrl(d.url)
-                        }
+                    if (syncModel.addSyncs(d.syncData)) {
+                        syncModel.updateMetaAndUser()
+                        syncModel.updateSynced()
+                    } else {
+                        syncModel.addFromUrl(d.url)
                     }
 
                     result_meta_site?.text = d.apiName
