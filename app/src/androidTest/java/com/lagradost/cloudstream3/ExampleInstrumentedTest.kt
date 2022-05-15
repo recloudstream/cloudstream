@@ -24,9 +24,7 @@ class ExampleInstrumentedTest {
     //}
 
     private fun getAllProviders(): List<MainAPI> {
-        val allApis = APIHolder.apis
-        allApis.addAll(APIHolder.restrictedApis)
-        return allApis //.filter { !it.usesWebView }
+        return APIHolder.allProviders //.filter { !it.usesWebView }
     }
 
     private suspend fun loadLinks(api: MainAPI, url: String?): Boolean {
@@ -113,7 +111,7 @@ class ExampleInstrumentedTest {
                             continue
                         }
 
-                        val url = (load.episodes[load.episodes.keys.first()])?.first()?.url
+                        val url = (load.episodes[load.episodes.keys.first()])?.first()?.data
                         validResults = loadLinks(api, url)
                         if (!validResults) continue
                     }
