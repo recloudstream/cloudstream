@@ -24,6 +24,10 @@ data class Videos (
     @JsonProperty("disallowed") var disallowed : Boolean? = null
 )
 
+class OkRuHttps: OkRu(){
+    override var mainUrl = "https://ok.ru"
+}
+
 open class OkRu : ExtractorApi() {
     override var name = "Okru"
     override var mainUrl = "http://ok.ru"
