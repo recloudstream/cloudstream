@@ -101,6 +101,12 @@
         "status": 1,
         "url": "https://dramasee.net"
     },
+    "DramaidProvider": {
+        "language": "id",
+        "name": "DramaId",
+        "status": 1,
+        "url": "https://185.224.83.103"
+    },
     "DreamSubProvider": {
         "language": "it",
         "name": "DreamSub",
@@ -160,6 +166,12 @@
         "status": 1,
         "url": "https://gogoanime.film"
     },
+    "GomunimeProvider": {
+        "language": "id",
+        "name": "Gomunime",
+        "status": 1,
+        "url": "https://185.231.223.76"
+    },
     "HDMProvider": {
         "language": "en",
         "name": "HD Movies",
@@ -183,6 +195,18 @@
         "name": "KDramaHood",
         "status": 1,
         "url": "https://kdramahood.com"
+    },
+    "KuramanimeProvider": {
+        "language": "id",
+        "name": "Kuramanime",
+        "status": 1,
+        "url": "https://kuramanime.com"
+    },
+    "KuronimeProvider": {
+        "language": "id",
+        "name": "Kuronime",
+        "status": 1,
+        "url": "https://185.231.223.254"
     },
     "LookMovieProvider": {
         "language": "en",
@@ -208,6 +232,12 @@
         "status": 1,
         "url": "https://mycima.tv"
     },
+    "NeonimeProvider": {
+        "language": "id",
+        "name": "Neonime",
+        "status": 1,
+        "url": "https://neonime.watch"
+    },
     "NginxProvider": {
         "language": "en",
         "name": "Nginx",
@@ -219,6 +249,18 @@
         "name": "9Anime",
         "status": 1,
         "url": "https://9anime.id"
+    },
+    "NontonAnimeIDProvider": {
+        "language": "id",
+        "name": "NontonAnimeID",
+        "status": 1,
+        "url": "https://75.119.159.228"
+    },
+    "OploverzProvider": {
+        "language": "id",
+        "name": "Oploverz",
+        "status": 1,
+        "url": "https://oploverz.asia"
     },
     "PeliSmartProvider": {
         "language": "es",
