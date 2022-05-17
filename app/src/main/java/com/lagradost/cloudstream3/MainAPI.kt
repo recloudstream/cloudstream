@@ -76,6 +76,7 @@ object APIHolder {
             TwoEmbedProvider(),
             DramaSeeProvider(),
             WatchAsianProvider(),
+	        DramaidProvider(),
             KdramaHoodProvider(),
             AkwamProvider(),
             MyCimaProvider(),
@@ -111,6 +112,12 @@ object APIHolder {
             DubbedAnimeProvider(),
             MonoschinosProvider(),
             KawaiifuProvider(), // disabled due to cloudflare
+	        NeonimeProvider(),
+            KuramanimeProvider(),
+            OploverzProvider(),
+            GomunimeProvider(),
+            NontonAnimeIDProvider(),
+            KuronimeProvider(),
             //MultiAnimeProvider(),
 	        NginxProvider(),
         )
