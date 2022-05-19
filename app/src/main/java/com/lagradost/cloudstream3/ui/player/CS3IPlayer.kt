@@ -669,7 +669,8 @@ class CS3IPlayer : IPlayer {
                         Log.i(TAG, "Rendered first frame")
 
                         val invalid = exoPlayer?.duration?.let { duration ->
-                            duration < 20000L
+                            // Only errors short playback when not playing downloaded files
+                            duration < 20_000L && currentDownloadedFile == null
                         } ?: false
                         if (invalid) {
                             releasePlayer(saveTime = false)
