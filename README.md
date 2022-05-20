@@ -32,6 +32,7 @@ https://github.com/LagradOst/CloudStream-3/releases
 * 🇩🇪 German
 * 🇬🇷 Greek
 * 🇮🇳 Hindi
+* 🇮🇩 Indonesian
 * 🇮🇹 Italian
 * 🇲🇰 Macedonian
 * 🇮🇳 Malayalam

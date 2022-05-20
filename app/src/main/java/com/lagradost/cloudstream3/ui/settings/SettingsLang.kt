@@ -43,6 +43,7 @@ class SettingsLang : PreferenceFragmentCompat() {
         Triple("", "Romanian", "ro"),
         Triple("", "Italian", "it"),
         Triple("", "Chinese", "zh"),
+        Triple("", "Indonesian", "id"),
     ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
     private fun getCurrentLocale(): String {
