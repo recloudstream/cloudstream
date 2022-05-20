@@ -201,7 +201,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                 putString(URL_BUNDLE, card.url)
                 putString(API_NAME_BUNDLE, card.apiName)
                 if (card is DataStoreHelper.ResumeWatchingResult) {
-                    println("CARD::::: $card")
+//                    println("CARD::::: $card")
                     if (card.season != null)
                         putInt(SEASON_BUNDLE, card.season)
                     if (card.episode != null)

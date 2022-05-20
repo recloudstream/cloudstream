@@ -82,6 +82,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         return player.setPreferredSubtitles(sub)
     }
 
+    override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {
+        viewModel.addSubtitles(subtitles.toSet())
+    }
+
     private fun noSubtitles(): Boolean {
         return setSubtitles(null)
     }
@@ -258,7 +262,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 var startSource = 0
 
                 val sortedUrls = sortLinks(useQualitySettings = false)
-                if (sortedUrls.isNullOrEmpty()) {
+                if (sortedUrls.isEmpty()) {
                     sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.isGone = true
                 } else {
                     startSource = sortedUrls.indexOf(currentSelectedLink)

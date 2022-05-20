@@ -92,6 +92,10 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
+    open fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {
+        throw NotImplementedError()
+    }
+
     open fun exitedPipMode() {
         throw NotImplementedError()
     }
@@ -338,7 +342,9 @@ abstract class AbstractPlayerFragment(
                 PRELOAD_NEXT_EPISODE_PERCENTAGE,
                 NEXT_WATCH_EPISODE_PERCENTAGE,
                 UPDATE_SYNC_PROGRESS_PERCENTAGE,
-            ), subtitlesUpdates = ::subtitlesChanged
+            ),
+            subtitlesUpdates = ::subtitlesChanged,
+            embeddedSubtitlesFetched = ::embeddedSubtitlesFetched,
         )
 
         if (player is CS3IPlayer) {
@@ -359,7 +365,7 @@ abstract class AbstractPlayerFragment(
                         settingsManager.getInt(getString(R.string.video_buffer_disk_key), 0)
                     val currentPrefBufferSec =
                         settingsManager.getInt(getString(R.string.video_buffer_length_key), 0)
-                    
+
                     player.cacheSize = currentPrefCacheSize * 1024L * 1024L
                     player.simpleCacheSize = currentPrefDiskSize * 1024L * 1024L
                     player.videoBufferMs = currentPrefBufferSec * 1000L

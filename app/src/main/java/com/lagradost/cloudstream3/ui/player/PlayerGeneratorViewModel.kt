@@ -93,10 +93,18 @@ class PlayerGeneratorViewModel : ViewModel() {
         }
     }
 
+    /**
+     * If duplicate nothing will happen
+     * */
     fun addSubtitles(file: Set<SubtitleData>) {
-        val subs = (_currentSubs.value?.toMutableSet() ?: mutableSetOf())
-        subs.addAll(file)
-        _currentSubs.postValue(subs)
+        val currentSubs = _currentSubs.value ?: emptySet()
+        // Prevent duplicates
+        val allSubs = (currentSubs + file).distinct().toSet()
+        // Do not post if there's nothing new
+        // Posting will refresh subtitles which will in turn
+        // make the subs to english if previously unselected
+        if (allSubs != currentSubs)
+            _currentSubs.postValue(allSubs)
     }
 
     private var currentJob: Job? = null

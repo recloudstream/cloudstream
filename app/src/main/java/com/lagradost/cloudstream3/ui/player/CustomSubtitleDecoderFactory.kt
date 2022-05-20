@@ -40,7 +40,7 @@ class CustomDecoder : SubtitleDecoder {
             )
         val captionRegex = listOf(Regex("""(-\s?|)[\[({][\w\d\s]*?[])}]\s*"""))
 
-        fun trimStr(string: String) : String {
+        fun trimStr(string: String): String {
             return string.trimStart().trim('\uFEFF', '\u200B').replace(
                 Regex("[\u00A0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u205F]"),
                 " "
@@ -109,10 +109,10 @@ class CustomDecoder : SubtitleDecoder {
                                         captionRegex.forEach { rgx ->
                                             fullStr = fullStr.replace(rgx, "\n")
                                         }
-                                        fullStr.replace(Regex("(\r\n|\r|\n){2,}"),"\n")
+                                        fullStr.replace(Regex("(\r\n|\r|\n){2,}"), "\n")
 
                                         buff.data = ByteBuffer.wrap(fullStr.toByteArray())
-                                    } catch (e : Exception) {
+                                    } catch (e: Exception) {
                                         data.position(pos)
                                         buff.data = data
                                     }

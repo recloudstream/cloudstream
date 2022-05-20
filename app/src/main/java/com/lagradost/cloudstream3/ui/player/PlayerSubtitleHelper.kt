@@ -23,8 +23,13 @@ enum class SubtitleOrigin {
     URL,
     DOWNLOADED_FILE,
     OPEN_SUBTITLES,
+    EMBEDDED_IN_VIDEO
 }
 
+/**
+ * @param name To be displayed in the player
+ * @param url Url for the subtitle, when EMBEDDED_IN_VIDEO this variable is used as the real backend language
+ * */
 data class SubtitleData(
     val name: String,
     val url: String,
@@ -75,6 +80,9 @@ class PlayerSubtitleHelper {
                 }
                 SubtitleOrigin.OPEN_SUBTITLES -> {
                     // TODO
+                    throw NotImplementedError()
+                }
+                SubtitleOrigin.EMBEDDED_IN_VIDEO -> {
                     throw NotImplementedError()
                 }
             }
