@@ -25,7 +25,7 @@ class M3u8Helper {
                     streamUrl = streamUrl,
                     quality = quality,
                     headers = headers,
-                ), true
+                ), null
             )
                 .map { stream ->
                     ExtractorLink(
@@ -40,7 +40,6 @@ class M3u8Helper {
                 }
         }
     }
-
 
     private val ENCRYPTION_DETECTION_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),")
     private val ENCRYPTION_URL_IV_REGEX =
@@ -117,7 +116,7 @@ class M3u8Helper {
         return !url.contains("https://") && !url.contains("http://")
     }
 
-    fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean): List<M3u8Stream> {
+    fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean?): List<M3u8Stream> {
         val generate = sequence {
             val m3u8Parent = getParentLink(m3u8.streamUrl)
             val response = runBlocking {
@@ -155,7 +154,7 @@ class M3u8Helper {
                     )
                 )
             }
-            if (returnThis || !hasAnyContent) {
+            if (returnThis ?: !hasAnyContent) {
                 yield(
                     M3u8Stream(
                         m3u8.streamUrl,
