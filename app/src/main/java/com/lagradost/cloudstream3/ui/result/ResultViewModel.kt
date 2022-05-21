@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getApiFromUrlNull
 import com.lagradost.cloudstream3.APIHolder.getId
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider
@@ -25,7 +27,6 @@ import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
@@ -355,9 +356,9 @@ class ResultViewModel : ViewModel() {
 
         when (data) {
             is Resource.Success -> {
-                val d = applyMeta(data.value, lastMeta)
-                page.postValue(d)
-                val mainId = d.getId()
+                val loadResponse = applyMeta(data.value, lastMeta)
+                page.postValue(loadResponse)
+                val mainId = loadResponse.getId()
                 id.postValue(mainId)
                 loadWatchStatus(mainId)
 
@@ -367,30 +368,39 @@ class ResultViewModel : ViewModel() {
                     VideoDownloadHelper.DownloadHeaderCached(
                         apiName,
                         validUrl,
-                        d.type,
-                        d.name,
-                        d.posterUrl,
+                        loadResponse.type,
+                        loadResponse.name,
+                        loadResponse.posterUrl,
                         mainId,
                         System.currentTimeMillis(),
                     )
                 )
 
-                when (d) {
+                when (loadResponse) {
                     is AnimeLoadResponse -> {
-                        if (d.episodes.isEmpty()) {
+                        if (loadResponse.episodes.isEmpty()) {
                             _dubSubEpisodes.postValue(emptyMap())
                             return@launch
                         }
 
-                        val status = getDub(mainId)
-                        val statuses = d.episodes.map { it.key }
-                        val dubStatus = if (statuses.contains(status)) status else statuses.first()
+//                      val status = getDub(mainId)
+                        val statuses = loadResponse.episodes.map { it.key }
+
+                        // Extremely bruh to have to take in context here, but I'm not sure how to do this in a better way :(
+                        val preferDub = context?.getApiDubstatusSettings()
+                            ?.contains(DubStatus.Dubbed) == true
+
+                        // 3 statements because there can be only dub even if you do not prefer it.
+                        val dubStatus =
+                            if (preferDub && statuses.contains(DubStatus.Dubbed)) DubStatus.Dubbed
+                            else if (!preferDub && statuses.contains(DubStatus.Subbed)) DubStatus.Subbed
+                            else statuses.first()
 
                         val fillerEpisodes =
-                            if (showFillers) safeApiCall { getFillerEpisodes(d.name) } else null
+                            if (showFillers) safeApiCall { getFillerEpisodes(loadResponse.name) } else null
 
                         val existingEpisodes = HashSet<Int>()
-                        val res = d.episodes.map { ep ->
+                        val res = loadResponse.episodes.map { ep ->
                             val episodes = ArrayList<ResultEpisode>()
                             val idIndex = ep.key.id
                             for ((index, i) in ep.value.withIndex()) {
@@ -399,7 +409,7 @@ class ResultViewModel : ViewModel() {
                                 if (!existingEpisodes.contains(episode)) {
                                     existingEpisodes.add(id)
                                     episodes.add(buildResultEpisode(
-                                        d.name,
+                                        loadResponse.name,
                                         filterName(i.name),
                                         i.posterUrl,
                                         episode,
@@ -413,7 +423,7 @@ class ResultViewModel : ViewModel() {
                                         if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
                                             it.contains(episode) && it[episode] == true
                                         } ?: false else false,
-                                        d.type,
+                                        loadResponse.type,
                                         mainId
                                     ))
                                 }
@@ -428,34 +438,35 @@ class ResultViewModel : ViewModel() {
                             updateEpisodes(mainId, episodes, -1)
                         }
                         _dubStatus.postValue(dubStatus)
-                        _dubSubSelections.postValue(d.episodes.keys)
+                        _dubSubSelections.postValue(loadResponse.episodes.keys)
                     }
 
                     is TvSeriesLoadResponse -> {
                         val episodes = ArrayList<ResultEpisode>()
                         val existingEpisodes = HashSet<Int>()
-                        for ((index, i) in d.episodes.sortedBy {
+                        for ((index, episode) in loadResponse.episodes.sortedBy {
                             (it.season?.times(10000) ?: 0) + (it.episode ?: 0)
                         }.withIndex()) {
-                            val episode = i.episode ?: (index + 1)
-                            val id = mainId + (i.season?.times(100000) ?: 0) + episode + 1
+                            val episodeIndex = episode.episode ?: (index + 1)
+                            val id =
+                                mainId + (episode.season?.times(100000) ?: 0) + episodeIndex + 1
                             if (!existingEpisodes.contains(id)) {
                                 existingEpisodes.add(id)
                                 episodes.add(
                                     buildResultEpisode(
-                                        d.name,
-                                        filterName(i.name),
-                                        i.posterUrl,
-                                        episode,
-                                        i.season,
-                                        i.data,
+                                        loadResponse.name,
+                                        filterName(episode.name),
+                                        episode.posterUrl,
+                                        episodeIndex,
+                                        episode.season,
+                                        episode.data,
                                         apiName,
                                         id,
                                         index,
-                                        i.rating,
-                                        i.description,
+                                        episode.rating,
+                                        episode.description,
                                         null,
-                                        d.type,
+                                        loadResponse.type,
                                         mainId
                                     )
                                 )
@@ -465,19 +476,19 @@ class ResultViewModel : ViewModel() {
                     }
                     is MovieLoadResponse -> {
                         buildResultEpisode(
-                            d.name,
-                            d.name,
+                            loadResponse.name,
+                            loadResponse.name,
                             null,
                             0,
                             null,
-                            d.dataUrl,
-                            d.apiName,
+                            loadResponse.dataUrl,
+                            loadResponse.apiName,
                             (mainId), // HAS SAME ID
                             0,
                             null,
                             null,
                             null,
-                            d.type,
+                            loadResponse.type,
                             mainId
                         ).let {
                             updateEpisodes(mainId, listOf(it), -1)
@@ -487,19 +498,19 @@ class ResultViewModel : ViewModel() {
                         updateEpisodes(
                             mainId, listOf(
                                 buildResultEpisode(
-                                    d.name,
-                                    d.name,
+                                    loadResponse.name,
+                                    loadResponse.name,
                                     null,
                                     0,
                                     null,
-                                    d.torrent ?: d.magnet ?: "",
-                                    d.apiName,
+                                    loadResponse.torrent ?: loadResponse.magnet ?: "",
+                                    loadResponse.apiName,
                                     (mainId), // HAS SAME ID
                                     0,
                                     null,
                                     null,
                                     null,
-                                    d.type,
+                                    loadResponse.type,
                                     mainId
                                 )
                             ), -1
