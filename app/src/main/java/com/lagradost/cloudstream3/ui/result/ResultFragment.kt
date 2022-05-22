@@ -96,6 +96,7 @@ import kotlinx.android.synthetic.main.result_recommendations.*
 import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -1746,20 +1747,21 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                             result_poster_holder?.setOnClickListener {
                                 try {
                                     context?.let { ctx ->
-                                        val bitmap = result_poster.drawable.toBitmap()
-                                        val sourceBuilder = AlertDialog.Builder(ctx)
-                                        sourceBuilder.setView(R.layout.result_poster)
+                                        runBlocking {
+                                            val sourceBuilder = AlertDialog.Builder(ctx)
+                                            sourceBuilder.setView(R.layout.result_poster)
 
-                                        val sourceDialog = sourceBuilder.create()
-                                        sourceDialog.show()
+                                            val sourceDialog = sourceBuilder.create()
+                                            sourceDialog.show()
 
-                                        sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
-                                            ?.apply {
-                                                setImageBitmap(bitmap)
-                                                setOnClickListener {
-                                                    sourceDialog.dismissSafe()
+                                            sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
+                                                ?.apply {
+                                                    setImage(posterImageLink)
+                                                    setOnClickListener {
+                                                        sourceDialog.dismissSafe()
+                                                    }
                                                 }
-                                            }
+                                        }
                                     }
                                 } catch (e: Exception) {
                                     logError(e)
