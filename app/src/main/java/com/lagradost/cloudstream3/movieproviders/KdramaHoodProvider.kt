@@ -227,7 +227,7 @@ class KdramaHoodProvider : MainAPI() {
                                 //Log.i(this.name, "Result => (src) ${src.toJson()}")
                                 callback(
                                     ExtractorLink(
-                                        name = "$name ${src.label}",
+                                        name = name,
                                         url = src.file,
                                         quality = getQualityFromName(src.label),
                                         referer = mainUrl,
