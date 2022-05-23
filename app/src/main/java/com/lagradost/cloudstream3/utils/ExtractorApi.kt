@@ -139,12 +139,15 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     StreamSB8(),
     StreamSB9(),
     StreamSB10(),
+    SBfull(),
     // Streamhub(), cause Streamhub2() works
     Streamhub2(),
 
     FEmbed(),
     FeHD(),
     Fplayer(),
+    DBfilm(),
+    LayarKaca(),
     //  WatchSB(), 'cause StreamSB.kt works
     Uqload(),
     Uqload1(),
@@ -183,7 +186,14 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     PlayerVoxzer(),
 
     BullStream(),
-    GMPlayer()
+    GMPlayer(),
+
+    Blogger(),
+
+    Hxfile(),
+    KotakAnimeid(),
+    Neonime8n(),
+    Neonime7n(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

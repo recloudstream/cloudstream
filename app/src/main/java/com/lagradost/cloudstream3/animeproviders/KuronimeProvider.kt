@@ -32,7 +32,7 @@ class KuronimeProvider : MainAPI() {
 
         fun getStatus(t: String): ShowStatus {
             return when (t) {
-                "Completed"  -> ShowStatus.Completed
+                "Completed" -> ShowStatus.Completed
                 "Ongoing" -> ShowStatus.Ongoing
                 else -> ShowStatus.Completed
             }
@@ -61,8 +61,12 @@ class KuronimeProvider : MainAPI() {
         } else {
             var title = uri.substringAfter("$mainUrl/")
             title = when {
-                (title.contains("-episode")) && !(title.contains("-movie")) -> Regex("nonton-(.+)-episode").find(title)?.groupValues?.get(1).toString()
-                (title.contains("-movie")) -> Regex("nonton-(.+)-movie").find(title)?.groupValues?.get(1).toString()
+                (title.contains("-episode")) && !(title.contains("-movie")) -> Regex("nonton-(.+)-episode").find(
+                    title
+                )?.groupValues?.get(1).toString()
+                (title.contains("-movie")) -> Regex("nonton-(.+)-movie").find(title)?.groupValues?.get(
+                    1
+                ).toString()
                 else -> title
             }
 
@@ -108,12 +112,17 @@ class KuronimeProvider : MainAPI() {
             it.select("img").attr("src")
         }
         val tags = document.select(".infodetail > ul > li:nth-child(2) > a").map { it.text() }
-        val type = getType(document.selectFirst(".infodetail > ul > li:nth-child(7)")?.ownText()?.trim().toString())
+        val type = getType(
+            document.selectFirst(".infodetail > ul > li:nth-child(7)")?.ownText()?.trim().toString()
+        )
         val trailer = document.select("iframe.entered.lazyloaded").attr("src")
         val year = Regex("\\d, ([0-9]*)").find(
             document.select(".infodetail > ul > li:nth-child(5)").text()
         )?.groupValues?.get(1)?.toIntOrNull()
-        val status = getStatus(document.selectFirst(".infodetail > ul > li:nth-child(3)")!!.ownText().replace(Regex("\\W"), ""))
+        val status = getStatus(
+            document.selectFirst(".infodetail > ul > li:nth-child(3)")!!.ownText()
+                .replace(Regex("\\W"), "")
+        )
         val description = document.select("span.const > p").text()
 
         val episodes = document.select("div.bixbox.bxcl > ul > li").map {
@@ -156,7 +165,7 @@ class KuronimeProvider : MainAPI() {
                         link,
                         referer = "https://animeku.org/",
                         quality = Qualities.Unknown.value,
-                        isM3u8 = link.contains(".m3u8")
+                        isM3u8 = true
                     )
                 )
             }
@@ -170,21 +179,14 @@ class KuronimeProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val document = app.get(data).document
-        val iframeLink = document.select(".mobius > .mirror > option").mapNotNull {
+        val sources = document.select(".mobius > .mirror > option").mapNotNull {
             fixUrl(Jsoup.parse(base64Decode(it.attr("value"))).select("iframe").attr("src"))
         }
 
-        iframeLink.map {
-            it.replace("https://ok.ru", "http://ok.ru")
-        }.apmap {
+        sources.apmap {
             safeApiCall {
                 when {
-                    it.contains("hxfile.co") -> invokeLocalSource(
-                        it,
-                        this.name,
-                        sourceCallback = callback
-                    )
-//                    it.contains("animeku.org") -> invokeKuroSource(it, callback)
+                    it.contains("animeku.org") -> invokeKuroSource(it, callback)
                     else -> loadExtractor(it, mainUrl, callback)
                 }
             }

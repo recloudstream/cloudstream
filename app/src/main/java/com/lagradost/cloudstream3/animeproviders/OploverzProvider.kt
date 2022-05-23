@@ -187,17 +187,12 @@ class OploverzProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val document = app.get(data).document
-        val iframeLink = document.select(".mobius > .mirror > option").mapNotNull {
+        val sources = document.select(".mobius > .mirror > option").mapNotNull {
             fixUrl(Jsoup.parse(base64Decode(it.attr("value"))).select("iframe").attr("src"))
         }
 
-        iframeLink.map {
-            it.replace("https://ok.ru", "http://ok.ru")
-        }.apmap {
-            when {
-                it.contains("blogger.com") -> invokeBloggerSource(it, callback)
-                else -> loadExtractor(it, data, callback)
-            }
+        sources.apmap {
+            loadExtractor(it, data, callback)
         }
 
         return true

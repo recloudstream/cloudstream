@@ -15,6 +15,7 @@ class Mp4Upload : ExtractorApi() {
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         with(app.get(url)) {
             getAndUnpack(this.text).let { unpackedText ->
+                val quality = unpackedText.lowercase().substringAfter(" height=").substringBefore(" ").toIntOrNull()
                 srcRegex.find(unpackedText)?.groupValues?.get(1)?.let { link ->
                     return listOf(
                         ExtractorLink(
@@ -22,7 +23,7 @@ class Mp4Upload : ExtractorApi() {
                             name,
                             link,
                             url,
-                            Qualities.Unknown.value,
+                            quality ?: Qualities.Unknown.value,
                         )
                     )
                 }

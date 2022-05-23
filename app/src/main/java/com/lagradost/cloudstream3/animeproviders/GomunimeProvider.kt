@@ -168,18 +168,6 @@ class GomunimeProvider : MainAPI() {
         }
     }
 
-    private fun invokeSource(
-        source: String,
-        sourceCallback: (ExtractorLink) -> Unit
-    ) {
-        M3u8Helper.generateM3u8(
-            source = this.name,
-            streamUrl = source,
-            referer = "$mainUrl/",
-            name = this.name,
-        ).forEach(sourceCallback)
-    }
-
     data class MobiSource(
         @JsonProperty("file") val file: String,
         @JsonProperty("label") val label: String,
@@ -219,15 +207,19 @@ class GomunimeProvider : MainAPI() {
                             url = "https://path.gomuni.me/app/vapi.php",
                             data = mapOf("fid" to it.first, "func" to "hls")
                         ).text.let { link ->
-                            invokeSource(link, callback)
+                            M3u8Helper.generateM3u8(
+                                this.name,
+                                link,
+                                mainUrl,
+                            ).forEach(callback)
                         }
                     }
-                    else -> {
+                    it.second.contains("mp4") -> {
                         app.post(
                             url = "https://path.gomuni.me/app/vapi.php",
                             data = mapOf("data" to it.first, "func" to "blogs")
                         ).parsed<List<MobiSource>>().map {
-                            callback(
+                            callback.invoke(
                                 ExtractorLink(
                                     source = name,
                                     name = "Mobi SD",
@@ -238,6 +230,7 @@ class GomunimeProvider : MainAPI() {
                             )
                         }
                     }
+                    else -> null
                 }
             }
         }

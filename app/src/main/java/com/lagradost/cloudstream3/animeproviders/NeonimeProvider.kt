@@ -89,7 +89,7 @@ class NeonimeProvider : MainAPI() {
 
         return document.select("div.item.episode-home").mapNotNull {
             val title = it.selectFirst("div.judul-anime > span")!!.text()
-            val poster = it.select("img").attr("data-src")
+            val poster = it.select("img").attr("data-src").toString().trim()
             val episodes = it.selectFirst("div.fixyear > h2.text-center")!!
                 .text().replace(Regex("[^0-9]"), "").trim().toIntOrNull()
             val tvType = getType(it.selectFirst("span.calidad2.episode")?.text().toString())
@@ -101,11 +101,6 @@ class NeonimeProvider : MainAPI() {
             }
         }
     }
-
-    data class NeonimeSyncData(
-        @JsonProperty("mal_id") val malId: String?,
-        @JsonProperty("anilist_id") val aniListId: String?,
-    )
 
     override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
@@ -174,14 +169,8 @@ class NeonimeProvider : MainAPI() {
             }
         }
 
-        source.map {
-            it.replace("https://ok.ru", "http://ok.ru")
-        }.apmap {
-                when {
-                    it.contains("blogger.com") -> invokeBloggerSource(it, callback)
-                    it.contains("7njctn.neonime.watch") || it.contains("8njctn.neonime.net") -> invokeLocalSource(it, mainUrl, redirect = false, callback)
-                    else -> loadExtractor(it, data, callback)
-                }
+        source.apmap {
+            loadExtractor(it, data, callback)
         }
 
         return true

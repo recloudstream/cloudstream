@@ -7,6 +7,9 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
+class SBfull : StreamSB() {
+    override var mainUrl = "https://sbfull.com"
+}
 
 class StreamSB1 : StreamSB() {
     override var mainUrl = "https://sbplay1.com"
@@ -68,12 +71,16 @@ open class StreamSB : ExtractorApi() {
         return String(hexChars)
     }
 
+    data class Subs (
+        @JsonProperty("file") val file: String,
+        @JsonProperty("label") val label: String,
+    )
 
     data class StreamData (
         @JsonProperty("file") val file: String,
         @JsonProperty("cdn_img") val cdnImg: String,
         @JsonProperty("hash") val hash: String,
-        @JsonProperty("subs") val subs: List<String>,
+        @JsonProperty("subs") val subs: List<Subs>?,
         @JsonProperty("length") val length: String,
         @JsonProperty("id") val id: String,
         @JsonProperty("title") val title: String,

@@ -8,6 +8,16 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 
+class LayarKaca: XStreamCdn() {
+    override val name: String = "LayarKaca-xxi"
+    override val mainUrl: String = "https://layarkacaxxi.icu"
+}
+
+class DBfilm: XStreamCdn() {
+    override val name: String = "DBfilm"
+    override val mainUrl: String = "https://dbfilm.bar"
+}
+
 class FEmbed: XStreamCdn() {
     override val name: String = "FEmbed"
     override val mainUrl: String = "https://www.fembed.com"

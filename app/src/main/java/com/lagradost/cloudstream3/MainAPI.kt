@@ -88,6 +88,8 @@ object APIHolder {
             StreamingcommunityProvider(),
             TantifilmProvider(),
             HDMovie5(),
+            RebahinProvider(),
+            LayarKaca21Provider(),
 
             // Metadata providers
             //TmdbProvider(),
@@ -628,6 +630,8 @@ fun getQualityFromString(string: String?): SearchQuality? {
         "dvdscr" -> SearchQuality.DVD
         "blueray" -> SearchQuality.BlueRay
         "bluray" -> SearchQuality.BlueRay
+        "blu" -> SearchQuality.BlueRay
+        "fhd" -> SearchQuality.HD
         "br" -> SearchQuality.BlueRay
         "standard" -> SearchQuality.SD
         "sd" -> SearchQuality.SD

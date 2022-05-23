@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.animeproviders.invokeBloggerSource
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -198,11 +197,11 @@ class DramaidProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val document = app.get(data).document
-        val iframeLink = document.select(".mobius > .mirror > option").mapNotNull {
+        val sources = document.select(".mobius > .mirror > option").mapNotNull {
             fixUrl(Jsoup.parse(base64Decode(it.attr("value"))).select("iframe").attr("src"))
         }
 
-        iframeLink.map {
+        sources.map {
             it.replace("https://ndrama.xyz", "https://www.fembed.com")
         }.apmap {
             when {

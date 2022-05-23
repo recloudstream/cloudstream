@@ -74,7 +74,11 @@ class NontonAnimeIDProvider : MainAPI() {
             if (name.contains("movie")) {
                 return "$mainUrl/anime/" + name.replace("-movie", "")
             } else {
-                "$mainUrl/anime/$name"
+                if (name.contains("kokurasetai-season-3")) {
+                    "$mainUrl/anime/${name.replace("season-3", "ultra-romantic")}"
+                } else {
+                    "$mainUrl/anime/$name"
+                }
             }
         }
     }
@@ -233,115 +237,10 @@ class NontonAnimeIDProvider : MainAPI() {
             sources.add(fixUrl(iframe))
         }
 
-        sources.map {
-            it.replace("https://ok.ru", "http://ok.ru")
-        }.apmap {
-            when {
-                it.contains("blogger.com") -> invokeBloggerSource(it, callback)
-                it.contains("kotakanimeid.com") -> invokeLocalSource(
-                    it,
-                    this.name,
-                    sourceCallback = callback
-                )
-                else -> loadExtractor(it, data, callback)
-            }
+        sources.apmap {
+            loadExtractor(it, data, callback)
         }
 
         return true
     }
 }
-
-// re-use as extractorApis
-
-suspend fun invokeBloggerSource(
-    url: String,
-    sourceCallback: (ExtractorLink) -> Unit
-) {
-    val doc = app.get(url).document
-    val sourceName = Regex("[^w{3}]\\.?(.+)\\.").find(URI(url).host)?.groupValues?.get(1).toString()
-        .replace(Regex("\\w+\\."), "").replaceFirstChar { it.uppercase() }
-
-    val server =
-        doc.selectFirst("script")?.data()!!.substringAfter("\"streams\":[").substringBefore("]")
-    tryParseJson<List<BloggerSource>>("[$server]")?.map {
-        sourceCallback.invoke(
-            ExtractorLink(
-                sourceName,
-                sourceName,
-                it.play_url,
-                referer = "https://www.youtube.com/",
-                quality = when (it.format_id) {
-                    18 -> 360
-                    22 -> 720
-                    else -> Qualities.Unknown.value
-                }
-            )
-        )
-    }
-}
-
-data class BloggerSource(
-    @JsonProperty("play_url") val play_url: String,
-    @JsonProperty("format_id") val format_id: Int
-)
-
-suspend fun invokeLocalSource(
-    source: String,
-    ref: String,
-    redirect: Boolean = true,
-    sourceCallback: (ExtractorLink) -> Unit
-) {
-    val doc = app.get(source, allowRedirects = redirect).document
-    val sourceName =
-        Regex("[^w{3}]\\.?(.+)\\.").find(URI(source).host)?.groupValues?.get(1).toString()
-            .replace(Regex("\\w+\\."), "").replaceFirstChar { it.uppercase() }
-
-    doc.select("script").map { script ->
-        if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
-            val data = getAndUnpack(script.data())
-            val server = data.substringAfter("sources:[").substringBefore("]")
-            tryParseJson<List<ResponseSource>>("[$server]")?.map {
-                sourceCallback.invoke(
-                    ExtractorLink(
-                        sourceName,
-                        sourceName,
-                        it.file,
-                        referer = ref,
-                        quality = when {
-                            source.contains("hxfile.co") -> getQualityFromName(
-                                Regex("\\d\\.(.*?).mp4").find(
-                                    doc.select("title").text()
-                                )?.groupValues?.get(1).toString()
-                            )
-                            else -> getQualityFromName(it.label)
-                        }
-
-                    )
-                )
-            }
-        } else {
-            if (script.data().contains("\"sources\":[")) {
-                val server = script.data().substringAfter("\"sources\":[").substringBefore("]")
-                tryParseJson<List<ResponseSource>>("[$server]")?.map {
-                    sourceCallback.invoke(
-                        ExtractorLink(
-                            sourceName,
-                            sourceName,
-                            it.file,
-                            referer = ref,
-                            quality = getQualityFromName(it.label)
-                        )
-                    )
-                }
-            } else {
-                // skip for now
-            }
-        }
-    }
-}
-
-data class ResponseSource(
-    @JsonProperty("file") val file: String,
-    @JsonProperty("type") val type: String?,
-    @JsonProperty("label") val label: String?
-)
