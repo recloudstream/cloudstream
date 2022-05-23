@@ -208,6 +208,12 @@
         "status": 1,
         "url": "https://185.231.223.254"
     },
+    "LayarKaca21Provider": {
+        "language": "id",
+        "name": "LayarKaca",
+        "status": 1,
+        "url": ""
+    },
     "LookMovieProvider": {
         "language": "en",
         "name": "LookMovie",
@@ -303,6 +309,12 @@
         "name": "Pinoy Movies",
         "status": 1,
         "url": "https://pinoymovies.es"
+    },
+    "RebahinProvider": {
+        "language": "id",
+        "name": "Rebahin",
+        "status": 1,
+        "url": "http://167.88.14.149"
     },
     "SeriesflixProvider": {
         "language": "es",
