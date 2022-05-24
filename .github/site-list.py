@@ -9,7 +9,7 @@ from typing import List, Dict
 JSON_PATH = "docs/providers.json"
 GLOB_ANIME = "app/src/main/java/com/lagradost/cloudstream3/animeproviders/*Provider.kt"
 GLOB_MOVIE = "app/src/main/java/com/lagradost/cloudstream3/movieproviders/*Provider.kt"
-URL_REGEX = compile("override\sva[lr]\smainUrl[^\"']+[\"'](https?://[a-zA-Z0-9\.-]+)[\"']")
+URL_REGEX = compile("override\sva[lr]\smainUrl[^\"']+[\"'](https?://[a-zA-Z0-9\.-\\]+)[\"']")
 FILENAME_REGEX = compile("([A-Za-z0-9]+)(?:.kt)$")
 PROVIDER_CLASSNAME_REGEX = compile("(?<=class\s)([a-zA-Z]+)(?=\s:\sMainAPI\(\))")
 NAME_REGEX = compile("override\sva[lr]\sname[^\"']+[\"']([a-zA-Z-.\s]+)")
