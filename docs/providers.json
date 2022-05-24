@@ -262,6 +262,12 @@
         "status": 1,
         "url": "https://75.119.159.228"
     },
+    "OlgplyProvider": {
+        "language": "en",
+        "name": "Olgply",
+        "status": 1,
+        "url": "https://olgply.com"
+    },
     "OploverzProvider": {
         "language": "id",
         "name": "Oploverz",
