@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.*
+import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
 import retrofit2.awaitResponse
 import java.util.*
 
@@ -258,7 +259,7 @@ open class TmdbProvider : MainAPI() {
 
         return if (useMetaLoadResponse) {
             return if (isTvSeries) {
-                val body = tmdb.tvService().tv(id, "en-US").awaitResponse().body()
+                val body = tmdb.tvService().tv(id, "en-US", AppendToResponse(AppendToResponseItem.EXTERNAL_IDS)).awaitResponse().body()
                 val response = body?.toLoadResponse()
                 if (response != null) {
                     if (response.recommendations.isNullOrEmpty())
@@ -277,7 +278,7 @@ open class TmdbProvider : MainAPI() {
 
                 response
             } else {
-                val body = tmdb.moviesService().summary(id, "en-US").awaitResponse().body()
+                val body = tmdb.moviesService().summary(id, "en-US", AppendToResponse(AppendToResponseItem.EXTERNAL_IDS)).awaitResponse().body()
                 val response = body?.toLoadResponse()
                 if (response != null) {
                     if (response.recommendations.isNullOrEmpty())

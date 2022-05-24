@@ -68,7 +68,7 @@
     "BflixProvider": {
         "language": "en",
         "name": "Bflix",
-        "status": 1,
+        "status": 0,
         "url": "https://bflix.ru"
     },
     "CinecalidadProvider": {
@@ -151,7 +151,7 @@
     "FmoviesToProvider": {
         "language": "en",
         "name": "Fmovies.to",
-        "status": 1,
+        "status": 0,
         "url": "https://fmovies.to"
     },
     "FrenchStreamProvider": {
@@ -253,7 +253,7 @@
     "NineAnimeProvider": {
         "language": "en",
         "name": "9Anime",
-        "status": 1,
+        "status": 0,
         "url": "https://9anime.id"
     },
     "NontonAnimeIDProvider": {
@@ -325,7 +325,7 @@
     "SflixProProvider": {
         "language": "en",
         "name": "Sflix.pro",
-        "status": 1,
+        "status": 0,
         "url": "https://sflix.pro"
     },
     "SflixProvider": {

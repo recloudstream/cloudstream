@@ -122,6 +122,7 @@ object APIHolder {
             KuronimeProvider(),
             //MultiAnimeProvider(),
 	        NginxProvider(),
+            OlgplyProvider(),
         )
     }
 
