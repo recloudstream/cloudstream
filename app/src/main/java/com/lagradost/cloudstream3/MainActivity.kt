@@ -354,6 +354,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    fun test() {
+        /*runBlocking {
+            //https://test.api.anime-skip.com/graphiql
+            val txt = app.get(
+                "https://api.anime-skip.com/status",
+                headers = mapOf("X-Client-ID" to "")
+            )
+            println("TEXT: $txt")
+        }*/
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // init accounts
         for (api in OAuth2accountApis) {
@@ -585,7 +596,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         loadCache()
-
+        test()
         /*nav_view.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
