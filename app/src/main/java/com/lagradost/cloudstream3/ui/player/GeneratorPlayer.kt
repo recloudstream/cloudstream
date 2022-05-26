@@ -560,32 +560,35 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         //Generate video title
-        var playerVideoTitle = if (headerName != null) {
-            (headerName +
-                    if (tvType.isEpisodeBased() && episode != null)
-                        if (season == null)
-                            " - ${getString(R.string.episode)} $episode"
-                        else
-                            " \"${getString(R.string.season_short)}${season}:${getString(R.string.episode_short)}${episode}\""
-                    else "") + if (subName.isNullOrBlank() || subName == headerName) "" else " - $subName"
-        } else {
-            ""
-        }
-
-        //Hide title, if set in setting
-        if (limitTitle < 0) {
-            player_video_title?.visibility = View.GONE
-        } else {
-            //Truncate video title if it exceeds limit
-            val differenceInLength = playerVideoTitle.length - limitTitle
-            val margin = 3 //If the difference is smaller than or equal to this value, ignore it
-            if (limitTitle > 0 && differenceInLength > margin) {
-                playerVideoTitle = playerVideoTitle.substring(0, limitTitle - 1) + "..."
+        context?.let { ctx ->
+            var playerVideoTitle = if (headerName != null) {
+                (headerName +
+                        if (tvType.isEpisodeBased() && episode != null)
+                            if (season == null)
+                                " - ${ctx.getString(R.string.episode)} $episode"
+                            else
+                                " \"${ctx.getString(R.string.season_short)}${season}:${ctx.getString(R.string.episode_short)}${episode}\""
+                        else "") + if (subName.isNullOrBlank() || subName == headerName) "" else " - $subName"
+            } else {
+                ""
             }
+
+            //Hide title, if set in setting
+            if (limitTitle < 0) {
+                player_video_title?.visibility = View.GONE
+            } else {
+                //Truncate video title if it exceeds limit
+                val differenceInLength = playerVideoTitle.length - limitTitle
+                val margin = 3 //If the difference is smaller than or equal to this value, ignore it
+                if (limitTitle > 0 && differenceInLength > margin) {
+                    playerVideoTitle = playerVideoTitle.substring(0, limitTitle - 1) + "..."
+                }
+            }
+
+            player_episode_filler_holder?.isVisible = isFiller ?: false
+            player_video_title?.text = playerVideoTitle
         }
 
-        player_episode_filler_holder?.isVisible = isFiller ?: false
-        player_video_title?.text = playerVideoTitle
     }
 
     @SuppressLint("SetTextI18n")

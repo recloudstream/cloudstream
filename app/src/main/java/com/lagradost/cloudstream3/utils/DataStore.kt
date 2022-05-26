@@ -6,6 +6,7 @@ import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.lagradost.cloudstream3.mvvm.logError
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 
@@ -13,9 +14,8 @@ const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 const val DOWNLOAD_EPISODE_CACHE = "download_episode_cache"
 const val VIDEO_PLAYER_BRIGHTNESS = "video_player_alpha_key"
 const val HOMEPAGE_API = "home_api_used"
-const val SEARCH_PROVIDER_TOGGLE = "settings_providers_toggle"
 
-const val PREFERENCES_NAME: String = "rebuild_preference"
+const val PREFERENCES_NAME = "rebuild_preference"
 
 object DataStore {
     val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
@@ -34,17 +34,21 @@ object DataStore {
     }
 
     fun <T> Context.setKeyRaw(path: String, value: T, isEditingAppSettings: Boolean = false) {
-        val editor: SharedPreferences.Editor =
-            if (isEditingAppSettings) getDefaultSharedPrefs().edit() else getSharedPrefs().edit()
-        when (value) {
-            is Boolean -> editor.putBoolean(path, value)
-            is Int -> editor.putInt(path, value)
-            is String -> editor.putString(path, value)
-            is Float -> editor.putFloat(path, value)
-            is Long -> editor.putLong(path, value)
-            (value as? Set<String> != null) -> editor.putStringSet(path, value as Set<String>)
+        try {
+            val editor: SharedPreferences.Editor =
+                if (isEditingAppSettings) getDefaultSharedPrefs().edit() else getSharedPrefs().edit()
+            when (value) {
+                is Boolean -> editor.putBoolean(path, value)
+                is Int -> editor.putInt(path, value)
+                is String -> editor.putString(path, value)
+                is Float -> editor.putFloat(path, value)
+                is Long -> editor.putLong(path, value)
+                (value as? Set<String> != null) -> editor.putStringSet(path, value as Set<String>)
+            }
+            editor.apply()
+        } catch (e: Exception) {
+            logError(e)
         }
-        editor.apply()
     }
 
     fun Context.getDefaultSharedPrefs(): SharedPreferences {
@@ -69,11 +73,15 @@ object DataStore {
     }
 
     fun Context.removeKey(path: String) {
-        val prefs = getSharedPrefs()
-        if (prefs.contains(path)) {
-            val editor: SharedPreferences.Editor = prefs.edit()
-            editor.remove(path)
-            editor.apply()
+        try {
+            val prefs = getSharedPrefs()
+            if (prefs.contains(path)) {
+                val editor: SharedPreferences.Editor = prefs.edit()
+                editor.remove(path)
+                editor.apply()
+            }
+        } catch (e: Exception) {
+            logError(e)
         }
     }
 
@@ -86,9 +94,13 @@ object DataStore {
     }
 
     fun <T> Context.setKey(path: String, value: T) {
-        val editor: SharedPreferences.Editor = getSharedPrefs().edit()
-        editor.putString(path, mapper.writeValueAsString(value))
-        editor.apply()
+        try {
+            val editor: SharedPreferences.Editor = getSharedPrefs().edit()
+            editor.putString(path, mapper.writeValueAsString(value))
+            editor.apply()
+        } catch (e: Exception) {
+            logError(e)
+        }
     }
 
     fun <T> Context.setKey(folder: String, path: String, value: T) {

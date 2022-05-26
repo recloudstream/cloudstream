@@ -520,4 +520,5 @@
     <string name="resolution_and_title">Resolution and title</string>
     <string name="title">Title</string>
     <string name="resolution">Resolution</string>
+    <string name="error_invalid_id">Invalid id</string>
 </resources>
