@@ -3,20 +3,11 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import java.util.*
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.lagradost.cloudstream3.movieproviders.SflixProvider
-import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.extractRabbitStream
-import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.toExtractorLink
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-import com.lagradost.nicehttp.Requests.Companion.await
-import kotlinx.coroutines.runBlocking
-import okhttp3.Interceptor
-import java.net.URI
 
 class GomunimeProvider : MainAPI() {
     override var mainUrl = "https://185.231.223.76"
@@ -210,7 +201,8 @@ class GomunimeProvider : MainAPI() {
                             M3u8Helper.generateM3u8(
                                 this.name,
                                 link,
-                                mainUrl,
+                                "$mainUrl/",
+                                headers = mapOf("Origin" to mainUrl)
                             ).forEach(callback)
                         }
                     }

@@ -89,7 +89,7 @@ object APIHolder {
             TantifilmProvider(),
             HDMovie5(),
             RebahinProvider(),
-            LayarKaca21Provider(),
+            LayarKacaProvider(),
 
             // Metadata providers
             //TmdbProvider(),

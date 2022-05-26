@@ -1,23 +1,22 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.httpsify
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.util.*
 
-class LayarKaca21Provider : MainAPI() {
-    override var mainUrl = "https://149.56.24.226/"
-    override var name = "LayarKaca21"
+class LayarKacaProvider : MainAPI() {
+    override var mainUrl = "https://149.56.24.226"
+    override var name = "LayarKaca"
     override val hasMainPage = true
     override val lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Movie,
         TvType.TvSeries,
+        TvType.AsianDrama
     )
 
     override suspend fun getMainPage(): HomePageResponse {

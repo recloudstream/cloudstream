@@ -190,6 +190,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     GMPlayer(),
 
     Blogger(),
+    Solidfiles(),
 
     Hxfile(),
     KotakAnimeid(),
