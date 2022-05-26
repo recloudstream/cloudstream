@@ -209,10 +209,15 @@
         "url": "https://185.231.223.254"
     },
     "LayarKaca21Provider": {
-        "language": "id",
         "name": "LayarKaca",
         "status": 1,
         "url": "https://149.56.24.226/"
+    },
+    "LayarKacaProvider": {
+        "language": "id",
+        "name": "LayarKaca",
+        "status": 1,
+        "url": "https://149.56.24.226"
     },
     "LookMovieProvider": {
         "language": "en",
