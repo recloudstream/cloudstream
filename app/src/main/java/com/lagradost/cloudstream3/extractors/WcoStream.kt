@@ -115,7 +115,7 @@ open class WcoStream : ExtractorApi() {
         )?.destructured) ?: return emptyList()
       //  val (skey) = Regex("""skey\s=\s['"](.*?)['"];""").find(html)?.destructured
       //     ?: return emptyList()
-        keytwo = getWcoKey()
+        keytwo = getWcoKey() ?: return emptyList()
         val encryptedID = encrypt(cipher(key, encrypt(Id))).replace("/", "_").replace("=","")
         val apiLink = "$baseUrl/info/$encryptedID"
         val referrer = "$baseUrl/e/$Id?domain=wcostream.cc"
