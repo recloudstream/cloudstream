@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - '*.md'
       - '*.json'
+      - '**/wcokey.txt'
 
 concurrency: 
   group: "pre-release"

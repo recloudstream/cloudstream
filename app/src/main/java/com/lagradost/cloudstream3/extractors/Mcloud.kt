@@ -6,6 +6,8 @@ import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.WcoStream.Companion.cipher
 import com.lagradost.cloudstream3.extractors.WcoStream.Companion.encrypt
+import com.lagradost.cloudstream3.extractors.WcoStream.Companion.keytwo
+import com.lagradost.cloudstream3.extractors.helper.WcoHelper.Companion.getWcoKey
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -32,6 +34,7 @@ open class Mcloud : ExtractorApi() {
     private val key = "LCbu3iYC7ln24K7P" // key credits @Modder4869
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val id = url.substringAfter("e/").substringAfter("embed/").substringBefore("?")
+        keytwo = getWcoKey()
         val encryptedid = encrypt(cipher(key, encrypt(id))).replace("/", "_").replace("=","")
         val link = "$mainUrl/info/$encryptedid"
         val response = app.get(link, headers = headers).text

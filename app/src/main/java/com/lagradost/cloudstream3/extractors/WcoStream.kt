@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.extractors.helper.WcoHelper.Companion.getWcoKey
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
@@ -55,7 +56,7 @@ open class WcoStream : ExtractorApi() {
     override val requiresReferer = false
 
     companion object {
-        private val keytwo = "0wMrYU+ixjJ4QdzgfN2HlyIVAt3sBOZnCT9Lm7uFDovkb/EaKpRWhqXS5168ePcG"
+        var keytwo = ""
         fun encrypt(input: String): String {
             if (input.any { it.code >= 256 }) throw Exception("illegal characters!")
             var output = ""
@@ -114,7 +115,7 @@ open class WcoStream : ExtractorApi() {
         )?.destructured) ?: return emptyList()
       //  val (skey) = Regex("""skey\s=\s['"](.*?)['"];""").find(html)?.destructured
       //     ?: return emptyList()
-
+        keytwo = getWcoKey()
         val encryptedID = encrypt(cipher(key, encrypt(Id))).replace("/", "_").replace("=","")
         val apiLink = "$baseUrl/info/$encryptedID"
         val referrer = "$baseUrl/e/$Id?domain=wcostream.cc"
