@@ -75,9 +75,10 @@ class SettingsFragment : Fragment() {
         private fun Context.isAutoTv(): Boolean {
             val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager?
             // AFT = Fire TV
+            val model = Build.MODEL.lowercase()
             return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION || Build.MODEL.contains(
                 "AFT"
-            )
+            ) || model.contains("firestick") || model.contains("fire tv") || model.contains("chromecast")
         }
     }
 
