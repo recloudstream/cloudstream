@@ -52,24 +52,26 @@ data class Image(
     @JsonProperty("url") val url: String,
     @JsonProperty("type") val type: String,
     @JsonProperty("sc_url") val scURL: String,
-    @JsonProperty("proxy") val proxy: Proxy,
-    @JsonProperty("server") val server: Proxy
+//    @JsonProperty("proxy") val proxy: Proxy,
+//    @JsonProperty("server") val server: Proxy
 )
 
-data class Proxy(
-    @JsonProperty("id") val id: Long,
-    @JsonProperty("type") val type: String,
-    @JsonProperty("ip") val ip: String,
-    @JsonProperty("number") val number: Long,
-    @JsonProperty("storage") val storage: Long,
-    @JsonProperty("max_storage") val maxStorage: Long,
-    @JsonProperty("max_conversions") val maxConversions: Any? = null,
-    @JsonProperty("max_publications") val maxPublications: Any? = null,
-    @JsonProperty("created_at") val createdAt: String,
-    @JsonProperty("updated_at") val updatedAt: String,
-    @JsonProperty("upload_bandwidth") val uploadBandwidth: Any? = null,
-    @JsonProperty("upload_bandwidth_limit") val uploadBandwidthLimit: Any? = null
-)
+// Proxy is not used and crashes otherwise
+
+//data class Proxy(
+//    @JsonProperty("id") val id: Long,
+//    @JsonProperty("type") val type: String,
+//    @JsonProperty("ip") val ip: String,
+//    @JsonProperty("number") val number: Long,
+//    @JsonProperty("storage") val storage: Long,
+//    @JsonProperty("max_storage") val maxStorage: Long,
+//    @JsonProperty("max_conversions") val maxConversions: Any? = null,
+//    @JsonProperty("max_publications") val maxPublications: Any? = null,
+//    @JsonProperty("created_at") val createdAt: String,
+//    @JsonProperty("updated_at") val updatedAt: String,
+//    @JsonProperty("upload_bandwidth") val uploadBandwidth: Any? = null,
+//    @JsonProperty("upload_bandwidth_limit") val uploadBandwidthLimit: Any? = null
+//)
 
 data class Season(
     @JsonProperty("id") val id: Long,
@@ -126,7 +128,7 @@ data class TrailerElement(
 
 class StreamingcommunityProvider : MainAPI() {
     override val lang = "it"
-    override var mainUrl = "https://streamingcommunity.top"
+    override var mainUrl = "https://streamingcommunity.monster"
     override var name = "Streamingcommunity"
     override val hasMainPage = true
     override val hasChromecastSupport = true
