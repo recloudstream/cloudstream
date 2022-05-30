@@ -394,6 +394,7 @@ abstract class AbstractPlayerFragment(
     override fun onDestroy() {
         playerEventListener = null
         keyEventListener = null
+        canEnterPipMode = false
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
         keepScreenOn(false)

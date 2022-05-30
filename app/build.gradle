@@ -171,4 +171,7 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     implementation "androidx.tvprovider:tvprovider:1.0.0"
+
+    // used for subtitle decoding https://github.com/albfernandez/juniversalchardet
+    implementation 'com.github.albfernandez:juniversalchardet:2.4.0'
 }

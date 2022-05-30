@@ -61,6 +61,7 @@ enum class Qualities(var value: Int) {
                 0 -> "Auto"
                 Unknown.value -> ""
                 P2160.value -> "4K"
+                null -> ""
                 else -> "${qual}p"
             }
         }

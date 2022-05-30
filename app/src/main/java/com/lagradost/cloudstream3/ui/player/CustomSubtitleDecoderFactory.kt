@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.content.Context
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.Format
 import com.google.android.exoplayer2.text.SubtitleDecoder
 import com.google.android.exoplayer2.text.SubtitleDecoderFactory
@@ -11,13 +13,29 @@ import com.google.android.exoplayer2.text.subrip.SubripDecoder
 import com.google.android.exoplayer2.text.ttml.TtmlDecoder
 import com.google.android.exoplayer2.text.webvtt.WebvttDecoder
 import com.google.android.exoplayer2.util.MimeTypes
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import org.mozilla.universalchardet.UniversalDetector
 import java.nio.ByteBuffer
-
 
 class CustomDecoder : SubtitleDecoder {
     companion object {
+        fun updateForcedEncoding(context: Context) {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+            val value = settingsManager.getString(
+                context.getString(R.string.subtitles_encoding_key),
+                null
+            )
+            overrideEncoding = if (value.isNullOrBlank()) {
+                null
+            } else {
+                value
+            }
+        }
+
+        private const val UTF_8 = "UTF-8"
         private const val TAG = "CustomDecoder"
+        private var overrideEncoding: String? = null
         var regexSubtitlesToRemoveCaptions = false
         val bloatRegex =
             listOf(
@@ -65,18 +83,67 @@ class CustomDecoder : SubtitleDecoder {
             if (realDecoder == null) {
                 inputBuffer.data?.let { data ->
                     // this way we read the subtitle file and decide what decoder to use instead of relying on mimetype
+                    Log.i(TAG, "Got data from queueInputBuffer")
 
-                    val pos = data.position()
-                    data.position(0)
-                    val arr = ByteArray(minOf(data.remaining(), 100))
-                    data.get(arr)
-                    data.position(pos)
+                    var (str, charset) = try {
+                        data.position(0)
+                        val fullDataArr = ByteArray(data.remaining())
+                        data.get(fullDataArr)
+                        val encoding = try {
+                            val encoding = overrideEncoding ?: run {
+                                val detector = UniversalDetector()
 
+                                detector.handleData(fullDataArr, 0, fullDataArr.size)
+                                detector.dataEnd()
+
+                                detector.detectedCharset // "windows-1256"
+                            }
+
+                            Log.i(
+                                TAG,
+                                "Detected encoding with charset $encoding and override = $overrideEncoding"
+                            )
+                            encoding ?: UTF_8
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to detect encoding throwing error")
+                            logError(e)
+                            UTF_8
+                        }
+
+                        var (fullStr, charset) = try {
+                            val set = charset(encoding)
+                            Pair(String(fullDataArr, set), set)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to parse using encoding $encoding")
+                            logError(e)
+                            Pair(fullDataArr.decodeToString(), charset(UTF_8))
+                        }
+
+                        bloatRegex.forEach { rgx ->
+                            fullStr = fullStr.replace(rgx, "\n")
+                        }
+
+                        fullStr.replace(Regex("(\r\n|\r|\n){2,}"), "\n")
+                        // fullStr = "1\n00:00:01,616 --> 00:00:40,200\n" +
+                        //         "تــــرجــمة"
+
+                        Log.i(
+                            TAG,
+                            "Encoded Text start: " + fullStr.substring(
+                                0,
+                                minOf(fullStr.length, 300)
+                            )
+                        )
+                        Pair(fullStr, charset)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Failed to parse text returning plain data")
+                        logError(e)
+                        return
+                    }
                     //https://emptycharacter.com/
                     //https://www.fileformat.info/info/unicode/char/200b/index.htm
-                    val str = trimStr(arr.decodeToString())
-                    Log.i(TAG, "Got data from queueInputBuffer")
-                    Log.i(TAG, "first string is >>>$str<<<")
+                    //val str = trimStr(arr.decodeToString())
+                    //Log.i(TAG, "first string is >>>$str<<<")
                     if (str.isNotEmpty()) {
                         //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
                         realDecoder = when {
@@ -93,33 +160,21 @@ class CustomDecoder : SubtitleDecoder {
                             TAG,
                             "Decoder selected: $realDecoder"
                         )
-                        val decoder = realDecoder
-                        if (decoder != null) {
+                        realDecoder?.let { decoder ->
                             decoder.dequeueInputBuffer()?.let { buff ->
                                 if (regexSubtitlesToRemoveCaptions && decoder::class.java != SsaDecoder::class.java) {
-                                    try {
-                                        data.position(0)
-                                        val fullDataArr = ByteArray(data.remaining())
-                                        data.get(fullDataArr)
-                                        var fullStr = trimStr(fullDataArr.decodeToString())
-
-                                        bloatRegex.forEach { rgx ->
-                                            fullStr = fullStr.replace(rgx, "\n")
-                                        }
-                                        captionRegex.forEach { rgx ->
-                                            fullStr = fullStr.replace(rgx, "\n")
-                                        }
-                                        fullStr.replace(Regex("(\r\n|\r|\n){2,}"), "\n")
-
-                                        buff.data = ByteBuffer.wrap(fullStr.toByteArray())
-                                    } catch (e: Exception) {
-                                        data.position(pos)
-                                        buff.data = data
+                                    captionRegex.forEach { rgx ->
+                                        str = str.replace(rgx, "\n")
                                     }
-                                } else {
-                                    buff.data = data
                                 }
+
+                                buff.data = ByteBuffer.wrap(str.toByteArray(charset = charset))
+
                                 decoder.queueInputBuffer(buff)
+                                Log.i(
+                                    TAG,
+                                    "Decoder queueInputBuffer successfully"
+                                )
                             }
                             CS3IPlayer.requestSubtitleUpdate?.invoke()
                         }
