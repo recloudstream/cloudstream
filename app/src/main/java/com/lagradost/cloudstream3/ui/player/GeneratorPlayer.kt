@@ -477,15 +477,24 @@ class GeneratorPlayer : FullScreenPlayer() {
     ): SubtitleData? {
         val langCode = preferredAutoSelectSubtitles ?: return null
         val lang = SubtitleHelper.fromTwoLettersToLanguage(langCode) ?: return null
-
-        if (settings)
-            subtitles.firstOrNull { sub ->
-                val t = sub.name.replace(Regex("[^A-Za-z]"), " ").trim()
-                t == lang || t.startsWith("$lang ")
-                        || t == langCode
-            }?.let { sub ->
-                return sub
+        if (downloads) {
+            return subtitles.firstOrNull { sub ->
+                (sub.origin == SubtitleOrigin.DOWNLOADED_FILE && sub.name == context?.getString(
+                    R.string.default_subtitles
+                ))
             }
+        }
+
+        sortSubs(subtitles).firstOrNull { sub ->
+            val t = sub.name.replace(Regex("[^A-Za-z]"), " ").trim()
+            (settings || (downloads && sub.origin == SubtitleOrigin.DOWNLOADED_FILE)) && t == lang || t.startsWith(
+                "$lang "
+            ) || t == langCode
+        }?.let { sub ->
+            return sub
+        }
+
+        // post check in case both did not catch anything
         if (downloads) {
             return subtitles.firstOrNull { sub ->
                 (sub.origin == SubtitleOrigin.DOWNLOADED_FILE || sub.name == context?.getString(
@@ -493,10 +502,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                 ))
             }
         }
+
         return null
     }
 
-    private fun autoSelectFromSettings() {
+    private fun autoSelectFromSettings(): Boolean {
         // auto select subtitle based of settings
         val langCode = preferredAutoSelectSubtitles
 
@@ -506,29 +516,34 @@ class GeneratorPlayer : FullScreenPlayer() {
                     if (setSubtitles(sub)) {
                         player.reloadPlayer(ctx)
                         player.handleEvent(CSPlayerEvent.Play)
+                        return true
                     }
                 }
             }
         }
+        return false
     }
 
-    private fun autoSelectFromDownloads() {
+    private fun autoSelectFromDownloads(): Boolean {
         if (player.getCurrentPreferredSubtitle() == null) {
             getAutoSelectSubtitle(currentSubs, settings = false, downloads = true)?.let { sub ->
                 context?.let { ctx ->
                     if (setSubtitles(sub)) {
                         player.reloadPlayer(ctx)
                         player.handleEvent(CSPlayerEvent.Play)
+                        return true
                     }
                 }
             }
         }
+        return false
     }
 
     private fun autoSelectSubtitles() {
         normalSafeApiCall {
-            autoSelectFromSettings()
-            autoSelectFromDownloads()
+            if (!autoSelectFromSettings()) {
+                autoSelectFromDownloads()
+            }
         }
     }
 
@@ -567,7 +582,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                             if (season == null)
                                 " - ${ctx.getString(R.string.episode)} $episode"
                             else
-                                " \"${ctx.getString(R.string.season_short)}${season}:${ctx.getString(R.string.episode_short)}${episode}\""
+                                " \"${ctx.getString(R.string.season_short)}${season}:${
+                                    ctx.getString(
+                                        R.string.episode_short
+                                    )
+                                }${episode}\""
                         else "") + if (subName.isNullOrBlank() || subName == headerName) "" else " - $subName"
             } else {
                 ""
