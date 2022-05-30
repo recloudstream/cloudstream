@@ -51,6 +51,7 @@
     <string name="show_logcat_key" translatable="false">show_logcat_key</string>
     <string name="bottom_title_key" translatable="false">bottom_title_key</string>
     <string name="poster_ui_key" translatable="false">poster_ui_key</string>
+    <string name="subtitles_encoding_key" translatable="false">subtitles_encoding_key</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
@@ -418,6 +419,7 @@
     <string name="provider_lang_settings">Provider languages</string>
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>
+    <string name="subtitles_encoding">Subtitle encoding</string>
     <string name="category_preferred_media_and_lang">Preferred media and language</string>
     <string name="category_ui">User interface</string>
 

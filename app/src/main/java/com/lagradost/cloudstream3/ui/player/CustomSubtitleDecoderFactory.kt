@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.content.Context
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.Format
 import com.google.android.exoplayer2.text.SubtitleDecoder
 import com.google.android.exoplayer2.text.SubtitleDecoderFactory
@@ -11,15 +13,29 @@ import com.google.android.exoplayer2.text.subrip.SubripDecoder
 import com.google.android.exoplayer2.text.ttml.TtmlDecoder
 import com.google.android.exoplayer2.text.webvtt.WebvttDecoder
 import com.google.android.exoplayer2.util.MimeTypes
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import org.mozilla.universalchardet.UniversalDetector
 import java.nio.ByteBuffer
 
 class CustomDecoder : SubtitleDecoder {
     companion object {
+        fun updateForcedEncoding(context: Context) {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+            val value = settingsManager.getString(
+                context.getString(R.string.subtitles_encoding_key),
+                null
+            )
+            overrideEncoding = if (value.isNullOrBlank()) {
+                null
+            } else {
+                value
+            }
+        }
+
         private const val UTF_8 = "UTF-8"
         private const val TAG = "CustomDecoder"
-        private var overrideEncoding: String? = null //TODO MAKE SETTING
+        private var overrideEncoding: String? = null
         var regexSubtitlesToRemoveCaptions = false
         val bloatRegex =
             listOf(
@@ -69,7 +85,7 @@ class CustomDecoder : SubtitleDecoder {
                     // this way we read the subtitle file and decide what decoder to use instead of relying on mimetype
                     Log.i(TAG, "Got data from queueInputBuffer")
 
-                    var str = try {
+                    var (str, charset) = try {
                         data.position(0)
                         val fullDataArr = ByteArray(data.remaining())
                         data.get(fullDataArr)
@@ -80,7 +96,7 @@ class CustomDecoder : SubtitleDecoder {
                                 detector.handleData(fullDataArr, 0, fullDataArr.size)
                                 detector.dataEnd()
 
-                                detector.detectedCharset // "windows-1256" adabic
+                                detector.detectedCharset // "windows-1256"
                             }
 
                             Log.i(
@@ -93,13 +109,23 @@ class CustomDecoder : SubtitleDecoder {
                             logError(e)
                             UTF_8
                         }
-                        var fullStr = try {
-                            String(fullDataArr, charset(encoding))
+
+                        var (fullStr, charset) = try {
+                            val set = charset(encoding)
+                            Pair(String(fullDataArr, set), set)
                         } catch (e: Exception) {
                             Log.e(TAG, "Failed to parse using encoding $encoding")
                             logError(e)
-                            fullDataArr.decodeToString()
+                            Pair(fullDataArr.decodeToString(), charset(UTF_8))
                         }
+
+                        bloatRegex.forEach { rgx ->
+                            fullStr = fullStr.replace(rgx, "\n")
+                        }
+
+                        fullStr.replace(Regex("(\r\n|\r|\n){2,}"), "\n")
+                        // fullStr = "1\n00:00:01,616 --> 00:00:40,200\n" +
+                        //         "تــــرجــمة"
 
                         Log.i(
                             TAG,
@@ -108,14 +134,7 @@ class CustomDecoder : SubtitleDecoder {
                                 minOf(fullStr.length, 300)
                             )
                         )
-
-                        bloatRegex.forEach { rgx ->
-                            fullStr = fullStr.replace(rgx, "\n")
-                        }
-
-                        fullStr.replace(Regex("(\r\n|\r|\n){2,}"), "\n")
-
-                        fullStr
+                        Pair(fullStr, charset)
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed to parse text returning plain data")
                         logError(e)
@@ -149,7 +168,7 @@ class CustomDecoder : SubtitleDecoder {
                                     }
                                 }
 
-                                buff.data = ByteBuffer.wrap(str.toByteArray())
+                                buff.data = ByteBuffer.wrap(str.toByteArray(charset = charset))
 
                                 decoder.queueInputBuffer(buff)
                                 Log.i(

@@ -15,7 +15,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.util.MimeTypes
-import com.google.android.material.button.MaterialButton
 import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -24,6 +23,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
@@ -32,11 +32,13 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSet
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
+import kotlinx.android.synthetic.main.player_select_source_and_subs.*
 import kotlinx.coroutines.Job
 
 class GeneratorPlayer : FullScreenPlayer() {
@@ -241,14 +243,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val sourceDialog = sourceBuilder.create()
                 selectSourceDialog = sourceDialog
                 sourceDialog.show()
-                val providerList =
-                    sourceDialog.findViewById<ListView>(R.id.sort_providers)!!
-                val subtitleList =
-                    sourceDialog.findViewById<ListView>(R.id.sort_subtitles)!!
-                val applyButton =
-                    sourceDialog.findViewById<MaterialButton>(R.id.apply_btt)!!
-                val cancelButton =
-                    sourceDialog.findViewById<MaterialButton>(R.id.cancel_btt)!!
+                val providerList = sourceDialog.sort_providers
+                val subtitleList = sourceDialog.sort_subtitles
 
                 val footer: TextView =
                     layoutInflater.inflate(R.layout.sort_bottom_footer_add_choice, null) as TextView
@@ -314,11 +310,56 @@ class GeneratorPlayer : FullScreenPlayer() {
                     subtitleList.setItemChecked(which, true)
                 }
 
-                cancelButton.setOnClickListener {
+                sourceDialog.cancel_btt?.setOnClickListener {
                     sourceDialog.dismissSafe(activity)
                 }
 
-                applyButton.setOnClickListener {
+                sourceDialog.subtitles_encoding_format?.apply {
+                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+
+                    val prefNames = ctx.resources.getStringArray(R.array.subtitles_encoding_list)
+                    val prefValues = ctx.resources.getStringArray(R.array.subtitles_encoding_values)
+
+                    val value = settingsManager.getString(
+                        ctx.getString(R.string.subtitles_encoding_key),
+                        null
+                    )
+                    val index = prefValues.indexOf(value)
+                    text = prefNames[if(index == -1) 0 else index]
+                }
+
+                sourceDialog.subtitles_click_settings?.setOnClickListener {
+                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+
+                    val prefNames = ctx.resources.getStringArray(R.array.subtitles_encoding_list)
+                    val prefValues = ctx.resources.getStringArray(R.array.subtitles_encoding_values)
+
+                    val currentPrefMedia =
+                        settingsManager.getString(
+                            getString(R.string.subtitles_encoding_key),
+                            null
+                        )
+
+                    val index = prefValues.indexOf(currentPrefMedia)
+                    sourceDialog.dismissSafe(activity)
+                    activity?.showDialog(
+                        prefNames.toList(),
+                        if(index == -1) 0 else index,
+                        ctx.getString(R.string.subtitles_encoding),
+                        true,
+                        {}) {
+                        settingsManager.edit()
+                            .putString(
+                                ctx.getString(R.string.subtitles_encoding_key),
+                                prefValues[it]
+                            )
+                            .apply()
+                        println("FORCED ENCODING: ${prefValues[it]}")
+                        updateForcedEncoding(ctx)
+                    }
+                }
+
+                sourceDialog.apply_btt?.setOnClickListener {
                     var init = false
                     if (sourceIndex != startSource) {
                         init = true
@@ -668,6 +709,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
             titleRez = settingsManager.getInt(getString(R.string.prefer_limit_title_rez_key), 3)
             limitTitle = settingsManager.getInt(getString(R.string.prefer_limit_title_key), 0)
+            updateForcedEncoding(ctx)
         }
 
         unwrapBundle(savedInstanceState)
