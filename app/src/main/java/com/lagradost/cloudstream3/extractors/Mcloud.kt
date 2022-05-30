@@ -34,8 +34,9 @@ open class Mcloud : ExtractorApi() {
     private val key = "LCbu3iYC7ln24K7P" // key credits @Modder4869
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val id = url.substringAfter("e/").substringAfter("embed/").substringBefore("?")
-        keytwo = getWcoKey() ?: return null
-        val encryptedid = encrypt(cipher(key, encrypt(id))).replace("/", "_").replace("=","")
+        val keys = getWcoKey()
+        keytwo = keys?.wcoKey ?: return null
+        val encryptedid = encrypt(cipher(keys.wcocipher!!, encrypt(id))).replace("/", "_").replace("=","")
         val link = "$mainUrl/info/$encryptedid"
         val response = app.get(link, headers = headers).text
         if(response.startsWith("<!DOCTYPE html>")) {
