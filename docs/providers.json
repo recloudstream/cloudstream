@@ -17,6 +17,12 @@
         "status": 1,
         "url": "https://allmoviesforyou.net"
     },
+    "AltadefinizioneProvider": {
+        "language": "it",
+        "name": "Altadefinizione",
+        "status": 1,
+        "url": "https://altadefinizione.limo"
+    },
     "AnimeFlickProvider": {
         "language": "en",
         "name": "AnimeFlick",
@@ -70,6 +76,12 @@
         "name": "Bflix",
         "status": 1,
         "url": "https://bflix.ru"
+    },
+    "Cb01Provider": {
+        "language": "it",
+        "name": "Cineblog",
+        "status": 1,
+        "url": "https://cb01.rip"
     },
     "CinecalidadProvider": {
         "language": "es",
@@ -361,7 +373,7 @@
         "language": "it",
         "name": "Streamingcommunity",
         "status": 1,
-        "url": "https://streamingcommunity.top"
+        "url": "https://streamingcommunity.monster"
     },
     "TantifilmProvider": {
         "language": "it",

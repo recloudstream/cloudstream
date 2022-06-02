@@ -283,7 +283,8 @@ class NineAnimeProvider : MainAPI() {
                 jsonservers.vidstream,
                 jsonservers.mcloud,
                 jsonservers.mp4upload,
-                jsonservers.streamtape
+                jsonservers.streamtape,
+                jsonservers.videovard
             ).mapNotNull {
                 try {
                     val epserver = app.get("$mainUrl/ajax/anime/episode?id=$it").text

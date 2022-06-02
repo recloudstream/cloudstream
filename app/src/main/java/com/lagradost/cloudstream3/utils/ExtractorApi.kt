@@ -119,6 +119,8 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     MwvnVizcloudInfo(),
     VizcloudDigital(),
     VizcloudCloud(),
+    VideoVard(),
+    VideovardSX(),
     Mp4Upload(),
     StreamTape(),
 
@@ -170,6 +172,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     DoodSoExtractor(),
     DoodLaExtractor(),
     DoodWsExtractor(),
+    DoodShExtractor(),
 
     AsianLoad(),
 
@@ -179,6 +182,10 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     ZplayerV2(),
     Upstream(),
 
+    Maxstream(),
+    Tantifilm(),
+    Userload(),
+    Supervideo(),
 
     // StreamSB.kt works
     //  SBPlay(),

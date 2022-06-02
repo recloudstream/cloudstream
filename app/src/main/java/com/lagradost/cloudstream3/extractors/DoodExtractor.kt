@@ -11,6 +11,10 @@ class DoodCxExtractor : DoodLaExtractor() {
     override var mainUrl = "https://dood.cx"
 }
 
+class DoodShExtractor : DoodLaExtractor() {
+    override var mainUrl = "https://dood.sh"
+}
+
 class DoodPmExtractor : DoodLaExtractor() {
     override var mainUrl = "https://dood.pm"
 }
