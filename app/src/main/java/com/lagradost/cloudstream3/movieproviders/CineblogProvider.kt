@@ -5,10 +5,10 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
-class Cb01Provider : MainAPI() {
+class CineblogProvider : MainAPI() {
     override val lang = "it"
     override var mainUrl = "https://cb01.rip"
-    override var name = "Cineblog01"
+    override var name = "CineBlog01"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val supportedTypes = setOf(
@@ -127,7 +127,7 @@ class Cb01Provider : MainAPI() {
             val episodeList = ArrayList<Episode>()
             document.select("#seasons > div").reversed().map { element ->
                 val season = element.selectFirst("div.se-q > span.se-t")!!.text().toInt()
-                element.select("div.se-a > ul > li").map{ episode ->
+                element.select("div.se-a > ul > li").filter { it.text()!="There are still no episodes this season" }.map{ episode ->
                     val href = episode.selectFirst("div.episodiotitle > a")!!.attr("href")
                     val epNum =episode.selectFirst("div.numerando")!!.text().substringAfter("-").filter { it.isDigit() }.toIntOrNull()
                     val epTitle = episode.selectFirst("div.episodiotitle > a")!!.text()

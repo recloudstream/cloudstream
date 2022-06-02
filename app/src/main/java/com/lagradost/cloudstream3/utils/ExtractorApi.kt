@@ -186,6 +186,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     Tantifilm(),
     Userload(),
     Supervideo(),
+    GuardareStream(),
 
     // StreamSB.kt works
     //  SBPlay(),

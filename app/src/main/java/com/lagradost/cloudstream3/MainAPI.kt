@@ -87,7 +87,7 @@ object APIHolder {
             TheFlixToProvider(),
             StreamingcommunityProvider(),
             TantifilmProvider(),
-            Cb01Provider(),
+            CineblogProvider(),
             AltadefinizioneProvider(),
             HDMovie5(),
             RebahinProvider(),
