@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import org.mozilla.universalchardet.UniversalDetector
 import java.nio.ByteBuffer
+import java.nio.charset.Charset
 
 class CustomDecoder : SubtitleDecoder {
     companion object {
@@ -58,6 +59,8 @@ class CustomDecoder : SubtitleDecoder {
             )
         val captionRegex = listOf(Regex("""(-\s?|)[\[({][\w\d\s]*?[])}]\s*"""))
 
+        //https://emptycharacter.com/
+        //https://www.fileformat.info/info/unicode/char/200b/index.htm
         fun trimStr(string: String): String {
             return string.trimStart().trim('\uFEFF', '\u200B').replace(
                 Regex("[\u00A0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u205F]"),
@@ -77,110 +80,114 @@ class CustomDecoder : SubtitleDecoder {
         return realDecoder?.dequeueInputBuffer() ?: SubtitleInputBuffer()
     }
 
+    private fun getStr(byteArray: ByteArray): Pair<String, Charset> {
+        val encoding = try {
+            val encoding = overrideEncoding ?: run {
+                val detector = UniversalDetector()
+
+                detector.handleData(byteArray, 0, byteArray.size)
+                detector.dataEnd()
+
+                detector.detectedCharset // "windows-1256"
+            }
+
+            Log.i(
+                TAG,
+                "Detected encoding with charset $encoding and override = $overrideEncoding"
+            )
+            encoding ?: UTF_8
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to detect encoding throwing error")
+            logError(e)
+            UTF_8
+        }
+
+        return try {
+            val set = charset(encoding)
+            Pair(String(byteArray, set), set)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse using encoding $encoding")
+            logError(e)
+            Pair(byteArray.decodeToString(), charset(UTF_8))
+        }
+    }
+
+    private fun getStr(input: SubtitleInputBuffer): String? {
+        try {
+            val data = input.data ?: return null
+            data.position(0)
+            val fullDataArr = ByteArray(data.remaining())
+            data.get(fullDataArr)
+            return trimStr(getStr(fullDataArr).first)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse text returning plain data")
+            logError(e)
+            return null
+        }
+    }
+
     override fun queueInputBuffer(inputBuffer: SubtitleInputBuffer) {
         Log.i(TAG, "queueInputBuffer")
         try {
-            if (realDecoder == null) {
-                inputBuffer.data?.let { data ->
-                    // this way we read the subtitle file and decide what decoder to use instead of relying on mimetype
-                    Log.i(TAG, "Got data from queueInputBuffer")
-
-                    var (str, charset) = try {
-                        data.position(0)
-                        val fullDataArr = ByteArray(data.remaining())
-                        data.get(fullDataArr)
-                        val encoding = try {
-                            val encoding = overrideEncoding ?: run {
-                                val detector = UniversalDetector()
-
-                                detector.handleData(fullDataArr, 0, fullDataArr.size)
-                                detector.dataEnd()
-
-                                detector.detectedCharset // "windows-1256"
+            val inputString = getStr(inputBuffer)
+            if (realDecoder == null && !inputString.isNullOrBlank()) {
+                var str: String = inputString
+                // this way we read the subtitle file and decide what decoder to use instead of relying on mimetype
+                Log.i(TAG, "Got data from queueInputBuffer")
+                //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
+                realDecoder = when {
+                    str.startsWith("WEBVTT", ignoreCase = true) -> WebvttDecoder()
+                    str.startsWith("<?xml version=\"", ignoreCase = true) -> TtmlDecoder()
+                    (str.startsWith(
+                        "[Script Info]",
+                        ignoreCase = true
+                    ) || str.startsWith("Title:", ignoreCase = true)) -> SsaDecoder()
+                    str.startsWith("1", ignoreCase = true) -> SubripDecoder()
+                    else -> null
+                }
+                Log.i(
+                    TAG,
+                    "Decoder selected: $realDecoder"
+                )
+                realDecoder?.let { decoder ->
+                    decoder.dequeueInputBuffer()?.let { buff ->
+                        if (regexSubtitlesToRemoveCaptions && decoder::class.java != SsaDecoder::class.java) {
+                            captionRegex.forEach { rgx ->
+                                str = str.replace(rgx, "\n")
                             }
-
-                            Log.i(
-                                TAG,
-                                "Detected encoding with charset $encoding and override = $overrideEncoding"
-                            )
-                            encoding ?: UTF_8
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Failed to detect encoding throwing error")
-                            logError(e)
-                            UTF_8
+                            bloatRegex.forEach { rgx ->
+                                str = str.replace(rgx, "\n")
+                            }
                         }
+                        buff.data = ByteBuffer.wrap(str.toByteArray(charset(UTF_8)))
 
-                        var (fullStr, charset) = try {
-                            val set = charset(encoding)
-                            Pair(String(fullDataArr, set), set)
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Failed to parse using encoding $encoding")
-                            logError(e)
-                            Pair(fullDataArr.decodeToString(), charset(UTF_8))
-                        }
-
-                        bloatRegex.forEach { rgx ->
-                            fullStr = fullStr.replace(rgx, "\n")
-                        }
-
-                        fullStr.replace(Regex("(\r\n|\r|\n){2,}"), "\n")
-                        // fullStr = "1\n00:00:01,616 --> 00:00:40,200\n" +
-                        //         "تــــرجــمة"
-
+                        decoder.queueInputBuffer(buff)
                         Log.i(
                             TAG,
-                            "Encoded Text start: " + fullStr.substring(
-                                0,
-                                minOf(fullStr.length, 300)
-                            )
+                            "Decoder queueInputBuffer successfully"
                         )
-                        Pair(fullStr, charset)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Failed to parse text returning plain data")
-                        logError(e)
-                        return
                     }
-                    //https://emptycharacter.com/
-                    //https://www.fileformat.info/info/unicode/char/200b/index.htm
-                    //val str = trimStr(arr.decodeToString())
-                    //Log.i(TAG, "first string is >>>$str<<<")
-                    if (str.isNotEmpty()) {
-                        //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
-                        realDecoder = when {
-                            str.startsWith("WEBVTT", ignoreCase = true) -> WebvttDecoder()
-                            str.startsWith("<?xml version=\"", ignoreCase = true) -> TtmlDecoder()
-                            (str.startsWith(
-                                "[Script Info]",
-                                ignoreCase = true
-                            ) || str.startsWith("Title:", ignoreCase = true)) -> SsaDecoder()
-                            str.startsWith("1", ignoreCase = true) -> SubripDecoder()
-                            else -> null
-                        }
-                        Log.i(
-                            TAG,
-                            "Decoder selected: $realDecoder"
-                        )
-                        realDecoder?.let { decoder ->
-                            decoder.dequeueInputBuffer()?.let { buff ->
-                                if (regexSubtitlesToRemoveCaptions && decoder::class.java != SsaDecoder::class.java) {
-                                    captionRegex.forEach { rgx ->
-                                        str = str.replace(rgx, "\n")
-                                    }
-                                }
-
-                                buff.data = ByteBuffer.wrap(str.toByteArray(charset = charset))
-
-                                decoder.queueInputBuffer(buff)
-                                Log.i(
-                                    TAG,
-                                    "Decoder queueInputBuffer successfully"
-                                )
-                            }
-                            CS3IPlayer.requestSubtitleUpdate?.invoke()
-                        }
-                    }
+                    CS3IPlayer.requestSubtitleUpdate?.invoke()
                 }
             } else {
+                Log.i(
+                    TAG,
+                    "Decoder else queueInputBuffer successfully"
+                )
+
+                if (!inputString.isNullOrBlank()) {
+                    var str: String = inputString
+                    if (regexSubtitlesToRemoveCaptions && realDecoder!!::class.java != SsaDecoder::class.java) {
+                        captionRegex.forEach { rgx ->
+                            str = str.replace(rgx, "\n")
+                        }
+                        bloatRegex.forEach { rgx ->
+                            str = str.replace(rgx, "\n")
+                        }
+                    }
+                    inputBuffer.data = ByteBuffer.wrap(str.toByteArray(charset(UTF_8)))
+                }
+
                 realDecoder?.queueInputBuffer(inputBuffer)
             }
         } catch (e: Exception) {

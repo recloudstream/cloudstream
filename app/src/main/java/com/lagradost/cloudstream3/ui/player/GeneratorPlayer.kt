@@ -283,11 +283,17 @@ class GeneratorPlayer : FullScreenPlayer() {
                     }
                 }
 
-                sourceDialog.setOnDismissListener {
+                var shouldDismiss = true
+
+                fun dismiss() {
                     if (isPlaying) {
                         player.handleEvent(CSPlayerEvent.Play)
                     }
                     activity?.hideSystemUI()
+                }
+
+                sourceDialog.setOnDismissListener {
+                    if (shouldDismiss) dismiss()
                     selectSourceDialog = null
                 }
 
@@ -325,7 +331,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         null
                     )
                     val index = prefValues.indexOf(value)
-                    text = prefNames[if(index == -1) 0 else index]
+                    text = prefNames[if (index == -1) 0 else index]
                 }
 
                 sourceDialog.subtitles_click_settings?.setOnClickListener {
@@ -340,11 +346,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                             null
                         )
 
-                    val index = prefValues.indexOf(currentPrefMedia)
+                    shouldDismiss = false
                     sourceDialog.dismissSafe(activity)
+
+                    val index = prefValues.indexOf(currentPrefMedia)
                     activity?.showDialog(
                         prefNames.toList(),
-                        if(index == -1) 0 else index,
+                        if (index == -1) 0 else index,
                         ctx.getString(R.string.subtitles_encoding),
                         true,
                         {}) {
@@ -354,8 +362,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                                 prefValues[it]
                             )
                             .apply()
-                        println("FORCED ENCODING: ${prefValues[it]}")
+
                         updateForcedEncoding(ctx)
+                        dismiss()
+                        player.seekTime(-1) // to update subtitles, a dirty trick
                     }
                 }
 
