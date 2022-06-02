@@ -132,11 +132,11 @@ object APIHolder {
         for (api in allProviders) {
             api.init()
         }
-        APIHolder.apiMap = null
+        apiMap = null
     }
 
     var apis: List<MainAPI> = arrayListOf()
-    var apiMap: Map<String, Int>? = null
+    private var apiMap: Map<String, Int>? = null
 
     private fun initMap() {
         if (apiMap == null)
@@ -352,7 +352,6 @@ abstract class MainAPI {
 
     fun overrideWithNewData(data: ProvidersInfoJson) {
         this.name = data.name
-        this.name
         this.mainUrl = data.url
         this.storedCredentials = data.credentials
     }
