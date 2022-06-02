@@ -2,13 +2,13 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 
 class CineblogProvider : MainAPI() {
     override val lang = "it"
     override var mainUrl = "https://cb01.rip"
-    override var name = "CineBlog01"
+    override var name = "CineBlog"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val supportedTypes = setOf(

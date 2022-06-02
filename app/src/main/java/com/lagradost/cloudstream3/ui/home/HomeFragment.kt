@@ -227,7 +227,7 @@ class HomeFragment : Fragment() {
                 listView?.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
                 listView?.setOnItemClickListener { _, _, i, _ ->
-                    if (!currentValidApis.isNullOrEmpty()) {
+                    if (currentValidApis.isNotEmpty()) {
                         currentApiName = currentValidApis[i].name
                         //to switch to apply simply remove this
                         currentApiName?.let(callback)

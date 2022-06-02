@@ -46,7 +46,6 @@ object SearchHelper {
                             activity.loadSearchResult(card, START_ACTION_LOAD_EP, id)
                         }
                     }
-
                 } else {
                     handleSearchClickCallback(
                         activity,
