@@ -38,6 +38,7 @@ class CustomDecoder : SubtitleDecoder {
         private const val TAG = "CustomDecoder"
         private var overrideEncoding: String? = null
         var regexSubtitlesToRemoveCaptions = false
+        var regexSubtitlesToRemoveBloat = false
         val bloatRegex =
             listOf(
                 Regex(
@@ -151,13 +152,15 @@ class CustomDecoder : SubtitleDecoder {
                 )
                 realDecoder?.let { decoder ->
                     decoder.dequeueInputBuffer()?.let { buff ->
-                        if (regexSubtitlesToRemoveCaptions && decoder::class.java != SsaDecoder::class.java) {
-                            captionRegex.forEach { rgx ->
-                                str = str.replace(rgx, "\n")
-                            }
-                            bloatRegex.forEach { rgx ->
-                                str = str.replace(rgx, "\n")
-                            }
+                        if (decoder::class.java != SsaDecoder::class.java) {
+                            if (regexSubtitlesToRemoveCaptions)
+                                captionRegex.forEach { rgx ->
+                                    str = str.replace(rgx, "\n")
+                                }
+                            if (regexSubtitlesToRemoveBloat)
+                                bloatRegex.forEach { rgx ->
+                                    str = str.replace(rgx, "\n")
+                                }
                         }
                         buff.data = ByteBuffer.wrap(str.toByteArray(charset(UTF_8)))
 
@@ -177,13 +180,15 @@ class CustomDecoder : SubtitleDecoder {
 
                 if (!inputString.isNullOrBlank()) {
                     var str: String = inputString
-                    if (regexSubtitlesToRemoveCaptions && realDecoder!!::class.java != SsaDecoder::class.java) {
-                        captionRegex.forEach { rgx ->
-                            str = str.replace(rgx, "\n")
-                        }
-                        bloatRegex.forEach { rgx ->
-                            str = str.replace(rgx, "\n")
-                        }
+                    if (realDecoder!!::class.java != SsaDecoder::class.java) {
+                        if (regexSubtitlesToRemoveCaptions)
+                            captionRegex.forEach { rgx ->
+                                str = str.replace(rgx, "\n")
+                            }
+                        if (regexSubtitlesToRemoveBloat)
+                            bloatRegex.forEach { rgx ->
+                                str = str.replace(rgx, "\n")
+                            }
                     }
                     inputBuffer.data = ByteBuffer.wrap(str.toByteArray(charset(UTF_8)))
                 }

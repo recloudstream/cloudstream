@@ -523,4 +523,6 @@
     <string name="title">Title</string>
     <string name="resolution">Resolution</string>
     <string name="error_invalid_id">Invalid id</string>
+    <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
+    <string name="subtitles_remove_bloat">Remove bloat from subtitles</string>
 </resources>
