@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:background="?attr/primaryBlackBackground"
         android:layout_height="match_parent">
@@ -16,6 +17,41 @@
                 android:gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+            <LinearLayout
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:id="@+id/settings_profile"
+                    android:padding="20dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <androidx.cardview.widget.CardView
+                        app:cardCornerRadius="25dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp">
+
+                    <ImageView
+                            android:id="@+id/settings_profile_pic"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            tools:ignore="ContentDescription" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                        android:id="@+id/settings_profile_text"
+                        android:textSize="18sp"
+                        android:textStyle="normal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        tools:text="Hello world"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textColor="?attr/textColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <TextView
                     android:nextFocusDown="@id/settings_lang"
