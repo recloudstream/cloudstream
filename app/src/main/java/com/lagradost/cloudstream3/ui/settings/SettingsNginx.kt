@@ -1,19 +1,20 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
+import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
-import com.lagradost.cloudstream3.utils.HOMEPAGE_API
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showNginxTextInputDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 
 class SettingsNginx : PreferenceFragmentCompat() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpToolbar(R.string.category_nginx)
+    }
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_nginx, rootKey)

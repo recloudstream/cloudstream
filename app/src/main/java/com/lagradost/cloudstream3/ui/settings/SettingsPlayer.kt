@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -17,6 +18,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getFolderSize
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.Qualities
@@ -28,6 +30,10 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import java.io.File
 
 class SettingsPlayer : PreferenceFragmentCompat() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpToolbar(R.string.category_player)
+    }
     // Open file picker
     private val pathPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->

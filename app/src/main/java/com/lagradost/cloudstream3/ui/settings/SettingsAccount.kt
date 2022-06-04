@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -14,11 +15,16 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.beneneCount
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 class SettingsAccount : PreferenceFragmentCompat() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpToolbar(R.string.category_credits)
+    }
     private fun showLoginInfo(api: AccountManager, info: OAuth2API.LoginInfo) {
         val builder =
             AlertDialog.Builder(context ?: return, R.style.AlertDialogCustom)

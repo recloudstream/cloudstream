@@ -4,14 +4,15 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
@@ -26,11 +27,14 @@ import java.io.OutputStream
 import kotlin.concurrent.thread
 
 class SettingsUpdates : PreferenceFragmentCompat() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpToolbar(R.string.category_updates)
+    }
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_updates, rootKey)
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
+        //val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         getPref(R.string.backup_key)?.setOnPreferenceClickListener {
             activity?.backup()

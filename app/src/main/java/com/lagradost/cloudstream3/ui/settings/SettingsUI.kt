@@ -1,18 +1,24 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
+import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 
 class SettingsUI : PreferenceFragmentCompat() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpToolbar(R.string.category_ui)
+    }
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settins_ui, rootKey)

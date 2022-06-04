@@ -61,6 +61,8 @@
         <item name="boxItemBackground">@color/boxItemBackground</item>
         <item name="iconColor">@color/iconColor</item>
         <item name="white">#FFF</item>
+
+        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
     </style>
 
     <style name="ListViewStyle" parent="Widget.AppCompat.ListView">
@@ -365,6 +367,10 @@
 
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:backgroundTint">?attr/primaryBlackBackground</item>
+    </style>
+
+    <style name="CustomPreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
+        <item name="android:layout">@layout/settings_title_top</item>
     </style>
 
     <style name="SettingsItem">

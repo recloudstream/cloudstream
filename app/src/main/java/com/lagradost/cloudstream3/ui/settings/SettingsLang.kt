@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
+import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
@@ -10,6 +11,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -52,6 +54,11 @@ class SettingsLang : PreferenceFragmentCompat() {
         // val dm = res.displayMetrics
         val conf = res.configuration
         return conf?.locale?.language ?: "en"
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpToolbar(R.string.category_preferred_media_and_lang)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
