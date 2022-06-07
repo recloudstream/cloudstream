@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.extractors.helper.WcoHelper.Companion.getNewWcoKey
 import com.lagradost.cloudstream3.extractors.helper.WcoHelper.Companion.getWcoKey
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -115,10 +116,10 @@ open class WcoStream : ExtractorApi() {
         )?.destructured) ?: return emptyList()
       //  val (skey) = Regex("""skey\s=\s['"](.*?)['"];""").find(html)?.destructured
       //     ?: return emptyList()
-        val keys = getWcoKey()
-        keytwo = keys?.wcoKey ?: return emptyList()
-        val encryptedID = encrypt(cipher(keys.wcocipher!!, encrypt(Id))).replace("/", "_").replace("=","")
-        val apiLink = "$baseUrl/info/$encryptedID"
+        val keys = getNewWcoKey()
+        keytwo = keys?.encryptKey ?: return emptyList()
+        val encryptedID = encrypt(cipher(keys.cipherkey!!, encrypt(Id))).replace("/", "_").replace("=","")
+        val apiLink = "$baseUrl/mediainfo/$encryptedID?key=${keys.mainKey}"
         val referrer = "$baseUrl/e/$Id?domain=wcostream.cc"
 
         data class SourcesWco (
