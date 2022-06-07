@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.addDuration
 import com.lagradost.cloudstream3.LoadResponse.Companion.addMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addRating
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
@@ -119,16 +120,6 @@ class AnimeWorldProvider : MainAPI() {
     }
 
     override suspend fun load(url: String): LoadResponse {
-        fun String.parseDuration(): Int? {
-            val arr = this.split(" e ")
-            return if (arr.size == 1)
-                arr[0].split(' ')[0].toIntOrNull()
-            else
-                arr[1].split(' ')[0].toIntOrNull()?.let {
-                    arr[0].removeSuffix("h").toIntOrNull()?.times(60)!!.plus(it)
-                }
-        }
-
         val document = request(url).document
 
         val widget = document.select("div.widget.info")
@@ -140,7 +131,7 @@ class AnimeWorldProvider : MainAPI() {
 
         val type: TvType = getType(widget.select("dd").first()?.text())
         val genres = widget.select(".meta").select("a[href*=\"/genre/\"]").map { it.text() }
-        val rating = widget.select("#average-vote")?.text()
+        val rating = widget.select("#average-vote").text()
 
         val trailerUrl = document.select(".trailer[data-url]").attr("data-url")
         val malId = document.select("#mal-button").attr("href")
@@ -151,7 +142,7 @@ class AnimeWorldProvider : MainAPI() {
         var dub = false
         var year: Int? = null
         var status: ShowStatus? = null
-        var duration: Int? = null
+        var duration: String? = null
 
         for (meta in document.select(".meta dt, .meta dd")) {
             val text = meta.text()
@@ -162,7 +153,7 @@ class AnimeWorldProvider : MainAPI() {
             else if (status == null && text.contains("Stato"))
                 status = getStatus(meta.nextElementSibling()?.text())
             else if (status == null && text.contains("Durata"))
-                duration = meta.nextElementSibling()?.text()?.parseDuration()
+                duration = meta.nextElementSibling()?.text()
         }
 
         val servers = document.select(".widget.servers")
@@ -183,7 +174,7 @@ class AnimeWorldProvider : MainAPI() {
         return newAnimeLoadResponse(title, url, type) {
             engName = title
             japName = otherTitle
-            posterUrl = poster
+            addPoster(poster)
             this.year = year
             addEpisodes(if (dub) DubStatus.Dubbed else DubStatus.Subbed, episodes)
             showStatus = status
@@ -192,7 +183,7 @@ class AnimeWorldProvider : MainAPI() {
             addMalId(malId)
             addAniListId(anlId)
             addRating(rating)
-            this.duration = duration
+            addDuration(duration)
             addTrailer(trailerUrl)
             this.recommendations = recommendations
             this.comingSoon = comingSoon
