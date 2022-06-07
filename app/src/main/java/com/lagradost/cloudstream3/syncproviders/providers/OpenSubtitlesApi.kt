@@ -23,7 +23,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubProv
     override val icon = R.drawable.open_subtitles_icon
     override val requiresPassword = true
     override val requiresUsername = true
-    override val createAccountUrl = "https://www.opensubtitles.com/"
+    override val createAccountUrl = "https://www.opensubtitles.com/en/users/sign_up"
 
     companion object {
         const val OPEN_SUBTITLES_USER_KEY: String = "open_subtitles_user" // user data like profile
