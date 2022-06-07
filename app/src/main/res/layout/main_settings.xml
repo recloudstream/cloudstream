@@ -70,7 +70,7 @@
 
             <TextView
                     android:nextFocusUp="@id/settings_lang"
-                    android:nextFocusDown="@id/settings_nginx"
+                    android:nextFocusDown="@id/settings_updates"
 
                     android:id="@+id/settings_ui"
                     style="@style/SettingsItem"
@@ -78,14 +78,6 @@
 
             <TextView
                     android:nextFocusUp="@id/settings_ui"
-                    android:nextFocusDown="@id/settings_updates"
-
-                    android:id="@+id/settings_nginx"
-                    style="@style/SettingsItem"
-                    android:text="@string/category_nginx" />
-
-            <TextView
-                    android:nextFocusUp="@id/settings_nginx"
                     android:nextFocusDown="@id/settings_credits"
 
                     android:id="@+id/settings_updates"

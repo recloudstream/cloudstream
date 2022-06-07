@@ -16,7 +16,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -116,7 +116,7 @@ class SettingsFragment : Fragment() {
 
         val isTrueTv = context?.isTrueTvSettings() == true
 
-        for (syncApi in OAuth2API.OAuth2Apis) {
+        for (syncApi in accountManagers) {
             val login = syncApi.loginInfo()
             val pic = login?.profilePicture ?: continue
             if (settings_profile_pic?.setImage(
@@ -135,7 +135,6 @@ class SettingsFragment : Fragment() {
             Pair(settings_credits, R.id.action_navigation_settings_to_navigation_settings_account),
             Pair(settings_ui, R.id.action_navigation_settings_to_navigation_settings_ui),
             Pair(settings_lang, R.id.action_navigation_settings_to_navigation_settings_lang),
-            Pair(settings_nginx, R.id.action_navigation_settings_to_navigation_settings_nginx),
             Pair(settings_updates, R.id.action_navigation_settings_to_navigation_settings_updates),
         ).forEach { (view, navigationId) ->
             view?.apply {

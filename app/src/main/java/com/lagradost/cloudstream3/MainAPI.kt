@@ -14,8 +14,8 @@ import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.metaproviders.CrossTmdbProvider
 import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -352,7 +352,8 @@ abstract class MainAPI {
 
     fun overrideWithNewData(data: ProvidersInfoJson) {
         this.name = data.name
-        this.mainUrl = data.url
+        if (data.url.isNotBlank() && data.url != "NONE")
+            this.mainUrl = data.url
         this.storedCredentials = data.credentials
     }
 

@@ -33,7 +33,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -882,7 +882,7 @@ class HomeFragment : Fragment() {
                 home_change_api_loading?.isVisible = false
             }
 
-            for (syncApi in OAuth2API.OAuth2Apis) {
+            for (syncApi in OAuth2Apis) {
                 val login = syncApi.loginInfo()
                 val pic = login?.profilePicture
                 if (home_profile_picture?.setImage(

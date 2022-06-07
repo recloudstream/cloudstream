@@ -815,10 +815,6 @@ class CS3IPlayer : IPlayer {
                         null
                     }
                 }
-                SubtitleOrigin.OPEN_SUBTITLES -> {
-                    // TODO
-                    throw NotImplementedError()
-                }
                 SubtitleOrigin.EMBEDDED_IN_VIDEO -> {
                     if (offlineSourceFactory != null) {
                         activeSubtitles.add(sub)

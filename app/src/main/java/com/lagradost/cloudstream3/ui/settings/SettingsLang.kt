@@ -116,7 +116,7 @@ class SettingsLang : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
+        getPref(R.string.locale_key)?.setOnPreferenceClickListener {
             val tempLangs = languages.toMutableList()
             //if (beneneCount > 100) {
             //    tempLangs.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))

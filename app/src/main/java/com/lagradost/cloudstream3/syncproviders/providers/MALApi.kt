@@ -14,10 +14,7 @@ import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.syncproviders.OAuth2API
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.secondsToReadable
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.unixTime
+import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
@@ -37,15 +34,18 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override val idPrefix = "mal"
     override var mainUrl = "https://myanimelist.net"
     override val icon = R.drawable.mal_logo
+    override val requiresLogin = true
+
+    override val createAccountUrl = "$mainUrl/register.php"
 
     override fun logOut() {
         removeAccountKeys()
     }
 
-    override fun loginInfo(): OAuth2API.LoginInfo? {
+    override fun loginInfo(): AuthAPI.LoginInfo? {
         //getMalUser(true)?
         getKey<MalUser>(accountId, MAL_USER_KEY)?.let { user ->
-            return OAuth2API.LoginInfo(
+            return AuthAPI.LoginInfo(
                 profilePicture = user.picture,
                 name = user.name,
                 accountIndex = accountIndex

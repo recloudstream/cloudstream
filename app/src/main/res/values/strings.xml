@@ -180,6 +180,7 @@
 
     <string name="subs_auto_select_language">Auto-Select Language</string>
     <string name="subs_download_languages">Download Languages</string>
+    <string name="subs_subtitle_languages">Subtitle Language</string>
     <string name="subs_hold_to_reset_to_default">Hold to reset to default</string>
     <string name="subs_import_text" formatted="true">Import fonts by placing them in %s</string>
     <string name="continue_watching">Continue Watching</string>
@@ -437,6 +438,13 @@
     <!-- account stuff -->
     <string name="anilist_key" translatable="false">anilist_key</string>
     <string name="mal_key" translatable="false">mal_key</string>
+    <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
+    <string name="nginx_key" translatable="false">nginx_key</string>
+    <string name="example_password">password123</string>
+    <string name="example_username">MyCoolUsername</string>
+    <string name="example_email">hello@world.com</string>
+    <string name="example_ip">127.0.0.1</string>
+
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
     <string name="anilist_account_settings" translatable="false">AniList</string>
@@ -451,6 +459,7 @@
     <string name="login">Login</string>
     <string name="switch_account">Switch account</string>
     <string name="add_account">Add account</string>
+    <string name="create_account">Create account</string>
     <string name="add_sync">Add tracking</string>
     <string name="added_sync_format" formatted="true">Added %s</string>
     <string name="upload_sync">Sync</string>
@@ -490,6 +499,7 @@
     <string name="recommended">Recommended</string>
     <string name="player_loaded_subtitles" formatted="true">Loaded %s</string>
     <string name="player_load_subtitles">Load from file</string>
+    <string name="player_load_subtitles_online">Load from Internet</string>
     <string name="downloaded_file">Downloaded file</string>
     <string name="actor_main">Main</string>
     <string name="actor_supporting">Supporting</string>

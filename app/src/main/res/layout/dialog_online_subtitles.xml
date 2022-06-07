@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:orientation="vertical">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+        <LinearLayout
+                android:id="@+id/sort_subtitles_holder"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="50"
+                android:orientation="vertical">
+
+            <!--   android:id="@+id/subs_settings"                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
+-->
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/search_background"
+                        android:visibility="visible">
+
+                    <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="30dp">
+
+                        <androidx.appcompat.widget.SearchView
+                                android:id="@+id/subtitles_search"
+                                app:iconifiedByDefault="false"
+                                app:queryBackground="@color/transparent"
+                                app:queryHint="@string/search_hint"
+
+                                app:searchIcon="@drawable/search_icon"
+                                android:layout_width="match_parent"
+
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_vertical"
+
+                                android:imeOptions="actionSearch"
+                                android:inputType="text"
+                                android:paddingStart="-10dp"
+                                tools:ignore="RtlSymmetry">
+
+                            <androidx.core.widget.ContentLoadingProgressBar
+                                    android:id="@+id/search_loading_bar"
+                                    style="@style/Widget.AppCompat.ProgressBar"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:layout_marginStart="-70dp"
+                                    android:foregroundTint="@color/white"
+                                    android:visibility="visible"
+                                    tools:visibility="visible"
+                                    android:progressTint="@color/white">
+
+                            </androidx.core.widget.ContentLoadingProgressBar>
+                            <!--app:queryHint="@string/search_hint"
+                             android:background="@color/grayBackground" @color/itemBackground
+                                        app:searchHintIcon="@drawable/search_white"
+                                        -->
+                        </androidx.appcompat.widget.SearchView>
+                    </FrameLayout>
+
+                    <ImageView
+                            android:id="@+id/search_filter"
+                            app:tint="?attr/textColor"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_margin="10dp"
+                            android:background="?selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/change_providers_img_des"
+                            android:nextFocusLeft="@id/main_search"
+                            android:nextFocusRight="@id/main_search"
+                            android:nextFocusUp="@id/nav_rail_view"
+                            android:nextFocusDown="@id/search_autofit_results"
+                            android:src="@drawable/ic_baseline_tune_24" />
+                </FrameLayout>
+
+
+            </LinearLayout>
+
+            <ListView
+                    android:id="@+id/subtitle_adapter"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:layout_rowWeight="1"
+                    android:background="?attr/primaryBlackBackground"
+                    android:nextFocusLeft="@id/sort_providers"
+                    android:nextFocusRight="@id/cancel_btt"
+                    android:requiresFadingEdge="vertical"
+                    tools:listfooter="@layout/sort_bottom_footer_add_choice"
+                    tools:listitem="@layout/sort_bottom_single_choice" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/apply_btt_holder"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="-60dp"
+            android:gravity="bottom|end"
+            android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/apply_btt"
+                style="@style/WhiteButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/sort_apply" />
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_btt"
+                style="@style/BlackButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/sort_cancel" />
+    </LinearLayout>
+</LinearLayout>

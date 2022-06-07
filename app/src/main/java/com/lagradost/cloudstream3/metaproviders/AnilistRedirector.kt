@@ -1,9 +1,9 @@
 package com.lagradost.cloudstream3.metaproviders
 
 import com.lagradost.cloudstream3.ErrorLoadingException
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.SyncApis
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.utils.SyncUtil
 
 object SyncRedirector {
