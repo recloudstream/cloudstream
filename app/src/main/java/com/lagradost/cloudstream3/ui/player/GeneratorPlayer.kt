@@ -65,12 +65,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                     putSerializable("syncData", syncData)
             }
         }
+
+        val subsProviders
+            get() = subtitleProviders.filter { !it.requiresLogin || it.loginInfo() != null }
+        val subsProvidersIsActive
+            get() = subsProviders.isNotEmpty()
     }
 
-    private val subsProviders
-        get() = subtitleProviders.filter { !it.requiresLogin || it.loginInfo() != null }
-    private val subsProvidersIsActive
-        get() = subsProviders.isNotEmpty()
 
     private var titleRez = 3
     private var limitTitle = 0
@@ -209,7 +210,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         return meta
     }
 
-    private fun openOnlineSubPicker(
+    override fun openOnlineSubPicker(
         context: Context,
         imdbId: Long?,
         dismissCallback: (() -> Unit)

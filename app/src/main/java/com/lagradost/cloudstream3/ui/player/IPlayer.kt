@@ -22,6 +22,7 @@ enum class PlayerEventType(val value: Int) {
     ShowSpeed(11),
     ShowMirrors(12),
     Resize(13),
+    SearchSubtitlesOnline(14),
 }
 
 enum class CSPlayerEvent(val value: Int) {
