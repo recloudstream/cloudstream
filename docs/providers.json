@@ -232,7 +232,6 @@
         "url": "https://149.56.24.226"
     },
     "LookMovieProvider": {
-        "language": "en",
         "name": "LookMovie",
         "status": 0,
         "url": "https://lookmovie.io"
