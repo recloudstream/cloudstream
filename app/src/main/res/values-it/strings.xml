@@ -180,11 +180,8 @@
     <string name="backup_failed_error_format">Errore nel backup %s</string>
 
     <string name="search">Cerca</string>
-    <string name="category_nginx">Nginx</string>
     <string name="category_account">Accounts e Crediti</string>
     <string name="category_updates">Aggiornamenti e Backup</string>
-    <string name="nginx_credentials_title">Credenziali Nginx</string>
-    <string name="nginx_credentials_summary">È necessario utilizzare il seguente formato mycoolusername:mysecurepassword123</string>
     <string name="nginx_info_title">Cos\'è Nginx?</string>
     <string name="nginx_info_summary">Nginx è un software che può essere utilizzato per visualizzare i file da un server di proprietà. Fare clic per vedere la guida all\'installazione di Nginx</string>
 

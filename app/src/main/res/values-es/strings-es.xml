@@ -35,9 +35,6 @@
     <string name="provider_lang_key" translatable="false">provider_lang_key</string>
     <string name="dns_key" translatable="false">dns_key</string>
     <string name="download_path_key" translatable="false">download_path_key</string>
-    <string name="nginx_url_key" translatable="false">nginx_url_key</string>
-    <string name="nginx_credentials" translatable="false">nginx_credentials</string>
-    <string name="nginx_info" translatable="false">nginx_info</string>
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
@@ -237,12 +234,9 @@
     <string name="backup_failed_error_format">Error al hacer una copia de seguridad de %s</string> 
  
     <string name="search">Búsqueda</string> 
-    <string name="category_nginx">Nginx</string> 
     <string name="category_account">Créditos y cuenta</string>
     <string name="category_updates">Actualizaciones y copia de seguridad</string> 
-    <string name="nginx_credentials_title">Credencial Nginx</string> 
-    <string name="nginx_credentials_summary">Tienes que usar el siguiente formato minombredeusuariogenial:micontraseñasegura123</string> 
-    <string name="nginx_info_title">¿Qué es Nginx?</string> 
+    <string name="nginx_info_title">¿Qué es Nginx?</string>
     <string name="nginx_info_summary">Nginx es un software que se puede usar para mostrar archivos de un servidor de su propiedad. Pulse para ver una guía de configuración de Nginx</string> 
  
     <string name="settings_info">Información</string> 
