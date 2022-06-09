@@ -193,7 +193,7 @@
     <string name="app_theme_settings">Thème de l\'application</string>
     <string name="player_speed_text_format" formatted="true">Vitesse (%.2fx)</string>
     <string name="use_system_brightness_settings">Utiliser la luminosité du système</string>
-    <string name="general">Général</string>
+    <string name="category_general">Général</string>
     <string name="dns_pref">DNS avec HTTPS</string>
     <string name="display_subbed_dubbed_settings">Afficher les animés en Anglais (Dub) / sous-titrés</string>
     <string name="phone_layout">Disposition en mode téléphone</string>

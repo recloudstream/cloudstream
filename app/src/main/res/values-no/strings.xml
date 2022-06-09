@@ -221,7 +221,7 @@
     <string name="resize_fit">Tilpass til skjermen</string>
     <string name="resize_fill">Tøye ut</string>
     <string name="resize_zoom">Zoome</string>
-    <string name="general">Grunnleggende</string>
+    <string name="category_general">Grunnleggende</string>
     <string name="provider_lang_settings">Leverandør Språk</string>
     <string name="app_layout">App Oppsett</string>
     <string name="automatic">Automatisk</string>

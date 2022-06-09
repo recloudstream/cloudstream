@@ -1786,7 +1786,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         }
                         result_description.setOnClickListener {
                             val builder: AlertDialog.Builder =
-                                AlertDialog.Builder(requireContext())
+                                AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
                             builder.setMessage(d.plot)
                                 .setTitle(if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
                                 .show()

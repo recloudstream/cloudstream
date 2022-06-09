@@ -40,7 +40,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        fun PreferenceFragmentCompat?.setUpToolbar(@StringRes title : Int) {
+        fun PreferenceFragmentCompat?.setUpToolbar(@StringRes title: Int) {
             if (this == null) return
             settings_toolbar?.apply {
                 setTitle(title)
@@ -131,6 +131,7 @@ class SettingsFragment : Fragment() {
         }
 
         listOf(
+            Pair(settings_general, R.id.action_navigation_settings_to_navigation_settings_general),
             Pair(settings_player, R.id.action_navigation_settings_to_navigation_settings_player),
             Pair(settings_credits, R.id.action_navigation_settings_to_navigation_settings_account),
             Pair(settings_ui, R.id.action_navigation_settings_to_navigation_settings_ui),

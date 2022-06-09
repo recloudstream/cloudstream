@@ -181,7 +181,7 @@
 
     <string name="search">Cerca</string>
     <string name="category_nginx">Nginx</string>
-    <string name="category_credits">Accounts e Crediti</string>
+    <string name="category_account">Accounts e Crediti</string>
     <string name="category_updates">Aggiornamenti e Backup</string>
     <string name="nginx_credentials_title">Credenziali Nginx</string>
     <string name="nginx_credentials_summary">È necessario utilizzare il seguente formato mycoolusername:mysecurepassword123</string>
@@ -328,7 +328,7 @@
     <string name="resize_zoom">Zoom</string>
 
     <string name="legal_notice">Disclaimer</string>
-    <string name="general">Generale</string>
+    <string name="category_general">Generale</string>
     <string name="random_button_settings">Random</string>
     <string name="random_button_settings_desc">Mostra pulsante Random nella homepage</string>
     <string name="provider_lang_settings">Lingua provider</string>

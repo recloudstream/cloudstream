@@ -259,7 +259,7 @@
         responsabilitatea utilizatorului de a evita orice acțiune care ar putea încălca legile care guvernează localitatea sa. Utilizați
         CloudStream 3 pe propriul risc.
     </string>
-    <string name="general">Generală</string>
+    <string name="category_general">Generală</string>
     <string name="provider_lang_settings">Limbile Furnizorului</string>
     <string name="app_layout">Aranjament-ul Aplicației</string>
     <string name="preferred_media_settings">Media Preferată</string>

@@ -231,7 +231,7 @@
     <string name="resize_fill">Punan ang buong screen</string>
     <string name="resize_zoom">Zoom</string>
 
-    <string name="general">Pangkalahatan</string>
+    <string name="category_general">Pangkalahatan</string>
     <string name="provider_lang_settings">Lenggwahe ng Provider</string>
     <string name="app_layout">App Layout</string>
     <string name="automatic">Awtomatik</string>

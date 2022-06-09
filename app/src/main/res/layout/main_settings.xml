@@ -52,8 +52,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
             </LinearLayout>
-
             <TextView
+                    android:nextFocusDown="@id/settings_player"
+
+                    android:id="@+id/settings_general"
+                    style="@style/SettingsItem"
+                    android:text="@string/category_general" />
+            
+            <TextView
+                    android:nextFocusUp="@id/settings_general"
                     android:nextFocusDown="@id/settings_lang"
 
                     android:id="@+id/settings_player"
@@ -89,7 +96,7 @@
 
                     android:id="@+id/settings_credits"
                     style="@style/SettingsItem"
-                    android:text="@string/category_credits" />
+                    android:text="@string/category_account" />
 
             <TextView
                     android:padding="10dp"

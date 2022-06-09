@@ -117,7 +117,7 @@
                 android:layout_gravity="bottom"
                 android:paddingBottom="5dp"
                 android:paddingTop="5dp"
-                android:textColor="@color/textColor"
+                android:textColor="?attr/textColor"
                 android:id="@+id/imageText"
                 android:minLines="2"
                 android:maxLines="2"

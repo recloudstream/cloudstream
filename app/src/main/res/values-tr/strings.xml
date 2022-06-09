@@ -344,7 +344,7 @@
         responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
         CloudStream 3 at your own risk.
     </string>
-    <string name="general">Genel</string>
+    <string name="category_general">Genel</string>
     <string name="provider_lang_settings">Sağlayıcı Dilleri</string>
     <string name="app_layout">Uygulama Düzeni</string>
     <string name="preferred_media_settings">Tercih Edilen Medya</string>

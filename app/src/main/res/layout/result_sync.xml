@@ -44,6 +44,7 @@
                         app:tint="?attr/textColor" />
 
                 <EditText
+                        android:textColorHint="?attr/grayTextColor"
                         android:id="@+id/result_sync_current_episodes"
                         style="@style/AppEditStyle"
                         tools:hint="20"

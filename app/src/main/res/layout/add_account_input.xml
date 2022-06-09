@@ -44,6 +44,7 @@
             android:layout_height="wrap_content">
 
         <EditText
+                android:textColorHint="?attr/grayTextColor"
                 android:hint="@string/example_username"
                 android:autofillHints="username"
                 android:id="@+id/login_username_input"
@@ -57,6 +58,7 @@
                 tools:ignore="LabelFor" />
 
         <EditText
+                android:textColorHint="?attr/grayTextColor"
                 android:autofillHints="emailAddress"
                 android:hint="@string/example_email"
                 android:id="@+id/login_email_input"
@@ -72,6 +74,7 @@
                 tools:ignore="LabelFor" />
 
         <EditText
+                android:textColorHint="?attr/grayTextColor"
                 android:hint="@string/example_ip"
                 android:id="@+id/login_server_input"
                 android:nextFocusRight="@id/cancel_btt"
@@ -85,6 +88,7 @@
                 tools:ignore="LabelFor" />
 
         <EditText
+                android:textColorHint="?attr/grayTextColor"
                 android:hint="@string/example_password"
                 android:id="@+id/login_password_input"
                 android:nextFocusRight="@id/cancel_btt"

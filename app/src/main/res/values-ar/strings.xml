@@ -246,7 +246,7 @@
     <string name="resize_fill">امتداد</string>
     <string name="resize_zoom">تكبير</string>
 
-    <string name="general">عام</string>
+    <string name="category_general">عام</string>
     <string name="provider_lang_settings">لغات الموفر</string>
     <string name="app_layout">واجهة التطبيق</string>	
     <string name="preferred_media_settings">النوع المفضل من المشاهدة</string>	

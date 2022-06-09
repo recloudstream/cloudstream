@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -24,7 +23,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSub
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.beneneCount
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -38,7 +36,7 @@ import kotlinx.android.synthetic.main.add_account_input.*
 class SettingsAccount : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpToolbar(R.string.category_credits)
+        setUpToolbar(R.string.category_account)
     }
 
     private fun showLoginInfo(api: AccountManager, info: AuthAPI.LoginInfo) {
@@ -179,16 +177,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
-        setPreferencesFromResource(R.xml.settings_credits_account, rootKey)
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
-        getPref(R.string.legal_notice_key)?.setOnPreferenceClickListener {
-            val builder: AlertDialog.Builder = AlertDialog.Builder(it.context)
-            builder.setTitle(R.string.legal_notice)
-            builder.setMessage(R.string.legal_notice_text)
-            builder.show()
-            return@setOnPreferenceClickListener true
-        }
+        setPreferencesFromResource(R.xml.settings_account, rootKey)
 
         val syncApis =
             listOf(
@@ -213,33 +202,5 @@ class SettingsAccount : PreferenceFragmentCompat() {
                 }
             }
         }
-
-        try {
-            beneneCount = settingsManager.getInt(getString(R.string.benene_count), 0)
-            getPref(R.string.benene_count)?.let { pref ->
-                pref.summary =
-                    if (beneneCount <= 0) getString(R.string.benene_count_text_none) else getString(
-                        R.string.benene_count_text
-                    ).format(
-                        beneneCount
-                    )
-
-                pref.setOnPreferenceClickListener {
-                    try {
-                        beneneCount++
-                        settingsManager.edit().putInt(getString(R.string.benene_count), beneneCount)
-                            .apply()
-                        it.summary = getString(R.string.benene_count_text).format(beneneCount)
-                    } catch (e: Exception) {
-                        logError(e)
-                    }
-
-                    return@setOnPreferenceClickListener true
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
     }
 }

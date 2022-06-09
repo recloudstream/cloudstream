@@ -12,16 +12,6 @@
             android:icon="@drawable/ic_outline_subtitles_24"
             app:summary="@string/chromecast_subtitles_settings_des" />
 
-    <Preference
-            android:key="@string/dns_key"
-            android:title="@string/dns_pref"
-            android:summary="@string/dns_pref_summary"
-            android:icon="@drawable/ic_baseline_dns_24" />
-
-    <Preference
-            android:key="@string/download_path_key"
-            android:title="@string/download_path_pref"
-            android:icon="@drawable/netflix_download" />
 
     <Preference
             android:key="@string/quality_pref_key"

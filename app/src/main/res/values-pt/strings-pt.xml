@@ -258,7 +258,7 @@
        responsabilidade do usuário de evitar qualquer ação que possa violar as leis que regem sua localidade. Utilizar
        CloudStream 3 por sua própria conta e risco.
     </string>
-	<string name="general">Geral</string>
+	<string name="category_general">Geral</string>
     <string name="provider_lang_settings">Idiomas dos Origems</string>
     <string name="app_layout">Layout do App</string>
     <string name="preferred_media_settings">Mídia preferida</string>

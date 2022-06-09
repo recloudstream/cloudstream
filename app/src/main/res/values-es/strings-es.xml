@@ -238,7 +238,7 @@
  
     <string name="search">Búsqueda</string> 
     <string name="category_nginx">Nginx</string> 
-    <string name="category_credits">Créditos y cuenta</string> 
+    <string name="category_account">Créditos y cuenta</string>
     <string name="category_updates">Actualizaciones y copia de seguridad</string> 
     <string name="nginx_credentials_title">Credencial Nginx</string> 
     <string name="nginx_credentials_summary">Tienes que usar el siguiente formato minombredeusuariogenial:micontraseñasegura123</string> 
@@ -408,7 +408,7 @@
         responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use 
         CloudStream 3 at your own risk. 
     </string> 
-    <string name="general">General</string> 
+    <string name="category_general">General</string>
     <string name="random_button_settings">Botón aleatorio</string> 
     <string name="random_button_settings_desc">Mostrar botón aleatorio en la página de inicio</string> 
     <string name="provider_lang_settings">Idiomas del proveedor</string> 

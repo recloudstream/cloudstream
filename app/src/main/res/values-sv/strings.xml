@@ -199,7 +199,7 @@
     <string name="resume">Återuppta</string>
     <string name="storage_error">Ett nerladdningsfel uppstod, kolla om appen har lagringsbehörigheter</string>
     <string name="watch_quality_pref">Föredragen videokvalitet</string>
-    <string name="general">Allmänna Inställningar</string>
+    <string name="category_general">Allmänna Inställningar</string>
     <string name="subs_font_size">Textstorlek</string>
     <string name="use_system_brightness_settings">Använd system ljusstyrka</string>
     <string name="use_system_brightness_settings_des">Använder systemets ljusstyrka instället för en svart överlaga</string>
