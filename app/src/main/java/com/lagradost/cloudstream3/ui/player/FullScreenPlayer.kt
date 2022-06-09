@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -135,6 +136,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     )
 
     open fun showMirrorsDialogue() {
+        throw NotImplementedError()
+    }
+
+    open fun openOnlineSubPicker(
+        context: Context,
+        imdbId: Long?,
+        dismissCallback: (() -> Unit)
+    ) {
         throw NotImplementedError()
     }
 
@@ -1069,6 +1078,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
                 PlayerEventType.ShowMirrors -> {
                     showMirrorsDialogue()
+                }
+                PlayerEventType.SearchSubtitlesOnline -> {
+                    if (subsProvidersIsActive) {
+                        openOnlineSubPicker(view.context, null) {}
+                    }
                 }
             }
         }
