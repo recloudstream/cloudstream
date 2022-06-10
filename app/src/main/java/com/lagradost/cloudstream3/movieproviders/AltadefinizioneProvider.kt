@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.*
 
 class AltadefinizioneProvider : MainAPI() {
     override val lang = "it"
-    override var mainUrl = "https://altadefinizione.limo"
+    override var mainUrl = "https://altadefinizione.hair"
     override var name = "Altadefinizione"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -53,9 +53,11 @@ class AltadefinizioneProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        val doc = app.post("$mainUrl/index.php?do=search", data = mapOf(
+        val doc = app.post("$mainUrl/index.php", data = mapOf(
+            "do" to "search",
             "subaction" to "search",
-            "story" to query
+            "story" to query,
+            "sortby" to "news_read"
         )).document
         return doc.select("div.box").map {
             val title = it.selectFirst("img")!!.attr("alt")
@@ -108,7 +110,7 @@ class AltadefinizioneProvider : MainAPI() {
                 ActorData(actor = Actor(it.text()))
         }
 
-
+        val tags: List<String> = document.select("#details > li:nth-child(1) > a").map { it.text() }
             return newMovieLoadResponse(
                 title,
                 url,
@@ -122,6 +124,7 @@ class AltadefinizioneProvider : MainAPI() {
                 this.recommendations = recomm
                 this.duration = null
                 this.actors = actors
+                this.tags = tags
             }
         }
 
