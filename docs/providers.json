@@ -190,6 +190,12 @@
         "status": 0,
         "url": "https://hdm.to"
     },
+    "HDTodayProvider": {
+        "language": "en",
+        "name": "HDToday",
+        "status": 1,
+        "url": "https://hdtoday.cc"
+    },
     "IHaveNoTvProvider": {
         "language": "en",
         "name": "I Have No TV",
