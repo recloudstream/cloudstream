@@ -121,7 +121,6 @@ class CineblogProvider : MainAPI() {
         }
 
 
-
         if (type == TvType.TvSeries) {
 
             val episodeList = ArrayList<Episode>()
@@ -160,7 +159,13 @@ class CineblogProvider : MainAPI() {
                 recomm
             )
         } else {
-
+            val actors: List<ActorData> =
+                document.select("div.person").filter{it.selectFirst("div.img > a > img")?.attr("src")!!.contains("/no/cast.png").not()}.map { actordata ->
+                    val actorName = actordata.selectFirst("div.data > div.name > a")!!.text()
+                    val actorImage : String? = actordata.selectFirst("div.img > a > img")?.attr("src")
+                    val roleActor = actordata.selectFirst("div.data > div.caracter")!!.text()
+                    ActorData(actor = Actor(actorName, image = actorImage), roleString = roleActor )
+                }
             return newMovieLoadResponse(
                 title,
                 url,
@@ -173,7 +178,7 @@ class CineblogProvider : MainAPI() {
                 this.rating = rating
                 this.recommendations = recomm
                 this.duration = null
-
+                this.actors = actors
             }
         }
     }

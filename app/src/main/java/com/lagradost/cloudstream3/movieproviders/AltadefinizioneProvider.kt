@@ -79,7 +79,7 @@ class AltadefinizioneProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val page = app.get(url)
         val document = page.document
-        val title = document.selectFirst(" h1 > a")!!.text()
+        val title = document.selectFirst(" h1 > a")!!.text().replace("streaming","")
         val description = document.select("#sfull").toString().substringAfter("altadefinizione").substringBeforeLast("fonte trama").parseAsHtml().toString()
         val rating = null
 
@@ -102,6 +102,13 @@ class AltadefinizioneProvider : MainAPI() {
 
         }
 
+
+        val actors: List<ActorData> =
+            document.select("#staring > a").map {
+                ActorData(actor = Actor(it.text()))
+        }
+
+
             return newMovieLoadResponse(
                 title,
                 url,
@@ -114,7 +121,7 @@ class AltadefinizioneProvider : MainAPI() {
                 this.rating = rating
                 this.recommendations = recomm
                 this.duration = null
-
+                this.actors = actors
             }
         }
 

@@ -56,7 +56,7 @@ class TantifilmProvider : MainAPI() {
         return doc.select("div.film.film-2").map {
             val href = it.selectFirst("a")!!.attr("href")
             val poster = it.selectFirst("img")!!.attr("src")
-            val name = it.selectFirst("a")!!.text().substringBefore("(")
+            val name = it.selectFirst("a > p")!!.text().substringBeforeLast("(")
             MovieSearchResponse(
                 name,
                 href,
@@ -95,7 +95,7 @@ class TantifilmProvider : MainAPI() {
         val recomm = document.select("div.mediaWrap.mediaWrapAlt.recomended_videos").map {
             val href = it.selectFirst("a")!!.attr("href")
             val poster = it.selectFirst("img")!!.attr("src")
-            val name = it.selectFirst("a")!!.attr("title").substringBeforeLast("(")
+            val name = it.selectFirst("a > p")!!.text().substringBeforeLast("(")
             MovieSearchResponse(
                 name,
                 href,
