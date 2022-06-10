@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 
 class HDMovie5 : MainAPI() {
-    override var mainUrl = "https://hdmovie5.tv"
+    override var mainUrl = "https://hdmovie5.mba"
     override var name = "HDMovie"
     override val lang = "hi"
 
@@ -33,6 +33,7 @@ class HDMovie5 : MainAPI() {
                     MovieSearchResponse(
                         a.text(),
                         a.attr("href"),
+
                         this.name,
                         TvType.Movie,
                         it.select("img").attr("src"),
