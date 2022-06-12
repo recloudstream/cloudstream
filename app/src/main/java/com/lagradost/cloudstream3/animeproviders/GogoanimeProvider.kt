@@ -183,7 +183,7 @@ class GogoanimeProvider : MainAPI() {
         }
     }
 
-    override var mainUrl = "https://gogoanime.film"
+    override var mainUrl = "https://gogoanime.sk"
     override var name = "GogoAnime"
     override val hasQuickSearch = false
     override val hasMainPage = true
