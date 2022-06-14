@@ -116,7 +116,7 @@
     },
     "GogoanimeProvider": {
         "name": "GogoAnime",
-        "url": "https://gogoanime.film",
+        "url": "https://gogoanime.sk",
         "status": 1
     },
     "KawaiifuProvider": {
@@ -266,7 +266,7 @@
     },
     "WatchAsianProvider": {
         "name": "WatchAsian",
-        "url": "https://watchasian.sh",
+        "url": "https://watchasian.cx",
         "status": 1
     },
     "WatchCartoonOnlineProvider": {

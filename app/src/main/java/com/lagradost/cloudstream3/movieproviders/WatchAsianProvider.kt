@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
 class WatchAsianProvider : MainAPI() {
-    override var mainUrl = "https://watchasian.sh"
+    override var mainUrl = "https://watchasian.cx"
     override var name = "WatchAsian"
     override val hasQuickSearch = false
     override val hasMainPage = true
