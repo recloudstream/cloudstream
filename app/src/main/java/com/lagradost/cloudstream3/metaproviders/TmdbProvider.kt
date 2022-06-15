@@ -24,6 +24,8 @@ data class TmdbLink(
 )
 
 open class TmdbProvider : MainAPI() {
+    // This should always be false, but might as well make it easier for forks
+    open val includeAdult = false
 
     // Use the LoadResponse from the metadata provider
     open val useMetaLoadResponse = false
@@ -319,7 +321,7 @@ open class TmdbProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse>? {
-        return tmdb.searchService().multi(query, 1, "en-Us", "US", true).awaitResponse()
+        return tmdb.searchService().multi(query, 1, "en-Us", "US", includeAdult).awaitResponse()
             .body()?.results?.mapNotNull {
                 it.movie?.toSearchResponse() ?: it.tvShow?.toSearchResponse()
             }
