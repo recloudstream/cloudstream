@@ -61,7 +61,7 @@ class TwoEmbedProvider : TmdbProvider() {
             val mappedservers = parseJson<EmbedJson>(ajax)
             val iframeLink = mappedservers.link
             if (iframeLink.contains("rabbitstream")) {
-                extractRabbitStream(iframeLink, subtitleCallback, callback, "https://ws10.rabbitstream.net/socket.io/?EIO=4&transport=polling") { it }
+                extractRabbitStream(iframeLink, subtitleCallback, callback, false) { it }
             } else {
                 loadExtractor(iframeLink, embedUrl, callback)
             }

@@ -354,6 +354,7 @@ class ZoroProvider : MainAPI() {
                     subtitleCallback,
                     // Blacklist VidCloud for now
                     { videoLink -> if (!videoLink.url.contains("betterstream")) callback(videoLink) },
+                    true,
                     extractorData
                 ) { sourceName ->
                     sourceName + " - ${it.first}"

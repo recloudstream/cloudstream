@@ -379,7 +379,7 @@
     "TwoEmbedProvider": {
         "language": "en",
         "name": "2Embed",
-        "status": 1,
+        "status": 0,
         "url": "https://www.2embed.ru"
     },
     "VMoveeProvider": {

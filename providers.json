@@ -242,7 +242,7 @@
     "TwoEmbedProvider": {
         "name": "2Embed",
         "url": "https://www.2embed.ru",
-        "status": 1
+        "status": 0
     },
     "VMoveeProvider": {
         "name": "VMovee",

@@ -342,7 +342,7 @@ open class SflixProvider : MainAPI() {
                 val extractorData =
                     "https://ws11.rabbitstream.net/socket.io/?EIO=4&transport=polling"
 
-                extractRabbitStream(iframeLink, subtitleCallback, callback, extractorData) { it }
+                extractRabbitStream(iframeLink, subtitleCallback, callback, false) { it }
             }
         }
 
@@ -607,15 +607,17 @@ open class SflixProvider : MainAPI() {
                             )
                         }
                 } else {
-                    listOf(ExtractorLink(
-                        caller.name,
-                        caller.name,
-                        file,
-                        caller.mainUrl,
-                        getQualityFromName(this.label),
-                        false,
-                        extractorData = extractorData
-                    ))
+                    listOf(
+                        ExtractorLink(
+                            caller.name,
+                            caller.name,
+                            file,
+                            caller.mainUrl,
+                            getQualityFromName(this.label),
+                            false,
+                            extractorData = extractorData
+                        )
+                    )
                 }
             }
         }
@@ -633,9 +635,10 @@ open class SflixProvider : MainAPI() {
             url: String,
             subtitleCallback: (SubtitleFile) -> Unit,
             callback: (ExtractorLink) -> Unit,
+            useSidAuthentication: Boolean,
             /** Used for extractorLink name, input: Source name */
-            extractorData: String,
-            nameTransformer: (String) -> String
+            extractorData: String? = null,
+            nameTransformer: (String) -> String,
         ) = suspendSafeApiCall {
             // https://rapid-cloud.ru/embed-6/dcPOVRE57YOT?z= -> https://rapid-cloud.ru/embed-6
             val mainIframeUrl =
@@ -651,20 +654,21 @@ open class SflixProvider : MainAPI() {
                 Regex("""recaptchaNumber = '(.*?)'""").find(iframe.text)?.groupValues?.get(1)
 
             var sid: String? = null
+            if (useSidAuthentication && extractorData != null) {
+                negotiateNewSid(extractorData)?.also {
+                    app.post(
+                        "$extractorData&t=${generateTimeStamp()}&sid=${it.sid}",
+                        requestBody = "40".toRequestBody(),
+                        timeout = 60
+                    )
+                    val text = app.get(
+                        "$extractorData&t=${generateTimeStamp()}&sid=${it.sid}",
+                        timeout = 60
+                    ).text.replaceBefore("{", "")
 
-            negotiateNewSid(extractorData)?.also {
-                app.post(
-                    "$extractorData&t=${generateTimeStamp()}&sid=${it.sid}",
-                    requestBody = "40".toRequestBody(),
-                    timeout = 60
-                )
-                val text = app.get(
-                    "$extractorData&t=${generateTimeStamp()}&sid=${it.sid}",
-                    timeout = 60
-                ).text.replaceBefore("{", "")
-
-                sid = parseJson<PollingData>(text).sid
-                ioSafe { app.get("$extractorData&t=${generateTimeStamp()}&sid=${it.sid}") }
+                    sid = parseJson<PollingData>(text).sid
+                    ioSafe { app.get("$extractorData&t=${generateTimeStamp()}&sid=${it.sid}") }
+                }
             }
 
             val mapped = app.get(
@@ -673,7 +677,7 @@ open class SflixProvider : MainAPI() {
                         "/embed",
                         "/ajax/embed"
                     )
-                }/getSources?id=$mainIframeId&_token=$iframeToken&_number=$number$&sId=${sid!!}",
+                }/getSources?id=$mainIframeId&_token=$iframeToken&_number=$number${sid?.let { "$&sId=$it" } ?: ""}",
                 referer = mainUrl,
                 headers = mapOf(
                     "X-Requested-With" to "XMLHttpRequest",
