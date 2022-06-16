@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.SyncApis
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.aniListApi
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.malApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.SyncUtil
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ data class CurrentSynced(
     val idPrefix: String,
     val isSynced: Boolean,
     val hasAccount: Boolean,
-    val icon: Int,
+    val icon: Int?,
 )
 
 class SyncViewModel : ViewModel() {

@@ -7,6 +7,7 @@
         android:layout_width="match_parent">
 
     <androidx.cardview.widget.CardView
+            android:id="@+id/account_profile_picture_holder"
             android:layout_marginStart="10dp"
             app:cardCornerRadius="100dp"
             android:layout_gravity="center_vertical"

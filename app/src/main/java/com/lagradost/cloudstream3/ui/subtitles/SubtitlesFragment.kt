@@ -57,6 +57,8 @@ data class SaveCaptionStyle(
     @JsonProperty("elevation") var elevation: Int,
     /**in sp**/
     @JsonProperty("fixedTextSize") var fixedTextSize: Float?,
+    @JsonProperty("removeCaptions") var removeCaptions: Boolean = false,
+    @JsonProperty("removeBloat") var removeBloat: Boolean = true,
 )
 
 const val DEF_SUBS_ELEVATION = 20
@@ -395,6 +397,15 @@ class SubtitlesFragment : Fragment() {
                 state.fixedTextSize = fontSizes.map { it.first }[index]
                 //textView.context.updateState() // font size not changed
             }
+        }
+
+        subtitles_remove_bloat?.isChecked = state.removeBloat
+        subtitles_remove_bloat?.setOnCheckedChangeListener { _, b ->
+            state.removeBloat = b
+        }
+        subtitles_remove_captions?.isChecked = state.removeCaptions
+        subtitles_remove_captions?.setOnCheckedChangeListener { _, b ->
+            state.removeCaptions = b
         }
 
         subs_font_size.setOnLongClickListener { _ ->

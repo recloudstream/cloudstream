@@ -1,8 +1,6 @@
 package com.lagradost.cloudstream3.animeproviders
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
@@ -33,6 +31,7 @@ class NeonimeProvider : MainAPI() {
             return when (t) {
                 "Ended"  -> ShowStatus.Completed
                 "OnGoing" -> ShowStatus.Ongoing
+                "Ongoing" -> ShowStatus.Ongoing
                 "In Production" -> ShowStatus.Ongoing
                 "Returning Series" -> ShowStatus.Ongoing
                 else -> ShowStatus.Completed

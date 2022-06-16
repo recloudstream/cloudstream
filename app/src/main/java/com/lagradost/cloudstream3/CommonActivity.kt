@@ -33,7 +33,6 @@ object CommonActivity {
     var canShowPipMode: Boolean = false
     var isInPIPMode: Boolean = false
 
-    val backEvent = Event<Boolean>()
     val onColorSelectedEvent = Event<Pair<Int, Int>>()
     val onDialogDismissedEvent = Event<Int>()
 
@@ -281,6 +280,10 @@ object CommonActivity {
             }
             KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9 -> {
                 PlayerEventType.ShowMirrors
+            }
+            // OpenSubtitles shortcut
+            KeyEvent.KEYCODE_O, KeyEvent.KEYCODE_NUMPAD_8 -> {
+                PlayerEventType.SearchSubtitlesOnline
             }
             KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3 -> {
                 PlayerEventType.ShowSpeed

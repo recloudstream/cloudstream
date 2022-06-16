@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+            android:key="@string/mal_key"
+            android:icon="@drawable/mal_logo" />
+
+    <Preference
+            android:key="@string/anilist_key"
+            android:icon="@drawable/ic_anilist_icon" />
+    <Preference
+            android:key="@string/opensubtitles_key"
+            android:icon="@drawable/open_subtitles_icon" />
+    <Preference
+            android:key="@string/nginx_key"
+            android:icon="@drawable/nginx" />
+
+    <Preference
+            android:title="@string/nginx_info_title"
+            android:icon="@drawable/nginx_question"
+            android:summary="@string/nginx_info_summary">
+        <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.sarlays.com/use-nginx-with-cloudstream/" />
+    </Preference>
+
+</PreferenceScreen>

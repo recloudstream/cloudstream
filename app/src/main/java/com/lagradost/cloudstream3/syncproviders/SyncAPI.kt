@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.syncproviders
 import com.lagradost.cloudstream3.*
 
 interface SyncAPI : OAuth2API {
-    val icon: Int
     val mainUrl: String
 
     /**

@@ -1,14 +1,13 @@
 package com.lagradost.cloudstream3.ui.player
 
-import android.content.Context
-import android.net.Uri
 import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.google.android.exoplayer2.ui.SubtitleView
 import com.google.android.exoplayer2.util.MimeTypes
-import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveBloat
+import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveCaptions
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.fromSaveToStyle
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -22,7 +21,6 @@ enum class SubtitleStatus {
 enum class SubtitleOrigin {
     URL,
     DOWNLOADED_FILE,
-    OPEN_SUBTITLES,
     EMBEDDED_IN_VIDEO
 }
 
@@ -66,28 +64,6 @@ class PlayerSubtitleHelper {
             }
         }
 
-        private fun getSubtitleMimeType(context: Context, url: String, origin: SubtitleOrigin): String {
-            return when (origin) {
-                // The url can look like .../document/4294 when the name is EnglishSDH.srt
-                SubtitleOrigin.DOWNLOADED_FILE -> {
-                    UniFile.fromUri(
-                        context,
-                        Uri.parse(url)
-                    ).name?.toSubtitleMimeType() ?: MimeTypes.APPLICATION_SUBRIP
-                }
-                SubtitleOrigin.URL -> {
-                    return url.toSubtitleMimeType()
-                }
-                SubtitleOrigin.OPEN_SUBTITLES -> {
-                    // TODO
-                    throw NotImplementedError()
-                }
-                SubtitleOrigin.EMBEDDED_IN_VIDEO -> {
-                    throw NotImplementedError()
-                }
-            }
-        }
-
         fun getSubtitleData(subtitleFile: SubtitleFile): SubtitleData {
             return SubtitleData(
                 name = subtitleFile.lang,
@@ -109,6 +85,8 @@ class PlayerSubtitleHelper {
     }
 
     fun setSubStyle(style: SaveCaptionStyle) {
+        regexSubtitlesToRemoveBloat = style.removeBloat
+        regexSubtitlesToRemoveCaptions = style.removeCaptions
         subtitleView?.context?.let { ctx ->
             subStyle = style
             subtitleView?.setStyle(ctx.fromSaveToStyle(style))

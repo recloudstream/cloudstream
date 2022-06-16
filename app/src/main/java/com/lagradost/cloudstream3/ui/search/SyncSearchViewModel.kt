@@ -3,10 +3,10 @@ package com.lagradost.cloudstream3.ui.search
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
 
 class SyncSearchViewModel {
-    private val repos = OAuth2API.SyncApis
+    private val repos = SyncApis
 
     data class SyncSearchResultSearchResponse(
         override val name: String,
@@ -18,5 +18,4 @@ class SyncSearchViewModel {
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse
-
 }

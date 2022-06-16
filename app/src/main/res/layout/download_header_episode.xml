@@ -56,7 +56,8 @@
         <ImageView
                 android:layout_marginStart="-50dp"
                 android:layout_height="match_parent"
-                android:layout_width="30dp"
+                android:padding="50dp"
+                android:layout_width="50dp"
                 android:id="@+id/download_header_goto_child"
                 android:layout_gravity="center_vertical|end"
                 android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
@@ -85,14 +86,11 @@
                     android:visibility="visible" />
 
             <ImageView
-
                     android:visibility="visible"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
                     android:layout_gravity="center_vertical"
                     android:layout_height="wrap_content"
-                    android:padding="2dp"
-                    android:layout_width="30dp"
+                    android:padding="10dp"
+                    android:layout_width="50dp"
                     android:id="@+id/download_header_episode_download"
                     android:background="?selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_baseline_play_arrow_24"

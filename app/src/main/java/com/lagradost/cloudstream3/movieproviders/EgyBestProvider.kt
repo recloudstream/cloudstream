@@ -161,7 +161,6 @@ class EgyBestProvider : MainAPI() {
         @JsonProperty("link") val link: String
     )
 
-
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,

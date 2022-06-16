@@ -20,6 +20,8 @@ class RebahinProvider : MainAPI() {
     override val supportedTypes = setOf(
         TvType.Movie,
         TvType.TvSeries,
+        TvType.Anime,
+        TvType.AsianDrama
     )
 
     override suspend fun getMainPage(): HomePageResponse {
@@ -168,6 +170,7 @@ class RebahinProvider : MainAPI() {
     private suspend fun invokeLokalSource(
         url: String,
         name: String,
+        ref: String,
         subCallback: (SubtitleFile) -> Unit,
         sourceCallback: (ExtractorLink) -> Unit
     ) {
@@ -182,11 +185,21 @@ class RebahinProvider : MainAPI() {
             if (script.data().contains("sources: [")) {
                 val source = tryParseJson<ResponseLocal>(
                     script.data().substringAfter("sources: [").substringBefore("],"))
-                M3u8Helper.generateM3u8(
-                    name,
-                    source!!.file,
-                    "http://172.96.161.72",
-                ).forEach(sourceCallback)
+                val m3uData = app.get(source!!.file, referer = ref).text
+                val quality = Regex("\\d{3,4}\\.m3u8").findAll(m3uData).map { it.value }.toList()
+
+                quality.forEach {
+                    sourceCallback.invoke(
+                        ExtractorLink(
+                            source = name,
+                            name = name,
+                            url = source.file.replace("video.m3u8", it),
+                            referer = ref,
+                            quality = getQualityFromName("${it.replace(".m3u8", "")}p"),
+                            isM3u8 = true
+                        )
+                    )
+                }
 
                 val trackJson = script.data().substringAfter("tracks: [").substringBefore("],")
                 val track = tryParseJson<List<Tracks>>("[$trackJson]")
@@ -291,6 +304,7 @@ class RebahinProvider : MainAPI() {
                     it.startsWith("http://172.96.161.72") -> invokeLokalSource(
                         it,
                         this.name,
+                        "http://172.96.161.72/",
                         subtitleCallback,
                         callback
                     )

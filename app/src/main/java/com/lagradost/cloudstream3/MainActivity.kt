@@ -27,20 +27,20 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
-import com.lagradost.cloudstream3.CommonActivity.backEvent
+import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
-import com.lagradost.cloudstream3.movieproviders.NginxProvider
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.OAuth2Apis
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.OAuth2accountApis
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appString
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.result.ResultFragment
@@ -59,6 +59,7 @@ import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
+import com.lagradost.cloudstream3.utils.IOnBackPressed
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
@@ -131,12 +132,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_download_child,
             R.id.navigation_subtitles,
             R.id.navigation_chrome_subtitles,
-            R.id.navigation_settings_nginx,
             R.id.navigation_settings_player,
             R.id.navigation_settings_updates,
             R.id.navigation_settings_ui,
             R.id.navigation_settings_account,
             R.id.navigation_settings_lang,
+            R.id.navigation_settings_general,
         ).contains(destination.id)
 
         val landscape = when (resources.configuration.orientation) {
@@ -234,13 +235,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         onUserLeaveHint(this)
     }
 
-    override fun onBackPressed() {
+    private fun backPressed() {
         this.window?.navigationBarColor =
             this.colorFromAttribute(R.attr.primaryGrayBackground)
         this.updateLocale()
-        backEvent.invoke(true)
         super.onBackPressed()
         this.updateLocale()
+    }
+
+    override fun onBackPressed() {
+        ((supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?)?.childFragmentManager?.primaryNavigationFragment as? IOnBackPressed)?.onBackPressed()
+            ?.let { runNormal ->
+                if (runNormal) backPressed()
+            } ?: run {
+            backPressed()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -354,10 +363,65 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    fun test() {
+        //val youtubeLink = "https://www.youtube.com/watch?v=TxB48MEAmZw"
+
+
+        /*
+        runBlocking {
+
+            val query = """
+            query {
+                searchShows(search: "spider", limit: 10) {
+                    id
+                    name
+                    originalName
+                }
+            }
+            """
+            val data =
+                mapOf(
+                    "query" to query,
+                    //"variables" to
+                    //        mapOf(
+                    //            "name" to name,
+                     //       ).toJson()
+                )
+            val txt = app.post(
+                "http://api.anime-skip.com/graphql",
+                headers = mapOf(
+                    "X-Client-ID" to "",
+                    "Content-Type" to "application/json",
+                    "Accept" to "application/json",
+                ),
+                json = data
+            )
+            println("TEXT: $txt")
+        }*/
+        /*runBlocking {
+            //https://test.api.anime-skip.com/graphiql
+            val txt = app.get(
+                "https://api.anime-skip.com/status",
+                headers = mapOf("X-Client-ID" to "")
+            )
+            println("TEXT: $txt")
+        }*/
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // init accounts
-        for (api in OAuth2accountApis) {
+        for (api in accountManagers) {
             api.init()
+        }
+
+        ioSafe {
+            inAppAuths.apmap { api ->
+                try {
+                    api.initialize()
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
         }
 
         SearchResultBuilder.updateCache(this)
@@ -379,68 +443,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             false
         }
 
-        fun addNginxToJson(data: java.util.HashMap<String, ProvidersInfoJson>): java.util.HashMap<String, ProvidersInfoJson>? {
-            try {
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-                val nginxUrl =
-                    settingsManager.getString(getString(R.string.nginx_url_key), "nginx_url_key")
-                        .toString()
-                val nginxCredentials =
-                    settingsManager.getString(
-                        getString(R.string.nginx_credentials),
-                        "nginx_credentials"
-                    )
-                        .toString()
-                val StoredNginxProvider = NginxProvider()
-                if (nginxUrl == "nginx_url_key" || nginxUrl == "") { // if key is default value, or empty:
-                    data[StoredNginxProvider.javaClass.simpleName] = ProvidersInfoJson(
-                        url = nginxUrl,
-                        name = StoredNginxProvider.name,
-                        status = PROVIDER_STATUS_DOWN,  // the provider will not be display
-                        credentials = nginxCredentials
-                    )
-                } else {  // valid url
-                    data[StoredNginxProvider.javaClass.simpleName] = ProvidersInfoJson(
-                        url = nginxUrl,
-                        name = StoredNginxProvider.name,
-                        status = PROVIDER_STATUS_OK,
-                        credentials = nginxCredentials
-                    )
-                }
-
-                return data
-            } catch (e: Exception) {
-                logError(e)
-                return data
-            }
-        }
-
-        fun createNginxJson(): ProvidersInfoJson? { //java.util.HashMap<String, ProvidersInfoJson>
-            return try {
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-                val nginxUrl =
-                    settingsManager.getString(getString(R.string.nginx_url_key), "nginx_url_key")
-                        .toString()
-                val nginxCredentials = settingsManager.getString(
-                    getString(R.string.nginx_credentials),
-                    "nginx_credentials"
-                ).toString()
-                if (nginxUrl == "nginx_url_key" || nginxUrl == "") { // if key is default value or empty:
-                    null // don't overwrite anything
-                } else {
-                    ProvidersInfoJson(
-                        url = nginxUrl,
-                        name = NginxProvider().name,
-                        status = PROVIDER_STATUS_OK,
-                        credentials = nginxCredentials
-                    )
-                }
-            } catch (e: Exception) {
-                logError(e)
-                null
-            }
-        }
-
         // this pulls the latest data so ppl don't have to update to simply change provider url
         if (downloadFromGithub) {
             try {
@@ -460,11 +462,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                         setKey(PROVIDER_STATUS_KEY, txt)
                                         MainAPI.overrideData = newCache // update all new providers
 
-                                        val newUpdatedCache =
-                                            newCache?.let { addNginxToJson(it) ?: it }
-
+                                        initAll()
                                         for (api in apis) { // update current providers
-                                            newUpdatedCache?.get(api.javaClass.simpleName)
+                                            newCache?.get(api.javaClass.simpleName)
                                                 ?.let { data ->
                                                     api.overrideWithNewData(data)
                                                 }
@@ -482,14 +482,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 newCache
                             }?.let { providersJsonMap ->
                                 MainAPI.overrideData = providersJsonMap
-                                val providersJsonMapUpdated = addNginxToJson(providersJsonMap)
-                                    ?: providersJsonMap // if return null, use unchanged one
+                                initAll()
                                 val acceptableProviders =
-                                    providersJsonMapUpdated.filter { it.value.status == PROVIDER_STATUS_OK || it.value.status == PROVIDER_STATUS_SLOW }
+                                    providersJsonMap.filter { it.value.status == PROVIDER_STATUS_OK || it.value.status == PROVIDER_STATUS_SLOW }
                                         .map { it.key }.toSet()
 
                                 val restrictedApis =
-                                    if (hasBenene) providersJsonMapUpdated.filter { it.value.status == PROVIDER_STATUS_BETA_ONLY }
+                                    if (hasBenene) providersJsonMap.filter { it.value.status == PROVIDER_STATUS_BETA_ONLY }
                                         .map { it.key }.toSet() else emptySet()
 
                                 apis = allProviders.filter { api ->
@@ -506,23 +505,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     }
                 }
             } catch (e: Exception) {
+                initAll()
                 apis = allProviders
                 e.printStackTrace()
                 logError(e)
             }
         } else {
+            initAll()
             apis = allProviders
-            try {
-                val nginxProviderName = NginxProvider().name
-                val nginxProviderIndex = apis.indexOf(APIHolder.getApiFromName(nginxProviderName))
-                val createdJsonProvider = createNginxJson()
-                if (createdJsonProvider != null) {
-                    apis[nginxProviderIndex].overrideWithNewData(createdJsonProvider) // people will have access to it if they disable metadata check (they are not filtered)
-                }
-            } catch (e: Exception) {
-                logError(e)
-            }
-
         }
 
         loadThemes(this)
@@ -585,7 +575,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         loadCache()
-
+        test()
         /*nav_view.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {

@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.metaproviders.TmdbLink
 import com.lagradost.cloudstream3.metaproviders.TmdbProvider
@@ -14,6 +15,7 @@ class OlgplyProvider : TmdbProvider() {
     override var name = "Olgply"
     override val instantLinkLoading = true
     override val useMetaLoadResponse = true
+    override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)
 
     override suspend fun loadLinks(
         data: String,

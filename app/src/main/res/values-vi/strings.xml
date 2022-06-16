@@ -243,7 +243,7 @@
     <string name="resize_fill">Kéo dãn</string>
     <string name="resize_zoom">Phóng to</string>
 	
-    <string name="general">Tổng quan</string>
+    <string name="category_general">Tổng quan</string>
     <string name="provider_lang_settings">Ngôn ngữ nhà cung cấp</string>
     <string name="app_layout">Giao diện App</string>
     <string name="preferred_media_settings">Thể loại ưu tiên</string>

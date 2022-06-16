@@ -220,7 +220,7 @@
     <string name="resize_zoom">Зумирај</string>
 
     <string name="legal_notice">Disclaimer</string>
-    <string name="general">Генерално</string>
+    <string name="category_general">Генерално</string>
     <string name="provider_lang_settings">Јазици на провајдерите</string>
     <string name="app_layout">Распоред на апликацијата</string>
     <string name="preferred_media_settings">Претпочитани медиуми</string>

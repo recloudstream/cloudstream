@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        android:orientation="horizontal"
+        android:keepScreenOn="true"
+        android:id="@+id/player_background"
+        app:backgroundTint="@android:color/black"
+        android:background="@android:color/black"
+        android:screenOrientation="sensorLandscape"
+        app:surface_type="texture_view">
+    <!--
+          app:fastforward_increment="10000"
+            app:rewind_increment="10000"-->
+    <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/player_view"
+            app:show_timeout="0"
+            app:hide_on_touch="false"
+            app:auto_show="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:backgroundTint="@android:color/black"
+            android:background="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:controller_layout_id="@layout/trailer_custom_layout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

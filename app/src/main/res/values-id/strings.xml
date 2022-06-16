@@ -187,11 +187,8 @@
     <string name="backup_failed_error_format">Error saat mencadang %s</string>
 
     <string name="search">Cari</string>
-    <string name="category_nginx">Nginx</string>
-    <string name="category_credits">Kredit dan akun</string>
+    <string name="category_account">Kredit dan akun</string>
     <string name="category_updates">Update dan cadangan</string>
-    <string name="nginx_credentials_title">Kredensial Nginx</string> 
-    <string name="nginx_credentials_summary">Kamu harus menggunakan format berikut namaku:passwordku123</string>
     <string name="nginx_info_title">Apa itu Nginx ?</string>
     <string name="nginx_info_summary">Nginx adalah sebuah software yang dapat digunakan untuk menampilkan file dari server yang anda miliki. Klik untuk melihat panduan pengaturan Nginx</string>
 
@@ -359,7 +356,7 @@
         responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
         CloudStream 3 at your own risk.
     </string>
-    <string name="general">Umum</string>
+    <string name="category_general">Umum</string>
     <string name="random_button_settings">Tombol Acak</string>
     <string name="random_button_settings_desc">Tampilkan tombol acak di Beranda</string>
     <string name="provider_lang_settings">Bahasa provider</string>

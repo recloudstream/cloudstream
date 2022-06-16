@@ -182,9 +182,6 @@
     <string name="backup_failed_error_format">Yedekleme hatası %s</string>
 
     <string name="search">Ara</string>
-    <string name="category_nginx">Nginx Ayarları</string>
-    <string name="nginx_credentials_title">Nginx Kimlik Bilgileri</string>
-    <string name="nginx_credentials_summary">Örnekteki formatta yazmalısın havalıkullanıcıadım:güvenlişifrem123</string>
     <string name="nginx_info_title">Nginx nedir?</string>
     <string name="nginx_info_summary">Nginx sahip olduğun sunucundaki dosyaları görüntülemek için kullanılabilecek bir yazılımdır. Nginx kurulum rehberini görmek için tıkla</string>
 
@@ -344,7 +341,7 @@
         responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
         CloudStream 3 at your own risk.
     </string>
-    <string name="general">Genel</string>
+    <string name="category_general">Genel</string>
     <string name="provider_lang_settings">Sağlayıcı Dilleri</string>
     <string name="app_layout">Uygulama Düzeni</string>
     <string name="preferred_media_settings">Tercih Edilen Medya</string>

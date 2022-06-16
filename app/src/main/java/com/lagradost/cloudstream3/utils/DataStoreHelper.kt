@@ -132,7 +132,7 @@ object DataStoreHelper {
         )
     }
 
-    fun removeLastWatchedOld(parentId: Int?) {
+    private fun removeLastWatchedOld(parentId: Int?) {
         if (parentId == null) return
         removeKey("$currentAccount/$RESULT_RESUME_WATCHING_OLD", parentId.toString())
     }

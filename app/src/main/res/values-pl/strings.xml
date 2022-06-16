@@ -270,7 +270,7 @@
     <string name="legal_notice">Zastrzeżenie</string>
 
     <string name="provider_lang_settings">Języki dostawców</string>
-    <string name="general">Ogólne</string>
+    <string name="category_general">Ogólne</string>
     <string name="app_layout">Układ aplikacji</string>
     <string name="preferred_media_settings">Preferowane media</string>
 

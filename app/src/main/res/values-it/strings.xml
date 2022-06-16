@@ -38,6 +38,8 @@
     <string name="title_settings">Impostazioni</string>
 
     <string name="search_hint">Cerca…</string>
+    <string name="search_hint_site" formatted="true">Cerca in %s…</string>
+
     <string name="no_data">Nessun dato</string>
     <string name="episode_more_options_des">Più impostazioni</string>
     <string name="next_episode">Prossimo episodio</string>
@@ -62,7 +64,6 @@
     <string name="reload_error">Riprova connesisone…</string>
     <string name="go_back">Indietro</string>
     <string name="play_episode">Riproduci episodio</string>
-    <!--<string name="need_storage">Per permettere il download</string>-->
 
     <string name="download">Scarica</string>
     <string name="downloaded">Scaricato</string>
@@ -121,7 +122,9 @@
 
     <string name="subs_auto_select_language">Selezione automatica lingua</string>
     <string name="subs_download_languages">Lingue da scaricare</string>
+    <string name="subs_subtitle_languages">Lingue sottotitoli</string>
     <string name="subs_hold_to_reset_to_default">Tenere premuto per ripristinare le impostazioni predefinite</string>
+    <string name="subs_import_text" formatted="true">Importa font mettendoli in %s</string>
     <string name="continue_watching">Continua a guardare</string>
 
     <string name="action_remove_watching">Rimuovi</string>
@@ -148,18 +151,22 @@
     <string name="chromecast_subtitles_settings">Sottotitoli Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Impostazioni sottotitoli Chromecast</string>
 
-    <string name="eigengraumode_settings">Modalità eigengravy</string>
+    <string name="eigengraumode_settings">Modalità Eigengravy</string>
     <string name="eigengraumode_settings_des">Aggiungi opzione velocità nel player</string>
     <string name="swipe_to_seek_settings">Scorri per mandare avanti/indietro</string>
     <string name="swipe_to_seek_settings_des">Scorri a sinistra o a destra per controllare il tempo del video</string>
     <string name="swipe_to_change_settings">Scorri per cambiare le impostazioni</string>
     <string name="swipe_to_change_settings_des">Passa il dito sul lato sinistro o destro per cambiare la luminosità o il volume</string>
-    <string name="double_tap_to_seek_settings">Doppio tocco per mandare avanti/indietro</string>
+    <string name="double_tap_to_seek_settings">Doppio tocco per andare avanti/indietro</string>
     <string name="double_tap_to_pause_settings">Doppio tocco per mettere in pausa</string>
     <string name="double_tap_to_seek_settings_des">Tocca due volte il lato destro o sinistro dello schermo per mandare avanti o indietro il video</string>
     <string name="double_tap_to_pause_settings_des">Tocca due volte il centro dello schermo per mettere in pausa il video</string>
+    <string name="double_tap_to_seek_amount_settings">Player seek</string>
     <string name="use_system_brightness_settings">Utilizzare la luminosità del sistema</string>
     <string name="use_system_brightness_settings_des">Utilizzare la luminosità del sistema al posto di una sovrapposizione scura</string>
+
+    <!--<string name="episode_sync_settings">Update watch progress</string>-->
+    <string name="episode_sync_settings_des">Sincronizza automaticamente gli episodi guardati</string>
 
     <string name="restore_settings">Ripristinare i dati da backup</string>
     <string name="killswitch_settings">Scarica gli ultimi metadata da GitHub</string>
@@ -173,12 +180,17 @@
     <string name="backup_failed_error_format">Errore nel backup %s</string>
 
     <string name="search">Cerca</string>
+    <string name="category_account">Accounts e Crediti</string>
+    <string name="category_updates">Aggiornamenti e Backup</string>
+    <string name="nginx_info_title">Cos\'è Nginx?</string>
+    <string name="nginx_info_summary">Nginx è un software che può essere utilizzato per visualizzare i file da un server di proprietà. Fare clic per vedere la guida all\'installazione di Nginx</string>
+
     <string name="settings_info">Info</string>
     <string name="advanced_search">Ricerca avanzata</string>
     <string name="advanced_search_des">Dividi i risultati della ricerca per provider</string>
     <string name="bug_report_settings_off">Invia i dati solo in caso di crash</string>
     <string name="bug_report_settings_on">Non inviare alcun dato</string>
-    <string name="show_fillers_settings">Mostra episodi filler per anime</string>
+    <string name="show_fillers_settings">Mostra tag [filler] per anime</string>
     <string name="updates_settings">Mostra gli aggiornamenti dell\'app</string>
     <string name="updates_settings_des">Cerca automaticamente nuovi aggiornamenti all\'avvio</string>
     <string name="uprereleases_settings">Aggiorna alle prerelease</string>
@@ -271,6 +283,12 @@
     <string name="episode_action_reload_links">Aggiorna link</string>
     <string name="episode_action_download_subtitle">Download sottotitoli</string>
 
+    <string name="show_hd">Etichetta Qualità</string>
+    <string name="show_dub">Etichetta Dub</string>
+    <string name="show_sub">Etichetta Sub</string>
+    <string name="show_title">Titolo</string>
+    <string name="poster_ui_settings">Etichette sui Poster</string>
+
     <string name="no_update_found">Nessun aggiornamento trovato</string>
     <string name="check_for_update">Controlla aggiornamenti</string>
 
@@ -284,6 +302,8 @@
     <string name="update">Aggiorna</string>
     <string name="watch_quality_pref">Risoluzione preferita</string>
     <string name="limit_title">Limita i caratteri del titolo nel player</string>
+    <string name="limit_title_rez">Risoluzione video player</string>
+
     <string name="video_buffer_size_settings">Dimensione cache video</string>
     <string name="video_buffer_length_settings">Lunghezza buffer video</string>
     <string name="video_buffer_disk_settings">Dimensione cache video su disco</string>
@@ -296,6 +316,7 @@
     <string name="dns_pref_summary">Utile per bypassare i blocchi ISP</string>
 
     <string name="download_path_pref">Posizione Download</string>
+    <string name="nginx_url_pref">URL Nginx server</string>
 
     <string name="display_subbed_dubbed_settings">Mostra anime doppiati/sottotitolati</string>
 
@@ -304,25 +325,39 @@
     <string name="resize_zoom">Zoom</string>
 
     <string name="legal_notice">Disclaimer</string>
-    <string name="general">Generale</string>
+    <string name="category_general">Generale</string>
+    <string name="random_button_settings">Random</string>
+    <string name="random_button_settings_desc">Mostra pulsante Random nella homepage</string>
     <string name="provider_lang_settings">Lingua provider</string>
     <string name="app_layout">Layout app</string>
     <string name="preferred_media_settings">Media preferito</string>
+    <string name="subtitles_encoding">Encoding Sottotitoli</string>
+    <string name="category_preferred_media_and_lang">Media e lingua preferiti</string>
+    <string name="category_ui">Interfaccia utente</string>
 
     <string name="automatic">Auto</string>
     <string name="tv_layout">Layout TV</string>
     <string name="phone_layout">Layout Telefono</string>
+    <string name="emulator_layout">Layout Emulator</string>
 
     <string name="primary_color_settings">Colore primario</string>
     <string name="app_theme_settings">Tema</string>
+    <string name="bottom_title_settings">Posizione Titolo sui Poster</string>
+    <string name="bottom_title_settings_des">Titolo sotto il poster</string>
 
     <!-- account stuff -->
+    <string name="example_password">password123</string>
+    <string name="example_username">MyCoolUsername</string>
+    <string name="example_email">hello@world.com</string>
+    <string name="example_ip">127.0.0.1</string>
+
     <string name="login_format" formatted="true">%s %s</string>
     <string name="account">account</string>
     <string name="logout">Logout</string>
     <string name="login">Login</string>
     <string name="switch_account">Cambia account</string>
     <string name="add_account">Aggiungi account</string>
+    <string name="create_account">Crea account</string>
     <string name="add_sync">Aggiungi tracking</string>
     <string name="added_sync_format" formatted="true">Aggiunto %s</string>
     <string name="upload_sync">Sync</string>
@@ -347,8 +382,8 @@
     <string name="subtitle_offset">Sincronizza sottotitoli</string>
     <string name="subtitle_offset_hint">1000ms</string>
     <string name="subtitle_offset_title">Ritardo sottotitoli</string>
-    <string name="subtitle_offset_extra_hint_later_format">Usa questo se i sottotitoli sono mostrati %dms troppo presto</string>
-    <string name="subtitle_offset_extra_hint_before_format">Usa questo se i sottotitoli vengono mostrati %dms troppo tardi</string>
+    <string name="subtitle_offset_extra_hint_later_format">Usa se i sottotitoli sono mostrati %dms troppo presto</string>
+    <string name="subtitle_offset_extra_hint_before_format">Usa se i sottotitoli vengono mostrati %dms troppo tardi</string>
     <string name="subtitle_offset_extra_hint_none_format">Nessun ritardo dei sottotitoli</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -358,15 +393,17 @@
     -->
     <string name="subtitles_example_text">Ma che bel gufo spenzola da quei travi</string>
 
-    <string name="recommended">Consiglaito</string>
+    <string name="recommended">Consigliato</string>
     <string name="player_loaded_subtitles" formatted="true">Caricato %s</string>
     <string name="player_load_subtitles">Carica da file</string>
-    <string name="downloaded_file">Downloaded file</string>
-    <string name="actor_main">Main</string>
-    <string name="actor_supporting">Supporting</string>
-    <string name="actor_background">Background</string>
+    <string name="player_load_subtitles_online">Carica da Internet</string>
+    <string name="downloaded_file">File scaricato</string>
+    <string name="actor_main">Protagonista</string>
+    <string name="actor_supporting">Supporto</string>
+    <string name="actor_background">Secondario</string>
 
     <string name="home_source">Sorgente</string>
+    <string name="home_random">Random</string>
 
     <string name="coming_soon">In Arrivo</string>
 
@@ -388,4 +425,11 @@
     <string name="quality_webrip">Web</string>
 
     <string name="poster_image">Poster</string>
+    <string name="category_player">Player</string>
+    <string name="resolution_and_title">Titolo e Risoluzione</string>
+    <string name="title">Titolo</string>
+    <string name="resolution">Risoluzione</string>
+    <string name="error_invalid_id">ID invalido</string>
+    <!--<string name="subtitles_remove_captions">Remove closed captions from subtitles</string>-->
+    <!--<string name="subtitles_remove_bloat">Remove bloat from subtitles</string>-->
 </resources>

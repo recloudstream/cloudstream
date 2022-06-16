@@ -47,7 +47,6 @@ class TenshiProvider : MainAPI() {
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val soup = app.get(mainUrl, interceptor = ddosGuardKiller).document
-        println(soup)
         for (section in soup.select("#content > section")) {
             try {
                 if (section.attr("id") == "toplist-tabs") {

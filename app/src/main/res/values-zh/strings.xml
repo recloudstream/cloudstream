@@ -306,7 +306,7 @@
         responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
         CloudStream 3 at your own risk.
     </string>
-    <string name="general">全局</string>
+    <string name="category_general">全局</string>
     <string name="provider_lang_settings">内容提供者语言</string>
     <string name="app_layout">应用布局</string>
     <string name="preferred_media_settings">首选媒体</string>

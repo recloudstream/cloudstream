@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.animeproviders
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.mvvm.safeApiCall
@@ -157,6 +156,8 @@ class KuronimeProvider : MainAPI() {
                 val token = data.substringAfter("var token = \"").substringBefore("\";")
                 val pat = data.substringAfter("var pat = \"").substringBefore("\";")
                 val link = "$doma$token$pat/index.m3u8"
+                val quality =
+                    Regex("\\d{3,4}p").find(doc.select("title").text())?.groupValues?.get(0)
 
                 sourceCallback.invoke(
                     ExtractorLink(
@@ -164,7 +165,8 @@ class KuronimeProvider : MainAPI() {
                         this.name,
                         link,
                         referer = "https://animeku.org/",
-                        quality = Qualities.Unknown.value,
+                        quality = getQualityFromName(quality),
+                        headers = mapOf("Origin" to "https://animeku.org"),
                         isM3u8 = true
                     )
                 )
@@ -186,7 +188,7 @@ class KuronimeProvider : MainAPI() {
         sources.apmap {
             safeApiCall {
                 when {
-                    it.contains("animeku.org") -> invokeKuroSource(it, callback)
+                    it.startsWith("https://animeku.org") -> invokeKuroSource(it, callback)
                     else -> loadExtractor(it, mainUrl, callback)
                 }
             }

@@ -62,20 +62,6 @@
             app:layout_constraintTop_toBottomOf="@+id/topMenuRight">
 
         <TextView
-                android:id="@+id/player_time_text_left"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="100dp"
-                android:alpha="0"
-                android:gravity="center|start"
-                android:shadowColor="@android:color/black"
-                android:shadowRadius="10.0"
-                android:textColor="@android:color/white"
-                android:textSize="40sp">
-
-        </TextView>
-
-        <TextView
                 android:id="@+id/player_time_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -84,20 +70,7 @@
                 android:shadowRadius="10.0"
                 android:textColor="@android:color/white"
                 android:textSize="30sp"
-                tools:text="+100">
-
-        </TextView>
-
-        <TextView
-                android:id="@+id/time_text_right"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="100dp"
-                android:gravity="center|end"
-                android:shadowColor="@android:color/black"
-                android:shadowRadius="10.0"
-                android:textColor="@android:color/white"
-                android:textSize="40sp" />
+                tools:text="+100" />
     </RelativeLayout>
 
     <FrameLayout
@@ -522,7 +495,7 @@
 
                                 android:nextFocusRight="@id/player_sources_btt"
                                 app:icon="@drawable/ic_outline_subtitles_24"
-                                android:text="@string/subtitle_offset"/>
+                                android:text="@string/subtitle_offset" />
 
                         <com.google.android.material.button.MaterialButton
                                 android:id="@+id/player_sources_btt"
@@ -592,15 +565,14 @@
                     style="@android:style/Widget.Material.ProgressBar.Horizontal"
                     android:layout_width="4dp"
                     android:layout_height="150dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginStart="40dp"
                     android:indeterminate="false"
                     android:max="100"
                     android:progress="100"
                     android:progressDrawable="@drawable/progress_drawable_vertical"
-                    tools:progress="30" />
+                    tools:progress="30"
+                    android:layout_centerInParent="true" />
         </RelativeLayout>
 
         <RelativeLayout

@@ -12,10 +12,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.syncproviders.OAuth2API
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.appString
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.maxStale
-import com.lagradost.cloudstream3.syncproviders.OAuth2API.Companion.unixTime
+import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -32,11 +29,13 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override val idPrefix = "anilist"
     override var mainUrl = "https://anilist.co"
     override val icon = R.drawable.ic_anilist_icon
+    override val requiresLogin = true
+    override val createAccountUrl = "$mainUrl/signup"
 
-    override fun loginInfo(): OAuth2API.LoginInfo? {
+    override fun loginInfo(): AuthAPI.LoginInfo? {
         // context.getUser(true)?.
         getKey<AniListUser>(accountId, ANILIST_USER_KEY)?.let { user ->
-            return OAuth2API.LoginInfo(
+            return AuthAPI.LoginInfo(
                 profilePicture = user.picture,
                 name = user.name,
                 accountIndex = accountIndex

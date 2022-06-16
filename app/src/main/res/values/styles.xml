@@ -61,6 +61,8 @@
         <item name="boxItemBackground">@color/boxItemBackground</item>
         <item name="iconColor">@color/iconColor</item>
         <item name="white">#FFF</item>
+
+        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
     </style>
 
     <style name="ListViewStyle" parent="Widget.AppCompat.ListView">
@@ -355,8 +357,9 @@
 
     <style name="AlertDialogCustomBlack" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowBackground">?attr/primaryBlackBackground</item>
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+
         <!-- No backgrounds, titles or window float -->
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
@@ -365,6 +368,10 @@
 
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:backgroundTint">?attr/primaryBlackBackground</item>
+    </style>
+
+    <style name="CustomPreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
+        <item name="android:layout">@layout/settings_title_top</item>
     </style>
 
     <style name="SettingsItem">

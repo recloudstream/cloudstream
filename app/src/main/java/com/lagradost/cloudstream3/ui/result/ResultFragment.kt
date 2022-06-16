@@ -24,12 +24,10 @@ import android.widget.*
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -41,7 +39,6 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -87,7 +84,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFileName
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import kotlinx.android.synthetic.main.fragment_result.*
@@ -185,7 +181,7 @@ fun ResultEpisode.getWatchProgress(): Float {
     return (getDisplayPosition() / 1000).toFloat() / (duration / 1000).toFloat()
 }
 
-class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegionsListener {
+class ResultFragment : ResultTrailerPlayer() {
     companion object {
         const val URL_BUNDLE = "url"
         const val API_NAME_BUNDLE = "apiName"
@@ -603,6 +599,59 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000f))
     }
 
+    var currentTrailers: List<String> = emptyList()
+    var currentTrailerIndex = 0
+
+    override fun nextMirror() {
+        currentTrailerIndex++
+        loadTrailer()
+    }
+
+    override fun playerError(exception: Exception) {
+        if (player.getIsPlaying()) // because we dont want random toasts in player
+            super.playerError(exception)
+    }
+
+    private fun loadTrailer(index: Int? = null) {
+        currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { trailer ->
+            //if(trailer.contains("youtube.com")) { // wont load in exo
+            //    nextMirror()
+            //    return
+            //}
+            context?.let { ctx ->
+                player.onPause()
+                player.loadPlayer(
+                    ctx,
+                    false,
+                    ExtractorLink(
+                        "",
+                        "Trailer",
+                        trailer,
+                        "",
+                        Qualities.Unknown.value
+                    ),
+                    null,
+                    startPosition = 0L,
+                    subtitles = emptySet(),
+                    subtitle = null,
+                    autoPlay = false
+                )
+            }
+        }
+    }
+
+    private fun setTrailers(trailers: List<String>?) {
+        context?.let { ctx ->
+            if (ctx.isTvSettings()) return
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+            val showTrailers =
+                settingsManager.getBoolean(ctx.getString(R.string.show_trailers_key), true)
+            if (!showTrailers) return
+            currentTrailers = trailers ?: emptyList()
+            loadTrailer()
+        }
+    }
+
     private fun setActors(actors: List<ActorData>?) {
         if (actors.isNullOrEmpty()) {
             result_cast_text?.isVisible = false
@@ -779,7 +828,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             } else if (dy < -5) {
                 result_bookmark_fab?.extend()
             }
-            result_poster_blur_holder?.translationY = -scrollY.toFloat()
+            //result_poster_blur_holder?.translationY = -scrollY.toFloat()
         })
 
         result_back.setOnClickListener {
@@ -1353,7 +1402,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             val newList = list.filter { it.isSynced && it.hasAccount }
 
             result_mini_sync?.isVisible = newList.isNotEmpty()
-            (result_mini_sync?.adapter as? ImageAdapter?)?.updateList(newList.map { it.icon })
+            (result_mini_sync?.adapter as? ImageAdapter?)?.updateList(newList.mapNotNull { it.icon })
         }
 
         observe(syncModel.syncIds) {
@@ -1508,7 +1557,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             when (startAction) {
                 START_ACTION_RESUME_LATEST -> {
                     for (ep in episodeList) {
-                        println("WATCH STATUS::: S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
+                        //println("WATCH STATUS::: S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
                         if (ep.getWatchProgress() > 0.90f) { // watched too much
                             continue
                         }
@@ -1528,7 +1577,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         var found = false
                         for (ep in episodeList) {
                             if (ep.id == startValue) { // watched too much
-                                println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
+                                //println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
                                 handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
                                 found = true
                                 break
@@ -1537,7 +1586,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         if (!found)
                             for (ep in episodeList) {
                                 if (ep.episode == resumeEpisode && ep.season == resumeSeason) {
-                                    println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
+                                    //println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
                                     handleAction(
                                         EpisodeClickEvent(
                                             ACTION_PLAY_EPISODE_IN_PLAYER,
@@ -1729,6 +1778,8 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     setRecommendations(d.recommendations, null)
                     setActors(d.actors)
 
+                    setTrailers(d.trailers)
+
                     if (syncModel.addSyncs(d.syncData)) {
                         syncModel.updateMetaAndUser()
                         syncModel.updateSynced()
@@ -1741,7 +1792,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     val posterImageLink = d.posterUrl
                     if (!posterImageLink.isNullOrEmpty()) {
                         result_poster?.setImage(posterImageLink, d.posterHeaders)
-                        result_poster_blur?.setImageBlur(posterImageLink, 10, 3, d.posterHeaders)
+                        //result_poster_blur?.setImageBlur(posterImageLink, 10, 3, d.posterHeaders)
                         //Full screen view of Poster image
                         if (context?.isTrueTvSettings() == false) // Poster not clickable on tv
                             result_poster_holder?.setOnClickListener {
@@ -1770,7 +1821,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
                     } else {
                         result_poster?.setImageResource(R.drawable.default_cover)
-                        result_poster_blur?.setImageResource(R.drawable.default_cover)
+                        //result_poster_blur?.setImageResource(R.drawable.default_cover)
                     }
 
                     result_poster_holder?.visibility = VISIBLE
@@ -1788,7 +1839,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                         }
                         result_description.setOnClickListener {
                             val builder: AlertDialog.Builder =
-                                AlertDialog.Builder(requireContext())
+                                AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
                             builder.setMessage(d.plot)
                                 .setTitle(if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
                                 .show()

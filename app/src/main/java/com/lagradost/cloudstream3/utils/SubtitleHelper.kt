@@ -45,7 +45,6 @@ object SubtitleHelper {
      * @param looseCheck will use .contains in addition to .equals
      * */
     fun fromLanguageToTwoLetters(input: String, looseCheck: Boolean): String? {
-
         languages.forEach {
             if (it.languageName.equals(input, ignoreCase = true)
                 || it.nativeName.equals(input, ignoreCase = true)

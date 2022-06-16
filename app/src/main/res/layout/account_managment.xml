@@ -16,13 +16,14 @@
             android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
+                android:id="@+id/account_main_profile_picture_holder"
                 app:cardCornerRadius="100dp"
                 android:layout_gravity="center_vertical"
                 android:layout_width="35dp"
                 android:layout_height="35dp">
 
             <ImageView
-                    android:id="@+id/account_profile_picture"
+                    android:id="@+id/account_main_profile_picture"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     tools:ignore="ContentDescription" />

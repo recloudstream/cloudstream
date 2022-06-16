@@ -28,8 +28,7 @@ class DoramasYTProvider : MainAPI() {
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
-        TvType.TvSeries,
-        TvType.Movie,
+        TvType.AsianDrama,
     )
 
     override suspend fun getMainPage(): HomePageResponse {

@@ -5,11 +5,10 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.httpsify
 import com.lagradost.cloudstream3.utils.loadExtractor
-import okhttp3.Interceptor
 import org.jsoup.Jsoup
 
 class HDMovie5 : MainAPI() {
-    override var mainUrl = "https://hdmovie5.tv"
+    override var mainUrl = "https://hdmovie5.mba"
     override var name = "HDMovie"
     override val lang = "hi"
 
@@ -34,6 +33,7 @@ class HDMovie5 : MainAPI() {
                     MovieSearchResponse(
                         a.text(),
                         a.attr("href"),
+
                         this.name,
                         TvType.Movie,
                         it.select("img").attr("src"),
@@ -137,7 +137,8 @@ class HDMovie5 : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         return data.split(",").apmapIndexed { index, it ->
-            val html = app.post(
+            //println("loadLinks:::: $index $it")
+            val p = app.post(
                 "$mainUrl/wp-admin/admin-ajax.php",
                 data = mapOf(
                     "action" to "doo_player_ajax",
@@ -145,10 +146,12 @@ class HDMovie5 : MainAPI() {
                     "nume" to "${index + 1}",
                     "type" to "movie"
                 )
-            ).parsed<PlayerAjaxResponse>().embedURL ?: return@apmapIndexed false
+            )
+           // println("TEXT::::: ${p.text}")
+            val html = p.parsedSafe<PlayerAjaxResponse>()?.embedURL ?: return@apmapIndexed false
             val doc = Jsoup.parse(html)
             val link = doc.select("iframe").attr("src")
-            loadExtractor(httpsify(link), "$mainUrl/",callback)
+            loadExtractor(httpsify(link), "$mainUrl/", callback)
         }.contains(true)
     }
 }

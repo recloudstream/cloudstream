@@ -3,7 +3,7 @@ package com.lagradost.cloudstream3.metaproviders
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
-import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi
@@ -15,7 +15,7 @@ class MultiAnimeProvider : MainAPI() {
     override val lang = "en"
     override val usesWebView = true
     override val supportedTypes = setOf(TvType.Anime)
-    private val syncApi: SyncAPI = OAuth2API.aniListApi
+    private val syncApi: SyncAPI = aniListApi
 
     private val syncUtilType by lazy {
         when (syncApi) {

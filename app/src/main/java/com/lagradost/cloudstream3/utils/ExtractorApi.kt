@@ -61,6 +61,7 @@ enum class Qualities(var value: Int) {
                 0 -> "Auto"
                 Unknown.value -> ""
                 P2160.value -> "4K"
+                null -> ""
                 else -> "${qual}p"
             }
         }
@@ -117,6 +118,9 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     VizcloudInfo(),
     MwvnVizcloudInfo(),
     VizcloudDigital(),
+    VizcloudCloud(),
+    VideoVard(),
+    VideovardSX(),
     Mp4Upload(),
     StreamTape(),
 
@@ -168,6 +172,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     DoodSoExtractor(),
     DoodLaExtractor(),
     DoodWsExtractor(),
+    DoodShExtractor(),
 
     AsianLoad(),
 
@@ -177,6 +182,11 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     ZplayerV2(),
     Upstream(),
 
+    Maxstream(),
+    Tantifilm(),
+    Userload(),
+    Supervideo(),
+    GuardareStream(),
 
     // StreamSB.kt works
     //  SBPlay(),
@@ -189,6 +199,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     GMPlayer(),
 
     Blogger(),
+    Solidfiles(),
 
     Hxfile(),
     KotakAnimeid(),

@@ -15,7 +15,7 @@ class RepoLinkGenerator(
 ) : IGenerator {
     companion object {
         const val TAG = "RepoLink"
-        val cache: HashMap<Int, Pair<MutableSet<ExtractorLink>, MutableSet<SubtitleData>>> = hashMapOf()
+        val cache: HashMap<Pair<String, Int>, Pair<MutableSet<ExtractorLink>, MutableSet<SubtitleData>>> = hashMapOf()
     }
 
     override val hasCache = true
@@ -71,7 +71,7 @@ class RepoLinkGenerator(
         val (currentLinkCache, currentSubsCache) = if (clearCache) {
             Pair(mutableSetOf(), mutableSetOf())
         } else {
-            cache[current.id] ?: Pair(mutableSetOf(), mutableSetOf())
+            cache[Pair(current.apiName, current.id)] ?: Pair(mutableSetOf(), mutableSetOf())
         }
 
         //val currentLinkCache = if (clearCache) mutableSetOf() else linkCache[index].toMutableSet()
@@ -137,7 +137,7 @@ class RepoLinkGenerator(
                 }
             }
         )
-        cache[current.id] = Pair(currentLinkCache, currentSubsCache)
+        cache[Pair(current.apiName, current.id)] = Pair(currentLinkCache, currentSubsCache)
 
         return result
     }
