@@ -1,11 +1,17 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.SparseArray
 import android.widget.FrameLayout
+import androidx.core.util.forEach
+import at.huber.youtubeExtractor.VideoMeta
+import at.huber.youtubeExtractor.YouTubeExtractor
+import at.huber.youtubeExtractor.YtFile
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
@@ -23,6 +29,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.MimeTypes
+import com.google.android.exoplayer2.video.VideoSize
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
@@ -31,6 +38,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorUri
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import java.io.File
 import javax.net.ssl.HttpsURLConnection
@@ -153,7 +161,8 @@ class CS3IPlayer : IPlayer {
         data: ExtractorUri?,
         startPosition: Long?,
         subtitles: Set<SubtitleData>,
-        subtitle: SubtitleData?
+        subtitle: SubtitleData?,
+        autoPlay: Boolean?
     ) {
         Log.i(TAG, "loadPlayer")
         if (sameEpisode) {
@@ -168,7 +177,7 @@ class CS3IPlayer : IPlayer {
         }
 
         // we want autoplay because of TV and UX
-        isPlaying = true
+        isPlaying = autoPlay ?: isPlaying
 
         // release the current exoplayer and cache
         releasePlayer()
@@ -322,6 +331,7 @@ class CS3IPlayer : IPlayer {
     }
 
     companion object {
+        private var ytVideos: MutableMap<String, YtFile> = mutableMapOf()
         private var simpleCache: SimpleCache? = null
 
         var requestSubtitleUpdate: (() -> Unit)? = null
@@ -686,6 +696,14 @@ class CS3IPlayer : IPlayer {
                         isPlaying = exo.isPlaying
                     }
 
+                    when (playbackState) {
+                        Player.STATE_READY -> {
+                            onRenderFirst()
+                        }
+                        else -> {}
+                    }
+
+
                     if (playWhenReady) {
                         when (playbackState) {
                             Player.STATE_READY -> {
@@ -715,50 +733,85 @@ class CS3IPlayer : IPlayer {
                 //    super.onCues(cues.map { cue -> cue.buildUpon().setText("Hello world").setSize(Cue.DIMEN_UNSET).build() })
                 //}
 
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    if (isPlaying) {
+                        onRenderFirst()
+                    }
+                }
+
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    super.onPlaybackStateChanged(playbackState)
+                    when (playbackState) {
+                        Player.STATE_READY -> {
+                            requestAutoFocus?.invoke()
+                        }
+                        Player.STATE_ENDED -> {
+                            handleEvent(CSPlayerEvent.NextEpisode)
+                        }
+                        Player.STATE_BUFFERING -> {
+                            updatedTime()
+                        }
+                        Player.STATE_IDLE -> {
+                            // IDLE
+                        }
+                        else -> Unit
+                    }
+                }
+
+                override fun onVideoSizeChanged(videoSize: VideoSize) {
+                    super.onVideoSizeChanged(videoSize)
+                    playerDimensionsLoaded?.invoke(Pair(videoSize.width, videoSize.height))
+                }
+
                 override fun onRenderedFirstFrame() {
                     updatedTime()
-
-                    if (!hasUsedFirstRender) { // this insures that we only call this once per player load
-                        Log.i(TAG, "Rendered first frame")
-
-                        val invalid = exoPlayer?.duration?.let { duration ->
-                            // Only errors short playback when not playing downloaded files
-                            duration < 20_000L && currentDownloadedFile == null
-                        } ?: false
-                        if (invalid) {
-                            releasePlayer(saveTime = false)
-                            playerError?.invoke(InvalidFileException("Too short playback"))
-                            return
-                        }
-
-                        setPreferredSubtitles(currentSubtitles)
-                        hasUsedFirstRender = true
-                        val format = exoPlayer?.videoFormat
-                        val width = format?.width
-                        val height = format?.height
-                        if (height != null && width != null) {
-                            playerDimensionsLoaded?.invoke(Pair(width, height))
-                            updatedTime()
-                            exoPlayer?.apply {
-                                requestedListeningPercentages?.forEach { percentage ->
-                                    createMessage { _, _ ->
-                                        updatedTime()
-                                    }
-                                        .setLooper(Looper.getMainLooper())
-                                        .setPosition( /* positionMs= */contentDuration * percentage / 100)
-                                        //   .setPayload(customPayloadData)
-                                        .setDeleteAfterDelivery(false)
-                                        .send()
-                                }
-                            }
-                        }
-                    }
                     super.onRenderedFirstFrame()
+                    onRenderFirst()
                 }
             })
         } catch (e: Exception) {
             Log.e(TAG, "loadExo error", e)
             playerError?.invoke(e)
+        }
+    }
+
+    fun onRenderFirst() {
+        if (!hasUsedFirstRender) { // this insures that we only call this once per player load
+            Log.i(TAG, "Rendered first frame")
+
+            val invalid = exoPlayer?.duration?.let { duration ->
+                // Only errors short playback when not playing downloaded files
+                duration < 20_000L && currentDownloadedFile == null
+            } ?: false
+
+            if (invalid) {
+                releasePlayer(saveTime = false)
+                playerError?.invoke(InvalidFileException("Too short playback"))
+                return
+            }
+
+            setPreferredSubtitles(currentSubtitles)
+            hasUsedFirstRender = true
+            val format = exoPlayer?.videoFormat
+            val width = format?.width
+            val height = format?.height
+            if (height != null && width != null) {
+                playerDimensionsLoaded?.invoke(Pair(width, height))
+                updatedTime()
+                exoPlayer?.apply {
+                    requestedListeningPercentages?.forEach { percentage ->
+                        createMessage { _, _ ->
+                            updatedTime()
+                        }
+                            .setLooper(Looper.getMainLooper())
+                            .setPosition( /* positionMs= */contentDuration * percentage / 100)
+                            //   .setPayload(customPayloadData)
+                            .setDeleteAfterDelivery(false)
+                            .send()
+                    }
+                }
+            }
         }
     }
 
@@ -829,9 +882,55 @@ class CS3IPlayer : IPlayer {
         return Pair(subSources, activeSubtitles)
     }
 
+
+    fun loadYtFile(context: Context, yt: YtFile) {
+        loadOnlinePlayer(
+            context,
+            ExtractorLink(
+                "YouTube",
+                "",
+                yt.url,
+                "",
+                yt.format?.height ?: Qualities.Unknown.value
+            )
+        )
+    }
+
     private fun loadOnlinePlayer(context: Context, link: ExtractorLink) {
-        Log.i(TAG, "loadOnlinePlayer")
+        Log.i(TAG, "loadOnlinePlayer $link")
         try {
+            if (link.url.contains("youtube.com")) {
+                val ytLink = link.url.replace("/embed/", "/watch?v=")
+                ytVideos[ytLink]?.let {
+                    loadYtFile(context, it)
+                    return
+                }
+                val ytExtractor =
+                    @SuppressLint("StaticFieldLeak")
+                    object : YouTubeExtractor(context) {
+                        override fun onExtractionComplete(
+                            ytFiles: SparseArray<YtFile>?,
+                            videoMeta: VideoMeta?
+                        ) {
+                            var yt: YtFile? = null
+                            ytFiles?.forEach { _, value ->
+                                if ((yt?.format?.height ?: 0) < (value.format?.height
+                                        ?: -1) && (value.format?.audioBitrate ?: -1) > 0
+                                ) {
+                                    yt = value
+                                }
+                            }
+                            yt?.let { ytf ->
+                                ytVideos[ytLink] = ytf
+                                loadYtFile(context, ytf)
+                            }
+                        }
+                    }
+                Log.i(TAG, "YouTube extraction on $ytLink")
+                ytExtractor.extract(ytLink)
+                return
+            }
+
             currentLink = link
 
             if (ignoreSSL) {

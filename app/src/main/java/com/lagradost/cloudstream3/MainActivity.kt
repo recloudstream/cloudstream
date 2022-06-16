@@ -356,6 +356,40 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     fun test() {
+        //val youtubeLink = "https://www.youtube.com/watch?v=TxB48MEAmZw"
+
+
+        /*
+        runBlocking {
+
+            val query = """
+            query { 
+                searchShows(search: "spider", limit: 10) {
+                    id
+                    name
+                    originalName
+                }
+            }
+            """
+            val data =
+                mapOf(
+                    "query" to query,
+                    //"variables" to
+                    //        mapOf(
+                    //            "name" to name,
+                     //       ).toJson()
+                )
+            val txt = app.post(
+                "http://api.anime-skip.com/graphql",
+                headers = mapOf(
+                    "X-Client-ID" to "",
+                    "Content-Type" to "application/json",
+                    "Accept" to "application/json",
+                ),
+                json = data
+            )
+            println("TEXT: $txt")
+        }*/
         /*runBlocking {
             //https://test.api.anime-skip.com/graphiql
             val txt = app.get(

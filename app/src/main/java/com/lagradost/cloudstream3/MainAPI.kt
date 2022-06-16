@@ -901,6 +901,17 @@ interface LoadResponse {
             }
         }
 
+        fun LoadResponse.addTrailer(trailerUrls: List<String>?) {
+            if(trailerUrls == null) return
+            if (this.trailers == null) {
+                this.trailers = trailerUrls
+            } else {
+                val update = this.trailers?.toMutableList()
+                update?.addAll(trailerUrls)
+                this.trailers = update
+            }
+        }
+
         fun LoadResponse.addImdbId(id: String?) {
             // TODO add imdb sync
         }

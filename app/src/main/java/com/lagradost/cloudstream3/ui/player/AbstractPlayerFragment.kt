@@ -68,6 +68,8 @@ abstract class AbstractPlayerFragment(
     var subStyle: SaveCaptionStyle? = null
     var subView: SubtitleView? = null
     var isBuffering = true
+    protected open var hasPipModeSupport = true
+
 
     @LayoutRes
     protected var layout: Int = R.layout.fragment_player
@@ -154,7 +156,7 @@ abstract class AbstractPlayerFragment(
             }
         }
 
-        canEnterPipMode = isPlayingRightNow
+        canEnterPipMode = isPlayingRightNow && hasPipModeSupport
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isInPIPMode) {
             activity?.let { act ->
                 PlayerPipHelper.updatePIPModeActions(act, isPlayingRightNow)
@@ -213,7 +215,13 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    private fun playerError(exception: Exception) {
+    private fun requestAudioFocus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            activity?.requestLocalAudioFocus(AppUtils.getFocusRequest())
+        }
+    }
+
+    open fun playerError(exception: Exception) {
         val ctx = context ?: return
         when (exception) {
             is PlaybackException -> {
@@ -264,12 +272,6 @@ abstract class AbstractPlayerFragment(
             else -> {
                 showToast(activity, exception.message, Toast.LENGTH_SHORT)
             }
-        }
-    }
-
-    private fun requestAudioFocus() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            activity?.requestLocalAudioFocus(AppUtils.getFocusRequest())
         }
     }
 

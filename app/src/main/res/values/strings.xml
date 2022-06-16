@@ -530,4 +530,5 @@
     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
     <string name="subtitles_remove_bloat">Remove bloat from subtitles</string>
     <string name="extras">Extras</string>
+    <string name="trailer">Trailer</string>
 </resources>

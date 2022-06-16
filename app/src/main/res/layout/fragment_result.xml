@@ -117,38 +117,13 @@
                 android:textColor="?attr/textColor" />
     </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
             android:id="@+id/result_finish_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            tools:visibility="visible">
-
-        <FrameLayout
-                android:id="@+id/result_poster_blur_holder"
-
-                android:layout_width="match_parent"
-                android:layout_height="230dp"
-                android:visibility="visible">
-
-            <ImageView
-                    android:id="@+id/result_poster_blur"
-
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:alpha="0"
-                    android:background="?attr/primaryGrayBackground"
-                    android:scaleType="centerCrop"
-                    tools:ignore="ContentDescription"
-                    tools:src="@drawable/example_poster" />
-
-            <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:layout_gravity="bottom"
-                    android:src="@drawable/background_shadow"
-                    tools:ignore="ContentDescription" />
-        </FrameLayout>
+            tools:visibility="visible"
+            android:orientation="vertical">
 
         <androidx.core.widget.NestedScrollView
                 android:id="@+id/result_scroll"
@@ -162,6 +137,8 @@
                     android:layout_height="match_parent"
                     android:background="?attr/primaryBlackBackground"
                     android:orientation="vertical">
+
+                <include layout="@layout/fragment_trailer" />
 
                 <!--
                 <FrameLayout
@@ -398,6 +375,7 @@
                             app:icon="@drawable/ic_baseline_bookmark_24"
                             tools:text="Bookmark"
                             tools:visibility="visible" />
+
 
                     <TextView
                             android:id="@+id/result_cast_text"
@@ -855,7 +833,7 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-    </FrameLayout>
+    </LinearLayout>
 
 
     <!--

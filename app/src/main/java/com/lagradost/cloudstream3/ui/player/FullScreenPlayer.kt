@@ -51,6 +51,21 @@ import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.Vector2
 import kotlinx.android.synthetic.main.player_custom_layout.*
+import kotlinx.android.synthetic.main.player_custom_layout.bottom_player_bar
+import kotlinx.android.synthetic.main.player_custom_layout.exo_ffwd
+import kotlinx.android.synthetic.main.player_custom_layout.exo_ffwd_text
+import kotlinx.android.synthetic.main.player_custom_layout.exo_progress
+import kotlinx.android.synthetic.main.player_custom_layout.exo_rew
+import kotlinx.android.synthetic.main.player_custom_layout.exo_rew_text
+import kotlinx.android.synthetic.main.player_custom_layout.player_center_menu
+import kotlinx.android.synthetic.main.player_custom_layout.player_ffwd_holder
+import kotlinx.android.synthetic.main.player_custom_layout.player_holder
+import kotlinx.android.synthetic.main.player_custom_layout.player_pause_play
+import kotlinx.android.synthetic.main.player_custom_layout.player_pause_play_holder
+import kotlinx.android.synthetic.main.player_custom_layout.player_rew_holder
+import kotlinx.android.synthetic.main.player_custom_layout.player_video_bar
+import kotlinx.android.synthetic.main.player_custom_layout.shadow_overlay
+import kotlinx.android.synthetic.main.trailer_custom_layout.*
 import kotlin.math.*
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
@@ -64,6 +79,9 @@ const val DOUBLE_TAB_PAUSE_PERCENTAGE = 0.15        // in both directions
 
 // All the UI Logic for the player
 open class FullScreenPlayer : AbstractPlayerFragment() {
+    protected open var lockRotation = true
+    protected open var isFullScreenPlayer = true
+
     // state of player UI
     protected var isShowing = false
     protected var isLocked = false
@@ -100,11 +118,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     // screenWidth and screenHeight does always
     // refer to the screen while in landscape mode
-    private val screenWidth: Int
+    protected val screenWidth: Int
         get() {
             return max(displayMetrics.widthPixels, displayMetrics.heightPixels)
         }
-    private val screenHeight: Int
+    protected val screenHeight: Int
         get() {
             return min(displayMetrics.widthPixels, displayMetrics.heightPixels)
         }
@@ -159,7 +177,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         animateLayoutChanges()
     }
 
-    private fun animateLayoutChanges() {
+    protected fun animateLayoutChanges() {
         if (isShowing) {
             updateUIVisibility()
         } else {
@@ -234,20 +252,25 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     override fun onResume() {
-        activity?.hideSystemUI()
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fullscreenNotch) {
-            val params = activity?.window?.attributes
-            params?.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            activity?.window?.attributes = params
+        if (isFullScreenPlayer) {
+            activity?.hideSystemUI()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fullscreenNotch) {
+                val params = activity?.window?.attributes
+                params?.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                activity?.window?.attributes = params
+            }
         }
+        if (lockRotation)
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+
 
         super.onResume()
     }
 
     override fun onDestroy() {
         activity?.showSystemUI()
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+        if (lockRotation)
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
         // simply resets brightness and notch settings that might have been overridden
         val lp = activity?.window?.attributes
@@ -336,7 +359,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
 
             dialog.setOnDismissListener {
-                activity?.hideSystemUI()
+                if (isFullScreenPlayer)
+                    activity?.hideSystemUI()
             }
             applyButton.setOnClickListener {
                 dialog.dismissSafe(activity)
@@ -374,9 +398,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 act.getString(R.string.player_speed),
                 false,
                 {
-                    activity?.hideSystemUI()
+                    if (isFullScreenPlayer)
+                        activity?.hideSystemUI()
                 }) { index ->
-                activity?.hideSystemUI()
+                if (isFullScreenPlayer)
+                    activity?.hideSystemUI()
                 setPlayBackSpeed(speedsNumbers[index])
             }
         }
@@ -455,9 +481,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private fun onClickChange() {
         isShowing = !isShowing
         if (isShowing) {
+            player_intro_play?.isGone = true
             autoHide()
         }
-        activity?.hideSystemUI()
+        if (isFullScreenPlayer)
+            activity?.hideSystemUI()
         animateLayoutChanges()
         player_pause_play?.requestFocus()
     }
@@ -692,7 +720,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         if (event == null || view == null) return false
         val currentTouch = Vector2(event.x, event.y)
         val startTouch = currentTouchStart
-
+        player_intro_play?.isGone = true
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 // validates if the touch is inside of the player area
@@ -717,7 +745,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
             }
             MotionEvent.ACTION_UP -> {
-                if (isCurrentTouchValid && !isLocked) {
+                if (isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
                     // seek time
                     if (swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
                         val startTime = currentTouchStartPlayerTime
@@ -749,18 +777,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             if (doubleTapPauseEnabled) { // you can pause if your tap is in the middle of the screen
                                 when {
                                     currentTouch.x < screenWidth / 2 - (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
-                                        if (doubleTapEnabled)
+                                        if (doubleTapEnabled && isFullScreenPlayer)
                                             rewind()
                                     }
                                     currentTouch.x > screenWidth / 2 + (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
-                                        if (doubleTapEnabled)
+                                        if (doubleTapEnabled && isFullScreenPlayer)
                                             fastForward()
                                     }
                                     else -> {
                                         player.handleEvent(CSPlayerEvent.PlayPauseToggle)
                                     }
                                 }
-                            } else if (doubleTapEnabled) {
+                            } else if (doubleTapEnabled && isFullScreenPlayer) {
                                 if (currentTouch.x < screenWidth / 2) {
                                     rewind()
                                 } else {
@@ -798,7 +826,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
             MotionEvent.ACTION_MOVE -> {
                 // if current touch is valid
-                if (startTouch != null && isCurrentTouchValid && !isLocked) {
+                if (startTouch != null && isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
                     // action is unassigned and can therefore be assigned
                     if (currentTouchAction == null) {
                         val diffFromStart = startTouch - currentTouch
@@ -1199,6 +1227,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         player_sources_btt?.setOnClickListener {
             showMirrorsDialogue()
+        }
+
+        player_intro_play?.setOnClickListener {
+            player_intro_play?.isGone = true
+            player.handleEvent(CSPlayerEvent.Play)
         }
 
         // it is !not! a bug that you cant touch the right side, it does not register inputs on navbar or status bar

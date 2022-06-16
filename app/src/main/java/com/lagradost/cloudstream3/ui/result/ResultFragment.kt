@@ -28,7 +28,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -85,7 +84,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFileName
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import kotlinx.android.synthetic.main.fragment_result.*
@@ -183,7 +181,7 @@ fun ResultEpisode.getWatchProgress(): Float {
     return (getDisplayPosition() / 1000).toFloat() / (duration / 1000).toFloat()
 }
 
-class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegionsListener {
+class ResultFragment : ResultTrailerPlayer() {
     companion object {
         const val URL_BUNDLE = "url"
         const val API_NAME_BUNDLE = "apiName"
@@ -601,6 +599,53 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
         setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000f))
     }
 
+    var currentTrailers: List<String> = emptyList()
+    var currentTrailerIndex = 0
+
+    override fun nextMirror() {
+        currentTrailerIndex++
+        loadTrailer()
+    }
+
+    override fun playerError(exception: Exception) {
+        if (player.getIsPlaying()) // because we dont want random toasts in player
+            super.playerError(exception)
+    }
+
+    private fun loadTrailer(index: Int? = null) {
+        currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { trailer ->
+            //if(trailer.contains("youtube.com")) { // wont load in exo
+            //    nextMirror()
+            //    return
+            //}
+            context?.let { ctx ->
+                player.onPause()
+                player.loadPlayer(
+                    ctx,
+                    false,
+                    ExtractorLink(
+                        "",
+                        "Trailer",
+                        trailer,
+                        "",
+                        Qualities.Unknown.value
+                    ),
+                    null,
+                    startPosition = 0L,
+                    subtitles = emptySet(),
+                    subtitle = null,
+                    autoPlay = false
+                )
+            }
+        }
+    }
+
+    private fun setTrailers(trailers: List<String>?) {
+        if(context?.isTvSettings() == true) return
+        currentTrailers = trailers ?: emptyList()
+        loadTrailer()
+    }
+
     private fun setActors(actors: List<ActorData>?) {
         if (actors.isNullOrEmpty()) {
             result_cast_text?.isVisible = false
@@ -777,7 +822,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
             } else if (dy < -5) {
                 result_bookmark_fab?.extend()
             }
-            result_poster_blur_holder?.translationY = -scrollY.toFloat()
+            //result_poster_blur_holder?.translationY = -scrollY.toFloat()
         })
 
         result_back.setOnClickListener {
@@ -1727,6 +1772,8 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     setRecommendations(d.recommendations, null)
                     setActors(d.actors)
 
+                    setTrailers(d.trailers)
+
                     if (syncModel.addSyncs(d.syncData)) {
                         syncModel.updateMetaAndUser()
                         syncModel.updateSynced()
@@ -1739,7 +1786,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
                     val posterImageLink = d.posterUrl
                     if (!posterImageLink.isNullOrEmpty()) {
                         result_poster?.setImage(posterImageLink, d.posterHeaders)
-                        result_poster_blur?.setImageBlur(posterImageLink, 10, 3, d.posterHeaders)
+                        //result_poster_blur?.setImageBlur(posterImageLink, 10, 3, d.posterHeaders)
                         //Full screen view of Poster image
                         if (context?.isTrueTvSettings() == false) // Poster not clickable on tv
                             result_poster_holder?.setOnClickListener {
@@ -1768,7 +1815,7 @@ class ResultFragment : Fragment(), PanelsChildGestureRegionObserver.GestureRegio
 
                     } else {
                         result_poster?.setImageResource(R.drawable.default_cover)
-                        result_poster_blur?.setImageResource(R.drawable.default_cover)
+                        //result_poster_blur?.setImageResource(R.drawable.default_cover)
                     }
 
                     result_poster_holder?.visibility = VISIBLE

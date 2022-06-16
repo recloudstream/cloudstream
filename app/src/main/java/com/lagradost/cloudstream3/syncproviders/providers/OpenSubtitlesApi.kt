@@ -93,7 +93,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubProv
     }
 
     private suspend fun initLogin(username: String, password: String): Boolean {
-        Log.i(TAG, "DATA = [$username] [$password]")
+        //Log.i(TAG, "DATA = [$username] [$password]")
         val response = app.post(
             url = "$host/login",
             headers = mapOf(
@@ -105,8 +105,8 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubProv
                 "password" to password
             )
         )
-        Log.i(TAG, "Responsecode = ${response.code}")
-        Log.i(TAG, "Result => ${response.text}")
+        //Log.i(TAG, "Responsecode = ${response.code}")
+        //Log.i(TAG, "Result => ${response.text}")
 
         if (response.isSuccessful) {
             AppUtils.tryParseJson<OAuthToken>(response.text)?.let { token ->

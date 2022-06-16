@@ -98,6 +98,7 @@ interface IPlayer {
         startPosition: Long? = null,
         subtitles : Set<SubtitleData>,
         subtitle : SubtitleData?,
+        autoPlay : Boolean? = true
     )
 
     fun reloadPlayer(context: Context)

@@ -174,4 +174,7 @@ dependencies {
 
     // used for subtitle decoding https://github.com/albfernandez/juniversalchardet
     implementation 'com.github.albfernandez:juniversalchardet:2.4.0'
+
+    // play yt
+    implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
 }
