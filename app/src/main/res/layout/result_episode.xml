@@ -113,17 +113,13 @@
         <ImageView
                 android:nextFocusLeft="@id/episode_holder"
                 android:nextFocusRight="@id/episode_holder"
-
                 app:tint="?attr/white"
-
                 android:id="@+id/result_episode_download"
                 android:visibility="visible"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:padding="2dp"
-                android:layout_width="30dp"
+                android:padding="10dp"
+                android:layout_width="50dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_baseline_play_arrow_24"
                 android:contentDescription="@string/download" />
