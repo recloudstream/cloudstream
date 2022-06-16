@@ -41,6 +41,18 @@
         "status": 1,
         "url": "https://www.animeworld.tv"
     },
+    "AnimefenixProvider": {
+        "language": "es",
+        "name": "Animefenix",
+        "status": 1,
+        "url": "https://animefenix.com"
+    },
+    "AnimeflvIOProvider": {
+        "language": "es",
+        "name": "Animeflv.io",
+        "status": 1,
+        "url": "https://animeflv.io"
+    },
     "AnimeflvnetProvider": {
         "language": "es",
         "name": "Animeflv.net",
@@ -137,6 +149,12 @@
         "status": 1,
         "url": "https://www.egy.best"
     },
+    "ElifilmsProvider": {
+        "language": "es",
+        "name": "Elifilms",
+        "status": 1,
+        "url": "https://elifilms.net"
+    },
     "EntrePeliculasySeriesProvider": {
         "name": "EntrePeliculasySeries",
         "status": 1,
@@ -147,6 +165,12 @@
         "name": "EntrePeliculasySeries",
         "status": 1,
         "url": "https://entrepeliculasyseries.nu"
+    },
+    "EstrenosDoramasProvider": {
+        "language": "es",
+        "name": "EstrenosDoramas",
+        "status": 1,
+        "url": "https://www23.estrenosdoramas.net"
     },
     "FaselHDProvider": {
         "language": "ar",
@@ -202,6 +226,12 @@
         "status": 1,
         "url": "https://ihavenotv.com"
     },
+    "JKAnimeProvider": {
+        "language": "es",
+        "name": "JKAnime",
+        "status": 1,
+        "url": "https://jkanime.net"
+    },
     "KawaiifuProvider": {
         "language": "en",
         "name": "Kawaiifu",
@@ -253,6 +283,12 @@
         "name": "Monoschinos",
         "status": 1,
         "url": "https://monoschinos2.com"
+    },
+    "MundoDonghuaProvider": {
+        "language": "es",
+        "name": "MundoDonghua",
+        "status": 1,
+        "url": "https://www.mundodonghua.com"
     },
     "MyCimaProvider": {
         "language": "ar",
