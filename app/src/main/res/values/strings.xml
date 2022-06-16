@@ -50,6 +50,7 @@
     <string name="bottom_title_key" translatable="false">bottom_title_key</string>
     <string name="poster_ui_key" translatable="false">poster_ui_key</string>
     <string name="subtitles_encoding_key" translatable="false">subtitles_encoding_key</string>
+    <string name="override_site_key" translatable="false">override_site_key</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
@@ -382,6 +383,10 @@
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
 
+    <string name="add_site_pref">Add site</string>
+    <string name="remove_site_pref">Remove site</string>
+    <string name="add_site_summary">Add a clone of an existing site, with a different url</string>
+
     <string name="download_path_pref">Download path</string>
 
     <string name="nginx_url_pref">Nginx server url</string>
@@ -440,6 +445,9 @@
     <string name="example_username">MyCoolUsername</string>
     <string name="example_email">hello@world.com</string>
     <string name="example_ip">127.0.0.1</string>
+    <string name="example_site_name">MyCoolSite</string>
+    <string name="example_site_url">example.com</string>
+    <string name="example_lang_name">Language code (en)</string>
 
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
@@ -529,6 +537,8 @@
     <string name="title">Title</string>
     <string name="resolution">Resolution</string>
     <string name="error_invalid_id">Invalid id</string>
+    <string name="error_invalid_data">Invalid data</string>
+    <string name="error">Error</string>
     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
     <string name="subtitles_remove_bloat">Remove bloat from subtitles</string>
     <string name="extras">Extras</string>

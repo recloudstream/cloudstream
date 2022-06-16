@@ -24,7 +24,7 @@ class MonoschinosProvider : MainAPI() {
 
     override var mainUrl = "https://monoschinos2.com"
     override var name = "Monoschinos"
-    override val lang = "es"
+    override var lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true

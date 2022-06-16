@@ -15,7 +15,7 @@ class RebahinProvider : MainAPI() {
     override var mainUrl = "http://167.88.14.149"
     override var name = "Rebahin"
     override val hasMainPage = true
-    override val lang = "id"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Movie,

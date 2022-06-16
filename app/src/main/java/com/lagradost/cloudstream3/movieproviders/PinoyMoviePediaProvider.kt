@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 class PinoyMoviePediaProvider : MainAPI() {
     override var name = "Pinoy Moviepedia"
     override var mainUrl = "https://pinoymoviepedia.ru"
-    override val lang = "tl"
+    override var lang = "tl"
     override val supportedTypes = setOf(TvType.AsianDrama)
     override val hasDownloadSupport = true
     override val hasMainPage = true

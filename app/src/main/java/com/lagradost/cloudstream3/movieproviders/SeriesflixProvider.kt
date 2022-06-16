@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 class SeriesflixProvider : MainAPI() {
     override var mainUrl = "https://seriesflix.video"
     override var name = "Seriesflix"
-    override val lang = "es"
+    override var lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true

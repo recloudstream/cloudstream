@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.nodes.Element
 
 class AkwamProvider : MainAPI() {
-    override val lang = "ar"
+    override var lang = "ar"
     override var mainUrl = "https://akwam.to"
     override var name = "Akwam"
     override val usesWebView = false

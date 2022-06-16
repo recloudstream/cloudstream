@@ -15,7 +15,7 @@ class DramaidProvider : MainAPI() {
     override var name = "DramaId"
     override val hasQuickSearch = false
     override val hasMainPage = true
-    override val lang = "id"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val hasChromecastSupport = false
     override val supportedTypes = setOf(TvType.AsianDrama)

@@ -155,11 +155,11 @@
         <service
                 android:name=".services.VideoDownloadService"
                 android:enabled="true"
-                android:exported="false"></service>
+                android:exported="false" />
 
         <activity
                 android:exported="false"
-                android:name=".ui.ControllerActivity"></activity>
+                android:name=".ui.ControllerActivity" />
 
         <provider
                 android:name="androidx.core.content.FileProvider"

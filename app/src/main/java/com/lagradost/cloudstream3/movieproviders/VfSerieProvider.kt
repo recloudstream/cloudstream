@@ -9,7 +9,7 @@ import org.jsoup.Jsoup
 class VfSerieProvider : MainAPI() {
     override var mainUrl = "https://vf-serie.org"
     override var name = "vf-serie.org"
-    override val lang = "fr"
+    override var lang = "fr"
 
     override val hasQuickSearch = false
     override val hasMainPage = false

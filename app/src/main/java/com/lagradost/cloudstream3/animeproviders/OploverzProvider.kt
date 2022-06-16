@@ -13,7 +13,7 @@ class OploverzProvider : MainAPI() {
     override var name = "Oploverz"
     override val hasQuickSearch = false
     override val hasMainPage = true
-    override val lang = "id"
+    override var lang = "id"
     override val hasDownloadSupport = true
 
     override val supportedTypes = setOf(

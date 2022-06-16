@@ -47,6 +47,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
@@ -68,6 +69,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.nicehttp.Requests
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
@@ -513,6 +515,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } else {
             initAll()
             apis = allProviders
+        }
+
+        try {
+            getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                list.forEach { custom ->
+                    allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                        ?.let {
+                            allProviders.add(it.javaClass.newInstance().apply {
+                                name = custom.name
+                                lang = custom.lang
+                                mainUrl = custom.url.trimEnd('/')
+                                canBeOverridden = false
+                            })
+                        }
+                }
+            }
+            apis = allProviders
+            APIHolder.apiMap = null
+        } catch (e: Exception) {
+            logError(e)
         }
 
         loadThemes(this)

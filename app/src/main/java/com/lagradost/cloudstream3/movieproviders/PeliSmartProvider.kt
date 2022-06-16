@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 class PeliSmartProvider: MainAPI() {
     override var mainUrl = "https://pelismart.com"
     override var name = "PeliSmart"
-    override val lang = "es"
+    override var lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true

@@ -39,7 +39,7 @@ object APIHolder {
 
     private const val defProvider = 0
 
-    val allProviders by lazy {
+    val allProviders =
         arrayListOf(
             // Movie providers
             ElifilmsProvider(),
@@ -132,7 +132,7 @@ object APIHolder {
             NginxProvider(),
             OlgplyProvider(),
         )
-    }
+
 
     fun initAll() {
         for (api in allProviders) {
@@ -142,7 +142,7 @@ object APIHolder {
     }
 
     var apis: List<MainAPI> = arrayListOf()
-    private var apiMap: Map<String, Int>? = null
+    var apiMap: Map<String, Int>? = null
 
     private fun initMap() {
         if (apiMap == null)
@@ -357,6 +357,7 @@ abstract class MainAPI {
     }
 
     fun overrideWithNewData(data: ProvidersInfoJson) {
+        if (!canBeOverridden) return
         this.name = data.name
         if (data.url.isNotBlank() && data.url != "NONE")
             this.mainUrl = data.url
@@ -366,10 +367,11 @@ abstract class MainAPI {
     open var name = "NONE"
     open var mainUrl = "NONE"
     open var storedCredentials: String? = null
+    open var canBeOverridden: Boolean = true
 
     //open val uniqueId : Int by lazy { this.name.hashCode() } // in case of duplicate providers you can have a shared id
 
-    open val lang = "en" // ISO_639_1 check SubtitleHelper
+    open var lang = "en" // ISO_639_1 check SubtitleHelper
 
     /**If link is stored in the "data" string, so links can be instantly loaded*/
     open val instantLinkLoading = false
@@ -908,7 +910,7 @@ interface LoadResponse {
         }
 
         fun LoadResponse.addTrailer(trailerUrls: List<String>?) {
-            if(trailerUrls == null) return
+            if (trailerUrls == null) return
             if (this.trailers == null) {
                 this.trailers = trailerUrls
             } else {

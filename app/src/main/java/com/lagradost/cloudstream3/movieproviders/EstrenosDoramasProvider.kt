@@ -20,7 +20,7 @@ class EstrenosDoramasProvider : MainAPI() {
 
     override var mainUrl = "https://www23.estrenosdoramas.net"
     override var name = "EstrenosDoramas"
-    override val lang = "es"
+    override var lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true

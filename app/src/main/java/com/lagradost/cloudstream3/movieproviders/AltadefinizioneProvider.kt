@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
 class AltadefinizioneProvider : MainAPI() {
-    override val lang = "it"
+    override var lang = "it"
     override var mainUrl = "https://altadefinizione.hair"
     override var name = "Altadefinizione"
     override val hasMainPage = true

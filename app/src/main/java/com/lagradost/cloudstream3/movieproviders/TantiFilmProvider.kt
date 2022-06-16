@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
 class TantifilmProvider : MainAPI() {
-    override val lang = "it"
+    override var lang = "it"
     override var mainUrl = "https://www.tantifilm.rodeo"
     override var name = "Tantifilm"
     override val hasMainPage = true

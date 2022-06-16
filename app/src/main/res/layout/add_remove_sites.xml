@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <TextView
+            android:id="@+id/add_site"
+            android:text="@string/add_site_pref"
+            style="@style/SettingsItem">
+
+        <requestFocus />
+    </TextView>
+
+    <TextView
+            android:id="@+id/remove_site"
+            android:text="@string/remove_site_pref"
+            style="@style/SettingsItem" />
+</LinearLayout>
