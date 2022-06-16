@@ -138,6 +138,34 @@
                     android:background="?attr/primaryBlackBackground"
                     android:orientation="vertical">
 
+                <com.facebook.shimmer.ShimmerFrameLayout
+                        android:visibility="gone"
+                        android:id="@+id/result_trailer_loading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical"
+                        app:shimmer_auto_start="true"
+                        app:shimmer_base_alpha="0.2"
+                        app:shimmer_duration="@integer/loading_time"
+                        app:shimmer_highlight_alpha="0.3"
+                        tools:visibility="visible">
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/result_padding"
+                            android:orientation="vertical">
+
+                        <androidx.cardview.widget.CardView
+                                android:background="@color/grayShimmer"
+                                app:cardCornerRadius="@dimen/loading_radius"
+                                android:layout_width="match_parent"
+                                android:layout_height="150dp"
+                                android:foreground="@drawable/outline_drawable" />
+                    </LinearLayout>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
                 <FrameLayout
                         android:id="@+id/result_smallscreen_holder"
                         android:layout_width="wrap_content"

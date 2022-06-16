@@ -31,6 +31,7 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.video.VideoSize
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
@@ -923,6 +924,8 @@ class CS3IPlayer : IPlayer {
                             yt?.let { ytf ->
                                 ytVideos[ytLink] = ytf
                                 loadYtFile(context, ytf)
+                            } ?: run {
+                                playerError?.invoke(ErrorLoadingException("No Link"))
                             }
                         }
                     }
