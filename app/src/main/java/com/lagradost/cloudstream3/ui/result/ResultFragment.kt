@@ -641,9 +641,15 @@ class ResultFragment : ResultTrailerPlayer() {
     }
 
     private fun setTrailers(trailers: List<String>?) {
-        if(context?.isTvSettings() == true) return
-        currentTrailers = trailers ?: emptyList()
-        loadTrailer()
+        context?.let { ctx ->
+            if (ctx.isTvSettings()) return
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+            val showTrailers =
+                settingsManager.getBoolean(ctx.getString(R.string.show_trailers_key), true)
+            if (!showTrailers) return
+            currentTrailers = trailers ?: emptyList()
+            loadTrailer()
+        }
     }
 
     private fun setActors(actors: List<ActorData>?) {

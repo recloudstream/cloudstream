@@ -138,7 +138,13 @@
                     android:background="?attr/primaryBlackBackground"
                     android:orientation="vertical">
 
-                <include layout="@layout/fragment_trailer" />
+                <FrameLayout
+                        android:id="@+id/result_smallscreen_holder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                    <include layout="@layout/fragment_trailer" />
+                </FrameLayout>
 
                 <!--
                 <FrameLayout

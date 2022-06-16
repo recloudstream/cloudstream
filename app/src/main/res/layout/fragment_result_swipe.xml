@@ -144,6 +144,15 @@
     </FrameLayout>
 
     <FrameLayout
+            android:visibility="gone"
+            android:id="@+id/result_fullscreen_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    </FrameLayout>
+
+    <FrameLayout
+            android:id="@+id/result_main_holder"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 

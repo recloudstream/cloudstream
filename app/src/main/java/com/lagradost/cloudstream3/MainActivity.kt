@@ -28,7 +28,6 @@ import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.initAll
-import com.lagradost.cloudstream3.CommonActivity.backEvent
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -60,6 +59,7 @@ import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
+import com.lagradost.cloudstream3.utils.IOnBackPressed
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
@@ -235,13 +235,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         onUserLeaveHint(this)
     }
 
-    override fun onBackPressed() {
+    private fun backPressed() {
         this.window?.navigationBarColor =
             this.colorFromAttribute(R.attr.primaryGrayBackground)
         this.updateLocale()
-        backEvent.invoke(true)
         super.onBackPressed()
         this.updateLocale()
+    }
+
+    override fun onBackPressed() {
+        ((supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?)?.childFragmentManager?.primaryNavigationFragment as? IOnBackPressed)?.onBackPressed()
+            ?.let { runNormal ->
+                if (runNormal) backPressed()
+            } ?: run {
+            backPressed()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -363,7 +371,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         runBlocking {
 
             val query = """
-            query { 
+            query {
                 searchShows(search: "spider", limit: 10) {
                     id
                     name

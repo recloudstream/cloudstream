@@ -33,7 +33,6 @@ object CommonActivity {
     var canShowPipMode: Boolean = false
     var isInPIPMode: Boolean = false
 
-    val backEvent = Event<Boolean>()
     val onColorSelectedEvent = Event<Pair<Int, Int>>()
     val onDialogDismissedEvent = Event<Int>()
 

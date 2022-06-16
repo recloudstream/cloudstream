@@ -62,7 +62,14 @@ import kotlinx.android.synthetic.main.player_custom_layout.player_ffwd_holder
 import kotlinx.android.synthetic.main.player_custom_layout.player_holder
 import kotlinx.android.synthetic.main.player_custom_layout.player_pause_play
 import kotlinx.android.synthetic.main.player_custom_layout.player_pause_play_holder
+import kotlinx.android.synthetic.main.player_custom_layout.player_progressbar_left
+import kotlinx.android.synthetic.main.player_custom_layout.player_progressbar_left_holder
+import kotlinx.android.synthetic.main.player_custom_layout.player_progressbar_left_icon
+import kotlinx.android.synthetic.main.player_custom_layout.player_progressbar_right
+import kotlinx.android.synthetic.main.player_custom_layout.player_progressbar_right_holder
+import kotlinx.android.synthetic.main.player_custom_layout.player_progressbar_right_icon
 import kotlinx.android.synthetic.main.player_custom_layout.player_rew_holder
+import kotlinx.android.synthetic.main.player_custom_layout.player_time_text
 import kotlinx.android.synthetic.main.player_custom_layout.player_video_bar
 import kotlinx.android.synthetic.main.player_custom_layout.shadow_overlay
 import kotlinx.android.synthetic.main.trailer_custom_layout.*
@@ -226,7 +233,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             player_ffwd_holder?.alpha = 1f
             player_rew_holder?.alpha = 1f
             // player_pause_play_holder?.alpha = 1f
-
+            shadow_overlay?.isVisible = true
             shadow_overlay?.startAnimation(fadeAnimation)
             player_ffwd_holder?.startAnimation(fadeAnimation)
             player_rew_holder?.startAnimation(fadeAnimation)
@@ -251,7 +258,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_subtitle_offset_btt?.isGone = player.getCurrentPreferredSubtitle() == null
     }
 
-    override fun onResume() {
+    protected fun enterFullscreen() {
         if (isFullScreenPlayer) {
             activity?.hideSystemUI()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fullscreenNotch) {
@@ -262,15 +269,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         if (lockRotation)
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-
-
-        super.onResume()
     }
 
-    override fun onDestroy() {
+    protected fun exitFullscreen() {
         activity?.showSystemUI()
-        if (lockRotation)
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+        //if (lockRotation)
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
         // simply resets brightness and notch settings that might have been overridden
         val lp = activity?.window?.attributes
@@ -280,6 +284,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
         }
         activity?.window?.attributes = lp
+    }
+
+    override fun onResume() {
+        enterFullscreen()
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        exitFullscreen()
         super.onDestroy()
     }
 
@@ -529,6 +542,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_lock_holder?.startAnimation(fadeAnimation)
         //player_go_back_holder?.startAnimation(fadeAnimation)
 
+        shadow_overlay?.isVisible = true
         shadow_overlay?.startAnimation(fadeAnimation)
 
         updateLockUI()
@@ -774,14 +788,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                         if (currentClickCount >= 1) { // have double clicked
                             currentDoubleTapIndex++
-                            if (doubleTapPauseEnabled) { // you can pause if your tap is in the middle of the screen
+                            if (doubleTapPauseEnabled && isFullScreenPlayer) { // you can pause if your tap is in the middle of the screen
                                 when {
                                     currentTouch.x < screenWidth / 2 - (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
-                                        if (doubleTapEnabled && isFullScreenPlayer)
+                                        if (doubleTapEnabled)
                                             rewind()
                                     }
                                     currentTouch.x > screenWidth / 2 + (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
-                                        if (doubleTapEnabled && isFullScreenPlayer)
+                                        if (doubleTapEnabled)
                                             fastForward()
                                     }
                                     else -> {
@@ -1050,6 +1064,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         // if nothing has loaded these buttons should not be visible
         player_skip_episode?.isVisible = false
         player_skip_op?.isVisible = false
+        shadow_overlay?.isVisible = false
 
         updateLockUI()
         updateUIVisibility()

@@ -35,6 +35,17 @@
                 android:layout_height="60dp" />
     </FrameLayout>
 
+    <TextView
+            android:id="@+id/player_time_text"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:shadowColor="@android:color/black"
+            android:shadowRadius="10.0"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            tools:text="+100" />
+
     <FrameLayout
             android:id="@+id/subtitle_holder"
             android:layout_width="match_parent"
@@ -268,11 +279,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:gravity="center_vertical"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
+                    android:layout_weight="1"
                     android:id="@+id/player_video_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -325,6 +337,104 @@
 
             </LinearLayout>
 
+            <ImageView
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/player_fullscreen"
+                    app:tint="@color/white"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/baseline_fullscreen_24"
+                    android:layout_marginEnd="10dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        <RelativeLayout
+                android:id="@+id/player_progressbar_left_holder"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="start"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/centerMenuView"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:alpha="1"
+                tools:visibility="visible">
+            <!--VERY hacky layout -->
+            <ImageView
+                    android:id="@+id/player_progressbar_left_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="220dp"
+                    android:src="@drawable/ic_baseline_volume_up_24"
+                    app:tint="@android:color/white"
+                    tools:ignore="ContentDescription">
+
+            </ImageView>
+
+            <ProgressBar
+                    android:id="@+id/player_progressbar_left"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="4dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="100"
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    tools:progress="30"
+                    android:layout_centerInParent="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+                android:id="@+id/player_progressbar_right_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="right"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/centerMenuView"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:alpha="1"
+                tools:ignore="RtlHardcoded"
+                tools:visibility="visible">
+
+            <ImageView
+                    android:id="@+id/player_progressbar_right_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="220dp"
+                    android:src="@drawable/ic_baseline_brightness_7_24"
+                    app:tint="@android:color/white"
+                    tools:ignore="ContentDescription">
+
+            </ImageView>
+
+            <ProgressBar
+                    android:id="@+id/player_progressbar_right"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="4dp"
+                    android:layout_height="150dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="100"
+                    android:progressDrawable="@drawable/progress_drawable_vertical" />
+        </RelativeLayout>
+    </LinearLayout>
 </FrameLayout>
