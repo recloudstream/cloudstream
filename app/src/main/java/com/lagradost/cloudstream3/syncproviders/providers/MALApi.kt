@@ -195,7 +195,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         ).text
         return mapper.readValue<MalAnime>(res).let { malAnime ->
             SyncAPI.SyncResult(
-                id = malAnime.id?.toString()!!,
+                id = internalId.toString(),
                 totalEpisodes = malAnime.numEpisodes,
                 title = malAnime.title,
                 publicScore = malAnime.mean?.toFloat()?.times(1000)?.toInt(),
@@ -209,7 +209,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 nextAiring = null,
                 studio = malAnime.studios?.mapNotNull { it.name },
                 genres = malAnime.genres?.map { it.name },
-                trailerUrl = null,
+                trailers = null,
                 startDate = parseDate(malAnime.startDate),
                 endDate = parseDate(malAnime.endDate),
                 recommendations = malAnime.recommendations?.mapNotNull { rec ->

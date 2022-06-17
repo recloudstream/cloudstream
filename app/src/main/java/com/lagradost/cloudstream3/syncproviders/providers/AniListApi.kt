@@ -142,6 +142,10 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     getUrlFromId(recMedia.id),
                     recMedia.coverImage?.large ?: recMedia.coverImage?.medium
                 )
+            },
+            trailers = when (season.trailer?.site?.lowercase()?.trim()) {
+                "youtube" -> listOf("https://www.youtube.com/watch?v=${season.trailer.id}")
+                else -> null
             }
             //TODO REST
         )

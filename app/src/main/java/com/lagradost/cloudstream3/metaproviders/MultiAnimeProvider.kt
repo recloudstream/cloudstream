@@ -61,7 +61,7 @@ class MultiAnimeProvider : MainAPI() {
                 plot = res.synopsis
                 tags = res.genres
                 rating = res.publicScore
-                addTrailer(res.trailerUrl)
+                addTrailer(res.trailers)
                 addAniListId(res.id.toIntOrNull())
                 recommendations = res.recommendations
             }

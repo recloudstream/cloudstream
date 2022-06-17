@@ -10,7 +10,15 @@ import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExt
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeStreamLinkHandlerFactory
 import org.schabi.newpipe.extractor.stream.VideoStream
 
-class YoutubeExtractor : ExtractorApi() {
+class YoutubeShortLinkExtractor : YoutubeExtractor() {
+    override val mainUrl = "https://youtu.be"
+
+    override fun getExtractorUrl(id: String): String {
+        return "$mainUrl/$id"
+    }
+}
+
+open class YoutubeExtractor : ExtractorApi() {
     override val mainUrl = "https://www.youtube.com"
     override val requiresReferer = false
     override val name = "YouTube"
@@ -20,7 +28,7 @@ class YoutubeExtractor : ExtractorApi() {
     }
 
     override fun getExtractorUrl(id: String): String {
-        return "https://www.youtube.com/watch?v=$id"
+        return "$mainUrl/watch?v=$id"
     }
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {

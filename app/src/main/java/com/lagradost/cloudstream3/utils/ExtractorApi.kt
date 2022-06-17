@@ -218,7 +218,9 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     KotakAnimeid(),
     Neonime8n(),
     Neonime7n(),
+
     YoutubeExtractor(),
+    YoutubeShortLinkExtractor(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

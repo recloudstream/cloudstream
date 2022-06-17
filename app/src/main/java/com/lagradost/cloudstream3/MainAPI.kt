@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -296,6 +297,16 @@ object APIHolder {
         if (realSet.isEmpty()) return hashSet
 
         return realSet
+    }
+
+    fun Context.updateHasTrailers() {
+        LoadResponse.isTrailersEnabled = getHasTrailers()
+    }
+
+    private fun Context.getHasTrailers(): Boolean {
+        if (this.isTvSettings()) return false
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        return settingsManager.getBoolean(this.getString(R.string.show_trailers_key), true)
     }
 
     fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
@@ -865,6 +876,7 @@ interface LoadResponse {
     companion object {
         private val malIdPrefix = malApi.idPrefix
         private val aniListIdPrefix = aniListApi.idPrefix
+        var isTrailersEnabled = true
 
         @JvmName("addActorNames")
         fun LoadResponse.addActors(actors: List<String>?) {
@@ -900,7 +912,7 @@ interface LoadResponse {
 
         /**better to call addTrailer with mutible trailers directly instead of calling this multiple times*/
         suspend fun LoadResponse.addTrailer(trailerUrl: String?, referer: String? = null) {
-            if (trailerUrl == null) return
+            if (!isTrailersEnabled || trailerUrl == null) return
             try {
                 val newTrailers = loadExtractor(trailerUrl, referer)
                 addTrailer(newTrailers)
@@ -920,7 +932,7 @@ interface LoadResponse {
         }
 
         suspend fun LoadResponse.addTrailer(trailerUrls: List<String>?, referer: String? = null) {
-            if (trailerUrls == null) return
+            if (!isTrailersEnabled || trailerUrls == null) return
             val newTrailers = trailerUrls.apmap { trailerUrl ->
                 try {
                     loadExtractor(trailerUrl, referer)

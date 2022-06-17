@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
@@ -70,7 +71,6 @@ class ResultViewModel : ViewModel() {
     val dubStatus: LiveData<DubStatus> get() = _dubStatus
     private val _dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
 
-    private val page: MutableLiveData<LoadResponse> = MutableLiveData()
     val id: MutableLiveData<Int> = MutableLiveData()
     val selectedSeason: MutableLiveData<Int> = MutableLiveData(-2)
     val seasonSelections: MutableLiveData<List<Int?>> = MutableLiveData()
@@ -88,11 +88,12 @@ class ResultViewModel : ViewModel() {
     fun updateWatchStatus(status: WatchType) = viewModelScope.launch {
         val currentId = id.value ?: return@launch
         _watchStatus.postValue(status)
-        val resultPage = page.value
+        val resultPage = _resultResponse.value
 
         withContext(Dispatchers.IO) {
             setResultWatchState(currentId, status.internalId)
-            if (resultPage != null) {
+            if (resultPage != null && resultPage is Resource.Success) {
+                val resultPageData = resultPage.value
                 val current = getBookmarkedData(currentId)
                 val currentTime = System.currentTimeMillis()
                 setBookmarkedData(
@@ -101,12 +102,12 @@ class ResultViewModel : ViewModel() {
                         currentId,
                         current?.bookmarkedTime ?: currentTime,
                         currentTime,
-                        resultPage.name,
-                        resultPage.url,
-                        resultPage.apiName,
-                        resultPage.type,
-                        resultPage.posterUrl,
-                        resultPage.year
+                        resultPageData.name,
+                        resultPageData.url,
+                        resultPageData.apiName,
+                        resultPageData.type,
+                        resultPageData.posterUrl,
+                        resultPageData.year
                     )
                 )
             }
@@ -120,7 +121,6 @@ class ResultViewModel : ViewModel() {
     var lastMeta: SyncAPI.SyncResult? = null
     private suspend fun applyMeta(resp: LoadResponse, meta: SyncAPI.SyncResult?): LoadResponse {
         if (meta == null) return resp
-        lastMeta = meta
         return resp.apply {
             Log.i(TAG, "applyMeta")
 
@@ -128,7 +128,7 @@ class ResultViewModel : ViewModel() {
             rating = rating ?: meta.publicScore
             tags = tags ?: meta.genres
             plot = if (plot.isNullOrBlank()) meta.synopsis else plot
-            addTrailer(meta.trailerUrl)
+            addTrailer(meta.trailers)
             posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
             actors = actors ?: meta.actors
 
@@ -142,13 +142,20 @@ class ResultViewModel : ViewModel() {
 
             recommendations = recommendations?.union(realRecommendations)?.toList()
                 ?: realRecommendations
+
+            println("THIS:$this")
         }
     }
 
     fun setMeta(meta: SyncAPI.SyncResult) = viewModelScope.launch {
         Log.i(TAG, "setMeta")
-        (result.value as? Resource.Success<LoadResponse>?)?.value?.let { resp ->
-            _resultResponse.postValue(Resource.Success(applyMeta(resp, meta)))
+        lastMeta = meta
+        ioWork {
+            (result.value as? Resource.Success<LoadResponse>?)?.value?.let { resp ->
+                val value = Resource.Success(applyMeta(resp, meta))
+                println("POSTED: $value")
+                _resultResponse.postValue(value)
+            }
         }
     }
 
@@ -356,8 +363,10 @@ class ResultViewModel : ViewModel() {
 
         when (data) {
             is Resource.Success -> {
-                val loadResponse = applyMeta(data.value, lastMeta)
-                page.postValue(loadResponse)
+                val loadResponse = if (lastMeta != null) ioWork {
+                    applyMeta(data.value, lastMeta)
+                } else data.value
+                _resultResponse.postValue(Resource.Success(loadResponse))
                 val mainId = loadResponse.getId()
                 id.postValue(mainId)
                 loadWatchStatus(mainId)
