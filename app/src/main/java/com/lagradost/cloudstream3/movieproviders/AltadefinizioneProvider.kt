@@ -5,6 +5,8 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
+
 
 class AltadefinizioneProvider : MainAPI() {
     override var lang = "it"
@@ -111,7 +113,10 @@ class AltadefinizioneProvider : MainAPI() {
         }
 
         val tags: List<String> = document.select("#details > li:nth-child(1) > a").map { it.text() }
-            return newMovieLoadResponse(
+
+        val trailerurl = document.selectFirst("#showtrailer > div > div > iframe")!!.attr("src")
+
+        return newMovieLoadResponse(
                 title,
                 url,
                 TvType.Movie,
@@ -125,6 +130,7 @@ class AltadefinizioneProvider : MainAPI() {
                 this.duration = null
                 this.actors = actors
                 this.tags = tags
+                addTrailer(trailerurl)
             }
         }
 
