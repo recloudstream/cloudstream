@@ -284,7 +284,7 @@ class StreamingcommunityProvider : MainAPI() {
         val trailerinfojs = document.select("slider-trailer").attr("videos")
         val trailerinfo = parseJson<List<TrailerElement>>(trailerinfojs)
         val trailerurl: String? = if (trailerinfo.isNotEmpty()) {
-            "https://www.youtube.com/watch?v=${trailerinfo[0].id}"
+            "https://www.youtube.com/watch?v=${trailerinfo[0].url}"
         } else {
             null
         }
