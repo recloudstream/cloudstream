@@ -118,7 +118,7 @@ class ResultViewModel : ViewModel() {
     }
 
     var lastMeta: SyncAPI.SyncResult? = null
-    private fun applyMeta(resp: LoadResponse, meta: SyncAPI.SyncResult?): LoadResponse {
+    private suspend fun applyMeta(resp: LoadResponse, meta: SyncAPI.SyncResult?): LoadResponse {
         if (meta == null) return resp
         lastMeta = meta
         return resp.apply {
@@ -145,7 +145,7 @@ class ResultViewModel : ViewModel() {
         }
     }
 
-    fun setMeta(meta: SyncAPI.SyncResult) {
+    fun setMeta(meta: SyncAPI.SyncResult) = viewModelScope.launch {
         Log.i(TAG, "setMeta")
         (result.value as? Resource.Success<LoadResponse>?)?.value?.let { resp ->
             _resultResponse.postValue(Resource.Success(applyMeta(resp, meta)))

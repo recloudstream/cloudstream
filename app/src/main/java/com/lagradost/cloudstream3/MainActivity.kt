@@ -76,6 +76,7 @@ import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import org.schabi.newpipe.extractor.NewPipe
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -366,9 +367,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     fun test() {
-        //val youtubeLink = "https://www.youtube.com/watch?v=TxB48MEAmZw"
+        /*thread {
+            val youtubeLink = "https://www.youtube.com/watch?v=Zxem9rqJ5S0"
 
+            val url = YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(youtubeLink)
+            println("ID:::: ${url.id}")
+            NewPipe.init(DownloaderTestImpl.getInstance())
+            val service = ServiceList.YouTube
+            val s = object : YoutubeStreamExtractor(
+                service,
+                url
+            ) {
 
+            }
+            s.fetchPage()
+            val streams = s.videoStreams
+            println("STREAMS: ${streams.map { "url = "+ it.url + " extra= " + it.height + "|" + it.isVideoOnly + "\n" }}")
+        }*/
         /*
         runBlocking {
 
@@ -598,6 +613,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         loadCache()
         test()
+        NewPipe.init(DownloaderTestImpl.getInstance())
         /*nav_view.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {

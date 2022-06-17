@@ -95,7 +95,7 @@ open class TmdbProvider : MainAPI() {
         }
     }
 
-    private fun TvShow.toLoadResponse(): TvSeriesLoadResponse {
+    private suspend fun TvShow.toLoadResponse(): TvSeriesLoadResponse {
         val episodes = this.seasons?.filter { !disableSeasonZero || (it.season_number ?: 0) != 0 }
             ?.mapNotNull { season ->
                 season.episodes?.map { episode ->
@@ -167,7 +167,7 @@ open class TmdbProvider : MainAPI() {
             }
     }
 
-    private fun Movie.toLoadResponse(): MovieLoadResponse {
+    private suspend fun Movie.toLoadResponse(): MovieLoadResponse {
         return newMovieLoadResponse(
             this.title ?: this.original_title, getUrl(id, false), TvType.Movie, TmdbLink(
                 this.imdb_id,

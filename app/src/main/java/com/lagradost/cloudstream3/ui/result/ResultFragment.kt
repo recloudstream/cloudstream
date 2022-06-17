@@ -602,7 +602,7 @@ class ResultFragment : ResultTrailerPlayer() {
         setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000f))
     }
 
-    var currentTrailers: List<String> = emptyList()
+    var currentTrailers: List<ExtractorLink> = emptyList()
     var currentTrailerIndex = 0
 
     override fun nextMirror() {
@@ -626,13 +626,7 @@ class ResultFragment : ResultTrailerPlayer() {
                     player.loadPlayer(
                         ctx,
                         false,
-                        ExtractorLink(
-                            "",
-                            "Trailer",
-                            trailer,
-                            "",
-                            Qualities.Unknown.value
-                        ),
+                        trailer,
                         null,
                         startPosition = 0L,
                         subtitles = emptySet(),
@@ -649,14 +643,14 @@ class ResultFragment : ResultTrailerPlayer() {
         result_trailer_loading?.isVisible = isSuccess
     }
 
-    private fun setTrailers(trailers: List<String>?) {
+    private fun setTrailers(trailers: List<ExtractorLink>?) {
         context?.let { ctx ->
             if (ctx.isTvSettings()) return
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
             val showTrailers =
                 settingsManager.getBoolean(ctx.getString(R.string.show_trailers_key), true)
             if (!showTrailers) return
-            currentTrailers = trailers ?: emptyList()
+            currentTrailers = trailers?.sortedBy { -it.quality } ?: emptyList()
             loadTrailer()
         }
     }
@@ -769,7 +763,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
         player_open_source?.setOnClickListener {
             currentTrailers.getOrNull(currentTrailerIndex)?.let {
-                context?.openBrowser(it)
+                context?.openBrowser(it.url)
             }
         }
 
