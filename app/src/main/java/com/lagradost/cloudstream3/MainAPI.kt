@@ -901,8 +901,12 @@ interface LoadResponse {
         /**better to call addTrailer with mutible trailers directly instead of calling this multiple times*/
         suspend fun LoadResponse.addTrailer(trailerUrl: String?, referer: String? = null) {
             if (trailerUrl == null) return
-            val newTrailers = loadExtractor(trailerUrl, referer)
-            addTrailer(newTrailers)
+            try {
+                val newTrailers = loadExtractor(trailerUrl, referer)
+                addTrailer(newTrailers)
+            } catch (e: Exception) {
+                logError(e)
+            }
         }
 
         fun LoadResponse.addTrailer(newTrailers: List<ExtractorLink>) {
