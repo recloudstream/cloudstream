@@ -54,6 +54,9 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
             }
 
             result_trailer_loading?.isVisible = false
+            result_smallscreen_holder?.isVisible = !isFullScreenPlayer
+            result_fullscreen_holder?.isVisible = isFullScreenPlayer
+
             player_background?.apply {
                 isVisible = true
                 layoutParams =

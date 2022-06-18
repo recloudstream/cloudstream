@@ -26,10 +26,14 @@ object Kitsu {
     private val cache: MutableMap<Pair<String, String>, Map<Int, KitsuResponse.Node>> =
         mutableMapOf()
 
+    var isEnabled = true
+
     suspend fun getEpisodesDetails(
         malId: String?,
-        anilistId: String?
+        anilistId: String?,
+        isResponseRequired: Boolean = true, // overrides isEnabled
     ): Map<Int, KitsuResponse.Node>? {
+        if (!isResponseRequired && !isEnabled) return null
         if (anilistId != null) {
             try {
                 val map = getKitsuEpisodesDetails(anilistId, "ANILIST_ANIME")

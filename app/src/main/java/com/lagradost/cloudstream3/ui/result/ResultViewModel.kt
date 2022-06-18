@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -28,6 +29,7 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -160,30 +162,35 @@ class ResultViewModel : ViewModel() {
             argamap({
                 addTrailer(meta.trailers)
             }, {
+
                 if (this !is AnimeLoadResponse) return@argamap
-                val map = getEpisodesDetails(getMalId(), getAniListId())
+                val map = getEpisodesDetails(getMalId(), getAniListId(), isResponseRequired = false)
                 if (map.isNullOrEmpty()) return@argamap
                 updateEpisodes = DubStatus.values().map { dubStatus ->
                     val current =
-                        this.episodes[dubStatus]?.sortedBy { it.episode ?: 0 }?.toMutableList()
+                        this.episodes[dubStatus]?.mapIndexed { index, episode ->
+                            episode.apply {
+                                this.episode = this.episode ?: (index + 1)
+                            }
+                        }?.sortedBy { it.episode ?: 0 }?.toMutableList()
                     if (current.isNullOrEmpty()) return@map false
-                    val episodes = current.mapIndexed { index, ep -> ep.episode ?: (index + 1) }
+                    val episodeNumbers = current.map { ep -> ep.episode!! }
                     var updateCount = 0
                     map.forEach { (episode, node) ->
-                        episodes.binarySearch(episode).let { index ->
+                        episodeNumbers.binarySearch(episode).let { index ->
                             current.getOrNull(index)?.let { currentEp ->
                                 current[index] = currentEp.apply {
                                     updateCount++
+                                    val currentBack = this
                                     this.description = this.description ?: node.description?.en
                                     this.name = this.name ?: node.titles?.canonical
-                                    this.episode = this.episode ?: node.num ?: episodes[index]
+                                    this.episode = this.episode ?: node.num ?: episodeNumbers[index]
                                     this.posterUrl = this.posterUrl ?: node.thumbnail?.original?.url
                                 }
                             }
                         }
                     }
                     this.episodes[dubStatus] = current
-
                     updateCount > 0
                 }.any { it }
             })
@@ -432,6 +439,7 @@ class ResultViewModel : ViewModel() {
                     res[dubStatus]?.let { episodes ->
                         updateEpisodes(mainId, episodes, -1)
                     }
+
                     _dubStatus.postValue(dubStatus)
                     _dubSubSelections.postValue(loadResponse.episodes.keys)
                 }
