@@ -375,8 +375,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         setSubtitles(subtitleData)
 
         // this is used instead of observe, because observe is too slow
-        val subs = currentSubs.toMutableSet()
-        subs.add(subtitleData)
+        val subs = currentSubs + subtitleData
         player.setActiveSubtitles(subs)
         player.reloadPlayer(ctx)
 

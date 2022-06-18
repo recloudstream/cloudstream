@@ -206,12 +206,15 @@ class CS3IPlayer : IPlayer {
                 )
             } else {
                 when (subtitleHelper.subtitleStatus(subtitle)) {
-                    SubtitleStatus.REQUIRES_RELOAD -> {
-                        Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
-                        return@let true
-                        // reloadPlayer(context)
-                    }
-                    SubtitleStatus.IS_ACTIVE -> {
+
+                    // Uncommenting this will lead to online subtitles resetting player to 00:00 on reload
+
+//                    SubtitleStatus.REQUIRES_RELOAD -> {
+//                        Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
+//                        return@let true
+//                        // reloadPlayer(context)
+//                    }
+                    SubtitleStatus.IS_ACTIVE, SubtitleStatus.REQUIRES_RELOAD -> {
                         Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
 
                         trackSelector.setParameters(
@@ -519,6 +522,7 @@ class CS3IPlayer : IPlayer {
                     mediaItem
                 )
 
+            println("PLAYBACK POS $playbackPosition")
             return exoPlayerBuilder.build().apply {
                 setPlayWhenReady(playWhenReady)
                 seekTo(currentWindow, playbackPosition)
