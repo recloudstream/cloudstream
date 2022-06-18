@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -642,6 +643,8 @@ class ResultFragment : ResultTrailerPlayer() {
                 false
             }
         result_trailer_loading?.isVisible = isSuccess
+        result_smallscreen_holder?.isVisible = !isSuccess && !isFullScreenPlayer
+        result_fullscreen_holder?.isVisible = !isSuccess && isFullScreenPlayer
     }
 
     private fun setTrailers(trailers: List<ExtractorLink>?) {
@@ -2113,6 +2116,9 @@ class ResultFragment : ResultTrailerPlayer() {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
             val showFillers =
                 settingsManager.getBoolean(ctx.getString(R.string.show_fillers_key), false)
+
+            Kitsu.isEnabled =
+                settingsManager.getBoolean(ctx.getString(R.string.show_kitsu_posters_key), true)
 
             val tempUrl = url
             if (tempUrl != null) {

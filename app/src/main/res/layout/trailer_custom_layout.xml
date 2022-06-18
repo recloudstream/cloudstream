@@ -8,6 +8,31 @@
         android:screenOrientation="landscape"
         tools:orientation="vertical">
 
+
+    <TextView
+            android:id="@+id/player_time_text"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:shadowColor="@android:color/black"
+            android:shadowRadius="10.0"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            tools:text="+100" />
+
+    <FrameLayout
+            android:id="@+id/subtitle_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <View
+                android:id="@+id/shadow_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black_overlay" />
+    </FrameLayout>
+
+
     <FrameLayout
             android:id="@+id/player_intro_play"
             android:layout_width="match_parent"
@@ -33,29 +58,6 @@
                 android:src="@drawable/play_button"
                 android:layout_width="60dp"
                 android:layout_height="60dp" />
-    </FrameLayout>
-
-    <TextView
-            android:id="@+id/player_time_text"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:gravity="center"
-            android:shadowColor="@android:color/black"
-            android:shadowRadius="10.0"
-            android:textColor="@android:color/white"
-            android:textSize="30sp"
-            tools:text="+100" />
-
-    <FrameLayout
-            android:id="@+id/subtitle_holder"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <View
-                android:id="@+id/shadow_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/black_overlay" />
     </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

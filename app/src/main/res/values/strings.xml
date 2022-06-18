@@ -32,6 +32,7 @@
     <string name="display_sub_key" translatable="false">display_sub_key</string>
     <string name="show_fillers_key" translatable="false">show_fillers_key</string>
     <string name="show_trailers_key" translatable="false">show_trailers_key</string>
+    <string name="show_kitsu_posters_key" translatable="false">show_kitsu_posters_key</string>
     <string name="random_button_key" translatable="false">random_button_key</string>
     <string name="provider_lang_key" translatable="false">provider_lang_key</string>
     <string name="dns_key" translatable="false">dns_key</string>
@@ -252,6 +253,8 @@
     <string name="bug_report_settings_on">Sends no data</string>
     <string name="show_fillers_settings">Show filler episode for anime</string>
     <string name="show_trailers_settings">Show trailers</string>
+    <string name="kitsu_settings">Show posters from kitsu</string>
+
     <string name="updates_settings">Show app updates</string>
     <string name="updates_settings_des">Automatically search for new updates on start</string>
     <string name="uprereleases_settings">Update to prereleases</string>

@@ -738,7 +738,7 @@ class CS3IPlayer : IPlayer {
                     super.onPlaybackStateChanged(playbackState)
                     when (playbackState) {
                         Player.STATE_READY -> {
-                            requestAutoFocus?.invoke()
+
                         }
                         Player.STATE_ENDED -> {
                             handleEvent(CSPlayerEvent.NextEpisode)

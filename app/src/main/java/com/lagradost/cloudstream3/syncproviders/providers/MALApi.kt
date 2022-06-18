@@ -35,7 +35,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override var mainUrl = "https://myanimelist.net"
     val apiUrl = "https://api.myanimelist.net"
     override val icon = R.drawable.mal_logo
-    override val requiresLogin = true
+    override val requiresLogin = false
 
     override val createAccountUrl = "$mainUrl/register.php"
 
@@ -189,9 +189,11 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         val internalId = id.toIntOrNull() ?: return null
         val url =
             "$apiUrl/v2/anime/$internalId?fields=id,title,main_picture,alternative_titles,start_date,end_date,synopsis,mean,rank,popularity,num_list_users,num_scoring_users,nsfw,created_at,updated_at,media_type,status,genres,my_list_status,num_episodes,start_season,broadcast,source,average_episode_duration,rating,pictures,background,related_anime,related_manga,recommendations,studios,statistics"
+
+        val auth = getAuth()
         val res = app.get(
-            url, headers = mapOf(
-                "Authorization" to "Bearer " + (getAuth() ?: return null)
+            url, headers = if (auth == null) emptyMap() else mapOf(
+                "Authorization" to "Bearer $auth"
             )
         ).text
         return mapper.readValue<MalAnime>(res).let { malAnime ->
