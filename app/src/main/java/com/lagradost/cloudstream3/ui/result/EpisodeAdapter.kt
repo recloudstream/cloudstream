@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +22,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.result_episode.view.*
-import kotlinx.android.synthetic.main.result_episode.view.episode_holder
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.*
 import kotlinx.android.synthetic.main.result_episode_large.view.episode_filler
@@ -47,6 +47,7 @@ const val ACTION_SHOW_OPTIONS = 10
 
 const val ACTION_CLICK_DEFAULT = 11
 const val ACTION_SHOW_TOAST = 12
+const val ACTION_SHOW_DESCRIPTION = 15
 
 const val ACTION_DOWNLOAD_EPISODE_SUBTITLE = 13
 const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
@@ -93,10 +94,10 @@ class EpisodeAdapter(
     @LayoutRes
     private var layout: Int = 0
     fun updateLayout() {
-        layout =
-            if (cardList.filter { it.poster != null }.size >= cardList.size / 2f) // If over half has posters then use the large layout
-                R.layout.result_episode_large
-            else R.layout.result_episode
+       // layout =
+       //     if (cardList.filter { it.poster != null }.size >= cardList.size / 2f) // If over half has posters then use the large layout
+      //          R.layout.result_episode_large
+      //      else R.layout.result_episode
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -105,7 +106,7 @@ class EpisodeAdapter(
         else R.layout.result_episode*/
 
         return EpisodeCardViewHolder(
-            LayoutInflater.from(parent.context).inflate(layout, parent, false),
+            LayoutInflater.from(parent.context).inflate(R.layout.result_episode_both, parent, false),
             hasDownloadSupport,
             clickCallback,
             downloadClickCallback
@@ -134,27 +135,39 @@ class EpisodeAdapter(
     ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
         override var downloadButton = EasyDownloadButton()
 
-        private val episodeText: TextView = itemView.episode_text
-        private val episodeFiller: MaterialButton? = itemView.episode_filler
-        private val episodeRating: TextView? = itemView.episode_rating
-        private val episodeDescript: TextView? = itemView.episode_descript
-        private val episodeProgress: ContentLoadingProgressBar? = itemView.episode_progress
-        private val episodePoster: ImageView? = itemView.episode_poster
 
-        private val episodeDownloadBar: ContentLoadingProgressBar = itemView.result_episode_progress_downloaded
-        private val episodeDownloadImage: ImageView = itemView.result_episode_download
-
-        private val episodeHolder = itemView.episode_holder
-
+        var episodeDownloadBar: ContentLoadingProgressBar? = null
+        var episodeDownloadImage: ImageView? = null
         var localCard: ResultEpisode? = null
 
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
             localCard = card
 
-            val name = if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"
+            val (parentView,otherView) = if(card.poster == null) {
+                itemView.episode_holder to itemView.episode_holder_large
+            } else {
+                itemView.episode_holder_large to itemView.episode_holder
+            }
+            parentView.isVisible = true
+            otherView.isVisible = false
+
+            val episodeText: TextView = parentView.episode_text
+            val episodeFiller: MaterialButton? = parentView.episode_filler
+            val episodeRating: TextView? = parentView.episode_rating
+            val episodeDescript: TextView? = parentView.episode_descript
+            val episodeProgress: ContentLoadingProgressBar? = parentView.episode_progress
+            val episodePoster: ImageView? = parentView.episode_poster
+
+            episodeDownloadBar =
+                parentView.result_episode_progress_downloaded
+            episodeDownloadImage = parentView.result_episode_download
+
+            val name =
+                if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"
             episodeFiller?.isVisible = card.isFiller == true
-            episodeText.text = name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
+            episodeText.text =
+                name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
             episodeText.isSelected = true // is needed for text repeating
 
             val displayPos = card.getDisplayPosition()
@@ -171,16 +184,20 @@ class EpisodeAdapter(
             }
 
             if (card.rating != null) {
-                episodeRating?.text = episodeRating?.context?.getString(R.string.rated_format)?.format(card.rating.toFloat() / 10f)
+                episodeRating?.text = episodeRating?.context?.getString(R.string.rated_format)
+                    ?.format(card.rating.toFloat() / 10f)
             } else {
                 episodeRating?.text = ""
             }
 
-            if (card.description != null) {
-                episodeDescript?.visibility = View.VISIBLE
-                episodeDescript?.text = card.description
-            } else {
-                episodeDescript?.visibility = View.GONE
+            episodeRating?.isGone = episodeRating?.text.isNullOrBlank()
+
+            episodeDescript?.apply {
+                text = card.description ?: ""
+                isGone = text.isNullOrBlank()
+                setOnClickListener {
+                    clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_DESCRIPTION, card))
+                }
             }
 
             episodePoster?.setOnClickListener {
@@ -192,34 +209,42 @@ class EpisodeAdapter(
                 return@setOnLongClickListener true
             }
 
-            episodeHolder.setOnClickListener {
+            parentView.setOnClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
             }
 
-            if (episodeHolder.context.isTrueTvSettings()) {
-                episodeHolder.isFocusable = true
-                episodeHolder.isFocusableInTouchMode = true
-                episodeHolder.touchscreenBlocksFocus = false
+            if (parentView.context.isTrueTvSettings()) {
+                parentView.isFocusable = true
+                parentView.isFocusableInTouchMode = true
+                parentView.touchscreenBlocksFocus = false
             }
 
-            episodeHolder.setOnLongClickListener {
+            parentView.setOnLongClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
 
                 return@setOnLongClickListener true
             }
 
-            episodeDownloadImage.isVisible = hasDownloadSupport
-            episodeDownloadBar.isVisible = hasDownloadSupport
+            episodeDownloadImage?.isVisible = hasDownloadSupport
+            episodeDownloadBar?.isVisible = hasDownloadSupport
+            reattachDownloadButton()
         }
 
         override fun reattachDownloadButton() {
             downloadButton.dispose()
             val card = localCard
             if (hasDownloadSupport && card != null) {
-                val downloadInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(itemView.context, card.id)
+                val downloadInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
+                    itemView.context,
+                    card.id
+                )
 
                 downloadButton.setUpButton(
-                    downloadInfo?.fileLength, downloadInfo?.totalBytes, episodeDownloadBar, episodeDownloadImage, null,
+                    downloadInfo?.fileLength,
+                    downloadInfo?.totalBytes,
+                    episodeDownloadBar ?: return,
+                    episodeDownloadImage ?: return,
+                    null,
                     VideoDownloadHelper.DownloadEpisodeCached(
                         card.name,
                         card.poster,

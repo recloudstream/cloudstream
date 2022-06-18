@@ -14,23 +14,33 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 object SingleSelectionHelper {
-    fun Activity.showOptionSelectStringRes(
+    fun Activity?.showOptionSelectStringRes(
         view: View?,
         poster: String?,
         options: List<Int>,
         tvOptions: List<Int> = listOf(),
         callback: (Pair<Boolean, Int>) -> Unit
     ) {
-        this.showOptionSelect(view, poster, options.map { this.getString(it) },tvOptions.map { this.getString(it) }, callback)
+        if(this == null) return
+
+        this.showOptionSelect(
+            view,
+            poster,
+            options.map { this.getString(it) },
+            tvOptions.map { this.getString(it) },
+            callback
+        )
     }
 
-    private fun Activity.showOptionSelect(
+    private fun Activity?.showOptionSelect(
         view: View?,
         poster: String?,
         options: List<String>,
         tvOptions: List<String>,
         callback: (Pair<Boolean, Int>) -> Unit
     ) {
+        if(this == null) return
+
         if (this.isTvSettings()) {
             val builder =
                 AlertDialog.Builder(this, R.style.AlertDialogCustom)
@@ -41,12 +51,13 @@ object SingleSelectionHelper {
 
             dialog.findViewById<ListView>(R.id.listview1)?.let { listView ->
                 listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-                listView.adapter = ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice_color).apply {
-                    addAll(tvOptions)
-                }
+                listView.adapter =
+                    ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice_color).apply {
+                        addAll(tvOptions)
+                    }
 
                 listView.setOnItemClickListener { _, _, i, _ ->
-                    callback.invoke(Pair(true,i))
+                    callback.invoke(Pair(true, i))
                     dialog.dismissSafe(this)
                 }
             }
@@ -62,12 +73,12 @@ object SingleSelectionHelper {
                     s
                 )
             }) {
-                callback(Pair(false,this.itemId))
+                callback(Pair(false, this.itemId))
             }
         }
     }
 
-    fun Activity.showDialog(
+    fun Activity?.showDialog(
         dialog: Dialog,
         items: List<String>,
         selectedIndex: List<Int>,
@@ -77,6 +88,8 @@ object SingleSelectionHelper {
         callback: (List<Int>) -> Unit,
         dismissCallback: () -> Unit
     ) {
+        if(this == null) return
+
         val realShowApply = showApply || isMultiSelect
         val listView = dialog.findViewById<ListView>(R.id.listview1)!!
         val textView = dialog.findViewById<TextView>(R.id.text1)!!
@@ -145,8 +158,7 @@ object SingleSelectionHelper {
     }
 
 
-
-    private fun Activity.showInputDialog(
+    private fun Activity?.showInputDialog(
         dialog: Dialog,
         value: String,
         name: String,
@@ -154,6 +166,8 @@ object SingleSelectionHelper {
         callback: (String) -> Unit,
         dismissCallback: () -> Unit
     ) {
+        if(this == null) return
+
         val inputView = dialog.findViewById<EditText>(R.id.nginx_text_input)!!
         val textView = dialog.findViewById<TextView>(R.id.text1)!!
         val applyButton = dialog.findViewById<TextView>(R.id.apply_btt)!!
@@ -184,13 +198,15 @@ object SingleSelectionHelper {
 
     }
 
-    fun Activity.showMultiDialog(
+    fun Activity?.showMultiDialog(
         items: List<String>,
         selectedIndex: List<Int>,
         name: String,
         dismissCallback: () -> Unit,
         callback: (List<Int>) -> Unit,
     ) {
+        if(this == null) return
+
         val builder =
             AlertDialog.Builder(this, R.style.AlertDialogCustom)
                 .setView(R.layout.bottom_selection_dialog)
@@ -200,7 +216,7 @@ object SingleSelectionHelper {
         showDialog(dialog, items, selectedIndex, name, true, true, callback, dismissCallback)
     }
 
-    fun Activity.showDialog(
+    fun Activity?.showDialog(
         items: List<String>,
         selectedIndex: Int,
         name: String,
@@ -208,6 +224,8 @@ object SingleSelectionHelper {
         dismissCallback: () -> Unit,
         callback: (Int) -> Unit,
     ) {
+        if(this == null) return
+
         val builder =
             AlertDialog.Builder(this, R.style.AlertDialogCustom)
                 .setView(R.layout.bottom_selection_dialog)
@@ -227,14 +245,15 @@ object SingleSelectionHelper {
     }
 
     /** Only for a low amount of items */
-    fun Activity.showBottomDialog(
+    fun Activity?.showBottomDialog(
         items: List<String>,
         selectedIndex: Int,
         name: String,
         showApply: Boolean,
-         dismissCallback: () -> Unit,
+        dismissCallback: () -> Unit,
         callback: (Int) -> Unit,
     ) {
+        if (this == null) return
         val builder =
             BottomSheetDialog(this)
         builder.setContentView(R.layout.bottom_selection_dialog)
@@ -252,12 +271,12 @@ object SingleSelectionHelper {
         )
     }
 
-        fun Activity.showNginxTextInputDialog(
-            name: String,
-            value: String,
-            textInputType: Int?,
-            dismissCallback: () -> Unit,
-            callback: (String) -> Unit,
+    fun Activity.showNginxTextInputDialog(
+        name: String,
+        value: String,
+        textInputType: Int?,
+        dismissCallback: () -> Unit,
+        callback: (String) -> Unit,
     ) {
         val builder = BottomSheetDialog(this)  // probably the stuff at the bottom
         builder.setContentView(R.layout.bottom_input_dialog)  // input layout

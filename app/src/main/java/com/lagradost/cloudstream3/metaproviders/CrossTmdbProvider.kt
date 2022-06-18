@@ -12,7 +12,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 class CrossTmdbProvider : TmdbProvider() {
     override var name = "MultiMovie"
     override val apiName = "MultiMovie"
-    override val lang = "en"
+    override var lang = "en"
     override val useMetaLoadResponse = true
     override val usesWebView = true
     override val supportedTypes = setOf(TvType.Movie)

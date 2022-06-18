@@ -13,17 +13,22 @@ import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
+import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider
 import com.lagradost.cloudstream3.animeproviders.NineAnimeProvider
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.providers.Kitsu.getEpisodesDetails
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
@@ -70,7 +75,6 @@ class ResultViewModel : ViewModel() {
     val dubStatus: LiveData<DubStatus> get() = _dubStatus
     private val _dubStatus: MutableLiveData<DubStatus> = MutableLiveData()
 
-    private val page: MutableLiveData<LoadResponse> = MutableLiveData()
     val id: MutableLiveData<Int> = MutableLiveData()
     val selectedSeason: MutableLiveData<Int> = MutableLiveData(-2)
     val seasonSelections: MutableLiveData<List<Int?>> = MutableLiveData()
@@ -88,11 +92,12 @@ class ResultViewModel : ViewModel() {
     fun updateWatchStatus(status: WatchType) = viewModelScope.launch {
         val currentId = id.value ?: return@launch
         _watchStatus.postValue(status)
-        val resultPage = page.value
+        val resultPage = _resultResponse.value
 
         withContext(Dispatchers.IO) {
             setResultWatchState(currentId, status.internalId)
-            if (resultPage != null) {
+            if (resultPage != null && resultPage is Resource.Success) {
+                val resultPageData = resultPage.value
                 val current = getBookmarkedData(currentId)
                 val currentTime = System.currentTimeMillis()
                 setBookmarkedData(
@@ -101,12 +106,12 @@ class ResultViewModel : ViewModel() {
                         currentId,
                         current?.bookmarkedTime ?: currentTime,
                         currentTime,
-                        resultPage.name,
-                        resultPage.url,
-                        resultPage.apiName,
-                        resultPage.type,
-                        resultPage.posterUrl,
-                        resultPage.year
+                        resultPageData.name,
+                        resultPageData.url,
+                        resultPageData.apiName,
+                        resultPageData.type,
+                        resultPageData.posterUrl,
+                        resultPageData.year
                     )
                 )
             }
@@ -118,19 +123,28 @@ class ResultViewModel : ViewModel() {
     }
 
     var lastMeta: SyncAPI.SyncResult? = null
-    private fun applyMeta(resp: LoadResponse, meta: SyncAPI.SyncResult?): LoadResponse {
-        if (meta == null) return resp
-        lastMeta = meta
-        return resp.apply {
+    var lastSync: Map<String, String>? = null
+
+    private suspend fun applyMeta(
+        resp: LoadResponse,
+        meta: SyncAPI.SyncResult?,
+        syncs: Map<String, String>? = null
+    ): Pair<LoadResponse, Boolean> {
+        if (meta == null) return resp to false
+        var updateEpisodes = false
+        val out = resp.apply {
             Log.i(TAG, "applyMeta")
 
             duration = duration ?: meta.duration
             rating = rating ?: meta.publicScore
             tags = tags ?: meta.genres
             plot = if (plot.isNullOrBlank()) meta.synopsis else plot
-            addTrailer(meta.trailerUrl)
             posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
             actors = actors ?: meta.actors
+
+            for ((k, v) in syncs ?: emptyMap()) {
+                syncData[k] = v
+            }
 
             val realRecommendations = ArrayList<SearchResponse>()
             val apiNames = listOf(GogoanimeProvider().name, NineAnimeProvider().name)
@@ -142,15 +156,55 @@ class ResultViewModel : ViewModel() {
 
             recommendations = recommendations?.union(realRecommendations)?.toList()
                 ?: realRecommendations
+
+            argamap({
+                addTrailer(meta.trailers)
+            }, {
+                if (this !is AnimeLoadResponse) return@argamap
+                val map = getEpisodesDetails(getMalId(), getAniListId())
+                if (map.isNullOrEmpty()) return@argamap
+                updateEpisodes = DubStatus.values().map { dubStatus ->
+                    val current =
+                        this.episodes[dubStatus]?.sortedBy { it.episode ?: 0 }?.toMutableList()
+                    if (current.isNullOrEmpty()) return@map false
+                    val episodes = current.mapIndexed { index, ep -> ep.episode ?: (index + 1) }
+                    var updateCount = 0
+                    map.forEach { (episode, node) ->
+                        episodes.binarySearch(episode).let { index ->
+                            current.getOrNull(index)?.let { currentEp ->
+                                current[index] = currentEp.apply {
+                                    updateCount++
+                                    this.description = this.description ?: node.description?.en
+                                    this.name = this.name ?: node.titles?.canonical
+                                    this.episode = this.episode ?: node.num ?: episodes[index]
+                                    this.posterUrl = this.posterUrl ?: node.thumbnail?.original?.url
+                                }
+                            }
+                        }
+                    }
+                    this.episodes[dubStatus] = current
+
+                    updateCount > 0
+                }.any { it }
+            })
         }
+        return out to updateEpisodes
     }
 
-    fun setMeta(meta: SyncAPI.SyncResult) {
-        Log.i(TAG, "setMeta")
-        (result.value as? Resource.Success<LoadResponse>?)?.value?.let { resp ->
-            _resultResponse.postValue(Resource.Success(applyMeta(resp, meta)))
+    fun setMeta(meta: SyncAPI.SyncResult, syncs: Map<String, String>?) =
+        viewModelScope.launch {
+            Log.i(TAG, "setMeta")
+            lastMeta = meta
+            lastSync = syncs
+            val (value, updateEpisodes) = ioWork {
+                (result.value as? Resource.Success<LoadResponse>?)?.value?.let { resp ->
+                    return@ioWork applyMeta(resp, meta, syncs)
+                }
+                return@ioWork null to null
+            }
+            _resultResponse.postValue(Resource.Success(value ?: return@launch))
+            if (updateEpisodes ?: return@launch) updateEpisodes(value, lastShowFillers)
         }
-    }
 
     private fun loadWatchStatus(localId: Int? = null) {
         val currentId = localId ?: id.value ?: return
@@ -310,6 +364,159 @@ class ResultViewModel : ViewModel() {
         return name
     }
 
+    var lastShowFillers = false
+    private suspend fun updateEpisodes(loadResponse: LoadResponse, showFillers: Boolean) {
+        Log.i(TAG, "updateEpisodes")
+        try {
+            lastShowFillers = showFillers
+            val mainId = loadResponse.getId()
+
+            when (loadResponse) {
+                is AnimeLoadResponse -> {
+                    if (loadResponse.episodes.isEmpty()) {
+                        _dubSubEpisodes.postValue(emptyMap())
+                        return
+                    }
+
+//                      val status = getDub(mainId)
+                    val statuses = loadResponse.episodes.map { it.key }
+
+                    // Extremely bruh to have to take in context here, but I'm not sure how to do this in a better way :(
+                    val preferDub = context?.getApiDubstatusSettings()
+                        ?.contains(DubStatus.Dubbed) == true
+
+                    // 3 statements because there can be only dub even if you do not prefer it.
+                    val dubStatus =
+                        if (preferDub && statuses.contains(DubStatus.Dubbed)) DubStatus.Dubbed
+                        else if (!preferDub && statuses.contains(DubStatus.Subbed)) DubStatus.Subbed
+                        else statuses.first()
+
+                    val fillerEpisodes =
+                        if (showFillers) safeApiCall { getFillerEpisodes(loadResponse.name) } else null
+
+                    val existingEpisodes = HashSet<Int>()
+                    val res = loadResponse.episodes.map { ep ->
+                        val episodes = ArrayList<ResultEpisode>()
+                        val idIndex = ep.key.id
+                        for ((index, i) in ep.value.withIndex()) {
+                            val episode = i.episode ?: (index + 1)
+                            val id = mainId + episode + idIndex * 1000000
+                            if (!existingEpisodes.contains(episode)) {
+                                existingEpisodes.add(id)
+                                episodes.add(buildResultEpisode(
+                                    loadResponse.name,
+                                    filterName(i.name),
+                                    i.posterUrl,
+                                    episode,
+                                    i.season,
+                                    i.data,
+                                    loadResponse.apiName,
+                                    id,
+                                    index,
+                                    i.rating,
+                                    i.description,
+                                    if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
+                                        it.contains(episode) && it[episode] == true
+                                    } ?: false else false,
+                                    loadResponse.type,
+                                    mainId
+                                ))
+                            }
+                        }
+
+                        Pair(ep.key, episodes)
+                    }.toMap()
+
+                    // These posts needs to be in this order as to make the preferDub in ResultFragment work
+                    _dubSubEpisodes.postValue(res)
+                    res[dubStatus]?.let { episodes ->
+                        updateEpisodes(mainId, episodes, -1)
+                    }
+                    _dubStatus.postValue(dubStatus)
+                    _dubSubSelections.postValue(loadResponse.episodes.keys)
+                }
+
+                is TvSeriesLoadResponse -> {
+                    val episodes = ArrayList<ResultEpisode>()
+                    val existingEpisodes = HashSet<Int>()
+                    for ((index, episode) in loadResponse.episodes.sortedBy {
+                        (it.season?.times(10000) ?: 0) + (it.episode ?: 0)
+                    }.withIndex()) {
+                        val episodeIndex = episode.episode ?: (index + 1)
+                        val id =
+                            mainId + (episode.season?.times(100000) ?: 0) + episodeIndex + 1
+                        if (!existingEpisodes.contains(id)) {
+                            existingEpisodes.add(id)
+                            episodes.add(
+                                buildResultEpisode(
+                                    loadResponse.name,
+                                    filterName(episode.name),
+                                    episode.posterUrl,
+                                    episodeIndex,
+                                    episode.season,
+                                    episode.data,
+                                    loadResponse.apiName,
+                                    id,
+                                    index,
+                                    episode.rating,
+                                    episode.description,
+                                    null,
+                                    loadResponse.type,
+                                    mainId
+                                )
+                            )
+                        }
+                    }
+                    updateEpisodes(mainId, episodes, -1)
+                }
+                is MovieLoadResponse -> {
+                    buildResultEpisode(
+                        loadResponse.name,
+                        loadResponse.name,
+                        null,
+                        0,
+                        null,
+                        loadResponse.dataUrl,
+                        loadResponse.apiName,
+                        (mainId), // HAS SAME ID
+                        0,
+                        null,
+                        null,
+                        null,
+                        loadResponse.type,
+                        mainId
+                    ).let {
+                        updateEpisodes(mainId, listOf(it), -1)
+                    }
+                }
+                is TorrentLoadResponse -> {
+                    updateEpisodes(
+                        mainId, listOf(
+                            buildResultEpisode(
+                                loadResponse.name,
+                                loadResponse.name,
+                                null,
+                                0,
+                                null,
+                                loadResponse.torrent ?: loadResponse.magnet ?: "",
+                                loadResponse.apiName,
+                                (mainId), // HAS SAME ID
+                                0,
+                                null,
+                                null,
+                                null,
+                                loadResponse.type,
+                                mainId
+                            )
+                        ), -1
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
     fun load(url: String, apiName: String, showFillers: Boolean) = viewModelScope.launch {
         _publicEpisodes.postValue(Resource.Loading())
         _resultResponse.postValue(Resource.Loading(url))
@@ -356,8 +563,10 @@ class ResultViewModel : ViewModel() {
 
         when (data) {
             is Resource.Success -> {
-                val loadResponse = applyMeta(data.value, lastMeta)
-                page.postValue(loadResponse)
+                val loadResponse = if (lastMeta != null || lastSync != null) ioWork {
+                    applyMeta(data.value, lastMeta, lastSync).first
+                } else data.value
+                _resultResponse.postValue(Resource.Success(loadResponse))
                 val mainId = loadResponse.getId()
                 id.postValue(mainId)
                 loadWatchStatus(mainId)
@@ -375,148 +584,7 @@ class ResultViewModel : ViewModel() {
                         System.currentTimeMillis(),
                     )
                 )
-
-                when (loadResponse) {
-                    is AnimeLoadResponse -> {
-                        if (loadResponse.episodes.isEmpty()) {
-                            _dubSubEpisodes.postValue(emptyMap())
-                            return@launch
-                        }
-
-//                      val status = getDub(mainId)
-                        val statuses = loadResponse.episodes.map { it.key }
-
-                        // Extremely bruh to have to take in context here, but I'm not sure how to do this in a better way :(
-                        val preferDub = context?.getApiDubstatusSettings()
-                            ?.contains(DubStatus.Dubbed) == true
-
-                        // 3 statements because there can be only dub even if you do not prefer it.
-                        val dubStatus =
-                            if (preferDub && statuses.contains(DubStatus.Dubbed)) DubStatus.Dubbed
-                            else if (!preferDub && statuses.contains(DubStatus.Subbed)) DubStatus.Subbed
-                            else statuses.first()
-
-                        val fillerEpisodes =
-                            if (showFillers) safeApiCall { getFillerEpisodes(loadResponse.name) } else null
-
-                        val existingEpisodes = HashSet<Int>()
-                        val res = loadResponse.episodes.map { ep ->
-                            val episodes = ArrayList<ResultEpisode>()
-                            val idIndex = ep.key.id
-                            for ((index, i) in ep.value.withIndex()) {
-                                val episode = i.episode ?: (index + 1)
-                                val id = mainId + episode + idIndex * 1000000
-                                if (!existingEpisodes.contains(episode)) {
-                                    existingEpisodes.add(id)
-                                    episodes.add(buildResultEpisode(
-                                        loadResponse.name,
-                                        filterName(i.name),
-                                        i.posterUrl,
-                                        episode,
-                                        i.season,
-                                        i.data,
-                                        apiName,
-                                        id,
-                                        index,
-                                        i.rating,
-                                        i.description,
-                                        if (fillerEpisodes is Resource.Success) fillerEpisodes.value?.let {
-                                            it.contains(episode) && it[episode] == true
-                                        } ?: false else false,
-                                        loadResponse.type,
-                                        mainId
-                                    ))
-                                }
-                            }
-
-                            Pair(ep.key, episodes)
-                        }.toMap()
-
-                        // These posts needs to be in this order as to make the preferDub in ResultFragment work
-                        _dubSubEpisodes.postValue(res)
-                        res[dubStatus]?.let { episodes ->
-                            updateEpisodes(mainId, episodes, -1)
-                        }
-                        _dubStatus.postValue(dubStatus)
-                        _dubSubSelections.postValue(loadResponse.episodes.keys)
-                    }
-
-                    is TvSeriesLoadResponse -> {
-                        val episodes = ArrayList<ResultEpisode>()
-                        val existingEpisodes = HashSet<Int>()
-                        for ((index, episode) in loadResponse.episodes.sortedBy {
-                            (it.season?.times(10000) ?: 0) + (it.episode ?: 0)
-                        }.withIndex()) {
-                            val episodeIndex = episode.episode ?: (index + 1)
-                            val id =
-                                mainId + (episode.season?.times(100000) ?: 0) + episodeIndex + 1
-                            if (!existingEpisodes.contains(id)) {
-                                existingEpisodes.add(id)
-                                episodes.add(
-                                    buildResultEpisode(
-                                        loadResponse.name,
-                                        filterName(episode.name),
-                                        episode.posterUrl,
-                                        episodeIndex,
-                                        episode.season,
-                                        episode.data,
-                                        apiName,
-                                        id,
-                                        index,
-                                        episode.rating,
-                                        episode.description,
-                                        null,
-                                        loadResponse.type,
-                                        mainId
-                                    )
-                                )
-                            }
-                        }
-                        updateEpisodes(mainId, episodes, -1)
-                    }
-                    is MovieLoadResponse -> {
-                        buildResultEpisode(
-                            loadResponse.name,
-                            loadResponse.name,
-                            null,
-                            0,
-                            null,
-                            loadResponse.dataUrl,
-                            loadResponse.apiName,
-                            (mainId), // HAS SAME ID
-                            0,
-                            null,
-                            null,
-                            null,
-                            loadResponse.type,
-                            mainId
-                        ).let {
-                            updateEpisodes(mainId, listOf(it), -1)
-                        }
-                    }
-                    is TorrentLoadResponse -> {
-                        updateEpisodes(
-                            mainId, listOf(
-                                buildResultEpisode(
-                                    loadResponse.name,
-                                    loadResponse.name,
-                                    null,
-                                    0,
-                                    null,
-                                    loadResponse.torrent ?: loadResponse.magnet ?: "",
-                                    loadResponse.apiName,
-                                    (mainId), // HAS SAME ID
-                                    0,
-                                    null,
-                                    null,
-                                    null,
-                                    loadResponse.type,
-                                    mainId
-                                )
-                            ), -1
-                        )
-                    }
-                }
+                updateEpisodes(loadResponse, showFillers)
             }
             else -> Unit
         }

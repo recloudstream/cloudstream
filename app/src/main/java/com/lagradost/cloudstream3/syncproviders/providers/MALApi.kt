@@ -33,6 +33,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override val redirectUrl = "mallogin"
     override val idPrefix = "mal"
     override var mainUrl = "https://myanimelist.net"
+    val apiUrl = "https://api.myanimelist.net"
     override val icon = R.drawable.mal_logo
     override val requiresLogin = true
 
@@ -62,7 +63,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     override suspend fun search(name: String): List<SyncAPI.SyncSearchResult> {
-        val url = "https://api.myanimelist.net/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
+        val url = "$apiUrl/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
         val auth = getAuth() ?: return emptyList()
         val res = app.get(
             url, headers = mapOf(
@@ -179,7 +180,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             name = node?.title ?: return null,
             apiName = this.name,
             syncId = node.id.toString(),
-            url = "https://myanimelist.net/anime/${node.id}",
+            url = "$mainUrl/anime/${node.id}",
             posterUrl = node.main_picture?.large
         )
     }
@@ -187,7 +188,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override suspend fun getResult(id: String): SyncAPI.SyncResult? {
         val internalId = id.toIntOrNull() ?: return null
         val url =
-            "https://api.myanimelist.net/v2/anime/$internalId?fields=id,title,main_picture,alternative_titles,start_date,end_date,synopsis,mean,rank,popularity,num_list_users,num_scoring_users,nsfw,created_at,updated_at,media_type,status,genres,my_list_status,num_episodes,start_season,broadcast,source,average_episode_duration,rating,pictures,background,related_anime,related_manga,recommendations,studios,statistics"
+            "$apiUrl/v2/anime/$internalId?fields=id,title,main_picture,alternative_titles,start_date,end_date,synopsis,mean,rank,popularity,num_list_users,num_scoring_users,nsfw,created_at,updated_at,media_type,status,genres,my_list_status,num_episodes,start_season,broadcast,source,average_episode_duration,rating,pictures,background,related_anime,related_manga,recommendations,studios,statistics"
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer " + (getAuth() ?: return null)
@@ -195,7 +196,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         ).text
         return mapper.readValue<MalAnime>(res).let { malAnime ->
             SyncAPI.SyncResult(
-                id = malAnime.id?.toString()!!,
+                id = internalId.toString(),
                 totalEpisodes = malAnime.numEpisodes,
                 title = malAnime.title,
                 publicScore = malAnime.mean?.toFloat()?.times(1000)?.toInt(),
@@ -203,13 +204,14 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 synopsis = malAnime.synopsis,
                 airStatus = when (malAnime.status) {
                     "finished_airing" -> ShowStatus.Completed
-                    "airing" -> ShowStatus.Ongoing
+                    "currently_airing" -> ShowStatus.Ongoing
+                    //"not_yet_aired"
                     else -> null
                 },
                 nextAiring = null,
                 studio = malAnime.studios?.mapNotNull { it.name },
                 genres = malAnime.genres?.map { it.name },
-                trailerUrl = null,
+                trailers = null,
                 startDate = parseDate(malAnime.startDate),
                 endDate = parseDate(malAnime.endDate),
                 recommendations = malAnime.recommendations?.mapNotNull { rec ->
@@ -260,7 +262,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             val currentCode = sanitizer["code"]!!
 
             val res = app.post(
-                "https://myanimelist.net/v1/oauth2/token",
+                "$mainUrl/v1/oauth2/token",
                 data = mapOf(
                     "client_id" to key,
                     "code" to currentCode,
@@ -292,7 +294,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 .replace("/", "_").replace("\n", "")
         val codeChallenge = codeVerifier
         val request =
-            "https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=$key&code_challenge=$codeChallenge&state=RequestID$requestId"
+            "$mainUrl/v1/oauth2/authorize?response_type=code&client_id=$key&code_challenge=$codeChallenge&state=RequestID$requestId"
         openBrowser(request)
     }
 
@@ -318,7 +320,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     private suspend fun refreshToken() {
         try {
             val res = app.post(
-                "https://myanimelist.net/v1/oauth2/token",
+                "$mainUrl/v1/oauth2/token",
                 data = mapOf(
                     "client_id" to key,
                     "grant_type" to "refresh_token",
@@ -451,7 +453,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         // Very lackluster docs
         // https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_id_animelist_get
         val url =
-            "https://api.myanimelist.net/v2/users/$user/animelist?fields=list_status,num_episodes,media_type,status,start_date,end_date,synopsis,alternative_titles,mean,genres,rank,num_list_users,nsfw,average_episode_duration,num_favorites,popularity,num_scoring_users,start_season,favorites_info,broadcast,created_at,updated_at&nsfw=1&limit=100&offset=$offset"
+            "$apiUrl/v2/users/$user/animelist?fields=list_status,num_episodes,media_type,status,start_date,end_date,synopsis,alternative_titles,mean,genres,rank,num_list_users,nsfw,average_episode_duration,num_favorites,popularity,num_scoring_users,start_season,favorites_info,broadcast,created_at,updated_at&nsfw=1&limit=100&offset=$offset"
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer $auth",
@@ -463,7 +465,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     private suspend fun getDataAboutMalId(id: Int): SmallMalAnime? {
         // https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get
         val url =
-            "https://api.myanimelist.net/v2/anime/$id?fields=id,title,num_episodes,my_list_status"
+            "$apiUrl/v2/anime/$id?fields=id,title,num_episodes,my_list_status"
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer " + (getAuth() ?: return null)
@@ -481,7 +483,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         checkMalToken()
         while (!isDone) {
             val res = app.get(
-                "https://api.myanimelist.net/v2/users/$user/animelist?fields=list_status&limit=1000&offset=${index * 1000}",
+                "$apiUrl/v2/users/$user/animelist?fields=list_status&limit=1000&offset=${index * 1000}",
                 headers = mapOf(
                     "Authorization" to "Bearer " + (getAuth() ?: return)
                 ), cacheTime = 0
@@ -532,10 +534,10 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     private suspend fun checkMalToken() {
-        if (unixTime > getKey(
+        if (unixTime > (getKey(
                 accountId,
                 MAL_UNIXTIME_KEY
-            ) ?: 0L
+            ) ?: 0L)
         ) {
             refreshToken()
         }
@@ -544,7 +546,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     private suspend fun getMalUser(setSettings: Boolean = true): MalUser? {
         checkMalToken()
         val res = app.get(
-            "https://api.myanimelist.net/v2/users/@me",
+            "$apiUrl/v2/users/@me",
             headers = mapOf(
                 "Authorization" to "Bearer " + (getAuth() ?: return null)
             ), cacheTime = 0
@@ -620,7 +622,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         ).filter { it.value != null } as Map<String, String>
 
         return app.put(
-            "https://api.myanimelist.net/v2/anime/$id/my_list_status",
+            "$apiUrl/v2/anime/$id/my_list_status",
             headers = mapOf(
                 "Authorization" to "Bearer " + (getAuth() ?: return null)
             ),

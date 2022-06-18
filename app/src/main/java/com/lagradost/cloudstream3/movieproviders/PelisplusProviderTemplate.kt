@@ -12,7 +12,7 @@ import org.jsoup.Jsoup
  */
 
 open class PelisplusProviderTemplate : MainAPI() {
-    override val lang = "es"
+    override var lang = "es"
     open val homePageUrlList = listOf<String>()
 
 //    // mainUrl is good to have as a holder for the url to make future changes easier.

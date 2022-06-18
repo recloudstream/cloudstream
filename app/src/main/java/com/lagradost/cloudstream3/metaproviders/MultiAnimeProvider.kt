@@ -12,7 +12,7 @@ import com.lagradost.cloudstream3.utils.SyncUtil
 // wont be implemented
 class MultiAnimeProvider : MainAPI() {
     override var name = "MultiAnime"
-    override val lang = "en"
+    override var lang = "en"
     override val usesWebView = true
     override val supportedTypes = setOf(TvType.Anime)
     private val syncApi: SyncAPI = aniListApi
@@ -61,7 +61,7 @@ class MultiAnimeProvider : MainAPI() {
                 plot = res.synopsis
                 tags = res.genres
                 rating = res.publicScore
-                addTrailer(res.trailerUrl)
+                addTrailer(res.trailers)
                 addAniListId(res.id.toIntOrNull())
                 recommendations = res.recommendations
             }

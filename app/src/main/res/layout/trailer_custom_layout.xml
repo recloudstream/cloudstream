@@ -58,7 +58,6 @@
                 android:background="@color/black_overlay" />
     </FrameLayout>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_video_holder"
             android:layout_width="match_parent"
@@ -273,6 +272,17 @@
                     android:layout_width="0dp" />
         </LinearLayout>
 
+        <ImageView
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:id="@+id/player_open_source"
+                app:tint="@color/white"
+                android:src="@drawable/ic_baseline_public_24"
+                android:layout_margin="20dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         <LinearLayout
                 android:id="@+id/bottom_player_bar"
                 android:layout_width="match_parent"
@@ -343,9 +353,9 @@
                     app:tint="@color/white"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/baseline_fullscreen_24"
-                    android:layout_marginEnd="10dp"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp" />
+                    android:layout_marginEnd="20dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

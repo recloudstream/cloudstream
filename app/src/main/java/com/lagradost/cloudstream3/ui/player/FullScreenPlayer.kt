@@ -229,6 +229,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
         }
 
+        val playerSourceMove = if (isShowing) 0f else -50.toPx.toFloat()
+        player_open_source?.let {
+            ObjectAnimator.ofFloat(it, "translationY", playerSourceMove).apply {
+                duration = 200
+                start()
+            }
+        }
+
+
         if (!isLocked) {
             player_ffwd_holder?.alpha = 1f
             player_rew_holder?.alpha = 1f
@@ -251,6 +260,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         bottom_player_bar?.startAnimation(fadeAnimation)
+        player_open_source?.startAnimation(fadeAnimation)
         player_top_holder?.startAnimation(fadeAnimation)
     }
 

@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 class CinecalidadProvider:MainAPI() {
     override var mainUrl = "https://cinecalidad.lol"
     override var name = "Cinecalidad"
-    override val lang = "es"
+    override var lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true

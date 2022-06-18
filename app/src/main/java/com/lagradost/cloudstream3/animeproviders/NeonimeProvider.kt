@@ -11,7 +11,7 @@ class NeonimeProvider : MainAPI() {
     override var name = "Neonime"
     override val hasQuickSearch = false
     override val hasMainPage = true
-    override val lang = "id"
+    override var lang = "id"
     override val hasDownloadSupport = true
 
     override val supportedTypes = setOf(

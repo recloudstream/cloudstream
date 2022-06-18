@@ -67,7 +67,7 @@ interface SyncAPI : OAuth2API {
         var studio: List<String>? = null,
         var genres: List<String>? = null,
         var synonyms: List<String>? = null,
-        var trailerUrl: String? = null,
+        var trailers: List<String>? = null,
         var isAdult : Boolean? = null,
         var posterUrl: String? = null,
         var backgroundPosterUrl : String? = null,

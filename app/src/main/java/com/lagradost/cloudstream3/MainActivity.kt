@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.initAll
+import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -47,6 +48,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
@@ -68,12 +70,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.nicehttp.Requests
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import org.schabi.newpipe.extractor.NewPipe
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -364,9 +368,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     fun test() {
-        //val youtubeLink = "https://www.youtube.com/watch?v=TxB48MEAmZw"
+        /*thread {
+            val youtubeLink = "https://www.youtube.com/watch?v=Zxem9rqJ5S0"
 
+            val url = YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(youtubeLink)
+            println("ID:::: ${url.id}")
+            NewPipe.init(DownloaderTestImpl.getInstance())
+            val service = ServiceList.YouTube
+            val s = object : YoutubeStreamExtractor(
+                service,
+                url
+            ) {
 
+            }
+            s.fetchPage()
+            val streams = s.videoStreams
+            println("STREAMS: ${streams.map { "url = "+ it.url + " extra= " + it.height + "|" + it.isVideoOnly + "\n" }}")
+        }*/
         /*
         runBlocking {
 
@@ -515,6 +533,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             apis = allProviders
         }
 
+        try {
+            getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                list.forEach { custom ->
+                    allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                        ?.let {
+                            allProviders.add(it.javaClass.newInstance().apply {
+                                name = custom.name
+                                lang = custom.lang
+                                mainUrl = custom.url.trimEnd('/')
+                                canBeOverridden = false
+                            })
+                        }
+                }
+            }
+            apis = allProviders
+            APIHolder.apiMap = null
+        } catch (e: Exception) {
+            logError(e)
+        }
+
         loadThemes(this)
         updateLocale()
         app.initClient(this)
@@ -576,6 +614,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         loadCache()
         test()
+        NewPipe.init(DownloaderTestImpl.getInstance())
+        updateHasTrailers()
         /*nav_view.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {

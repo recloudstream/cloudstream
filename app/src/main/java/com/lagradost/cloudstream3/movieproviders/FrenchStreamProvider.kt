@@ -12,7 +12,7 @@ class FrenchStreamProvider : MainAPI() {
     override var name = "French Stream"
     override val hasQuickSearch = false
     override val hasMainPage = true
-    override val lang = "fr"
+    override var lang = "fr"
     override val supportedTypes = setOf(TvType.AnimeMovie, TvType.TvSeries, TvType.Movie)
 
     override suspend fun search(query: String): List<SearchResponse> {

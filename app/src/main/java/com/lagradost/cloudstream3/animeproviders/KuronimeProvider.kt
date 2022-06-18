@@ -3,17 +3,18 @@ package com.lagradost.cloudstream3.animeproviders
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.mvvm.safeApiCall
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.util.ArrayList
 
 class KuronimeProvider : MainAPI() {
     override var mainUrl = "https://185.231.223.254"
     override var name = "Kuronime"
     override val hasQuickSearch = false
     override val hasMainPage = true
-    override val lang = "id"
+    override var lang = "id"
     override val hasDownloadSupport = true
 
     override val supportedTypes = setOf(
@@ -139,7 +140,6 @@ class KuronimeProvider : MainAPI() {
             plot = description
             addTrailer(trailer)
             this.tags = tags
-            trailers = listOf(trailer)
         }
     }
 

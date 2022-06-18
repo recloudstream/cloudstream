@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
 class CineblogProvider : MainAPI() {
-    override val lang = "it"
+    override var lang = "it"
     override var mainUrl = "https://cb01.rip"
     override var name = "CineBlog"
     override val hasMainPage = true

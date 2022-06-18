@@ -1,19 +1,20 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
-import kotlin.collections.ArrayList
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 
-class ElifilmsProvider:MainAPI() {
+class ElifilmsProvider : MainAPI() {
     override var mainUrl: String = "https://elifilms.net"
     override var name: String = "Elifilms"
-    override val lang = "es"
+    override var lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Movie,
     )
+
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val newest = app.get(mainUrl).document.selectFirst("a.fav_link.premiera")?.attr("href")
@@ -42,6 +43,7 @@ class ElifilmsProvider:MainAPI() {
         if (items.size <= 0) throw ErrorLoadingException()
         return HomePageResponse(items)
     }
+
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/?s=$query"
         val doc = app.get(url).document
@@ -52,6 +54,7 @@ class ElifilmsProvider:MainAPI() {
             (MovieSearchResponse(name, href, this.name, TvType.Movie, poster, null))
         }
     }
+
     override suspend fun load(url: String): LoadResponse {
         val document = app.get(url, timeout = 120).document
         val title = document.selectFirst(".post_title h1")?.text() ?: ""
@@ -73,6 +76,7 @@ class ElifilmsProvider:MainAPI() {
             tags
         )
     }
+
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,

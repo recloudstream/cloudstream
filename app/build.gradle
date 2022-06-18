@@ -36,7 +36,7 @@ android {
         targetSdkVersion 30
 
         versionCode 48
-        versionName "2.10.28"
+        versionName "2.10.29"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
@@ -74,6 +74,8 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -143,7 +145,7 @@ dependencies {
     implementation 'com.jaredrummler:colorpicker:1.1.0'
 
     //run JS
-    implementation 'org.mozilla:rhino:1.7R4'
+    implementation 'org.mozilla:rhino:1.7.14'
 
     // TorrentStream
     //implementation 'com.github.TorrentStream:TorrentStream-Android:2.7.0'
@@ -175,6 +177,11 @@ dependencies {
     // used for subtitle decoding https://github.com/albfernandez/juniversalchardet
     implementation 'com.github.albfernandez:juniversalchardet:2.4.0'
 
-    // play yt
-    implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
+    // slow af yt
+    //implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
+
+    // newpipe yt
+    implementation 'com.github.TeamNewPipe:NewPipeExtractor:master-SNAPSHOT'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+
 }

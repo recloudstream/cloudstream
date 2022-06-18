@@ -41,6 +41,7 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
+import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -50,6 +51,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
+import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
@@ -88,8 +90,10 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFileName
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
+import kotlinx.android.synthetic.main.fragment_trailer.*
 import kotlinx.android.synthetic.main.result_recommendations.*
 import kotlinx.android.synthetic.main.result_sync.*
+import kotlinx.android.synthetic.main.trailer_custom_layout.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
@@ -599,7 +603,7 @@ class ResultFragment : ResultTrailerPlayer() {
         setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000f))
     }
 
-    var currentTrailers: List<String> = emptyList()
+    var currentTrailers: List<ExtractorLink> = emptyList()
     var currentTrailerIndex = 0
 
     override fun nextMirror() {
@@ -608,48 +612,43 @@ class ResultFragment : ResultTrailerPlayer() {
     }
 
     override fun playerError(exception: Exception) {
-        if (player.getIsPlaying()) // because we dont want random toasts in player
+        if (player.getIsPlaying()) { // because we dont want random toasts in player
             super.playerError(exception)
+        } else {
+            nextMirror()
+        }
     }
 
     private fun loadTrailer(index: Int? = null) {
-        currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { trailer ->
-            //if(trailer.contains("youtube.com")) { // wont load in exo
-            //    nextMirror()
-            //    return
-            //}
-            context?.let { ctx ->
-                player.onPause()
-                player.loadPlayer(
-                    ctx,
-                    false,
-                    ExtractorLink(
-                        "",
-                        "Trailer",
+        val isSuccess =
+            currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { trailer ->
+                context?.let { ctx ->
+                    player.onPause()
+                    player.loadPlayer(
+                        ctx,
+                        false,
                         trailer,
-                        "",
-                        Qualities.Unknown.value
-                    ),
-                    null,
-                    startPosition = 0L,
-                    subtitles = emptySet(),
-                    subtitle = null,
-                    autoPlay = false
-                )
+                        null,
+                        startPosition = 0L,
+                        subtitles = emptySet(),
+                        subtitle = null,
+                        autoPlay = false
+                    )
+                    true
+                } ?: run {
+                    false
+                }
+            } ?: run {
+                false
             }
-        }
+        result_trailer_loading?.isVisible = isSuccess
     }
 
-    private fun setTrailers(trailers: List<String>?) {
-        context?.let { ctx ->
-            if (ctx.isTvSettings()) return
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            val showTrailers =
-                settingsManager.getBoolean(ctx.getString(R.string.show_trailers_key), true)
-            if (!showTrailers) return
-            currentTrailers = trailers ?: emptyList()
-            loadTrailer()
-        }
+    private fun setTrailers(trailers: List<ExtractorLink>?) {
+        context?.updateHasTrailers()
+        if (!LoadResponse.isTrailersEnabled) return
+        currentTrailers = trailers?.sortedBy { -it.quality } ?: emptyList()
+        loadTrailer()
     }
 
     private fun setActors(actors: List<ActorData>?) {
@@ -758,6 +757,12 @@ class ResultFragment : ResultTrailerPlayer() {
         result_overlapping_panels?.setStartPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
         result_overlapping_panels?.setEndPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
 
+        player_open_source?.setOnClickListener {
+            currentTrailers.getOrNull(currentTrailerIndex)?.let {
+                context?.openBrowser(it.url)
+            }
+        }
+
         updateUIListener = ::updateUI
 
         val restart = arguments?.getBoolean(RESTART_BUNDLE) ?: false
@@ -767,6 +772,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
         activity?.window?.decorView?.clearFocus()
         hideKeyboard()
+        context?.updateHasTrailers()
         activity?.loadCache()
 
         activity?.fixPaddingStatusbar(result_top_bar)
@@ -828,6 +834,12 @@ class ResultFragment : ResultTrailerPlayer() {
             } else if (dy < -5) {
                 result_bookmark_fab?.extend()
             }
+            if (!isFullScreenPlayer && player.getIsPlaying()) {
+                if (scrollY > (player_background?.height ?: scrollY)) {
+                    player.handleEvent(CSPlayerEvent.Pause)
+                }
+            }
+
             //result_poster_blur_holder?.translationY = -scrollY.toFloat()
         })
 
@@ -975,6 +987,7 @@ class ResultFragment : ResultTrailerPlayer() {
                 }
                 ACTION_CHROME_CAST_EPISODE -> requireLinks(true)
                 ACTION_CHROME_CAST_MIRROR -> requireLinks(true)
+                ACTION_SHOW_DESCRIPTION -> true
                 else -> requireLinks(false)
             }
             if (!isLoaded) return@main // CANT LOAD
@@ -982,6 +995,14 @@ class ResultFragment : ResultTrailerPlayer() {
             when (episodeClick.action) {
                 ACTION_SHOW_TOAST -> {
                     showToast(activity, R.string.play_episode_toast, Toast.LENGTH_SHORT)
+                }
+
+                ACTION_SHOW_DESCRIPTION -> {
+                    val builder: AlertDialog.Builder =
+                        AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
+                    builder.setMessage(episodeClick.data.description ?: return@main)
+                        .setTitle(R.string.torrent_plot)
+                        .show()
                 }
 
                 ACTION_CLICK_DEFAULT -> {
@@ -1431,7 +1452,7 @@ class ResultFragment : ResultTrailerPlayer() {
                     val d = meta.value
                     result_sync_episodes?.progress = currentSyncProgress * 1000
                     setSyncMaxEpisodes(d.totalEpisodes)
-                    viewModel.setMeta(d)
+                    viewModel.setMeta(d, syncdata)
                 }
                 is Resource.Loading -> {
                     result_sync_max_episodes?.text =

@@ -15,7 +15,7 @@ import org.jsoup.select.Elements
 class PinoyMoviesEsProvider : MainAPI() {
     override var name = "Pinoy Movies"
     override var mainUrl = "https://pinoymovies.es"
-    override val lang = "tl"
+    override var lang = "tl"
     override val supportedTypes = setOf(TvType.AsianDrama)
     override val hasDownloadSupport = false
     override val hasMainPage = true

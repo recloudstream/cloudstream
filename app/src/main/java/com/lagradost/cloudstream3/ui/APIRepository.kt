@@ -13,12 +13,12 @@ class APIRepository(val api: MainAPI) {
         val noneApi = object : MainAPI() {
             override var name = "None"
             override val supportedTypes = emptySet<TvType>()
-            override val lang = ""
+            override var lang = ""
         }
         val randomApi = object : MainAPI() {
             override var name = "Random"
             override val supportedTypes = emptySet<TvType>()
-            override val lang = ""
+            override var lang = ""
         }
 
         fun isInvalidData(data: String): Boolean {

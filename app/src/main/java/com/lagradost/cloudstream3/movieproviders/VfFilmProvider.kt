@@ -9,7 +9,7 @@ import org.jsoup.Jsoup
 class VfFilmProvider : MainAPI() {
     override var mainUrl = "https://vf-film.me"
     override var name = "vf-film.me"
-    override val lang = "fr"
+    override var lang = "fr"
     override val hasQuickSearch = false
     override val hasMainPage = false
     override val hasChromecastSupport = false

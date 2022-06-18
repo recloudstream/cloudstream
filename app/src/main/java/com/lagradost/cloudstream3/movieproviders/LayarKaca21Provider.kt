@@ -11,7 +11,7 @@ class LayarKacaProvider : MainAPI() {
     override var mainUrl = "https://149.56.24.226"
     override var name = "LayarKaca"
     override val hasMainPage = true
-    override val lang = "id"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Movie,

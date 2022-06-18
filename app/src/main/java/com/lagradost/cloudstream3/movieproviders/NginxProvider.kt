@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 
@@ -95,7 +96,7 @@ class NginxProvider : MainAPI() {
                 this.plot = description
                 this.rating = ratingAverage
                 this.tags = tagsList
-                this.trailers = trailer
+                addTrailer(trailer)
                 addPoster(poster, authHeader)
             }
         } else  // a tv serie

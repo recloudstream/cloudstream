@@ -11,7 +11,7 @@ import kotlin.collections.ArrayList
 class AnimeflvIOProvider:MainAPI() {
     override var mainUrl = "https://animeflv.io" //Also scrapes from animeid.to
     override var name = "Animeflv.io"
-    override val lang = "es"
+    override var lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true

@@ -6,12 +6,18 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.hippo.unifile.UniFile
+import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
@@ -20,9 +26,15 @@ import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import kotlinx.android.synthetic.main.add_remove_sites.*
+import kotlinx.android.synthetic.main.add_site_input.*
 import java.io.File
 
 class SettingsGeneral : PreferenceFragmentCompat() {
@@ -30,6 +42,17 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_general)
     }
+
+    data class CustomSite(
+        @JsonProperty("parentJavaClass") // javaClass.simpleName
+        val parentJavaClass: String,
+        @JsonProperty("name")
+        val name: String,
+        @JsonProperty("url")
+        val url: String,
+        @JsonProperty("lang")
+        val lang: String,
+    )
 
     // Open file picker
     private val pathPicker =
@@ -64,6 +87,94 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.settins_general, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
+        fun getCurrent(): MutableList<CustomSite> {
+            return getKey<Array<CustomSite>>(USER_PROVIDER_API)?.toMutableList()
+                ?: mutableListOf()
+        }
+
+        fun showAdd() {
+            val providers = allProviders.distinctBy { it.javaClass }.sortedBy { it.name }
+            activity?.showDialog(
+                providers.map { "${it.name} (${it.mainUrl})" },
+                -1,
+                context?.getString(R.string.add_site_pref) ?: return,
+                true,
+                {}) { selection ->
+                val provider = providers.getOrNull(selection) ?: return@showDialog
+
+                val builder =
+                    AlertDialog.Builder(context ?: return@showDialog, R.style.AlertDialogCustom)
+                        .setView(R.layout.add_site_input)
+
+                val dialog = builder.create()
+                dialog.show()
+
+                dialog.text2?.text = provider.name
+                dialog.apply_btt?.setOnClickListener {
+                    val name = dialog.site_name_input?.text?.toString()
+                    val url = dialog.site_url_input?.text?.toString()
+                    val lang = dialog.site_lang_input?.text?.toString()
+                    val realLang = if (lang.isNullOrBlank()) provider.lang else lang
+                    if (url.isNullOrBlank() || name.isNullOrBlank() || realLang.length != 2) {
+                        showToast(activity, R.string.error_invalid_data, Toast.LENGTH_SHORT)
+                        return@setOnClickListener
+                    }
+
+                    val current = getCurrent()
+                    val newSite = CustomSite(provider.javaClass.simpleName, name, url, realLang)
+                    current.add(newSite)
+                    setKey(USER_PROVIDER_API, current.toTypedArray())
+
+                    dialog.dismissSafe(activity)
+                }
+                dialog.cancel_btt?.setOnClickListener {
+                    dialog.dismissSafe(activity)
+                }
+            }
+        }
+
+        fun showDelete() {
+            val current = getCurrent()
+
+            activity?.showMultiDialog(
+                current.map { it.name },
+                listOf(),
+                context?.getString(R.string.remove_site_pref) ?: return,
+                {}) { indexes ->
+                current.removeAll(indexes.map { current[it] })
+                setKey(USER_PROVIDER_API, current.toTypedArray())
+            }
+        }
+
+        fun showAddOrDelete() {
+            val builder =
+                AlertDialog.Builder(context ?: return, R.style.AlertDialogCustom)
+                    .setView(R.layout.add_remove_sites)
+
+            val dialog = builder.create()
+            dialog.show()
+
+            dialog.add_site?.setOnClickListener {
+                showAdd()
+                dialog.dismissSafe(activity)
+            }
+            dialog.remove_site?.setOnClickListener {
+                showDelete()
+                dialog.dismissSafe(activity)
+            }
+        }
+
+        getPref(R.string.override_site_key)?.setOnPreferenceClickListener { _ ->
+
+            if (getCurrent().isEmpty()) {
+                showAdd()
+            } else {
+                showAddOrDelete()
+            }
+
+            return@setOnPreferenceClickListener true
+        }
+
         getPref(R.string.legal_notice_key)?.setOnPreferenceClickListener {
             val builder: AlertDialog.Builder =
                 AlertDialog.Builder(it.context, R.style.AlertDialogCustom)
@@ -72,7 +183,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             builder.show()
             return@setOnPreferenceClickListener true
         }
-        
+
         getPref(R.string.dns_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.dns_pref)
             val prefValues = resources.getIntArray(R.array.dns_pref_values)
@@ -177,6 +288,5 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 }

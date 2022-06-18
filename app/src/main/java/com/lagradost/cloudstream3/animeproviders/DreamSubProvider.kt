@@ -11,7 +11,7 @@ import org.jsoup.nodes.Element
 class DreamSubProvider : MainAPI() {
     override var mainUrl = "https://dreamsub.me"
     override var name = "DreamSub"
-    override val lang = "it"
+    override var lang = "it"
     override val hasMainPage = true
 
     override val supportedTypes = setOf(
