@@ -187,6 +187,9 @@ class CS3IPlayer : IPlayer {
     }
 
     var currentSubtitles: SubtitleData? = null
+    /**
+     * @return True if the player should be reloaded
+     * */
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
         Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
@@ -199,15 +202,11 @@ class CS3IPlayer : IPlayer {
                 )
             } else {
                 when (subtitleHelper.subtitleStatus(subtitle)) {
-
-                    // Uncommenting this will lead to online subtitles resetting player to 00:00 on reload
-
-//                    SubtitleStatus.REQUIRES_RELOAD -> {
-//                        Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
-//                        return@let true
-//                        // reloadPlayer(context)
-//                    }
-                    SubtitleStatus.IS_ACTIVE, SubtitleStatus.REQUIRES_RELOAD -> {
+                    SubtitleStatus.REQUIRES_RELOAD -> {
+                        Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
+                        return@let true
+                    }
+                    SubtitleStatus.IS_ACTIVE -> {
                         Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
 
                         trackSelector.setParameters(
@@ -230,7 +229,6 @@ class CS3IPlayer : IPlayer {
                         //}
                     }
                     SubtitleStatus.NOT_FOUND -> {
-                        // not found
                         Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
                         return@let true
                     }
@@ -272,7 +270,7 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.setSubStyle(style)
     }
 
-    private fun saveData() {
+    override fun saveData() {
         Log.i(TAG, "saveData")
         updatedTime()
 

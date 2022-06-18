@@ -376,6 +376,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         // this is used instead of observe, because observe is too slow
         val subs = currentSubs + subtitleData
+
+        // Save current time as to not reset player to 00:00
+        player.saveData()
         player.setActiveSubtitles(subs)
         player.reloadPlayer(ctx)
 
@@ -773,11 +776,11 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun autoSelectFromSettings(): Boolean {
         // auto select subtitle based of settings
         val langCode = preferredAutoSelectSubtitles
-
         if (!langCode.isNullOrEmpty() && player.getCurrentPreferredSubtitle() == null) {
             getAutoSelectSubtitle(currentSubs, settings = true, downloads = false)?.let { sub ->
                 context?.let { ctx ->
                     if (setSubtitles(sub)) {
+                        player.saveData()
                         player.reloadPlayer(ctx)
                         player.handleEvent(CSPlayerEvent.Play)
                         return true
@@ -793,6 +796,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             getAutoSelectSubtitle(currentSubs, settings = false, downloads = true)?.let { sub ->
                 context?.let { ctx ->
                     if (setSubtitles(sub)) {
+                        player.saveData()
                         player.reloadPlayer(ctx)
                         player.handleEvent(CSPlayerEvent.Play)
                         return true

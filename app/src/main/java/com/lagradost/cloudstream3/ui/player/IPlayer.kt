@@ -90,6 +90,8 @@ interface IPlayer {
     )
 
     fun updateSubtitleStyle(style: SaveCaptionStyle)
+    fun saveData()
+
     fun loadPlayer(
         context: Context,
         sameEpisode: Boolean,
