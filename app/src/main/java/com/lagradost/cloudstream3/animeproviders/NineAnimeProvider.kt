@@ -34,7 +34,7 @@ class NineAnimeProvider : MainAPI() {
             Pair("$mainUrl/ajax/home/widget?name=updated_sub&page=1", "Recently Updated (SUB)"),
             Pair(
                 "$mainUrl/ajax/home/widget?name=updated_dub&page=1",
-                "Recently Updated (DUB)(DUB)"
+                "Recently Updated (DUB)"
             ),
             Pair(
                 "$mainUrl/ajax/home/widget?name=updated_chinese&page=1",
@@ -64,7 +64,8 @@ class NineAnimeProvider : MainAPI() {
     }
 
     //Credits to https://github.com/jmir1
-    private val key = "c/aUAorINHBLxWTy3uRiPt8J+vjsOheFG1E0q2X9CYwDZlnmd4Kb5M6gSVzfk7pQ" //key credits to @Modder4869
+    private val key =
+        "c/aUAorINHBLxWTy3uRiPt8J+vjsOheFG1E0q2X9CYwDZlnmd4Kb5M6gSVzfk7pQ" //key credits to @Modder4869
 
     private fun getVrf(id: String): String? {
         val reversed = ue(encode(id) + "0000000").slice(0..5).reversed()
@@ -175,7 +176,10 @@ class NineAnimeProvider : MainAPI() {
         return app.get(url).document.select("ul.anime-list li").mapNotNull {
             val title = it.selectFirst("a.name")!!.text()
             val href =
-                fixUrlNull(it.selectFirst("a")!!.attr("href"))?.replace(Regex("(\\?ep=(\\d+)\$)"), "")
+                fixUrlNull(it.selectFirst("a")!!.attr("href"))?.replace(
+                    Regex("(\\?ep=(\\d+)\$)"),
+                    ""
+                )
                     ?: return@mapNotNull null
             val image = it.selectFirst("a.poster img")!!.attr("src")
             AnimeSearchResponse(
@@ -199,7 +203,8 @@ class NineAnimeProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse? {
         val validUrl = url.replace("https://9anime.to", mainUrl)
         val doc = app.get(validUrl).document
-        val animeid = doc.selectFirst("div.player-wrapper.watchpage")!!.attr("data-id") ?: return null
+        val animeid =
+            doc.selectFirst("div.player-wrapper.watchpage")!!.attr("data-id") ?: return null
         val animeidencoded = encode(getVrf(animeid) ?: return null)
         val poster = doc.selectFirst("aside.main div.thumb div img")!!.attr("src")
         val title = doc.selectFirst(".info .title")!!.text()

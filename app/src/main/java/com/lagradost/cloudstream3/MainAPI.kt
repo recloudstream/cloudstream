@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.lagradost.cloudstream3.LoadResponse.Companion.addMalId
 import com.lagradost.cloudstream3.animeproviders.*
 import com.lagradost.cloudstream3.metaproviders.CrossTmdbProvider
 import com.lagradost.cloudstream3.movieproviders.*
@@ -896,6 +897,14 @@ interface LoadResponse {
         @JvmName("addActorsOnly")
         fun LoadResponse.addActors(actors: List<Actor>?) {
             this.actors = actors?.map { actor -> ActorData(actor) }
+        }
+
+        fun LoadResponse.getMalId() : String? {
+            return this.syncData[malIdPrefix]
+        }
+
+        fun LoadResponse.getAniListId() : String? {
+            return this.syncData[aniListIdPrefix]
         }
 
         fun LoadResponse.addMalId(id: Int?) {

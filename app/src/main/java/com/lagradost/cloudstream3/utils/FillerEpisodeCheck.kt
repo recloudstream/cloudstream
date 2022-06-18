@@ -11,9 +11,11 @@ object FillerEpisodeCheck {
     private const val MAIN_URL = "https://www.animefillerlist.com"
 
     var list: HashMap<String, String>? = null
+    var cache: HashMap<String, HashMap<Int, Boolean>> = hashMapOf()
 
     private fun fixName(name: String): String {
-        return name.lowercase(Locale.ROOT)/*.replace(" ", "")*/.replace("-", " ").replace("[^a-zA-Z0-9 ]".toRegex(), "")
+        return name.lowercase(Locale.ROOT)/*.replace(" ", "")*/.replace("-", " ")
+            .replace("[^a-zA-Z0-9 ]".toRegex(), "")
     }
 
     private suspend fun getFillerList(): Boolean {
@@ -61,6 +63,9 @@ object FillerEpisodeCheck {
 
     suspend fun getFillerEpisodes(query: String): HashMap<Int, Boolean>? {
         try {
+            cache[query]?.let {
+                return it
+            }
             if (!getFillerList()) return null
             val localList = list ?: return null
 
@@ -75,9 +80,15 @@ object FillerEpisodeCheck {
                 "(\\d+)" // year
             )
             val blackListRegex =
-                Regex(""" (${blackList.joinToString(separator = "|").replace("(", "\\(").replace(")", "\\)")})""")
+                Regex(
+                    """ (${
+                        blackList.joinToString(separator = "|").replace("(", "\\(")
+                            .replace(")", "\\)")
+                    })"""
+                )
 
-            val realQuery = fixName(query.replace(blackListRegex, "")).replace("shippuuden", "shippuden")
+            val realQuery =
+                fixName(query.replace(blackListRegex, "")).replace("shippuuden", "shippuden")
             if (!localList.containsKey(realQuery)) return null
             val href = localList[realQuery]?.replace(MAIN_URL, "") ?: return null // JUST IN CASE
             val result = app.get("$MAIN_URL$href").text
@@ -90,6 +101,7 @@ object FillerEpisodeCheck {
                     hashMap[episodeNumber] = type
                 }
             }
+            cache[query] = hashMap
             return hashMap
         } catch (e: Exception) {
             e.printStackTrace()

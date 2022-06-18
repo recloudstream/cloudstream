@@ -987,6 +987,7 @@ class ResultFragment : ResultTrailerPlayer() {
                 }
                 ACTION_CHROME_CAST_EPISODE -> requireLinks(true)
                 ACTION_CHROME_CAST_MIRROR -> requireLinks(true)
+                ACTION_SHOW_DESCRIPTION -> true
                 else -> requireLinks(false)
             }
             if (!isLoaded) return@main // CANT LOAD
@@ -994,6 +995,14 @@ class ResultFragment : ResultTrailerPlayer() {
             when (episodeClick.action) {
                 ACTION_SHOW_TOAST -> {
                     showToast(activity, R.string.play_episode_toast, Toast.LENGTH_SHORT)
+                }
+
+                ACTION_SHOW_DESCRIPTION -> {
+                    val builder: AlertDialog.Builder =
+                        AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
+                    builder.setMessage(episodeClick.data.description ?: return@main)
+                        .setTitle(R.string.torrent_plot)
+                        .show()
                 }
 
                 ACTION_CLICK_DEFAULT -> {
@@ -1419,6 +1428,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
         observe(syncModel.syncIds) {
             syncdata = it
+            println("syncdata: $syncdata")
         }
 
         var currentSyncProgress = 0
@@ -1443,7 +1453,7 @@ class ResultFragment : ResultTrailerPlayer() {
                     val d = meta.value
                     result_sync_episodes?.progress = currentSyncProgress * 1000
                     setSyncMaxEpisodes(d.totalEpisodes)
-                    viewModel.setMeta(d)
+                    viewModel.setMeta(d, syncdata)
                 }
                 is Resource.Loading -> {
                     result_sync_max_episodes?.text =
