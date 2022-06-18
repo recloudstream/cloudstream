@@ -22,6 +22,8 @@ import androidx.annotation.IntDef
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.SampleStream.ReadDataResult
 import com.google.android.exoplayer2.text.*
+import com.google.android.exoplayer2.text.Cue.DIMEN_UNSET
+import com.google.android.exoplayer2.text.Cue.LINE_TYPE_NUMBER
 import com.google.android.exoplayer2.util.Assertions
 import com.google.android.exoplayer2.util.Log
 import com.google.android.exoplayer2.util.MimeTypes
@@ -308,7 +310,18 @@ open class NonFinalTextRenderer @JvmOverloads constructor(
     }
 
     private fun invokeUpdateOutputInternal(cues: List<Cue>) {
-        output.onCues(cues.map { cue -> cue.buildUpon().setSize(Cue.DIMEN_UNSET).build() }) // this fixes https://github.com/LagradOst/CloudStream-3/issues/717
+        output.onCues(cues.map { cue ->
+            val builder = cue.buildUpon()
+
+            // See https://github.com/google/ExoPlayer/issues/7934
+            // SubripDecoder texts tend to be DIMEN_UNSET which pushes up the
+            // subs unlike WEBVTT which creates an inconsistency
+            if (cue.line == DIMEN_UNSET)
+                builder.setLine(-1f, LINE_TYPE_NUMBER)
+
+            // this fixes https://github.com/LagradOst/CloudStream-3/issues/717
+            builder.setSize(DIMEN_UNSET).build()
+        })
     }
 
     /**
