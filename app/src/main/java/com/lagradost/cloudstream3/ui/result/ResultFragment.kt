@@ -1428,7 +1428,6 @@ class ResultFragment : ResultTrailerPlayer() {
 
         observe(syncModel.syncIds) {
             syncdata = it
-            println("syncdata: $syncdata")
         }
 
         var currentSyncProgress = 0

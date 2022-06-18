@@ -522,7 +522,6 @@ class CS3IPlayer : IPlayer {
                 )
                 setHandleAudioBecomingNoisy(true)
                 setPlaybackSpeed(playBackSpeed)
-
             }
         }
     }
@@ -699,7 +698,7 @@ class CS3IPlayer : IPlayer {
                     if (playWhenReady) {
                         when (playbackState) {
                             Player.STATE_READY -> {
-                                requestAutoFocus?.invoke()
+
                             }
                             Player.STATE_ENDED -> {
                                 handleEvent(CSPlayerEvent.NextEpisode)
@@ -728,6 +727,7 @@ class CS3IPlayer : IPlayer {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     super.onIsPlayingChanged(isPlaying)
                     if (isPlaying) {
+                        requestAutoFocus?.invoke()
                         onRenderFirst()
                     }
                 }

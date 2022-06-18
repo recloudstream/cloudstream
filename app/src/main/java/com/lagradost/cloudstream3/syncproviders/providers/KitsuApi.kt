@@ -88,14 +88,10 @@ query {
   }
 }"""
         val result = getKitsuData(query)
-        println("got getKitsuEpisodesDetails result $result")
-
         val map = (result.data?.lookupMapping?.episodes?.nodes ?: return null).mapNotNull { ep ->
             val num = ep?.num ?: return@mapNotNull null
             num to ep
         }.toMap()
-        println("got getKitsuEpisodesDetails map $map")
-
         if (map.isNotEmpty()) {
             cache[id to site] = map
         }

@@ -383,7 +383,7 @@
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
 
-    <string name="add_site_pref">Add site</string>
+    <string name="add_site_pref">Clone site</string>
     <string name="remove_site_pref">Remove site</string>
     <string name="add_site_summary">Add a clone of an existing site, with a different url</string>
 
