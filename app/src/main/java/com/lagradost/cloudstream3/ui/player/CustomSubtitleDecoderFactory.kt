@@ -73,7 +73,7 @@ class CustomDecoder : SubtitleDecoder {
     private var realDecoder: SubtitleDecoder? = null
 
     override fun getName(): String {
-        return realDecoder?.name ?: this::class.java.name
+        return realDecoder?.name ?: this::javaClass.name
     }
 
     override fun dequeueInputBuffer(): SubtitleInputBuffer {
@@ -127,6 +127,11 @@ class CustomDecoder : SubtitleDecoder {
         }
     }
 
+    private fun SubtitleInputBuffer.setSubtitleText(text: String) {
+//        println("Set subtitle text -----\n$text\n-----")
+        this.data = ByteBuffer.wrap(text.toByteArray(charset(UTF_8)))
+    }
+
     override fun queueInputBuffer(inputBuffer: SubtitleInputBuffer) {
         Log.i(TAG, "queueInputBuffer")
         try {
@@ -152,7 +157,7 @@ class CustomDecoder : SubtitleDecoder {
                 )
                 realDecoder?.let { decoder ->
                     decoder.dequeueInputBuffer()?.let { buff ->
-                        if (decoder::class.java != SsaDecoder::class.java) {
+                        if (decoder !is SsaDecoder) {
                             if (regexSubtitlesToRemoveCaptions)
                                 captionRegex.forEach { rgx ->
                                     str = str.replace(rgx, "\n")
@@ -162,8 +167,7 @@ class CustomDecoder : SubtitleDecoder {
                                     str = str.replace(rgx, "\n")
                                 }
                         }
-                        buff.data = ByteBuffer.wrap(str.toByteArray(charset(UTF_8)))
-
+                        buff.setSubtitleText(str)
                         decoder.queueInputBuffer(buff)
                         Log.i(
                             TAG,
@@ -180,7 +184,7 @@ class CustomDecoder : SubtitleDecoder {
 
                 if (!inputString.isNullOrBlank()) {
                     var str: String = inputString
-                    if (realDecoder!!::class.java != SsaDecoder::class.java) {
+                    if (realDecoder !is SsaDecoder) {
                         if (regexSubtitlesToRemoveCaptions)
                             captionRegex.forEach { rgx ->
                                 str = str.replace(rgx, "\n")
@@ -190,7 +194,7 @@ class CustomDecoder : SubtitleDecoder {
                                 str = str.replace(rgx, "\n")
                             }
                     }
-                    inputBuffer.data = ByteBuffer.wrap(str.toByteArray(charset(UTF_8)))
+                    inputBuffer.setSubtitleText(str)
                 }
 
                 realDecoder?.queueInputBuffer(inputBuffer)
