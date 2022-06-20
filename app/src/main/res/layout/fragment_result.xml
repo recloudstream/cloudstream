@@ -816,6 +816,16 @@
                                         tools:text="8 Episodes" />
                             </LinearLayout>
 
+                            <!--TODO add next airing-->
+                            <TextView
+                                    android:visibility="gone"
+                                    android:id="@+id/result_next_airing"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="?attr/textColor"
+                                    android:textSize="17sp"
+                                    android:textStyle="bold"
+                                    tools:text="Episode 1022 will be released in" />
                             <com.facebook.shimmer.ShimmerFrameLayout
                                     android:id="@+id/result_episode_loading"
                                     android:layout_width="match_parent"

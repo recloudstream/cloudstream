@@ -98,7 +98,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         return SyncAPI.SyncResult(
             season.id.toString(),
             nextAiring = season.nextAiringEpisode?.let {
-                SyncAPI.SyncNextAiring(
+                NextAiring(
                     it.episode ?: return@let null,
                     (it.timeUntilAiring ?: return@let null) + unixTime
                 )
