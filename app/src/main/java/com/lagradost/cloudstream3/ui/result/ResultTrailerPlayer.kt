@@ -85,7 +85,6 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
         isFullScreenPlayer = fullscreen
         lockRotation = fullscreen
         player_fullscreen?.setImageResource(if (fullscreen) R.drawable.baseline_fullscreen_exit_24 else R.drawable.baseline_fullscreen_24)
-        uiReset()
         if (fullscreen) {
             enterFullscreen()
             result_top_bar?.isVisible = false
@@ -106,6 +105,7 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
             exitFullscreen()
         }
         fixPlayerSize()
+        uiReset()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -914,8 +914,9 @@ class GeneratorPlayer : FullScreenPlayer() {
         savedInstanceState: Bundle?
     ): View? {
         // this is used instead of layout-television to follow the settings and some TV devices are not classified as TV for some reason
+        isTv = context?.isTvSettings() == true
         layout =
-            if (context?.isTvSettings() == true) R.layout.fragment_player_tv else R.layout.fragment_player
+            if (isTv) R.layout.fragment_player_tv else R.layout.fragment_player
 
         viewModel = ViewModelProvider(this)[PlayerGeneratorViewModel::class.java]
         sync = ViewModelProvider(this)[SyncViewModel::class.java]
