@@ -15,12 +15,12 @@ class AkwamProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie, TvType.Anime, TvType.Cartoon)
 
     private fun Element.toSearchResponse(): SearchResponse? {
-        val url = select("a.box")?.attr("href") ?: return null
+        val url = select("a.box").attr("href") ?: return null
         if (url.contains("/games/") || url.contains("/programs/")) return null
         val poster = select("picture > img")
         val title = poster.attr("alt")
         val posterUrl = poster.attr("data-src")
-        val year = select(".badge-secondary")?.text()?.toIntOrNull()
+        val year = select(".badge-secondary").text().toIntOrNull()
 
         // If you need to differentiate use the url.
         return MovieSearchResponse(
@@ -103,14 +103,14 @@ class AkwamProvider : MainAPI() {
             it.text()
         }
 
-        val actors = doc.select("div.widget-body > div > div.entry-box > a")?.mapNotNull {
+        val actors = doc.select("div.widget-body > div > div.entry-box > a").mapNotNull {
             val name = it?.selectFirst("div > .entry-title")?.text() ?: return@mapNotNull null
             val image = it.selectFirst("div > img")?.attr("src") ?: return@mapNotNull null
             Actor(name, image)
         }
 
         val recommendations =
-            doc.select("div > div.widget-body > div.row > div > div.entry-box")?.mapNotNull {
+            doc.select("div > div.widget-body > div.row > div > div.entry-box").mapNotNull {
                 val recTitle = it?.selectFirst("div.entry-body > .entry-title > .text-white")
                     ?: return@mapNotNull null
                 val href = recTitle.attr("href") ?: return@mapNotNull null
@@ -140,7 +140,7 @@ class AkwamProvider : MainAPI() {
             val episodes = doc.select("div.bg-primary2.p-4.col-lg-4.col-md-6.col-12").map {
                 it.toEpisode()
             }.let {
-                val isReversed = it.lastOrNull()?.episode ?: 1 < it.firstOrNull()?.episode ?: 0
+                val isReversed = (it.lastOrNull()?.episode ?: 1) < (it.firstOrNull()?.episode ?: 0)
                 if (isReversed)
                     it.reversed()
                 else it
@@ -183,11 +183,23 @@ class AkwamProvider : MainAPI() {
     ): Boolean {
         val doc = app.get(data).document
 
-        val links = doc.select("div.tab-content.quality").map {
-            val quality = getQualityFromId(it.attr("id").getIntFromText())
-            it.select(".col-lg-6 > a:contains(تحميل)").map { linkElement ->
-                if(linkElement.attr("href").contains("/download/")) { linkElement.attr("href") to quality } else {
-                    "$mainUrl/download${linkElement.attr("href").split("/link")[1]}${data.split("/movie|/episode|/show/episode".toRegex())[1]}" to quality // just in case if they add the shorts urls again
+        val links = doc.select("div.tab-content.quality").map { element ->
+            val quality = getQualityFromId(element.attr("id").getIntFromText())
+            element.select(".col-lg-6 > a:contains(تحميل)").map { linkElement ->
+                if (linkElement.attr("href").contains("/download/")) {
+                    Pair(
+                        linkElement.attr("href"),
+                        quality,
+                    )
+                } else {
+                    val url = "$mainUrl/download${
+                        linkElement.attr("href").split("/link")[1]
+                    }${data.split("/movie|/episode|/show/episode".toRegex())[1]}"
+                    Pair(
+                        url,
+                        quality,
+                    )
+                    // just in case if they add the shorts urls again
                 }
             }
         }.flatten()
@@ -200,7 +212,7 @@ class AkwamProvider : MainAPI() {
             callback.invoke(
                 ExtractorLink(
                     this.name,
-                    this.name + " - ${it.second.name.replace("P", "")}p",
+                    this.name,
                     url,
                     this.mainUrl,
                     it.second.value
