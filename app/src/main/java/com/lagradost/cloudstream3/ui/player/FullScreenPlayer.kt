@@ -88,6 +88,7 @@ const val DOUBLE_TAB_PAUSE_PERCENTAGE = 0.15        // in both directions
 open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
+    protected open var isTv = false
 
     // state of player UI
     protected var isShowing = false
@@ -1055,7 +1056,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                     // netflix capture back and hide ~monke
                     KeyEvent.KEYCODE_BACK -> {
-                        if (isShowing) {
+                        if (isShowing && isTv) {
                             onClickChange()
                             return true
                         }
@@ -1257,6 +1258,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_intro_play?.setOnClickListener {
             player_intro_play?.isGone = true
             player.handleEvent(CSPlayerEvent.Play)
+            updateUIVisibility()
         }
 
         // it is !not! a bug that you cant touch the right side, it does not register inputs on navbar or status bar

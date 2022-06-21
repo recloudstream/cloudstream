@@ -41,6 +41,7 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
+import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
@@ -100,6 +101,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.concurrent.TimeUnit
+
 
 const val MAX_SYNO_LENGH = 1000
 
@@ -652,6 +655,55 @@ class ResultFragment : ResultTrailerPlayer() {
         if (!LoadResponse.isTrailersEnabled) return
         currentTrailers = trailers?.sortedBy { -it.quality } ?: emptyList()
         loadTrailer()
+    }
+
+    private fun setNextEpisode(nextAiring: NextAiring?) {
+        result_next_airing_holder?.isVisible =
+            if (nextAiring == null || nextAiring.episode <= 0 || nextAiring.unixTime <= unixTime) {
+                false
+            } else {
+                val seconds = nextAiring.unixTime - unixTime
+                val days = TimeUnit.SECONDS.toDays(seconds)
+                val hours: Long = TimeUnit.SECONDS.toHours(seconds) - days * 24
+                val minute =
+                    TimeUnit.SECONDS.toMinutes(seconds) - TimeUnit.SECONDS.toHours(seconds) * 60
+                // val second =
+                //    TimeUnit.SECONDS.toSeconds(seconds) - TimeUnit.SECONDS.toMinutes(seconds) * 60
+                try {
+                    val ctx = context
+                    if (ctx == null) {
+                        false
+                    } else {
+                        when {
+                            days > 0 -> {
+                                ctx.getString(R.string.next_episode_time_day_format).format(
+                                    days,
+                                    hours,
+                                    minute
+                                )
+                            }
+                            hours > 0 -> ctx.getString(R.string.next_episode_time_hour_format)
+                                .format(
+                                    hours,
+                                    minute
+                                )
+                            minute > 0 -> ctx.getString(R.string.next_episode_time_min_format)
+                                .format(
+                                    minute
+                                )
+                            else -> null
+                        }?.also { text ->
+                            result_next_airing_time?.text = text
+                            result_next_airing?.text =
+                                ctx.getString(R.string.next_episode_format).format(nextAiring.episode)
+                        } != null
+                    }
+                } catch (e: Exception) { // mistranslation
+                    result_next_airing_holder?.isVisible = false
+                    logError(e)
+                    false
+                }
+            }
     }
 
     private fun setActors(actors: List<ActorData>?) {
@@ -1801,7 +1853,7 @@ class ResultFragment : ResultTrailerPlayer() {
                     setRating(d.rating)
                     setRecommendations(d.recommendations, null)
                     setActors(d.actors)
-
+                    setNextEpisode(if (d is EpisodeResponse) d.nextAiring else null)
                     setTrailers(d.trailers)
 
                     if (syncModel.addSyncs(d.syncData)) {

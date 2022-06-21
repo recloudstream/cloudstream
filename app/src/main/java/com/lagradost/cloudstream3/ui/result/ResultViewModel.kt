@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -29,7 +28,6 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
-import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -144,6 +142,10 @@ class ResultViewModel : ViewModel() {
             posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
             actors = actors ?: meta.actors
 
+            if (this is EpisodeResponse) {
+                nextAiring = nextAiring ?: meta.nextAiring
+            }
+
             for ((k, v) in syncs ?: emptyMap()) {
                 syncData[k] = v
             }
@@ -162,7 +164,6 @@ class ResultViewModel : ViewModel() {
             argamap({
                 addTrailer(meta.trailers)
             }, {
-
                 if (this !is AnimeLoadResponse) return@argamap
                 val map = getEpisodesDetails(getMalId(), getAniListId(), isResponseRequired = false)
                 if (map.isNullOrEmpty()) return@argamap

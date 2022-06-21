@@ -139,6 +139,7 @@
                     android:orientation="vertical">
 
                 <com.facebook.shimmer.ShimmerFrameLayout
+                        tools:visibility="gone"
                         android:visibility="gone"
                         android:id="@+id/result_trailer_loading"
                         android:layout_width="match_parent"
@@ -148,8 +149,7 @@
                         app:shimmer_auto_start="true"
                         app:shimmer_base_alpha="0.2"
                         app:shimmer_duration="@integer/loading_time"
-                        app:shimmer_highlight_alpha="0.3"
-                        tools:visibility="visible">
+                        app:shimmer_highlight_alpha="0.3">
 
                     <LinearLayout
                             android:layout_width="match_parent"
@@ -423,6 +423,7 @@
                             tools:text="Cast: Joe Ligma" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                            tools:visibility="gone"
                             android:nextFocusUp="@id/result_bookmark_button"
                             android:nextFocusDown="@id/result_play_movie"
 
@@ -669,6 +670,7 @@
                                 android:visibility="gone"
                                 tools:visibility="visible">
 
+
                             <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_resume_series_button"
                                     style="@style/WhiteButton"
@@ -747,6 +749,7 @@
                                     tools:text="69m\nremaining" />
                         </LinearLayout>
 
+
                         <LinearLayout
                                 android:id="@+id/result_episodes_tab"
                                 android:layout_width="match_parent"
@@ -765,6 +768,7 @@
                                         style="@style/MultiSelectButton"
                                         android:layout_gravity="center_vertical"
                                         android:layout_marginStart="0dp"
+                                        android:layout_marginEnd="10dp"
                                         android:nextFocusLeft="@id/result_episode_select"
                                         android:nextFocusRight="@id/result_episode_select"
                                         android:nextFocusUp="@id/result_description"
@@ -779,6 +783,8 @@
 
                                         android:layout_gravity="center_vertical"
                                         android:layout_marginStart="0dp"
+                                        android:layout_marginEnd="10dp"
+
                                         android:nextFocusLeft="@id/result_season_button"
                                         android:nextFocusRight="@id/result_season_button"
 
@@ -794,6 +800,7 @@
 
                                         android:layout_gravity="center_vertical"
                                         android:layout_marginStart="0dp"
+                                        android:layout_marginEnd="10dp"
                                         android:nextFocusLeft="@id/result_season_button"
                                         android:nextFocusRight="@id/result_season_button"
 
@@ -814,6 +821,37 @@
                                         android:textSize="17sp"
                                         android:textStyle="normal"
                                         tools:text="8 Episodes" />
+                            </LinearLayout>
+
+
+                            <!--TODO add next airing-->
+                            <LinearLayout
+                                    android:id="@+id/result_next_airing_holder"
+                                    android:layout_gravity="start"
+                                    android:paddingBottom="15dp"
+                                    android:orientation="horizontal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                <TextView
+                                        android:gravity="center"
+
+                                        android:id="@+id/result_next_airing"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="?attr/grayTextColor"
+                                        android:textSize="17sp"
+                                        android:textStyle="normal"
+                                        android:text="Episode 1022 will be released in" />
+                                <TextView
+                                        android:paddingStart="5dp"
+                                        android:gravity="center"
+                                        android:id="@+id/result_next_airing_time"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="?attr/textColor"
+                                        android:textSize="17sp"
+                                        android:textStyle="normal"
+                                        tools:text="5d 3h 30m" />
                             </LinearLayout>
 
                             <com.facebook.shimmer.ShimmerFrameLayout

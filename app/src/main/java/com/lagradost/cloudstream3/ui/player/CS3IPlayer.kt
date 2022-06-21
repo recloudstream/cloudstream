@@ -300,14 +300,14 @@ class CS3IPlayer : IPlayer {
 
         saveData()
         exoPlayer?.pause()
-        releasePlayer()
+        //releasePlayer()
     }
 
     override fun onPause() {
         Log.i(TAG, "onPause")
         saveData()
         exoPlayer?.pause()
-        releasePlayer()
+        //releasePlayer()
     }
 
     override fun onResume(context: Context) {

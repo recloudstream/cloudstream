@@ -36,11 +36,6 @@ interface SyncAPI : OAuth2API {
         override var id: Int? = null,
     ) : SearchResponse
 
-    data class SyncNextAiring(
-        val episode: Int,
-        val unixTime: Long,
-    )
-
     data class SyncStatus(
         val status: Int,
         /** 1-10 */
@@ -63,7 +58,7 @@ interface SyncAPI : OAuth2API {
         var duration: Int? = null,
         var synopsis: String? = null,
         var airStatus: ShowStatus? = null,
-        var nextAiring: SyncNextAiring? = null,
+        var nextAiring: NextAiring? = null,
         var studio: List<String>? = null,
         var genres: List<String>? = null,
         var synonyms: List<String>? = null,

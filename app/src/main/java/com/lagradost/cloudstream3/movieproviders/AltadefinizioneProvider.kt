@@ -114,7 +114,7 @@ class AltadefinizioneProvider : MainAPI() {
 
         val tags: List<String> = document.select("#details > li:nth-child(1) > a").map { it.text() }
 
-        val trailerurl = document.selectFirst("#showtrailer > div > div > iframe")!!.attr("src")
+        val trailerurl = document.selectFirst("#showtrailer > div > div > iframe")?.attr("src")
 
         return newMovieLoadResponse(
                 title,

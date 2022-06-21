@@ -184,6 +184,12 @@
         "status": 1,
         "url": "https://filman.cc"
     },
+    "FilmpertuttiProvider": {
+        "language": "it",
+        "name": "Filmpertutti",
+        "status": 1,
+        "url": "https://www.filmpertutti.buzz"
+    },
     "FmoviesToProvider": {
         "language": "en",
         "name": "Fmovies.to",
@@ -420,7 +426,7 @@
         "language": "it",
         "name": "Tantifilm",
         "status": 1,
-        "url": "https://www.tantifilm.rodeo"
+        "url": "https://www.tantifilm.pics"
     },
     "TenshiProvider": {
         "language": "en",
