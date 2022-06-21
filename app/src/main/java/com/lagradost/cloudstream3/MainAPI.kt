@@ -92,6 +92,7 @@ object APIHolder {
             TantifilmProvider(),
             CineblogProvider(),
             AltadefinizioneProvider(),
+            FilmpertuttiProvider(),
             HDMovie5(),
             RebahinProvider(),
             LayarKacaProvider(),
