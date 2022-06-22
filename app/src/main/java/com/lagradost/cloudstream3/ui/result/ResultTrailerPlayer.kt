@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
@@ -72,6 +73,9 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
         playerWidthHeight = widthHeight
         fixPlayerSize()
     }
+
+    override fun showMirrorsDialogue() {}
+    override fun openOnlineSubPicker(context: Context, imdbId: Long?, dismissCallback: () -> Unit) {}
 
     override fun subtitlesChanged() {}
 
