@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
@@ -234,11 +235,15 @@ class SyncViewModel : ViewModel() {
 
         _metaResponse.postValue(Resource.Loading())
         var lastError: Resource<SyncAPI.SyncResult> = Resource.Failure(false, null, null, "No data")
-        val current = syncs.toList()
+        val current = ArrayList(syncs.toList())
 
         // shitty way to sort anilist first, as it has trailers while mal does not
         if (syncs.containsKey(aniListApi.idPrefix)) {
-            Collections.swap(current, current.indexOfFirst { it.first == aniListApi.idPrefix }, 0)
+            try { // swap can throw error
+                Collections.swap(current, current.indexOfFirst { it.first == aniListApi.idPrefix }, 0)
+            } catch (e : Exception) {
+                logError(e)
+            }
         }
 
         current.forEach { (prefix, id) ->

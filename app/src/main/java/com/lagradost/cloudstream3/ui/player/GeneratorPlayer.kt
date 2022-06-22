@@ -518,7 +518,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subsArrayAdapter =
                     ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-                subsArrayAdapter.add(getString(R.string.no_subtitles))
+                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles))
                 subsArrayAdapter.addAll(currentSubtitles.map { it.name })
 
                 subtitleList.adapter = subsArrayAdapter
@@ -838,20 +838,22 @@ class GeneratorPlayer : FullScreenPlayer() {
                 tvType = meta.tvType
             }
         }
-
-        //Generate video title
-        val playerVideoTitle = if (headerName != null) {
-            (headerName +
-                    if (tvType.isEpisodeBased() && episode != null)
-                        if (season == null)
-                            " - ${getString(R.string.episode)} $episode"
-                        else
-                            " \"${getString(R.string.season_short)}${season}:${getString(R.string.episode_short)}${episode}\""
-                    else "") + if (subName.isNullOrBlank() || subName == headerName) "" else " - $subName"
-        } else {
-            ""
+        context?.let { ctx ->
+            //Generate video title
+            val playerVideoTitle = if (headerName != null) {
+                (headerName +
+                        if (tvType.isEpisodeBased() && episode != null)
+                            if (season == null)
+                                " - ${ctx.getString(R.string.episode)} $episode"
+                            else
+                                " \"${ctx.getString(R.string.season_short)}${season}:${ctx.getString(R.string.episode_short)}${episode}\""
+                        else "") + if (subName.isNullOrBlank() || subName == headerName) "" else " - $subName"
+            } else {
+                ""
+            }
+            return playerVideoTitle
         }
-        return playerVideoTitle
+        return ""
     }
 
 
@@ -933,8 +935,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         context?.let { ctx ->
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            titleRez = settingsManager.getInt(getString(R.string.prefer_limit_title_rez_key), 3)
-            limitTitle = settingsManager.getInt(getString(R.string.prefer_limit_title_key), 0)
+            titleRez = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_rez_key), 3)
+            limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_key), 0)
             updateForcedEncoding(ctx)
         }
 
