@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.net.URI
@@ -138,40 +141,19 @@ class GogoanimeProvider : MainAPI() {
                 source: GogoSource,
                 sourceCallback: (ExtractorLink) -> Unit
             ) {
-                when {
-                    source.file.contains("m3u8") -> {
-                        M3u8Helper.generateM3u8(
-                            mainApiName,
-                            source.file,
-                            mainUrl,
-                            headers = mapOf("Referer" to "https://gogoplay4.com")
-                        ).forEach(sourceCallback)
-                    }
-                    source.file.contains("vidstreaming") -> {
-                        sourceCallback.invoke(
-                            ExtractorLink(
-                                mainApiName,
-                                mainApiName,
-                                source.file,
-                                mainUrl,
-                                getQualityFromName(source.label),
-                                isM3u8 = source.type == "hls"
-                            )
-                        )
-                    }
-                    else -> {
-                        sourceCallback.invoke(
-                            ExtractorLink(
-                                mainApiName,
-                                mainApiName,
-                                source.file,
-                                mainUrl,
-                                getQualityFromName(source.label),
-                                isM3u8 = source.type == "hls"
-                            )
-                        )
-                    }
-                }
+                sourceCallback.invoke(
+                    ExtractorLink(
+                        mainApiName,
+                        mainApiName,
+                        source.file,
+                        mainUrl,
+                        getQualityFromName(source.label),
+                        isM3u8 = source.type == "hls" || source.label?.contains(
+                            "auto",
+                            ignoreCase = true
+                        ) == true
+                    )
+                )
             }
 
             sources.source?.forEach {
@@ -279,8 +261,7 @@ class GogoanimeProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val link = getProperAnimeLink(url)
         val episodeloadApi = "https://ajax.gogo-load.com/ajax/load-list-episode"
-        val html = app.get(link).text
-        val doc = Jsoup.parse(html)
+        val doc = app.get(link).document
 
         val animeBody = doc.selectFirst(".anime_info_body_bg")
         val title = animeBody?.selectFirst("h1")!!.text()
@@ -391,7 +372,7 @@ class GogoanimeProvider : MainAPI() {
                 val streamingDocument = streamingResponse.document
                 argamap({
                     streamingDocument.select(".list-server-items > .linkserver")
-                        ?.forEach { element ->
+                        .forEach { element ->
                             val status = element.attr("data-status") ?: return@forEach
                             if (status != "1") return@forEach
                             val data = element.attr("data-video") ?: return@forEach
