@@ -23,6 +23,12 @@
         "status": 1,
         "url": "https://altadefinizione.hair"
     },
+    "AniflixProvider": {
+        "language": "en",
+        "name": "Aniflix",
+        "status": 1,
+        "url": "https://aniflix.pro"
+    },
     "AnimeFlickProvider": {
         "language": "en",
         "name": "AnimeFlick",
