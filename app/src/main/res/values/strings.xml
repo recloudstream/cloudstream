@@ -136,6 +136,7 @@
     <string name="download_canceled">Download Canceled</string>
     <string name="download_done">Download Done</string>
     <string name="download_format" translatable="false">%s - %s</string>
+    <string name="stream">Stream</string>
 
     <string name="error_loading_links_toast">Error Loading Links</string>
     <string name="download_storage_text">Internal Storage</string>

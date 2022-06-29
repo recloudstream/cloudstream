@@ -8,7 +8,9 @@
         app:cardBackgroundColor="?attr/boxItemBackground"
         android:id="@+id/episode_holder"
         android:foreground="@drawable/outline_drawable"
-        android:layout_marginBottom="10dp">
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp">
 
     <LinearLayout
             android:foreground="?android:attr/selectableItemBackgroundBorderless"

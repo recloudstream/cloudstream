@@ -11,6 +11,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
             android:background="?attr/primaryGrayBackground"
+            tools:layout_height="100dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <!--
@@ -124,7 +125,6 @@
 
             android:background="?attr/primaryBlackBackground"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:padding="10dp"
             android:id="@+id/download_list"
             android:layout_width="match_parent"
             tools:listitem="@layout/download_header_episode"
@@ -154,6 +154,7 @@
     </ProgressBar>-->
 
     <com.facebook.shimmer.ShimmerFrameLayout
+            tools:visibility="gone"
             android:id="@+id/download_loading"
             app:shimmer_base_alpha="0.2"
             app:shimmer_highlight_alpha="0.3"
@@ -185,4 +186,13 @@
             <include layout="@layout/loading_downloads" />
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:text="@string/stream"
+            android:visibility="gone"
+            android:id="@+id/download_stream_button"
+            app:icon="@drawable/netflix_play"
+            style="@style/ExtendedFloatingActionButton"
+            android:textColor="?attr/textColor"
+            tools:ignore="ContentDescription" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

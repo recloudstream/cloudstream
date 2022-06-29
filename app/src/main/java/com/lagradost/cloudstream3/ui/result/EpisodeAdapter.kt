@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.ui.download.DownloadButtonViewHolder
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
@@ -94,10 +95,10 @@ class EpisodeAdapter(
     @LayoutRes
     private var layout: Int = 0
     fun updateLayout() {
-       // layout =
-       //     if (cardList.filter { it.poster != null }.size >= cardList.size / 2f) // If over half has posters then use the large layout
-      //          R.layout.result_episode_large
-      //      else R.layout.result_episode
+        // layout =
+        //     if (cardList.filter { it.poster != null }.size >= cardList.size / 2f) // If over half has posters then use the large layout
+        //          R.layout.result_episode_large
+        //      else R.layout.result_episode
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -106,7 +107,8 @@ class EpisodeAdapter(
         else R.layout.result_episode*/
 
         return EpisodeCardViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.result_episode_both, parent, false),
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.result_episode_both, parent, false),
             hasDownloadSupport,
             clickCallback,
             downloadClickCallback
@@ -144,7 +146,7 @@ class EpisodeAdapter(
         fun bind(card: ResultEpisode) {
             localCard = card
 
-            val (parentView,otherView) = if(card.poster == null) {
+            val (parentView, otherView) = if (card.poster == null) {
                 itemView.episode_holder to itemView.episode_holder_large
             } else {
                 itemView.episode_holder_large to itemView.episode_holder
@@ -193,7 +195,7 @@ class EpisodeAdapter(
             episodeRating?.isGone = episodeRating?.text.isNullOrBlank()
 
             episodeDescript?.apply {
-                text = card.description ?: ""
+                text = card.description.html()
                 isGone = text.isNullOrBlank()
                 setOnClickListener {
                     clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_DESCRIPTION, card))

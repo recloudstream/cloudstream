@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_downloads.*
 
+
 const val DOWNLOAD_NAVIGATE_TO = "downloadpage"
 
 class DownloadFragment : Fragment() {
@@ -165,8 +166,22 @@ class DownloadFragment : Fragment() {
 
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
 
-        download_list.adapter = adapter
-        download_list.layoutManager = GridLayoutManager(context, 1)
+        download_list?.adapter = adapter
+        download_list?.layoutManager = GridLayoutManager(context, 1)
+        /*download_stream_button?.isGone = context?.isTvSettings() == true
+        download_stream_button?.setOnClickListener {
+
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            download_list?.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                val dy = scrollY - oldScrollY
+                if (dy > 0) { //check for scroll down
+                    download_stream_button?.shrink() // hide
+                } else if (dy < -5) {
+                    download_stream_button?.extend() // show
+                }
+            }
+        }*/
         downloadsViewModel.updateList(requireContext())
 
         context?.fixPaddingStatusbar(download_root)

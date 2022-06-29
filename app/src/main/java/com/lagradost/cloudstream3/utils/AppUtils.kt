@@ -18,11 +18,14 @@ import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
+import android.text.Spanned
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
+import androidx.core.text.toSpanned
 import androidx.tvprovider.media.tv.PreviewChannelHelper
 import androidx.tvprovider.media.tv.TvContractCompat
 import androidx.tvprovider.media.tv.WatchNextProgram
@@ -61,6 +64,22 @@ object AppUtils {
     //        )
     //    }
     //}
+    fun String?.html(): Spanned {
+        return getHtmlText(this ?: return "".toSpanned())
+    }
+
+    private fun getHtmlText(text: String): Spanned {
+        return try {
+            // I have no idea if this can throw any error, but I dont want to try
+            HtmlCompat.fromHtml(
+                text, HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+        } catch (e: Exception) {
+            logError(e)
+            text.toSpanned()
+        }
+    }
+
     @SuppressLint("RestrictedApi")
     private fun buildWatchNextProgramUri(
         context: Context,
@@ -222,7 +241,7 @@ object AppUtils {
 
     /** Any object as json string */
     fun Any.toJson(): String {
-        if(this is String) return this
+        if (this is String) return this
         return mapper.writeValueAsString(this)
     }
 

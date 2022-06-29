@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <EditText
+            android:layout_weight="20"
+            android:id="@+id/subtitle_offset_input"
+            android:inputType="textUri"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/subtitle_offset_hint"
+            tools:ignore="LabelFor" />
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|end"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+        <com.google.android.material.button.MaterialButton
+                style="@style/WhiteButton"
+                android:layout_gravity="center_vertical|end"
+                android:visibility="visible"
+                android:text="@string/sort_apply"
+                android:id="@+id/apply_btt"
+                android:layout_width="wrap_content">
+
+            <requestFocus />
+        </com.google.android.material.button.MaterialButton>
+
+        <com.google.android.material.button.MaterialButton
+                style="@style/BlackButton"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/sort_cancel"
+                android:id="@+id/cancel_btt"
+                android:layout_width="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

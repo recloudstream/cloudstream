@@ -35,9 +35,10 @@ class FlowLayout : ViewGroup {
             measureChild(child, widthMeasureSpec, heightMeasureSpec)
             val childWidth = child.measuredWidth
             val childHeight = child.measuredHeight
+            currentHeight = max(currentHeight, currentChildHookPointy + childHeight)
 
             //check if child can be placed in the current row, else go to next line
-            if (currentChildHookPointx + childWidth - child.marginEnd - child.paddingEnd - itemSpacing > realWidth) {
+            if (currentChildHookPointx + childWidth - child.marginEnd - child.paddingEnd > realWidth) {
                 //new line
                 currentWidth = max(currentWidth, currentChildHookPointx)
 
@@ -47,8 +48,8 @@ class FlowLayout : ViewGroup {
             }
             val nextChildHookPointx =
                 currentChildHookPointx + childWidth + if (childWidth == 0) 0 else itemSpacing
+
             val nextChildHookPointy = currentChildHookPointy
-            currentHeight = max(currentHeight, currentChildHookPointy + childHeight)
             val lp = child.layoutParams as LayoutParams
             lp.x = currentChildHookPointx
             lp.y = currentChildHookPointy
