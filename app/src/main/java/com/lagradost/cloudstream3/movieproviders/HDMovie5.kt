@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 
 class HDMovie5 : MainAPI() {
-    override var mainUrl = "https://hdmovie2.tv"
+    override var mainUrl = "https://hdmovie2.to"
     override var name = "HDMovie"
     override var lang = "hi"
 
@@ -137,7 +137,6 @@ class HDMovie5 : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         return data.split(",").apmapIndexed { index, it ->
-            //println("loadLinks:::: $index $it")
             val p = app.post(
                 "$mainUrl/wp-admin/admin-ajax.php",
                 data = mapOf(
@@ -147,7 +146,6 @@ class HDMovie5 : MainAPI() {
                     "type" to "movie"
                 )
             )
-           // println("TEXT::::: ${p.text}")
             val html = p.parsedSafe<PlayerAjaxResponse>()?.embedURL ?: return@apmapIndexed false
             val doc = Jsoup.parse(html)
             val link = doc.select("iframe").attr("src")

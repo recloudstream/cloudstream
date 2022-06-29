@@ -146,7 +146,7 @@
     "EgyBestProvider": {
         "language": "ar",
         "name": "EgyBest",
-        "status": 1,
+        "status": 0,
         "url": "https://www.egy.best"
     },
     "ElifilmsProvider": {
@@ -175,7 +175,7 @@
     "FaselHDProvider": {
         "language": "ar",
         "name": "FaselHD",
-        "status": 1,
+        "status": 0,
         "url": "https://faselhd.io"
     },
     "FilmanProvider": {

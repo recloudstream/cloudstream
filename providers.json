@@ -97,7 +97,7 @@
     "EgyBestProvider": {
         "name": "EgyBest",
         "url": "https://egy.best",
-        "status": 1
+        "status": 0
     },
     "EntrepeliculasyseriesProvider": {
         "name": "EntrePeliculasySeries",
