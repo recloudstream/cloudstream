@@ -34,6 +34,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.lagradost.cloudstream3.R
@@ -156,16 +157,20 @@ object UIHelper {
         errorImageDrawable: Int? = null
     ): Boolean {
         if (this == null || url.isNullOrBlank()) return false
+
         return try {
-            val builder = GlideApp.with(this.context)
+            val builder = GlideApp.with(this)
                 .load(GlideUrl(url) { headers ?: emptyMap() }).transition(
                     DrawableTransitionOptions.withCrossFade()
                 )
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
 
-            if (errorImageDrawable != null)
+            val res = if (errorImageDrawable != null)
                 builder.error(errorImageDrawable).into(this)
             else
                 builder.into(this)
+            res.clearOnDetach()
 
             true
         } catch (e: Exception) {
@@ -182,13 +187,16 @@ object UIHelper {
     ) {
         if (this == null || url.isNullOrBlank()) return
         try {
-            GlideApp.with(this.context)
+            val res = GlideApp.with(this)
                 .load(GlideUrl(url) { headers ?: emptyMap() })
                 .apply(bitmapTransform(BlurTransformation(radius, sample)))
                 .transition(
                     DrawableTransitionOptions.withCrossFade()
                 )
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(this)
+            res.clearOnDetach()
         } catch (e: Exception) {
             logError(e)
         }
