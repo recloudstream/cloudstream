@@ -167,6 +167,7 @@
                 </com.facebook.shimmer.ShimmerFrameLayout>
 
                 <FrameLayout
+                        android:descendantFocusability="blocksDescendants"
                         android:id="@+id/result_smallscreen_holder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
@@ -307,10 +308,10 @@
                         <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginStart="10dp"
                                 android:orientation="vertical">
 
                             <TextView
+                                    android:layout_marginHorizontal="10dp"
                                     android:id="@+id/result_title"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -322,6 +323,7 @@
                                     tools:text="The Perfect Run The Perfect Run" />
 
                             <com.lagradost.cloudstream3.widget.FlowLayout
+                                    android:layout_marginHorizontal="10dp"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     app:itemSpacing="10dp">
@@ -358,11 +360,16 @@
                                         tools:text="121min" />
                             </com.lagradost.cloudstream3.widget.FlowLayout>
 
+<!--
+This has half margin and half padding to make TV focus on description look better.
+The focus outline now settles between the poster and text.
+-->
                             <FrameLayout
+                                    android:layout_marginHorizontal="5dp"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent">
-
                                 <TextView
+                                        android:padding="5dp"
                                         android:maxLength="1000"
                                         android:ellipsize="end"
                                         android:id="@+id/result_description"
@@ -371,9 +378,6 @@
                                         android:foreground="@drawable/outline_drawable"
                                         android:nextFocusUp="@id/result_back"
                                         android:nextFocusDown="@id/result_bookmark_button"
-
-                                        android:paddingTop="5dp"
-                                        android:paddingBottom="0dp"
                                         android:textColor="?attr/textColor"
                                         android:textSize="15sp"
                                         tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />

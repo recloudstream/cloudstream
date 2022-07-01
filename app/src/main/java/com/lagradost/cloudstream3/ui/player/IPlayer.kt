@@ -116,4 +116,7 @@ interface IPlayer {
     fun onResume(context: Context)
 
     fun release()
+
+    /** Get if player is actually used */
+    fun isActive() : Boolean
 }

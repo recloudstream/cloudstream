@@ -876,6 +876,10 @@ class CS3IPlayer : IPlayer {
         return Pair(subSources, activeSubtitles)
     }
 
+    override fun isActive(): Boolean {
+        return exoPlayer != null
+    }
+
     private fun loadOnlinePlayer(context: Context, link: ExtractorLink) {
         Log.i(TAG, "loadOnlinePlayer $link")
         try {

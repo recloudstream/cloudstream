@@ -1143,10 +1143,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // handle tv controls directly based on player state
         keyEventListener = { eventNav ->
-            val (event, hasNavigated) = eventNav
-            if (event != null)
-                handleKeyEvent(event, hasNavigated)
-            else false
+            // Don't hook player keys if player isn't active
+            if (player.isActive()) {
+                val (event, hasNavigated) = eventNav
+                if (event != null)
+                    handleKeyEvent(event, hasNavigated)
+                else false
+            } else false
         }
 
         try {

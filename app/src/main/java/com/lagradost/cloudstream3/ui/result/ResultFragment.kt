@@ -24,7 +24,6 @@ import android.widget.*
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
-import androidx.core.text.HtmlCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -98,10 +97,7 @@ import kotlinx.android.synthetic.main.fragment_trailer.*
 import kotlinx.android.synthetic.main.result_recommendations.*
 import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.android.synthetic.main.trailer_custom_layout.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -646,6 +642,13 @@ class ResultFragment : ResultTrailerPlayer() {
             }
         result_trailer_loading?.isVisible = isSuccess
         result_smallscreen_holder?.isVisible = !isSuccess && !isFullScreenPlayer
+
+        // We don't want the trailer to be focusable if it's not visible
+        result_smallscreen_holder?.descendantFocusability = if (isSuccess) {
+            ViewGroup.FOCUS_AFTER_DESCENDANTS
+        } else {
+            ViewGroup.FOCUS_BLOCK_DESCENDANTS
+        }
         result_fullscreen_holder?.isVisible = !isSuccess && isFullScreenPlayer
     }
 
