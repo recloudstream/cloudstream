@@ -87,13 +87,13 @@ class AniflixProvider : MainAPI() {
                     listOf(newEpisode("$mainUrl/api/anime/?id=$id&episode=1"))
                 )
             else
-                addEpisodes(DubStatus.Subbed, res.episodes.episodes?.nodes?.mapNotNull { node ->
-                    val ep = node?.number ?: return@mapNotNull null
+                addEpisodes(DubStatus.Subbed, res.episodes.episodes?.nodes?.mapIndexed { index, node ->
+                    val episodeIndex = node?.number ?: (index + 1)
                     //"$mainUrl/_next/data/$token/watch/$id.json?episode=${node.number ?: return@mapNotNull null}&id=$id"
-                    newEpisode("$mainUrl/api/anime?id=$id&episode=${ep}") {
-                        episode = ep
-                        posterUrl = node.thumbnail?.original?.url
-                        name = node.titles?.canonical
+                    newEpisode("$mainUrl/api/anime?id=$id&episode=${episodeIndex}") {
+                        episode = episodeIndex
+                        posterUrl = node?.thumbnail?.original?.url
+                        name = node?.titles?.canonical
                     }
                 })
         }
