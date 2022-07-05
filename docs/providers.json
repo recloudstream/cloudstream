@@ -338,6 +338,12 @@
         "status": 1,
         "url": "https://olgply.com"
     },
+    "OpenVidsProvider": {
+        "language": "en",
+        "name": "OpenVids",
+        "status": 1,
+        "url": "https://openvids.io"
+    },
     "OploverzProvider": {
         "language": "id",
         "name": "Oploverz",
