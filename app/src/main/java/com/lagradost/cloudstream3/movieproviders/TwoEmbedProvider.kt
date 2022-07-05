@@ -15,7 +15,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 class TwoEmbedProvider : TmdbProvider() {
     override val apiName = "2Embed"
     override var name = "2Embed"
-    override var mainUrl = "https://www.2embed.ru"
+    override var mainUrl = "https://www.2embed.to"
     override val useMetaLoadResponse = true
     override val instantLinkLoading = false
     override val supportedTypes = setOf(
