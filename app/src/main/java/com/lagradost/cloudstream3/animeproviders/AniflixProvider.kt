@@ -3,13 +3,15 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import java.net.URLDecoder
 
 class AniflixProvider : MainAPI() {
     override var mainUrl = "https://aniflix.pro"
     override var name = "Aniflix"
-    override val hasMainPage = false
+    override val hasMainPage = true
 
     override val supportedTypes = setOf(
         TvType.AnimeMovie,
@@ -42,6 +44,33 @@ class AniflixProvider : MainAPI() {
         }
     }
 
+
+    override suspend fun getMainPage(): HomePageResponse {
+        val items = ArrayList<HomePageList>()
+        val soup = app.get(mainUrl).document
+        val elements = listOf(
+            Pair("Trending Now", "div:nth-child(3) > div a"),
+            Pair("Popular", "div:nth-child(4) > div a"),
+            Pair("Top Rated", "div:nth-child(5) > div a"),
+        )
+
+        elements.map { (name, element) ->
+            val home = soup.select(element).map {
+                val href = it.attr("href")
+                val title = it.selectFirst("p.mt-2")!!.text()
+                val image = it.selectFirst("img.rounded-md[sizes]")!!.attr("src").replace("/_next/image?url=","")
+                    .replace(Regex("\\&.*\$"),"")
+                val realposter = URLDecoder.decode(image, "UTF-8")
+                newAnimeSearchResponse(title, fixUrl(href)) {
+                    this.posterUrl = realposter
+                }
+            }
+            items.add(HomePageList(name, home))
+        }
+
+        return HomePageResponse(items)
+    }
+
     override suspend fun search(query: String): List<SearchResponse>? {
         val token = getToken()
         val url = "$mainUrl/_next/data/$token/search.json?keyword=$query"
@@ -57,6 +86,7 @@ class AniflixProvider : MainAPI() {
 
     override suspend fun load(url: String): LoadResponse {
         val token = getToken()
+
         val id = Regex("$mainUrl/anime/([0-9]*)").find(url)?.groupValues?.getOrNull(1)
             ?: throw ErrorLoadingException("Error parsing link for id")
 

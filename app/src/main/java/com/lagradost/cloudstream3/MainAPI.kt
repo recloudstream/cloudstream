@@ -97,6 +97,7 @@ object APIHolder {
             RebahinProvider(),
             LayarKacaProvider(),
             HDTodayProvider(),
+            OpenVidsProvider(),
 
             // Metadata providers
             //TmdbProvider(),
