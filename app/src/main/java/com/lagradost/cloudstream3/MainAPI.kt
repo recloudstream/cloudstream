@@ -97,7 +97,9 @@ object APIHolder {
             RebahinProvider(),
             LayarKacaProvider(),
             HDTodayProvider(),
-            OpenVidsProvider(),
+            OpenVidsProvider(),       
+            IdlixProvider(),
+            MultiplexProvider(),
 
             // Metadata providers
             //TmdbProvider(),
@@ -132,6 +134,8 @@ object APIHolder {
             GomunimeProvider(),
             NontonAnimeIDProvider(),
             KuronimeProvider(),
+            OtakudesuProvider(),
+            AnimeIndoProvider(),
             //MultiAnimeProvider(),
             NginxProvider(),
             OlgplyProvider(),
@@ -541,6 +545,11 @@ fun capitalizeStringNullable(str: String?): String? {
     } catch (e: Exception) {
         str
     }
+}
+
+fun fixTitle(str: String): String {
+    return str.split(" ").joinToString(" ") { it.lowercase()
+        .replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else it } }
 }
 
 /** https://www.imdb.com/title/tt2861424/ -> tt2861424 */

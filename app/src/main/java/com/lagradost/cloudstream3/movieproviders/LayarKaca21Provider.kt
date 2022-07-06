@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
@@ -25,7 +27,7 @@ class LayarKacaProvider : MainAPI() {
         val homePageList = ArrayList<HomePageList>()
 
         document.select("section.hot-block,section#newseries").forEach { block ->
-            val header = block.select("footer.load-more > a").text().trim()
+            val header = fixTitle(block.select("footer.load-more > a").text().trim())
             val items = block.select("div.slider-item").mapNotNull {
                 it.toTopSearchResult()
             }
@@ -33,7 +35,7 @@ class LayarKacaProvider : MainAPI() {
         }
 
         document.select("div#newest").forEach { block ->
-            val header = block.select(".header > h2 > a").text()
+            val header = fixTitle(block.select(".header > h2 > a").text())
             val items = block.select("div.item").mapNotNull {
                 it.toMainSearchResult()
             }
@@ -42,7 +44,7 @@ class LayarKacaProvider : MainAPI() {
 
         document.select("section#recomendation,section#populer,section#seriespopuler")
             .forEach { block ->
-                val header = block.select(".header > h2 > a").text()
+                val header = fixTitle(block.select(".header > h2 > a").text())
                 val items = block.select("div.item").mapNotNull {
                     it.toBottomSearchResult()
                 }
@@ -60,7 +62,7 @@ class LayarKacaProvider : MainAPI() {
             if (this.select("div.quality-top").isNotEmpty()) TvType.Movie else TvType.TvSeries
         return if (type == TvType.Movie) {
             val quality = getQualityFromString(this.select("div.quality-top").text().trim())
-            return newMovieSearchResponse(title, href, TvType.Movie) {
+            newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = posterUrl
                 this.quality = quality
             }
@@ -68,7 +70,7 @@ class LayarKacaProvider : MainAPI() {
             val episode = this.select("div.last-episode > span").text().toIntOrNull()
             newAnimeSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
-                addDubStatus(dubExist = false, subExist = true, subEpisodes = episode)
+                addSub(episode)
             }
         }
 
@@ -133,15 +135,10 @@ class LayarKacaProvider : MainAPI() {
                 .isNotEmpty()
         ) TvType.TvSeries else TvType.Movie
         val description = document.select("div.content > blockquote").text().trim()
+        val trailer = document.selectFirst("div.action-player li > a.fancybox")?.attr("href")
         val rating =
             document.selectFirst("div.content > div:nth-child(6) > h3")?.text()?.toRatingInt()
-        val actors = document.select("div.col-xs-9.content > div:nth-child(3) > h3 > a").map {
-            ActorData(
-                Actor(
-                    it.text()
-                )
-            )
-        }
+        val actors = document.select("div.col-xs-9.content > div:nth-child(3) > h3 > a").map { it.text() }
 
         val recommendations = document.select("div.row.item-media").map {
             val recName = it.selectFirst("h3")?.text()?.trim().toString()
@@ -171,8 +168,9 @@ class LayarKacaProvider : MainAPI() {
                 this.plot = description
                 this.tags = tags
                 this.rating = rating
-                this.actors = actors
+                addActors(actors)
                 this.recommendations = recommendations
+                addTrailer(trailer)
             }
         }
         else {
@@ -182,8 +180,9 @@ class LayarKacaProvider : MainAPI() {
                 this.plot = description
                 this.tags = tags
                 this.rating = rating
-                this.actors = actors
+                addActors(actors)
                 this.recommendations = recommendations
+                addTrailer(trailer)
             }
         }
     }

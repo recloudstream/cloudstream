@@ -216,11 +216,23 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
 
     Blogger(),
     Solidfiles(),
+    YourUpload(),
 
     Hxfile(),
     KotakAnimeid(),
     Neonime8n(),
     Neonime7n(),
+    Yufiles(),
+    Aico(),
+
+    JWPlayer(),
+    Meownime(),
+    DesuArcg(),
+    DesuOdchan(),
+    DesuOdvip(),
+    DesuDrive(),
+
+    Filesim(),
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),

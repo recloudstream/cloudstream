@@ -1,17 +1,18 @@
 package com.lagradost.cloudstream3.animeproviders
 
+import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
+import com.lagradost.cloudstream3.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.util.ArrayList
 
+
 class OploverzProvider : MainAPI() {
-    override var mainUrl = "https://oploverz.asia"
+    override var mainUrl = "https://65.108.132.145"
     override var name = "Oploverz"
-    override val hasQuickSearch = false
     override val hasMainPage = true
     override var lang = "id"
     override val hasDownloadSupport = true
@@ -47,7 +48,7 @@ class OploverzProvider : MainAPI() {
 
         document.select(".bixbox.bbnofrm").forEach { block ->
             val header = block.selectFirst("h3")!!.text().trim()
-            val animes = block.select("article[itemscope=itemscope]").mapNotNull {
+            val animes = block.select("article[itemscope=itemscope]").map {
                 it.toSearchResult()
             }
             if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
@@ -86,7 +87,7 @@ class OploverzProvider : MainAPI() {
 
     }
 
-    private fun Element.toSearchResult(): SearchResponse {
+    private fun Element.toSearchResult(): AnimeSearchResponse {
         val href = getProperAnimeLink(this.selectFirst("a.tip")!!.attr("href"))
         val title = this.selectFirst("h2[itemprop=headline]")!!.text().trim()
         val posterUrl = fixUrl(this.selectFirst("img")!!.attr("src"))
@@ -97,7 +98,7 @@ class OploverzProvider : MainAPI() {
 
         return newAnimeSearchResponse(title, href, type) {
             this.posterUrl = posterUrl
-            addDubStatus(dubExist = false, subExist = true, subEpisodes = epNum)
+            addSub(epNum)
         }
     }
 
@@ -133,15 +134,15 @@ class OploverzProvider : MainAPI() {
                 .text().trim().replace("Status: ", "")
         )
         val typeCheck =
-            when {
-                document.select(".info-content > .spe > span:nth-child(5), .info-content > .spe > span")
-                    .text().trim().contains("TV") -> "TV"
-                document.select(".info-content > .spe > span:nth-child(5), .info-content > .spe > span")
-                    .text().trim().contains("TV") -> "Movie"
+            when (document.select(".info-content > .spe > span:nth-child(5), .info-content > .spe > span")
+                .text().trim()) {
+                "TV" -> "TV"
+                "Movie" -> "Movie"
                 else -> "OVA"
             }
         val type = getType(typeCheck)
         val description = document.select(".entry-content > p").text().trim()
+        val trailer = document.selectFirst("a.trailerbutton")?.attr("href")
 
         val episodes = document.select(".eplister > ul > li").map {
             val name = it.select(".epl-title").text().trim()
@@ -171,6 +172,7 @@ class OploverzProvider : MainAPI() {
             plot = description
             this.tags = tags
             this.recommendations = recommendations
+            addTrailer(trailer)
         }
 
     }

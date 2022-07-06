@@ -180,7 +180,7 @@ class DramaidProvider : MainAPI() {
         }
 
         tryParseJson<Tracks>(trackers)?.let {
-            subCallback(
+            subCallback.invoke(
                 SubtitleFile(
                     if (it.label.contains("Indonesia")) "${it.label}n" else it.label,
                     it.file

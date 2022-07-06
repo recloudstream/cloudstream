@@ -20,13 +20,18 @@ class Neonime8n : Hxfile() {
 class KotakAnimeid : Hxfile() {
     override val name = "KotakAnimeid"
     override val mainUrl = "https://kotakanimeid.com"
+    override val requiresReferer = true
 }
 
-private data class ResponseSource(
-    @JsonProperty("file") val file: String,
-    @JsonProperty("type") val type: String?,
-    @JsonProperty("label") val label: String?
-)
+class Yufiles : Hxfile() {
+    override val name = "Yufiles"
+    override val mainUrl = "https://yufiles.com"
+}
+
+class Aico : Hxfile() {
+    override val name = "Aico"
+    override val mainUrl = "https://aico.pw"
+}
 
 open class Hxfile : ExtractorApi() {
     override val name = "Hxfile"
@@ -36,7 +41,7 @@ open class Hxfile : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val sources = mutableListOf<ExtractorLink>()
-        val document = app.get(url, allowRedirects = redirect).document
+        val document = app.get(url, allowRedirects = redirect, referer = referer).document
         with(document) {
             this.select("script").map { script ->
                 if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
@@ -85,5 +90,11 @@ open class Hxfile : ExtractorApi() {
         }
         return sources
     }
+
+    private data class ResponseSource(
+        @JsonProperty("file") val file: String,
+        @JsonProperty("type") val type: String?,
+        @JsonProperty("label") val label: String?
+    )
 
 }

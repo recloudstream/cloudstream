@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.net.URI
 import java.util.ArrayList
 
 class NontonAnimeIDProvider : MainAPI() {
@@ -49,15 +47,15 @@ class NontonAnimeIDProvider : MainAPI() {
 
         document.select("section#postbaru").forEach { block ->
             val header = block.selectFirst("h2")!!.text().trim()
-            val animes = block.select("article.animeseries").mapNotNull {
+            val animes = block.select("article.animeseries").map {
                 it.toSearchResult()
             }
             if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
         }
 
-        document.select("aside#sidebar_right > div.side:nth-child(2)").forEach { block ->
+        document.select("aside#sidebar_right > div:nth-child(4)").forEach { block ->
             val header = block.selectFirst("h3")!!.ownText().trim()
-            val animes = block.select("li.fullwdth").mapNotNull {
+            val animes = block.select("li.fullwdth").map {
                 it.toSearchResultPopular()
             }
             if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
@@ -83,7 +81,7 @@ class NontonAnimeIDProvider : MainAPI() {
         }
     }
 
-    private fun Element.toSearchResult(): SearchResponse {
+    private fun Element.toSearchResult(): AnimeSearchResponse {
         val href = getProperAnimeLink(fixUrl(this.selectFirst("a")!!.attr("href")))
         val title = this.selectFirst("h3.title")!!.text()
         val posterUrl = fixUrl(this.select("img").attr("data-src"))
@@ -95,7 +93,7 @@ class NontonAnimeIDProvider : MainAPI() {
 
     }
 
-    private fun Element.toSearchResultPopular(): SearchResponse {
+    private fun Element.toSearchResultPopular(): AnimeSearchResponse {
         val href = getProperAnimeLink(fixUrl(this.selectFirst("a")!!.attr("href")))
         val title = this.select("h4").text().trim()
         val posterUrl = fixUrl(this.select("img").attr("data-src"))
@@ -149,7 +147,7 @@ class NontonAnimeIDProvider : MainAPI() {
         val type = getType(document.select("span.typeseries").text().trim())
         val rating = document.select("span.nilaiseries").text().trim().toIntOrNull()
         val description = document.select(".entry-content.seriesdesc > p").text().trim()
-        val trailer = document.select("a.ytp-impression-link").attr("href")
+        val trailer = document.selectFirst("iframe#traileryt")?.attr("data-src")
 
         val episodes = if (document.select("button.buttfilter").isNotEmpty()) {
             val id = document.select("input[name=series_id]").attr("value")
@@ -238,7 +236,7 @@ class NontonAnimeIDProvider : MainAPI() {
         }
 
         sources.apmap {
-            loadExtractor(it, data, callback)
+            loadExtractor(it, "$mainUrl/", callback)
         }
 
         return true

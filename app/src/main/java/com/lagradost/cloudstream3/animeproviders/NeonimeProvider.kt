@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
@@ -43,10 +44,10 @@ class NeonimeProvider : MainAPI() {
         val document = app.get(mainUrl).document
 
         val homePageList = ArrayList<HomePageList>()
-
-        document.select("div.item_1.items").forEach { block ->
-            val header = block.previousElementSibling()?.select("h1")!!.text()
-            val animes = block.select("div.item").mapNotNull {
+        
+        document.select("div.item_1.items,div#slid01").forEach { block ->
+            val header = block.previousElementSibling()?.select("h1")?.text() ?: block.selectFirst("h3")?.text().toString()
+            val animes = block.select("div.item").map {
                 it.toSearchResult()
             }
             if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
@@ -58,26 +59,36 @@ class NeonimeProvider : MainAPI() {
     private fun getProperAnimeLink(uri: String): String {
         return when {
             uri.contains("/episode") -> {
-                val href = "$mainUrl/tvshows/" + Regex("episode/(.*)-\\d{1,2}x\\d+").find(uri)?.groupValues?.get(1).toString()
-                when {
-                    !href.contains("-subtitle-indonesia") -> "$href-subtitle-indonesia"
-                    href.contains("-special") -> href.replace(Regex("-x\\d+"), "")
-                    else -> href
+                val title = uri.substringAfter("$mainUrl/episode/").let { tt ->
+                    val fixTitle = Regex("(.*)-\\d{1,2}x\\d+").find(tt)?.groupValues?.getOrNull(1).toString()
+                    when {
+                        !tt.contains("-season") && !tt.contains(Regex("-1x\\d+")) && !tt.contains("one-piece") -> "$fixTitle-season-${Regex("-(\\d{1,2})x\\d+").find(tt)?.groupValues?.getOrNull(1).toString()}"
+                        tt.contains("-special") -> fixTitle.replace(Regex("-x\\d+"), "")
+                        !fixTitle.contains("-subtitle-indonesia") -> "$fixTitle-subtitle-indonesia"
+                        else -> fixTitle
+                    }
                 }
+
+//                title = when {
+//                    title.contains("youkoso-jitsuryoku") && !title.contains("-season") -> title.replace("-e-", "-e-tv-")
+//                    else -> title
+//                }
+
+                "$mainUrl/tvshows/$title"
             }
             else -> uri
         }
     }
 
-    private fun Element.toSearchResult(): SearchResponse {
+    private fun Element.toSearchResult(): AnimeSearchResponse {
         val href = getProperAnimeLink(fixUrl(this.select("a").attr("href")))
-        val title = this.select("span.tt.title-episode,h2.title-episode-movie").text()
+        val title = this.select("span.tt.title-episode,h2.title-episode-movie,span.ttps").text()
         val posterUrl = fixUrl(this.select("img").attr("data-src"))
         val epNum = this.select(".fixyear > h2.text-center").text().replace(Regex("[^0-9]"), "").trim().toIntOrNull()
 
         return newAnimeSearchResponse(title, href, TvType.Anime) {
             this.posterUrl = posterUrl
-            addDubStatus(dubExist = false, subExist = true, subEpisodes = epNum)
+            addSub(epNum)
         }
 
     }
@@ -96,7 +107,7 @@ class NeonimeProvider : MainAPI() {
 
             newAnimeSearchResponse(title, href, tvType) {
                 this.posterUrl = poster
-                addDubStatus(dubExist = false, subExist = true, subEpisodes = episodes)
+                addSub(episodes)
             }
         }
     }
@@ -112,19 +123,16 @@ class NeonimeProvider : MainAPI() {
                 val mYear = document.selectFirst("a[href*=release-year]")!!.text().toIntOrNull()
                 val mDescription = document.select("div[itemprop = description]").text().trim()
                 val mRating = document.select("span[itemprop = ratingValue]").text().toIntOrNull()
+                val mTrailer = document.selectFirst("div.youtube_id iframe")?.attr("data-wpfc-original-src")?.substringAfterLast("html#")?.let{ "https://www.youtube.com/embed/$it"}
 
-                return MovieLoadResponse(
-                    name = mTitle,
-                    url = url,
-                    this.name,
-                    type = TvType.Movie,
-                    dataUrl = url,
-                    posterUrl = mPoster,
-                    year = mYear,
-                    plot = mDescription,
-                    rating = mRating,
+                return newMovieLoadResponse(name = mTitle, url = url, type = TvType.Movie, dataUrl = url) {
+                    posterUrl = mPoster
+                    year = mYear
+                    plot = mDescription
+                    rating = mRating
                     tags = mTags
-                )
+                    addTrailer(mTrailer)
+                }
             }
             else {
                 val title = document.select("h1[itemprop = name]").text().trim()
@@ -133,6 +141,7 @@ class NeonimeProvider : MainAPI() {
                 val year = document.select("#info a[href*=\"-year/\"]").text().toIntOrNull()
                 val status = getStatus(document.select("div.metadatac > span").last()!!.text().trim())
                 val description = document.select("div[itemprop = description] > p").text().trim()
+                val trailer = document.selectFirst("div.youtube_id_tv iframe")?.attr("data-wpfc-original-src")?.substringAfterLast("html#")?.let{ "https://www.youtube.com/embed/$it"}
 
                 val episodes = document.select("ul.episodios > li").mapNotNull {
                     val name = it.selectFirst(".episodiotitle > a")!!.ownText().trim()
@@ -148,6 +157,7 @@ class NeonimeProvider : MainAPI() {
                     showStatus = status
                     plot = description
                     this.tags = tags
+                    addTrailer(trailer)
                 }
             }
     }
