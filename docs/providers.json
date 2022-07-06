@@ -35,6 +35,12 @@
         "status": 1,
         "url": "https://animeflick.net"
     },
+    "AnimeIndoProvider": {
+        "language": "id",
+        "name": "AnimeIndo",
+        "status": 1,
+        "url": "https://animeindo.sbs"
+    },
     "AnimePaheProvider": {
         "language": "en",
         "name": "AnimePahe",
@@ -238,6 +244,12 @@
         "status": 1,
         "url": "https://ihavenotv.com"
     },
+    "IdlixProvider": {
+        "language": "id",
+        "name": "Idlix",
+        "status": 1,
+        "url": ""
+    },
     "JKAnimeProvider": {
         "language": "es",
         "name": "JKAnime",
@@ -266,7 +278,7 @@
         "language": "id",
         "name": "Kuronime",
         "status": 1,
-        "url": "https://185.231.223.254"
+        "url": "https://45.12.2.2"
     },
     "LayarKaca21Provider": {
         "name": "LayarKaca",
@@ -295,6 +307,12 @@
         "name": "Monoschinos",
         "status": 1,
         "url": "https://monoschinos2.com"
+    },
+    "MultiplexProvider": {
+        "language": "id",
+        "name": "Multiplex",
+        "status": 1,
+        "url": "https://146.19.24.137"
     },
     "MundoDonghuaProvider": {
         "language": "es",
@@ -348,7 +366,13 @@
         "language": "id",
         "name": "Oploverz",
         "status": 1,
-        "url": "https://oploverz.asia"
+        "url": "https://65.108.132.145"
+    },
+    "OtakudesuProvider": {
+        "language": "id",
+        "name": "Otakudesu",
+        "status": 1,
+        "url": "https://otakudesu.watch"
     },
     "PeliSmartProvider": {
         "language": "es",
