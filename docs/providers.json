@@ -259,7 +259,7 @@
     "KawaiifuProvider": {
         "language": "en",
         "name": "Kawaiifu",
-        "status": 0,
+        "status": 1,
         "url": "https://kawaiifu.com"
     },
     "KdramaHoodProvider": {
