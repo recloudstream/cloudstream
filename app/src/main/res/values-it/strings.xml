@@ -13,6 +13,10 @@
     <string name="year_format" translatable="false" formatted="true">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
+    <string name="next_episode_format" formatted="true">L\'episodio %d uscirà in</string>
+    <string name="next_episode_time_day_format" formatted="true">%dg %do %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%do %dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
 
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -67,13 +71,14 @@
 
     <string name="download">Scarica</string>
     <string name="downloaded">Scaricato</string>
-    <string name="downloading">Scaricando</string>
+    <string name="downloading">Download in corso</string>
     <string name="download_paused">Download in pausa</string>
     <string name="download_started">Download iniziato</string>
     <string name="download_failed">Download fallito</string>
     <string name="download_canceled">Download cancellato</string>
     <string name="download_done">Download completato</string>
     <string name="download_format" translatable="false">%s - %s</string>
+    <string name="stream">Stream</string>
 
     <string name="error_loading_links_toast">Errore durante il caricamento dei link</string>
     <string name="download_storage_text">Archiviazione interna</string>
@@ -191,6 +196,9 @@
     <string name="bug_report_settings_off">Invia i dati solo in caso di crash</string>
     <string name="bug_report_settings_on">Non inviare alcun dato</string>
     <string name="show_fillers_settings">Mostra tag [filler] per anime</string>
+    <string name="show_trailers_settings">Mostra trailer</string>
+    <string name="kitsu_settings">Mostra poster da Kitsu</string>
+
     <string name="updates_settings">Mostra gli aggiornamenti dell\'app</string>
     <string name="updates_settings_des">Cerca automaticamente nuovi aggiornamenti all\'avvio</string>
     <string name="uprereleases_settings">Aggiorna alle prerelease</string>
@@ -315,7 +323,12 @@
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Utile per bypassare i blocchi ISP</string>
 
+    <string name="add_site_pref">Clona un sito</string>
+    <string name="remove_site_pref">Rimuovi sito</string>
+    <string name="add_site_summary">Aggiungi un clone di un sito esistente, con un url differente</string>
+
     <string name="download_path_pref">Posizione Download</string>
+
     <string name="nginx_url_pref">URL Nginx server</string>
 
     <string name="display_subbed_dubbed_settings">Mostra anime doppiati/sottotitolati</string>
@@ -338,7 +351,7 @@
     <string name="automatic">Auto</string>
     <string name="tv_layout">Layout TV</string>
     <string name="phone_layout">Layout Telefono</string>
-    <string name="emulator_layout">Layout Emulator</string>
+    <string name="emulator_layout">Layout Emulatore</string>
 
     <string name="primary_color_settings">Colore primario</string>
     <string name="app_theme_settings">Tema</string>
@@ -350,6 +363,9 @@
     <string name="example_username">MyCoolUsername</string>
     <string name="example_email">hello@world.com</string>
     <string name="example_ip">127.0.0.1</string>
+    <string name="example_site_name">MyCoolSite</string>
+    <string name="example_site_url">example.com</string>
+    <string name="example_lang_name">Codice lingua (it)</string>
 
     <string name="login_format" formatted="true">%s %s</string>
     <string name="account">account</string>
@@ -430,6 +446,10 @@
     <string name="title">Titolo</string>
     <string name="resolution">Risoluzione</string>
     <string name="error_invalid_id">ID invalido</string>
+    <string name="error_invalid_data">Dati non validi</string>
+    <string name="error">Errore</string>
     <!--<string name="subtitles_remove_captions">Remove closed captions from subtitles</string>-->
     <!--<string name="subtitles_remove_bloat">Remove bloat from subtitles</string>-->
+    <!--<string name="extras">Extra</string>-->
+    <string name="trailer">Trailer</string>
 </resources>
