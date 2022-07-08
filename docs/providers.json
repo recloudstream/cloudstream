@@ -144,7 +144,6 @@
         "url": "https://185.224.83.103"
     },
     "DreamSubProvider": {
-        "language": "it",
         "name": "DreamSub",
         "status": 1,
         "url": "https://dreamsub.me"
