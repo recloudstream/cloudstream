@@ -128,7 +128,7 @@ data class TrailerElement(
 
 class StreamingcommunityProvider : MainAPI() {
     override var lang = "it"
-    override var mainUrl = "https://streamingcommunity.business"
+    override var mainUrl = "https://streamingcommunity.org"
     override var name = "Streamingcommunity"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -177,7 +177,7 @@ class StreamingcommunityProvider : MainAPI() {
     override suspend fun getMainPage(): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val document = app.get(mainUrl).document
-        document.select("slider-title").subList(2, 6).map { it ->
+        document.select("slider-title").subList(0, 6).map { it ->
             if (it.attr("slider-name") != "In arrivo") {
                 val films = it.attr("titles-json")
                 val lista = mutableListOf<MovieSearchResponse>()

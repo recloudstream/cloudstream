@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.movieproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
@@ -86,10 +88,16 @@ class FilmanProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val response = app.get(url).text
         val document = Jsoup.parse(response)
+        val documentTitle = document.select("title").text().trim()
+
+        if (documentTitle.startsWith("Logowanie")){
+            throw RuntimeException("This page seems to be locked behind a login-wall on the website, unable to scrape it. If it is not please report it.")
+        }
+
         var title = document.select("span[itemprop=title]").text()
         val data = document.select("#links").outerHtml()
         val posterUrl = document.select("#single-poster > img").attr("src")
-        val year = document.select(".info > ul li")[1].text().toIntOrNull()
+        val year = document.select(".info > ul li").getOrNull(0)?.text()?.toIntOrNull()
         val plot = document.select(".description").text()
         val episodesElements = document.select("#episode-list a[href]")
         if (episodesElements.isEmpty()) {
@@ -132,7 +140,7 @@ class FilmanProvider : MainAPI() {
 
         document?.select(".link-to-video")?.apmap { item ->
             val decoded = base64Decode(item.select("a").attr("data-iframe"))
-            val link = mapper.readValue<LinkElement>(decoded).src
+            val link = tryParseJson<LinkElement>(decoded)?.src ?: return@apmap
             loadExtractor(link, null, callback)
         }
         return true

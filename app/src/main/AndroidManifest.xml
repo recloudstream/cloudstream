@@ -114,7 +114,7 @@
                 <data android:scheme="https" android:host="secretlink.xyz" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="hdm.to" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="theflix.to" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="streamingcommunity.top" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="streamingcommunity.org" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="www.tantifilm.rodeo" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="v2.apimdb.net" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="www.wcostream.com" android:pathPrefix="/"/>
