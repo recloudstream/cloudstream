@@ -173,7 +173,7 @@ class KuronimeProvider : MainAPI() {
     ): Boolean {
         val document = app.get(data).document
         val sources = document.select(".mobius > .mirror > option").mapNotNull {
-            fixUrl(Jsoup.parse(base64Decode(it.attr("value"))).select("iframe").attr("src"))
+            fixUrl(Jsoup.parse(base64Decode(it.attr("value"))).select("iframe").attr("data-src"))
         }
 
         sources.apmap {
