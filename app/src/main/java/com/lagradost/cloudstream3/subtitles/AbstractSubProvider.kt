@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.subtitles
 import androidx.annotation.WorkerThread
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleEntity
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
+import com.lagradost.cloudstream3.syncproviders.AuthAPI
 
 interface AbstractSubProvider {
     @WorkerThread
@@ -15,3 +16,5 @@ interface AbstractSubProvider {
         throw NotImplementedError()
     }
 }
+
+interface AbstractSubApi : AbstractSubProvider, AuthAPI
