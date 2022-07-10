@@ -295,6 +295,8 @@ abstract class AbstractPlayerFragment(
                 }
             }
 
+            // Necessary for multiple combined videos
+            player_view?.setShowMultiWindowTimeBar(true)
             player_view?.player = player
             player_view?.performClick()
         }
