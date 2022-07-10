@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 
 class HDMovie5 : MainAPI() {
-    override var mainUrl = "https://hdmovie2.to"
+    override var mainUrl = "https://hdmovie2.org"
     override var name = "HDMovie"
     override var lang = "hi"
 
