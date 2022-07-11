@@ -462,8 +462,9 @@
         <item name="android:ellipsize">marquee</item>
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:drawablePadding">20dp</item>
-        <item name="drawableTint">@color/check_selection_color</item>
-        <item name="drawableStartCompat">@drawable/ic_baseline_check_24</item>
+<!--        <item name="drawableTint">@color/check_selection_color</item>-->
+<!--        Set color in the drawable instead of tint to allow multiple drawables-->
+        <item name="drawableStartCompat">@drawable/ic_baseline_check_24_listview</item>
     </style>
 
     <style name="BlackButton" parent="NiceButton">

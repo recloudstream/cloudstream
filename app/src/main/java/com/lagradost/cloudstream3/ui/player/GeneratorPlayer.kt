@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -216,25 +217,80 @@ class GeneratorPlayer : FullScreenPlayer() {
         dismissCallback: (() -> Unit)
     ) {
         val providers = subsProviders
+        val isSingleProvider = subsProviders.size == 1
 
         val dialog = Dialog(context, R.style.AlertDialogCustomBlack)
         dialog.setContentView(R.layout.dialog_online_subtitles)
 
+        var currentSubtitles: List<AbstractSubtitleEntities.SubtitleEntity> = emptyList()
+        var currentSubtitle: AbstractSubtitleEntities.SubtitleEntity? = null
+
+        fun getName(entry: AbstractSubtitleEntities.SubtitleEntity, withLanguage: Boolean): String {
+            if (entry.lang.isBlank() || !withLanguage) {
+                return entry.name
+            }
+            val language = fromTwoLettersToLanguage(entry.lang.trim()) ?: entry.lang
+            return "$language ${entry.name}"
+        }
+
+        val layout = R.layout.sort_bottom_single_choice_double_text
         val arrayAdapter =
-            ArrayAdapter<String>(dialog.context, R.layout.sort_bottom_single_choice)
+            object : ArrayAdapter<AbstractSubtitleEntities.SubtitleEntity>(dialog.context, layout) {
+                fun setHearingImpairedIcon(
+                    imageViewEnd: ImageView?,
+                    position: Int
+                ) {
+                    if (imageViewEnd == null) return
+                    val isHearingImpaired =
+                        currentSubtitles.getOrNull(position)?.isHearingImpaired ?: false
+
+                    val drawableEnd = if (isHearingImpaired) {
+                        ContextCompat.getDrawable(
+                            context,
+                            R.drawable.ic_baseline_hearing_24
+                        )?.apply {
+                            setTint(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.textColor
+                                )
+                            )
+                        }
+                    } else null
+
+                    imageViewEnd.setImageDrawable(drawableEnd)
+                }
+
+                override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                    val view = convertView ?: LayoutInflater.from(context)
+                        .inflate(layout, null)
+
+                    val item = getItem(position)
+
+                    val mainTextView = view.findViewById<TextView>(R.id.main_text)
+                    val secondaryTextView = view.findViewById<TextView>(R.id.secondary_text)
+                    val drawableEnd = view.findViewById<ImageView>(R.id.drawable_end)
+
+                    mainTextView?.text = item?.let { getName(it, false) }
+
+                    val language = item?.let { fromTwoLettersToLanguage(it.lang.trim()) ?: it.lang } ?: ""
+                    val providerSuffix = if (isSingleProvider || item == null) "" else " · ${item.source}"
+                    secondaryTextView?.text = language + providerSuffix
+
+                    setHearingImpairedIcon(drawableEnd, position)
+                    return view
+                }
+            }
 
         dialog.show()
-
         dialog.cancel_btt.setOnClickListener {
             dialog.dismissSafe()
         }
 
         dialog.subtitle_adapter.choiceMode = AbsListView.CHOICE_MODE_SINGLE
         dialog.subtitle_adapter.adapter = arrayAdapter
-        val adapter = dialog.subtitle_adapter.adapter as? ArrayAdapter<String>
-
-        var currentSubtitles: List<AbstractSubtitleEntities.SubtitleEntity> = emptyList()
-        var currentSubtitle: AbstractSubtitleEntities.SubtitleEntity? = null
+        val adapter =
+            dialog.subtitle_adapter.adapter as? ArrayAdapter<AbstractSubtitleEntities.SubtitleEntity>
 
         dialog.subtitle_adapter.setOnItemClickListener { _, _, position, _ ->
             currentSubtitle = currentSubtitles.getOrNull(position) ?: return@setOnItemClickListener
@@ -242,19 +298,11 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         var currentLanguageTwoLetters: String = getAutoSelectLanguageISO639_1()
 
-        fun getName(entry: AbstractSubtitleEntities.SubtitleEntity): String {
-            return if (entry.lang.isBlank()) {
-                entry.name
-            } else {
-                val language = fromTwoLettersToLanguage(entry.lang.trim()) ?: entry.lang
-                return "$language ${entry.name}"
-            }
-        }
 
         fun setSubtitlesList(list: List<AbstractSubtitleEntities.SubtitleEntity>) {
             currentSubtitles = list
             adapter?.clear()
-            adapter?.addAll(currentSubtitles.map { getName(it) })
+            adapter?.addAll(currentSubtitles)
         }
 
         val currentTempMeta = getMetaData()
@@ -328,7 +376,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     ioSafe {
                         val url = api.load(currentSubtitle) ?: return@ioSafe
                         val subtitle = SubtitleData(
-                            name = getName(currentSubtitle),
+                            name = getName(currentSubtitle, true),
                             url = url,
                             origin = SubtitleOrigin.URL,
                             mimeType = url.toSubtitleMimeType()
@@ -846,7 +894,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                             if (season == null)
                                 " - ${ctx.getString(R.string.episode)} $episode"
                             else
-                                " \"${ctx.getString(R.string.season_short)}${season}:${ctx.getString(R.string.episode_short)}${episode}\""
+                                " \"${ctx.getString(R.string.season_short)}${season}:${
+                                    ctx.getString(
+                                        R.string.episode_short
+                                    )
+                                }${episode}\""
                         else "") + if (subName.isNullOrBlank() || subName == headerName) "" else " - $subName"
             } else {
                 ""

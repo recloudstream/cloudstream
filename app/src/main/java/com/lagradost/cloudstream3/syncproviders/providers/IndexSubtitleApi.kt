@@ -1,13 +1,14 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.util.Log
-import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.subtitles.AbstractSubProvider
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.imdbUrlToIdNullable
+import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
-import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 
-class IndexSubtitleApi : AuthAPI, AbstractSubProvider {
+class IndexSubtitleApi : AbstractSubApi {
     override val name = "IndexSubtitle"
     override val idPrefix = "indexsubtitle"
     override val requiresLogin = false
@@ -42,7 +43,7 @@ class IndexSubtitleApi : AuthAPI, AbstractSubProvider {
         }
     }
 
-    private fun getOrdinal(num: Int?) : String? {
+    private fun getOrdinal(num: Int?): String? {
         return when (num) {
             1 -> "First"
             2 -> "Second"
@@ -83,13 +84,15 @@ class IndexSubtitleApi : AuthAPI, AbstractSubProvider {
         }
     }
 
-    private fun isRightEps(text: String, seasonNum: Int?, epNum: Int?) : Boolean {
-        val FILTER_EPS_REGEX = Regex("(?i)((Chapter\\s?0?${epNum})|((Season)?\\s?0?${seasonNum}?\\s?(Episode)\\s?0?${epNum}[^0-9]))|(?i)((S?0?${seasonNum}?E0?${epNum}[^0-9])|(0?${seasonNum}[a-z]0?${epNum}[^0-9]))")
+    private fun isRightEps(text: String, seasonNum: Int?, epNum: Int?): Boolean {
+        val FILTER_EPS_REGEX =
+            Regex("(?i)((Chapter\\s?0?${epNum})|((Season)?\\s?0?${seasonNum}?\\s?(Episode)\\s?0?${epNum}[^0-9]))|(?i)((S?0?${seasonNum}?E0?${epNum}[^0-9])|(0?${seasonNum}[a-z]0?${epNum}[^0-9]))")
         return text.contains(FILTER_EPS_REGEX)
     }
 
-    private fun haveEps(text: String) : Boolean {
-        val HAVE_EPS_REGEX = Regex("(?i)((Chapter\\s?0?\\d)|((Season)?\\s?0?\\d?\\s?(Episode)\\s?0?\\d))|(?i)((S?0?\\d?E0?\\d)|(0?\\d[a-z]0?\\d))")
+    private fun haveEps(text: String): Boolean {
+        val HAVE_EPS_REGEX =
+            Regex("(?i)((Chapter\\s?0?\\d)|((Season)?\\s?0?\\d?\\s?(Episode)\\s?0?\\d))|(?i)((S?0?\\d?E0?\\d)|(0?\\d[a-z]0?\\d))")
         return text.contains(HAVE_EPS_REGEX)
     }
 
@@ -104,13 +107,18 @@ class IndexSubtitleApi : AuthAPI, AbstractSubProvider {
 
         val urlItems = ArrayList<String>()
 
-        fun cleanResources(results: MutableList<AbstractSubtitleEntities.SubtitleEntity>, name: String, link: String) {
+        fun cleanResources(
+            results: MutableList<AbstractSubtitleEntities.SubtitleEntity>,
+            name: String,
+            link: String
+        ) {
             results.add(
                 AbstractSubtitleEntities.SubtitleEntity(
                     idPrefix = idPrefix,
                     name = name,
                     lang = queryLang.toString(),
                     data = link,
+                    source = this.name,
                     type = if (seasonNum > 0) TvType.TvSeries else TvType.Movie,
                     epNumber = epNum,
                     seasonNumber = seasonNum,
@@ -152,11 +160,13 @@ class IndexSubtitleApi : AuthAPI, AbstractSubProvider {
                                 it.selectFirst("a")!!.attr("href")
                             )
                             val itemDoc = app.get(urlItem).document
-                            val id = imdbUrlToIdNullable(itemDoc.selectFirst("div.d-flex span.badge.badge-primary")?.parent()
-                                    ?.attr("href"))?.toLongOrNull()
+                            val id = imdbUrlToIdNullable(
+                                itemDoc.selectFirst("div.d-flex span.badge.badge-primary")?.parent()
+                                    ?.attr("href")
+                            )?.toLongOrNull()
                             val year = itemDoc.selectFirst("div.d-flex span.badge.badge-success")
-                                    ?.ownText()
-                                    ?.trim().toString()
+                                ?.ownText()
+                                ?.trim().toString()
                             Log.i(TAG, "id => $id \nyear => $year||$yearNum")
                             if (imdbId > 0) {
                                 if (id == imdbId) {
@@ -191,12 +201,13 @@ class IndexSubtitleApi : AuthAPI, AbstractSubProvider {
             val request = app.get(url)
             if (request.isSuccessful) {
                 request.document.select("div.my-3.p-3 div.media").map { block ->
-                    if (block.select("span.d-block span[data-original-title=Language]").text().trim()
+                    if (block.select("span.d-block span[data-original-title=Language]").text()
+                            .trim()
                             .contains("$queryLang")
                     ) {
                         var name = block.select("strong.text-primary").text().trim()
                         val link = fixUrl(block.selectFirst("a")!!.attr("href"))
-                        if(seasonNum > 0) {
+                        if (seasonNum > 0) {
                             when {
                                 isRightEps(name, seasonNum, epNum) -> {
                                     cleanResources(results, name, link)
@@ -222,7 +233,7 @@ class IndexSubtitleApi : AuthAPI, AbstractSubProvider {
 
         val req = app.get(data.data)
 
-        if(req.isSuccessful) {
+        if (req.isSuccessful) {
             val document = req.document
             val link = if (document.select("div.my-3.p-3 div.media").size == 1) {
                 fixUrl(
@@ -230,7 +241,8 @@ class IndexSubtitleApi : AuthAPI, AbstractSubProvider {
                 )
             } else {
                 document.select("div.my-3.p-3 div.media").mapNotNull { block ->
-                    val name = block.selectFirst("strong.d-block.text-primary")?.text()?.trim().toString()
+                    val name =
+                        block.selectFirst("strong.d-block.text-primary")?.text()?.trim().toString()
                     if (seasonNum!! > 0) {
                         if (isRightEps(name, seasonNum, epNum)) {
                             fixUrl(block.selectFirst("a")!!.attr("href"))
