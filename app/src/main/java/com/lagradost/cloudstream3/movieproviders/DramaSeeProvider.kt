@@ -49,20 +49,17 @@ class DramaSeeProvider : MainAPI() {
 
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search?q=$query"
-        val html = app.get(url).document
-        val document = html.getElementsByTag("body")
-            .select("section > main > ul.series > li") ?: return listOf()
+        val document = app.get(url).document
+        val posters = document.select ("div.film-poster")
 
-        return document.mapNotNull {
-            if (it == null) {
-                return@mapNotNull null
-            }
-            val innerA = it.select("a.series-img") ?: return@mapNotNull null
+
+        return posters.mapNotNull {
+            val innerA = it.select("a") ?: return@mapNotNull null
             val link = fixUrlNull(innerA.attr("href")) ?: return@mapNotNull null
-            val title = it.select("a.series-name")?.text() ?: return@mapNotNull null
-            val year = null
-            val imgsrc = innerA.select("img")?.attr("src") ?: return@mapNotNull null
-            val image = fixUrlNull(imgsrc)
+            val title = innerA.attr("title") ?: return@mapNotNull null
+            val year = Regex(""".*\((\d{4})\)""").find(title)?.groupValues?.getOrNull(1)?.toIntOrNull()
+            val imgSrc = it.select("img")?.attr("data-src") ?: return@mapNotNull null
+            val image = fixUrlNull(imgSrc)
 
             MovieSearchResponse(
                 name = title,
