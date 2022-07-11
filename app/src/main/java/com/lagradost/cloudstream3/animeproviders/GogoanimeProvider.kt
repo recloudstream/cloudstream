@@ -92,7 +92,9 @@ class GogoanimeProvider : MainAPI() {
             secretDecryptKey: String?,
             // This could be removed, but i prefer it verbose
             isUsingAdaptiveKeys: Boolean,
-            isUsingAdaptiveData: Boolean
+            isUsingAdaptiveData: Boolean,
+            // If you don't want to re-fetch the document
+            iframeDocument: Document? = null
         ) = safeApiCall {
             // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt
             // No Licence on the following code
@@ -104,9 +106,9 @@ class GogoanimeProvider : MainAPI() {
 
             val id = Regex("id=([^&]+)").find(iframeUrl)!!.value.removePrefix("id=")
 
-            var document: Document? = null
+            var document: Document? = iframeDocument
             val foundIv =
-                iv ?: app.get(iframeUrl).document.also { document = it }
+                iv ?: (document ?: app.get(iframeUrl).document.also { document = it })
                     .select("""div.wrapper[class*=container]""")
                     .attr("class").split("-").lastOrNull() ?: return@safeApiCall
             val foundKey = secretKey ?: getKey(base64Decode(id) + foundIv) ?: return@safeApiCall

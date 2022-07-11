@@ -1,12 +1,9 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 
@@ -90,7 +87,7 @@ class FilmanProvider : MainAPI() {
         val document = Jsoup.parse(response)
         val documentTitle = document.select("title").text().trim()
 
-        if (documentTitle.startsWith("Logowanie")){
+        if (documentTitle.startsWith("Logowanie")) {
             throw RuntimeException("This page seems to be locked behind a login-wall on the website, unable to scrape it. If it is not please report it.")
         }
 
