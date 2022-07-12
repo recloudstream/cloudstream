@@ -100,6 +100,7 @@ object APIHolder {
             OpenVidsProvider(),       
             IdlixProvider(),
             MultiplexProvider(),
+            VidSrcProvider(),
 
             // Metadata providers
             //TmdbProvider(),

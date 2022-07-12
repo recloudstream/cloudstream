@@ -472,7 +472,7 @@
     "TheFlixToProvider": {
         "language": "en",
         "name": "TheFlix.to",
-        "status": 0,
+        "status": 1,
         "url": "https://theflix.to"
     },
     "TrailersTwoProvider": {
