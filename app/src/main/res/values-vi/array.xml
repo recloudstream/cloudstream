@@ -261,7 +261,7 @@
         <item>Tối</item>
         <item>Xám</item>
         <item>Amoled</item>
-        <item>Flashbang</item>
+        <item>Sáng</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
