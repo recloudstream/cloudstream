@@ -86,7 +86,7 @@
     "AsiaFlixProvider": {
         "language": "en",
         "name": "AsiaFlix",
-        "status": 3,
+        "status": 0,
         "url": "https://asiaflix.app"
     },
     "AsianLoadProvider": {

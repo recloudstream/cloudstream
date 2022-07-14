@@ -47,7 +47,7 @@
     "AsiaFlixProvider": {
         "name": "AsiaFlix",
         "url": "https://asiaflix.app",
-        "status": 3
+        "status": 0
     },
     "BflixProvider": {
         "name": "Bflix",

@@ -19,6 +19,7 @@ class AsianLoadProvider : VidstreamProviderTemplate() {
 
     override val iv = "9262859232435825"
     override val secretKey = "93422192433952489752342908585752"
+    override val secretDecryptKey = secretKey
 
     override val supportedTypes = setOf(TvType.AsianDrama)
 }

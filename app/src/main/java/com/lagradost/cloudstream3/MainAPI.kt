@@ -64,7 +64,7 @@ object APIHolder {
             VfSerieProvider(),
             FrenchStreamProvider(),
             AsianLoadProvider(),
-            AsiaFlixProvider(), // restricted
+            AsiaFlixProvider(), // This should be removed in favor of asianembed.io, same source
             BflixProvider(),
             FmoviesToProvider(),
             SflixProProvider(),
