@@ -472,7 +472,7 @@
     "TheFlixToProvider": {
         "language": "en",
         "name": "TheFlix.to",
-        "status": 0,
+        "status": 1,
         "url": "https://theflix.to"
     },
     "TrailersTwoProvider": {
@@ -510,6 +510,12 @@
         "name": "VidEmbed",
         "status": 1,
         "url": "https://vidembed.cc"
+    },
+    "VidSrcProvider": {
+        "language": "en",
+        "name": "VidSrc",
+        "status": 1,
+        "url": "https://v2.vidsrc.me"
     },
     "WatchAsianProvider": {
         "language": "en",

@@ -1,11 +1,7 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider.Companion.extractVidstream
-import com.lagradost.cloudstream3.extractors.XStreamCdn
-import com.lagradost.cloudstream3.extractors.helper.AsianEmbedHelper
-import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
@@ -19,25 +15,23 @@ class DramaSeeProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.AsianDrama)
 
     override suspend fun getMainPage(): HomePageResponse {
-        val headers = mapOf("X-Requested-By" to "dramasee.net")
+        val headers = mapOf("X-Requested-By" to mainUrl)
         val document = app.get(mainUrl, headers = headers).document
         val mainbody = document.getElementsByTag("body")
 
         return HomePageResponse(
-            mainbody?.select("section")?.map { row ->
-                val main = row?.select("main") ?: return@map null
-                val title = main.select("div.title > div > h2")?.text() ?: "Main"
-                val inner = main.select("li.series-item") ?: return@map null
+            mainbody.select("section.block_area.block_area_home")?.map { main ->
+                val title = main.select("h2.cat-heading").text() ?: "Main"
+                val inner = main.select("div.flw-item") ?: return@map null
 
                 HomePageList(
                     title,
                     inner.mapNotNull {
-                        // Get inner div from article
                         val innerBody = it?.selectFirst("a")
                         // Fetch details
                         val link = fixUrlNull(innerBody?.attr("href")) ?: return@mapNotNull null
-                        val image = fixUrlNull(innerBody?.select("img")?.attr("src")) ?: ""
-                        val name = it?.selectFirst("a.series-name")?.text() ?: "<Untitled>"
+                        val image = fixUrlNull(it.select("img").attr("data-src")) ?: ""
+                        val name = innerBody?.attr("title") ?: "<Untitled>"
                         //Log.i(this.name, "Result => (innerBody, image) ${innerBody} / ${image}")
                         MovieSearchResponse(
                             name,
@@ -55,20 +49,17 @@ class DramaSeeProvider : MainAPI() {
 
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search?q=$query"
-        val html = app.get(url).document
-        val document = html.getElementsByTag("body")
-            .select("section > main > ul.series > li") ?: return listOf()
+        val document = app.get(url).document
+        val posters = document.select ("div.film-poster")
 
-        return document.mapNotNull {
-            if (it == null) {
-                return@mapNotNull null
-            }
-            val innerA = it.select("a.series-img") ?: return@mapNotNull null
+
+        return posters.mapNotNull {
+            val innerA = it.select("a") ?: return@mapNotNull null
             val link = fixUrlNull(innerA.attr("href")) ?: return@mapNotNull null
-            val title = it.select("a.series-name")?.text() ?: return@mapNotNull null
-            val year = null
-            val imgsrc = innerA.select("img")?.attr("src") ?: return@mapNotNull null
-            val image = fixUrlNull(imgsrc)
+            val title = innerA.attr("title") ?: return@mapNotNull null
+            val year = Regex(""".*\((\d{4})\)""").find(title)?.groupValues?.getOrNull(1)?.toIntOrNull()
+            val imgSrc = it.select("img")?.attr("data-src") ?: return@mapNotNull null
+            val image = fixUrlNull(imgSrc)
 
             MovieSearchResponse(
                 name = title,
@@ -84,12 +75,12 @@ class DramaSeeProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
         val body = doc.getElementsByTag("body")
-        val inner = body?.select("div.series-info")
+        val inner = body?.select("div.anis-content")
 
         // Video details
-        val poster = fixUrlNull(inner?.select("div.img > img")?.attr("src")) ?: ""
+        val poster = fixUrlNull(inner?.select("img.film-poster-img")?.attr("src")) ?: ""
         //Log.i(this.name, "Result => (imgLinkCode) ${imgLinkCode}")
-        val title = inner?.select("h1.series-name")?.text() ?: ""
+        val title = inner?.select("h2.film-name.dynamic-name")?.text() ?: ""
         val year = if (title.length > 5) {
             title.substring(title.length - 5)
                 .trim().trimEnd(')').toIntOrNull()
@@ -97,15 +88,14 @@ class DramaSeeProvider : MainAPI() {
             null
         }
         //Log.i(this.name, "Result => (year) ${title.substring(title.length - 5)}")
-        val seriesBody = body?.select("div.series-body")
-        val descript = seriesBody?.firstOrNull()?.select("div.js-content")?.text()
-        val tags = seriesBody?.select("div.series-tags > a")
+        val descript = body?.firstOrNull()?.select("div.film-description.m-hide")?.text()
+        val tags = inner?.select("div.item.item-list > a")
             ?.mapNotNull { it?.text()?.trim() ?: return@mapNotNull null }
-        val recs = body?.select("ul.series > li")?.mapNotNull {
-            val a = it.select("a.series-img") ?: return@mapNotNull null
+        val recs = body.select("div.flw-item")?.mapNotNull {
+            val a = it.select("a") ?: return@mapNotNull null
             val aUrl = fixUrlNull(a.attr("href")) ?: return@mapNotNull null
-            val aImg = fixUrlNull(a.select("img")?.attr("src"))
-            val aName = a.select("img")?.attr("alt") ?: return@mapNotNull null
+            val aImg = fixUrlNull(it.select("img")?.attr("data-src"))
+            val aName = a.attr("title") ?: return@mapNotNull null
             val aYear = aName.trim().takeLast(5).removeSuffix(")").toIntOrNull()
             MovieSearchResponse(
                 url = aUrl,
@@ -118,40 +108,41 @@ class DramaSeeProvider : MainAPI() {
         }
 
         // Episodes Links
-        val episodeList = ArrayList<Episode>()
-        body?.select("ul.episodes > li")?.forEach { ep ->
-            val innerA = ep.select("a") ?: return@forEach
-            val count = innerA.select("span.episode")?.text()?.toIntOrNull() ?: 0
-            val epLink = fixUrlNull(innerA.attr("href")) ?: return@forEach
-            //Log.i(this.name, "Result => (epLink) ${epLink}")
-            if (epLink.isNotBlank()) {
-                // Fetch video links
-                val epVidLinkEl = app.get(epLink, referer = mainUrl).document
-                val ajaxUrl = epVidLinkEl.select("div#js-player")?.attr("embed")
-                //Log.i(this.name, "Result => (ajaxUrl) ${ajaxUrl}")
-                if (!ajaxUrl.isNullOrEmpty()) {
-                    val innerPage = app.get(fixUrl(ajaxUrl), referer = epLink).document
-                    val listOfLinks = mutableListOf<String>()
-                    innerPage.select("div.player.active > main > div")?.forEach { em ->
-                        val href = fixUrlNull(em.attr("src")) ?: ""
-                        if (href.isNotBlank()) {
-                            listOfLinks.add(href)
-                        }
-                    }
+        val episodeUrl = body.select("a.btn.btn-radius.btn-primary.btn-play").attr("href")
+        val episodeDoc = app.get(episodeUrl).document
 
-                    //Log.i(this.name, "Result => (listOfLinks) ${listOfLinks.toJson()}")
-                    episodeList.add(
-                        Episode(
-                            name = null,
-                            season = null,
-                            episode = count,
-                            data = listOfLinks.distinct().toJson(),
-                            posterUrl = poster,
-                            date = null
-                        )
-                    )
-                }
-            }
+
+        val episodeList = episodeDoc.select("div.ss-list.ss-list-min > a").mapNotNull { ep ->
+            val episodeNumber = ep.attr("data-number").toIntOrNull()
+            val epLink = fixUrlNull(ep.attr("href")) ?: return@mapNotNull null
+
+//            if (epLink.isNotBlank()) {
+//                // Fetch video links
+//                val epVidLinkEl = app.get(epLink, referer = mainUrl).document
+//                val ajaxUrl = epVidLinkEl.select("div#js-player")?.attr("embed")
+//                //Log.i(this.name, "Result => (ajaxUrl) ${ajaxUrl}")
+//                if (!ajaxUrl.isNullOrEmpty()) {
+//                    val innerPage = app.get(fixUrl(ajaxUrl), referer = epLink).document
+//                    val listOfLinks = mutableListOf<String>()
+//                    innerPage.select("div.player.active > main > div")?.forEach { em ->
+//                        val href = fixUrlNull(em.attr("src")) ?: ""
+//                        if (href.isNotBlank()) {
+//                            listOfLinks.add(href)
+//                        }
+//                    }
+//
+//                    //Log.i(this.name, "Result => (listOfLinks) ${listOfLinks.toJson()}")
+//
+//                }
+//            }
+            Episode(
+                name = null,
+                season = null,
+                episode = episodeNumber,
+                data = epLink,
+                posterUrl = null,
+                date = null
+            )
         }
 
         //If there's only 1 episode, consider it a movie.
@@ -161,7 +152,7 @@ class DramaSeeProvider : MainAPI() {
                 url = url,
                 apiName = this.name,
                 type = TvType.Movie,
-                dataUrl = episodeList[0].data,
+                dataUrl = episodeList.first().data,
                 posterUrl = poster,
                 year = year,
                 plot = descript,
@@ -174,7 +165,7 @@ class DramaSeeProvider : MainAPI() {
             url = url,
             apiName = this.name,
             type = TvType.AsianDrama,
-            episodes = episodeList.reversed(),
+            episodes = episodeList,
             posterUrl = poster,
             year = year,
             plot = descript,
@@ -189,33 +180,37 @@ class DramaSeeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        var count = 0
-        mapper.readValue<List<String>>(data).apmap { item ->
-            if (item.isNotEmpty()) {
-                count++
-                val url = fixUrl(item.trim())
-                //Log.i(this.name, "Result => (url) ${url}")
-                when {
-                    url.startsWith("https://asianembed.io") || url.startsWith("https://asianload.io") -> {
-                        val iv = "9262859232435825"
-                        val secretKey = "93422192433952489752342908585752"
-                        extractVidstream(url, this.name, callback, iv, secretKey, secretKey,
-                            isUsingAdaptiveKeys = false,
-                            isUsingAdaptiveData = false
-                        )
-                        AsianEmbedHelper.getUrls(url, callback)
-                    }
-                    url.startsWith("https://embedsito.com") -> {
-                        val extractor = XStreamCdn()
-                        extractor.domainUrl = "embedsito.com"
-                        extractor.getSafeUrl(url)?.forEach(callback)
-                    }
-                    else -> {
-                        loadExtractor(url, mainUrl, callback)
-                    }
+        println("DATATATAT $data")
+
+        val document = app.get(data).document
+        val iframeUrl = document.select("iframe").attr("src")
+        val iframe = app.get(iframeUrl)
+        val iframeDoc = iframe.document
+
+        argamap({
+            iframeDoc.select(".list-server-items > .linkserver")
+                .forEach { element ->
+                    val status = element.attr("data-status") ?: return@forEach
+                    if (status != "1") return@forEach
+                    val extractorData = element.attr("data-video") ?: return@forEach
+                    loadExtractor(extractorData, iframe.url, callback)
                 }
-            }
-        }
-        return count > 0
+        }, {
+            val iv = "9262859232435825"
+            val secretKey = "93422192433952489752342908585752"
+            val secretDecryptKey = "93422192433952489752342908585752"
+            extractVidstream(
+                iframe.url,
+                this.name,
+                callback,
+                iv,
+                secretKey,
+                secretDecryptKey,
+                isUsingAdaptiveKeys = false,
+                isUsingAdaptiveData = true,
+                iframeDocument = iframeDoc
+            )
+        })
+        return true
     }
 }
