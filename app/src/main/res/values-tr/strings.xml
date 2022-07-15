@@ -169,7 +169,7 @@
     <string name="swipe_to_change_settings_des">Sol ve sağ taraftan kaydırarak parlaklık ve sesi ayarla</string>
     <string name="double_tap_to_seek_settings">Gözlemek için çift tıkla</string>
     <string name="double_tap_to_pause_settings">Durdurmak için çift tıkla</string>
-    <string name="double_tap_to_seek_amount_settings">Player seek amount</string>
+    <string name="double_tap_to_seek_amount_settings">Oynatıcı gözleme miktarı</string>
     <string name="double_tap_to_seek_settings_des">İleri ve geri atlamak için sağa ve sola çift tıkla</string>
     <string name="double_tap_to_pause_settings_des">Durdurmak için ortaya tıkla</string>
     <string name="use_system_brightness_settings">Sistem parlaklığını kullan</string>

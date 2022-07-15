@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <array name="cast_mini_controller_control_buttons">
+        <item>@id/cast_button_type_rewind_30_seconds</item>
+        <item>@id/cast_button_type_play_pause_toggle</item>
+        <item>@id/cast_button_type_forward_30_seconds</item>
+    </array>
+    <array name="cast_expanded_controller_control_buttons">
+        <!-- Fake sources button -->
+        <item>@id/cast_button_type_rewind_30_seconds</item>
+        <item>@id/cast_button_type_rewind_30_seconds</item>
+        <item>@id/cast_button_type_forward_30_seconds</item>
+        <!-- Actually fake to make the skip op button the same style -->
+        <item>@id/cast_button_type_forward_30_seconds</item>
+    </array>
+
+    <array name="dns_pref">
+        <item>@string/none</item>
+        <item>Google</item>
+        <item>Cloudflare</item>
+        <!--        <item>OpenDns</item>-->
+        <item>AdGuard</item>
+    </array>
+    <array name="dns_pref_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <!--        <item>3</item>-->
+        <item>4</item>
+    </array>
+
+    <array name="media_type_pref">
+        <item>Hepsi</item>
+        <item>Film ve Dizi</item>
+        <item>Anime</item>
+        <item>Belgesel</item>
+    </array>
+    <array name="media_type_pref_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </array>
+
+    <array name="limit_title_rez_pref_names">
+        <item>@string/resolution_and_title</item>
+        <item>@string/title</item>
+        <item>@string/resolution</item>
+        <item>@string/none</item>
+    </array>
+
+    <array name="limit_title_rez_pref_values">
+        <item>3</item>
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+    </array>
+
+    <array name="limit_title_pref_names">
+        <item>@string/none</item>
+        <item>16 karakter</item>
+        <item>32 karakter</item>
+        <item>64 karakter</item>
+        <item>128 karakter</item>
+        <item>Başlığı gizle</item>
+    </array>
+    <array name="limit_title_pref_values">
+        <item>0</item>
+        <item>16</item>
+        <item>32</item>
+        <item>64</item>
+        <item>128</item>
+        <item>-1</item>
+    </array>
+
+    <array name="skip_sec_values">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+    </array>
+
+    <array name="video_buffer_length_names">
+        <item>@string/automatic</item>
+        <item>1dk</item>
+        <item>1dk 30sn</item>
+        <item>2dk</item>
+        <item>2dk 30sn</item>
+        <item>3dk</item>
+        <item>3dk 30sn</item>
+        <item>4dk</item>
+        <item>5dk</item>
+        <item>6dk</item>
+        <item>7dk</item>
+        <item>8dk</item>
+        <item>9dk</item>
+        <item>10dk</item>
+        <item>15dk</item>
+        <item>20dk</item>
+        <item>30dk</item>
+    </array>
+
+    <array name="video_buffer_length_values">
+        <item>0</item>
+        <item>60</item>
+        <item>90</item>
+        <item>120</item>
+        <item>150</item>
+        <item>180</item>
+        <item>210</item>
+        <item>240</item>
+        <item>300</item>
+        <item>360</item>
+        <item>420</item>
+        <item>480</item>
+        <item>540</item>
+        <item>600</item>
+        <item>900</item>
+        <item>1200</item>
+        <item>1800</item>
+    </array>
+
+    <array name="video_buffer_size_names">
+        <item>@string/automatic</item>
+        <item>10MB</item>
+        <item>20MB</item>
+        <item>30MB</item>
+        <item>40MB</item>
+        <item>50MB</item>
+        <item>60MB</item>
+        <item>70MB</item>
+        <item>80MB</item>
+        <item>90MB</item>
+        <item>100MB</item>
+        <item>150MB</item>
+        <item>200MB</item>
+        <item>250MB</item>
+        <item>300MB</item>
+        <item>350MB</item>
+        <item>400MB</item>
+        <item>450MB</item>
+        <item>500MB</item>
+    </array>
+
+    <array name="video_buffer_size_values">
+        <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+        <item>100</item>
+        <item>150</item>
+        <item>200</item>
+        <item>250</item>
+        <item>300</item>
+        <item>350</item>
+        <item>400</item>
+        <item>450</item>
+        <item>500</item>
+    </array>
+
+    <array name="poster_ui_options">
+        <item>@string/show_hd</item>
+        <item>@string/show_dub</item>
+        <item>@string/show_sub</item>
+        <item>@string/show_title</item>
+    </array>
+
+    <array name="poster_ui_options_values">
+        <item>@string/show_hd_key</item>
+        <item>@string/show_dub_key</item>
+        <item>@string/show_sub_key</item>
+        <item>@string/show_title_key</item>
+    </array>
+
+    <array name="episode_long_click_options">
+        <item>@string/episode_action_chromecast_episode</item>
+        <item>@string/episode_action_chromecast_mirror</item>
+        <item>@string/episode_action_play_in_app</item>
+        <item>@string/episode_action_play_in_vlc</item>
+        <item>@string/episode_action_play_in_browser</item>
+        <item>@string/episode_action_copy_link</item>
+        <item>@string/episode_action_auto_download</item>
+        <item>@string/episode_action_download_mirror</item>
+        <item>@string/episode_action_download_subtitle</item>
+        <item>@string/episode_action_reload_links</item>
+    </array>
+
+    <array name="episode_long_click_options_values">
+        <item>4</item>
+        <item>5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>9</item>
+        <item>6</item>
+        <item>7</item>
+        <item>13</item>
+        <item>8</item>
+    </array>
+
+    <array name="app_layout">
+        <item>@string/automatic</item>
+        <item>@string/phone_layout</item>
+        <item>@string/tv_layout</item>
+        <item>@string/emulator_layout</item>
+    </array>
+
+    <array name="app_layout_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </array>
+
+    <string-array name="themes_overlay_names">
+        <item>Normal</item>
+        <item>Karanfil Pembesi</item>
+        <item>Koyu Yeşil</item>
+        <item>Kestane</item>
+        <item>Lacivert</item>
+        <item>Gri</item>
+        <item>Beyaz</item>
+        <item>Kahverengi</item>
+        <item>Soğuk</item>
+        <item>Ateş</item>
+        <item>Mor</item>
+        <item>Yeşil</item>
+        <item>Elma</item>
+        <item>Muz</item>
+        <item>Parti</item>
+        <item>Pembe</item>
+    </string-array>
+    <string-array name="themes_overlay_names_values">
+        <item>Normal</item>
+        <item>CarnationPink</item>
+        <item>DarkGreen</item>
+        <item>Maroon</item>
+        <item>NavyBlue</item>
+        <item>Grey</item>
+        <item>White</item>
+        <item>Brown</item>
+        <item>Blue</item>
+        <item>Red</item>
+        <item>Purple</item>
+        <item>Green</item>
+        <item>GreenApple</item>
+        <item>Banana</item>
+        <item>Party</item>
+        <item>Pink</item>
+    </string-array>
+
+    <string-array name="themes_names">
+        <item>Koyu</item>
+        <item>Gri</item>
+        <item>Amoled</item>
+        <item>Flaş Bombası</item>
+    </string-array>
+    <string-array name="themes_names_values">
+        <item>AmoledLight</item>
+        <item>Black</item>
+        <item>Amoled</item>
+        <item>Light</item>
+    </string-array>
+
+    <!--https://github.com/videolan/vlc-android/blob/72ccfb93db027b49855760001d1a930fa657c5a8/application/resources/src/main/res/values/arrays.xml#L266-->
+    <string-array name="subtitles_encoding_list" tools:ignore="TypographyDashes">
+        <item>@string/automatic</item>
+        <item>Universal (UTF-8)</item>
+        <item>Universal (UTF-16)</item>
+        <item>Universal (big endian UTF-16)</item>
+        <item>Universal (little endian UTF-16)</item>
+        <item>Universal, Chinese (GB18030)</item>
+        <item>Western European (Latin-9)</item>
+        <item>Western European (Windows-1252)</item>
+        <item>Western European (IBM 00850)</item>
+        <item>Eastern European (Latin-2)</item>
+        <item>Eastern European (Windows-1250)</item>
+        <item>Esperanto (Latin-3)</item>
+        <item>Nordic (Latin-6)</item>
+        <item>Cyrillic (Windows-1251)</item>
+        <item>Russian (KOI8-R)</item>
+        <item>Ukrainian (KOI8-U)</item>
+        <item>Arabic (ISO 8859-6)</item>
+        <item>Arabic (Windows-1256)</item>
+        <item>Greek (ISO 8859-7)</item>
+        <item>Greek (Windows-1253)</item>
+        <item>Hebrew (ISO 8859-8)</item>
+        <item>Hebrew (Windows-1255)</item>
+        <item>Turkish (ISO 8859-9)</item>
+        <item>Turkish (Windows-1254)</item>
+        <item>Thai (TIS 620-2533/ISO 8859-11)</item>
+        <item>Thai (Windows-874)</item>
+        <item>Baltic (Latin-7)</item>
+        <item>Baltic (Windows-1257)</item>
+        <item>Celtic (Latin-8)</item>
+        <item>South-Eastern European (Latin-10)</item>
+        <item>Simplified Chinese (ISO-2022-CN-EXT)</item>
+        <item>Simplified Chinese Unix (EUC-CN)</item>
+        <item>Japanese (7-bits JIS/ISO-2022-JP-2)</item>
+        <item>Japanese Unix (EUC-JP)</item>
+        <item>Japanese (Shift JIS)</item>
+        <item>Korean (EUC-KR/CP949)</item>
+        <item>Korean (ISO-2022-KR)</item>
+        <item>Traditional Chinese (Big5)</item>
+        <item>Traditional Chinese Unix (EUC-TW)</item>
+        <item>Hong-Kong Supplementary (HKSCS)</item>
+        <item>Vietnamese (VISCII)</item>
+        <item>Vietnamese (Windows-1258)</item>
+    </string-array>
+    <string-array name="subtitles_encoding_values" translatable="false" tools:ignore="TypographyDashes">
+        <item></item>
+        <item>UTF-8</item>
+        <item>UTF-16</item>
+        <item>UTF-16BE</item>
+        <item>UTF-16LE</item>
+        <item>GB18030</item>
+        <item>ISO-8859-15</item>
+        <item>Windows-1252</item>
+        <item>IBM850</item>
+        <item>ISO-8859-2</item>
+        <item>Windows-1250</item>
+        <item>ISO-8859-3</item>
+        <item>ISO-8859-10</item>
+        <item>Windows-1251</item>
+        <item>KOI8-R</item>
+        <item>KOI8-U</item>
+        <item>ISO-8859-6</item>
+        <item>Windows-1256</item>
+        <item>ISO-8859-7</item>
+        <item>Windows-1253</item>
+        <item>ISO-8859-8</item>
+        <item>Windows-1255</item>
+        <item>ISO-8859-9</item>
+        <item>Windows-1254</item>
+        <item>ISO-8859-11</item>
+        <item>Windows-874</item>
+        <item>ISO-8859-13</item>
+        <item>Windows-1257</item>
+        <item>ISO-8859-14</item>
+        <item>ISO-8859-16</item>
+        <item>ISO-2022-CN-EXT</item>
+        <item>EUC-CN</item>
+        <item>ISO-2022-JP-2</item>
+        <item>EUC-JP</item>
+        <item>Shift_JIS</item>
+        <item>CP949</item>
+        <item>ISO-2022-KR</item>
+        <item>Big5</item>
+        <item>ISO-2022-TW</item>
+        <item>Big5-HKSCS</item>
+        <item>VISCII</item>
+        <item>Windows-1258</item>
+    </string-array>
+</resources>
