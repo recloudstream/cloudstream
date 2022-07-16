@@ -40,7 +40,7 @@ data class ExtractorLinkPlayList(
     override val headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
     override val extractorData: String? = null,
-    ) : ExtractorLink(
+) : ExtractorLink(
     source,
     name,
     // Blank as un-used
@@ -91,6 +91,12 @@ data class ExtractorSubtitleLink(
     override val referer: String,
     override val headers: Map<String, String> = mapOf()
 ) : VideoDownloadManager.IDownloadableMinimum
+
+/**
+ * Removes https:// and www.
+ * To match urls regardless of schema, perhaps Uri() can be used?
+ */
+val schemaStripRegex = Regex("""^(https:|)//(www\.|)""")
 
 enum class Qualities(var value: Int) {
     Unknown(400),
@@ -146,7 +152,9 @@ suspend fun loadExtractor(
     callback: (ExtractorLink) -> Unit
 ): Boolean {
     for (extractor in extractorApis) {
-        if (url.startsWith(extractor.mainUrl)) {
+        if (url.replace(schemaStripRegex, "")
+                .startsWith(extractor.mainUrl.replace(schemaStripRegex, ""))
+        ) {
             extractor.getSafeUrl(url, referer)?.forEach(callback)
             return true
         }
