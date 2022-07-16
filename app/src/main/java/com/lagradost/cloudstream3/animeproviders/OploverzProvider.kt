@@ -69,6 +69,7 @@ class OploverzProvider : MainAPI() {
                 )?.groupValues?.get(1).toString()
                 (title.contains("-ova")) -> Regex("(.+)-ova").find(title)?.groupValues?.get(1)
                     .toString()
+                (title.contains("-movie")) -> Regex("(.+)-subtitle").find(title)?.groupValues?.get(1).toString()
                 else -> Regex("(.+)-subtitle").find(title)?.groupValues?.get(1).toString()
                     .replace(Regex("-\\d+"), "")
             }
@@ -136,9 +137,9 @@ class OploverzProvider : MainAPI() {
         val typeCheck =
             when (document.select(".info-content > .spe > span:nth-child(5), .info-content > .spe > span")
                 .text().trim()) {
-                "TV" -> "TV"
+                "OVA" -> "OVA"
                 "Movie" -> "Movie"
-                else -> "OVA"
+                else -> "TV"
             }
         val type = getType(typeCheck)
         val description = document.select(".entry-content > p").text().trim()

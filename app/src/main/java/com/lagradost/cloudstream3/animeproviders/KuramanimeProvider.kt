@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.network.DdosGuardKiller
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import org.jsoup.Jsoup
@@ -42,26 +43,18 @@ class KuramanimeProvider : MainAPI() {
 
         val homePageList = ArrayList<HomePageList>()
 
-        document.select("div[class*=__product]").forEach { block ->
-            val header = block.select(".section-title > h4").text()
-            val animes = block.select("div.col-lg-4.col-md-6.col-sm-6").mapNotNull {
+        document.select("div.trending__product").forEach { block ->
+            val header = block.selectFirst("h4")?.text().toString()
+            val animes = block.select("div.col-lg-4.col-md-6.col-sm-6").map {
                 it.toSearchResult()
             }
             if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
         }
 
-        document.select("#topAnimesSection").forEach { block ->
-            val header = block.previousElementSibling()!!.select("h5").text().trim()
-            val animes = block.select("a").mapNotNull {
+        document.select("div.product__sidebar__view").forEach { block ->
+            val header = block.selectFirst("h5")?.text().toString()
+            val animes = block.select("div.product__sidebar__comment__item").map {
                 it.toSearchResultView()
-            }
-            if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
-        }
-
-        document.select("#latestCommentSection").forEach { block ->
-            val header = block.previousElementSibling()!!.select("h5").text().trim()
-            val animes = block.select(".product__sidebar__comment__item").mapNotNull {
-                it.toSearchResultComment()
             }
             if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
         }
@@ -77,41 +70,34 @@ class KuramanimeProvider : MainAPI() {
         }
     }
 
-    private fun Element.toSearchResult(): SearchResponse {
+    private fun Element.toSearchResult(): AnimeSearchResponse {
         val href = getProperAnimeLink(fixUrl(this.selectFirst("a")!!.attr("href")))
-        val title = this.select(".product__item__text > h5 > a").text()
-        val posterUrl = fixUrl(this.select(".product__item__pic.set-bg").attr("data-setbg"))
-        val type = getType(this.selectFirst(".product__item__text > ul > li")!!.text())
-
-        return newAnimeSearchResponse(title, href, type) {
-            this.posterUrl = posterUrl
-            addDubStatus(dubExist = false, subExist = true)
-        }
-
-    }
-
-    private fun Element.toSearchResultView(): SearchResponse {
-        val href = getProperAnimeLink(fixUrl(this.attr("href")))
-        val title = this.selectFirst("h5")!!.text().trim()
-        val posterUrl =
-            fixUrl(this.select(".product__sidebar__view__item.set-bg").attr("data-setbg"))
+        val title = this.selectFirst("h5 a")?.text().toString()
+        val posterUrl = fixUrl(this.select("div.product__item__pic.set-bg").attr("data-setbg"))
+        val episode = Regex("([0-9*])\\s?/").find(
+            this.select("div.ep span").text()
+        )?.groupValues?.getOrNull(1)?.toIntOrNull()
 
         return newAnimeSearchResponse(title, href, TvType.Anime) {
             this.posterUrl = posterUrl
-            addDubStatus(dubExist = false, subExist = true)
+            addSub(episode)
         }
 
     }
 
-    private fun Element.toSearchResultComment(): SearchResponse {
-        val href = getProperAnimeLink(fixUrl(this.selectFirst("a")!!.attr("href")))
-        val title = this.selectFirst("h5")!!.text()
-        val posterUrl = fixUrl(this.select("img").attr("src"))
-        val type = getType(this.selectFirst("ul > li")!!.text())
+    private fun Element.toSearchResultView(): AnimeSearchResponse {
+        val href = getProperAnimeLink(fixUrl(this.selectFirst("a")?.attr("href").toString()))
+        val title = this.selectFirst("h5")?.text()?.trim().toString()
+        val posterUrl = fixUrlNull(
+            this.selectFirst("div.product__sidebar__comment__item__pic.set-bg")?.attr("data-setbg")
+        )
+        val episode =
+            this.selectFirst("h5")?.nextElementSibling()?.text()?.replace(Regex("[^0-9]"), "")
+                ?.toIntOrNull()
 
-        return newAnimeSearchResponse(title, href, type) {
+        return newAnimeSearchResponse(title, href, TvType.Anime) {
             this.posterUrl = posterUrl
-            addDubStatus(dubExist = false, subExist = true)
+            addSub(episode)
         }
 
     }
@@ -190,19 +176,21 @@ class KuramanimeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val servers = app.get(data, interceptor = DdosGuardKiller(true)).document
+        val servers = app.get(data).document
         servers.select("video#player > source").map {
-            val url = it.attr("src")
-            val quality = it.attr("size").toInt()
-            callback.invoke(
-                ExtractorLink(
-                    name,
-                    name,
-                    url,
-                    referer = "$mainUrl/",
-                    quality = quality
+            suspendSafeApiCall {
+                val url = it.attr("src")
+                val quality = it.attr("size").toInt()
+                callback.invoke(
+                    ExtractorLink(
+                        name,
+                        name,
+                        url,
+                        referer = "$mainUrl/",
+                        quality = quality
+                    )
                 )
-            )
+            }
         }
 
         return true

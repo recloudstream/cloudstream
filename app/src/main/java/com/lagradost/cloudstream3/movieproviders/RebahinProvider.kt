@@ -81,7 +81,7 @@ class RebahinProvider : MainAPI() {
                 this.select("div.mli-eps > span").text().replace(Regex("[^0-9]"), "").toIntOrNull()
             newAnimeSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
-                addDubStatus(dubExist = false, subExist = true, subEpisodes = episode)
+                addSub(episode)
             }
         }
     }
@@ -114,19 +114,18 @@ class RebahinProvider : MainAPI() {
             .ownText().replace(Regex("[^0-9]"), "").toIntOrNull()
         val actors = document.select("span[itemprop=actor] > a").map { it.select("span").text() }
 
+        val baseLink = fixUrl(document.select("div#mv-info > a").attr("href").toString())
+
         return if (tvType == TvType.TvSeries) {
-            val baseLink = document.select("div#mv-info > a").attr("href")
             val episodes = app.get(baseLink).document.select("div#list-eps > a").map {
-                val name = it.text().replace(Regex("Server\\s?\\d"), "").trim()
-                name
-            }.distinct().map {
-                val name = it
-                val epNum = it.replace(Regex("[^0-9]"), "").toIntOrNull()
-                val link = "$baseLink?ep=$epNum"
-                newEpisode(link) {
-                    this.name = name
-                    this.episode = epNum
-                }
+                Pair(it.text(), it.attr("data-iframe"))
+            }.groupBy { it.first }.map { eps ->
+                Episode(
+                    data = eps.value.map { fixUrl(base64Decode(it.second)) }.toString(),
+                    name = eps.key,
+                    episode = eps.key.filter { it.isDigit() }.toIntOrNull()
+                )
+
             }
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = poster
@@ -139,8 +138,12 @@ class RebahinProvider : MainAPI() {
                 addTrailer(trailer)
             }
         } else {
-            val episodes = document.select("div#mv-info > a").attr("href")
-            newMovieLoadResponse(title, url, TvType.Movie, episodes) {
+            val links =
+                app.get(baseLink).document.select("div#server-list div.server-wrapper div[id*=episode]")
+                    .map {
+                        fixUrl(base64Decode(it.attr("data-iframe")))
+                    }.toString()
+            newMovieLoadResponse(title, url, TvType.Movie, links) {
                 this.posterUrl = poster
                 this.year = year
                 this.plot = description
@@ -152,18 +155,6 @@ class RebahinProvider : MainAPI() {
             }
         }
     }
-
-    private data class ResponseLocal(
-        @JsonProperty("file") val file: String,
-        @JsonProperty("label") val label: String,
-        @JsonProperty("type") val type: String?
-    )
-
-    private data class Tracks(
-        @JsonProperty("file") val file: String,
-        @JsonProperty("label") val label: String?,
-        @JsonProperty("kind") val kind: String?
-    )
 
     private suspend fun invokeLokalSource(
         url: String,
@@ -182,7 +173,8 @@ class RebahinProvider : MainAPI() {
         document.select("script").map { script ->
             if (script.data().contains("sources: [")) {
                 val source = tryParseJson<ResponseLocal>(
-                    script.data().substringAfter("sources: [").substringBefore("],"))
+                    script.data().substringAfter("sources: [").substringBefore("],")
+                )
                 val m3uData = app.get(source!!.file, referer = ref).text
                 val quality = Regex("\\d{3,4}\\.m3u8").findAll(m3uData).map { it.value }.toList()
 
@@ -212,28 +204,6 @@ class RebahinProvider : MainAPI() {
             }
         }
     }
-
-    private data class Captions(
-        @JsonProperty("id") val id: String,
-        @JsonProperty("hash") val hash: String,
-        @JsonProperty("language") val language: String,
-    )
-
-    private data class Data(
-        @JsonProperty("file") val file: String,
-        @JsonProperty("label") val label: String,
-    )
-
-    private data class Player(
-        @JsonProperty("poster_file") val poster_file: String,
-    )
-
-    private data class ResponseKotakAjair(
-        @JsonProperty("success") val success: Boolean,
-        @JsonProperty("player") val player: Player,
-        @JsonProperty("data") val data: List<Data>?,
-        @JsonProperty("captions") val captions: List<Captions>?
-    )
 
     private suspend fun invokeKotakAjairSource(
         url: String,
@@ -277,45 +247,26 @@ class RebahinProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
 
-        val sources = if (data.contains("/play")) {
-            app.get(data).document.select(".server-wrapper").mapNotNull {
-                val iframeLink =
-                    "${mainUrl}/iembed/?source=${it.selectFirst("div.server")?.attr("data-iframe")}"
-                app.get(iframeLink).document.select("iframe").attr("src")
-            }
-        } else {
-            val fixData = Regex("(.*?)\\?ep").find(data)?.groupValues?.get(1).toString()
-            val document = app.get(fixData).document
-            val ep = Regex("\\?ep=([0-9]+)").find(data)?.groupValues?.get(1).toString()
-            val title = document.selectFirst("div#list-eps > a")?.text()?.replace(Regex("[\\d]"), "")
-                    ?.trim()?.replace("Server", "")?.trim()
-            document.select("div#list-eps > a:matches(${title}\\s?${ep}$)").mapNotNull {
-                val iframeLink = "${mainUrl}/iembed/?source=${it.attr("data-iframe")}"
-                app.get(iframeLink).document.select("iframe")
-                    .attr("src")
-            }
-        }
-
-        sources.apmap {
+        data.removeSurrounding("[", "]").split(",").map { it.trim() }.apmap { link ->
             safeApiCall {
                 when {
-                    it.startsWith("http://172.96.161.72") -> invokeLokalSource(
-                        it,
+                    link.startsWith("http://172.96.161.72") -> invokeLokalSource(
+                        link,
                         this.name,
                         "http://172.96.161.72/",
                         subtitleCallback,
                         callback
                     )
-                    it.startsWith("https://kotakajair.xyz") -> invokeKotakAjairSource(
-                        it,
+                    link.startsWith("https://kotakajair.xyz") -> invokeKotakAjairSource(
+                        link,
                         subtitleCallback,
                         callback
                     )
                     else -> {
-                        loadExtractor(it, data, callback)
-                        if (it.startsWith("https://sbfull.com")) {
+                        loadExtractor(link, "$mainUrl/", callback)
+                        if (link.startsWith("https://sbfull.com")) {
                             val response = app.get(
-                                it, interceptor = WebViewResolver(
+                                link, interceptor = WebViewResolver(
                                     Regex("""\.srt""")
                                 )
                             )
@@ -333,6 +284,40 @@ class RebahinProvider : MainAPI() {
 
         return true
     }
+
+    private data class ResponseLocal(
+        @JsonProperty("file") val file: String,
+        @JsonProperty("label") val label: String,
+        @JsonProperty("type") val type: String?
+    )
+
+    private data class Tracks(
+        @JsonProperty("file") val file: String,
+        @JsonProperty("label") val label: String?,
+        @JsonProperty("kind") val kind: String?
+    )
+
+    private data class Captions(
+        @JsonProperty("id") val id: String,
+        @JsonProperty("hash") val hash: String,
+        @JsonProperty("language") val language: String,
+    )
+
+    private data class Data(
+        @JsonProperty("file") val file: String,
+        @JsonProperty("label") val label: String,
+    )
+
+    private data class Player(
+        @JsonProperty("poster_file") val poster_file: String,
+    )
+
+    private data class ResponseKotakAjair(
+        @JsonProperty("success") val success: Boolean,
+        @JsonProperty("player") val player: Player,
+        @JsonProperty("data") val data: List<Data>?,
+        @JsonProperty("captions") val captions: List<Captions>?
+    )
 
 }
 
