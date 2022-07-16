@@ -237,6 +237,12 @@
         "status": 1,
         "url": "https://hdtoday.cc"
     },
+    "HDrezkaProvider": {
+        "language": "ru",
+        "name": "HDrezka",
+        "status": 1,
+        "url": "https://rezka.ag"
+    },
     "IHaveNoTvProvider": {
         "language": "en",
         "name": "I Have No TV",
@@ -247,7 +253,7 @@
         "language": "id",
         "name": "Idlix",
         "status": 1,
-        "url": ""
+        "url": "https://94.103.82.88"
     },
     "JKAnimeProvider": {
         "language": "es",
@@ -397,6 +403,12 @@
         "status": 1,
         "url": "https://pelisplus.icu"
     },
+    "PhimmoichillProvider": {
+        "language": "vi",
+        "name": "Phimmoichill",
+        "status": 1,
+        "url": "https://phimmoichill.net"
+    },
     "PinoyHDXyzProvider": {
         "language": "tl",
         "name": "Pinoy-HD",
@@ -486,6 +498,12 @@
         "name": "2Embed",
         "status": 1,
         "url": "https://www.2embed.to"
+    },
+    "UakinoProvider": {
+        "language": "uk",
+        "name": "Uakino",
+        "status": 1,
+        "url": "https://uakino.club"
     },
     "VMoveeProvider": {
         "language": "en",
