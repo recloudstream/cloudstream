@@ -97,7 +97,10 @@ import kotlinx.android.synthetic.main.fragment_trailer.*
 import kotlinx.android.synthetic.main.result_recommendations.*
 import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.android.synthetic.main.trailer_custom_layout.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -610,6 +613,10 @@ class ResultFragment : ResultTrailerPlayer() {
         loadTrailer()
     }
 
+    override fun hasNextMirror(): Boolean {
+        return currentTrailerIndex + 1 < currentTrailers.size
+    }
+
     override fun playerError(exception: Exception) {
         if (player.getIsPlaying()) { // because we dont want random toasts in player
             super.playerError(exception)
@@ -697,7 +704,8 @@ class ResultFragment : ResultTrailerPlayer() {
                         }?.also { text ->
                             result_next_airing_time?.text = text
                             result_next_airing?.text =
-                                ctx.getString(R.string.next_episode_format).format(nextAiring.episode)
+                                ctx.getString(R.string.next_episode_format)
+                                    .format(nextAiring.episode)
                         } != null
                     }
                 } catch (e: Exception) { // mistranslation
@@ -1163,7 +1171,7 @@ class ResultFragment : ResultTrailerPlayer() {
                         try {
                             acquireSingeExtractorLink(act.getString(R.string.episode_action_copy_link)) { link ->
                                 val serviceClipboard =
-                                    (act.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?)
+                                    (act.getSystemService(CLIPBOARD_SERVICE) as? ClipboardManager?)
                                         ?: return@acquireSingeExtractorLink
                                 val clip = ClipData.newPlainText(link.name, link.url)
                                 serviceClipboard.setPrimaryClip(clip)

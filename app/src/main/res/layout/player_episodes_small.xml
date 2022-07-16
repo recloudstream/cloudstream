@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+
+        android:id="@+id/episode_holder"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+
+        app:cardBackgroundColor="@color/transparent"
+        app:cardElevation="0dp"
+        android:foreground="@drawable/outline_drawable">
+
+    <androidx.core.widget.ContentLoadingProgressBar
+            android:layout_marginBottom="-1.5dp"
+            android:id="@+id/episode_progress"
+            android:progressTint="?attr/colorPrimary"
+            android:progressBackgroundTint="?attr/colorPrimary"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            tools:progress="50"
+            android:layout_gravity="bottom"
+            android:layout_height="5dp" />
+
+    <LinearLayout
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <!--marquee_forever-->
+        <com.google.android.material.button.MaterialButton
+                android:layout_marginStart="10dp"
+
+                android:layout_gravity="center"
+                style="@style/SmallBlackButton"
+                android:text="@string/filler"
+                android:id="@+id/episode_filler" />
+
+        <TextView
+                android:id="@+id/episode_text"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                tools:text="Episode 1"
+                android:textColor="?attr/textColor"
+
+                android:scrollHorizontally="true"
+                android:ellipsize="marquee"
+
+                android:marqueeRepeatLimit="0"
+                android:singleLine="true"
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+    </LinearLayout>
+</FrameLayout>

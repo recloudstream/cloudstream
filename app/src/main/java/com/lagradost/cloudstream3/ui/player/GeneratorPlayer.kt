@@ -143,6 +143,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         currentSelectedLink = link
         currentMeta = viewModel.getMeta()
         nextMeta = viewModel.getNextMeta()
+        setEpisodes(viewModel.getAllMeta() ?: emptyList())
         isActive = true
         setPlayerDimen(null)
         setTitle()
@@ -273,8 +274,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     mainTextView?.text = item?.let { getName(it, false) }
 
-                    val language = item?.let { fromTwoLettersToLanguage(it.lang.trim()) ?: it.lang } ?: ""
-                    val providerSuffix = if (isSingleProvider || item == null) "" else " · ${item.source}"
+                    val language =
+                        item?.let { fromTwoLettersToLanguage(it.lang.trim()) ?: it.lang } ?: ""
+                    val providerSuffix =
+                        if (isSingleProvider || item == null) "" else " · ${item.source}"
                     secondaryTextView?.text = language + providerSuffix
 
                     setHearingImpairedIcon(drawableEnd, position)
@@ -686,6 +689,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         isNextEpisode = true
         player.release()
         viewModel.loadLinksPrev()
+    }
+
+    override fun hasNextMirror(): Boolean {
+        val links = sortLinks()
+        return links.isNotEmpty() && links.indexOf(currentSelectedLink) + 1 < links.size
     }
 
     override fun nextMirror() {

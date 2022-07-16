@@ -607,14 +607,55 @@
                     style="@android:style/Widget.Material.ProgressBar.Horizontal"
                     android:layout_width="4dp"
                     android:layout_height="150dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="40dp"
                     android:indeterminate="false"
                     android:max="100"
                     android:progress="100"
-                    android:progressDrawable="@drawable/progress_drawable_vertical" />
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    android:layout_centerInParent="true" />
         </RelativeLayout>
     </LinearLayout>
+
+<!--
+    <ImageView
+            android:padding="15dp"
+            android:id="@+id/player_episodes_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24"
+            android:background="@drawable/video_tap_button_always_white"
+
+            app:tint="@android:color/white"
+            tools:ignore="ContentDescription"></ImageView>
+
+    <LinearLayout
+            android:visibility="gone"
+            android:background="?attr/primaryBlackBackground"
+            android:orientation="vertical"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+        <TextView
+                android:padding="10dp"
+                style="@style/WatchHeaderText"
+                android:textSize="15sp"
+                android:layout_marginEnd="0dp"
+                android:text="@string/episodes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:requiresFadingEdge="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:id="@+id/player_episode_list"
+                tools:listitem="@layout/player_episodes"
+                android:layout_width="200dp"
+                android:layout_height="match_parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+    -->
 </FrameLayout>

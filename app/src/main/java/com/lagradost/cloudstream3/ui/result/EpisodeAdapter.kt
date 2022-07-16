@@ -175,15 +175,9 @@ class EpisodeAdapter(
             val displayPos = card.getDisplayPosition()
             episodeProgress?.max = (card.duration / 1000).toInt()
             episodeProgress?.progress = (displayPos / 1000).toInt()
+            episodeProgress?.isVisible = displayPos > 0L
 
-            episodeProgress?.visibility = if (displayPos > 0L) View.VISIBLE else View.GONE
-
-            if (card.poster != null) {
-                episodePoster?.visibility = View.VISIBLE
-                episodePoster?.setImage(card.poster)
-            } else {
-                episodePoster?.visibility = View.GONE
-            }
+            episodePoster?.isVisible = episodePoster?.setImage(card.poster) == true
 
             if (card.rating != null) {
                 episodeRating?.text = episodeRating?.context?.getString(R.string.rated_format)

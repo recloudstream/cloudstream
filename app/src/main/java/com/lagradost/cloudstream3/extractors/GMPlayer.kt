@@ -23,7 +23,7 @@ class GMPlayer : ExtractorApi() {
                 "origin" to mainUrl
             ),
             data = mapOf("hash" to id, "r" to ref)
-        ).also { println("shiv " + it.text) }.parsed<GmResponse>().videoSource ?: return null
+        ).parsed<GmResponse>().videoSource ?: return null
 
         return M3u8Helper.generateM3u8(
             name,

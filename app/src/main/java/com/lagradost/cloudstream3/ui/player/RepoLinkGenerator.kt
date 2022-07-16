@@ -15,7 +15,8 @@ class RepoLinkGenerator(
 ) : IGenerator {
     companion object {
         const val TAG = "RepoLink"
-        val cache: HashMap<Pair<String, Int>, Pair<MutableSet<ExtractorLink>, MutableSet<SubtitleData>>> = hashMapOf()
+        val cache: HashMap<Pair<String, Int>, Pair<MutableSet<ExtractorLink>, MutableSet<SubtitleData>>> =
+            hashMapOf()
     }
 
     override val hasCache = true
@@ -52,6 +53,10 @@ class RepoLinkGenerator(
 
     override fun getCurrent(offset: Int): Any? {
         return episodes.getOrNull(currentIndex + offset)
+    }
+
+    override fun getAll(): List<Any> {
+        return episodes
     }
 
     // this is a simple array that is used to instantly load links if they are already loaded

@@ -546,9 +546,12 @@
     <string name="resolution">Resolution</string>
     <string name="error_invalid_id">Invalid id</string>
     <string name="error_invalid_data">Invalid data</string>
+    <string name="error_invalid_url">Invalid url</string>
     <string name="error">Error</string>
     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
     <string name="subtitles_remove_bloat">Remove bloat from subtitles</string>
     <string name="extras">Extras</string>
     <string name="trailer">Trailer</string>
+    <string name="network_adress_example">Link to stream</string>
+    <string name="referer">Referer</string>
 </resources>

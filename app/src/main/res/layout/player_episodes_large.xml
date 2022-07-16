@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+
+        android:id="@+id/episode_holder_large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        app:cardCornerRadius="@dimen/rounded_image_radius"
+        app:cardBackgroundColor="@color/transparent"
+        app:cardElevation="0dp"
+        android:foreground="@drawable/outline_drawable"
+        android:layout_marginBottom="5dp">
+    <!-- IDK BUT THIS DOES NOT SEAM LIKE A GOOD WAY OF DOING IT -->
+    <!--<LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal">
+        <View
+                android:layout_weight="0.5"
+                android:id="@+id/episode_view_procentage"
+                android:alpha="0.2"
+                android:background="?attr/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+        </View>
+        <View
+                android:id="@+id/episode_view_procentage_off"
+                android:layout_weight="0.10"
+                android:alpha="0"
+                android:background="@color/transparent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+        </View>
+    </LinearLayout>-->
+    <androidx.cardview.widget.CardView
+            android:layout_width="200dp"
+            android:layout_height="114dp"
+            android:foreground="@drawable/outline_drawable">
+
+        <ImageView
+                android:nextFocusLeft="@id/result_episode_download"
+                android:nextFocusRight="@id/episode_holder"
+
+                android:id="@+id/episode_poster"
+                tools:src="@drawable/example_poster"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+
+                android:scaleType="centerCrop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/episode_poster_img_des" />
+
+        <ImageView
+                android:src="@drawable/play_button"
+                android:layout_gravity="center"
+                android:layout_width="57dp"
+                android:layout_height="57dp"
+                android:contentDescription="@string/play_episode" />
+
+        <androidx.core.widget.ContentLoadingProgressBar
+                android:layout_marginBottom="-1.5dp"
+                android:id="@+id/episode_progress"
+                android:progressTint="?attr/colorPrimary"
+                android:progressBackgroundTint="?attr/colorPrimary"
+                style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                tools:progress="50"
+                android:layout_gravity="bottom"
+                android:layout_height="5dp" />
+    </androidx.cardview.widget.CardView>
+
+
+  <!--  <LinearLayout
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <com.google.android.material.button.MaterialButton
+                android:layout_marginStart="10dp"
+
+                android:layout_gravity="center"
+                style="@style/SmallBlackButton"
+                android:text="@string/filler"
+                android:id="@+id/episode_filler" />
+
+        <TextView
+                android:id="@+id/episode_text"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="50dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                tools:text="Episode 1"
+                android:textColor="?attr/textColor"
+
+                android:scrollHorizontally="true"
+                android:ellipsize="marquee"
+
+                android:marqueeRepeatLimit="0"
+                android:singleLine="true"
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+    </LinearLayout>-->
+</LinearLayout>

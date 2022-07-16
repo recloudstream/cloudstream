@@ -189,7 +189,6 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:text="@string/stream"
-            android:visibility="gone"
             android:id="@+id/download_stream_button"
             app:icon="@drawable/netflix_play"
             style="@style/ExtendedFloatingActionButton"

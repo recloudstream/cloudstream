@@ -1,30 +1,42 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.app.Dialog
+import android.content.ClipboardManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
+import com.lagradost.cloudstream3.ui.player.LinkGenerator
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_downloads.*
+import kotlinx.android.synthetic.main.stream_input.*
 
 
 const val DOWNLOAD_NAVIGATE_TO = "downloadpage"
@@ -168,9 +180,45 @@ class DownloadFragment : Fragment() {
 
         download_list?.adapter = adapter
         download_list?.layoutManager = GridLayoutManager(context, 1)
-        /*download_stream_button?.isGone = context?.isTvSettings() == true
+        download_stream_button?.isGone = context?.isTvSettings() == true
         download_stream_button?.setOnClickListener {
+            val dialog =
+                Dialog(it.context ?: return@setOnClickListener, R.style.AlertDialogCustom)
+            dialog.setContentView(R.layout.stream_input)
 
+            dialog.show()
+
+            (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?)?.primaryClip?.getItemAt(
+                0
+            )?.text?.toString()?.let { copy ->
+                dialog.stream_url?.setText(copy)
+            }
+
+            dialog.apply_btt?.setOnClickListener {
+                val url = dialog.stream_url.text?.toString()
+                if (url.isNullOrEmpty()) {
+                    showToast(activity, R.string.error_invalid_url, Toast.LENGTH_SHORT)
+                } else {
+                    val referer = dialog.stream_referer.text?.toString()
+
+                    activity?.navigate(
+                        R.id.global_to_navigation_player,
+                        GeneratorPlayer.newInstance(
+                            LinkGenerator(
+                                listOf(url),
+                                extract = true,
+                                referer = referer
+                            )
+                        )
+                    )
+
+                    dialog.dismissSafe(activity)
+                }
+            }
+
+            dialog.cancel_btt?.setOnClickListener {
+                dialog.dismissSafe(activity)
+            }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             download_list?.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
@@ -181,7 +229,7 @@ class DownloadFragment : Fragment() {
                     download_stream_button?.extend() // show
                 }
             }
-        }*/
+        }
         downloadsViewModel.updateList(requireContext())
 
         context?.fixPaddingStatusbar(download_root)

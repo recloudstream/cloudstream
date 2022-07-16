@@ -80,6 +80,10 @@ class PlayerGeneratorViewModel : ViewModel() {
         return normalSafeApiCall { generator?.getCurrent() }
     }
 
+    fun getAllMeta(): List<Any>? {
+        return normalSafeApiCall { generator?.getAll() }
+    }
+
     fun getNextMeta(): Any? {
         return normalSafeApiCall {
             if (generator?.hasNext() == false) return@normalSafeApiCall null
