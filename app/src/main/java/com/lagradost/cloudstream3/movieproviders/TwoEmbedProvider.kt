@@ -18,7 +18,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 class TwoEmbedProvider : TmdbProvider() {
     override val apiName = "2Embed"
     override var name = "2Embed"
-    override var mainUrl = "https://www.2embed.org"
+    override var mainUrl = "https://2embed.org"
     override val useMetaLoadResponse = true
     override val instantLinkLoading = false
     override val supportedTypes = setOf(
@@ -46,10 +46,10 @@ class TwoEmbedProvider : TmdbProvider() {
         ) else listOf(mappedData.tmdbID.toString(), "tmdb")
         val isMovie = mappedData.episode == null && mappedData.season == null
         val embedUrl = if (isMovie) {
-            "$mainUrl/embed/$site/movie?id=$id"
+            "$mainUrl/embed/movie?$site=$id"
         } else {
-            val suffix = "$id&s=${mappedData.season ?: 1}&e=${mappedData.episode ?: 1}"
-            "$mainUrl/embed/$site/tv?id=$suffix"
+            val suffix = "$id&sea=${mappedData.season ?: 1}&epi=${mappedData.episode ?: 1}"
+            "$mainUrl/embed/series?$site=$suffix"
         }
 
         val document = app.get(embedUrl).document
