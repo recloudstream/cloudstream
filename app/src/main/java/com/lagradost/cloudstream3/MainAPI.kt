@@ -109,7 +109,6 @@ object APIHolder {
             // Metadata providers
             //TmdbProvider(),
             CrossTmdbProvider(),
-            ApiMDBProvider(),
 
             // Anime providers
             WatchCartoonOnlineProvider(),
