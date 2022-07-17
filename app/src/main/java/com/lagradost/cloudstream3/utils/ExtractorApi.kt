@@ -294,6 +294,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),
+    Streamlare()
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

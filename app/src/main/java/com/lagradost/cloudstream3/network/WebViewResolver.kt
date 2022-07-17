@@ -33,6 +33,17 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
         }
     }
 
+    suspend fun resolveUsingWebView(
+        url: String,
+        referer: String? = null,
+        method: String = "GET",
+        requestCallBack: (Request) -> Boolean = { false },
+    ) : Pair<Request?, List<Request>> {
+        return resolveUsingWebView(
+            requestCreator(method, url, referer = referer), requestCallBack
+        )
+    }
+
     /**
      * @param requestCallBack asynchronously return matched requests by either interceptUrl or additionalUrls. If true, destroy WebView.
      * @return the final request (by interceptUrl) and all the collected urls (by additionalUrls).

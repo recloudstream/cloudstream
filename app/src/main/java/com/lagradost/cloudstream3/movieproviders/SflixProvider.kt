@@ -16,12 +16,15 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.nicehttp.NiceResponse
 import kotlinx.coroutines.delay
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.system.measureTimeMillis
 
 open class SflixProvider : MainAPI() {
@@ -342,7 +345,11 @@ open class SflixProvider : MainAPI() {
                 val extractorData =
                     "https://ws11.rabbitstream.net/socket.io/?EIO=4&transport=polling"
 
-                extractRabbitStream(iframeLink, subtitleCallback, callback, false) { it }
+                if (iframeLink.contains("streamlare", ignoreCase = true)) {
+                    loadExtractor(iframeLink, null).forEach(callback)
+                } else {
+                    extractRabbitStream(iframeLink, subtitleCallback, callback, false) { it }
+                }
             }
         }
 
@@ -571,18 +578,14 @@ open class SflixProvider : MainAPI() {
             }
         }
 
+        // Only scrape servers with these names
         fun String?.isValidServer(): Boolean {
-            if (this.isNullOrEmpty()) return false
-            if (this.equals("UpCloud", ignoreCase = true) || this.equals(
-                    "Vidcloud",
-                    ignoreCase = true
-                ) || this.equals("RapidStream", ignoreCase = true)
-            ) return true
-            return false
+            val list = listOf("upcloud", "vidcloud", "streamlare")
+            return list.contains(this?.lowercase(Locale.ROOT))
         }
 
         // For re-use in Zoro
-        fun Sources.toExtractorLink(
+        private fun Sources.toExtractorLink(
             caller: MainAPI,
             name: String,
             extractorData: String? = null,
