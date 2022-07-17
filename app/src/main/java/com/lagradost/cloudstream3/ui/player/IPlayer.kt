@@ -88,6 +88,7 @@ interface IPlayer {
         subtitlesUpdates: (() -> Unit)? = null,                     // callback from player to inform that subtitles have updated in some way
         embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null, // callback from player to give all embedded subtitles
     )
+    fun releaseCallbacks()
 
     fun updateSubtitleStyle(style: SaveCaptionStyle)
     fun saveData()

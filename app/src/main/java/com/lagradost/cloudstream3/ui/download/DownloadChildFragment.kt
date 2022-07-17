@@ -31,12 +31,8 @@ class DownloadChildFragment : Fragment() {
 
     override fun onDestroyView() {
         (download_child_list?.adapter as DownloadChildAdapter?)?.killAdapter()
-        super.onDestroyView()
-    }
-
-    override fun onDestroy() {
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
-        super.onDestroy()
+        super.onDestroyView()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -315,6 +315,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     override fun onDestroy() {
         exitFullscreen()
+        player.release()
+        player.releaseCallbacks()
         super.onDestroy()
     }
 
@@ -1104,7 +1106,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // init variables
         setPlayBackSpeed(getKey(PLAYBACK_SPEED_KEY) ?: 1.0f)
 

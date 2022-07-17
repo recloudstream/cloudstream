@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.isMovieType
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
@@ -100,16 +101,20 @@ class DownloadViewModel : ViewModel() {
                 (it.child?.episode ?: 0) + (it.child?.season?.times(10000) ?: 0)
             } // episode sorting by episode, lowest to highest
         }
+        try {
+            val stat = StatFs(Environment.getExternalStorageDirectory().path)
 
-        val stat = StatFs(Environment.getExternalStorageDirectory().path)
+            val localBytesAvailable = stat.availableBytes//stat.blockSizeLong * stat.blockCountLong
+            val localTotalBytes = stat.blockSizeLong * stat.blockCountLong
+            val localDownloadedBytes = visual.sumOf { it.totalBytes }
 
-        val localBytesAvailable = stat.availableBytes//stat.blockSizeLong * stat.blockCountLong
-        val localTotalBytes = stat.blockSizeLong * stat.blockCountLong
-        val localDownloadedBytes = visual.sumOf { it.totalBytes }
-
-        _usedBytes.postValue(localTotalBytes - localBytesAvailable - localDownloadedBytes)
-        _availableBytes.postValue(localBytesAvailable)
-        _downloadBytes.postValue(localDownloadedBytes)
+            _usedBytes.postValue(localTotalBytes - localBytesAvailable - localDownloadedBytes)
+            _availableBytes.postValue(localBytesAvailable)
+            _downloadBytes.postValue(localDownloadedBytes)
+        } catch (e : Exception) {
+            _downloadBytes.postValue(0)
+            logError(e)
+        }
 
         _headerCards.postValue(visual)
     }

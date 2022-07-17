@@ -65,16 +65,12 @@ class DownloadFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        (download_list?.adapter as DownloadHeaderAdapter?)?.killAdapter()
-        super.onDestroyView()
-    }
-
-    override fun onDestroy() {
         if (downloadDeleteEventListener != null) {
             VideoDownloadManager.downloadDeleteEvent -= downloadDeleteEventListener!!
             downloadDeleteEventListener = null
         }
-        super.onDestroy()
+        (download_list?.adapter as DownloadHeaderAdapter?)?.killAdapter()
+        super.onDestroyView()
     }
 
     override fun onCreateView(
@@ -83,7 +79,17 @@ class DownloadFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         downloadsViewModel =
-            ViewModelProvider(this).get(DownloadViewModel::class.java)
+            ViewModelProvider(this)[DownloadViewModel::class.java]
+
+        return inflater.inflate(R.layout.fragment_downloads, container, false)
+    }
+
+    private var downloadDeleteEventListener: ((Int) -> Unit)? = null
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        hideKeyboard()
+
         observe(downloadsViewModel.noDownloadsText) {
             text_no_downloads.text = it
         }
@@ -114,16 +120,8 @@ class DownloadFragment : Fragment() {
                     getBytesAsText(it)
                 )
             download_app?.setLayoutWidth(it)
-            download_storage_appbar?.visibility = View.VISIBLE
+            download_storage_appbar?.isVisible = it > 0
         }
-        return inflater.inflate(R.layout.fragment_downloads, container, false)
-    }
-
-    private var downloadDeleteEventListener: ((Int) -> Unit)? = null
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        hideKeyboard()
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             DownloadHeaderAdapter(

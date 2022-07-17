@@ -360,14 +360,15 @@
                                         tools:text="121min" />
                             </com.lagradost.cloudstream3.widget.FlowLayout>
 
-<!--
-This has half margin and half padding to make TV focus on description look better.
-The focus outline now settles between the poster and text.
--->
+                            <!--
+                            This has half margin and half padding to make TV focus on description look better.
+                            The focus outline now settles between the poster and text.
+                            -->
                             <FrameLayout
                                     android:layout_marginHorizontal="5dp"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent">
+
                                 <TextView
                                         android:padding="5dp"
                                         android:maxLength="1000"
@@ -848,9 +849,10 @@ The focus outline now settles between the poster and text.
                                         android:textColor="?attr/grayTextColor"
                                         android:textSize="17sp"
                                         android:textStyle="normal"
-                                        android:text="Episode 1022 will be released in" />
+                                        tools:text="Episode 1022 will be released in" />
 
                                 <TextView
+                                        android:paddingEnd="5dp"
                                         android:paddingStart="5dp"
                                         android:gravity="center"
                                         android:id="@+id/result_next_airing_time"
@@ -903,6 +905,7 @@ The focus outline now settles between the poster and text.
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="0dp"
                                     android:clipToPadding="false"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                     android:descendantFocusability="afterDescendants"
                                     android:paddingBottom="100dp"
                                     tools:listitem="@layout/result_episode" />

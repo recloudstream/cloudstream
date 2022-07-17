@@ -359,12 +359,12 @@ class GeneratorPlayer : FullScreenPlayer() {
             }
         })
 
-        dialog.search_filter.setOnClickListener {
+        dialog.search_filter.setOnClickListener { view ->
             val lang639_1 = languages.map { it.ISO_639_1 }
             activity?.showDialog(
                 languages.map { it.languageName },
                 lang639_1.indexOf(currentLanguageTwoLetters),
-                context.getString(R.string.subs_subtitle_languages),
+                view?.context?.getString(R.string.subs_subtitle_languages) ?: return@setOnClickListener,
                 true,
                 { }
             ) { index ->
@@ -609,7 +609,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     val currentPrefMedia =
                         settingsManager.getString(
-                            getString(R.string.subtitles_encoding_key),
+                            ctx.getString(R.string.subtitles_encoding_key),
                             null
                         )
 
