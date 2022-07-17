@@ -78,7 +78,6 @@
         "url": "https://animekisa.in"
     },
     "ApiMDBProvider": {
-        "language": "en",
         "name": "ApiMDB",
         "status": 0,
         "url": "https://v2.apimdb.net"
