@@ -350,6 +350,7 @@ abstract class AbstractPlayerFragment(
         resizeMode = getKey(RESIZE_MODE_KEY) ?: 0
         resize(resizeMode, false)
 
+        player.releaseCallbacks()
         player.initCallbacks(
             playerUpdated = ::playerUpdated,
             updateIsPlaying = ::updateIsPlaying,

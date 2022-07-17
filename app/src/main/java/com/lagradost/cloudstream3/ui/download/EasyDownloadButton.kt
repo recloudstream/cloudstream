@@ -20,8 +20,13 @@ class EasyDownloadButton : IDisposable {
         val id: Int
     }
 
+    private var _clickCallback: ((DownloadClickEvent) -> Unit)? = null
+    private var _imageChangeCallback: ((Pair<Int, String>) -> Unit)? = null
+
     override fun dispose() {
         try {
+            _clickCallback = null
+            _imageChangeCallback = null
             downloadProgressEventListener?.let { VideoDownloadManager.downloadProgressEvent -= it }
             downloadStatusEventListener?.let { VideoDownloadManager.downloadStatusEvent -= it }
         } catch (e: Exception) {
@@ -119,6 +124,8 @@ class EasyDownloadButton : IDisposable {
         clickCallback: (DownloadClickEvent) -> Unit,
         isTextPercentage: Boolean = false
     ) {
+        _clickCallback = clickCallback
+        _imageChangeCallback = downloadImageChangeCallback
         var lastState: VideoDownloadManager.DownloadType? = null
         var currentBytes = setupCurrentBytes ?: 0
         var totalBytes = setupTotalBytes ?: 0
@@ -142,7 +149,7 @@ class EasyDownloadButton : IDisposable {
             } else {
                 Pair(R.drawable.netflix_download, R.string.download)
             }
-            downloadImageChangeCallback.invoke(
+            _imageChangeCallback?.invoke(
                 Pair(
                     img.first,
                     downloadView.context.getString(img.second)
@@ -223,7 +230,7 @@ class EasyDownloadButton : IDisposable {
 
         downloadView.setOnClickListener {
             if (currentBytes <= 0) {
-                clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
+                _clickCallback?.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
             } else {
                 val list = arrayListOf(
                     Pair(DOWNLOAD_ACTION_PLAY_FILE, R.string.popup_play_file),
@@ -243,7 +250,7 @@ class EasyDownloadButton : IDisposable {
                 it.popupMenuNoIcons(
                     list
                 ) {
-                    clickCallback.invoke(DownloadClickEvent(itemId, data))
+                    _clickCallback?.invoke(DownloadClickEvent(itemId, data))
                 }
             }
         }

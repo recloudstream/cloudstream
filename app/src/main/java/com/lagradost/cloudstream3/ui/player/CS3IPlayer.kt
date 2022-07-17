@@ -108,6 +108,21 @@ class CS3IPlayer : IPlayer {
     private var playerUpdated: ((Any?) -> Unit)? = null
     private var embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null
 
+    override fun releaseCallbacks() {
+        playerUpdated = null
+        updateIsPlaying = null
+        requestAutoFocus = null
+        playerError = null
+        playerDimensionsLoaded = null
+        requestedListeningPercentages = null
+        playerPositionChanged = null
+        nextEpisode = null
+        prevEpisode = null
+        subtitlesUpdates = null
+        embeddedSubtitlesFetched = null
+        requestSubtitleUpdate = null
+    }
+
     override fun initCallbacks(
         playerUpdated: (Any?) -> Unit,
         updateIsPlaying: ((Pair<CSPlayerLoading, CSPlayerLoading>) -> Unit)?,

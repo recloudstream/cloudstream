@@ -20,6 +20,7 @@
         -->
         <LinearLayout
                 android:id="@+id/download_storage_appbar"
+                tools:visibility="visible"
                 android:visibility="gone"
                 android:layout_margin="10dp"
                 android:orientation="vertical"

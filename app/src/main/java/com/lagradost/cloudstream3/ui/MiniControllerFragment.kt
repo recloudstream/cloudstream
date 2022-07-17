@@ -12,21 +12,40 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.UIHelper.adjustAlpha
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import java.lang.ref.WeakReference
 
 
 class MyMiniControllerFragment : MiniControllerFragment() {
     var currentColor: Int = 0
 
-    // I KNOW, KINDA SPAGHETTI SOLUTION, BUT IT WORKS
-    override fun onInflate(context: Context, attributeSet: AttributeSet, bundle: Bundle?) {
-        val obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.CustomCast, 0, 0)
-        if (obtainStyledAttributes.hasValue(R.styleable.CustomCast_customCastBackgroundColor)) {
-            currentColor = obtainStyledAttributes.getColor(R.styleable.CustomCast_customCastBackgroundColor, 0)
-        }
-        obtainStyledAttributes.recycle()
-        super.onInflate(context, attributeSet, bundle)
+    override fun onDestroy() {
+        currentColor = 0
+        super.onDestroy()
     }
 
+    // I KNOW, KINDA SPAGHETTI SOLUTION, BUT IT WORKS
+    override fun onInflate(context: Context, attributeSet: AttributeSet, bundle: Bundle?) {
+        super.onInflate(context, attributeSet, bundle)
+
+        // somehow this leaks and I really dont know why, it seams like if you go back to a fragment with this, it leaks????
+        if (currentColor == 0) {
+            WeakReference(
+                context.obtainStyledAttributes(
+                    attributeSet,
+                    R.styleable.CustomCast
+                )
+            ).apply {
+                if (get()
+                        ?.hasValue(R.styleable.CustomCast_customCastBackgroundColor) == true
+                ) {
+                    currentColor =
+                        get()
+                            ?.getColor(R.styleable.CustomCast_customCastBackgroundColor, 0) ?: 0
+                }
+                get()?.recycle()
+            }.clear()
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,18 +57,24 @@ class MyMiniControllerFragment : MiniControllerFragment() {
             val containerCurrent: RelativeLayout? = view.findViewById(R.id.container_current)
 
             context?.let { ctx ->
-                progressBar?.setBackgroundColor(adjustAlpha(ctx.colorFromAttribute(R.attr.colorPrimary), 0.35f))
-                val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 2.toPx)
+                progressBar?.setBackgroundColor(
+                    adjustAlpha(
+                        ctx.colorFromAttribute(R.attr.colorPrimary),
+                        0.35f
+                    )
+                )
+                val params = RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    2.toPx
+                )
 
                 progressBar?.layoutParams = params
-
-                if (currentColor != 0) {
-                    containerCurrent?.setBackgroundColor(currentColor)
-                }
+                val color = currentColor
+                if (color != 0)
+                    containerCurrent?.setBackgroundColor(color)
             }
             val child = containerAll?.getChildAt(0)
             child?.alpha = 0f // REMOVE GRADIENT
-
         } catch (e: Exception) {
             // JUST IN CASE
         }

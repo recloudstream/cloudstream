@@ -129,10 +129,14 @@ object UIHelper {
     }
 
     fun Activity?.navigate(@IdRes navigation: Int, arguments: Bundle? = null) {
-        if (this is FragmentActivity) {
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?)?.navController?.navigate(
-                navigation, arguments
-            )
+        try {
+            if (this is FragmentActivity) {
+                (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?)?.navController?.navigate(
+                    navigation, arguments
+                )
+            }
+        } catch (e : Exception) {
+            logError(e)
         }
     }
 

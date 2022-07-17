@@ -241,8 +241,8 @@
     },
     "TwoEmbedProvider": {
         "name": "2Embed",
-        "url": "https://www.2embed.ru",
-        "status": 0
+        "url": "https://2embed.org",
+        "status": 1
     },
     "VMoveeProvider": {
         "name": "VMovee",
