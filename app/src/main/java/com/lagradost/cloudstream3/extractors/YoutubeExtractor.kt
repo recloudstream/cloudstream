@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.schemaStripRegex
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeStreamLinkHandlerFactory
@@ -35,7 +36,11 @@ open class YoutubeExtractor : ExtractorApi() {
         val streams = safeApiCall {
             val streams = ytVideos[url] ?: let {
                 val link =
-                    YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(url)
+                    YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(
+                        url.replace(
+                            schemaStripRegex, ""
+                        )
+                    )
 
                 val s = object : YoutubeStreamExtractor(
                     ServiceList.YouTube,
