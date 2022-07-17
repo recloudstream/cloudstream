@@ -950,9 +950,9 @@ class ResultFragment : ResultTrailerPlayer() {
                 loadingDialog = builder.create()
 
                 loadingDialog.show()
-                //loadingDialog.setOnDismissListener {
-                //    currentLoadingCount++
-                //}
+                loadingDialog.setOnDismissListener {
+                    currentLoadingCount++
+                }
             }
 
             val data = viewModel.loadEpisode(episodeClick.data, isCasting)
