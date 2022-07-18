@@ -26,6 +26,7 @@ https://github.com/LagradOst/CloudStream-3/releases
 
 ***The list of supported languages:***
 * 🇱🇧 Arabic
+* 🇨🇿 Czech
 * 🇳🇱 Dutch
 * 🇬🇧 English
 * 🇫🇷 French

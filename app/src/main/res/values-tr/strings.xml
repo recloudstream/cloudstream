@@ -380,7 +380,7 @@
     <string name="emulator_layout">Emülatör düzeni</string>
 
     <string name="primary_color_settings">Birincil renk</string>
-    <string name="app_theme_settings">Uygualama teması</string>
+    <string name="app_theme_settings">Uygulama teması</string>
     <string name="bottom_title_settings">Poster başlık konumu</string>
     <string name="bottom_title_settings_des">Başlığı posterin altına yerleştir</string>
 
@@ -487,10 +487,13 @@
     <string name="resolution">Çözünürlük</string>
     <string name="error_invalid_id">Geçersiz ID</string>
     <string name="error_invalid_data">Geçersiz veri</string>
+    <string name="error_invalid_url">Geçersiz URL</string>
     <string name="error">Hata</string>
     <string name="subtitles_remove_captions">Alt yazılardan seçmeli alt yazıyı kaldır</string>
     <string name="subtitles_remove_bloat">Alt yazılardaki şişkinliği kaldır</string>
     <string name="extras">Ekstralar</string>
     <string name="trailer">Fragman</string>
+    <string name="network_adress_example">Yayına bağlan</string>
+    <string name="referer">Yönlendiren</string>
 </resources>
 
