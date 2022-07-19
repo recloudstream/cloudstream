@@ -303,6 +303,7 @@ class ResultFragment : ResultTrailerPlayer() {
                 TvType.Torrent -> "Torrent"
                 TvType.Documentary -> "Documentaries"
                 TvType.AsianDrama -> "AsianDrama"
+                TvType.Live -> "LiveStreams"
             }
         }
 
@@ -1665,10 +1666,15 @@ class ResultFragment : ResultTrailerPlayer() {
             }
 
             result_resume_progress_holder?.isVisible = isProgressVisible
-            context?.getString(if (isProgressVisible) R.string.resume else R.string.play_movie_button)
-                ?.let {
-                    result_play_movie?.text = it
+            context?.getString(
+                when {
+                    currentType?.isLiveStream() == true -> R.string.play_livestream_button
+                    isProgressVisible -> R.string.resume
+                    else -> R.string.play_movie_button
                 }
+            )?.let {
+                result_play_movie?.text = it
+            }
             //println("startAction = $startAction")
 
             when (startAction) {
@@ -1943,10 +1949,10 @@ class ResultFragment : ResultTrailerPlayer() {
 
                     result_poster_holder?.visibility = VISIBLE
 
-                    /*result_play_movie?.text =
-                        if (d.type == TvType.Torrent) getString(R.string.play_torrent_button) else getString(
+                    result_play_movie?.text =
+                        if (d.type == TvType.Live) getString(R.string.play_livestream_button) else getString(
                             R.string.play_movie_button
-                        )*/
+                        )
                     //result_plot_header?.text =
                     //    if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
                     val syno = d.plot
@@ -2130,6 +2136,7 @@ class ResultFragment : ResultTrailerPlayer() {
                             TvType.Movie -> R.string.movies_singular
                             TvType.Torrent -> R.string.torrent_singular
                             TvType.AsianDrama -> R.string.asian_drama_singular
+                            TvType.Live -> R.string.live_singular
                         }
                     )?.let {
                         result_meta_type?.text = it

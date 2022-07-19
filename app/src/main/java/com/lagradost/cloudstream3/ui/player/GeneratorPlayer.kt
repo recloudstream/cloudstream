@@ -364,7 +364,8 @@ class GeneratorPlayer : FullScreenPlayer() {
             activity?.showDialog(
                 languages.map { it.languageName },
                 lang639_1.indexOf(currentLanguageTwoLetters),
-                view?.context?.getString(R.string.subs_subtitle_languages) ?: return@setOnClickListener,
+                view?.context?.getString(R.string.subs_subtitle_languages)
+                    ?: return@setOnClickListener,
                 true,
                 { }
             ) { index ->
@@ -721,6 +722,9 @@ class GeneratorPlayer : FullScreenPlayer() {
     var maxEpisodeSet: Int? = null
 
     override fun playerPositionChanged(posDur: Pair<Long, Long>) {
+        // Don't save livestream data
+        if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
+
         val (position, duration) = posDur
         viewModel.getId()?.let {
             DataStoreHelper.setViewPos(it, position, duration)

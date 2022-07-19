@@ -119,6 +119,7 @@
     <string name="type_re_watching">Rewatching</string>
 
     <string name="play_movie_button">Play Movie</string>
+    <string name="play_livestream_button">Play Livestream</string>
     <string name="play_torrent_button">Stream Torrent</string>
     <string name="pick_source">Sources</string>
     <string name="pick_subtitle">Subtitles</string>
@@ -327,6 +328,7 @@
     <string name="documentaries">Documentaries</string>
     <string name="ova">OVA</string>
     <string name="asian_drama">Asian Dramas</string>
+    <string name="livestreams">Livestreams</string>
 
     <!--singular-->
     <string name="movies_singular">Movie</string>
@@ -337,6 +339,7 @@
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentary</string>
     <string name="asian_drama_singular">Asian Drama</string>
+    <string name="live_singular">Livestream</string>
 
     <string name="source_error">Source error</string>
     <string name="remote_error">Remote error</string>

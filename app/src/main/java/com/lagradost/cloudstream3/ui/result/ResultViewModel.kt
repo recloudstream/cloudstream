@@ -498,6 +498,26 @@ class ResultViewModel : ViewModel() {
                         updateEpisodes(mainId, listOf(it), -1)
                     }
                 }
+                is LiveStreamLoadResponse -> {
+                    buildResultEpisode(
+                        loadResponse.name,
+                        loadResponse.name,
+                        null,
+                        0,
+                        null,
+                        loadResponse.dataUrl,
+                        loadResponse.apiName,
+                        (mainId), // HAS SAME ID
+                        0,
+                        null,
+                        null,
+                        null,
+                        loadResponse.type,
+                        mainId
+                    ).let {
+                        updateEpisodes(mainId, listOf(it), -1)
+                    }
+                }
                 is TorrentLoadResponse -> {
                     updateEpisodes(
                         mainId, listOf(
