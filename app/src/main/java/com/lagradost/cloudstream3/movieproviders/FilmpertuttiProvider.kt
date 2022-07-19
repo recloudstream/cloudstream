@@ -14,7 +14,7 @@ import org.jsoup.nodes.Element
 
 class FilmpertuttiProvider : MainAPI() {
     override var lang = "it"
-    override var mainUrl = "https://www.filmpertutti.buzz"
+    override var mainUrl = "https://www.filmpertutti.love"
     override var name = "Filmpertutti"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -221,7 +221,7 @@ class FilmpertuttiProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        tryParseJson<List<String>>(data)?.forEach { id ->
+        tryParseJson<List<String>>(data)?.apmap { id ->
             if (id.contains("buckler")){
                 val id2 = unshorten_linkup(id).trim().replace("/v/","/e/").replace("/f/","/e/")
                 loadExtractor(id2, data, callback)

@@ -103,7 +103,7 @@
     "CineblogProvider": {
         "language": "it",
         "name": "CineBlog",
-        "status": 1,
+        "status": 0,
         "url": "https://cb01.rip"
     },
     "CinecalidadProvider": {
@@ -197,8 +197,8 @@
     "FilmpertuttiProvider": {
         "language": "it",
         "name": "Filmpertutti",
-        "status": 1,
-        "url": "https://www.filmpertutti.buzz"
+        "status": 0,
+        "url": "https://www.filmpertutti.love"
     },
     "FmoviesToProvider": {
         "language": "en",
