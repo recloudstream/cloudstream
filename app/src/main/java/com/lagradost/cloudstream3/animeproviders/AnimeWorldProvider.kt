@@ -41,7 +41,7 @@ class AnimeWorldProvider : MainAPI() {
         private suspend fun getCookies(url: String): Map<String, String> {
             val rhino = Context.enter()
             rhino.optimizationLevel = -1
-            val scope: Scriptable = rhino.initStandardObjects()
+            val scope: Scriptable = rhino.initSafeStandardObjects()
 
             val slowAes = app.get("https://www.animeworld.tv/aes.min.js").text
 //            val slowAes = """
