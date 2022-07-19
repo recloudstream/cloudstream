@@ -272,6 +272,12 @@
         "status": 1,
         "url": "https://kdramahood.com"
     },
+    "KimCartoonProvider": {
+        "language": "en",
+        "name": "Kim Cartoon",
+        "status": 1,
+        "url": "https://kimcartoon.li"
+    },
     "KuramanimeProvider": {
         "language": "id",
         "name": "Kuramanime",
