@@ -1602,11 +1602,15 @@ object VideoDownloadManager {
     }
 
     private fun saveQueue() {
-        val dQueue =
-            downloadQueue.toList()
-                .mapIndexed { index, any -> DownloadQueueResumePackage(index, any) }
-                .toTypedArray()
-        setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
+        try {
+            val dQueue =
+                downloadQueue.toList()
+                    .mapIndexed { index, any -> DownloadQueueResumePackage(index, any) }
+                    .toTypedArray()
+            setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
+        } catch (e : Exception) {
+            logError(e)
+        }
     }
 
     /*fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
