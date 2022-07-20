@@ -461,6 +461,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             false
         }
 
+        try {
+            getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                list.forEach { custom ->
+                    allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                        ?.let {
+                            allProviders.add(it.javaClass.newInstance().apply {
+                                name = custom.name
+                                lang = custom.lang
+                                mainUrl = custom.url.trimEnd('/')
+                                canBeOverridden = false
+                            })
+                        }
+                }
+            }
+            apis = allProviders
+            APIHolder.apiMap = null
+        } catch (e: Exception) {
+            logError(e)
+        }
+
         // this pulls the latest data so ppl don't have to update to simply change provider url
         if (downloadFromGithub) {
             try {
@@ -533,25 +553,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             apis = allProviders
         }
 
-        try {
-            getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
-                list.forEach { custom ->
-                    allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                        ?.let {
-                            allProviders.add(it.javaClass.newInstance().apply {
-                                name = custom.name
-                                lang = custom.lang
-                                mainUrl = custom.url.trimEnd('/')
-                                canBeOverridden = false
-                            })
-                        }
-                }
-            }
-            apis = allProviders
-            APIHolder.apiMap = null
-        } catch (e: Exception) {
-            logError(e)
-        }
 
         loadThemes(this)
         updateLocale()
