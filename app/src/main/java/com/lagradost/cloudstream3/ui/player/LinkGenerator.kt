@@ -57,7 +57,7 @@ class LinkGenerator(
                         link,
                         link,
                         referer ?: "",
-                        Qualities.Unknown.value, link.contains(".m3u8") // TODO USE REAL PARSER
+                        Qualities.Unknown.value, link.contains(".m3u") // TODO USE REAL PARSER
                     ) to null
                 )
             }
