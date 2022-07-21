@@ -32,9 +32,8 @@ class APIRepository(val api: MainAPI) {
     val hasQuickSearch = api.hasQuickSearch
 
     suspend fun load(url: String): Resource<LoadResponse> {
-        if (isInvalidData(url)) throw ErrorLoadingException()
-
         return safeApiCall {
+            if (isInvalidData(url)) throw ErrorLoadingException()
             api.load(api.fixUrl(url)) ?: throw ErrorLoadingException()
         }
     }

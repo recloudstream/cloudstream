@@ -1224,7 +1224,7 @@ class ResultFragment : ResultTrailerPlayer() {
                     sortUrls(
                         currentLinks ?: return@main
                     ),//(currentLinks ?: return@main).filter { !it.isM3u8 },
-                    getString(R.string.episode_action_download_mirror)
+                    context?.getString(R.string.episode_action_download_mirror) ?: ""
                 ) { link ->
                     startDownload(
                         context,
