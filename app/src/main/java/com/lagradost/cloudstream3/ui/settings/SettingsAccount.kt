@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.View.*
+import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AlertDialog
@@ -24,6 +26,7 @@ import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -76,6 +79,33 @@ class SettingsAccount : PreferenceFragmentCompat() {
                         AlertDialog.Builder(context ?: return, R.style.AlertDialogCustom)
                             .setView(R.layout.add_account_input)
                     val dialog = builder.show()
+
+                    val visibilityMap = mapOf(
+                        dialog.login_email_input to api.requiresEmail,
+                        dialog.login_password_input to api.requiresPassword,
+                        dialog.login_server_input to api.requiresServer,
+                        dialog.login_username_input to api.requiresUsername
+                    )
+
+                    if (context?.isTvSettings() == true) {
+                        visibilityMap.forEach { (input, isVisible) ->
+                            input.isVisible = isVisible
+
+                            // Band-aid for weird FireTV behavior causing crashes because keyboard covers the screen
+                            input.setOnEditorActionListener { textView, actionId, _ ->
+                                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                                    val view = textView.focusSearch(FOCUS_DOWN)
+                                    return@setOnEditorActionListener view?.requestFocus(FOCUS_DOWN) == true
+                                }
+                                return@setOnEditorActionListener true
+                            }
+                        }
+                    } else {
+                        visibilityMap.forEach { (input, isVisible) ->
+                            input.isVisible = isVisible
+                        }
+                    }
+
                     dialog.login_email_input?.isVisible = api.requiresEmail
                     dialog.login_password_input?.isVisible = api.requiresPassword
                     dialog.login_server_input?.isVisible = api.requiresServer
