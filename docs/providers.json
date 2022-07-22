@@ -558,6 +558,12 @@
         "status": 1,
         "url": "https://wcostream.cc"
     },
+    "XcineProvider": {
+        "language": "de",
+        "name": "Xcine",
+        "status": 1,
+        "url": "https://xcine.me"
+    },
     "ZoroProvider": {
         "language": "en",
         "name": "Zoro",
