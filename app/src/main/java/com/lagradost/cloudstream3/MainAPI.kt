@@ -145,8 +145,8 @@ object APIHolder {
             NginxProvider(),
             OlgplyProvider(),
             AniflixProvider(),
-
-            KimCartoonProvider()
+            KimCartoonProvider(),
+            XcineProvider()
         )
 
 
