@@ -169,7 +169,6 @@ suspend fun loadExtractor(
     for (extractor in extractorApis) {
         if (url.startsWith(extractor.mainUrl)) {
             return extractor.getSafeUrl(url, referer) ?: emptyList()
-
         }
     }
     return emptyList()

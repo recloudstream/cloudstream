@@ -214,7 +214,6 @@ class QuickSearchFragment : Fragment() {
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
-                        println("DATA: $data")
                         (quick_search_autofit_results?.adapter as? SearchAdapter?)?.updateList(
                             data
                         )

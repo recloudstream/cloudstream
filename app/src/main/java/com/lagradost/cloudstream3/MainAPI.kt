@@ -837,9 +837,9 @@ fun AnimeSearchResponse.addDubStatus(
 
 fun AnimeSearchResponse.addDubStatus(status: String, episodes: Int? = null) {
     if (status.contains("(dub)", ignoreCase = true)) {
-        addDubStatus(DubStatus.Dubbed)
+        addDubStatus(DubStatus.Dubbed, episodes)
     } else if (status.contains("(sub)", ignoreCase = true)) {
-        addDubStatus(DubStatus.Subbed)
+        addDubStatus(DubStatus.Subbed, episodes)
     }
 }
 
@@ -1020,25 +1020,28 @@ interface LoadResponse {
         }
 
         fun LoadResponse.addDuration(input: String?) {
-            val cleanInput = input?.trim()?.replace(" ", "") ?: return
-            Regex("([0-9]*)h.*?([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
-                if (values.size == 3) {
-                    val hours = values[1].toIntOrNull()
-                    val minutes = values[2].toIntOrNull()
-                    this.duration = if (minutes != null && hours != null) {
-                        hours * 60 + minutes
-                    } else null
-                    if (this.duration != null) return
-                }
-            }
-            Regex("([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
-                if (values.size == 2) {
-                    this.duration = values[1].toIntOrNull()
-                    if (this.duration != null) return
-                }
-            }
+            this.duration = getDurationFromString(input) ?: this.duration
         }
     }
+}
+
+fun getDurationFromString(input: String?): Int? {
+    val cleanInput = input?.trim()?.replace(" ", "") ?: return null
+    Regex("([0-9]*)h.*?([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
+        if (values.size == 3) {
+            val hours = values[1].toIntOrNull()
+            val minutes = values[2].toIntOrNull()
+            return if (minutes != null && hours != null) {
+                hours * 60 + minutes
+            } else null
+        }
+    }
+    Regex("([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
+        if (values.size == 2) {
+            return values[1].toIntOrNull()
+        }
+    }
+    return null
 }
 
 fun LoadResponse?.isEpisodeBased(): Boolean {
@@ -1118,7 +1121,7 @@ data class AnimeLoadResponse(
 ) : LoadResponse, EpisodeResponse
 
 fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<Episode>?) {
-    if (episodes == null) return
+    if (episodes.isNullOrEmpty()) return
     this.episodes[status] = episodes
 }
 

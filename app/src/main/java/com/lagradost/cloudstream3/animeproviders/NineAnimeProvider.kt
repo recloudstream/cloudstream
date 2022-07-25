@@ -3,11 +3,10 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
-import java.util.*
 
 class NineAnimeProvider : MainAPI() {
     override var mainUrl = "https://9anime.id"
@@ -16,6 +15,7 @@ class NineAnimeProvider : MainAPI() {
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Anime)
+    override val hasQuickSearch = true
 
     companion object {
         fun getDubStatus(title: String): DubStatus {
@@ -25,35 +25,147 @@ class NineAnimeProvider : MainAPI() {
                 DubStatus.Subbed
             }
         }
+
+
+        private const val nineAnimeKey =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+        private const val cipherKey = "rTKp3auwu0ULA6II"
+
+        private fun encodeVrf(text: String): String {
+            return encode(
+                encrypt(
+                    cipher(cipherKey, encode(text)),
+                    nineAnimeKey
+                ).replace("""=+$""".toRegex(), "")
+            )
+        }
+
+        private fun decodeVrf(text: String): String {
+            return decode(cipher(cipherKey, decrypt(text, nineAnimeKey)))
+        }
+
+        fun encrypt(input: String, key: String): String {
+            if (input.any { it.code > 255 }) throw Exception("illegal characters!")
+            var output = ""
+            for (i in input.indices step 3) {
+                val a = intArrayOf(-1, -1, -1, -1)
+                a[0] = input[i].code shr 2
+                a[1] = (3 and input[i].code) shl 4
+                if (input.length > i + 1) {
+                    a[1] = a[1] or (input[i + 1].code shr 4)
+                    a[2] = (15 and input[i + 1].code) shl 2
+                }
+                if (input.length > i + 2) {
+                    a[2] = a[2] or (input[i + 2].code shr 6)
+                    a[3] = 63 and input[i + 2].code
+                }
+                for (n in a) {
+                    if (n == -1) output += "="
+                    else {
+                        if (n in 0..63) output += key[n]
+                    }
+                }
+            }
+            return output
+        }
+
+        fun cipher(key: String, text: String): String {
+            val arr = IntArray(256) { it }
+
+            var u = 0
+            var r: Int
+            arr.indices.forEach {
+                u = (u + arr[it] + key[it % key.length].code) % 256
+                r = arr[it]
+                arr[it] = arr[u]
+                arr[u] = r
+            }
+            u = 0
+            var c = 0
+
+            return text.indices.map { j ->
+                c = (c + 1) % 256
+                u = (u + arr[c]) % 256
+                r = arr[c]
+                arr[c] = arr[u]
+                arr[u] = r
+                (text[j].code xor arr[(arr[c] + arr[u]) % 256]).toChar()
+            }.joinToString("")
+        }
+
+        @Suppress("SameParameterValue")
+        private fun decrypt(input: String, key: String): String {
+            val t = if (input.replace("""[\t\n\f\r]""".toRegex(), "").length % 4 == 0) {
+                input.replace("""==?$""".toRegex(), "")
+            } else input
+            if (t.length % 4 == 1 || t.contains("""[^+/0-9A-Za-z]""".toRegex())) throw Exception("bad input")
+            var i: Int
+            var r = ""
+            var e = 0
+            var u = 0
+            for (o in t.indices) {
+                e = e shl 6
+                i = key.indexOf(t[o])
+                e = e or i
+                u += 6
+                if (24 == u) {
+                    r += ((16711680 and e) shr 16).toChar()
+                    r += ((65280 and e) shr 8).toChar()
+                    r += (255 and e).toChar()
+                    e = 0
+                    u = 0
+                }
+            }
+            return if (12 == u) {
+                e = e shr 4
+                r + e.toChar()
+            } else {
+                if (18 == u) {
+                    e = e shr 2
+                    r += ((65280 and e) shr 8).toChar()
+                    r += (255 and e).toChar()
+                }
+                r
+            }
+        }
+
+        private fun encode(input: String): String =
+            java.net.URLEncoder.encode(input, "utf-8").replace("+", "%20")
+
+        private fun decode(input: String): String = java.net.URLDecoder.decode(input, "utf-8")
     }
 
     override suspend fun getMainPage(): HomePageResponse {
         val items = listOf(
-            Pair("$mainUrl/ajax/home/widget?name=trending", "Trending"),
-            Pair("$mainUrl/ajax/home/widget?name=updated_all", "All"),
-            Pair("$mainUrl/ajax/home/widget?name=updated_sub&page=1", "Recently Updated (SUB)"),
-            Pair(
-                "$mainUrl/ajax/home/widget?name=updated_dub&page=1",
-                "Recently Updated (DUB)"
-            ),
-            Pair(
-                "$mainUrl/ajax/home/widget?name=updated_chinese&page=1",
-                "Recently Updated (Chinese)"
-            ),
-            Pair("$mainUrl/ajax/home/widget?name=random", "Random"),
+            "$mainUrl/ajax/home/widget/trending?page=1" to "Trending",
+            "$mainUrl/ajax/home/widget/updated-all?page=1" to "All",
+            "$mainUrl/ajax/home/widget/updated-sub?page=1" to "Recently Updated (SUB)",
+            "$mainUrl/ajax/home/widget/updated-dub?page=1" to
+                    "Recently Updated (DUB)",
+            "$mainUrl/ajax/home/widget/updated-china?page=1" to
+                    "Recently Updated (Chinese)",
+            "$mainUrl/ajax/home/widget/random?page=1" to "Random",
         ).apmap { (url, name) ->
             val home = Jsoup.parse(
                 app.get(
                     url
                 ).parsed<Response>().html
-            ).select("ul.anime-list li").map {
-                val title = it.selectFirst("a.name")!!.text()
-                val link = it.selectFirst("a")!!.attr("href")
-                val poster = it.selectFirst("a.poster img")!!.attr("src")
+            ).select("div.item").mapNotNull { element ->
+                val title = element.selectFirst(".info > .name") ?: return@mapNotNull null
+                val link = title.attr("href")
+                val poster = element.selectFirst(".poster > a > img")?.attr("src")
+                val meta = element.selectFirst(".poster > a > .meta > .inner > .left")
+                val subbedEpisodes = meta?.selectFirst(".sub")?.text()?.toIntOrNull()
+                val dubbedEpisodes = meta?.selectFirst(".dub")?.text()?.toIntOrNull()
 
-                newAnimeSearchResponse(title, link) {
+                newAnimeSearchResponse(title.text() ?: return@mapNotNull null, link) {
                     this.posterUrl = poster
-                    addDubStatus(getDubStatus(title))
+                    addDubStatus(
+                        dubbedEpisodes != null,
+                        subbedEpisodes != null,
+                        dubbedEpisodes,
+                        subbedEpisodes
+                    )
                 }
             }
 
@@ -63,203 +175,154 @@ class NineAnimeProvider : MainAPI() {
         return HomePageResponse(items)
     }
 
-    //Credits to https://github.com/jmir1
-    private val key =
-        "c/aUAorINHBLxWTy3uRiPt8J+vjsOheFG1E0q2X9CYwDZlnmd4Kb5M6gSVzfk7pQ" //key credits to @Modder4869
-
-    private fun getVrf(id: String): String? {
-        val reversed = ue(encode(id) + "0000000").slice(0..5).reversed()
-
-        return reversed + ue(je(reversed, encode(id) ?: return null)).replace(
-            """=+$""".toRegex(),
-            ""
-        )
-    }
-
-    private fun getLink(url: String): String? {
-        val i = url.slice(0..5)
-        val n = url.slice(6..url.lastIndex)
-        return decode(je(i, ze(n)))
-    }
-
-    private fun ue(input: String): String {
-        if (input.any { it.code >= 256 }) throw Exception("illegal characters!")
-        var output = ""
-        for (i in input.indices step 3) {
-            val a = intArrayOf(-1, -1, -1, -1)
-            a[0] = input[i].code shr 2
-            a[1] = (3 and input[i].code) shl 4
-            if (input.length > i + 1) {
-                a[1] = a[1] or (input[i + 1].code shr 4)
-                a[2] = (15 and input[i + 1].code) shl 2
-            }
-            if (input.length > i + 2) {
-                a[2] = a[2] or (input[i + 2].code shr 6)
-                a[3] = 63 and input[i + 2].code
-            }
-            for (n in a) {
-                if (n == -1) output += "="
-                else {
-                    if (n in 0..63) output += key[n]
-                }
-            }
-        }
-        return output;
-    }
-
-    private fun je(inputOne: String, inputTwo: String): String {
-        val arr = IntArray(256) { it }
-        var output = ""
-        var u = 0
-        var r: Int
-        for (a in arr.indices) {
-            u = (u + arr[a] + inputOne[a % inputOne.length].code) % 256
-            r = arr[a]
-            arr[a] = arr[u]
-            arr[u] = r
-        }
-        u = 0
-        var c = 0
-        for (f in inputTwo.indices) {
-            c = (c + f) % 256
-            u = (u + arr[c]) % 256
-            r = arr[c]
-            arr[c] = arr[u]
-            arr[u] = r
-            output += (inputTwo[f].code xor arr[(arr[c] + arr[u]) % 256]).toChar()
-        }
-        return output
-    }
-
-    private fun ze(input: String): String {
-        val t = if (input.replace("""[\t\n\f\r]""".toRegex(), "").length % 4 == 0) {
-            input.replace(Regex("""/==?$/"""), "")
-        } else input
-        if (t.length % 4 == 1 || t.contains(Regex("""[^+/0-9A-Za-z]"""))) throw Exception("bad input")
-        var i: Int
-        var r = ""
-        var e = 0
-        var u = 0
-        for (o in t.indices) {
-            e = e shl 6
-            i = key.indexOf(t[o])
-            e = e or i
-            u += 6
-            if (24 == u) {
-                r += ((16711680 and e) shr 16).toChar()
-                r += ((65280 and e) shr 8).toChar()
-                r += (255 and e).toChar()
-                e = 0
-                u = 0
-            }
-        }
-        return if (12 == u) {
-            e = e shr 4
-            r + e.toChar()
-        } else {
-            if (18 == u) {
-                e = e shr 2
-                r += ((65280 and e) shr 8).toChar()
-                r += (255 and e).toChar()
-            }
-            r
-        }
-    }
-
-    private fun encode(input: String): String? = java.net.URLEncoder.encode(input, "utf-8")
-
-    private fun decode(input: String): String? = java.net.URLDecoder.decode(input, "utf-8")
-
-    override suspend fun search(query: String): List<SearchResponse> {
-        val url = "$mainUrl/filter?sort=title%3Aasc&keyword=$query"
-
-        return app.get(url).document.select("ul.anime-list li").mapNotNull {
-            val title = it.selectFirst("a.name")!!.text()
-            val href =
-                fixUrlNull(it.selectFirst("a")!!.attr("href"))?.replace(
-                    Regex("(\\?ep=(\\d+)\$)"),
-                    ""
-                )
-                    ?: return@mapNotNull null
-            val image = it.selectFirst("a.poster img")!!.attr("src")
-            AnimeSearchResponse(
-                title,
-                href,
-                this.name,
-                TvType.Anime,
-                image,
-                null,
-                if (title.contains("(DUB)") || title.contains("(Dub)")) EnumSet.of(
-                    DubStatus.Dubbed
-                ) else EnumSet.of(DubStatus.Subbed),
-            )
-        }
-    }
-
     data class Response(
-        @JsonProperty("html") val html: String
+        @JsonProperty("result") val html: String
     )
 
-    override suspend fun load(url: String): LoadResponse? {
+    data class QuickSearchResponse(
+        //@JsonProperty("status") val status: Int? = null,
+        @JsonProperty("result") val result: QuickSearchResult? = null,
+        //@JsonProperty("message") val message: String? = null,
+        //@JsonProperty("messages") val messages: ArrayList<String> = arrayListOf()
+    )
+
+    data class QuickSearchResult(
+        @JsonProperty("html") val html: String? = null,
+        //@JsonProperty("linkMore") val linkMore: String? = null
+    )
+
+    override suspend fun quickSearch(query: String): List<SearchResponse>? {
+        val vrf = encodeVrf(query)
+        val url =
+            "$mainUrl/ajax/anime/search?keyword=$query&vrf=$vrf"
+        val response = app.get(url).parsedSafe<QuickSearchResponse>()
+        val document = Jsoup.parse(response?.result?.html ?: return null)
+        return document.select(".items > a").mapNotNull { element ->
+            val link = fixUrl(element?.attr("href") ?: return@mapNotNull null)
+            val title = element.selectFirst(".info > .name")?.text() ?: return@mapNotNull null
+            newAnimeSearchResponse(title, link) {
+                posterUrl = element.selectFirst(".poster > span > img")?.attr("src")
+            }
+        }
+    }
+
+    override suspend fun search(query: String): List<SearchResponse>? {
+        val vrf = encodeVrf(query)
+        //?language%5B%5D=${if (selectDub) "dubbed" else "subbed"}&
+        val url =
+            "$mainUrl/filter?keyword=${encode(query)}&vrf=${vrf}&page=1"
+        return app.get(url).document.select("#list-items div.ani.poster.tip > a").mapNotNull {
+            val link = fixUrl(it.attr("href") ?: return@mapNotNull null)
+            val img = it.select("img")
+            val title = img.attr("alt")
+            newAnimeSearchResponse(title, link) {
+                posterUrl = img.attr("src")
+            }
+        }
+    }
+
+    override suspend fun load(url: String): LoadResponse {
         val validUrl = url.replace("https://9anime.to", mainUrl)
         val doc = app.get(validUrl).document
-        val animeid =
-            doc.selectFirst("div.player-wrapper.watchpage")!!.attr("data-id") ?: return null
-        val animeidencoded = encode(getVrf(animeid) ?: return null)
-        val poster = doc.selectFirst("aside.main div.thumb div img")!!.attr("src")
-        val title = doc.selectFirst(".info .title")!!.text()
-        val description = doc.selectFirst("div.info p")!!.text().replace("Ver menos", "").trim()
-        val episodes = Jsoup.parse(
-            app.get(
-                "$mainUrl/ajax/anime/servers?ep=1&id=${animeid}&vrf=$animeidencoded&ep=8&episode=&token="
-            ).parsed<Response>().html
-        ).select("ul.episodes li a").mapNotNull {
-            val link = it?.attr("href") ?: return@mapNotNull null
-            val name = "Episode ${it.text()}"
-            Episode(link, name)
+
+        val meta = doc.selectFirst("#w-info") ?: throw ErrorLoadingException("Could not find info")
+        val ratingElement = meta.selectFirst(".brating > #w-rating")
+        val id = ratingElement?.attr("data-id") ?: throw ErrorLoadingException("Could not find id")
+        val binfo =
+            meta.selectFirst(".binfo") ?: throw ErrorLoadingException("Could not find binfo")
+        val info = binfo.selectFirst(".info") ?: throw ErrorLoadingException("Could not find info")
+
+        val title = (info.selectFirst(".title") ?: info.selectFirst(".d-title"))?.text()
+            ?: throw ErrorLoadingException("Could not find title")
+
+        val body =
+            app.get("$mainUrl/ajax/episode/list/$id?vrf=${encodeVrf(id)}").parsed<Response>().html
+
+        val subEpisodes = ArrayList<Episode>()
+        val dubEpisodes = ArrayList<Episode>()
+
+        //TODO RECOMMENDATIONS
+
+        Jsoup.parse(body).body().select(".episodes > ul > li > a").mapNotNull { element ->
+            val ids = element.attr("data-ids").split(",", limit = 2)
+
+            val epNum = element.attr("data-num")
+                .toIntOrNull() // might fuck up on 7.5 ect might use data-slug instead
+            val epTitle = element.selectFirst("span.d-title")?.text()
+            //val filler = element.hasClass("filler")
+            ids.getOrNull(1)?.let { dub ->
+                dubEpisodes.add(
+                    Episode(
+                        "$mainUrl/ajax/server/list/$dub?vrf=${encodeVrf(dub)}",
+                        epTitle,
+                        episode = epNum
+                    )
+                )
+            }
+            ids.getOrNull(0)?.let { sub ->
+                subEpisodes.add(
+                    Episode(
+                        "$mainUrl/ajax/server/list/$sub?vrf=${encodeVrf(sub)}",
+                        epTitle,
+                        episode = epNum
+                    )
+                )
+            }
         }
 
-        val recommendations =
-            doc.select("div.container aside.main section div.body ul.anime-list li")
-                .mapNotNull { element ->
-                    val recTitle = element.select("a.name").text() ?: return@mapNotNull null
-                    val image = element.select("a.poster img").attr("src")
-                    val recUrl = fixUrl(element.select("a").attr("href"))
-                    newAnimeSearchResponse(recTitle, recUrl) {
-                        this.posterUrl = image
-                        addDubStatus(getDubStatus(recTitle))
+        return newAnimeLoadResponse(title, url, TvType.Anime) {
+            addEpisodes(DubStatus.Dubbed, dubEpisodes)
+            addEpisodes(DubStatus.Subbed, subEpisodes)
+
+            plot = info.selectFirst(".synopsis > .shorting > .content")?.text()
+            posterUrl = binfo.selectFirst(".poster > span > img")?.attr("src")
+            rating = ratingElement.attr("data-score").toFloat().times(1000f).toInt()
+
+            info.select(".bmeta > .meta > div").forEach { element ->
+                when (element.ownText()) {
+                    "Genre: " -> {
+                        tags = element.select("span > a").mapNotNull { it?.text() }
                     }
+                    "Duration: " -> {
+                        duration = getDurationFromString(element.selectFirst("span")?.text())
+                    }
+                    "Type: " -> {
+                        type = when (element.selectFirst("span > a")?.text()) {
+                            "ONA" -> TvType.OVA
+                            else -> {
+                                type
+                            }
+                        }
+                    }
+                    "Status: " -> {
+                        showStatus = when (element.selectFirst("span")?.text()) {
+                            "Releasing" -> ShowStatus.Ongoing
+                            "Completed" -> ShowStatus.Completed
+                            else -> {
+                                showStatus
+                            }
+                        }
+                    }
+                    else -> {}
                 }
-
-        val infodoc = doc.selectFirst("div.info .meta .col1")!!.text()
-        val tvType = if (infodoc.contains("Movie")) TvType.AnimeMovie else TvType.Anime
-        val status =
-            if (infodoc.contains("Completed")) ShowStatus.Completed
-            else if (infodoc.contains("Airing")) ShowStatus.Ongoing
-            else null
-        val tags = doc.select("div.info .meta .col1 div:contains(Genre) a").map { it.text() }
-
-        return newAnimeLoadResponse(title, validUrl, tvType) {
-            this.posterUrl = poster
-            this.plot = description
-            this.recommendations = recommendations
-            this.showStatus = status
-            this.tags = tags
-            addEpisodes(DubStatus.Subbed, episodes)
+            }
         }
     }
 
-    data class Links(
-        @JsonProperty("url") val url: String
+    data class Result(
+        @JsonProperty("url")
+        val url: String? = null
     )
 
-    data class Servers(
-        @JsonProperty("28") val mcloud: String?,
-        @JsonProperty("35") val mp4upload: String?,
-        @JsonProperty("40") val streamtape: String?,
-        @JsonProperty("41") val vidstream: String?,
-        @JsonProperty("43") val videovard: String?
+    data class Links(
+        @JsonProperty("result")
+        val result: Result? = null
     )
+
+    //TODO 9anime outro into {"status":200,"result":{"url":"","skip_data":{"intro_begin":67,"intro_end":154,"outro_begin":1337,"outro_end":1415,"count":3}},"message":"","messages":[]}
+    private suspend fun getEpisodeLinks(id: String): Links? {
+        return app.get("$mainUrl/ajax/server/$id?vrf=${encodeVrf(id)}").parsedSafe()
+    }
 
     override suspend fun loadLinks(
         data: String,
@@ -267,44 +330,29 @@ class NineAnimeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val document = app.get(data).document
-        val animeid =
-            document.selectFirst("div.player-wrapper.watchpage")!!.attr("data-id") ?: return false
-        val animeidencoded = encode(getVrf(animeid) ?: return false)
+        val body = app.get(data).parsed<Response>().html
+        val document = Jsoup.parse(body)
 
-        Jsoup.parse(
-            app.get(
-                "$mainUrl/ajax/anime/servers?&id=${animeid}&vrf=$animeidencoded&episode=&token="
-            ).parsed<Response>().html
-        ).select("div.body").map { element ->
-            val jsonregex = Regex("(\\{.+\\}.*$data)")
-            val servers = jsonregex.find(element.toString())?.value?.replace(
-                Regex("(\".*data-base=.*href=\"$data)"),
-                ""
-            )?.replace("&quot;", "\"") ?: return@map
-
-            val jsonservers = parseJson<Servers?>(servers) ?: return@map
-            listOfNotNull(
-                jsonservers.vidstream,
-                jsonservers.mcloud,
-                jsonservers.mp4upload,
-                jsonservers.streamtape,
-                jsonservers.videovard
-            ).mapNotNull {
-                try {
-                    val epserver = app.get("$mainUrl/ajax/anime/episode?id=$it").text
-                    (if (epserver.contains("url")) {
-                        parseJson<Links>(epserver)
-                    } else null)?.url?.let { it1 -> getLink(it1.replace("=", "")) }
-                        ?.replace("/embed/", "/e/")
-                } catch (e: Exception) {
-                    logError(e)
-                    null
+        document.select("li").apmap {
+            try {
+                val name = it.text()
+                val encodedStreamUrl =
+                    getEpisodeLinks(it.attr("data-link-id"))?.result?.url ?: return@apmap
+                val url = decodeVrf(encodedStreamUrl)
+                if (!loadExtractor(url, callback = callback, referer = mainUrl)) {
+                    callback(
+                        ExtractorLink(
+                            this.name,
+                            name,
+                            url,
+                            mainUrl,
+                            Qualities.Unknown.value,
+                            url.contains(".m3u8")
+                        )
+                    )
                 }
-            }.apmap { url ->
-                loadExtractor(
-                    url, data, callback
-                )
+            } catch (e: Exception) {
+                logError(e)
             }
         }
 
