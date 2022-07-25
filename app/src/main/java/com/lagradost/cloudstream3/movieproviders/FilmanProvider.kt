@@ -18,9 +18,8 @@ class FilmanProvider : MainAPI() {
     )
 
     override suspend fun getMainPage(): HomePageResponse {
-        val response = app.get(mainUrl).text
-        val document = Jsoup.parse(response)
-        val lists = document.select(".item-list,.series-list")
+        val document = app.get(mainUrl).document
+        val lists = document.select("div#item-list")
         val categories = ArrayList<HomePageList>()
         for (l in lists) {
             val title = l.parent()!!.select("h3").text()
@@ -53,17 +52,16 @@ class FilmanProvider : MainAPI() {
 
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/wyszukiwarka?phrase=$query"
-        val response = app.get(url).text
-        val document = Jsoup.parse(response)
-        val lists = document.select("#advanced-search > div")
-        val movies = lists[1].select(".item")
-        val series = lists[3].select(".item")
+        val document = app.get(url).document
+        val lists = document.select("div#item-list")
+        val movies = lists[0].select(".poster > a")
+        val series = lists[1].select(".poster > a")
         if (movies.isEmpty() && series.isEmpty()) return ArrayList()
         fun getVideos(type: TvType, items: Elements): List<SearchResponse> {
             return items.map { i ->
                 val href = i.attr("href")
                 val img = i.selectFirst("> img")!!.attr("src").replace("/thumb/", "/big/")
-                val name = i.selectFirst(".title")!!.text()
+                val name = i.attr("title")
                 if (type === TvType.TvSeries) {
                     TvSeriesSearchResponse(
                         name,
@@ -83,8 +81,7 @@ class FilmanProvider : MainAPI() {
     }
 
     override suspend fun load(url: String): LoadResponse {
-        val response = app.get(url).text
-        val document = Jsoup.parse(response)
+        val document = app.get(url).document
         val documentTitle = document.select("title").text().trim()
 
         if (documentTitle.startsWith("Logowanie")) {
