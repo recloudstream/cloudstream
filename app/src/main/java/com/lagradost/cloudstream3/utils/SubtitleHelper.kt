@@ -116,15 +116,30 @@ object SubtitleHelper {
     private const val asciiOffset = 0x41
     private const val offset = flagOffset - asciiOffset
 
+    private val flagRegex = Regex("[\uD83C\uDDE6-\uD83C\uDDFF]{2}")
+
     fun getFlagFromIso(inp: String?): String? {
         try {
-            flags[inp ?: return null]?.let { flagAscii ->
-                val firstChar: Int = Character.codePointAt(flagAscii, 0) + offset
-                val secondChar: Int = Character.codePointAt(flagAscii, 1) + offset
+            val ret = getFlagFromIsoShort(flags[inp ?: return null])
+                ?: getFlagFromIsoShort(inp.uppercase()) ?: return null
 
-                return (String(Character.toChars(firstChar)) + String(Character.toChars(secondChar)))
+            return if (flagRegex.matches(ret)) {
+                ret
+            } else {
+                null
             }
+        } catch (e: Exception) {
+            logError(e)
             return null
+        }
+    }
+
+    private fun getFlagFromIsoShort(flagAscii: String?): String? {
+        try {
+            val firstChar: Int = Character.codePointAt(flagAscii ?: return null, 0) + offset
+            val secondChar: Int = Character.codePointAt(flagAscii, 1) + offset
+
+            return (String(Character.toChars(firstChar)) + String(Character.toChars(secondChar)))
         } catch (e: Exception) {
             logError(e)
             return null

@@ -99,14 +99,14 @@ object APIHolder {
             RebahinProvider(),
             LayarKacaProvider(),
             HDTodayProvider(),
-            OpenVidsProvider(),       
+            OpenVidsProvider(),
             IdlixProvider(),
             MultiplexProvider(),
             VidSrcProvider(),
             UakinoProvider(),
             PhimmoichillProvider(),
             HDrezkaProvider(),
-  
+
 
             // Metadata providers
             //TmdbProvider(),
@@ -555,8 +555,10 @@ fun capitalizeStringNullable(str: String?): String? {
 }
 
 fun fixTitle(str: String): String {
-    return str.split(" ").joinToString(" ") { it.lowercase()
-        .replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else it } }
+    return str.split(" ").joinToString(" ") {
+        it.lowercase()
+            .replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else it }
+    }
 }
 
 /** https://www.imdb.com/title/tt2861424/ -> tt2861424 */
@@ -623,13 +625,14 @@ fun TvType.isAnimeOp(): Boolean {
 
 data class SubtitleFile(val lang: String, val url: String)
 
-class HomePageResponse(
+data class HomePageResponse(
     val items: List<HomePageList>
 )
 
-class HomePageList(
+data class HomePageList(
     val name: String,
-    var list: List<SearchResponse>
+    var list: List<SearchResponse>,
+    val isHorizontalImages: Boolean = false
 )
 
 enum class SearchQuality {
@@ -863,6 +866,19 @@ data class MovieSearchResponse(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
+) : SearchResponse
+
+data class LiveSearchResponse(
+    override val name: String,
+    override val url: String,
+    override val apiName: String,
+    override var type: TvType? = null,
+
+    override var posterUrl: String? = null,
+    override var id: Int? = null,
+    override var quality: SearchQuality? = null,
+    override var posterHeaders: Map<String, String>? = null,
+    val lang: String? = null,
 ) : SearchResponse
 
 data class TvSeriesSearchResponse(

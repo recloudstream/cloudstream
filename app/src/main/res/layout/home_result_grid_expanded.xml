@@ -22,6 +22,7 @@
             android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
+                android:id="@+id/image_holder"
                 android:layout_width="114dp"
                 android:layout_height="180dp"
                 android:elevation="10dp"
@@ -105,6 +106,16 @@
                         style="@style/SearchBox"
                         android:layout_gravity="end"
                         android:background="@drawable/sub_bg_color" />
+
+                <TextView
+                        tools:visibility="visible"
+                        android:visibility="gone"
+                        android:textSize="20sp"
+                        android:id="@+id/text_flag"
+                        tools:text="🇸🇪"
+                        style="@style/SearchBox"
+                        android:layout_gravity="end"
+                        android:background="@color/transparent" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

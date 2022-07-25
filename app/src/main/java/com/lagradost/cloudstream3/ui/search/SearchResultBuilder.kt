@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueT
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.home_result_grid.view.*
 
@@ -46,6 +47,7 @@ object SearchResultBuilder {
 
         val textIsDub: TextView? = itemView.text_is_dub
         val textIsSub: TextView? = itemView.text_is_sub
+        val textFlag: TextView? = itemView.text_flag
         val textQuality: TextView? = itemView.text_quality
         val shadow: View? = itemView.title_shadow
 
@@ -60,6 +62,7 @@ object SearchResultBuilder {
         playImg?.isVisible = false
         textIsDub?.isVisible = false
         textIsSub?.isVisible = false
+        textFlag?.isVisible = false
 
         val showSub = showCache[textIsDub?.context?.getString(R.string.show_sub_key)] ?: false
         val showDub = showCache[textIsDub?.context?.getString(R.string.show_dub_key)] ?: false
@@ -188,6 +191,14 @@ object SearchResultBuilder {
         }
 
         when (card) {
+            is LiveSearchResponse -> {
+                SubtitleHelper.getFlagFromIso(card.lang)?.let { flagEmoji ->
+                    textFlag?.apply {
+                        isVisible = true
+                        text = flagEmoji
+                    }
+                }
+            }
             is DataStoreHelper.ResumeWatchingResult -> {
                 val pos = card.watchPos?.fixVisual()
                 if (pos != null) {

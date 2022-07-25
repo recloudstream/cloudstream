@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
@@ -505,8 +506,9 @@ class HomeFragment : Fragment() {
                     (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(
                         d?.items?.mapNotNull {
                             try {
-                                listHomepageItems.addAll(it.list.filterSearchResponse())
-                                HomePageList(it.name, it.list.filterSearchResponse())
+                                val filter = it.list.filterSearchResponse()
+                                listHomepageItems.addAll(filter)
+                                it.copy(list = filter)
                             } catch (e: Exception) {
                                 logError(e)
                                 null
@@ -518,6 +520,8 @@ class HomeFragment : Fragment() {
                     home_loaded?.isVisible = true
                     if (toggleRandomButton) {
                         home_random?.isVisible = listHomepageItems.isNotEmpty()
+                    } else {
+                        home_random?.isGone = true
                     }
                 }
                 is Resource.Failure -> {

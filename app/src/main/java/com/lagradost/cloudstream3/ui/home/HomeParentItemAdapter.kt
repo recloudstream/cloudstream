@@ -83,8 +83,11 @@ class ParentItemAdapter(
                 info.list.toMutableList(),
                 clickCallback = clickCallback,
                 nextFocusUp = recyclerView.nextFocusUpId,
-                nextFocusDown = recyclerView.nextFocusDownId
-            )
+                nextFocusDown = recyclerView.nextFocusDownId,
+            ).apply {
+                isHorizontal = info.isHorizontalImages
+            }
+
             //(recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
 
             moreInfo?.setOnClickListener {

@@ -11,26 +11,31 @@ import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchResponseDiffCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.utils.UIHelper.IsBottomLayout
-import kotlinx.android.synthetic.main.home_result_grid.view.*
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import kotlinx.android.synthetic.main.home_result_grid.view.background_card
+import kotlinx.android.synthetic.main.home_result_grid_expanded.view.*
 
 class HomeChildItemAdapter(
     val cardList: MutableList<SearchResponse>,
-    private val overrideLayout : Int? = null,
+    private val overrideLayout: Int? = null,
     private val nextFocusUp: Int? = null,
     private val nextFocusDown: Int? = null,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var isHorizontal: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layout = overrideLayout ?: if(parent.context.IsBottomLayout()) R.layout.home_result_grid_expanded else R.layout.home_result_grid
+        val layout = overrideLayout
+            ?: if (parent.context.IsBottomLayout()) R.layout.home_result_grid_expanded else R.layout.home_result_grid
 
         return CardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
             clickCallback,
             itemCount,
             nextFocusUp,
-            nextFocusDown
+            nextFocusDown,
+            isHorizontal
         )
     }
 
@@ -68,6 +73,7 @@ class HomeChildItemAdapter(
         private val itemCount: Int,
         private val nextFocusUp: Int? = null,
         private val nextFocusDown: Int? = null,
+        private val isHorizontal: Boolean = false
     ) :
         RecyclerView.ViewHolder(itemView) {
 
@@ -79,6 +85,26 @@ class HomeChildItemAdapter(
                 itemCount - 1 -> false
                 else -> null
             }
+
+            (itemView.image_holder ?: itemView.background_card)?.apply {
+                val min = 114.toPx
+                val max = 180.toPx
+
+                layoutParams =
+                    layoutParams.apply {
+                        width = if (!isHorizontal) {
+                            min
+                        } else {
+                            max
+                        }
+                        height = if (!isHorizontal) {
+                            max
+                        } else {
+                            min
+                        }
+                    }
+            }
+
 
             SearchResultBuilder.bind(
                 clickCallback,

@@ -58,6 +58,16 @@
                     android:layout_gravity="end"
                     style="@style/SearchBox"
                     android:background="@drawable/sub_bg_color" />
+
+            <TextView
+                    tools:visibility="visible"
+                    android:visibility="gone"
+                    android:textSize="20sp"
+                    android:id="@+id/text_flag"
+                    tools:text="🇸🇪"
+                    style="@style/SearchBox"
+                    android:layout_gravity="end"
+                    android:background="@color/transparent" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
