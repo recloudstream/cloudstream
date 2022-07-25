@@ -21,7 +21,7 @@
         "language": "it",
         "name": "Altadefinizione",
         "status": 1,
-        "url": "https://altadefinizione.hair"
+        "url": "https://altadefinizione.tienda"
     },
     "AniflixProvider": {
         "language": "en",
@@ -100,10 +100,16 @@
         "status": 1,
         "url": "https://bflix.ru"
     },
+    "CimaNowProvider": {
+        "language": "ar",
+        "name": "CimaNow",
+        "status": 1,
+        "url": "https://cimanow.cc"
+    },
     "CineblogProvider": {
         "language": "it",
         "name": "CineBlog",
-        "status": 0,
+        "status": 1,
         "url": "https://cb01.rip"
     },
     "CinecalidadProvider": {
@@ -197,8 +203,8 @@
     "FilmpertuttiProvider": {
         "language": "it",
         "name": "Filmpertutti",
-        "status": 0,
-        "url": "https://www.filmpertutti.love"
+        "status": 1,
+        "url": "https://filmpertutti.love"
     },
     "FmoviesToProvider": {
         "language": "en",
@@ -239,7 +245,7 @@
     "HDrezkaProvider": {
         "language": "ru",
         "name": "HDrezka",
-        "status": 1,
+        "status": 0,
         "url": "https://rezka.ag"
     },
     "IHaveNoTvProvider": {
@@ -472,13 +478,13 @@
         "language": "it",
         "name": "Streamingcommunity",
         "status": 1,
-        "url": "https://streamingcommunity.org"
+        "url": "https://streamingcommunity.best"
     },
     "TantifilmProvider": {
         "language": "it",
         "name": "Tantifilm",
         "status": 1,
-        "url": "https://www.tantifilm.pics"
+        "url": "https://www.tantifilm.nl"
     },
     "TenshiProvider": {
         "language": "en",

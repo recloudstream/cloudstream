@@ -85,6 +85,7 @@ object APIHolder {
             KdramaHoodProvider(),
             AkwamProvider(),
             MyCimaProvider(),
+            CimaNowProvider(),
             EgyBestProvider(),
             FaselHDProvider(),
             SoaptwoDayProvider(),
