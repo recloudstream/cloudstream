@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 
 class AltadefinizioneProvider : MainAPI() {
     override var lang = "it"
-    override var mainUrl = "https://altadefinizione.hair"
+    override var mainUrl = "https://altadefinizione.tienda"
     override var name = "Altadefinizione"
     override val hasMainPage = true
     override val hasChromecastSupport = true
