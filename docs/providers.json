@@ -100,6 +100,12 @@
         "status": 1,
         "url": "https://bflix.ru"
     },
+    "CimaNowProvider": {
+        "language": "ar",
+        "name": "CimaNow",
+        "status": 1,
+        "url": "https://cimanow.cc"
+    },
     "CineblogProvider": {
         "language": "it",
         "name": "CineBlog",
