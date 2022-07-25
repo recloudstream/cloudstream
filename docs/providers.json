@@ -239,7 +239,7 @@
     "HDrezkaProvider": {
         "language": "ru",
         "name": "HDrezka",
-        "status": 1,
+        "status": 0,
         "url": "https://rezka.ag"
     },
     "IHaveNoTvProvider": {
