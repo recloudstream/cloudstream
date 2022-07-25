@@ -245,8 +245,8 @@
     "HDrezkaProvider": {
         "language": "ru",
         "name": "HDrezka",
-        "status": 0,
-        "url": "https://rezka.ag"
+        "status": 1
+        "url": "https://hdrezka19139.org"
     },
     "IHaveNoTvProvider": {
         "language": "en",
