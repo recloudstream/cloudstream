@@ -47,6 +47,12 @@
         "status": 0,
         "url": "https://animepahe.com"
     },
+    "AnimeSailProvider": {
+        "language": "id",
+        "name": "AnimeSail",
+        "status": 1,
+        "url": "https://111.90.143.42"
+    },
     "AnimeWorldProvider": {
         "language": "it",
         "name": "AnimeWorld",
@@ -498,6 +504,12 @@
         "status": 1,
         "url": "https://theflix.to"
     },
+    "TocanimeProvider": {
+        "language": "vi",
+        "name": "Tocanime",
+        "status": 1,
+        "url": "https://tocanime.co"
+    },
     "TrailersTwoProvider": {
         "language": "en",
         "name": "Trailers.to",
@@ -569,6 +581,12 @@
         "name": "Xcine",
         "status": 1,
         "url": "https://xcine.me"
+    },
+    "YomoviesProvider": {
+        "language": "hi",
+        "name": "Yomovies",
+        "status": 1,
+        "url": "https://yomovies.plus"
     },
     "ZoroProvider": {
         "language": "en",
