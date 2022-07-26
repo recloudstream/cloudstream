@@ -283,7 +283,7 @@
         <item name="behavior_peekHeight">512dp</item>
     </style>
 
-    <style name="PreferenceTheme" parent="@style/AppTheme"></style>
+    <style name="PreferenceTheme" parent="@style/AppTheme" />
 
     <style name="Theme.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
