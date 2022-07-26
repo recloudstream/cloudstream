@@ -143,7 +143,8 @@ class OploverzProvider : MainAPI() {
         val trailer = document.selectFirst("a.trailerbutton")?.attr("href")
 
         val episodes = document.select(".eplister > ul > li").map {
-            val name = it.select(".epl-title").text().trim()
+            val header = it.select(".epl-title").text()
+            val name = Regex("(Episode\\s?[0-9]+)").find(header)?.groupValues?.getOrNull(0) ?: header
             val link = fixUrl(it.select("a").attr("href"))
             Episode(link, name)
         }.reversed()

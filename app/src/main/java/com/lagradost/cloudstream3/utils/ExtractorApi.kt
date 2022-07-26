@@ -289,8 +289,9 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     DesuDrive(),
 
     Filesim(),
-
     Linkbox(),
+    Acefile(),
+    SpeedoStream(),
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),

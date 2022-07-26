@@ -117,46 +117,36 @@ class NeonimeProvider : MainAPI() {
 
             if (url.contains("movie") || url.contains("live-action")) {
                 val mTitle = document.selectFirst(".sbox > .data > h1[itemprop = name]")?.text().toString().trim()
-                val mPoster =
-                    document.selectFirst(".sbox > .imagen > .fix > img[itemprop = image]")?.attr("data-src")
-                val mTags = document.select("p.meta_dd > a").map { it.text() }
-                val mYear = document.selectFirst("a[href*=release-year]")!!.text().toIntOrNull()
-                val mDescription = document.select("div[itemprop = description]").text().trim()
-                val mRating = document.select("span[itemprop = ratingValue]").text().toIntOrNull()
                 val mTrailer = document.selectFirst("div.youtube_id iframe")?.attr("data-wpfc-original-src")?.substringAfterLast("html#")?.let{ "https://www.youtube.com/embed/$it"}
 
                 return newMovieLoadResponse(name = mTitle, url = url, type = TvType.Movie, dataUrl = url) {
-                    posterUrl = mPoster
-                    year = mYear
-                    plot = mDescription
-                    rating = mRating
-                    tags = mTags
+                    posterUrl = document.selectFirst(".sbox > .imagen > .fix > img[itemprop = image]")?.attr("data-src")
+                    year = document.selectFirst("a[href*=release-year]")!!.text().toIntOrNull()
+                    plot = document.select("div[itemprop = description]").text().trim()
+                    rating = document.select("span[itemprop = ratingValue]").text().toIntOrNull()
+                    tags = document.select("p.meta_dd > a").map { it.text() }
                     addTrailer(mTrailer)
                 }
             }
             else {
                 val title = document.select("h1[itemprop = name]").text().trim()
-                val poster = document.selectFirst(".imagen > img")?.attr("data-src")
-                val tags = document.select("#info a[href*=\"-genre/\"]").map { it.text() }
-                val year = document.select("#info a[href*=\"-year/\"]").text().toIntOrNull()
-                val status = getStatus(document.select("div.metadatac > span").last()!!.text().trim())
-                val description = document.select("div[itemprop = description] > p").text().trim()
                 val trailer = document.selectFirst("div.youtube_id_tv iframe")?.attr("data-wpfc-original-src")?.substringAfterLast("html#")?.let{ "https://www.youtube.com/embed/$it"}
 
                 val episodes = document.select("ul.episodios > li").mapNotNull {
-                    val name = it.selectFirst(".episodiotitle > a")!!.ownText().trim()
+                    val header = it.selectFirst(".episodiotitle > a")?.ownText().toString()
+                    val name = Regex("(Episode\\s?[0-9]+)").find(header)?.groupValues?.getOrNull(0) ?: header
                     val link = fixUrl(it.selectFirst(".episodiotitle > a")!!.attr("href"))
                     Episode(link, name)
                 }.reversed()
 
                 return newAnimeLoadResponse(title, url, TvType.Anime) {
                     engName = title
-                    posterUrl = poster
-                    this.year = year
+                    posterUrl = document.selectFirst(".imagen > img")?.attr("data-src")
+                    year = document.select("#info a[href*=\"-year/\"]").text().toIntOrNull()
                     addEpisodes(DubStatus.Subbed, episodes)
-                    showStatus = status
-                    plot = description
-                    this.tags = tags
+                    showStatus = getStatus(document.select("div.metadatac > span").last()!!.text().trim())
+                    plot = document.select("div[itemprop = description] > p").text().trim()
+                    tags = document.select("#info a[href*=\"-genre/\"]").map { it.text() }
                     addTrailer(trailer)
                 }
             }

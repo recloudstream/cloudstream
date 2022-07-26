@@ -175,16 +175,13 @@ class NontonAnimeIDProvider : MainAPI() {
                     )
                 ).parsed<EpResponse>().content
             ).select("li").map {
-                val engName =
-                    document.selectFirst("div.bottomtitle:nth-child(4) > span:nth-child(1)")
-                        ?.ownText()
-                val name = it.selectFirst("span.t1")!!.text().trim().replace("Episode", "$engName")
-                val link = it.selectFirst("a")!!.attr("href")
+                val name = Regex("(Episode\\s?[0-9]+)").find(it.selectFirst("a")?.text().toString())?.groupValues?.getOrNull(0) ?: it.selectFirst("a")?.text()
+                val link = fixUrl(it.selectFirst("a")!!.attr("href"))
                 Episode(link, name)
             }.reversed()
         } else {
             document.select("ul.misha_posts_wrap2 > li").map {
-                val name = it.select("span.t1").text().trim()
+                val name = Regex("(Episode\\s?[0-9]+)").find(it.selectFirst("a")?.text().toString())?.groupValues?.getOrNull(0) ?: it.selectFirst("a")?.text()
                 val link = it.select("a").attr("href")
                 Episode(link, name)
             }.reversed()

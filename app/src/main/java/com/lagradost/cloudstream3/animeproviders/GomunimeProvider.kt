@@ -145,7 +145,7 @@ class GomunimeProvider : MainAPI() {
                 document.select(".bixbox.bxcl.epcheck > script").toString().trim()
             )?.groupValues?.get(1).toString().replace(Regex("""\\"""), "").trim()
         ).map {
-            val name = it.epTitle
+            val name = Regex("(Episode\\s?[0-9]+)").find(it.epTitle.toString())?.groupValues?.getOrNull(0) ?: it.epTitle
             val link = it.epLink
             Episode(link, name)
         }.reversed()

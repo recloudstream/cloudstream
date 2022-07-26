@@ -107,6 +107,7 @@ object APIHolder {
             UakinoProvider(),
             PhimmoichillProvider(),
             HDrezkaProvider(),
+            YomoviesProvider(),
 
 
             // Metadata providers
@@ -142,6 +143,8 @@ object APIHolder {
             KuronimeProvider(),
             OtakudesuProvider(),
             AnimeIndoProvider(),
+            AnimeSailProvider(),
+            TocanimeProvider(),
             //MultiAnimeProvider(),
             NginxProvider(),
             OlgplyProvider(),
