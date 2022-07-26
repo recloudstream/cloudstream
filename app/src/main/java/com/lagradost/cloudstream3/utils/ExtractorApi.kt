@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.*
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
@@ -143,6 +144,17 @@ fun getAndUnpack(string: String): String {
     return JsUnpacker(packedText).unpack() ?: string
 }
 
+suspend fun unshortenLinkSafe(url : String) : String {
+    return try {
+        if (ShortLink.isShortLink(url))
+            ShortLink.unshorten(url)
+        else url
+    } catch (e: Exception) {
+        logError(e)
+        url
+    }
+}
+
 /**
  * Tries to load the appropriate extractor based on link, returns true if any extractor is loaded.
  * */
@@ -151,14 +163,17 @@ suspend fun loadExtractor(
     referer: String? = null,
     callback: (ExtractorLink) -> Unit
 ): Boolean {
+    val currentUrl = unshortenLinkSafe(url)
+
     for (extractor in extractorApis) {
-        if (url.replace(schemaStripRegex, "")
+        if (currentUrl.replace(schemaStripRegex, "")
                 .startsWith(extractor.mainUrl.replace(schemaStripRegex, ""))
         ) {
-            extractor.getSafeUrl(url, referer)?.forEach(callback)
+            extractor.getSafeUrl(currentUrl, referer)?.forEach(callback)
             return true
         }
     }
+
     return false
 }
 
@@ -166,9 +181,11 @@ suspend fun loadExtractor(
     url: String,
     referer: String? = null,
 ): List<ExtractorLink> {
+    val currentUrl = unshortenLinkSafe(url)
+
     for (extractor in extractorApis) {
-        if (url.startsWith(extractor.mainUrl)) {
-            return extractor.getSafeUrl(url, referer) ?: emptyList()
+        if (currentUrl.startsWith(extractor.mainUrl)) {
+            return extractor.getSafeUrl(currentUrl, referer) ?: emptyList()
         }
     }
     return emptyList()

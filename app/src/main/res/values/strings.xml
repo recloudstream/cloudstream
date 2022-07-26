@@ -92,6 +92,7 @@
     <string name="duration_format" formatted="true">%d min</string>
 
     <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">Play with CloudStream</string>
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
     <string name="title_downloads">Downloads</string>

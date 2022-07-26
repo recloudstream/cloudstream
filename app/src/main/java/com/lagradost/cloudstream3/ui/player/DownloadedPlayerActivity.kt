@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -35,6 +37,34 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         finish()
     }
 
+    private fun playLink(url: String) {
+        this.navigate(
+            R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
+                LinkGenerator(
+                    listOf(
+                        url
+                    )
+                )
+            )
+        )
+    }
+
+    private fun playUri(uri: Uri) {
+        val name = UniFile.fromUri(this, uri).name
+        this.navigate(
+            R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
+                DownloadFileGenerator(
+                    listOf(
+                        ExtractorUri(
+                            uri = uri,
+                            name = name ?: getString(R.string.downloaded_file)
+                        )
+                    )
+                )
+            )
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(DTAG, "onCreate")
 
@@ -45,69 +75,35 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         setContentView(R.layout.empty_layout)
 
         val data = intent.data
-        if (data == null) {
+
+        if (intent?.action == Intent.ACTION_SEND) {
+            val extraText = try { // I dont trust android
+                intent.getStringExtra(Intent.EXTRA_TEXT)
+            } catch (e: Exception) {
+                null
+            }
+            val cd = intent.clipData
+            val item = if (cd != null && cd.itemCount > 0) cd.getItemAt(0) else null
+            val url = item?.text?.toString()
+
+            // idk what I am doing, just hope any of these work
+            if (item?.uri != null)
+                playUri(item.uri)
+            else if (url != null)
+                playLink(url)
+            else if (data != null)
+                playUri(data)
+            else if (extraText != null)
+                playLink(extraText)
+            else {
+                finish()
+                return
+            }
+        } else if (data?.scheme == "content") {
+            playUri(data)
+        } else {
             finish()
             return
         }
-
-        if (data.scheme == "content") {
-            val name = UniFile.fromUri(this, data).name
-            this.navigate(
-                R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
-                    DownloadFileGenerator(
-                        listOf(
-                            ExtractorUri(
-                                uri = data,
-                                name = name ?: getString(R.string.downloaded_file)
-                            )
-                        )
-                    )
-                )
-            )
-        }
-
-        // Legacy code, seems to work perfectly fine without it
-
-//        } else {
-//            val uri = getUri(intent.data)
-//            if (uri == null) {
-//                finish()
-//                return
-//            }
-//            val path = uri.path
-//            // Because it doesn't get the path when it's downloaded, I have no idea
-//            val realPath = if (File(
-//                    intent.data?.path?.removePrefix("/file") ?: "NONE"
-//                ).exists()
-//            ) intent.data?.path?.removePrefix("/file") else path
-//
-//            if (realPath == null) {
-//                finish()
-//                return
-//            }
-//
-//            val name = try {
-//                File(realPath).name
-//            } catch (e: Exception) {
-//                "NULL"
-//            }
-//
-//            val tryUri = try {
-//                AppUtils.getVideoContentUri(this, realPath) ?: uri
-//            } catch (e: Exception) {
-//                logError(e)
-//                uri
-//            }
-//
-//            setContentView(R.layout.empty_layout)
-//            Log.i(DTAG, "navigating")
-//
-//            //TODO add relative path for subs
-//            this.navigate(
-//                R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
-//                    DownloadFileGenerator(listOf(ExtractorUri(uri = tryUri, name = name)))
-//                )
-//            )
-//        }
     }
 }
