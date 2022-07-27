@@ -178,11 +178,9 @@ suspend fun loadExtractor(
     callback: (ExtractorLink) -> Unit
 ): Boolean {
     val currentUrl = unshortenLinkSafe(url)
-
+    val compareUrl = currentUrl.lowercase().replace(schemaStripRegex, "")
     for (extractor in extractorApis) {
-        if (currentUrl.replace(schemaStripRegex, "")
-                .startsWith(extractor.mainUrl.replace(schemaStripRegex, ""))
-        ) {
+        if (compareUrl.startsWith(extractor.mainUrl.replace(schemaStripRegex, ""))) {
             extractor.getSafeUrl(currentUrl, referer, subtitleCallback, callback)
             return true
         }
@@ -314,6 +312,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     YoutubeShortLinkExtractor(),
     Streamlare(),
     VidSrcExtractor(),
+    VidSrcExtractor2(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

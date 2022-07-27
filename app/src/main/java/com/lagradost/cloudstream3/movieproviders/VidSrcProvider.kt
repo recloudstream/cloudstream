@@ -44,7 +44,7 @@ class VidSrcProvider : TmdbProvider() {
                 "$mainUrl/embed/$suffix"
         }
 
-        extractor.getSafeUrl(embedUrl)?.forEach(callback) ?: return false
+        extractor.getSafeUrl(embedUrl, null, subtitleCallback, callback)
 
         return true
     }
