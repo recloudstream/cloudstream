@@ -6,6 +6,8 @@
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
 
+    <string name="app_dub_sub_episode_text_format">%s Odc. %d</string>
+    <string name="next_episode_format">Odcinek %d będzie udostępniony</string>
     <string name="result_poster_img_des">Plakat</string>
     <string name="episode_poster_img_des">Plakat odcinka</string>
     <string name="home_main_poster_img_des">Główny plakat</string>
@@ -21,6 +23,7 @@
     <string name="title_settings">Ustawienia</string>
 
     <string name="search_hint">Szukaj…</string>
+    <string name="search_hint_site">Szukaj %s…</string>
     <string name="no_data">Brak danych</string>
     <string name="episode_more_options_des">Więcej opcji</string>
     <string name="next_episode">Następny odcinek</string>
@@ -28,7 +31,7 @@
     <string name="result_share">Udostępnij</string>
     <string name="result_open_in_browser">Otwórz w przeglądarce</string>
     <string name="skip_loading">Pomiń ładowanie</string>
-    <string name="loading_chromecast">Ładowanie...</string>
+    <string name="loading_chromecast">Ładowanie…</string>
 
     <string name="type_watching">W trakcie</string>
     <string name="type_on_hold">Zawieszone</string>
@@ -39,6 +42,7 @@
     <string name="type_re_watching">Ponowne oglądanie</string>
 
     <string name="play_movie_button">Odtwórz film</string>
+    <string name="play_livestream_button">Odtwórz Livestream</string>
     <string name="play_torrent_button">Otwórz torrent</string>
     <string name="pick_source">Źródła</string>
     <string name="pick_subtitle">Napisy</string>
@@ -56,6 +60,7 @@
     <string name="download_canceled">Anulowano pobieranie</string>
     <string name="download_done">Zakończono pobieranie</string>
 
+    <string name="stream">Streamuj</string>
     <string name="error_loading_links_toast">Błąd przy ładowaniu linków</string>
     <string name="download_storage_text">Pamięć wewnętrzna</string>
 
@@ -75,8 +80,13 @@
     <string name="filter_bookmarks">Filtruj zakładki</string>
     <string name="error_bookmarks_text">Zakładki</string>
     <string name="action_remove_from_bookmarks">Usuń</string>
+    <string name="action_add_to_bookmarks">Ustaw status oglądania</string>
     <string name="sort_apply">Zastosuj</string>
     <string name="sort_cancel">Anuluj</string>
+    <string name="sort_copy">Kopiuj</string>
+    <string name="sort_close">Zamknij</string>
+    <string name="sort_clear">Wyczyść</string>
+    <string name="sort_save">Zapisz</string>
     <string name="player_speed">Prędkość odtwarzania</string>
 
     <string name="subtitles_settings">Ustawienia napisów</string>
@@ -97,7 +107,9 @@
 
     <string name="subs_auto_select_language">Wybierz język automatycznie</string>
     <string name="subs_download_languages">Pobieranie języków</string>
+    <string name="subs_subtitle_languages">Język napisów</string>
     <string name="subs_hold_to_reset_to_default">Przytrzymaj aby zresetować</string>
+    <string name="subs_import_text">Importuj czcionki umieszczając je w %s</string>
     <string name="continue_watching">Kontyntynuj oglądanie</string>
 
     <string name="action_remove_watching">Usuń</string>
@@ -112,6 +124,7 @@
     <string name="normal_no_plot">Nie znaleziono opisu</string>
     <string name="torrent_no_plot">Nie znaleziono opisu</string>
 
+    <string name="show_log_cat">Pokaż logcat 🐈</string>
     <string name="picture_in_picture">Obraz-w-obrazie</string>
     <string name="picture_in_picture_des">Oglądaj w małym, pływającym okienku</string>
     <string name="player_size_settings">Przycisk zmiany rozmiaru</string>
@@ -127,14 +140,17 @@
     <string name="swipe_to_seek_settings_des">Przesuwaj w lewo lub prawo aby kontrolować czas</string>
     <string name="swipe_to_change_settings">Przesuwaj aby zmienić ustawienia</string>
     <string name="swipe_to_change_settings_des">Przesuwaj po lewej lub prawej stronie aby zmienić jasność i głośność</string>
-    <string name="double_tap_to_seek_settings">Podwójne wciśnięcie aby przeglądać</string>
+    <string name="double_tap_to_seek_settings">Podwójne stuknięcie aby przeglądać</string>
     <string name="double_tap_to_pause_settings">Stuknij dwukrotnie, aby wstrzymać</string>
-    <string name="double_tap_to_seek_settings_des">Naciśnij 2 razy z prawej lub lewej strony aby przeglądać</string>
+    <string name="double_tap_to_seek_amount_settings">Wielkość skoku przy podwójnym stuknięciu</string>
+    <string name="double_tap_to_seek_settings_des">Stuknij 2 razy z prawej lub lewej strony aby przeglądać</string>
     <string name="double_tap_to_pause_settings_des">Stuknij na środku, aby wstrzymać</string>
     <string name="use_system_brightness_settings">Użyj jasności systemowej</string>
     <string name="use_system_brightness_settings_des">Użyj jasności systemowej w odtwarzaczu aplikacji zamiast ciemnej nakładki
     </string>
-    
+
+    <string name="episode_sync_settings">Aktualizuj postęp oglądania</string>
+    <string name="episode_sync_settings_des">Automatycznie synchronizuj postęp aktualnego odcinka</string>
     <string name="restore_settings">Przywracanie danych z kopii zapasowej</string>
     <string name="killswitch_settings">Pobierz najnowsze metadane z Githuba</string>
     <string name="killswitch_settings_des">Jeśli chcesz mieć dostęp do wszystkich dostawców (nawet tych uszkodzonych), wyłącz tę opcję</string>
@@ -147,14 +163,20 @@
     <string name="backup_failed_error_format">Błąd tworzenia kopii zapasowej %s</string>
 
     <string name="search">Szukaj</string>
+    <string name="category_account">Konta</string>
+    <string name="category_updates">Aktualizacje i kopia zapasowa</string>
+    <string name="nginx_info_title">Co to Nginx?</string>
+    <string name="nginx_info_summary">Nginx to oprogramowanie, które może być używane do wyświetlania plików z serwera, którego jesteś właścicielem. Kliknij, aby zobaczyć przewodnik konfiguracji Nginx</string>
     <string name="settings_info">Informacje</string>
     <string name="advanced_search">Zaawansowane wyszukiwanie</string>
     <string name="advanced_search_des">Szukaj z podziałem na dostawców</string>
     <string name="bug_report_settings_off">Wysyłaj dane tylko przy awariach</string>
     <string name="bug_report_settings_on">Nie wysyłaj żadnych danych</string>
     <string name="show_fillers_settings">Pokaż odcinek wypełniający dla anime</string>
+    <string name="show_trailers_settings">Pokaż zwiastuny</string>
+    <string name="kitsu_settings">Pokaż plakaty z Kitsu</string>
     <string name="updates_settings">Pokazuj aktualizacje</string>
-    <string name="updates_settings_des">Automatycznie wyszukuj aktualizacji</string>
+    <string name="updates_settings_des">Automatycznie wyszukuj aktualizacji przy starcie</string>
     <string name="uprereleases_settings">Aktualizuj do wersji beta</string>
     <string name="uprereleases_settings_des">Wyszukuj wersji beta, zamiast pełnych wydań</string>
     <string name="github">Github</string>
@@ -164,7 +186,7 @@
     <string name="benene">Daj banana programistom</string>
     <string name="benene_des">Dano banana</string>
 
-    <string name="app_language">Język</string>
+    <string name="app_language">Język aplikacji</string>
 
     <string name="no_chromecast_support_toast">Ten dostawca nie wspiera Chromecast</string>
     <string name="no_links_found_toast">Nie znaleziono linków</string>
@@ -180,13 +202,14 @@
     <string name="season_short">S</string>
     <string name="episode_short">O</string>
 
+    <string name="no_episodes_found">Nie znaleziono odcinków</string>
     <string name="delete_file">Usuń plik</string>
     <string name="delete">Usuń</string>
     <string name="pause">Wstrzymaj</string>
     <string name="resume">Odtwórz</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">TSpowoduje to trwałe usunięcie %s\nCzy jesteś pewien?</string>
+    <string name="delete_message" formatted="true">Spowoduje to trwałe usunięcie %s\nCzy jesteś pewien?</string>
     <string name="resume_time_left" formatted="true">%dm\npozostało</string>
 
     <string name="status_ongoing">Bierzący</string>
@@ -215,6 +238,7 @@
     <string name="ova">OVA</string>
     <string name="asian_drama">Filmy azjatyckie</string>
 
+    <string name="livestreams">Livestreamy</string>
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serial telewizyjny</string>
     <string name="cartoons_singular">Kreskówka</string>
@@ -238,8 +262,14 @@
     <string name="episode_action_download_mirror">Pobierz mirror</string>
     <string name="episode_action_reload_links">Odświerz linki</string>
 
-    <string name="no_update_found">No Update Found</string>
-    <string name="check_for_update">Check for Update</string>
+    <string name="episode_action_download_subtitle">Pobierz napisy</string>
+    <string name="show_hd">Etykieta jakości</string>
+    <string name="show_dub">Etykieta dubbingu</string>
+    <string name="show_sub">Etykieta napisów</string>
+    <string name="show_title">Tytuł</string>
+    <string name="poster_ui_settings">Włącz elementy interfejsu na plakatach</string>
+    <string name="no_update_found">Nie znaleziono aktualizacji</string>
+    <string name="check_for_update">Sprawdź czy jest aktualizacja</string>
 
     <string name="video_lock">Zablokuj</string>
     <string name="video_aspect_ratio_resize">Rozmiar</string>
@@ -247,8 +277,11 @@
     <string name="video_skip_op">Pomiń OP</string>
 
     <string name="dont_show_again">Nie pokazuj ponownie</string>
+    <string name="skip_update">Pomiń tę aktualizację</string>
     <string name="update">Aktualizacja</string>
     <string name="watch_quality_pref">Domyślna jakość</string>
+    <string name="limit_title">Maksymalna ilość znaków tytułu w odtwarzaczu</string>
+    <string name="limit_title_rez">Zawartość tytułu w odtwarzaczu</string>
     <string name="video_buffer_size_settings">Rozmiar bufora wideo</string>
     <string name="video_buffer_length_settings">Długość bufora wideo</string>
     <string name="video_buffer_disk_settings">Pamięć podręczna wideo na dysku</string>
@@ -259,8 +292,12 @@
 
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Przydatne w pomijaniu blokad dostawców internetu</string>
-    
+
+    <string name="add_site_pref">Sklonuj stronę</string>
+    <string name="remove_site_pref">Usuń stronę</string>
+    <string name="add_site_summary">Dodaj klona istniejącej strony z innym adresem url</string>
     <string name="download_path_pref">Ścieżka pobierania</string>
+    <string name="nginx_url_pref">Url serwera Nginx</string>
     <string name="display_subbed_dubbed_settings">Wyświetlanie Anime z dubbingiem/subbingiem</string>
 
     <string name="resize_fit">Dopasuj do ekranu</string>
@@ -269,11 +306,16 @@
 
     <string name="legal_notice">Zastrzeżenie</string>
 
+    <string name="random_button_settings">Przycisk do losowania</string>
+    <string name="random_button_settings_desc">Pokaż przycisk do losowania na stronie głównej</string>
     <string name="provider_lang_settings">Języki dostawców</string>
     <string name="category_general">Ogólne</string>
     <string name="app_layout">Układ aplikacji</string>
     <string name="preferred_media_settings">Preferowane media</string>
 
+    <string name="subtitles_encoding">Kodowanie napisów</string>
+    <string name="category_preferred_media_and_lang">Język</string>
+    <string name="category_ui">Układ interfejsu</string>
     <string name="automatic">Automatyczny</string>
     <string name="tv_layout">Układ dla telewizorów</string>
     <string name="phone_layout">Układ dla telefonów</string>
@@ -283,15 +325,20 @@
     <string name="app_theme_settings">Motyw aplikacji</string>
 
 
+    <string name="bottom_title_settings">Pozycja tytułu względem plakatu</string>
+    <string name="bottom_title_settings_des">Ustaw tytuł pod plakatem</string>
     <string name="account">konto</string>
     <string name="logout">Wyloguj się</string>
     <string name="login">Logowanie</string>
     <string name="switch_account">Przełącz konto</string>
     <string name="add_account">Dodaj konto</string>
+    <string name="create_account">Utwórz konto</string>
     <string name="add_sync">Dodaj synchronizację</string>
     <string name="added_sync_format" formatted="true">Dodano %s</string>
     <string name="upload_sync">Synchronizacja</string>
 
+    <string name="authenticated_user">Uwierzytelniono %s</string>
+    <string name="authenticated_user_fail">Nie udało się uwierzytelnić w %s</string>
     <string name="none">Brak</string>
     <string name="normal">Normalne</string>
     <string name="all">Wszystkie</string>
@@ -313,6 +360,7 @@
     <string name="recommended">Polecane</string>
     <string name="player_loaded_subtitles" formatted="true">Załadowano %s</string>
     <string name="player_load_subtitles">Wczytaj z pliku</string>
+    <string name="player_load_subtitles_online">Wczytaj z Internetu</string>
     <string name="downloaded_file">Pobrano plik</string>
     <string name="actor_main">Główna</string>
     <string name="actor_supporting">Drugoplanowy</string>
@@ -320,7 +368,8 @@
 
     <string name="home_source">Źródło</string>
 
-    <string name="coming_soon">Już wkrótce...</string>
+    <string name="home_random">Losowy</string>
+    <string name="coming_soon">Już wkrótce…</string>
     <string name="quality_cam">Cam</string>
     <string name="quality_cam_rip">Cam</string>
     <string name="quality_cam_hd">Cam</string>
@@ -332,4 +381,14 @@
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="poster_image">Obraz plakatu</string>
+    <string name="category_player">Odtwarzacz</string>
+    <string name="resolution_and_title">Rozdzielczość i tytuł</string>
+    <string name="title">Tytuł</string>
+    <string name="resolution">Rozdzielczość</string>
+    <string name="error_invalid_id">Niepoprawne id</string>
+    <string name="error_invalid_data">Niepoprawne dane</string>
+    <string name="error_invalid_url">Niepoprawny url</string>
+    <string name="error">Błąd</string>
+    <string name="subtitles_remove_captions">Usuń informacje dla niesłyszących z napisów</string>
+    <string name="subtitles_remove_bloat">Usuń nadmiarowe informacje z napisów</string>
 </resources>
