@@ -53,6 +53,12 @@
         "status": 1,
         "url": "https://111.90.143.42"
     },
+    "AnimeSaturnProvider": {
+        "language": "it",
+        "name": "AnimeSaturn",
+        "status": 1,
+        "url": "https://www.animesaturn.cc"
+    },
     "AnimeWorldProvider": {
         "language": "it",
         "name": "AnimeWorld",
