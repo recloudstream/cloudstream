@@ -664,6 +664,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    override fun playerError(exception: Exception) {
+        Log.i(TAG, "playerError = $currentSelectedLink")
+        super.playerError(exception)
+    }
+
     private fun noLinksFound() {
         showToast(activity, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
         activity?.popCurrentPage()

@@ -144,7 +144,7 @@ fun getAndUnpack(string: String): String {
     return JsUnpacker(packedText).unpack() ?: string
 }
 
-suspend fun unshortenLinkSafe(url : String) : String {
+suspend fun unshortenLinkSafe(url: String): String {
     return try {
         if (ShortLink.isShortLink(url))
             ShortLink.unshorten(url)
@@ -312,7 +312,8 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),
-    Streamlare()
+    Streamlare(),
+    VidSrcExtractor(),
 )
 
 fun getExtractorApiFromName(name: String): ExtractorApi {
