@@ -10,10 +10,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
@@ -152,7 +152,7 @@ object BackupUtils {
                                         ?: return@registerForActivityResult
 
                                 val restoredValue =
-                                    mapper.readValue<BackupFile>(input)
+                                    parseJson<BackupFile>(input.readBytes().toString())
                                 activity.restore(
                                     restoredValue,
                                     restoreSettings = true,
@@ -191,8 +191,8 @@ object BackupUtils {
                         "content/unknown",
                     )
                 )
-            } catch (e : Exception) {
-                showToast(this,e.message)
+            } catch (e: Exception) {
+                showToast(this, e.message)
                 logError(e)
             }
         }

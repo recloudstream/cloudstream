@@ -2,10 +2,6 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -16,6 +12,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import java.net.URL
@@ -70,7 +67,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 "Authorization" to "Bearer $auth",
             ), cacheTime = 0
         ).text
-        return mapper.readValue<MalSearch>(res).data.map {
+        return parseJson<MalSearch>(res).data.map {
             val node = it.node
             SyncAPI.SyncSearchResult(
                 node.title,
@@ -196,7 +193,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 "Authorization" to "Bearer $auth"
             )
         ).text
-        return mapper.readValue<MalAnime>(res).let { malAnime ->
+        return parseJson<MalAnime>(res).let { malAnime ->
             SyncAPI.SyncResult(
                 id = internalId.toString(),
                 totalEpisodes = malAnime.numEpisodes,
@@ -300,16 +297,13 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         openBrowser(request)
     }
 
-    private val mapper = JsonMapper.builder().addModule(KotlinModule())
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
-
     private var requestId = 0
     private var codeVerifier = ""
 
     private fun storeToken(response: String) {
         try {
             if (response != "") {
-                val token = mapper.readValue<ResponseToken>(response)
+                val token = parseJson<ResponseToken>(response)
                 setKey(accountId, MAL_UNIXTIME_KEY, (token.expires_in + unixTime))
                 setKey(accountId, MAL_REFRESH_TOKEN_KEY, token.refresh_token)
                 setKey(accountId, MAL_TOKEN_KEY, token.access_token)
@@ -474,7 +468,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             ), cacheTime = 0
         ).text
 
-        return mapper.readValue<SmallMalAnime>(res)
+        return parseJson<SmallMalAnime>(res)
     }
 
     suspend fun setAllMalData() {
@@ -490,7 +484,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                     "Authorization" to "Bearer " + (getAuth() ?: return)
                 ), cacheTime = 0
             ).text
-            val values = mapper.readValue<MalRoot>(res)
+            val values = parseJson<MalRoot>(res)
             val titles =
                 values.data.map { MalTitleHolder(it.list_status, it.node.id, it.node.title) }
             for (t in titles) {
@@ -554,7 +548,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             ), cacheTime = 0
         ).text
 
-        val user = mapper.readValue<MalUser>(res)
+        val user = parseJson<MalUser>(res)
         if (setSettings) {
             setKey(accountId, MAL_USER_KEY, user)
             registerAccount()
@@ -600,7 +594,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return if (res.isNullOrBlank()) {
             false
         } else {
-            val malStatus = mapper.readValue<MalStatus>(res)
+            val malStatus = parseJson<MalStatus>(res)
             if (allTitles.containsKey(id)) {
                 val currentTitle = allTitles[id]!!
                 allTitles[id] = MalTitleHolder(malStatus, id, currentTitle.name)

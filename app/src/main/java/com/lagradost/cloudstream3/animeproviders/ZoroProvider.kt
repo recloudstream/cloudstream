@@ -2,12 +2,12 @@ package com.lagradost.cloudstream3.animeproviders
 
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addMalId
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.extractRabbitStream
 import com.lagradost.cloudstream3.movieproviders.SflixProvider.Companion.runSflixExtractorVerifierJob
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -210,7 +210,7 @@ class ZoroProvider : MainAPI() {
         val animeId = URI(url).path.split("-").last()
 
         val episodes = Jsoup.parse(
-            mapper.readValue<Response>(
+            parseJson<Response>(
                 app.get(
                     "$mainUrl/ajax/v2/episode/list/$animeId"
                 ).text
@@ -223,7 +223,7 @@ class ZoroProvider : MainAPI() {
         }
 
         val actors = document.select("div.block-actors-content > div.bac-list-wrap > div.bac-item")
-            ?.mapNotNull { head ->
+            .mapNotNull { head ->
                 val subItems = head.select(".per-info") ?: return@mapNotNull null
                 if (subItems.isEmpty()) return@mapNotNull null
                 var role: ActorRole? = null

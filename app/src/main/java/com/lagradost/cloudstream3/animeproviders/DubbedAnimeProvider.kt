@@ -1,10 +1,10 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -117,7 +117,7 @@ class DubbedAnimeProvider : MainAPI() {
         val url =
             mainUrl + (if (isMovie) "/movies/jsonMovie" else "/xz/v3/jsonEpi") + ".php?slug=$slug&_=$unixTime"
         val response = app.get(url).text
-        val mapped = mapper.readValue<QueryEpisodeResultRoot>(response)
+        val mapped = parseJson<QueryEpisodeResultRoot>(response)
         return mapped.result.anime.first()
     }
 

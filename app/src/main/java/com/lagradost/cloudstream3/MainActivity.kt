@@ -615,7 +615,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         loadCache()
         test()
-        NewPipe.init(DownloaderTestImpl.getInstance())
         updateHasTrailers()
         /*nav_view.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {

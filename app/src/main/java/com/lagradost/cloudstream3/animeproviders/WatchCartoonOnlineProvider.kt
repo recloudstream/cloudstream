@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
@@ -238,7 +238,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
             )
         )
 
-        val link = mapper.readValue<LinkResponse>(linkResponse.text)
+        val link = parseJson<LinkResponse>(linkResponse.text)
 
         val hdLink = "${link.server}/getvid?evid=${link.hd}"
         val sdLink = "${link.server}/getvid?evid=${link.enc}"

@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import kotlin.concurrent.thread
@@ -65,9 +66,6 @@ class InAppUpdater {
             @JsonProperty("updateNodeId") val updateNodeId: String?
         )
 
-        private val mapper = JsonMapper.builder().addModule(KotlinModule())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
-
         private fun Activity.getAppUpdate(): Update {
             return try {
                 val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
@@ -86,7 +84,7 @@ class InAppUpdater {
             val url = "https://api.github.com/repos/LagradOst/CloudStream-3/releases"
             val headers = mapOf("Accept" to "application/vnd.github.v3+json")
             val response =
-                mapper.readValue<List<GithubRelease>>(runBlocking {
+                parseJson<List<GithubRelease>>(runBlocking {
                     app.get(
                         url,
                         headers = headers
@@ -154,7 +152,7 @@ class InAppUpdater {
             val releaseUrl = "https://api.github.com/repos/LagradOst/CloudStream-3/releases"
             val headers = mapOf("Accept" to "application/vnd.github.v3+json")
             val response =
-                mapper.readValue<List<GithubRelease>>(app.get(releaseUrl, headers = headers).text)
+                parseJson<List<GithubRelease>>(app.get(releaseUrl, headers = headers).text)
 
             val found =
                 response.lastOrNull { rel ->
@@ -163,7 +161,7 @@ class InAppUpdater {
             val foundAsset = found?.assets?.getOrNull(0)
 
             val tagResponse =
-                mapper.readValue<GithubTag>(app.get(tagUrl, headers = headers).text)
+                parseJson<GithubTag>(app.get(tagUrl, headers = headers).text)
 
             val shouldUpdate =
                 (getString(R.string.prerelease_commit_hash) != tagResponse.github_object.sha)

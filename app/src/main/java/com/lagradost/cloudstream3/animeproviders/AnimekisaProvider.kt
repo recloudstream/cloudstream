@@ -72,7 +72,7 @@ class AnimekisaProvider : MainAPI() {
                 val title = it.selectFirst("h3 a")?.text() ?: ""
                 val url = it.selectFirst("a.film-poster-ahref")?.attr("href")
                     ?.replace("watch/", "anime/")?.replace(
-                        Regex("(-episode-(\\d+)\\/\$|-episode-(\\d+)\$|-episode-full|-episode-.*-.(\\/|))"),
+                        Regex("(-episode-(\\d+)/\$|-episode-(\\d+)\$|-episode-full|-episode-.*-.(/|))"),
                         ""
                     ) ?: return@mapNotNull null
                 val poster = it.selectFirst(".film-poster img")?.attr("data-src")

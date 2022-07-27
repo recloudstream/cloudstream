@@ -2,11 +2,10 @@ package com.lagradost.cloudstream3.utils
 
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.animeproviders.AniflixProvider
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import java.util.concurrent.TimeUnit
 
 object SyncUtil {
@@ -62,7 +61,7 @@ object SyncUtil {
             val url =
                 "https://raw.githubusercontent.com/MALSync/MAL-Sync-Backup/master/data/pages/$site/$slug.json"
             val response = app.get(url, cacheTime = 1, cacheUnit = TimeUnit.DAYS).text
-            val mapped = mapper.readValue<MalSyncPage?>(response)
+            val mapped = parseJson<MalSyncPage?>(response)
 
             val overrideMal = mapped?.malId ?: mapped?.Mal?.id ?: mapped?.Anilist?.malId
             val overrideAnilist = mapped?.aniId ?: mapped?.Anilist?.id

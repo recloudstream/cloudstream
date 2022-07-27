@@ -1,9 +1,8 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mapper
+import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
@@ -73,7 +72,7 @@ open class XStreamCdn : ExtractorApi() {
             val text = this.text
             if (text.isEmpty()) return listOf()
             if (text == """{"success":false,"data":"Video not found or has been removed"}""") return listOf()
-            mapper.readValue<ResponseJson?>(text)?.let {
+            AppUtils.parseJson<ResponseJson?>(text)?.let {
                 if (it.success && it.data != null) {
                     it.data.forEach { data ->
                         extractedLinksList.add(

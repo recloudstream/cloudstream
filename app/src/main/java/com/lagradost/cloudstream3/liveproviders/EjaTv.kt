@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.nodes.Element
 
 class EjaTv : MainAPI() {
-    override var mainUrl = "https://eja.tv/"
+    override var mainUrl = "https://eja.tv"
     override var name = "Eja.tv"
 
     // Universal language?
@@ -25,6 +25,7 @@ class EjaTv : MainAPI() {
         val href = fixUrl(link.attr("href"))
         val img = this.selectFirst("div.thumb img")
         val lang = this.selectFirst(".card-title > a")?.attr("href")?.removePrefix("?country=")
+            ?.replace("int", "eu") //international -> European Union 🇪🇺
         return LiveSearchResponse(
             // Kinda hack way to get the title
             img?.attr("alt")?.replaceFirst("Watch ", "") ?: return null,
@@ -45,7 +46,6 @@ class EjaTv : MainAPI() {
             "Entertainment" to mapOf("language" to language, "category" to "Entertainment")
         )
         return HomePageResponse(dataMap.apmap { (title, data) ->
-            println("ADDED isHorizontalImages")
             val document = app.post(mainUrl, data = data).document
             val shows = document.select("div.card-body").mapNotNull {
                 it.toSearchResponse()

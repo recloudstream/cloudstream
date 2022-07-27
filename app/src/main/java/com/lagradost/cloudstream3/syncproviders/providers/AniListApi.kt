@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
@@ -14,6 +13,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
@@ -174,9 +174,6 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     companion object {
-        private val mapper = JsonMapper.builder().addModule(KotlinModule())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
-
         private val aniListStatusString =
             arrayOf("CURRENT", "COMPLETED", "PAUSED", "DROPPED", "PLANNING", "REPEATING")
 
@@ -489,7 +486,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
             }"""
 
         val data = postApi(q, true)
-        val d = mapper.readValue<GetDataRoot>(data ?: return null)
+        val d = parseJson<GetDataRoot>(data ?: return null)
 
         val main = d.data?.Media
         if (main?.mediaListEntry != null) {
@@ -750,7 +747,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 				}"""
         val data = postApi(q)
         if (data.isNullOrBlank()) return null
-        val userData = mapper.readValue<AniListRoot>(data)
+        val userData = parseJson<AniListRoot>(data)
         val u = userData.data?.Viewer
         val user = AniListUser(
             u?.id,

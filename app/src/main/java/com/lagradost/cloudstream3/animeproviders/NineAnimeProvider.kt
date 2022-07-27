@@ -206,7 +206,7 @@ class NineAnimeProvider : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String): List<SearchResponse>? {
+    override suspend fun search(query: String): List<SearchResponse> {
         val vrf = encodeVrf(query)
         //?language%5B%5D=${if (selectDub) "dubbed" else "subbed"}&
         val url =

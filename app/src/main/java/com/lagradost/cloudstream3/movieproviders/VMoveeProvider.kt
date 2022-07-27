@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.Jsoup
@@ -75,7 +75,7 @@ class VMoveeProvider : MainAPI() {
                 data = mapOf("action" to "doo_player_ajax", "post" to data, "nume" to "2", "type" to "movie")
             ).text
 
-        val ajax = mapper.readValue<LoadLinksAjax>(post)
+        val ajax = parseJson<LoadLinksAjax>(post)
         var realUrl = ajax.embedUrl
         if (realUrl.startsWith("//")) {
             realUrl = "https:$realUrl"
@@ -90,7 +90,7 @@ class VMoveeProvider : MainAPI() {
                 headers = mapOf("Referer" to request.url),
                 data = mapOf("r" to "https://www.vmovee.watch/", "d" to "reeoov.tube")
             ).text
-            val apiData = mapper.readValue<ReeoovAPI>(apiResponse)
+            val apiData = parseJson<ReeoovAPI>(apiResponse)
             for (d in apiData.data) {
                 callback.invoke(
                     ExtractorLink(

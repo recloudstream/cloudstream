@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import org.schabi.newpipe.extractor.NewPipe
 import java.util.*
 
 object CommonActivity {
@@ -115,6 +116,8 @@ object CommonActivity {
                     act.hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
 
         act.updateLocale()
+
+        NewPipe.init(DownloaderTestImpl.getInstance())
     }
 
     private fun Activity.enterPIPMode() {

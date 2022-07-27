@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.movieproviders
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -20,17 +20,19 @@ class PinoyHDXyzProvider : MainAPI() {
         val document = app.get(mainUrl, referer = mainUrl).document
         val mainbody = document.getElementsByTag("body")
 
-        mainbody?.select("div.section-cotent.col-md-12.bordert")?.forEach { row ->
+        mainbody.select("div.section-cotent.col-md-12.bordert").forEach { row ->
             val title = row?.select("div.title-section.tt")?.text() ?: "<Row>"
             val elements = row?.select("li.img_frame.preview-tumb7")?.mapNotNull {
                 // Get inner div from article
                 val innerBody = it?.selectFirst("a") ?: return@mapNotNull null
                 // Fetch details
-                val name = it.text()?.trim()
-                if (name.isNullOrBlank()) { return@mapNotNull null }
+                val name = it.text().trim()
+                if (name.isBlank()) {
+                    return@mapNotNull null
+                }
 
                 val link = innerBody.attr("href") ?: return@mapNotNull null
-                val image = fixUrlNull(innerBody.select("img")?.attr("src"))
+                val image = fixUrlNull(innerBody.select("img").attr("src"))
                 //Log.i(this.name, "Result => (innerBody, image) ${innerBody} / ${image}")
                 // Get Year from Link
                 val rex = Regex("_(\\d+)_")
@@ -60,7 +62,7 @@ class PinoyHDXyzProvider : MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search/?q=${query.replace(" ", "+")}"
         val document = app.get(url).document.select("div.portfolio-thumb")
-        return document?.mapNotNull {
+        return document.mapNotNull {
             if (it == null) {
                 return@mapNotNull null
             }
@@ -77,13 +79,13 @@ class PinoyHDXyzProvider : MainAPI() {
                 posterUrl = image,
                 year = year
             )
-        }?.distinctBy { c -> c.url } ?: listOf()
+        }.distinctBy { c -> c.url }
     }
 
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
         val body = doc.getElementsByTag("body")
-        val inner = body?.select("div.info")
+        val inner = body.select("div.info")
 
         // Video links
         val listOfLinks: MutableList<String> = mutableListOf()
@@ -92,11 +94,11 @@ class PinoyHDXyzProvider : MainAPI() {
         var title = ""
         var year: Int? = null
         var tags: List<String>? = null
-        val poster = fixUrlNull(inner?.select("div.portfolio-tumb.ph-link > img")?.attr("src"))
+        val poster = fixUrlNull(inner.select("div.portfolio-tumb.ph-link > img").attr("src"))
         //Log.i(this.name, "Result => (imgLinkCode) ${imgLinkCode}")
-        inner?.select("table")?.select("tr")?.forEach {
+        inner.select("table").select("tr").forEach {
             val td = it?.select("td") ?: return@forEach
-            val caption = td[0].text()?.lowercase()
+            val caption = td[0].text().lowercase()
             //Log.i(this.name, "Result => (caption) $caption")
             when (caption) {
                 "name" -> {
@@ -106,41 +108,45 @@ class PinoyHDXyzProvider : MainAPI() {
                     var yearRes = td[1].toString()
                     year = if (yearRes.isNotBlank()) {
                         if (yearRes.contains("var year =")) {
-                            yearRes = yearRes.substring(yearRes.indexOf("var year =") + "var year =".length)
+                            yearRes =
+                                yearRes.substring(yearRes.indexOf("var year =") + "var year =".length)
                             //Log.i(this.name, "Result => (yearRes) $yearRes")
                             yearRes = yearRes.substring(0, yearRes.indexOf(';'))
                                 .trim().removeSurrounding("'")
                         }
                         yearRes.toIntOrNull()
-                    } else { null }
+                    } else {
+                        null
+                    }
                 }
                 "genre" -> {
-                    tags = td[1].select("a")?.mapNotNull { tag ->
+                    tags = td[1].select("a").mapNotNull { tag ->
                         tag?.text()?.trim() ?: return@mapNotNull null
-                    }?.filter { a -> a.isNotBlank() }
+                    }.filter { a -> a.isNotBlank() }
                 }
             }
         }
 
-        var descript = body?.select("div.eText")?.text()
+        var descript = body.select("div.eText").text()
         if (!descript.isNullOrEmpty()) {
             try {
                 descript = "(undefined_x_Polus+[.\\d+])".toRegex().replace(descript, "")
                 descript = "(_x_Polus+[.\\d+])".toRegex().replace(descript, "")
                 descript = descript.trim().removeSuffix("undefined").trim()
-            } catch (e: java.lang.Exception) {  }
+            } catch (e: java.lang.Exception) {
+            }
         }
         // Add links hidden in description
         listOfLinks.addAll(fetchUrls(descript))
         listOfLinks.forEach { link ->
             //Log.i(this.name, "Result => (hidden link) $link")
-            descript = descript?.replace(link, "")
+            descript = descript.replace(link, "")
         }
 
         // Try looking for episodes, for series
         val episodeList = ArrayList<Episode>()
-        val bodyText = body?.select("div.section-cotent1.col-md-12")?.select("section")
-            ?.select("script")?.toString() ?: ""
+        val bodyText = body.select("div.section-cotent1.col-md-12").select("section")
+            .select("script").toString()
         //Log.i(this.name, "Result => (bodyText) ${bodyText}")
 
         "(?<=ses=\\(')(.*)(?='\\).split)".toRegex().find(bodyText)?.groupValues?.get(0).let {
@@ -178,14 +184,14 @@ class PinoyHDXyzProvider : MainAPI() {
         }
 
         // Video links for Movie
-        body?.select("div.tabcontent > iframe")?.forEach {
+        body.select("div.tabcontent > iframe").forEach {
             val linkMain = it?.attr("src")
             if (!linkMain.isNullOrEmpty()) {
                 listOfLinks.add(linkMain)
                 //Log.i(this.name, "Result => (linkMain) $linkMain")
             }
         }
-        body?.select("div.tabcontent.hide > iframe")?.forEach {
+        body.select("div.tabcontent.hide > iframe").forEach {
             val linkMain = it?.attr("src")
             if (!linkMain.isNullOrEmpty()) {
                 listOfLinks.add(linkMain)
@@ -193,7 +199,7 @@ class PinoyHDXyzProvider : MainAPI() {
             }
         }
 
-        val extraLinks = body?.select("div.tabcontent.hide")?.text()
+        val extraLinks = body.select("div.tabcontent.hide").text()
         listOfLinks.addAll(fetchUrls(extraLinks))
 
         val streamLinks = listOfLinks.distinct().toJson()
@@ -218,7 +224,7 @@ class PinoyHDXyzProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         var count = 0
-        mapper.readValue<List<String>>(data).forEach { item ->
+        parseJson<List<String>>(data).forEach { item ->
             val url = item.trim()
             if (url.isNotBlank()) {
                 if (loadExtractor(url, mainUrl, subtitleCallback, callback)) {

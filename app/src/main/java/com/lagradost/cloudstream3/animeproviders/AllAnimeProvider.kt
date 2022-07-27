@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.mvvm.safeApiCall
@@ -165,7 +164,7 @@ class AllAnimeProvider : MainAPI() {
             res = app.get(link).text
             if (res.contains("PERSISTED_QUERY_NOT_FOUND")) return emptyList()
         }
-        val response = mapper.readValue<AllAnimeQuery>(res)
+        val response = parseJson<AllAnimeQuery>(res)
 
         val results = response.data.shows.edges.filter {
             // filtering in case there is an anime with 0 episodes available on the site.
@@ -211,7 +210,7 @@ class AllAnimeProvider : MainAPI() {
 
         rhino.evaluateString(scope, js, "JavaScript", 1, null)
         val jsEval = scope.get("returnValue", scope) ?: return null
-        val showData = mapper.readValue<Edges>(jsEval as String)
+        val showData = parseJson<Edges>(jsEval as String)
 
         val title = showData.name
         val description = showData.description
@@ -230,7 +229,7 @@ class AllAnimeProvider : MainAPI() {
             }) else null)
         }
 
-        val characters = soup.select("div.character > div.card-character-box")?.mapNotNull {
+        val characters = soup.select("div.character > div.card-character-box").mapNotNull {
             val img = it?.selectFirst("img")?.attr("src") ?: return@mapNotNull null
             val name = it.selectFirst("div > a")?.ownText() ?: return@mapNotNull null
             val role = when (it.selectFirst("div > .text-secondary")?.text()?.trim()) {
@@ -333,7 +332,7 @@ class AllAnimeProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         var apiEndPoint =
-            mapper.readValue<ApiEndPoint>(app.get("$mainUrl/getVersion").text).episodeIframeHead
+            parseJson<ApiEndPoint>(app.get("$mainUrl/getVersion").text).episodeIframeHead
         if (apiEndPoint.endsWith("/")) apiEndPoint =
             apiEndPoint.slice(0 until apiEndPoint.length - 1)
 
@@ -370,7 +369,7 @@ class AllAnimeProvider : MainAPI() {
                     val response = app.get(link)
 
                     if (response.code < 400) {
-                        val links = mapper.readValue<AllAnimeVideoApiResponse>(response.text).links
+                        val links = parseJson<AllAnimeVideoApiResponse>(response.text).links
                         links.forEach { server ->
                             if (server.hls != null && server.hls) {
                                 getM3u8Qualities(
