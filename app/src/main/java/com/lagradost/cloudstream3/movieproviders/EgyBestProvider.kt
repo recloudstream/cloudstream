@@ -226,8 +226,7 @@ class EgyBestProvider : MainAPI() {
                     link,
                     this.mainUrl,
                     quality!!,
-                    true,
-                    headers = mapOf("range" to "bytes=0-"),
+                    true
                 )
             )
         }
