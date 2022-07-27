@@ -163,7 +163,7 @@ class MundoDonghuaProvider : MainAPI() {
                 }.toList().apmap {
                     val unpack = getAndUnpack(it).replace("diasfem","embedsito")
                     fetchUrls(unpack).apmap { url ->
-                        loadExtractor(url, data, callback)
+                        loadExtractor(url, data, subtitleCallback, callback)
                     }
                     if (unpack.contains("protea_tab")) {
                         val protearegex = Regex("(protea_tab.*slug.*,type)")

@@ -170,7 +170,7 @@ class EntrepeliculasyseriesProvider:MainAPI() {
                     data =  mapOf(Pair("h", postkey)),
                     allowRedirects = false
                 ).okhttpResponse.headers.values("location").apmap {
-                    loadExtractor(it, data, callback)
+                    loadExtractor(it, data, subtitleCallback, callback)
                 }
             }
         }

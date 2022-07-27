@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.argamap
@@ -30,15 +31,19 @@ class Vidstream(val mainUrl: String) {
     suspend fun getUrl(
         id: String,
         isCasting: Boolean = false,
-        callback: (ExtractorLink) -> Unit
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit,
     ): Boolean {
         val extractorUrl = getExtractorUrl(id)
         argamap(
             {
                 normalApis.apmap { api ->
                     val url = api.getExtractorUrl(id)
-                    val source = api.getSafeUrl(url)
-                    source?.forEach { callback.invoke(it) }
+                    api.getSafeUrl(
+                        url,
+                        callback = callback,
+                        subtitleCallback = subtitleCallback
+                    )
                 }
             }, {
                 /** Stolen from GogoanimeProvider.kt extractor */
@@ -57,7 +62,7 @@ class Vidstream(val mainUrl: String) {
                     ) "1080" else qualityRegex.find(element.text())?.destructured?.component1()
                         .toString()
 
-                    if (!loadExtractor(href, link, callback)) {
+                    if (!loadExtractor(href, link, subtitleCallback, callback)) {
                         callback.invoke(
                             ExtractorLink(
                                 this.name,
@@ -84,12 +89,7 @@ class Vidstream(val mainUrl: String) {
                         // Matches vidstream links with extractors
                         extractorApis.filter { !it.requiresReferer || !isCasting }.apmap { api ->
                             if (link.startsWith(api.mainUrl)) {
-                                val extractedLinks = api.getSafeUrl(link, extractorUrl)
-                                if (extractedLinks?.isNotEmpty() == true) {
-                                    extractedLinks.forEach {
-                                        callback.invoke(it)
-                                    }
-                                }
+                                api.getSafeUrl(link, extractorUrl, subtitleCallback, callback)
                             }
                         }
                     }

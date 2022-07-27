@@ -24,7 +24,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.system.measureTimeMillis
 
 open class SflixProvider : MainAPI() {
@@ -346,7 +345,7 @@ open class SflixProvider : MainAPI() {
                     "https://ws11.rabbitstream.net/socket.io/?EIO=4&transport=polling"
 
                 if (iframeLink.contains("streamlare", ignoreCase = true)) {
-                    loadExtractor(iframeLink, null).forEach(callback)
+                    loadExtractor(iframeLink, null,subtitleCallback,callback)
                 } else {
                     extractRabbitStream(iframeLink, subtitleCallback, callback, false) { it }
                 }

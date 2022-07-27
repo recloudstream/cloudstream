@@ -87,7 +87,7 @@ class ElifilmsProvider : MainAPI() {
             val encodedurl = it.attr("data-id")
             val urlDecoded = base64Decode(encodedurl)
             val url = fixUrl(urlDecoded)
-            loadExtractor(url, data, callback)
+            loadExtractor(url, data, subtitleCallback, callback)
         }
         return true
     }

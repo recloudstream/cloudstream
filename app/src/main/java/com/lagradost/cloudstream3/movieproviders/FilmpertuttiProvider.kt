@@ -224,15 +224,15 @@ class FilmpertuttiProvider : MainAPI() {
         tryParseJson<List<String>>(data)?.apmap { id ->
             if (id.contains("buckler")){
                 val id2 = unshorten_linkup(id).trim().replace("/v/","/e/").replace("/f/","/e/")
-                loadExtractor(id2, data, callback)
+                loadExtractor(id2, data, subtitleCallback, callback)
             }
             else if (id.contains("isecure")){
                 val doc1 = app.get(id).document
                 val id2 = doc1.selectFirst("iframe")!!.attr("src")
-                loadExtractor(id2, data, callback)
+                loadExtractor(id2, data, subtitleCallback, callback)
             }
             else{
-                loadExtractor(id, data, callback)
+                loadExtractor(id, data, subtitleCallback, callback)
             }
         }
         return true

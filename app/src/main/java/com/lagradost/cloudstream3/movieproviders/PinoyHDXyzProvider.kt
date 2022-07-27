@@ -221,7 +221,7 @@ class PinoyHDXyzProvider : MainAPI() {
         mapper.readValue<List<String>>(data).forEach { item ->
             val url = item.trim()
             if (url.isNotBlank()) {
-                if (loadExtractor(url, mainUrl, callback)) {
+                if (loadExtractor(url, mainUrl, subtitleCallback, callback)) {
                     count++
                 }
             }

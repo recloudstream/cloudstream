@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
-class CinecalidadProvider:MainAPI() {
+class CinecalidadProvider : MainAPI() {
     override var mainUrl = "https://cinecalidad.lol"
     override var name = "Cinecalidad"
     override var lang = "es"
@@ -98,9 +98,10 @@ class CinecalidadProvider:MainAPI() {
             val href = li.selectFirst("a")!!.attr("href")
             val epThumb = li.selectFirst("img.lazy")!!.attr("data-src")
             val name = li.selectFirst(".episodiotitle a")!!.text()
-            val seasonid = li.selectFirst(".numerando")!!.text().replace(Regex("(S|E)"),"").let { str ->
-                str.split("-").mapNotNull { subStr -> subStr.toIntOrNull() }
-            }
+            val seasonid =
+                li.selectFirst(".numerando")!!.text().replace(Regex("(S|E)"), "").let { str ->
+                    str.split("-").mapNotNull { subStr -> subStr.toIntOrNull() }
+                }
             val isValid = seasonid.size == 2
             val episode = if (isValid) seasonid.getOrNull(1) else null
             val season = if (isValid) seasonid.getOrNull(0) else null
@@ -112,7 +113,8 @@ class CinecalidadProvider:MainAPI() {
                 if (epThumb.contains("svg")) null else epThumb
             )
         }
-        return when (val tvType = if (url.contains("/ver-pelicula/")) TvType.Movie else TvType.TvSeries) {
+        return when (val tvType =
+            if (url.contains("/ver-pelicula/")) TvType.Movie else TvType.TvSeries) {
             TvType.TvSeries -> {
                 TvSeriesLoadResponse(
                     title,
@@ -156,18 +158,18 @@ class CinecalidadProvider:MainAPI() {
             val url = it.attr("data-option")
             if (url.startsWith("https://cinestart.net")) {
                 val extractor = Cinestart()
-                extractor.getSafeUrl(url)?.forEach { link ->
-                    callback.invoke(link)
-                }
+                extractor.getSafeUrl(url, null, subtitleCallback, callback)
             } else {
-                loadExtractor(url, mainUrl, callback)
+                loadExtractor(url, mainUrl, subtitleCallback, callback)
             }
             if (url.startsWith("https://cinecalidad.lol")) {
-                val cineurlregex = Regex("(https:\\/\\/cinecalidad\\.lol\\/play\\/\\?h=[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
+                val cineurlregex =
+                    Regex("(https:\\/\\/cinecalidad\\.lol\\/play\\/\\?h=[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
                 cineurlregex.findAll(url).map {
-                    it.value.replace("/play/","/play/r.php")
+                    it.value.replace("/play/", "/play/r.php")
                 }.toList().apmap {
-                    app.get(it,
+                    app.get(
+                        it,
                         headers = mapOf(
                             "Host" to "cinecalidad.lol",
                             "User-Agent" to USER_AGENT,
@@ -182,57 +184,61 @@ class CinecalidadProvider:MainAPI() {
                             "Sec-Fetch-Site" to "same-origin",
                             "Sec-Fetch-User" to "?1",
                         ),
-                        allowRedirects = false).okhttpResponse.headers.values("location").apmap { extractedurl ->
-                        if (extractedurl.contains("cinestart"))   {
-                            loadExtractor(extractedurl, mainUrl, callback)
+                        allowRedirects = false
+                    ).okhttpResponse.headers.values("location").apmap { extractedurl ->
+                        if (extractedurl.contains("cinestart")) {
+                            loadExtractor(extractedurl, mainUrl, subtitleCallback, callback)
                         }
                     }
                 }
             }
         }
-        if (datatext.contains("en castellano")) app.get("$data?ref=es").document.select(".dooplay_player_option").apmap {
-            val url = it.attr("data-option")
-            if (url.startsWith("https://cinestart.net")) {
-                val extractor = Cinestart()
-                extractor.getSafeUrl(url)?.forEach { link ->
-                    callback.invoke(link)
+        if (datatext.contains("en castellano")) app.get("$data?ref=es").document.select(".dooplay_player_option")
+            .apmap {
+                val url = it.attr("data-option")
+                if (url.startsWith("https://cinestart.net")) {
+                    val extractor = Cinestart()
+                    extractor.getSafeUrl(url, null, subtitleCallback, callback)
+                } else {
+                    loadExtractor(url, mainUrl, subtitleCallback, callback)
                 }
-            } else {
-                loadExtractor(url, mainUrl, callback)
-            }
 
-            if (url.startsWith("https://cinecalidad.lol")) {
-                val cineurlregex = Regex("(https:\\/\\/cinecalidad\\.lol\\/play\\/\\?h=[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
-                cineurlregex.findAll(url).map {
-                    it.value.replace("/play/","/play/r.php")
-                }.toList().apmap {
-                    app.get(it,
-                        headers = mapOf(
-                            "Host" to "cinecalidad.lol",
-                            "User-Agent" to USER_AGENT,
-                            "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-                            "Accept-Language" to "en-US,en;q=0.5",
-                            "DNT" to "1",
-                            "Connection" to "keep-alive",
-                            "Referer" to data,
-                            "Upgrade-Insecure-Requests" to "1",
-                            "Sec-Fetch-Dest" to "iframe",
-                            "Sec-Fetch-Mode" to "navigate",
-                            "Sec-Fetch-Site" to "same-origin",
-                            "Sec-Fetch-User" to "?1",
-                        ),
-                        allowRedirects = false).okhttpResponse.headers.values("location").apmap { extractedurl ->
-                        if (extractedurl.contains("cinestart"))   {
-                            loadExtractor(extractedurl, mainUrl, callback)
+                if (url.startsWith("https://cinecalidad.lol")) {
+                    val cineurlregex =
+                        Regex("(https:\\/\\/cinecalidad\\.lol\\/play\\/\\?h=[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
+                    cineurlregex.findAll(url).map {
+                        it.value.replace("/play/", "/play/r.php")
+                    }.toList().apmap {
+                        app.get(
+                            it,
+                            headers = mapOf(
+                                "Host" to "cinecalidad.lol",
+                                "User-Agent" to USER_AGENT,
+                                "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                                "Accept-Language" to "en-US,en;q=0.5",
+                                "DNT" to "1",
+                                "Connection" to "keep-alive",
+                                "Referer" to data,
+                                "Upgrade-Insecure-Requests" to "1",
+                                "Sec-Fetch-Dest" to "iframe",
+                                "Sec-Fetch-Mode" to "navigate",
+                                "Sec-Fetch-Site" to "same-origin",
+                                "Sec-Fetch-User" to "?1",
+                            ),
+                            allowRedirects = false
+                        ).okhttpResponse.headers.values("location").apmap { extractedurl ->
+                            if (extractedurl.contains("cinestart")) {
+                                loadExtractor(extractedurl, mainUrl, subtitleCallback, callback)
+                            }
                         }
                     }
                 }
             }
-        }
-        if (datatext.contains("Subtítulo LAT") || datatext.contains("Forzados LAT"))   {
+        if (datatext.contains("Subtítulo LAT") || datatext.contains("Forzados LAT")) {
             doc.select("#panel_descarga.pane a").apmap {
-                val link = if (data.contains("serie") || data.contains("episodio")) "${data}${it.attr("href")}"
-                else it.attr("href")
+                val link =
+                    if (data.contains("serie") || data.contains("episodio")) "${data}${it.attr("href")}"
+                    else it.attr("href")
                 val docsub = app.get(link)
                 val linksub = docsub.document
                 val validsub = docsub.text
@@ -241,8 +247,11 @@ class CinecalidadProvider:MainAPI() {
                     val langdoc = linksub.selectFirst("div.titulo h3")!!.text()
                     val reallang = langregex.find(langdoc)?.destructured?.component1()
                     linksub.select("a.link").apmap {
-                        val sublink = if (data.contains("serie") || data.contains("episodio")) "${data}${it.attr("href")}"
-                        else it.attr("href")
+                        val sublink =
+                            if (data.contains("serie") || data.contains("episodio")) "${data}${
+                                it.attr("href")
+                            }"
+                            else it.attr("href")
                         subtitleCallback(
                             SubtitleFile(reallang!!, sublink)
                         )

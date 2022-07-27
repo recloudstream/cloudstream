@@ -50,14 +50,15 @@ class DramaSeeProvider : MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/search?q=$query"
         val document = app.get(url).document
-        val posters = document.select ("div.film-poster")
+        val posters = document.select("div.film-poster")
 
 
         return posters.mapNotNull {
             val innerA = it.select("a") ?: return@mapNotNull null
             val link = fixUrlNull(innerA.attr("href")) ?: return@mapNotNull null
             val title = innerA.attr("title") ?: return@mapNotNull null
-            val year = Regex(""".*\((\d{4})\)""").find(title)?.groupValues?.getOrNull(1)?.toIntOrNull()
+            val year =
+                Regex(""".*\((\d{4})\)""").find(title)?.groupValues?.getOrNull(1)?.toIntOrNull()
             val imgSrc = it.select("img")?.attr("data-src") ?: return@mapNotNull null
             val image = fixUrlNull(imgSrc)
 
@@ -193,7 +194,7 @@ class DramaSeeProvider : MainAPI() {
                     val status = element.attr("data-status") ?: return@forEach
                     if (status != "1") return@forEach
                     val extractorData = element.attr("data-video") ?: return@forEach
-                    loadExtractor(extractorData, iframe.url, callback)
+                    loadExtractor(extractorData, iframe.url, subtitleCallback, callback)
                 }
         }, {
             val iv = "9262859232435825"

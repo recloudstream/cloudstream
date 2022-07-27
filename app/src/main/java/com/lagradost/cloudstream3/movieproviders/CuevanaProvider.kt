@@ -227,7 +227,7 @@ class CuevanaProvider : MainAPI() {
                     val json = parseJson<Femcuevana>(url)
                     val link = json.url
                     if (link.contains("fembed")) {
-                        loadExtractor(link, data, callback)
+                        loadExtractor(link, data, subtitleCallback, callback)
                     }
                 }
             }
@@ -281,7 +281,7 @@ class CuevanaProvider : MainAPI() {
                                     ),
                                     data = mapOf(Pair("url", gotolink))
                                 ).okhttpResponse.headers.values("location").apmap { golink ->
-                                    loadExtractor(golink, data, callback)
+                                    loadExtractor(golink, data, subtitleCallback, callback)
                                 }
                             }
                         }
@@ -311,7 +311,7 @@ class CuevanaProvider : MainAPI() {
                                     ),
                                     data = mapOf(Pair("h", inlink))
                                 ).okhttpResponse.headers.values("location").apmap { link ->
-                                    loadExtractor(link, data, callback)
+                                    loadExtractor(link, data, subtitleCallback, callback)
                                 }
                             }
                         }

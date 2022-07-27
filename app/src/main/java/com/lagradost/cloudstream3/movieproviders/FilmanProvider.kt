@@ -2,8 +2,9 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 
@@ -58,10 +59,11 @@ class FilmanProvider : MainAPI() {
         val series = lists[3].select("#item-list > div:not(.clearfix)")
         if (movies.isEmpty() && series.isEmpty()) return ArrayList()
         fun getVideos(type: TvType, items: Elements): List<SearchResponse> {
-            return items.mapNotNull  { i ->
-                val href = i.selectFirst(".poster > a")?.attr("href")?: return@mapNotNull null
-                val img = i.selectFirst(".poster > a > img")?.attr("src")?.replace("/thumb/", "/big/")
-                val name = i.selectFirst(".film_title")?.text()?: return@mapNotNull null
+            return items.mapNotNull { i ->
+                val href = i.selectFirst(".poster > a")?.attr("href") ?: return@mapNotNull null
+                val img =
+                    i.selectFirst(".poster > a > img")?.attr("src")?.replace("/thumb/", "/big/")
+                val name = i.selectFirst(".film_title")?.text() ?: return@mapNotNull null
                 val year = i.selectFirst(".film_year")?.text()?.toIntOrNull()
                 if (type === TvType.TvSeries) {
                     TvSeriesSearchResponse(
@@ -136,7 +138,7 @@ class FilmanProvider : MainAPI() {
         document?.select(".link-to-video")?.apmap { item ->
             val decoded = base64Decode(item.select("a").attr("data-iframe"))
             val link = tryParseJson<LinkElement>(decoded)?.src ?: return@apmap
-            loadExtractor(link, null, callback)
+            loadExtractor(link, subtitleCallback, callback)
         }
         return true
     }

@@ -232,7 +232,7 @@ class TantifilmProvider : MainAPI() {
         iframe.forEach { id ->
             val doc2 = app.get(id).document
             val id2 = app.get(doc2.selectFirst("iframe")!!.attr("src")).url
-            loadExtractor(id2, data, callback)
+            loadExtractor(id2, data, subtitleCallback, callback)
         }
         return true
     }

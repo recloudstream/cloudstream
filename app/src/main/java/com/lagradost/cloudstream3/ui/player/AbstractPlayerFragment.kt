@@ -375,6 +375,7 @@ abstract class AbstractPlayerFragment(
             subView = player_view?.findViewById(R.id.exo_subtitles)
             subStyle = SubtitlesFragment.getCurrentSavedStyle()
             player.initSubtitles(subView, subtitle_holder, subStyle)
+
             SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 
             try {

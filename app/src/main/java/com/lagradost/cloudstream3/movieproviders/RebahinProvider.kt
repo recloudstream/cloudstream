@@ -7,11 +7,12 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.network.WebViewResolver
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
 import java.net.URI
-import java.util.ArrayList
 
 class RebahinProvider : MainAPI() {
     override var mainUrl = "http://167.88.14.149"
@@ -263,7 +264,7 @@ class RebahinProvider : MainAPI() {
                         callback
                     )
                     else -> {
-                        loadExtractor(link, "$mainUrl/", callback)
+                        loadExtractor(link, "$mainUrl/", subtitleCallback, callback)
                         if (link.startsWith("https://sbfull.com")) {
                             val response = app.get(
                                 link, interceptor = WebViewResolver(

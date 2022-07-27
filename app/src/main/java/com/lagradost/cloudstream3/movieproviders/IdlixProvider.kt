@@ -365,7 +365,7 @@ class IdlixProvider : MainAPI() {
                         if (source.startsWith("https://uservideo.xyz")) {
                             source = app.get(source).document.select("iframe").attr("src")
                         }
-                        loadExtractor(source, data, callback)
+                        loadExtractor(source, data, subtitleCallback, callback)
                     }
                 }
             }

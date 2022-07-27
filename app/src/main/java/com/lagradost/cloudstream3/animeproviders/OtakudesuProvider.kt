@@ -189,7 +189,7 @@ class OtakudesuProvider : MainAPI() {
                 }
             }
 
-            loadExtractor(sources, data, callback)
+            loadExtractor(sources, data, subtitleCallback, callback)
 
         }
 

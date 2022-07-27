@@ -339,7 +339,7 @@ class NineAnimeProvider : MainAPI() {
                 val encodedStreamUrl =
                     getEpisodeLinks(it.attr("data-link-id"))?.result?.url ?: return@apmap
                 val url = decodeVrf(encodedStreamUrl)
-                if (!loadExtractor(url, callback = callback, referer = mainUrl)) {
+                if (!loadExtractor(url, mainUrl, subtitleCallback, callback)) {
                     callback(
                         ExtractorLink(
                             this.name,

@@ -2,11 +2,12 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class AnimefenixProvider:MainAPI() {
@@ -179,7 +180,7 @@ class AnimefenixProvider:MainAPI() {
 
                     else -> ""
                 }
-                loadExtractor(links, data, callback)
+                loadExtractor(links, data, subtitleCallback, callback)
 
                 argamap({
                     if (links.contains("AmaNormal")) {

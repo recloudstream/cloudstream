@@ -189,7 +189,7 @@ class EstrenosDoramasProvider : MainAPI() {
         val document = app.get(data).document
         document.select("div.tab_container iframe").apmap { container ->
             val directlink = fixUrl(container.attr("src"))
-            loadExtractor(directlink, data, callback)
+            loadExtractor(directlink, data, subtitleCallback, callback)
 
             if (directlink.contains("/repro/amz/")) {
                 val amzregex = Regex("https:\\/\\/repro3\\.estrenosdoramas\\.us\\/repro\\/amz\\/examples\\/.*\\.php\\?key=.*\$")
@@ -239,7 +239,7 @@ class EstrenosDoramasProvider : MainAPI() {
                     ).text
                     val extracteklink = link.substringAfter("\"urlremoto\":\"").substringBefore("\"}")
                         .replace("\\/", "/").replace("//ok.ru/","http://ok.ru/")
-                    loadExtractor(extracteklink, data, callback)
+                    loadExtractor(extracteklink, data, subtitleCallback, callback)
                 }
             }
 

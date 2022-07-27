@@ -22,7 +22,7 @@ class WatchAsianProvider : MainAPI() {
         val headers = mapOf("X-Requested-By" to mainUrl)
         val doc = app.get(mainUrl, headers = headers).document
         val rowPair = mutableListOf<Pair<String, String>>()
-        doc.select("div.block-tab")?.forEach {
+        doc.select("div.block-tab").forEach {
             it?.select("ul.tab > li")?.mapNotNull { row ->
                 val link = row?.attr("data-tab") ?: return@mapNotNull null
                 val title = row.text() ?: return@mapNotNull null
@@ -77,12 +77,12 @@ class WatchAsianProvider : MainAPI() {
         return document.mapNotNull {
             val innerA = it?.selectFirst("a") ?: return@mapNotNull null
             val link = fixUrlNull(innerA.attr("href")) ?: return@mapNotNull null
-            val title = it.select("h3.title")?.text() ?: return@mapNotNull null
+            val title = it.select("h3.title").text() ?: return@mapNotNull null
             if (title.isEmpty()) {
                 return@mapNotNull null
             }
             val year = null
-            val imgsrc = innerA.select("img")?.attr("data-original") ?: return@mapNotNull null
+            val imgsrc = innerA.select("img").attr("data-original") ?: return@mapNotNull null
             val image = fixUrlNull(imgsrc)
             //Log.i(this.name, "Result => (img movie) $title / $link")
             MovieSearchResponse(
@@ -100,31 +100,31 @@ class WatchAsianProvider : MainAPI() {
         val body = app.get(url).document
         // Declare vars
         val isDramaDetail = url.contains("/drama-detail/")
-        var poster = ""
+        var poster: String? = null
         var title = ""
         var descript: String? = null
         var year: Int? = null
         var tags: List<String>? = null
         if (isDramaDetail) {
             val main = body.select("div.details")
-            val inner = main?.select("div.info")
+            val inner = main.select("div.info")
             // Video details
-            poster = fixUrlNull(main?.select("div.img > img")?.attr("src")) ?: ""
+            poster = fixUrlNull(main.select("div.img > img").attr("src"))
             //Log.i(this.name, "Result => (imgLinkCode) ${imgLinkCode}")
-            title = inner?.select("h1")?.firstOrNull()?.text() ?: ""
+            title = inner.select("h1").firstOrNull()?.text() ?: ""
             //Log.i(this.name, "Result => (year) ${title.substring(title.length - 5)}")
-            descript = inner?.text()
+            descript = inner.text()
 
-            inner?.select("p")?.forEach { p ->
+            inner.select("p").forEach { p ->
                 val caption =
                     p?.selectFirst("span")?.text()?.trim()?.lowercase()?.removeSuffix(":")?.trim()
                         ?: return@forEach
                 when (caption) {
                     "genre" -> {
-                        tags = p.select("a")?.mapNotNull { it?.text()?.trim() }
+                        tags = p.select("a").mapNotNull { it?.text()?.trim() }
                     }
                     "released" -> {
-                        year = p.select("a")?.text()?.trim()?.toIntOrNull()
+                        year = p.select("a").text().trim()?.toIntOrNull()
                     }
                 }
             }
@@ -147,7 +147,7 @@ class WatchAsianProvider : MainAPI() {
 
         // Episodes Links
         //Log.i(this.name, "Result => (all eps) ${body.select("ul.list-episode-item-2.all-episode > li")}")
-        val episodeList = body.select("ul.list-episode-item-2.all-episode > li")?.mapNotNull { ep ->
+        val episodeList = body.select("ul.list-episode-item-2.all-episode > li").mapNotNull { ep ->
             //Log.i(this.name, "Result => (epA) ${ep.select("a")}")
             val innerA = ep.select("a") ?: return@mapNotNull null
             //Log.i(this.name, "Result => (innerA) ${fixUrlNull(innerA.attr("href"))}")
@@ -164,7 +164,7 @@ class WatchAsianProvider : MainAPI() {
                 posterUrl = poster,
                 date = null
             )
-        } ?: listOf()
+        }
         //If there's only 1 episode, consider it a movie.
         if (episodeList.size == 1) {
             //Clean title
@@ -216,21 +216,24 @@ class WatchAsianProvider : MainAPI() {
                 url.startsWith("https://asianembed.io") || url.startsWith("https://asianload.io") -> {
                     val iv = "9262859232435825"
                     val secretKey = "93422192433952489752342908585752"
-                    extractVidstream(url, this.name, callback, iv, secretKey, secretKey,
+                    extractVidstream(
+                        url, this.name, callback, iv, secretKey, secretKey,
                         isUsingAdaptiveKeys = false,
                         isUsingAdaptiveData = false
                     )
-                    AsianEmbedHelper.getUrls(url, callback)
+                    AsianEmbedHelper.getUrls(url, subtitleCallback, callback)
                 }
                 url.startsWith("https://embedsito.com") -> {
                     val extractor = XStreamCdn()
                     extractor.domainUrl = "embedsito.com"
-                    extractor.getSafeUrl(url)?.apmap { link ->
-                        callback.invoke(link)
-                    }
+                    extractor.getSafeUrl(
+                        url,
+                        subtitleCallback = subtitleCallback,
+                        callback = callback,
+                    )
                 }
                 else -> {
-                    loadExtractor(url, mainUrl, callback)
+                    loadExtractor(url, mainUrl, subtitleCallback, callback)
                 }
             }
         }
@@ -240,8 +243,8 @@ class WatchAsianProvider : MainAPI() {
     private suspend fun getServerLinks(url: String): String {
         val moviedoc = app.get(url, referer = mainUrl).document
         return moviedoc.select("div.anime_muti_link > ul > li")
-            ?.mapNotNull {
+            .mapNotNull {
                 fixUrlNull(it?.attr("data-video")) ?: return@mapNotNull null
-            }?.toJson() ?: ""
+            }.toJson()
     }
 }

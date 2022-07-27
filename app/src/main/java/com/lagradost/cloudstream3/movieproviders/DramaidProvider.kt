@@ -206,7 +206,7 @@ class DramaidProvider : MainAPI() {
         }.apmap {
             when {
                 it.contains("motonews.club") -> invokeDriveSource(it, this.name, subtitleCallback, callback)
-                else -> loadExtractor(it, data, callback)
+                else -> loadExtractor(it, data, subtitleCallback, callback)
             }
         }
 

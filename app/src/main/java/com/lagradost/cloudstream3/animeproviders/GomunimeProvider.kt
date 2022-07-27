@@ -145,7 +145,9 @@ class GomunimeProvider : MainAPI() {
                 document.select(".bixbox.bxcl.epcheck > script").toString().trim()
             )?.groupValues?.get(1).toString().replace(Regex("""\\"""), "").trim()
         ).map {
-            val name = Regex("(Episode\\s?[0-9]+)").find(it.epTitle.toString())?.groupValues?.getOrNull(0) ?: it.epTitle
+            val name =
+                Regex("(Episode\\s?[0-9]+)").find(it.epTitle.toString())?.groupValues?.getOrNull(0)
+                    ?: it.epTitle
             val link = it.epLink
             Episode(link, name)
         }.reversed()
@@ -194,7 +196,7 @@ class GomunimeProvider : MainAPI() {
             safeApiCall {
                 when {
                     it.second.contains("frame") -> {
-                        loadExtractor(it.first, data, callback)
+                        loadExtractor(it.first, data, subtitleCallback, callback)
                     }
                     it.second.contains("hls") -> {
                         app.post(

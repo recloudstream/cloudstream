@@ -1901,7 +1901,7 @@ class ResultFragment : ResultTrailerPlayer() {
                     setRecommendations(d.recommendations, null)
                     setActors(d.actors)
                     setNextEpisode(if (d is EpisodeResponse) d.nextAiring else null)
-                    setTrailers(d.trailers)
+                    setTrailers(d.trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
 
                     if (syncModel.addSyncs(d.syncData)) {
                         syncModel.updateMetaAndUser()

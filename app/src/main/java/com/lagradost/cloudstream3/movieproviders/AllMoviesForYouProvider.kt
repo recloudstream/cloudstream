@@ -197,9 +197,9 @@ class AllMoviesForYouProvider : MainAPI() {
                 val soup = app.get(id).document
                 soup.select("body iframe").map {
                     val link = fixUrl(it.attr("src").replace("streamhub.to/d/", "streamhub.to/e/"))
-                    loadExtractor(link, data, callback)
+                    loadExtractor(link, data, subtitleCallback, callback)
                 }
-            } else loadExtractor(id, data, callback)
+            } else loadExtractor(id, data, subtitleCallback, callback)
         }
         return true
     }

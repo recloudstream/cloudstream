@@ -101,7 +101,7 @@ class HDMovie5 : MainAPI() {
             (doc.select("#repimdb>strong").text().toFloatOrNull()?.times(1000))?.toInt(),
             info.select(".sgeneros>a").map { it.text() },
             info.select(".runtime").text().substringBefore(" Min.").toIntOrNull(),
-            null,
+            mutableListOf(),
             doc.select("#single_relacionados>article>a").map {
                 val img = it.select("img")
                 MovieSearchResponse(
@@ -149,7 +149,7 @@ class HDMovie5 : MainAPI() {
             val html = p.parsedSafe<PlayerAjaxResponse>()?.embedURL ?: return@apmapIndexed false
             val doc = Jsoup.parse(html)
             val link = doc.select("iframe").attr("src")
-            loadExtractor(httpsify(link), "$mainUrl/", callback)
+            loadExtractor(httpsify(link), "$mainUrl/", subtitleCallback, callback)
         }.contains(true)
     }
 }

@@ -2,11 +2,13 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
+import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.loadExtractor
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AnimeflvIOProvider:MainAPI() {
     override var mainUrl = "https://animeflv.io" //Also scrapes from animeid.to
@@ -220,7 +222,7 @@ class AnimeflvIOProvider:MainAPI() {
                     }
                 }
             }
-            loadExtractor(url, data, callback)
+            loadExtractor(url, data, subtitleCallback, callback)
         }
         return true
     }

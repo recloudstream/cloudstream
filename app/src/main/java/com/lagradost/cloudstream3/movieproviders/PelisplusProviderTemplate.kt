@@ -229,7 +229,7 @@ open class PelisplusProviderTemplate : MainAPI() {
         if (info.contains("Latino")) {
             doc.select(".server-item-1 li").apmap {
                 val serverid = fixUrl(it.attr("data-video")).replace("streaming.php","play")
-                loadExtractor(serverid, data, callback)
+                loadExtractor(serverid, data, subtitleCallback, callback)
                 if (serverid.contains("pelisplus.icu")) {
                     getPelisStream(serverid, callback)
                 }
@@ -239,7 +239,7 @@ open class PelisplusProviderTemplate : MainAPI() {
         if (info.contains("Subtitulado")) {
             doc.select(".server-item-0 li").apmap {
                 val serverid = fixUrl(it.attr("data-video")).replace("streaming.php","play")
-                loadExtractor(serverid, data, callback)
+                loadExtractor(serverid, data, subtitleCallback, callback)
                 if (serverid.contains("pelisplus.icu")) {
                     getPelisStream(serverid, callback)
                 }
@@ -249,7 +249,7 @@ open class PelisplusProviderTemplate : MainAPI() {
         if (info.contains("Castellano")) {
             doc.select(".server-item-2 li").apmap {
                 val serverid = fixUrl(it.attr("data-video")).replace("streaming.php","play")
-                loadExtractor(serverid, data, callback)
+                loadExtractor(serverid, data, subtitleCallback, callback)
                 if (serverid.contains("pelisplus.icu")) {
                     getPelisStream(serverid, callback)
                 }

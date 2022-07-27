@@ -66,7 +66,7 @@ class TwoEmbedProvider : TmdbProvider() {
             if (iframeLink.contains("rabbitstream")) {
                 extractRabbitStream(iframeLink, subtitleCallback, callback, false) { it }
             } else {
-                loadExtractor(iframeLink, embedUrl, callback)
+                loadExtractor(iframeLink, embedUrl, subtitleCallback, callback)
             }
         }
         return true

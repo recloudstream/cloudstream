@@ -155,7 +155,7 @@ class CineblogProvider : MainAPI() {
                 rating,
                 null,
                 null,
-                null,
+                mutableListOf(),
                 recomm
             )
         } else {
@@ -205,7 +205,7 @@ class CineblogProvider : MainAPI() {
 
         val url2= Regex("""src='((.|\\n)*?)'""").find(test.text)?.groups?.get(1)?.value.toString()
         val trueUrl = app.get(url2, headers = mapOf("referer" to mainUrl)).url
-        loadExtractor(trueUrl, data, callback)
+        loadExtractor(trueUrl, data, subtitleCallback, callback)
 
         return true
     }

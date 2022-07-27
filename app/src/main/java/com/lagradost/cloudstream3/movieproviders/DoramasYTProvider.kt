@@ -147,7 +147,7 @@ class DoramasYTProvider : MainAPI() {
                     callback.invoke(link)
                 }
             } else {
-                loadExtractor(url, mainUrl, callback)
+                loadExtractor(url, mainUrl, subtitleCallback, callback)
             }
         }
         return true

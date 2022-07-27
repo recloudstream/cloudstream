@@ -165,7 +165,7 @@ class PelisplusHDProvider:MainAPI() {
     ): Boolean {
         app.get(data).document.select("div.player > script").map { script ->
             fetchUrls(script.data().replace("https://pelisplushd.net/fembed.php?url=","https://www.fembed.com/v/")).apmap {
-                loadExtractor(it, data, callback)
+                loadExtractor(it, data, subtitleCallback, callback)
             }
         }
         return true

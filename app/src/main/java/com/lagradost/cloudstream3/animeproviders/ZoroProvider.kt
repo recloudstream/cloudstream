@@ -55,17 +55,18 @@ class ZoroProvider : MainAPI() {
     private fun Element.toSearchResult(): SearchResponse? {
         val href = fixUrl(this.select("a").attr("href"))
         val title = this.select("h3.film-name").text()
-            val dubSub = this.select(".film-poster > .tick.ltr").text()
+        val dubSub = this.select(".film-poster > .tick.ltr").text()
         //val episodes = this.selectFirst(".film-poster > .tick-eps")?.text()?.toIntOrNull()
 
         val dubExist = dubSub.contains("dub", ignoreCase = true)
         val subExist = dubSub.contains("sub", ignoreCase = true)
-        val episodes = this.selectFirst(".film-poster > .tick.rtl > .tick-eps")?.text()?.let { eps ->
-            //println("REGEX:::: $eps")
-            // current episode / max episode
-            //Regex("Ep (\\d+)/(\\d+)")
-            epRegex.find(eps)?.groupValues?.get(1)?.toIntOrNull()
-        }
+        val episodes =
+            this.selectFirst(".film-poster > .tick.rtl > .tick-eps")?.text()?.let { eps ->
+                //println("REGEX:::: $eps")
+                // current episode / max episode
+                //Regex("Ep (\\d+)/(\\d+)")
+                epRegex.find(eps)?.groupValues?.get(1)?.toIntOrNull()
+            }
         if (href.contains("/news/") || title.trim().equals("News", ignoreCase = true)) return null
         val posterUrl = fixUrl(this.select("img").attr("data-src"))
         val type = getType(this.select("div.fd-infor > span.fdi-item").text())
@@ -346,7 +347,7 @@ class ZoroProvider : MainAPI() {
                 link,
             ).parsed<RapidCloudResponse>().link
             val hasLoadedExtractorLink =
-                loadExtractor(extractorLink, "https://rapid-cloud.ru/", callback)
+                loadExtractor(extractorLink, "https://rapid-cloud.ru/", subtitleCallback, callback)
 
             if (!hasLoadedExtractorLink) {
                 extractRabbitStream(

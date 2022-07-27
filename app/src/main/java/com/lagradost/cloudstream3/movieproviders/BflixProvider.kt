@@ -27,8 +27,14 @@ open class BflixProvider : MainAPI() {
             Pair("Movies", "div.tab-content[data-name=movies] div.filmlist div.item"),
             Pair("Shows", "div.tab-content[data-name=shows] div.filmlist div.item"),
             Pair("Trending", "div.tab-content[data-name=trending] div.filmlist div.item"),
-            Pair("Latest Movies", "div.container section.bl:contains(Latest Movies) div.filmlist div.item"),
-            Pair("Latest TV-Series", "div.container section.bl:contains(Latest TV-Series) div.filmlist div.item"),
+            Pair(
+                "Latest Movies",
+                "div.container section.bl:contains(Latest Movies) div.filmlist div.item"
+            ),
+            Pair(
+                "Latest TV-Series",
+                "div.container section.bl:contains(Latest TV-Series) div.filmlist div.item"
+            ),
         )
         for ((name, element) in testa) try {
             val test = soup.select(element).map {
@@ -57,7 +63,8 @@ open class BflixProvider : MainAPI() {
     }
 
     //Credits to https://github.com/jmir1
-    private val key = "5uLKesbh0nkrpPq9VwMC6+tQBdomjJ4HNl/fWOSiREvAYagT8yIG7zx2D13UZFXc" //key credits to @Modder4869
+    private val key =
+        "5uLKesbh0nkrpPq9VwMC6+tQBdomjJ4HNl/fWOSiREvAYagT8yIG7zx2D13UZFXc" //key credits to @Modder4869
 
     private fun getVrf(id: String): String? {
         val reversed = ue(encode(id) + "0000000").slice(0..5).reversed()
@@ -216,7 +223,7 @@ open class BflixProvider : MainAPI() {
         }
 
         val tags = soup.select("div.info .meta div:contains(Genre) a").map { it.text() }
-        val episodes =  Jsoup.parse(
+        val episodes = Jsoup.parse(
             app.get(
                 "$mainUrl/ajax/film/servers?id=$movieid&vrf=$movieidencoded"
             ).parsed<Response>().html
@@ -232,15 +239,16 @@ open class BflixProvider : MainAPI() {
 
             val eptitle = it.selectFirst(".episode a span.name")!!.text()
             val secondtitle = it.selectFirst(".episode a span")!!.text()
-                .replace(Regex("(Episode (\\d+):|Episode (\\d+)-|Episode (\\d+))"),"") ?: ""
+                .replace(Regex("(Episode (\\d+):|Episode (\\d+)-|Episode (\\d+))"), "") ?: ""
             Episode(
                 href,
-                secondtitle+eptitle,
+                secondtitle + eptitle,
                 season,
                 episode,
             )
         }
-        val tvType = if (url.contains("/movie/") && episodes.size == 1) TvType.Movie else TvType.TvSeries
+        val tvType =
+            if (url.contains("/movie/") && episodes.size == 1) TvType.Movie else TvType.TvSeries
         val recommendations =
             soup.select("div.bl-2 section.bl div.content div.filmlist div.item")
                 ?.mapNotNull { element ->
@@ -261,9 +269,12 @@ open class BflixProvider : MainAPI() {
         val durationregex = Regex("((\\d+) min)")
         val yearegex = Regex("<span>(\\d+)<\\/span>")
         val duration = if (durationdoc.contains("na min")) null
-        else durationregex.find(durationdoc)?.destructured?.component1()?.replace(" min","")?.toIntOrNull()
-        val year = if (mainUrl == "https://bflix.ru") { yearegex.find(durationdoc)?.destructured?.component1()
-            ?.replace(Regex("<span>|<\\/span>"),"") } else null
+        else durationregex.find(durationdoc)?.destructured?.component1()?.replace(" min", "")
+            ?.toIntOrNull()
+        val year = if (mainUrl == "https://bflix.ru") {
+            yearegex.find(durationdoc)?.destructured?.component1()
+                ?.replace(Regex("<span>|<\\/span>"), "")
+        } else null
         return when (tvType) {
             TvType.TvSeries -> {
                 TvSeriesLoadResponse(
@@ -343,7 +354,8 @@ open class BflixProvider : MainAPI() {
                 val a = it.select("a").map {
                     it.attr("data-kname")
                 }
-                val tvType = if (data.contains("movie/") && a.size == 1) TvType.Movie else TvType.TvSeries
+                val tvType =
+                    if (data.contains("movie/") && a.size == 1) TvType.Movie else TvType.TvSeries
                 val servers = if (tvType == TvType.Movie) it.select(".episode a").attr("data-ep")
                 else
                     it.select(".episode a[href=$cleandata]").attr("data-ep")
@@ -364,7 +376,7 @@ open class BflixProvider : MainAPI() {
                         ?.replace("/embed/", "/e/")?.replace(Regex("(\\?sub.info.*)"), "")
                 }.apmap { url ->
                     loadExtractor(
-                        url, data, callback
+                        url, data, subtitleCallback, callback
                     )
                 }
                 //Apparently any server works, I haven't found any diference

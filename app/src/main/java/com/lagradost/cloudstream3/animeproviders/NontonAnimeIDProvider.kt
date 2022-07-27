@@ -3,10 +3,10 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.util.ArrayList
 
 class NontonAnimeIDProvider : MainAPI() {
     override var mainUrl = "https://75.119.159.228"
@@ -175,13 +175,17 @@ class NontonAnimeIDProvider : MainAPI() {
                     )
                 ).parsed<EpResponse>().content
             ).select("li").map {
-                val name = Regex("(Episode\\s?[0-9]+)").find(it.selectFirst("a")?.text().toString())?.groupValues?.getOrNull(0) ?: it.selectFirst("a")?.text()
+                val name = Regex("(Episode\\s?[0-9]+)").find(
+                    it.selectFirst("a")?.text().toString()
+                )?.groupValues?.getOrNull(0) ?: it.selectFirst("a")?.text()
                 val link = fixUrl(it.selectFirst("a")!!.attr("href"))
                 Episode(link, name)
             }.reversed()
         } else {
             document.select("ul.misha_posts_wrap2 > li").map {
-                val name = Regex("(Episode\\s?[0-9]+)").find(it.selectFirst("a")?.text().toString())?.groupValues?.getOrNull(0) ?: it.selectFirst("a")?.text()
+                val name = Regex("(Episode\\s?[0-9]+)").find(
+                    it.selectFirst("a")?.text().toString()
+                )?.groupValues?.getOrNull(0) ?: it.selectFirst("a")?.text()
                 val link = it.select("a").attr("href")
                 Episode(link, name)
             }.reversed()
@@ -243,7 +247,7 @@ class NontonAnimeIDProvider : MainAPI() {
         }
 
         sources.apmap {
-            loadExtractor(it, "$mainUrl/", callback)
+            loadExtractor(it, "$mainUrl/", subtitleCallback, callback)
         }
 
         return true

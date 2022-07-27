@@ -126,7 +126,7 @@ class OpenVidsProvider:TmdbProvider() {
                     membed.isUsingAdaptiveKeys,
                     membed.isUsingAdaptiveData)
             } else
-                loadExtractor(links, data, callback)
+                loadExtractor(links, data, subtitleCallback, callback)
         }
         return true
     }

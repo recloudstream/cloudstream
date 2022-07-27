@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.animeproviders
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
-import org.jsoup.Jsoup
 
 class KimCartoonProvider : MainAPI() {
 
@@ -83,9 +82,9 @@ class KimCartoonProvider : MainAPI() {
 
     override suspend fun quickSearch(query: String): List<SearchResponse> {
         return app.post(
-                "$mainUrl/Ajax/SearchSuggest",
-                data = mapOf("keyword" to query)
-            ).document.select("a").map {
+            "$mainUrl/Ajax/SearchSuggest",
+            data = mapOf("keyword" to query)
+        ).document.select("a").map {
             AnimeSearchResponse(
                 it.text(),
                 it.attr("href"),
@@ -143,7 +142,7 @@ class KimCartoonProvider : MainAPI() {
         servers.apmap {
             app.get(it).document.select("#my_video_1").attr("src").let { iframe ->
                 if (iframe.isNotEmpty()) {
-                    loadExtractor(iframe, "$mainUrl/", callback)
+                    loadExtractor(iframe, "$mainUrl/", subtitleCallback, callback)
                 }
                 //There are other servers, but they require some work to do
             }

@@ -152,7 +152,7 @@ class PeliSmartProvider: MainAPI() {
              .replace("https://pelismarthd.com/p/1.php?v=","https://evoload.io/e/")
              .replace("https://pelismarthd.com/p/2.php?v=","https://streamtape.com/e/")
              .replace("https://pelismarthd.com/p/4.php?v=","https://dood.to/e/")
-             loadExtractor(urlc, data, callback)
+             loadExtractor(urlc, data, subtitleCallback, callback)
          }
         return true
     }

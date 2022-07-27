@@ -169,7 +169,7 @@ class NeonimeProvider : MainAPI() {
         }
 
         source.apmap {
-            loadExtractor(it, data, callback)
+            loadExtractor(it, data, subtitleCallback, callback)
         }
 
         return true

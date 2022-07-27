@@ -215,7 +215,7 @@ class IHaveNoTvProvider : MainAPI() {
 
         val iframe = soup.selectFirst("#videoWrap iframe")
         if (iframe != null) {
-            loadExtractor(iframe.attr("src"), null, callback)
+            loadExtractor(iframe.attr("src"), null, subtitleCallback, callback)
         }
         return true
     }

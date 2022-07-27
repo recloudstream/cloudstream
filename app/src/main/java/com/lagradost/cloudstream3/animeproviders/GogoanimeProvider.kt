@@ -338,7 +338,11 @@ class GogoanimeProvider : MainAPI() {
         @JsonProperty("default") val default: String? = null
     )
 
-    private suspend fun extractVideos(uri: String, callback: (ExtractorLink) -> Unit) {
+    private suspend fun extractVideos(
+        uri: String,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
         val doc = app.get(uri).document
 
         val iframe = fixUrlNull(doc.selectFirst("div.play-video > iframe")?.attr("src")) ?: return
@@ -366,7 +370,7 @@ class GogoanimeProvider : MainAPI() {
                         )
                     } else {
                         val url = it.attr("href")
-                        loadExtractor(url, null, callback)
+                        loadExtractor(url, null, subtitleCallback, callback)
                     }
                 }
             }, {
@@ -378,7 +382,7 @@ class GogoanimeProvider : MainAPI() {
                             val status = element.attr("data-status") ?: return@forEach
                             if (status != "1") return@forEach
                             val data = element.attr("data-video") ?: return@forEach
-                            loadExtractor(data, streamingResponse.url, callback)
+                            loadExtractor(data, streamingResponse.url, subtitleCallback, callback)
                         }
                 }, {
                     val iv = "3134003223491201"
@@ -405,7 +409,7 @@ class GogoanimeProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        extractVideos(data, callback)
+        extractVideos(data, subtitleCallback, callback)
         return true
     }
 }

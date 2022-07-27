@@ -222,7 +222,7 @@ class PelisflixProvider : MainAPI() {
                     allowRedirects = false
                 ).okhttpResponse.headers.values("location").apmap { link ->
                     val url1 = link.replace("#bu", "")
-                    loadExtractor(url1, data, callback)
+                    loadExtractor(url1, data, subtitleCallback, callback)
                 }
             }
         }

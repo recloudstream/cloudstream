@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.util.Log
 import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -89,6 +90,7 @@ class PlayerSubtitleHelper {
         regexSubtitlesToRemoveCaptions = style.removeCaptions
         subtitleView?.context?.let { ctx ->
             subStyle = style
+            Log.i(TAG,"SET STYLE = $style")
             subtitleView?.setStyle(ctx.fromSaveToStyle(style))
             subtitleView?.translationY = -style.elevation.toPx.toFloat()
             val size = style.fixedTextSize

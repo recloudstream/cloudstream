@@ -3,12 +3,12 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
+import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.loadExtractor
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.List
 
 
 class JKAnimeProvider : MainAPI() {
@@ -34,9 +34,18 @@ class JKAnimeProvider : MainAPI() {
 
     override suspend fun getMainPage(): HomePageResponse {
         val urls = listOf(
-            Pair("$mainUrl/directorio/?filtro=fecha&tipo=TV&estado=1&fecha=none&temporada=none&orden=desc", "En emisión"),
-            Pair("$mainUrl/directorio/?filtro=fecha&tipo=none&estado=none&fecha=none&temporada=none&orden=none", "Animes"),
-            Pair("$mainUrl/directorio/?filtro=fecha&tipo=Movie&estado=none&fecha=none&temporada=none&orden=none", "Películas"),
+            Pair(
+                "$mainUrl/directorio/?filtro=fecha&tipo=TV&estado=1&fecha=none&temporada=none&orden=desc",
+                "En emisión"
+            ),
+            Pair(
+                "$mainUrl/directorio/?filtro=fecha&tipo=none&estado=none&fecha=none&temporada=none&orden=none",
+                "Animes"
+            ),
+            Pair(
+                "$mainUrl/directorio/?filtro=fecha&tipo=Movie&estado=none&fecha=none&temporada=none&orden=none",
+                "Películas"
+            ),
         )
 
         val items = ArrayList<HomePageList>()
@@ -46,12 +55,14 @@ class JKAnimeProvider : MainAPI() {
                 "Últimos episodios",
                 app.get(mainUrl).document.select(".listadoanime-home a.bloqq").map {
                     val title = it.selectFirst("h5")?.text()
-                    val dubstat =if (title!!.contains("Latino") || title.contains("Castellano"))
+                    val dubstat = if (title!!.contains("Latino") || title.contains("Castellano"))
                         DubStatus.Dubbed else DubStatus.Subbed
-                    val poster = it.selectFirst(".anime__sidebar__comment__item__pic img")?.attr("src") ?: ""
+                    val poster =
+                        it.selectFirst(".anime__sidebar__comment__item__pic img")?.attr("src") ?: ""
                     val epRegex = Regex("/(\\d+)/|/especial/|/ova/")
                     val url = it.attr("href").replace(epRegex, "")
-                    val epNum = it.selectFirst("h6")?.text()?.replace("Episodio ", "")?.toIntOrNull()
+                    val epNum =
+                        it.selectFirst("h6")?.text()?.replace("Episodio ", "")?.toIntOrNull()
                     newAnimeSearchResponse(title, url) {
                         this.posterUrl = poster
                         addDubStatus(dubstat, epNum)
@@ -82,12 +93,12 @@ class JKAnimeProvider : MainAPI() {
         return HomePageResponse(items)
     }
 
-    data class MainSearch (
+    data class MainSearch(
         @JsonProperty("animes") val animes: List<Animes>,
         @JsonProperty("anime_types") val animeTypes: AnimeTypes
     )
 
-    data class Animes (
+    data class Animes(
         @JsonProperty("id") val id: String,
         @JsonProperty("slug") val slug: String,
         @JsonProperty("title") val title: String,
@@ -98,7 +109,7 @@ class JKAnimeProvider : MainAPI() {
         @JsonProperty("thumbnail") val thumbnail: String
     )
 
-    data class AnimeTypes (
+    data class AnimeTypes(
         @JsonProperty("TV") val TV: String,
         @JsonProperty("OVA") val OVA: String,
         @JsonProperty("Movie") val Movie: String,
@@ -134,7 +145,8 @@ class JKAnimeProvider : MainAPI() {
         val title = doc.selectFirst(".anime__details__title > h3")?.text()
         val type = doc.selectFirst(".anime__details__text")?.text()
         val description = doc.selectFirst(".anime__details__text > p")?.text()
-        val genres = doc.select("div.col-lg-6:nth-child(1) > ul:nth-child(1) > li:nth-child(2) > a").map { it.text() }
+        val genres = doc.select("div.col-lg-6:nth-child(1) > ul:nth-child(1) > li:nth-child(2) > a")
+            .map { it.text() }
         val status = when (doc.selectFirst("span.enemision")?.text()) {
             "En emisión" -> ShowStatus.Ongoing
             "Concluido" -> ShowStatus.Completed
@@ -143,7 +155,8 @@ class JKAnimeProvider : MainAPI() {
         val animeID = doc.selectFirst("div.ml-2")?.attr("data-anime")?.toInt()
         val animeeps = "$mainUrl/ajax/last_episode/$animeID/"
         val jsoneps = app.get(animeeps).text
-        val lastepnum = jsoneps.substringAfter("{\"number\":\"").substringBefore("\",\"title\"").toInt()
+        val lastepnum =
+            jsoneps.substringAfter("{\"number\":\"").substringBefore("\",\"title\"").toInt()
         val episodes = (1..lastepnum).map {
             val link = "${url.removeSuffix("/")}/$it"
             Episode(link)
@@ -158,7 +171,7 @@ class JKAnimeProvider : MainAPI() {
         }
     }
 
-    data class Nozomi (
+    data class Nozomi(
         @JsonProperty("file") val file: String?
     )
 
@@ -193,16 +206,17 @@ class JKAnimeProvider : MainAPI() {
             if (script.data().contains("var video = []")) {
                 val videos = script.data().replace("\\/", "/")
                 fetchUrls(videos).map {
-                    it.replace("$mainUrl/jkfembed.php?u=","https://embedsito.com/v/")
-                        .replace("$mainUrl/jkokru.php?u=","http://ok.ru/videoembed/")
-                        .replace("$mainUrl/jkvmixdrop.php?u=","https://mixdrop.co/e/")
-                        .replace("$mainUrl/jk.php?u=","$mainUrl/")
+                    it.replace("$mainUrl/jkfembed.php?u=", "https://embedsito.com/v/")
+                        .replace("$mainUrl/jkokru.php?u=", "http://ok.ru/videoembed/")
+                        .replace("$mainUrl/jkvmixdrop.php?u=", "https://mixdrop.co/e/")
+                        .replace("$mainUrl/jk.php?u=", "$mainUrl/")
                 }.apmap { link ->
-                    loadExtractor(link, data, callback)
+                    loadExtractor(link, data, subtitleCallback, callback)
                     if (link.contains("um2.php")) {
                         val doc = app.get(link, referer = data).document
                         val gsplaykey = doc.select("form input[value]").attr("value")
-                        val postgsplay = app.post("$mainUrl/gsplay/redirect_post.php",
+                        app.post(
+                            "$mainUrl/gsplay/redirect_post.php",
                             headers = mapOf(
                                 "Host" to "jkanime.net",
                                 "User-Agent" to USER_AGENT,
@@ -219,11 +233,14 @@ class JKAnimeProvider : MainAPI() {
                                 "Sec-Fetch-Site" to "same-origin",
                                 "TE" to "trailers",
                                 "Pragma" to "no-cache",
-                                "Cache-Control" to "no-cache",),
-                            data = mapOf(Pair("data",gsplaykey)),
-                            allowRedirects = false).okhttpResponse.headers.values("location").apmap { loc ->
-                            val postkey = loc.replace("/gsplay/player.html#","")
-                            val nozomitext = app.post("$mainUrl/gsplay/api.php",
+                                "Cache-Control" to "no-cache",
+                            ),
+                            data = mapOf(Pair("data", gsplaykey)),
+                            allowRedirects = false
+                        ).okhttpResponse.headers.values("location").apmap { loc ->
+                            val postkey = loc.replace("/gsplay/player.html#", "")
+                            val nozomitext = app.post(
+                                "$mainUrl/gsplay/api.php",
                                 headers = mapOf(
                                     "Host" to "jkanime.net",
                                     "User-Agent" to USER_AGENT,
@@ -236,8 +253,9 @@ class JKAnimeProvider : MainAPI() {
                                     "Connection" to "keep-alive",
                                     "Sec-Fetch-Dest" to "empty",
                                     "Sec-Fetch-Mode" to "cors",
-                                    "Sec-Fetch-Site" to "same-origin",),
-                                data = mapOf(Pair("v",postkey)),
+                                    "Sec-Fetch-Site" to "same-origin",
+                                ),
+                                data = mapOf(Pair("v", postkey)),
                                 allowRedirects = false
                             ).text
                             val json = parseJson<Nozomi>(nozomitext)
@@ -245,13 +263,20 @@ class JKAnimeProvider : MainAPI() {
                             if (nozomiurl.isEmpty()) null else
                                 nozomiurl.forEach { url ->
                                     val nozominame = "Nozomi"
-                                    streamClean(nozominame, url!!, "", null, callback, url.contains(".m3u8"))
+                                    streamClean(
+                                        nozominame,
+                                        url!!,
+                                        "",
+                                        null,
+                                        callback,
+                                        url.contains(".m3u8")
+                                    )
                                 }
                         }
                     }
                     if (link.contains("um.php")) {
                         val desutext = app.get(link, referer = data).text
-                        val desuRegex = Regex("((https:|http:)\\/\\/.*\\.m3u8)")
+                        val desuRegex = Regex("((https:|http:)//.*\\.m3u8)")
                         val file = desuRegex.find(desutext)?.value
                         val namedesu = "Desu"
                         generateM3u8(
@@ -259,13 +284,31 @@ class JKAnimeProvider : MainAPI() {
                             file!!,
                             mainUrl,
                         ).forEach { desurl ->
-                            streamClean(namedesu, desurl.url, mainUrl, desurl.quality.toString(), callback, true)
+                            streamClean(
+                                namedesu,
+                                desurl.url,
+                                mainUrl,
+                                desurl.quality.toString(),
+                                callback,
+                                true
+                            )
                         }
                     }
                     if (link.contains("jkmedia")) {
-                        app.get(link, referer = data, allowRedirects = false).okhttpResponse.headers.values("location").apmap { xtremeurl ->
+                        app.get(
+                            link,
+                            referer = data,
+                            allowRedirects = false
+                        ).okhttpResponse.headers.values("location").apmap { xtremeurl ->
                             val namex = "Xtreme S"
-                            streamClean(namex, xtremeurl, "", null, callback, xtremeurl.contains(".m3u8"))
+                            streamClean(
+                                namex,
+                                xtremeurl,
+                                "",
+                                null,
+                                callback,
+                                xtremeurl.contains(".m3u8")
+                            )
                         }
                     }
                 }

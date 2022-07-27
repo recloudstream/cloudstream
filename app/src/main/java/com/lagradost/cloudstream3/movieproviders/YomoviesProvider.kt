@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
-import java.util.ArrayList
 
 class YomoviesProvider : MainAPI() {
     override var mainUrl = "https://yomovies.plus"
@@ -122,8 +121,15 @@ class YomoviesProvider : MainAPI() {
                             source,
                             referer = "$mainUrl/"
                         ).document.select("ul.list-server-items li")
-                            .apmap { loadExtractor(it.attr("data-video").substringBefore("=https://msubload"), "$mainUrl/", callback) }
-                        else -> loadExtractor(source, "$mainUrl/", callback)
+                            .apmap {
+                                loadExtractor(
+                                    it.attr("data-video").substringBefore("=https://msubload"),
+                                    "$mainUrl/",
+                                    subtitleCallback,
+                                    callback
+                                )
+                            }
+                        else -> loadExtractor(source, "$mainUrl/", subtitleCallback, callback)
                     }
                 }
             }

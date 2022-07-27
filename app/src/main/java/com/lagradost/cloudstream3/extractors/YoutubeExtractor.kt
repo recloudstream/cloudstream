@@ -1,14 +1,14 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.ErrorLoadingException
-import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.schemaStripRegex
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeStreamLinkHandlerFactory
+import org.schabi.newpipe.extractor.stream.SubtitlesStream
 import org.schabi.newpipe.extractor.stream.VideoStream
 
 class YoutubeShortLinkExtractor : YoutubeExtractor() {
@@ -26,56 +26,56 @@ open class YoutubeExtractor : ExtractorApi() {
 
     companion object {
         private var ytVideos: MutableMap<String, List<VideoStream>> = mutableMapOf()
+        private var ytVideosSubtitles: MutableMap<String, List<SubtitlesStream>> = mutableMapOf()
     }
 
     override fun getExtractorUrl(id: String): String {
         return "$mainUrl/watch?v=$id"
     }
 
-    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        val streams = safeApiCall {
-            val streams = ytVideos[url] ?: let {
-                val link =
-                    YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(
-                        url.replace(
-                            schemaStripRegex, ""
-                        )
+    override suspend fun getUrl(
+        url: String,
+        referer: String?,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
+        if (ytVideos[url].isNullOrEmpty()) {
+            val link =
+                YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(
+                    url.replace(
+                        schemaStripRegex, ""
                     )
-
-                val s = object : YoutubeStreamExtractor(
-                    ServiceList.YouTube,
-                    link
-                ) {
-
-                }
-                s.fetchPage()
-                val streams = s.videoStreams ?: return@let emptyList()
-                ytVideos[url] = streams
-                streams
-            }
-            if (streams.isEmpty()) {
-                throw ErrorLoadingException("No Youtube streams")
-            }
-
-            streams
-            //streams.sortedBy { it.height }
-            //    .firstOrNull { !it.isVideoOnly && it.height > 0 }
-            //    ?: throw ErrorLoadingException("No valid Youtube stream")
-        }
-        if (streams is Resource.Success) {
-            return streams.value.mapNotNull {
-                if (it.isVideoOnly || it.height <= 0) return@mapNotNull null
-
-                ExtractorLink(
-                    this.name,
-                    this.name,
-                    it.url ?: return@mapNotNull null,
-                    "",
-                    it.height
                 )
+
+            val s = object : YoutubeStreamExtractor(
+                ServiceList.YouTube,
+                link
+            ) {
+
             }
-        } else {
-            return null
+            s.fetchPage()
+            ytVideos[url] = s.videoStreams
+            ytVideosSubtitles[url] = try {
+                s.subtitlesDefault.filterNotNull()
+            } catch (e: Exception) {
+                logError(e)
+                emptyList()
+            }
         }
+        ytVideos[url]?.mapNotNull {
+            if (it.isVideoOnly || it.height <= 0) return@mapNotNull null
+
+            ExtractorLink(
+                this.name,
+                this.name,
+                it.url ?: return@mapNotNull null,
+                "",
+                it.height
+            )
+        }?.forEach(callback)
+        ytVideosSubtitles[url]?.mapNotNull {
+            SubtitleFile(it.languageTag ?: return@mapNotNull null, it.url ?: return@mapNotNull null)
+        }?.forEach(subtitleCallback)
     }
+
 }

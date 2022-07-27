@@ -56,7 +56,8 @@ class WcoProvider : MainAPI() {
                         nameHeader.attr("href").replace("/watch/", "/anime/")
                             .replace(Regex("-episode-.*"), "/")
                     val isDub =
-                        filmPoster!!.selectFirst("> div.film-poster-quality")?.text()?.contains("DUB")
+                        filmPoster!!.selectFirst("> div.film-poster-quality")?.text()
+                            ?.contains("DUB")
                             ?: false
                     val poster = filmPoster.selectFirst("> img")!!.attr("data-src")
                     val set: EnumSet<DubStatus> =
@@ -231,8 +232,8 @@ class WcoProvider : MainAPI() {
         }
 
         for (server in servers) {
-            WcoStream().getSafeUrl(server["link"].toString(), "")?.forEach(callback)
-            Mcloud().getSafeUrl(server["link"].toString(), "")?.forEach(callback)
+            WcoStream().getSafeUrl(server["link"].toString(), null, subtitleCallback, callback)
+            Mcloud().getSafeUrl(server["link"].toString(), null, subtitleCallback, callback)
         }
         return true
     }

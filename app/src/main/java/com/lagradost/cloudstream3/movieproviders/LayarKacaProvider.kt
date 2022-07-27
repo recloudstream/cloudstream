@@ -219,7 +219,7 @@ class LayarKacaProvider : MainAPI() {
             } else {
                 it
             }
-            loadExtractor(link, data, callback)
+            loadExtractor(link, data, subtitleCallback, callback)
         }
 
         return true

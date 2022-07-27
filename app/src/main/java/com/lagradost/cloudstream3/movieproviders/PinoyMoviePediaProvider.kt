@@ -231,7 +231,7 @@ class PinoyMoviePediaProvider : MainAPI() {
                     callback.invoke(it)
                 }
             } else {
-                loadExtractor(link, mainUrl, callback)
+                loadExtractor(link, mainUrl, subtitleCallback, callback)
             }
         }
         return count > 0

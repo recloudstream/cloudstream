@@ -56,8 +56,9 @@ class AnimeFlickProvider : MainAPI() {
         val title = doc.selectFirst("h2.title")!!.text()
 
         val yearText = doc.selectFirst(".trending-year")?.text()
-        val year = if (yearText != null) Regex("""(\d{4})""").find(yearText)?.destructured?.component1()
-            ?.toIntOrNull() else null
+        val year =
+            if (yearText != null) Regex("""(\d{4})""").find(yearText)?.destructured?.component1()
+                ?.toIntOrNull() else null
         val description = doc.selectFirst("p")?.text()
 
         val genres = doc.select("a[href*=\"genre-\"]").map { it.text() }
@@ -95,7 +96,7 @@ class AnimeFlickProvider : MainAPI() {
             var alreadyAdded = false
             for (extractor in extractorApis) {
                 if (link.startsWith(extractor.mainUrl)) {
-                    extractor.getSafeUrl(link, data)?.forEach(callback)
+                    extractor.getSafeUrl(link, data, subtitleCallback, callback)
                     alreadyAdded = true
                     break
                 }

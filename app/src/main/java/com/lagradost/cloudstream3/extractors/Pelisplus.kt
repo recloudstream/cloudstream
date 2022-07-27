@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
@@ -27,12 +28,16 @@ class Pelisplus(val mainUrl: String) {
     private val normalApis = arrayListOf(MultiQuality())
 
     // https://gogo-stream.com/streaming.php?id=MTE3NDg5
-    suspend fun getUrl(id: String, isCasting: Boolean = false, callback: (ExtractorLink) -> Unit): Boolean {
+    suspend fun getUrl(
+        id: String,
+        isCasting: Boolean = false,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
         try {
             normalApis.apmap { api ->
                 val url = api.getExtractorUrl(id)
-                val source = api.getSafeUrl(url)
-                source?.forEach { callback.invoke(it) }
+                api.getSafeUrl(url, subtitleCallback = subtitleCallback, callback = callback)
             }
             val extractorUrl = getExtractorUrl(id)
 
@@ -50,9 +55,10 @@ class Pelisplus(val mainUrl: String) {
                     val href = element.attr("href") ?: return@apmap
                     val qual = if (element.text()
                             .contains("HDP")
-                    ) "1080" else qualityRegex.find(element.text())?.destructured?.component1().toString()
+                    ) "1080" else qualityRegex.find(element.text())?.destructured?.component1()
+                        .toString()
 
-                    if (!loadExtractor(href, link, callback)) {
+                    if (!loadExtractor(href, link, subtitleCallback, callback)) {
                         callback.invoke(
                             ExtractorLink(
                                 this.name,
@@ -80,12 +86,7 @@ class Pelisplus(val mainUrl: String) {
                     // Matches vidstream links with extractors
                     extractorApis.filter { !it.requiresReferer || !isCasting }.apmap { api ->
                         if (link.startsWith(api.mainUrl)) {
-                            val extractedLinks = api.getSafeUrl(link, extractorUrl)
-                            if (extractedLinks?.isNotEmpty() == true) {
-                                extractedLinks.forEach {
-                                    callback.invoke(it)
-                                }
-                            }
+                            api.getSafeUrl(link, extractorUrl, subtitleCallback, callback)
                         }
                     }
                 }

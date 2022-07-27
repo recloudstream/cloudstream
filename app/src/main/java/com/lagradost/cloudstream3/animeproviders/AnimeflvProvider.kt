@@ -173,7 +173,7 @@ class AnimeflvnetProvider : MainAPI() {
                     it.replace("https://embedsb.com/e/", "https://watchsb.com/e/")
                         .replace("https://ok.ru", "http://ok.ru")
                 }.apmap {
-                    loadExtractor(it, data, callback)
+                    loadExtractor(it, data, subtitleCallback, callback)
                 }
             }
         }

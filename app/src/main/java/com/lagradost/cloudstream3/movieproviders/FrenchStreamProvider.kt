@@ -68,7 +68,7 @@ class FrenchStreamProvider : MainAPI() {
                 ?.mapNotNull {   // all the tags like action, thriller ...; unused variable
                     it?.text()
                 }
-            return newMovieLoadResponse(title,url,TvType.Movie,url) {
+            return newMovieLoadResponse(title, url, TvType.Movie, url) {
                 this.posterUrl = poster
                 addRating(soup.select("div.fr-count > div").text())
                 this.year = soup.select("ul.flist-col > li").getOrNull(2)?.text()?.toIntOrNull()
@@ -82,8 +82,7 @@ class FrenchStreamProvider : MainAPI() {
             //println("listeEpisode:")
             val episodeList = if ("<a" !in (listEpisode[0]).toString()) {  // check if VF is empty
                 listEpisode[1]  // no vf, return vostfr
-            }
-            else {
+            } else {
                 listEpisode[0] // no vostfr, return vf
             }
 
@@ -221,9 +220,9 @@ class FrenchStreamProvider : MainAPI() {
         servers.apmap {
             for (extractor in extractorApis) {
                 if (it.first.contains(extractor.name, ignoreCase = true)) {
-        //                    val name = it.first
-        //                    print("true for $name")
-                    extractor.getSafeUrl(it.second, it.second)?.forEach(callback)
+                    //                    val name = it.first
+                    //                    print("true for $name")
+                    extractor.getSafeUrl(it.second, it.second, subtitleCallback, callback)
                     break
                 }
             }

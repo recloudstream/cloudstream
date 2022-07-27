@@ -112,7 +112,8 @@ class AnimeSailProvider : MainAPI() {
         )
         val episodes = document.select("ul.daftar > li").map {
             val header = it.select("a").text().trim()
-            val name = Regex("(Episode\\s?[0-9]+)").find(header)?.groupValues?.getOrNull(0) ?: header
+            val name =
+                Regex("(Episode\\s?[0-9]+)").find(header)?.groupValues?.getOrNull(0) ?: header
             val link = fixUrl(it.select("a").attr("href"))
             Episode(link, name = name)
         }.reversed()
@@ -157,7 +158,8 @@ class AnimeSailProvider : MainAPI() {
                                     iframe.contains("/race/") -> "Race"
                                     else -> this.name
                                 }
-                            val quality = Regex("\\.([0-9]{3,4})\\.").find(link)?.groupValues?.get(1)
+                            val quality =
+                                Regex("\\.([0-9]{3,4})\\.").find(link)?.groupValues?.get(1)
                             callback.invoke(
                                 ExtractorLink(
                                     source = source,
@@ -174,11 +176,11 @@ class AnimeSailProvider : MainAPI() {
                     iframe.startsWith("$mainUrl/utils/player/framezilla/") || iframe.startsWith("https://uservideo.xyz") -> {
                         request(iframe, ref = data).document.select("iframe").attr("src")
                             .let { link ->
-                                loadExtractor(fixUrl(link), mainUrl, callback)
+                                loadExtractor(fixUrl(link), mainUrl, subtitleCallback, callback)
                             }
                     }
                     else -> {
-                        loadExtractor(iframe, mainUrl, callback)
+                        loadExtractor(iframe, mainUrl, subtitleCallback, callback)
                     }
                 }
             }
