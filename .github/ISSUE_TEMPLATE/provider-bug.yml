@@ -1,6 +1,6 @@
 name: 🐞 Provider Issue Report
 description: Report a source issue
-labels: [provider]
+labels: [bug]
 body:
 
   - type: input
