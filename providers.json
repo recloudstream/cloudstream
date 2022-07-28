@@ -264,6 +264,11 @@
         "url": "https://vidembed.cc",
         "status": 1
     },
+    "YomoviesProvider": {
+        "name": "Yomovies",
+        "url": "https://yomovies.vip",
+        "status": 1
+    },
     "WatchAsianProvider": {
         "name": "WatchAsian",
         "url": "https://watchasian.cx",
