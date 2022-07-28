@@ -17,6 +17,8 @@ class NineAnimeProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.Anime)
     override val hasQuickSearch = true
 
+    // taken from https://github.com/saikou-app/saikou/blob/b35364c8c2a00364178a472fccf1ab72f09815b4/app/src/main/java/ani/saikou/parsers/anime/NineAnime.kt
+    // GNU General Public License v3.0 https://github.com/saikou-app/saikou/blob/main/LICENSE.md
     companion object {
         fun getDubStatus(title: String): DubStatus {
             return if (title.contains("(dub)", ignoreCase = true)) {
@@ -31,17 +33,17 @@ class NineAnimeProvider : MainAPI() {
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
         private const val cipherKey = "rTKp3auwu0ULA6II"
 
-        private fun encodeVrf(text: String): String {
+        fun encodeVrf(text: String, mainKey: String): String {
             return encode(
                 encrypt(
-                    cipher(cipherKey, encode(text)),
+                    cipher(mainKey, encode(text)),
                     nineAnimeKey
                 ).replace("""=+$""".toRegex(), "")
             )
         }
 
-        private fun decodeVrf(text: String): String {
-            return decode(cipher(cipherKey, decrypt(text, nineAnimeKey)))
+        fun decodeVrf(text: String, mainKey: String): String {
+            return decode(cipher(mainKey, decrypt(text, nineAnimeKey)))
         }
 
         fun encrypt(input: String, key: String): String {
@@ -129,7 +131,7 @@ class NineAnimeProvider : MainAPI() {
             }
         }
 
-        private fun encode(input: String): String =
+        fun encode(input: String): String =
             java.net.URLEncoder.encode(input, "utf-8").replace("+", "%20")
 
         private fun decode(input: String): String = java.net.URLDecoder.decode(input, "utf-8")
@@ -192,7 +194,7 @@ class NineAnimeProvider : MainAPI() {
     )
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? {
-        val vrf = encodeVrf(query)
+        val vrf = encodeVrf(query, cipherKey)
         val url =
             "$mainUrl/ajax/anime/search?keyword=$query&vrf=$vrf"
         val response = app.get(url).parsedSafe<QuickSearchResponse>()
@@ -207,7 +209,7 @@ class NineAnimeProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        val vrf = encodeVrf(query)
+        val vrf = encodeVrf(query, cipherKey)
         //?language%5B%5D=${if (selectDub) "dubbed" else "subbed"}&
         val url =
             "$mainUrl/filter?keyword=${encode(query)}&vrf=${vrf}&page=1"
@@ -236,7 +238,8 @@ class NineAnimeProvider : MainAPI() {
             ?: throw ErrorLoadingException("Could not find title")
 
         val body =
-            app.get("$mainUrl/ajax/episode/list/$id?vrf=${encodeVrf(id)}").parsed<Response>().html
+            app.get("$mainUrl/ajax/episode/list/$id?vrf=${encodeVrf(id, cipherKey)}")
+                .parsed<Response>().html
 
         val subEpisodes = ArrayList<Episode>()
         val dubEpisodes = ArrayList<Episode>()
@@ -253,7 +256,7 @@ class NineAnimeProvider : MainAPI() {
             ids.getOrNull(1)?.let { dub ->
                 dubEpisodes.add(
                     Episode(
-                        "$mainUrl/ajax/server/list/$dub?vrf=${encodeVrf(dub)}",
+                        "$mainUrl/ajax/server/list/$dub?vrf=${encodeVrf(dub, cipherKey)}",
                         epTitle,
                         episode = epNum
                     )
@@ -262,7 +265,7 @@ class NineAnimeProvider : MainAPI() {
             ids.getOrNull(0)?.let { sub ->
                 subEpisodes.add(
                     Episode(
-                        "$mainUrl/ajax/server/list/$sub?vrf=${encodeVrf(sub)}",
+                        "$mainUrl/ajax/server/list/$sub?vrf=${encodeVrf(sub, cipherKey)}",
                         epTitle,
                         episode = epNum
                     )
@@ -321,7 +324,7 @@ class NineAnimeProvider : MainAPI() {
 
     //TODO 9anime outro into {"status":200,"result":{"url":"","skip_data":{"intro_begin":67,"intro_end":154,"outro_begin":1337,"outro_end":1415,"count":3}},"message":"","messages":[]}
     private suspend fun getEpisodeLinks(id: String): Links? {
-        return app.get("$mainUrl/ajax/server/$id?vrf=${encodeVrf(id)}").parsedSafe()
+        return app.get("$mainUrl/ajax/server/$id?vrf=${encodeVrf(id, cipherKey)}").parsedSafe()
     }
 
     override suspend fun loadLinks(
@@ -338,7 +341,7 @@ class NineAnimeProvider : MainAPI() {
                 val name = it.text()
                 val encodedStreamUrl =
                     getEpisodeLinks(it.attr("data-link-id"))?.result?.url ?: return@apmap
-                val url = decodeVrf(encodedStreamUrl)
+                val url = decodeVrf(encodedStreamUrl, cipherKey)
                 if (!loadExtractor(url, mainUrl, subtitleCallback, callback)) {
                     callback(
                         ExtractorLink(

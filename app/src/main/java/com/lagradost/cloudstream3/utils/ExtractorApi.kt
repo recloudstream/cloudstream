@@ -202,6 +202,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     MwvnVizcloudInfo(),
     VizcloudDigital(),
     VizcloudCloud(),
+    VizcloudSite(),
     VideoVard(),
     VideovardSX(),
     Mp4Upload(),

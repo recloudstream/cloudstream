@@ -22,7 +22,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.video.VideoSize
-import com.lagradost.cloudstream3.APIHolder.getApiFromName
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
@@ -210,6 +210,7 @@ class CS3IPlayer : IPlayer {
     }
 
     var currentSubtitles: SubtitleData? = null
+
     /**
      * @return True if the player should be reloaded
      * */
@@ -353,8 +354,8 @@ class CS3IPlayer : IPlayer {
         var requestSubtitleUpdate: (() -> Unit)? = null
 
         private fun createOnlineSource(link: ExtractorLink): DataSource.Factory {
-            val provider = getApiFromName(link.source)
-            val interceptor = provider.getVideoInterceptor(link)
+            val provider = getApiFromNameNull(link.source)
+            val interceptor = provider?.getVideoInterceptor(link)
 
             val source = if (interceptor == null) {
                 DefaultHttpDataSource.Factory() //TODO USE app.baseClient

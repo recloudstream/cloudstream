@@ -149,18 +149,14 @@ class SettingsLang : PreferenceFragmentCompat() {
 
         getPref(R.string.provider_lang_key)?.setOnPreferenceClickListener {
             activity?.getApiProviderLangSettings()?.let { current ->
-                var allLangs: MutableSet<String> = mutableSetOf()
-                for (api in APIHolder.apis) {
-                    allLangs.add(api.lang)
-                }
-                allLangs = allLangs.sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) }.toMutableSet()
+                val langs = APIHolder.apis.map { it.lang }.toSet().sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) }
 
                 val currentList = ArrayList<Int>()
                 for (i in current) {
-                    currentList.add(allLangs.indexOf(i))
+                    currentList.add(langs.indexOf(i))
                 }
 
-                val names = allLangs.map {
+                val names = langs.map {
                     val emoji = SubtitleHelper.getFlagFromIso(it)
                     val name = SubtitleHelper.fromTwoLettersToLanguage(it)
                     val fullName = "$emoji $name"
