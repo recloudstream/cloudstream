@@ -1,86 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="300dp"
-        android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
-            style="@style/WatchHeaderText"
-            android:layout_margin="0dp"
-            android:paddingTop="10dp"
-            android:text="@string/subtitle_offset_title"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        style="@style/WatchHeaderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="0dp"
+        android:paddingTop="10dp"
+        android:text="@string/subtitle_offset_title" />
 
     <TextView
-            android:id="@+id/subtitle_offset_sub_title"
-            android:layout_gravity="center"
-            tools:text="@string/subtitle_offset_extra_hint_none_format"
-            android:textColor="?attr/grayTextColor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        android:id="@+id/subtitle_offset_sub_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="?attr/grayTextColor"
+        tools:text="@string/subtitle_offset_extra_hint_none_format" />
+
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <ImageView
-                android:id="@+id/subtitle_offset_subtract"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="10dp"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:src="@drawable/baseline_remove_24"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:tint="?attr/white"
-                tools:ignore="ContentDescription" />
+            android:id="@+id/subtitle_offset_subtract_more"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:nextFocusRight="@id/subtitle_offset_subtract"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_keyboard_arrow_left_24"
+            app:tint="?attr/white"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/subtitle_offset_subtract"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:nextFocusLeft="@id/subtitle_offset_subtract_more"
+            android:padding="10dp"
+            android:src="@drawable/baseline_remove_24"
+            app:tint="?attr/white"
+            tools:ignore="ContentDescription" />
+
         <EditText
-                android:layout_weight="20"
-                android:id="@+id/subtitle_offset_input"
-                android:inputType="numberSigned"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/subtitle_offset_hint"
-                tools:ignore="LabelFor" />
+            android:id="@+id/subtitle_offset_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+            android:hint="@string/subtitle_offset_hint"
+            android:inputType="numberSigned"
+            tools:ignore="LabelFor" />
 
         <ImageView
-                android:id="@+id/subtitle_offset_add"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="10dp"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_add_24"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:tint="?attr/white"
-                tools:ignore="ContentDescription" />
+            android:id="@+id/subtitle_offset_add"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:nextFocusRight="@id/subtitle_offset_add_more"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_add_24"
+            app:tint="?attr/white"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/subtitle_offset_add_more"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:nextFocusLeft="@id/subtitle_offset_add"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
+            app:tint="?attr/white"
+            tools:ignore="ContentDescription" />
     </LinearLayout>
+
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_gravity="bottom"
-            android:gravity="bottom|end"
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:gravity="bottom|end"
+        android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
-                style="@style/WhiteButton"
-                android:layout_gravity="center_vertical|end"
-                android:visibility="visible"
-                android:text="@string/sort_apply"
-                android:id="@+id/apply_btt"
-                android:layout_width="wrap_content">
+            android:id="@+id/apply_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/sort_apply"
+            android:visibility="visible">
 
             <requestFocus />
         </com.google.android.material.button.MaterialButton>
 
         <com.google.android.material.button.MaterialButton
-                style="@style/BlackButton"
-                android:layout_gravity="center_vertical|end"
-                android:text="@string/sort_cancel"
-                android:id="@+id/cancel_btt"
-                android:layout_width="wrap_content" />
+            android:id="@+id/cancel_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/sort_cancel" />
     </LinearLayout>
 </LinearLayout>

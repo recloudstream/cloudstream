@@ -352,7 +352,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val cancelButton = dialog.findViewById<TextView>(R.id.cancel_btt)!!
             val input = dialog.findViewById<EditText>(R.id.subtitle_offset_input)!!
             val sub = dialog.findViewById<ImageView>(R.id.subtitle_offset_subtract)!!
+            val subMore = dialog.findViewById<ImageView>(R.id.subtitle_offset_subtract_more)!!
             val add = dialog.findViewById<ImageView>(R.id.subtitle_offset_add)!!
+            val addMore = dialog.findViewById<ImageView>(R.id.subtitle_offset_add_more)!!
             val subTitle = dialog.findViewById<TextView>(R.id.subtitle_offset_sub_title)!!
 
             input.doOnTextChanged { text, _, _, _ ->
@@ -381,6 +383,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             input.text = Editable.Factory.getInstance()?.newEditable(beforeOffset.toString())
 
             val buttonChange = 100L
+            val buttonChangeMore = 1000L
 
             fun changeBy(by: Long) {
                 val current = (input.text?.toString()?.toLongOrNull() ?: 0) + by
@@ -390,9 +393,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             add.setOnClickListener {
                 changeBy(buttonChange)
             }
-
+            addMore.setOnClickListener {
+                changeBy(buttonChangeMore)
+            }
             sub.setOnClickListener {
                 changeBy(-buttonChange)
+            }
+            subMore.setOnClickListener {
+                changeBy(-buttonChangeMore)
             }
 
             dialog.setOnDismissListener {
