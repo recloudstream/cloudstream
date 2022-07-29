@@ -36,6 +36,7 @@
     <string name="duration_format" formatted="true">%d min</string>
 
     <!-- <string name="app_name">CloudStream</string> -->
+    <string name="play_with_app_name">Riproduci con CloudStream</string>
     <string name="title_home">Home</string>
     <string name="title_search">Cerca</string>
     <string name="title_downloads">Scaricati</string>
@@ -62,6 +63,7 @@
     <string name="type_re_watching">Riguardando</string>
 
     <string name="play_movie_button">Riproduci film</string>
+    <string name="play_livestream_button">Riproduci Livestream</string>
     <string name="play_torrent_button">Stream Torrent</string>
     <string name="pick_source">Fonti</string>
     <string name="pick_subtitle">Sottotitoli</string>
@@ -185,7 +187,7 @@
     <string name="backup_failed_error_format">Errore nel backup %s</string>
 
     <string name="search">Cerca</string>
-    <string name="category_account">Accounts e Crediti</string>
+    <string name="category_account">Accounts</string>
     <string name="category_updates">Aggiornamenti e Backup</string>
     <string name="nginx_info_title">Cos\'è Nginx?</string>
     <string name="nginx_info_summary">Nginx è un software che può essere utilizzato per visualizzare i file da un server di proprietà. Fare clic per vedere la guida all\'installazione di Nginx</string>
@@ -204,9 +206,9 @@
     <string name="uprereleases_settings">Aggiorna alle prerelease</string>
     <string name="uprereleases_settings_des">Cerca per aggiornamenti alle prerelease invice di cercare solo le release complete</string>
     <string name="github">GitHub</string>
-    <string name="lightnovel">App di light novel degli stessi sviluppatori</string>
-    <string name="anim">App di anime dagli stessi sviluppatori</string>
-    <string name="discord">Entra Discord</string>
+    <string name="lightnovel">App per Light Novel degli stessi sviluppatori</string>
+    <string name="anim">App per Anime degli stessi sviluppatori</string>
+    <string name="discord">Entra in Discord</string>
     <string name="benene">Dai una banana agli sviluppatori</string>
     <string name="benene_des">Dai una banana</string>
 
@@ -263,6 +265,7 @@
     <string name="torrent">Torrent</string>
     <string name="documentaries">Documentari</string>
     <string name="asian_drama">Drama Asiatici</string>
+    <string name="livestreams">Livestreams</string>
 
     <!--singular-->
     <string name="movies_singular">Film</string>
@@ -273,6 +276,7 @@
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentario</string>
     <string name="asian_drama_singular">Drama Asiatico</string>
+    <string name="live_singular">Livestream</string>
 
     <string name="source_error">Source error</string>
     <string name="remote_error">Remote error</string>
@@ -445,11 +449,14 @@
     <string name="resolution_and_title">Titolo e Risoluzione</string>
     <string name="title">Titolo</string>
     <string name="resolution">Risoluzione</string>
-    <string name="error_invalid_id">ID invalido</string>
+    <string name="error_invalid_id">ID non valido</string>
     <string name="error_invalid_data">Dati non validi</string>
+    <string name="error_invalid_url">Url non valido</string>
     <string name="error">Errore</string>
     <!--<string name="subtitles_remove_captions">Remove closed captions from subtitles</string>-->
     <!--<string name="subtitles_remove_bloat">Remove bloat from subtitles</string>-->
     <!--<string name="extras">Extra</string>-->
     <string name="trailer">Trailer</string>
+    <string name="network_adress_example">Link allo stream</string>
+    <!--<string name="referer">Referer</string>-->
 </resources>
