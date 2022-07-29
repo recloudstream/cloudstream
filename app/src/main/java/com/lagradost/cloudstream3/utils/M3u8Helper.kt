@@ -103,7 +103,7 @@ class M3u8Helper {
         }.filter {
             listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
         }
-        return result.getOrNull(0)
+        return result.lastOrNull()
     }
 
     private fun getParentLink(uri: String): String {
