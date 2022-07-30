@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
@@ -7,6 +8,7 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.APIRepository
@@ -19,45 +21,45 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 
+fun getCurrentLocale(context: Context): String {
+    val res = context.resources
+    // Change locale settings in the app.
+    // val dm = res.displayMetrics
+    val conf = res.configuration
+    return conf?.locale?.language ?: "en"
+}
+
+// idk, if you find a way of automating this it would be great
+// https://www.iemoji.com/view/emoji/1794/flags/antarctica
+// Emoji Character Encoding Data --> C/C++/Java Src
+// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
+val appLanguages = arrayListOf(
+    Triple("", "Spanish", "es"),
+    Triple("", "English", "en"),
+    Triple("", "Viet Nam", "vi"),
+    Triple("", "Dutch", "nl"),
+    Triple("", "French", "fr"),
+    Triple("", "Greek", "el"),
+    Triple("", "Swedish", "sv"),
+    Triple("", "Tagalog", "tl"),
+    Triple("", "Polish", "pl"),
+    Triple("", "Hindi", "hi"),
+    Triple("", "Malayalam", "ml"),
+    Triple("", "Norsk", "no"),
+    Triple("", "German", "de"),
+    Triple("", "Arabic", "ar"),
+    Triple("", "Turkish", "tr"),
+    Triple("", "Macedonian", "mk"),
+    Triple("\uD83C\uDDF5\uD83C\uDDF9", "Portuguese", "pt"),
+    Triple("\uD83C\uDDE7\uD83C\uDDF7", "Brazilian Portuguese", "bp"),
+    Triple("", "Romanian", "ro"),
+    Triple("", "Italian", "it"),
+    Triple("", "Chinese", "zh"),
+    Triple("", "Indonesian", "id"),
+    Triple("", "Czech", "cs"),
+).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
+
 class SettingsLang : PreferenceFragmentCompat() {
-    // idk, if you find a way of automating this it would be great
-    // https://www.iemoji.com/view/emoji/1794/flags/antarctica
-    // Emoji Character Encoding Data --> C/C++/Java Src
-    // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
-    private val languages = arrayListOf(
-        Triple("", "Spanish", "es"),
-        Triple("", "English", "en"),
-        Triple("", "Viet Nam", "vi"),
-        Triple("", "Dutch", "nl"),
-        Triple("", "French", "fr"),
-        Triple("", "Greek", "el"),
-        Triple("", "Swedish", "sv"),
-        Triple("", "Tagalog", "tl"),
-        Triple("", "Polish", "pl"),
-        Triple("", "Hindi", "hi"),
-        Triple("", "Malayalam", "ml"),
-        Triple("", "Norsk", "no"),
-        Triple("", "German", "de"),
-        Triple("", "Arabic", "ar"),
-        Triple("", "Turkish", "tr"),
-        Triple("", "Macedonian", "mk"),
-        Triple("\uD83C\uDDF5\uD83C\uDDF9", "Portuguese", "pt"),
-        Triple("\uD83C\uDDE7\uD83C\uDDF7", "Brazilian Portuguese", "bp"),
-        Triple("", "Romanian", "ro"),
-        Triple("", "Italian", "it"),
-        Triple("", "Chinese", "zh"),
-        Triple("", "Indonesian", "id"),
-        Triple("", "Czech", "cs"),
-    ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
-
-    private fun getCurrentLocale(): String {
-        val res = requireContext().resources
-        // Change locale settings in the app.
-        // val dm = res.displayMetrics
-        val conf = res.configuration
-        return conf?.locale?.language ?: "en"
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_preferred_media_and_lang)
@@ -112,22 +114,21 @@ class SettingsLang : PreferenceFragmentCompat() {
                     .putInt(getString(R.string.prefer_media_type_key), prefValues[it])
                     .apply()
 
-                AcraApplication.removeKey(HOMEPAGE_API)
-                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
+                removeKey(HOMEPAGE_API)
+//                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
         }
 
         getPref(R.string.locale_key)?.setOnPreferenceClickListener {
-            val tempLangs = languages.toMutableList()
+            val tempLangs = appLanguages.toMutableList()
             //if (beneneCount > 100) {
             //    tempLangs.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))
             //}
-            val current = getCurrentLocale()
+            val current = getCurrentLocale(requireContext())
             val languageCodes = tempLangs.map { it.third }
             val languageNames = tempLangs.map { (emoji, name, iso) ->
                 val flag = emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
-
                 "$flag $name"
             }
             val index = languageCodes.indexOf(current)
@@ -149,7 +150,8 @@ class SettingsLang : PreferenceFragmentCompat() {
 
         getPref(R.string.provider_lang_key)?.setOnPreferenceClickListener {
             activity?.getApiProviderLangSettings()?.let { current ->
-                val langs = APIHolder.apis.map { it.lang }.toSet().sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) }
+                val langs = APIHolder.apis.map { it.lang }.toSet()
+                    .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) }
 
                 val currentList = ArrayList<Int>()
                 for (i in current) {
