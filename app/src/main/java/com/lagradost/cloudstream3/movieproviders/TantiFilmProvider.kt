@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 
 class TantifilmProvider : MainAPI() {
     override var lang = "it"
-    override var mainUrl = "https://www.tantifilm.nl"
+    override var mainUrl = "https://tantifilm.autos"
     override var name = "Tantifilm"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -18,9 +18,9 @@ class TantifilmProvider : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        Pair("$mainUrl/watch-genre/serie-tv/page/", "Serie Tv"),
-        Pair("$mainUrl/watch-genre/azione/page/", "Azione"),
-        Pair("$mainUrl/watch-genre/avventura/page/", "Avventura"),
+        Pair("$mainUrl/watch-genre/al-cinema/page/", "Ultimi Film"),
+        Pair("$mainUrl/serie-tv/page/", "Ultime Serie Tv"),
+        Pair("$mainUrl/watch-genre/film-aggiornati/page/", "Ultimi Film Aggiornati"),
     )
 
     override suspend fun getMainPage(

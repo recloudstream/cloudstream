@@ -16,60 +16,37 @@ class CineblogProvider : MainAPI() {
         TvType.Movie,
         TvType.TvSeries,
     )
+    override val mainPage = mainPageOf(
+        Pair("$mainUrl/popolari/page/number/?get=movies", "Film Popolari"),
+        Pair("$mainUrl/popolari/page/number/?get=tv", "Serie Tv Popolari"),
+        Pair("$mainUrl/i-piu-votati/page/number/?get=movies", "Film più votati"),
+        Pair("$mainUrl/i-piu-votati/page/number/?get=tv", "Serie Tv più votate"),
+        Pair("$mainUrl/anno/2022/page/number", "Ultime uscite"),
+    )
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
-        val items = ArrayList<HomePageList>()
-        val urls = listOf(
-            Pair("$mainUrl/genere/azione/", "Azione"),
-            Pair("$mainUrl/genere/avventura/", "Avventura"),
-        )
-        for ((url, name) in urls) {
-            try {
-                val soup = app.get(url).document
-                val home = soup.select("article.item.movies").map {
-                    val title = it.selectFirst("div.data > h3 > a")!!.text().substringBefore("(")
-                    val link = it.selectFirst("div.poster > a")!!.attr("href")
-                    val quality = getQualityFromString(it.selectFirst("span.quality")?.text())
-                    TvSeriesSearchResponse(
-                        title,
-                        link,
-                        this.name,
-                        TvType.Movie,
-                        it.selectFirst("img")!!.attr("src"),
-                        null,
-                        null,
-                        quality = quality
-                    )
-                }
-
-                items.add(HomePageList(name, home))
-            } catch (e: Exception) {
-                logError(e)
-            }
+    override suspend fun getMainPage(
+        page: Int,
+        categoryName: String,
+        categoryData: String
+    ): HomePageResponse {
+        val url = categoryData.replace("number", page.toString())
+        val soup = app.get(url, referer = url.substringBefore("page")).document
+        val home = soup.select("article.item").map {
+            val title = it.selectFirst("div.data > h3 > a")!!.text().substringBefore("(")
+            val link = it.selectFirst("div.poster > a")!!.attr("href")
+            val quality = getQualityFromString(it.selectFirst("span.quality")?.text())
+            TvSeriesSearchResponse(
+                title,
+                link,
+                this.name,
+                TvType.Movie,
+                it.selectFirst("img")!!.attr("src"),
+                null,
+                null,
+                quality = quality
+            )
         }
-        try {
-            val soup = app.get("$mainUrl/serietv/").document
-            val home = soup.select("article.item.tvshows").map {
-                val title = it.selectFirst("div.data > h3 > a")!!.text().substringBefore("(")
-                val link = it.selectFirst("div.poster > a")!!.attr("href")
-                TvSeriesSearchResponse(
-                    title,
-                    link,
-                    this.name,
-                    TvType.Movie,
-                    it.selectFirst("img")!!.attr("src"),
-                    null,
-                    null,
-                )
-            }
-
-            items.add(HomePageList("Serie tv", home))
-        } catch (e: Exception) {
-            logError(e)
-        }
-
-        if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(categoryName, home)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {

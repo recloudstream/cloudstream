@@ -128,10 +128,10 @@
                 <data android:scheme="https" android:host="hdm.to" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="theflix.to" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="streamingcommunity.best" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="www.tantifilm.nl" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="tantifilm.autos" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="cb01.rip" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="altadefinizione.tienda" android:pathPrefix="/"/>
-                <data android:scheme="https" android:host="filmpertutti.love" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="filmpertutti.photo" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="hdmovie2.art" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="http://167.88.14.149" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="149.56.24.226" android:pathPrefix="/"/>

@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ShortLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.nicehttp.NiceResponse
 import org.jsoup.nodes.Element
@@ -14,7 +15,7 @@ import org.jsoup.nodes.Element
 
 class FilmpertuttiProvider : MainAPI() {
     override var lang = "it"
-    override var mainUrl = "https://filmpertutti.love"
+    override var mainUrl = "https://filmpertutti.photo"
     override var name = "Filmpertutti"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -24,9 +25,9 @@ class FilmpertuttiProvider : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        Pair("$mainUrl/category/serie-tv/page/", "Serie Tv"),
-        Pair("$mainUrl/category/film/azione/page/", "Azione"),
-        Pair("$mainUrl/category/film/avventura/page/", "Avventura"),
+        Pair("$mainUrl/category/film/page/", "Film Popolari"),
+        Pair("$mainUrl/category/serie-tv/page/", "Serie Tv Popolari"),
+        Pair("$mainUrl/prime-visioni/", "Ultime uscite"),
     )
 
     override suspend fun getMainPage(
@@ -178,56 +179,6 @@ class FilmpertuttiProvider : MainAPI() {
         }
     }
 
-    // to be updated when UnshortenUrl is ready
-    suspend fun unshorten_linkup(uri: String): String {
-        var r: NiceResponse? = null
-        var uri = uri
-        when {
-            uri.contains("/tv/") -> uri = uri.replace("/tv/", "/tva/")
-            uri.contains("delta") -> uri = uri.replace("/delta/", "/adelta/")
-            (uri.contains("/ga/") || uri.contains("/ga2/")) -> uri =
-                base64Decode(uri.split('/').last()).trim()
-            uri.contains("/speedx/") -> uri =
-                uri.replace("http://linkup.pro/speedx", "http://speedvideo.net")
-            else -> {
-                r = app.get(uri, allowRedirects = true)
-                uri = r.url
-                val link =
-                    Regex("<iframe[^<>]*src=\\'([^'>]*)\\'[^<>]*>").find(r.text)?.value
-                        ?: Regex("""action="(?:[^/]+.*?/[^/]+/([a-zA-Z0-9_]+))">""").find(r.text)?.value
-                        ?: Regex("""href","((.|\\n)*?)"""").findAll(r.text)
-                            .elementAtOrNull(1)?.groupValues?.get(1)
-
-                if (link != null) {
-                    uri = link
-                }
-            }
-        }
-
-        val short = Regex("""^https?://.*?(https?://.*)""").find(uri)?.value
-        if (short != null) {
-            uri = short
-        }
-        if (r == null) {
-            r = app.get(
-                uri,
-                allowRedirects = false
-            )
-            if (r.headers["location"] != null) {
-                uri = r.headers["location"].toString()
-            }
-        }
-        if (uri.contains("snip.")) {
-            if (uri.contains("out_generator")) {
-                uri = Regex("url=(.*)\$").find(uri)!!.value
-            } else if (uri.contains("/decode/")) {
-                uri = app.get(uri, allowRedirects = true).url
-            }
-        }
-        return uri
-    }
-
-
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
@@ -235,16 +186,8 @@ class FilmpertuttiProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         tryParseJson<List<String>>(data)?.apmap { id ->
-            if (id.contains("buckler")) {
-                val id2 = unshorten_linkup(id).trim().replace("/v/", "/e/").replace("/f/", "/e/")
-                loadExtractor(id2, data, subtitleCallback, callback)
-            } else if (id.contains("isecure")) {
-                val doc1 = app.get(id).document
-                val id2 = doc1.selectFirst("iframe")!!.attr("src")
-                loadExtractor(id2, data, subtitleCallback, callback)
-            } else {
-                loadExtractor(id, data, subtitleCallback, callback)
-            }
+            val link = ShortLink.unshorten(id).trim().replace("/v/", "/e/").replace("/f/", "/e/")
+            loadExtractor(link, data, subtitleCallback, callback)
         }
         return true
     }

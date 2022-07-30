@@ -30,6 +30,7 @@ object ShortLink {
     private val nuovoLinkRegex = """nuovolink\.com"""
     private val uprotRegex = """uprot\.net"""
     private val davisonbarkerRegex = """davisonbarker\.pro|lowrihouston\.pro"""
+    private val isecureRegex = """isecure\.link"""
 
     private val shortList = listOf(
         ShortUrl(adflyRegex, "adfly", ::unshortenAdfly),
@@ -39,6 +40,7 @@ object ShortLink {
         ShortUrl(nuovoLinkRegex, "nuovolink", ::unshortenNuovoLink),
         ShortUrl(uprotRegex, "uprot", ::unshortenUprot),
         ShortUrl(davisonbarkerRegex, "uprot", ::unshortenDavisonbarker),
+        ShortUrl(isecureRegex, "isecure", ::unshortenIsecure),
     )
 
     fun isShortLink(url: String): Boolean {
@@ -186,5 +188,9 @@ object ShortLink {
 
     fun unshortenDavisonbarker(uri: String): String {
         return URLDecoder.decode(uri.substringAfter("dest="))
+    }
+    suspend fun unshortenIsecure(uri: String): String {
+        val doc = app.get(uri).document
+        return doc.selectFirst("iframe")?.attr("src")?.trim()?: uri
     }
 }

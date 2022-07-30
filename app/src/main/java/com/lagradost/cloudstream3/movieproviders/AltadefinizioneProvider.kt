@@ -18,8 +18,9 @@ class AltadefinizioneProvider : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        Pair("$mainUrl/azione/page/", "Azione"),
-        Pair("$mainUrl/avventura/page/", "Avventura"),
+        Pair("$mainUrl/cerca/anno/2022/page/", "Ultimi Film"),
+        Pair("$mainUrl/cerca/openload-quality/HD/page/", "Film in HD"),
+        Pair("$mainUrl/cinema/page/", "Ora al cinema")
     )
 
     override suspend fun getMainPage(
