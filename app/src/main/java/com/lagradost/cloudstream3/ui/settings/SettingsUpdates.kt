@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
@@ -31,6 +32,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_updates)
     }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_updates, rootKey)
@@ -38,6 +40,11 @@ class SettingsUpdates : PreferenceFragmentCompat() {
 
         getPref(R.string.backup_key)?.setOnPreferenceClickListener {
             activity?.backup()
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.redo_setup_key)?.setOnPreferenceClickListener {
+            findNavController().navigate(R.id.navigation_setup_language)
             return@setOnPreferenceClickListener true
         }
 
@@ -112,7 +119,11 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             thread {
                 if (!requireActivity().runAutoUpdate(false)) {
                     activity?.runOnUiThread {
-                        CommonActivity.showToast(activity, R.string.no_update_found, Toast.LENGTH_SHORT)
+                        CommonActivity.showToast(
+                            activity,
+                            R.string.no_update_found,
+                            Toast.LENGTH_SHORT
+                        )
                     }
                 }
             }

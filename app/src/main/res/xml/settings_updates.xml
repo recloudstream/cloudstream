@@ -1,49 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
-            android:title="@string/check_for_update"
-            app:summary="@string/app_version"
-            app:key="@string/manual_check_update_key"
-            app:icon="@drawable/ic_baseline_system_update_24" />
+        android:title="@string/check_for_update"
+        app:icon="@drawable/ic_baseline_system_update_24"
+        app:key="@string/manual_check_update_key"
+        app:summary="@string/app_version" />
 
     <Preference
-            android:icon="@drawable/baseline_save_as_24"
-            android:key="@string/backup_key"
-            android:title="@string/backup_settings" />
+        android:icon="@drawable/baseline_save_as_24"
+        android:key="@string/backup_key"
+        android:title="@string/backup_settings" />
 
     <Preference
-            android:icon="@drawable/baseline_restore_page_24"
-            android:key="@string/restore_key"
-            android:title="@string/restore_settings" />
+        android:icon="@drawable/baseline_restore_page_24"
+        android:key="@string/restore_key"
+        android:title="@string/restore_settings" />
 
     <Preference
-            android:key="@string/show_logcat_key"
-            android:title="@string/show_log_cat"
-            android:icon="@drawable/baseline_description_24" />
+        android:icon="@drawable/baseline_description_24"
+        android:key="@string/show_logcat_key"
+        android:title="@string/show_log_cat" />
     <SwitchPreference
-            android:key="acra.disable"
-            android:icon="@drawable/ic_baseline_bug_report_24"
-            android:title="@string/pref_disable_acra"
-            android:summaryOff="@string/bug_report_settings_off"
-            android:summaryOn="@string/bug_report_settings_on"
-            android:defaultValue="false" />
+        android:defaultValue="false"
+        android:icon="@drawable/ic_baseline_bug_report_24"
+        android:key="acra.disable"
+        android:summaryOff="@string/bug_report_settings_off"
+        android:summaryOn="@string/bug_report_settings_on"
+        android:title="@string/pref_disable_acra" />
     <SwitchPreference
-            app:key="@string/auto_update_key"
-            android:title="@string/updates_settings"
-            android:summary="@string/updates_settings_des"
-            app:defaultValue="true"
-            android:icon="@drawable/ic_baseline_notifications_active_24" />
+        android:icon="@drawable/ic_baseline_notifications_active_24"
+        android:summary="@string/updates_settings_des"
+        android:title="@string/updates_settings"
+        app:defaultValue="true"
+        app:key="@string/auto_update_key" />
     <SwitchPreference
-            app:key="@string/prerelease_update_key"
-            android:title="@string/uprereleases_settings"
-            android:summary="@string/uprereleases_settings_des"
-            app:defaultValue="false"
-            android:icon="@drawable/ic_baseline_developer_mode_24" />
+        android:icon="@drawable/ic_baseline_developer_mode_24"
+        android:summary="@string/uprereleases_settings_des"
+        android:title="@string/uprereleases_settings"
+        app:defaultValue="false"
+        app:key="@string/prerelease_update_key" />
     <SwitchPreference
-            android:icon="@drawable/netflix_download"
-            android:key="@string/killswitch_key"
-            android:defaultValue="true"
-            android:summary="@string/killswitch_settings_des"
-            android:title="@string/killswitch_settings" />
+        android:defaultValue="true"
+        android:icon="@drawable/netflix_download"
+        android:key="@string/killswitch_key"
+        android:summary="@string/killswitch_settings_des"
+        android:title="@string/killswitch_settings" />
+    <Preference
+        app:key="@string/redo_setup_key"
+        android:icon="@drawable/ic_baseline_construction_24"
+        android:title="Redo setup process" />
 </PreferenceScreen>

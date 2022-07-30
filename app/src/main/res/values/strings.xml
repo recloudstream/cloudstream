@@ -52,19 +52,20 @@
     <string name="poster_ui_key" translatable="false">poster_ui_key</string>
     <string name="subtitles_encoding_key" translatable="false">subtitles_encoding_key</string>
     <string name="override_site_key" translatable="false">override_site_key</string>
+    <string name="redo_setup_key" translatable="false">redo_setup_key</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
-    <string name="storage_size_format" translatable="false" formatted="true">%s • %sGB</string>
-    <string name="download_size_format" translatable="false" formatted="true">%sMB / %sMB</string>
-    <string name="mb_format" translatable="false" formatted="true">%dMB</string>
-    <string name="episode_name_format" translatable="false" formatted="true">%s %s</string>
-    <string name="ffw_text_format" translatable="false" formatted="true">+%d</string>
-    <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
-    <string name="ffw_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="rating_format" translatable="false" formatted="true">%.1f/10.0</string>
-    <string name="year_format" translatable="false" formatted="true">%d</string>
+    <string name="extra_info_format" formatted="true" translatable="false">%d %s | %sMB</string>
+    <string name="storage_size_format" formatted="true" translatable="false">%s • %sGB</string>
+    <string name="download_size_format" formatted="true" translatable="false">%sMB / %sMB</string>
+    <string name="mb_format" formatted="true" translatable="false">%dMB</string>
+    <string name="episode_name_format" formatted="true" translatable="false">%s %s</string>
+    <string name="ffw_text_format" formatted="true" translatable="false">+%d</string>
+    <string name="rew_text_format" formatted="true" translatable="false">-%d</string>
+    <string name="ffw_text_regular_format" formatted="true" translatable="false">%d</string>
+    <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
+    <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
+    <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">Episode %d will be released in</string>
@@ -558,4 +559,14 @@
     <string name="trailer">Trailer</string>
     <string name="network_adress_example">Link to stream</string>
     <string name="referer">Referer</string>
+    <string name="next">Next</string>
+    <string name="provider_languages_tip">Watch videos in these languages</string>
+    <string name="previous">Previous</string>
+    <string name="skip_setup">Skip setup</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_layout_subtext">Change the look of the app to suit your device</string>
+    <string name="crash_reporting_title">Crash reporting</string>
+    <string name="preferred_media_subtext">What do you want to see</string>
+    <string name="setup_done">Done</string>
 </resources>
