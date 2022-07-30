@@ -148,7 +148,7 @@ class AltadefinizioneProvider : MainAPI() {
         val doc = app.get(data).document
         if (doc.select("div.guardahd-player").isNullOrEmpty()) {
             val videoUrl =
-                doc.select("input").filter { it.hasAttr("data-mirror") }.last().attr("value")
+                doc.select("input").last { it.hasAttr("data-mirror") }.attr("value")
             loadExtractor(videoUrl, data, subtitleCallback, callback)
             doc.select("#mirrors > li > a").forEach {
                 loadExtractor(fixUrl(it.attr("data-target")), data, subtitleCallback, callback)

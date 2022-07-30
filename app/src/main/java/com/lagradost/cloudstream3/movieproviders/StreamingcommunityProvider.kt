@@ -398,7 +398,7 @@ class StreamingcommunityProvider : MainAPI() {
     }
 
 
-    private fun getM3u8Qualities(
+    private suspend fun getM3u8Qualities(
         m3u8Link: String,
         referer: String,
         qualityName: String,

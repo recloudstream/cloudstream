@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.internal.closeQuietly
 import java.io.BufferedInputStream
@@ -1129,7 +1130,9 @@ object VideoDownloadManager {
 
         if (!stream.resume!!) realIndex = 0
         val fileLengthAdd = stream.fileLength!!
-        val tsIterator = m3u8Helper.hlsYield(listOf(m3u8), realIndex)
+        val tsIterator = runBlocking {
+            m3u8Helper.hlsYield(listOf(m3u8), realIndex)
+        }
 
         val displayName = getDisplayName(name, extension)
 

@@ -111,7 +111,7 @@ class FilmpertuttiProvider : MainAPI() {
         if (type == TvType.TvSeries) {
 
             val episodeList = ArrayList<Episode>()
-            document.select("div.accordion-item").filter{it.selectFirst("#season > ul > li.s_title > span")!!.text().isNotEmpty()}.map { element ->
+            document.select("div.accordion-item").filter{ it -> it.selectFirst("#season > ul > li.s_title > span")!!.text().isNotEmpty()}.map { element ->
                 val season =
                     element.selectFirst("#season > ul > li.s_title > span")!!.text().toInt()
                 element.select("div.episode-wrap").map { episode ->
