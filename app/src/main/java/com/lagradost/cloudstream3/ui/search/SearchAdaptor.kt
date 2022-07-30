@@ -27,6 +27,7 @@ class SearchAdapter(
     private val resView: AutofitRecyclerView,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var hasNext : Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layout = if(parent.context.IsBottomLayout()) R.layout.search_result_grid_expanded else R.layout.search_result_grid

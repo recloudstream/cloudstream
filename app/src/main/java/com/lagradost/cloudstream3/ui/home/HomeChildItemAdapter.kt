@@ -24,6 +24,7 @@ class HomeChildItemAdapter(
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isHorizontal: Boolean = false
+    var hasNext : Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layout = overrideLayout

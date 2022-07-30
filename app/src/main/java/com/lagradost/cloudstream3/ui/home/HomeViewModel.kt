@@ -158,9 +158,8 @@ class HomeViewModel : ViewModel() {
 
     val lock: MutableSet<String> = mutableSetOf()
 
-    // this is soo over engineered, but idk how I can make it clean without making the main api harder to use :pensive:
-    fun expand(name: String) = viewModelScope.launch {
-        if (lock.contains(name)) return@launch
+    suspend fun expandAndReturn(name: String) : ExpandableHomepageList? {
+        if (lock.contains(name)) return null
         lock += name
 
         repo?.apply {
@@ -183,11 +182,8 @@ class HomeViewModel : ViewModel() {
                                     "Expanded contained an item that was previously already in the list\n${list.name} = ${this.list.list}\n${newList.name} = ${newList.list}"
                                 }
 
-                                val before = list.list.size
                                 this.list.list += newList.list
                                 this.list.list.distinctBy { it.url } // just to be sure we are not adding the same shit for some reason
-                                expandable[key] = this
-                                val after = list.list.size
                             } ?: debugWarning {
                                 "Expanded an item not in main load named $key, current list is ${expandable.keys}"
                             }
@@ -201,6 +197,13 @@ class HomeViewModel : ViewModel() {
         }
 
         lock -= name
+
+        return expandable[name]
+    }
+
+    // this is soo over engineered, but idk how I can make it clean without making the main api harder to use :pensive:
+    fun expand(name: String) = viewModelScope.launch {
+        expandAndReturn(name)
     }
 
     private fun load(api: MainAPI?) = viewModelScope.launch {

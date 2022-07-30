@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import java.net.URLDecoder
@@ -75,7 +74,6 @@ class AniflixProvider : MainAPI() {
         val token = getToken()
         val url = "$mainUrl/_next/data/$token/search.json?keyword=$query"
         val response = app.get(url)
-        println("resp: $url ===> ${response.text}")
         val searchResponse =
             response.parsedSafe<Search>()
                 ?: throw ErrorLoadingException("No Media")
