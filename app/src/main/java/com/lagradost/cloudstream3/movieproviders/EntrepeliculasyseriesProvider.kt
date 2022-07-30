@@ -1,11 +1,10 @@
 package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
-class EntrepeliculasyseriesProvider:MainAPI() {
+class EntrepeliculasyseriesProvider : MainAPI() {
     override var mainUrl = "https://entrepeliculasyseries.nu"
     override var name = "EntrePeliculasySeries"
     override var lang = "es"
@@ -18,39 +17,35 @@ class EntrepeliculasyseriesProvider:MainAPI() {
     )
     override val vpnStatus = VPNStatus.MightBeNeeded //Due to evoload sometimes not loading
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
-        val items = ArrayList<HomePageList>()
-        val urls = listOf(
-            Pair("$mainUrl/series/", "Series"),
-            Pair("$mainUrl/peliculas/", "Peliculas"),
-            Pair("$mainUrl/anime/", "Animes"),
-        )
+    override val mainPage = mainPageOf(
+        Pair("$mainUrl/series/page/", "Series"),
+        Pair("$mainUrl/peliculas/page/", "Peliculas"),
+        Pair("$mainUrl/anime/page/", "Animes"),
+    )
 
-        for ((url, name) in urls) {
-            try {
-                val soup = app.get(url).document
-                val home = soup.select("ul.list-movie li").map {
-                    val title = it.selectFirst("a.link-title h2")!!.text()
-                    val link = it.selectFirst("a")!!.attr("href")
-                    TvSeriesSearchResponse(
-                        title,
-                        link,
-                        this.name,
-                        if (link.contains("/pelicula/")) TvType.Movie else TvType.TvSeries,
-                        it.selectFirst("a.poster img")!!.attr("src"),
-                        null,
-                        null,
-                    )
-                }
+    override suspend fun getMainPage(
+        page: Int,
+        categoryName: String,
+        categoryData: String
+    ): HomePageResponse {
+        val url = categoryData + page
 
-                items.add(HomePageList(name, home))
-            } catch (e: Exception) {
-                logError(e)
-            }
+        val soup = app.get(url).document
+        val home = soup.select("ul.list-movie li").map {
+            val title = it.selectFirst("a.link-title h2")!!.text()
+            val link = it.selectFirst("a")!!.attr("href")
+            TvSeriesSearchResponse(
+                title,
+                link,
+                this.name,
+                if (link.contains("/pelicula/")) TvType.Movie else TvType.TvSeries,
+                it.selectFirst("a.poster img")!!.attr("src"),
+                null,
+                null,
+            )
         }
 
-        if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(categoryName, home)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -110,7 +105,8 @@ class EntrepeliculasyseriesProvider:MainAPI() {
                 fixUrl(epThumb)
             )
         }
-        return when (val tvType = if (url.contains("/pelicula/")) TvType.Movie else TvType.TvSeries) {
+        return when (val tvType =
+            if (url.contains("/pelicula/")) TvType.Movie else TvType.TvSeries) {
             TvType.TvSeries -> {
                 TvSeriesLoadResponse(
                     title,
@@ -151,8 +147,10 @@ class EntrepeliculasyseriesProvider:MainAPI() {
             val doc = app.get(servers).document
             doc.select("input").apmap {
                 val postkey = it.attr("value")
-                app.post("https://entrepeliculasyseries.nu/r.php",
-                    headers = mapOf("Host" to "entrepeliculasyseries.nu",
+                app.post(
+                    "https://entrepeliculasyseries.nu/r.php",
+                    headers = mapOf(
+                        "Host" to "entrepeliculasyseries.nu",
                         "User-Agent" to USER_AGENT,
                         "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                         "Accept-Language" to "en-US,en;q=0.5",
@@ -165,9 +163,10 @@ class EntrepeliculasyseriesProvider:MainAPI() {
                         "Sec-Fetch-Dest" to "document",
                         "Sec-Fetch-Mode" to "navigate",
                         "Sec-Fetch-Site" to "same-origin",
-                        "Sec-Fetch-User" to "?1",),
+                        "Sec-Fetch-User" to "?1",
+                    ),
                     //params = mapOf(Pair("h", postkey)),
-                    data =  mapOf(Pair("h", postkey)),
+                    data = mapOf(Pair("h", postkey)),
                     allowRedirects = false
                 ).okhttpResponse.headers.values("location").apmap {
                     loadExtractor(it, data, subtitleCallback, callback)

@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.movieproviders
 import androidx.core.text.parseAsHtml
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
@@ -18,40 +17,37 @@ class AltadefinizioneProvider : MainAPI() {
         TvType.Movie
     )
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
-        val items = ArrayList<HomePageList>()
-        val urls = listOf(
-            Pair("$mainUrl/azione/", "Azione"),
-            Pair("$mainUrl/avventura/", "Avventura"),
-        )
-        for ((url, name) in urls) {
-            try {
-                val soup = app.get(url).document
-                val home = soup.select("div.box").map {
-                    val title = it.selectFirst("img")!!.attr("alt")
-                    val link = it.selectFirst("a")!!.attr("href")
-                    val image = mainUrl + it.selectFirst("img")!!.attr("src")
-                    val quality = getQualityFromString(it.selectFirst("span")!!.text())
+    override val mainPage = mainPageOf(
+        Pair("$mainUrl/azione/page/", "Azione"),
+        Pair("$mainUrl/avventura/page/", "Avventura"),
+    )
 
-                    MovieSearchResponse(
-                        title,
-                        link,
-                        this.name,
-                        TvType.Movie,
-                        image,
-                        null,
-                        null,
-                        quality,
-                    )
-                }
+    override suspend fun getMainPage(
+        page: Int,
+        categoryName: String,
+        categoryData: String
+    ): HomePageResponse {
+        val url = categoryData + page
 
-                items.add(HomePageList(name, home))
-            } catch (e: Exception) {
-                logError(e)
-            }
+        val soup = app.get(url).document
+        val home = soup.select("div.box").map {
+            val title = it.selectFirst("img")!!.attr("alt")
+            val link = it.selectFirst("a")!!.attr("href")
+            val image = mainUrl + it.selectFirst("img")!!.attr("src")
+            val quality = getQualityFromString(it.selectFirst("span")!!.text())
+
+            MovieSearchResponse(
+                title,
+                link,
+                this.name,
+                TvType.Movie,
+                image,
+                null,
+                null,
+                quality,
+            )
         }
-        if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(categoryName, home)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
