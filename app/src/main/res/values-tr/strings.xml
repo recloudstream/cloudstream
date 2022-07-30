@@ -1,17 +1,17 @@
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
-    <string name="storage_size_format" translatable="false" formatted="true">%s • %sGB</string>
-    <string name="download_size_format" translatable="false" formatted="true">%sMB / %sMB</string>
-    <string name="mb_format" translatable="false" formatted="true">%dMB</string>
-    <string name="episode_name_format" translatable="false" formatted="true">%s %s</string>
-    <string name="ffw_text_format" translatable="false" formatted="true">+%d</string>
-    <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
-    <string name="ffw_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="rating_format" translatable="false" formatted="true">%.1f/10.0</string>
-    <string name="year_format" translatable="false" formatted="true">%d</string>
+    <string name="extra_info_format" formatted="true" translatable="false">%d %s | %sMB</string>
+    <string name="storage_size_format" formatted="true" translatable="false">%s • %sGB</string>
+    <string name="download_size_format" formatted="true" translatable="false">%sMB / %sMB</string>
+    <string name="mb_format" formatted="true" translatable="false">%dMB</string>
+    <string name="episode_name_format" formatted="true" translatable="false">%s %s</string>
+    <string name="ffw_text_format" formatted="true" translatable="false">+%d</string>
+    <string name="rew_text_format" formatted="true" translatable="false">-%d</string>
+    <string name="ffw_text_regular_format" formatted="true" translatable="false">%d</string>
+    <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
+    <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
+    <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">Bölüm %d şu tarihte yayınlanacak: </string>
@@ -39,6 +39,7 @@
     <string name="duration_format" formatted="true">%d dakika</string>
 
     <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">CloudStream ile oynat</string>
     <string name="title_home">Ana sayfa</string>
     <string name="title_search">Arama</string>
     <string name="title_downloads">İndirilenler</string>
@@ -66,6 +67,7 @@
     <string name="type_re_watching">Yeniden izleniyor</string>
 
     <string name="play_movie_button">Filmi oynat</string>
+    <string name="play_livestream_button">Canlı yayını oynat</string>
     <string name="play_torrent_button">Torrent oynat</string>
     <string name="pick_source">Kaynaklar</string>
     <string name="pick_subtitle">Alt yazılar</string>
@@ -268,6 +270,7 @@
     <string name="documentaries">Belgeseller</string>
     <string name="ova">OVA</string>
     <string name="asian_drama">Asya dramaları</string>
+    <string name="livestreams">Canlı yayınlar</string>
 
     <!--singular-->
     <string name="movies_singular">Film</string>
@@ -278,6 +281,7 @@
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Belgesel</string>
     <string name="asian_drama_singular">Asya draması</string>
+    <string name="live_singular">Canlı yayın</string>
 
     <string name="source_error">Kaynak hatası</string>
     <string name="remote_error">Sunucu hatası</string>
@@ -495,5 +499,15 @@
     <string name="trailer">Fragman</string>
     <string name="network_adress_example">Yayına bağlan</string>
     <string name="referer">Yönlendiren</string>
+    <string name="next">İleri</string>
+    <string name="provider_languages_tip">Videoları bu dillerde izle</string>
+    <string name="previous">Geri</string>
+    <string name="skip_setup">Kurulumu atla</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Merhaba boş parça</string>
+    <string name="app_layout_subtext">Cihazınıza uygun görünümü seçin</string>
+    <string name="crash_reporting_title">Çökme raporları</string>
+    <string name="preferred_media_subtext">Ne izlemek istiyorsunuz?</string>
+    <string name="setup_done">Bitti</string>
 </resources>
 
