@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchQuality
@@ -74,6 +75,18 @@ object DataStoreHelper {
         return getKeys(folder)?.mapNotNull {
             it.removePrefix("$folder/").toIntOrNull()
         }
+    }
+
+    fun deleteAllResumeStateIds() {
+        val folder = "$currentAccount/$RESULT_RESUME_WATCHING"
+        removeKeys(folder)
+    }
+
+    fun deleteAllBookmarkedData() {
+        val folder1 = "$currentAccount/$RESULT_WATCH_STATE"
+        val folder2 = "$currentAccount/$RESULT_WATCH_STATE_DATA"
+        removeKeys(folder1)
+        removeKeys(folder2)
     }
 
     fun getAllResumeStateIds(): List<Int>? {

@@ -23,6 +23,12 @@
         "status": 1,
         "url": "https://altadefinizione.tienda"
     },
+    "AniPlayProvider": {
+        "language": "it",
+        "name": "AniPlay",
+        "status": 1,
+        "url": "https://aniplay.it"
+    },
     "AniflixProvider": {
         "language": "en",
         "name": "Aniflix",

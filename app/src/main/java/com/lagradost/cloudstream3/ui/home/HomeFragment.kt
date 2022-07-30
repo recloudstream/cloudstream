@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.home
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -50,6 +52,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
@@ -91,6 +95,7 @@ import kotlinx.android.synthetic.main.fragment_home.home_watch_holder
 import kotlinx.android.synthetic.main.fragment_home.home_watch_parent_item_title
 import kotlinx.android.synthetic.main.fragment_home.result_error_text
 import kotlinx.android.synthetic.main.fragment_home_tv.*
+import kotlinx.android.synthetic.main.home_episodes_expanded.*
 import java.util.*
 
 const val HOME_BOOKMARK_VALUE_LIST = "home_bookmarked_last_list"
@@ -117,7 +122,7 @@ class HomeFragment : Fragment() {
 
         val errorProfilePic = errorProfilePics.random()
 
-        fun Activity.loadHomepageList(item: HomePageList) {
+        fun Activity.loadHomepageList(item: HomePageList, deleteCallback: (() -> Unit)? = null) {
             val context = this
             val bottomSheetDialogBuilder = BottomSheetDialog(context)
             bottomSheetDialogBuilder.setContentView(R.layout.home_episodes_expanded)
@@ -128,9 +133,43 @@ class HomeFragment : Fragment() {
             val titleHolder =
                 bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
 
+            val delete = bottomSheetDialogBuilder.home_expanded_delete
+            delete.isGone = deleteCallback == null
+            if (deleteCallback != null) {
+                delete.setOnClickListener {
+                    try {
+                        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+                        val dialogClickListener =
+                            DialogInterface.OnClickListener { _, which ->
+                                when (which) {
+                                    DialogInterface.BUTTON_POSITIVE -> {
+                                        deleteCallback.invoke()
+                                        bottomSheetDialogBuilder.dismissSafe(this)
+                                    }
+                                    DialogInterface.BUTTON_NEGATIVE -> {}
+                                }
+                            }
+
+                        builder.setTitle(R.string.delete_file)
+                            .setMessage(
+                                context.getString(R.string.delete_message).format(
+                                    item.name
+                                )
+                            )
+                            .setPositiveButton(R.string.delete, dialogClickListener)
+                            .setNegativeButton(R.string.cancel, dialogClickListener)
+                            .show()
+                    } catch (e: Exception) {
+                        logError(e)
+                        // ye you somehow fucked up formatting did you?
+                    }
+                }
+            }
+
             titleHolder.setOnClickListener {
                 bottomSheetDialogBuilder.dismissSafe(this)
             }
+
 
             // Span settings
             recycle.spanCount = currentSpan
@@ -642,7 +681,10 @@ class HomeFragment : Fragment() {
                         getString(R.string.error_bookmarks_text), //home_bookmarked_parent_item_title?.text?.toString() ?: getString(R.string.error_bookmarks_text),
                         bookmarks
                     )
-                )
+                ) {
+                    deleteAllBookmarkedData()
+                    homeViewModel.loadStoredData(null)
+                }
             }
         }
 
@@ -665,7 +707,10 @@ class HomeFragment : Fragment() {
                             ?: getString(R.string.continue_watching),
                         resumeWatching
                     )
-                )
+                ) {
+                    deleteAllResumeStateIds()
+                    homeViewModel.loadResumeWatching()
+                }
             }
         }
 
