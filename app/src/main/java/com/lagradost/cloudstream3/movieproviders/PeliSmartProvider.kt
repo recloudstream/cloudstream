@@ -25,7 +25,8 @@ class PeliSmartProvider: MainAPI() {
             Pair("$mainUrl/documentales/", "Documentales"),
         )
 
-        for ((url, name) in urls) {
+        // has no inf loading
+        urls.apmap { (url, name) ->
             try {
                 val soup = app.get(url).document
                 val home = soup.select(".description-off").map {

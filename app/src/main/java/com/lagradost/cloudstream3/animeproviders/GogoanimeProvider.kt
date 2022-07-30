@@ -167,7 +167,7 @@ class GogoanimeProvider : MainAPI() {
         }
     }
 
-    override var mainUrl = "https://gogoanime.sk"
+    override var mainUrl = "https://gogoanime.lu"
     override var name = "GogoAnime"
     override val hasQuickSearch = false
     override val hasMainPage = true
@@ -178,52 +178,50 @@ class GogoanimeProvider : MainAPI() {
         TvType.OVA
     )
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
-        val headers = mapOf(
-            "authority" to "ajax.gogo-load.com",
-            "sec-ch-ua" to "\"Google Chrome\";v=\"89\", \"Chromium\";v=\"89\", \";Not A Brand\";v=\"99\"",
-            "accept" to "text/html, */*; q=0.01",
-            "dnt" to "1",
-            "sec-ch-ua-mobile" to "?0",
-            "user-agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36",
-            "origin" to mainUrl,
-            "sec-fetch-site" to "cross-site",
-            "sec-fetch-mode" to "cors",
-            "sec-fetch-dest" to "empty",
-            "referer" to "$mainUrl/"
-        )
-        val parseRegex =
-            Regex("""<li>\s*\n.*\n.*<a\s*href=["'](.*?-episode-(\d+))["']\s*title=["'](.*?)["']>\n.*?img src="(.*?)"""")
+    val headers = mapOf(
+        "authority" to "ajax.gogo-load.com",
+        "sec-ch-ua" to "\"Google Chrome\";v=\"89\", \"Chromium\";v=\"89\", \";Not A Brand\";v=\"99\"",
+        "accept" to "text/html, */*; q=0.01",
+        "dnt" to "1",
+        "sec-ch-ua-mobile" to "?0",
+        "user-agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36",
+        "origin" to mainUrl,
+        "sec-fetch-site" to "cross-site",
+        "sec-fetch-mode" to "cors",
+        "sec-fetch-dest" to "empty",
+        "referer" to "$mainUrl/"
+    )
+    val parseRegex =
+        Regex("""<li>\s*\n.*\n.*<a\s*href=["'](.*?-episode-(\d+))["']\s*title=["'](.*?)["']>\n.*?img src="(.*?)"""")
 
-        val urls = listOf(
-            Pair("1", "Recent Release - Sub"),
-            Pair("2", "Recent Release - Dub"),
-            Pair("3", "Recent Release - Chinese"),
-        )
+    override val mainPage = mainPageOf(
+        Pair("1", "Recent Release - Sub"),
+        Pair("2", "Recent Release - Dub"),
+        Pair("3", "Recent Release - Chinese"),
+    )
 
-        val items = ArrayList<HomePageList>()
-        for (i in urls) {
-            try {
-                val params = mapOf("page" to "1", "type" to i.first)
-                val html = app.get(
-                    "https://ajax.gogo-load.com/ajax/page-recent-release.html",
-                    headers = headers,
-                    params = params
-                )
-                items.add(HomePageList(i.second, (parseRegex.findAll(html.text).map {
-                    val (link, epNum, title, poster) = it.destructured
-                    val isSub = listOf(1, 3).contains(i.first.toInt())
-                    newAnimeSearchResponse(title, link) {
-                        this.posterUrl = poster
-                        addDubStatus(!isSub, epNum.toIntOrNull())
-                    }
-                }).toList()))
-            } catch (e: Exception) {
-                e.printStackTrace()
+    override suspend fun getMainPage(
+        page: Int,
+        categoryName: String,
+        categoryData: String
+    ): HomePageResponse {
+        val params = mapOf("page" to page.toString(), "type" to categoryData)
+        val html = app.get(
+            "https://ajax.gogo-load.com/ajax/page-recent-release.html",
+            headers = headers,
+            params = params
+        )
+        val isSub = listOf(1, 3).contains(categoryData.toInt())
+
+        val home = parseRegex.findAll(html.text).map {
+            val (link, epNum, title, poster) = it.destructured
+            newAnimeSearchResponse(title, link) {
+                this.posterUrl = poster
+                addDubStatus(!isSub, epNum.toIntOrNull())
             }
-        }
-        if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        }.toList()
+
+        return newHomePageResponse(categoryName, home)
     }
 
     override suspend fun search(query: String): ArrayList<SearchResponse> {

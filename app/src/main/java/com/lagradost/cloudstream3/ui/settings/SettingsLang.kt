@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -55,7 +57,7 @@ val appLanguages = arrayListOf(
     Triple("", "Romanian", "ro"),
     Triple("", "Italian", "it"),
     Triple("", "Chinese", "zh"),
-    Triple("", "Indonesian", "id"),
+    Triple("\uD83C\uDDEE\uD83C\uDDE9", "Indonesian", "in"),
     Triple("", "Czech", "cs"),
 ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
@@ -120,13 +122,13 @@ class SettingsLang : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        getPref(R.string.locale_key)?.setOnPreferenceClickListener {
+        getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
             val tempLangs = appLanguages.toMutableList()
             //if (beneneCount > 100) {
             //    tempLangs.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))
             //}
-            val current = getCurrentLocale(requireContext())
-            val languageCodes = tempLangs.map { it.third }
+            val current = getCurrentLocale(pref.context)
+            val languageCodes = tempLangs.map { (_, _, iso) -> iso }
             val languageNames = tempLangs.map { (emoji, name, iso) ->
                 val flag = emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
                 "$flag $name"

@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -19,37 +18,35 @@ class SoaptwoDayProvider : MainAPI() {
         TvType.TvSeries,
     )
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
-        val items = ArrayList<HomePageList>()
-        val urls = listOf(
-            Pair("$mainUrl/movielist/", "Movies"),
-            Pair("$mainUrl/tvlist/", "TV Series"),
-        )
-        for ((url, name) in urls) {
-            try {
-                val soup = app.get(url).document
-                val home =
-                    soup.select("div.container div.row div.col-sm-12.col-lg-12 div.row div.col-sm-12.col-lg-12 .col-xs-6")
-                        .map {
-                            val title = it.selectFirst("h5 a")!!.text()
-                            val link = it.selectFirst("a")!!.attr("href")
-                            TvSeriesSearchResponse(
-                                title,
-                                link,
-                                this.name,
-                                TvType.TvSeries,
-                                fixUrl(it.selectFirst("img")!!.attr("src")),
-                                null,
-                                null,
-                            )
-                        }
+    override val mainPage = mainPageOf(
+        Pair("$mainUrl/movielist?page=", "Movies"),
+        Pair("$mainUrl/tvlist?page=", "TV Series"),
+    )
 
-                items.add(HomePageList(name, home))
-            } catch (e: Exception) {
-                logError(e)
-            }
-        }
-        return HomePageResponse(items)
+    override suspend fun getMainPage(
+        page: Int,
+        categoryName: String,
+        categoryData: String
+    ): HomePageResponse {
+        val url = categoryData + page
+
+        val soup = app.get(url).document
+        val home =
+            soup.select("div.container div.row div.col-sm-12.col-lg-12 div.row div.col-sm-12.col-lg-12 .col-xs-6")
+                .map {
+                    val title = it.selectFirst("h5 a")!!.text()
+                    val link = it.selectFirst("a")!!.attr("href")
+                    TvSeriesSearchResponse(
+                        title,
+                        link,
+                        this.name,
+                        TvType.TvSeries,
+                        fixUrl(it.selectFirst("img")!!.attr("src")),
+                        null,
+                        null,
+                    )
+                }
+        return newHomePageResponse(categoryName, home)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {

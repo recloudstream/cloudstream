@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.Cinestart
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 
@@ -19,39 +18,35 @@ class CinecalidadProvider : MainAPI() {
     )
     override val vpnStatus = VPNStatus.MightBeNeeded //Due to evoload sometimes not loading
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
-        val items = ArrayList<HomePageList>()
-        val urls = listOf(
-            Pair("$mainUrl/ver-serie/", "Series"),
-            Pair("$mainUrl/", "Peliculas"),
-            Pair("$mainUrl/genero-de-la-pelicula/peliculas-en-calidad-4k/", "4K UHD"),
-        )
+    override val mainPage = mainPageOf(
+        Pair("$mainUrl/ver-serie/page/", "Series"),
+        Pair("$mainUrl/page/", "Peliculas"),
+        Pair("$mainUrl/genero-de-la-pelicula/peliculas-en-calidad-4k/page/", "4K UHD"),
+    )
 
-        for ((url, name) in urls) {
-            try {
-                val soup = app.get(url).document
-                val home = soup.select(".item.movies").map {
-                    val title = it.selectFirst("div.in_title")!!.text()
-                    val link = it.selectFirst("a")!!.attr("href")
-                    TvSeriesSearchResponse(
-                        title,
-                        link,
-                        this.name,
-                        if (link.contains("/ver-pelicula/")) TvType.Movie else TvType.TvSeries,
-                        it.selectFirst(".poster.custom img")!!.attr("data-src"),
-                        null,
-                        null,
-                    )
-                }
+    override suspend fun getMainPage(
+        page: Int,
+        categoryName: String,
+        categoryData: String
+    ): HomePageResponse {
+        val url = categoryData + page
 
-                items.add(HomePageList(name, home))
-            } catch (e: Exception) {
-                logError(e)
-            }
+        val soup = app.get(url).document
+        val home = soup.select(".item.movies").map {
+            val title = it.selectFirst("div.in_title")!!.text()
+            val link = it.selectFirst("a")!!.attr("href")
+            TvSeriesSearchResponse(
+                title,
+                link,
+                this.name,
+                if (link.contains("/ver-pelicula/")) TvType.Movie else TvType.TvSeries,
+                it.selectFirst(".poster.custom img")!!.attr("data-src"),
+                null,
+                null,
+            )
         }
 
-        if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(categoryName, home)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
