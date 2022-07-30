@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.common.collect.BiMap
+import com.google.common.collect.HashBiMap
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -138,12 +140,28 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         return false
     }
 
-    /*
-       Fetch subtitles using token authenticated on previous method (see authorize).
-       Returns list of Subtitles which user can select to download (see load).
-    */
+    /**
+     * Some languages do not use the normal country codes on OpenSubtitles
+     * */
+    private val languageExceptions = mapOf(
+        "pt" to "pt-PT"
+    )
+    private fun fixLanguage(language: String?) : String? {
+        return languageExceptions[language] ?: language
+    }
+    // O(n) but good enough, BiMap did not want to work properly
+    private fun fixLanguageReverse(language: String?) : String? {
+        return languageExceptions.entries.firstOrNull { it.value == language }?.key ?: language
+    }
+
+    /**
+     * Fetch subtitles using token authenticated on previous method (see authorize).
+     * Returns list of Subtitles which user can select to download (see load).
+     * */
     override suspend fun search(query: AbstractSubtitleEntities.SubtitleSearch): List<AbstractSubtitleEntities.SubtitleEntity>? {
         throwIfCantDoRequest()
+        val fixedLang = fixLanguage(query.lang)
+
         val imdbId = query.imdb ?: 0
         val queryText = query.query.replace(" ", "+")
         val epNum = query.epNumber ?: 0
@@ -155,8 +173,8 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
 
         val searchQueryUrl = when (imdbId > 0) {
             //Use imdb_id to search if its valid
-            true -> "$host/subtitles?imdb_id=$imdbId&languages=${query.lang}$yearQuery$epQuery$seasonQuery"
-            false -> "$host/subtitles?query=$queryText&languages=${query.lang}$yearQuery$epQuery$seasonQuery"
+            true -> "$host/subtitles?imdb_id=$imdbId&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
+            false -> "$host/subtitles?query=$queryText&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
         }
 
         val req = app.get(
@@ -182,7 +200,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
                 //Use any valid name/title in hierarchy
                 val name = featureDetails?.movieName ?: featureDetails?.title
                 ?: featureDetails?.parentTitle ?: attr.release ?: ""
-                val lang = attr.language ?: ""
+                val lang = fixLanguageReverse(attr.language)?: ""
                 val resEpNum = featureDetails?.episodeNumber ?: query.epNumber
                 val resSeasonNum = featureDetails?.seasonNumber ?: query.seasonNumber
                 val year = featureDetails?.year ?: query.year
