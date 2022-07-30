@@ -32,7 +32,7 @@ class JKAnimeProvider : MainAPI() {
         TvType.Anime,
     )
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val urls = listOf(
             Pair(
                 "$mainUrl/directorio/?filtro=fecha&tipo=TV&estado=1&fecha=none&temporada=none&orden=desc",

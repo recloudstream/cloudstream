@@ -30,7 +30,7 @@ class WcoProvider : MainAPI() {
         TvType.OVA
     )
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val urls = listOf(
             Pair("$mainUrl/ajax/list/recently_updated?type=tv", "Recently Updated Anime"),
             Pair("$mainUrl/ajax/list/recently_updated?type=movie", "Recently Updated Movies"),

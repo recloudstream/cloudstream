@@ -43,6 +43,7 @@ class SearchViewModel : ViewModel() {
         _currentSearch.postValue(emptyList())
     }
 
+    private var currentSearchIndex = 0
     private var onGoingSearch: Job? = null
     fun searchAndCancel(
         query: String,
@@ -50,6 +51,7 @@ class SearchViewModel : ViewModel() {
         ignoreSettings: Boolean = false,
         isQuickSearch: Boolean = false,
     ) {
+        currentSearchIndex++
         onGoingSearch?.cancel()
         onGoingSearch = search(query, providersActive, ignoreSettings, isQuickSearch)
     }
@@ -70,6 +72,7 @@ class SearchViewModel : ViewModel() {
         isQuickSearch: Boolean = false,
     ) =
         viewModelScope.launch {
+            val currentIndex = currentSearchIndex
             if (query.length <= 1) {
                 clearSearch()
                 return@launch
@@ -91,40 +94,44 @@ class SearchViewModel : ViewModel() {
 
             _searchResponse.postValue(Resource.Loading())
 
-            val currentList = ArrayList<OnGoingSearch>()
 
             _currentSearch.postValue(ArrayList())
 
             withContext(Dispatchers.IO) { // This interrupts UI otherwise
+                val currentList = ArrayList<OnGoingSearch>()
+
                 repos.filter { a ->
                     (ignoreSettings || (providersActive.isEmpty() || providersActive.contains(a.name))) && (!isQuickSearch || a.hasQuickSearch)
                 }.apmap { a -> // Parallel
                     val search = if (isQuickSearch) a.quickSearch(query) else a.search(query)
+                    if(currentSearchIndex != currentIndex) return@apmap
                     currentList.add(OnGoingSearch(a.name, search))
                     _currentSearch.postValue(currentList)
                 }
-            }
-            _currentSearch.postValue(currentList)
 
-            val list = ArrayList<SearchResponse>()
-            val nestedList =
-                currentList.map { it.data }
-                    .filterIsInstance<Resource.Success<List<SearchResponse>>>().map { it.value }
+                if(currentSearchIndex != currentIndex) return@withContext // this should prevent rewrite of existing data bug
 
-            // I do it this way to move the relevant search results to the top
-            var index = 0
-            while (true) {
-                var added = 0
-                for (sublist in nestedList) {
-                    if (sublist.size > index) {
-                        list.add(sublist[index])
-                        added++
+                _currentSearch.postValue(currentList)
+                val list = ArrayList<SearchResponse>()
+                val nestedList =
+                    currentList.map { it.data }
+                        .filterIsInstance<Resource.Success<List<SearchResponse>>>().map { it.value }
+
+                // I do it this way to move the relevant search results to the top
+                var index = 0
+                while (true) {
+                    var added = 0
+                    for (sublist in nestedList) {
+                        if (sublist.size > index) {
+                            list.add(sublist[index])
+                            added++
+                        }
                     }
+                    if (added == 0) break
+                    index++
                 }
-                if (added == 0) break
-                index++
-            }
 
-            _searchResponse.postValue(Resource.Success(list))
+                _searchResponse.postValue(Resource.Success(list))
+            }
         }
 }

@@ -64,7 +64,7 @@ class AnimeSaturnProvider : MainAPI() {
 
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val document = app.get(mainUrl).document
         val list = ArrayList<HomePageList>()
         document.select("div.container:has(span.badge-saturn)").forEach {

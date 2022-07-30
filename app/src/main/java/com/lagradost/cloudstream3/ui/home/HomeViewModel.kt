@@ -10,10 +10,12 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.HomePageResponse
+import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.debugWarning
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
@@ -34,15 +36,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.set
 
 class HomeViewModel : ViewModel() {
     private var repo: APIRepository? = null
 
     private val _apiName = MutableLiveData<String>()
     val apiName: LiveData<String> = _apiName
-
-    private val _page = MutableLiveData<Resource<HomePageResponse?>>()
-    val page: LiveData<Resource<HomePageResponse?>> = _page
 
     private val _randomItems = MutableLiveData<List<SearchResponse>?>(null)
     val randomItems: LiveData<List<SearchResponse>?> = _randomItems
@@ -51,8 +51,10 @@ class HomeViewModel : ViewModel() {
         return APIRepository(apis.first { it.hasMainPage })
     }
 
-    private val _availableWatchStatusTypes = MutableLiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>>()
-    val availableWatchStatusTypes: LiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>> = _availableWatchStatusTypes
+    private val _availableWatchStatusTypes =
+        MutableLiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>>()
+    val availableWatchStatusTypes: LiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>> =
+        _availableWatchStatusTypes
     private val _bookmarks = MutableLiveData<Pair<Boolean, List<SearchResponse>>>()
     val bookmarks: LiveData<Pair<Boolean, List<SearchResponse>>> = _bookmarks
 
@@ -143,6 +145,67 @@ class HomeViewModel : ViewModel() {
         onGoingLoad = load(api)
     }
 
+    data class ExpandableHomepageList(
+        var list: HomePageList,
+        var currentPage: Int,
+        var hasNext: Boolean,
+    )
+
+    private val expandable: MutableMap<String, ExpandableHomepageList> = mutableMapOf()
+    private val _page =
+        MutableLiveData<Resource<Map<String, ExpandableHomepageList>>>(Resource.Loading())
+    val page: LiveData<Resource<Map<String, ExpandableHomepageList>>> = _page
+
+    val lock: MutableSet<String> = mutableSetOf()
+
+    suspend fun expandAndReturn(name: String) : ExpandableHomepageList? {
+        if (lock.contains(name)) return null
+        lock += name
+
+        repo?.apply {
+            expandable[name]?.let { current ->
+                debugAssert({ !current.hasNext }) {
+                    "Expand called when not needed"
+                }
+
+                val nextPage = current.currentPage + 1
+                val next = getMainPage(nextPage, mainPage.indexOfFirst { it.name == name })
+                if (next is Resource.Success) {
+                    next.value.filterNotNull().forEach { main ->
+                        main.items.forEach { newList ->
+                            val key = newList.name
+                            expandable[key]?.apply {
+                                hasNext = main.hasNext
+                                currentPage = nextPage
+
+                                debugWarning({ newList.list.any { outer -> this.list.list.any { it.url == outer.url } } }) {
+                                    "Expanded contained an item that was previously already in the list\n${list.name} = ${this.list.list}\n${newList.name} = ${newList.list}"
+                                }
+
+                                this.list.list += newList.list
+                                this.list.list.distinctBy { it.url } // just to be sure we are not adding the same shit for some reason
+                            } ?: debugWarning {
+                                "Expanded an item not in main load named $key, current list is ${expandable.keys}"
+                            }
+                        }
+                    }
+                } else {
+                    current.hasNext = false
+                }
+            }
+            _page.postValue(Resource.Success(expandable))
+        }
+
+        lock -= name
+
+        return expandable[name]
+    }
+
+    // this is soo over engineered, but idk how I can make it clean without making the main api harder to use :pensive:
+    fun expand(name: String) = viewModelScope.launch {
+        expandAndReturn(name)
+    }
+
     private fun load(api: MainAPI?) = viewModelScope.launch {
         repo = if (api != null) {
             APIRepository(api)
@@ -156,35 +219,43 @@ class HomeViewModel : ViewModel() {
         if (repo?.hasMainPage == true) {
             _page.postValue(Resource.Loading())
 
-            val data = repo?.getMainPage()
-            when (data) {
+            when (val data = repo?.getMainPage(1, null)) {
                 is Resource.Success -> {
                     try {
-                        val home = data.value
-                        if (home?.items?.isNullOrEmpty() == false) {
+                        expandable.clear()
+                        data.value.forEach { home ->
+                            home?.items?.forEach { list ->
+                                expandable[list.name] =
+                                    ExpandableHomepageList(list, 1, home.hasNext)
+                            }
+                        }
+                        _page.postValue(Resource.Success(expandable))
+                        val items = data.value.mapNotNull { it?.items }.flatten()
+
+                        //val home = data.value
+                        if (items.isNotEmpty()) {
                             val currentList =
-                                home.items.shuffled().filter { !it.list.isNullOrEmpty() }.flatMap { it.list }
+                                items.shuffled().filter { it.list.isNotEmpty() }
+                                    .flatMap { it.list }
                                     .distinctBy { it.url }
                                     .toList()
 
-                            if (!currentList.isNullOrEmpty()) {
+                            if (currentList.isNotEmpty()) {
                                 val randomItems = currentList.shuffled()
 
                                 _randomItems.postValue(randomItems)
                             }
                         }
-                    } catch (e : Exception) {
+                    } catch (e: Exception) {
                         _randomItems.postValue(emptyList())
                         logError(e)
                     }
                 }
+                is Resource.Failure -> {
+                    _page.postValue(data!!)
+                }
                 else -> Unit
             }
-            data?.let {
-                _page.postValue(it)
-            }
-        } else {
-            _page.postValue(Resource.Success(HomePageResponse(emptyList())))
         }
     }
 
@@ -194,7 +265,7 @@ class HomeViewModel : ViewModel() {
             loadAndCancel(noneApi)
         else if (preferredApiName == randomApi.name || api == null) {
             val validAPIs = context?.filterProviderByPreferredMedia()
-            if(validAPIs.isNullOrEmpty()) {
+            if (validAPIs.isNullOrEmpty()) {
                 loadAndCancel(noneApi)
             } else {
                 val apiRandom = validAPIs.random()

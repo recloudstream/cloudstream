@@ -110,7 +110,7 @@ class AsiaFlixProvider : MainAPI() {
         )
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val headers = mapOf("X-Requested-By" to "asiaflix-web")
         val response = app.get("$apiUrl/dashboard", headers = headers).text
 

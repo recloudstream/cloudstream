@@ -367,8 +367,8 @@
     <string name="actor_background">Pomocniczy</string>
 
     <string name="home_source">Źródło</string>
-
     <string name="home_random">Losowy</string>
+    
     <string name="coming_soon">Już wkrótce…</string>
     <string name="quality_cam">Cam</string>
     <string name="quality_cam_rip">Cam</string>
@@ -391,4 +391,11 @@
     <string name="error">Błąd</string>
     <string name="subtitles_remove_captions">Usuń informacje dla niesłyszących z napisów</string>
     <string name="subtitles_remove_bloat">Usuń nadmiarowe informacje z napisów</string>
+    <string name="next">Dalej</string>
+    <string name="provider_languages_tip">Wyświetlaj filmy w wybranych językach</string>
+    <string name="previous">Cofnij</string>
+    <string name="skip_setup">Pomiń</string>
+    <string name="app_layout_subtext">Dostosuj wygląd aplikacji do urządzenia</string>
+    <string name="preferred_media_subtext">Preferowany rodzaj filmów</string>
+    <string name="setup_done">Gotowe</string>
 </resources>

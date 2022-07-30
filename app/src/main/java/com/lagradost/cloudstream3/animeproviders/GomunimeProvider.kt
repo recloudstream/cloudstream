@@ -46,7 +46,7 @@ class GomunimeProvider : MainAPI() {
         @JsonProperty("html") val html: String
     )
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val urls = listOf(
             Pair("e", "Episode Baru"),
             Pair("c", "Completed"),

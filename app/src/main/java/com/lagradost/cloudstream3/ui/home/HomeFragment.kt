@@ -20,7 +20,6 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -44,11 +43,12 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.search.*
-import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
+import com.lagradost.cloudstream3.utils.AppUtils.setMaxViewPoolSize
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -122,11 +122,27 @@ class HomeFragment : Fragment() {
 
         val errorProfilePic = errorProfilePics.random()
 
-        fun Activity.loadHomepageList(item: HomePageList, deleteCallback: (() -> Unit)? = null) {
+        fun Activity.loadHomepageList(
+            item: HomePageList,
+            deleteCallback: (() -> Unit)? = null,
+        ) {
+            loadHomepageList(
+                expand = HomeViewModel.ExpandableHomepageList(item, 1, false),
+                deleteCallback = deleteCallback,
+                expandCallback = null
+            )
+        }
+
+        fun Activity.loadHomepageList(
+            expand: HomeViewModel.ExpandableHomepageList,
+            deleteCallback: (() -> Unit)? = null,
+            expandCallback: (suspend (String) -> HomeViewModel.ExpandableHomepageList?)? = null
+        ) {
             val context = this
             val bottomSheetDialogBuilder = BottomSheetDialog(context)
             bottomSheetDialogBuilder.setContentView(R.layout.home_episodes_expanded)
             val title = bottomSheetDialogBuilder.findViewById<TextView>(R.id.home_expanded_text)!!
+            val item = expand.list
             title.text = item.name
             val recycle =
                 bottomSheetDialogBuilder.findViewById<AutofitRecyclerView>(R.id.home_expanded_recycler)!!
@@ -179,7 +195,35 @@ class HomeFragment : Fragment() {
                 if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
                     bottomSheetDialogBuilder.dismissSafe(this)
                 }
+            }.apply {
+                hasNext = expand.hasNext
             }
+
+            recycle.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                var expandCount = 0
+                val name = expand.list.name
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                    val adapter = recyclerView.adapter
+                    if (adapter !is SearchAdapter) return
+
+                    val count = adapter.itemCount
+                    val currentHasNext = adapter.hasNext
+                    if (!recyclerView.canScrollVertically(1) && currentHasNext && expandCount != count) {
+                        expandCount = count
+                        ioSafe {
+                            expandCallback?.invoke(name)?.let { newExpand ->
+                                (recyclerView.adapter as? SearchAdapter?)?.apply {
+                                    hasNext = newExpand.hasNext
+                                    updateList(newExpand.list.list)
+                                }
+                            }
+                        }
+                    }
+                }
+            })
 
             val spanListener = { span: Int ->
                 recycle.spanCount = span
@@ -348,8 +392,6 @@ class HomeFragment : Fragment() {
             if (context?.isTvSettings() == true) R.layout.fragment_home_tv else R.layout.fragment_home
         return inflater.inflate(layout, container, false)
     }
-
-    private var currentHomePage: HomePageResponse? = null
 
     private fun toggleMainVisibility(visible: Boolean) {
         home_main_holder?.isVisible = visible
@@ -541,18 +583,11 @@ class HomeFragment : Fragment() {
                     val d = data.value
                     listHomepageItems.clear()
 
-                    currentHomePage = d
+                    // println("ITEMCOUNT: ${d.values.size} ${home_master_recycler?.adapter?.itemCount}")
                     (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(
-                        d?.items?.mapNotNull {
-                            try {
-                                val filter = it.list.filterSearchResponse()
-                                listHomepageItems.addAll(filter)
-                                it.copy(list = filter)
-                            } catch (e: Exception) {
-                                logError(e)
-                                null
-                            }
-                        } ?: listOf())
+                        d.values.toMutableList(),
+                        home_master_recycler
+                    )
 
                     home_loading?.isVisible = false
                     home_loading_error?.isVisible = false
@@ -602,13 +637,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
-        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
-            ParentItemAdapter(mutableListOf(), { callback ->
-                homeHandleSearch(callback)
-            }, { item ->
-                activity?.loadHomepageList(item)
-            })
 
         val toggleList = listOf(
             Pair(home_type_watching_btt, WatchType.WATCHING),
@@ -861,9 +889,22 @@ class HomeFragment : Fragment() {
         context?.fixPaddingStatusbarView(home_statusbar)
         context?.fixPaddingStatusbar(home_loading_statusbar)
 
-
-        home_master_recycler.adapter = adapter
-        home_master_recycler.layoutManager = GridLayoutManager(context, 1)
+        home_master_recycler.adapter =
+            ParentItemAdapter(mutableListOf(), { callback ->
+                homeHandleSearch(callback)
+            }, { item ->
+                activity?.loadHomepageList(item, expandCallback = {
+                    homeViewModel.expandAndReturn(it)
+                })
+            }, { name ->
+                homeViewModel.expand(name)
+            })
+        home_master_recycler?.setMaxViewPoolSize(0, Int.MAX_VALUE)
+        home_master_recycler.layoutManager = object : LinearLayoutManager(context) {
+            override fun supportsPredictiveItemAnimations(): Boolean {
+                return false
+            }
+        } // GridLayoutManager(context, 1).also { it.supportsPredictiveItemAnimations() }
 
         if (context?.isTvSettings() == false) {
             LinearSnapHelper().attachToRecyclerView(home_main_poster_recyclerview) // snap

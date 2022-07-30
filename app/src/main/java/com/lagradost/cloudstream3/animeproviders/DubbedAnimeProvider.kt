@@ -96,7 +96,7 @@ class DubbedAnimeProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val trendingUrl = "$mainUrl/xz/trending.php?_=$unixTimeMS"
         val lastEpisodeUrl = "$mainUrl/xz/epgrid.php?p=1&_=$unixTimeMS"
         val recentlyAddedUrl = "$mainUrl/xz/gridgrabrecent.php?p=1&_=$unixTimeMS"

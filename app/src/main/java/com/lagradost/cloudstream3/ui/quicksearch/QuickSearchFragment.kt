@@ -27,7 +27,6 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageLis
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
-import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.search.SearchViewModel
 import com.lagradost.cloudstream3.utils.UIHelper
@@ -173,7 +172,7 @@ class QuickSearchFragment : Fragment() {
                     updateList(list.map { ongoing ->
                         val ongoingList = HomePageList(
                             ongoing.apiName,
-                            if (ongoing.data is Resource.Success) ongoing.data.value.filterSearchResponse() else ArrayList()
+                            if (ongoing.data is Resource.Success) ongoing.data.value else ArrayList()
                         )
                         ongoingList
                     })

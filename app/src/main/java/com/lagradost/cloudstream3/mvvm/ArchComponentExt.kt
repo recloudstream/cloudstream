@@ -4,12 +4,41 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.bumptech.glide.load.HttpException
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.ErrorLoadingException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException
+
+const val DEBUG_EXCEPTION = "THIS IS A DEBUG EXCEPTION!"
+
+class DebugException(message: String) : Exception("$DEBUG_EXCEPTION\n$message")
+
+inline fun debugException(message: () -> String) {
+    if (BuildConfig.DEBUG) {
+        throw DebugException(message.invoke())
+    }
+}
+
+inline fun debugWarning(message: () -> String) {
+    if (BuildConfig.DEBUG) {
+        logError(DebugException(message.invoke()))
+    }
+}
+
+inline fun debugAssert(assert: () -> Boolean, message: () -> String) {
+    if (BuildConfig.DEBUG && assert.invoke()) {
+        throw DebugException(message.invoke())
+    }
+}
+
+inline fun debugWarning(assert: () -> Boolean, message: () -> String) {
+    if (BuildConfig.DEBUG && assert.invoke()) {
+        logError(DebugException(message.invoke()))
+    }
+}
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
     liveData.observe(this) { it?.let { t -> action(t) } }
@@ -61,11 +90,12 @@ suspend fun <T> suspendSafeApiCall(apiCall: suspend () -> T): T? {
 }
 
 fun <T> safeFail(throwable: Throwable): Resource<T> {
-    val stackTraceMsg = (throwable.localizedMessage ?: "") + "\n\n" + throwable.stackTrace.joinToString(
-        separator = "\n"
-    ) {
-        "${it.fileName} ${it.lineNumber}"
-    }
+    val stackTraceMsg =
+        (throwable.localizedMessage ?: "") + "\n\n" + throwable.stackTrace.joinToString(
+            separator = "\n"
+        ) {
+            "${it.fileName} ${it.lineNumber}"
+        }
     return Resource.Failure(false, null, null, stackTraceMsg)
 }
 
@@ -92,16 +122,31 @@ suspend fun <T> safeApiCall(
                     safeFail(throwable)
                 }
                 is SocketTimeoutException -> {
-                    Resource.Failure(true, null, null, "Connection Timeout\nPlease try again later.")
+                    Resource.Failure(
+                        true,
+                        null,
+                        null,
+                        "Connection Timeout\nPlease try again later."
+                    )
                 }
                 is HttpException -> {
-                    Resource.Failure(false, throwable.statusCode, null, throwable.message ?: "HttpException")
+                    Resource.Failure(
+                        false,
+                        throwable.statusCode,
+                        null,
+                        throwable.message ?: "HttpException"
+                    )
                 }
                 is UnknownHostException -> {
                     Resource.Failure(true, null, null, "Cannot connect to server, try again later.")
                 }
                 is ErrorLoadingException -> {
-                    Resource.Failure(true, null, null, throwable.message ?: "Error loading, try again later.")
+                    Resource.Failure(
+                        true,
+                        null,
+                        null,
+                        throwable.message ?: "Error loading, try again later."
+                    )
                 }
                 is NotImplementedError -> {
                     Resource.Failure(false, null, null, "This operation is not implemented.")

@@ -15,7 +15,7 @@ class ElifilmsProvider : MainAPI() {
         TvType.Movie,
     )
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val newest = app.get(mainUrl).document.selectFirst("a.fav_link.premiera")?.attr("href")
         val urls = listOf(

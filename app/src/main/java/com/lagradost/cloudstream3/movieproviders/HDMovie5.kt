@@ -19,7 +19,7 @@ class HDMovie5 : MainAPI() {
         TvType.TvSeries,
     )
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val doc = app.get(mainUrl).document.select("div.content")
         val list = mapOf(
             "Featured Movies" to "featured",

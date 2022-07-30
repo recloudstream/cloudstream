@@ -44,7 +44,7 @@ class TenshiProvider : MainAPI() {
         }
     }*/
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val soup = app.get(mainUrl, interceptor = ddosGuardKiller).document
         for (section in soup.select("#content > section")) {

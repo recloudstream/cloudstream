@@ -58,7 +58,7 @@ class AnimePaheProvider : MainAPI() {
         TvType.OVA
     )
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         data class Data(
             @JsonProperty("id") val id: Int,
             @JsonProperty("anime_id") val animeId: Int,

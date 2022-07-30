@@ -41,7 +41,7 @@ class CimaNowProvider : MainAPI() {
         )
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
 
         val doc = app.get("$mainUrl/home", headers = mapOf("user-agent" to "MONKE")).document
         val pages = doc.select("section").not("section:contains(أختر وجهتك المفضلة)").not("section:contains(تم اضافته حديثاً)").apmap {

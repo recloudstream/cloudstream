@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
+import androidx.recyclerview.widget.RecyclerView
 import androidx.tvprovider.media.tv.PreviewChannelHelper
 import androidx.tvprovider.media.tv.TvContractCompat
 import androidx.tvprovider.media.tv.WatchNextProgram
@@ -52,6 +53,11 @@ import java.net.URL
 import java.net.URLDecoder
 
 object AppUtils {
+    fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
+        for (i in 0..maxViewTypeId)
+            recycledViewPool.setMaxRecycledViews(i, maxPoolSize)
+    }
+
     //fun Context.deleteFavorite(data: SearchResponse) {
     //    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
     //    normalSafeApiCall {

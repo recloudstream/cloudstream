@@ -426,7 +426,7 @@ class SearchFragment : Fragment() {
                     val newItems = list.map { ongoing ->
                         val ongoingList = HomePageList(
                             ongoing.apiName,
-                            if (ongoing.data is Resource.Success) ongoing.data.value.filterSearchResponse() else ArrayList()
+                            if (ongoing.data is Resource.Success) ongoing.data.value else ArrayList()
                         )
                         ongoingList
                     }

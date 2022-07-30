@@ -39,7 +39,7 @@ class KuronimeProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val document = app.get(mainUrl).document
 
         val homePageList = ArrayList<HomePageList>()
