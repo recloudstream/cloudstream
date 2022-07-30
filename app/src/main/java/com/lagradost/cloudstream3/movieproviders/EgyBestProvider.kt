@@ -41,7 +41,7 @@ class EgyBestProvider : MainAPI() {
         )
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         // url, title
         val doc = app.get(mainUrl).document
         val pages = arrayListOf<HomePageList>()

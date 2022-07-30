@@ -178,7 +178,7 @@ class GogoanimeProvider : MainAPI() {
         TvType.OVA
     )
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val headers = mapOf(
             "authority" to "ajax.gogo-load.com",
             "sec-ch-ua" to "\"Google Chrome\";v=\"89\", \"Chromium\";v=\"89\", \";Not A Brand\";v=\"99\"",

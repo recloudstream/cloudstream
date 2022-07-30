@@ -212,7 +212,7 @@ class NginxProvider : MainAPI() {
     }
 
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val authHeader =
             getAuthHeader()  // call again because it isn't reloaded if in main class and storedCredentials loads after
 

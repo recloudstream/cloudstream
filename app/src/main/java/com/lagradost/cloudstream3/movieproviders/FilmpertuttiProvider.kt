@@ -23,7 +23,7 @@ class FilmpertuttiProvider : MainAPI() {
         TvType.TvSeries
     )
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
             Pair("$mainUrl/category/serie-tv/", "Serie Tv"),

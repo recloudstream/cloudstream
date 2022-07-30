@@ -143,7 +143,7 @@ class TheFlixToProvider : MainAPI() {
     }
 
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val doc = app.get(mainUrl).document
         val scriptText = doc.selectFirst("script[type=application/json]")!!.data()

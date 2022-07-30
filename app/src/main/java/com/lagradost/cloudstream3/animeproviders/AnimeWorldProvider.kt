@@ -130,7 +130,7 @@ class AnimeWorldProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val document = request(mainUrl).document
         val list = ArrayList<HomePageList>()
 

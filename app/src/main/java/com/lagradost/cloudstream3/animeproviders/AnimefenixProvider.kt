@@ -30,7 +30,7 @@ class AnimefenixProvider:MainAPI() {
         else DubStatus.Subbed
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val urls = listOf(
             Pair("$mainUrl/", "Animes"),
             Pair("$mainUrl/animes?type[]=movie&order=default", "Peliculas", ),

@@ -18,7 +18,7 @@ class FilmanProvider : MainAPI() {
         TvType.TvSeries
     )
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val document = app.get(mainUrl).document
         val lists = document.select("#item-list,#series-list")
         val categories = ArrayList<HomePageList>()

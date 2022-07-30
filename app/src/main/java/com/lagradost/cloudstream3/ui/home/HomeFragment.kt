@@ -20,10 +20,8 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
@@ -44,7 +42,6 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.search.*
-import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -349,8 +346,6 @@ class HomeFragment : Fragment() {
         return inflater.inflate(layout, container, false)
     }
 
-    private var currentHomePage: HomePageResponse? = null
-
     private fun toggleMainVisibility(visible: Boolean) {
         home_main_holder?.isVisible = visible
         home_main_poster_recyclerview?.isVisible = visible
@@ -541,18 +536,8 @@ class HomeFragment : Fragment() {
                     val d = data.value
                     listHomepageItems.clear()
 
-                    currentHomePage = d
-                    (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(
-                        d?.items?.mapNotNull {
-                            try {
-                                val filter = it.list.filterSearchResponse()
-                                listHomepageItems.addAll(filter)
-                                it.copy(list = filter)
-                            } catch (e: Exception) {
-                                logError(e)
-                                null
-                            }
-                        } ?: listOf())
+                    // println("ITEMCOUNT: ${d.values.size} ${home_master_recycler?.adapter?.itemCount}")
+                    (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(d.values.toMutableList())
 
                     home_loading?.isVisible = false
                     home_loading_error?.isVisible = false
@@ -602,13 +587,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
-        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
-            ParentItemAdapter(mutableListOf(), { callback ->
-                homeHandleSearch(callback)
-            }, { item ->
-                activity?.loadHomepageList(item)
-            })
 
         val toggleList = listOf(
             Pair(home_type_watching_btt, WatchType.WATCHING),
@@ -861,9 +839,19 @@ class HomeFragment : Fragment() {
         context?.fixPaddingStatusbarView(home_statusbar)
         context?.fixPaddingStatusbar(home_loading_statusbar)
 
-
-        home_master_recycler.adapter = adapter
-        home_master_recycler.layoutManager = GridLayoutManager(context, 1)
+        home_master_recycler.adapter =
+            ParentItemAdapter(mutableListOf(), { callback ->
+                homeHandleSearch(callback)
+            }, { item ->
+                activity?.loadHomepageList(item)
+            }, { name ->
+                homeViewModel.expand(name)
+            })
+        home_master_recycler.layoutManager = object : LinearLayoutManager(context) {
+            override fun supportsPredictiveItemAnimations(): Boolean {
+                return false
+            }
+        }; // GridLayoutManager(context, 1).also { it.supportsPredictiveItemAnimations() }
 
         if (context?.isTvSettings() == false) {
             LinearSnapHelper().attachToRecyclerView(home_main_poster_recyclerview) // snap

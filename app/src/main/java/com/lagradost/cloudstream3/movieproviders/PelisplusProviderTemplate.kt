@@ -142,7 +142,7 @@ open class PelisplusProviderTemplate : MainAPI() {
 
     // This loads the homepage, which is basically a collection of search results with labels.
     // Optional function, but make sure to enable hasMainPage if you program this.
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val urls = homePageUrlList
         val homePageList = ArrayList<HomePageList>()
         // .pmap {} is used to fetch the different pages in parallel

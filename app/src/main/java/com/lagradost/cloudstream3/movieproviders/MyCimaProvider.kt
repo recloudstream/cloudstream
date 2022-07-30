@@ -44,7 +44,7 @@ class MyCimaProvider : MainAPI() {
         )
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         // Title, Url
         val moviesUrl = listOf(
             "Movies" to "$mainUrl/movies/page/" + (0..25).random(),

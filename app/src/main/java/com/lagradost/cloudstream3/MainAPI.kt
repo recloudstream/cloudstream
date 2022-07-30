@@ -376,6 +376,32 @@ data class ProvidersInfoJson(
     @JsonProperty("status") var status: Int,
 )
 
+
+data class MainPageData(
+    val name: String,
+    val data: String,
+)
+
+/** return list of MainPageData with url to name, make for more readable code */
+fun mainPageOf(vararg elements: Pair<String, String>): List<MainPageData> {
+    return elements.map { (url, name) -> MainPageData(name = name, data = url) }
+}
+
+fun newHomePageResponse(
+    name: String,
+    list: List<SearchResponse>,
+    hasNext: Boolean? = null
+): HomePageResponse {
+    return HomePageResponse(
+        listOf(HomePageList(name, list)),
+        hasNext = hasNext ?: list.isNotEmpty()
+    )
+}
+
+fun newHomePageResponse(list: HomePageList, hasNext: Boolean? = null): HomePageResponse {
+    return HomePageResponse(listOf(list), hasNext = hasNext ?: list.list.isNotEmpty())
+}
+
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
 abstract class MainAPI {
     companion object {
@@ -431,8 +457,14 @@ abstract class MainAPI {
     open val vpnStatus = VPNStatus.None
     open val providerType = ProviderType.DirectProvider
 
+    open val mainPage = listOf(MainPageData("", ""))
+
     @WorkerThread
-    open suspend fun getMainPage(): HomePageResponse? {
+    open suspend fun getMainPage(
+        page: Int,
+        categoryName: String,
+        categoryData: String
+    ): HomePageResponse? {
         throw NotImplementedError()
     }
 
@@ -632,7 +664,8 @@ fun TvType.isAnimeOp(): Boolean {
 data class SubtitleFile(val lang: String, val url: String)
 
 data class HomePageResponse(
-    val items: List<HomePageList>
+    val items: List<HomePageList>,
+    val hasNext: Boolean = false
 )
 
 data class HomePageList(

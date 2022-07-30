@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.movieproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.nodes.Element
@@ -41,7 +40,7 @@ class XcineProvider : MainAPI() {
         )
     }
 
-    override suspend fun getMainPage(): HomePageResponse {
+    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
         val document = app.get(mainUrl).document
         val sections = document.select("div.group-film")
         return HomePageResponse(sections.mapNotNull { section ->

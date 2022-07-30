@@ -29,6 +29,7 @@ class APIRepository(val api: MainAPI) {
     val hasMainPage = api.hasMainPage
     val name = api.name
     val mainUrl = api.mainUrl
+    val mainPage = api.mainPage
     val hasQuickSearch = api.hasQuickSearch
 
     suspend fun load(url: String): Resource<LoadResponse> {
@@ -59,9 +60,13 @@ class APIRepository(val api: MainAPI) {
         }
     }
 
-    suspend fun getMainPage(): Resource<HomePageResponse?> {
+    suspend fun getMainPage(page: Int, nameIndex: Int? = null): Resource<List<HomePageResponse?>> {
         return safeApiCall {
-            api.getMainPage() ?: throw ErrorLoadingException()
+            nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
+                listOf(api.getMainPage(page, data.name, data.data))
+            } ?: api.mainPage.apmap { data ->
+                api.getMainPage(page, data.name, data.data)
+            }
         }
     }
 
