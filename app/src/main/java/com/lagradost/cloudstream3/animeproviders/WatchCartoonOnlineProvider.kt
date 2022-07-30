@@ -72,7 +72,7 @@ class WatchCartoonOnlineProvider : MainAPI() {
             ).text
         document = Jsoup.parse(response)
         items = document.select("#catlist-listview2 > ul > li")
-            .filter { it?.text() != null && !it.text().toString().contains("Episode") }
+            .filter { it -> it?.text() != null && !it.text().toString().contains("Episode") }
 
         for (item in items) {
             val titleHeader = item.selectFirst("a")

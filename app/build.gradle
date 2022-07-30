@@ -108,7 +108,7 @@ dependencies {
 
     //implementation "io.karn:khttp-android:0.1.2" //okhttp instead
 //    implementation 'org.jsoup:jsoup:1.13.1'
-//    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1"
 
     implementation "androidx.preference:preference-ktx:1.2.0"
 
@@ -156,7 +156,7 @@ dependencies {
     // Networking
 //    implementation "com.squareup.okhttp3:okhttp:4.9.2"
 //    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1"
-    implementation 'com.github.Blatzar:NiceHttp:0.2.0'
+    implementation 'com.github.Blatzar:NiceHttp:0.3.2'
 
     // Util to skip the URI file fuckery 🙏
     implementation "com.github.tachiyomiorg:unifile:17bec43"

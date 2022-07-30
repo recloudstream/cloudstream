@@ -12,7 +12,7 @@ import kotlin.math.pow
 class M3u8Helper {
     companion object {
         private val generator = M3u8Helper()
-        fun generateM3u8(
+        suspend fun generateM3u8(
             source: String,
             streamUrl: String,
             referer: String,
@@ -116,56 +116,51 @@ class M3u8Helper {
         return !url.contains("https://") && !url.contains("http://")
     }
 
-    fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean?): List<M3u8Stream> {
-        val generate = sequence {
-            val m3u8Parent = getParentLink(m3u8.streamUrl)
-            val response = runBlocking {
-                app.get(m3u8.streamUrl, headers = m3u8.headers).text
-            }
+    suspend fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean?): List<M3u8Stream> {
+        val list = mutableListOf<M3u8Stream>()
 
-            var hasAnyContent = false
-            for (match in QUALITY_REGEX.findAll(response)) {
-                hasAnyContent = true
+        val m3u8Parent = getParentLink(m3u8.streamUrl)
+        val response = app.get(m3u8.streamUrl, headers = m3u8.headers, verify = false).text
 
-                var (quality, m3u8Link, m3u8Link2) = match.destructured
-                if (m3u8Link.isEmpty()) m3u8Link = m3u8Link2
-                if (absoluteExtensionDetermination(m3u8Link) == "m3u8") {
-                    if (isNotCompleteUrl(m3u8Link)) {
-                        m3u8Link = "$m3u8Parent/$m3u8Link"
-                    }
-                    if (quality.isEmpty()) {
-                        println(m3u8.streamUrl)
-                    }
-                    yieldAll(
-                        m3u8Generation(
-                            M3u8Stream(
-                                m3u8Link,
-                                quality.toIntOrNull(),
-                                m3u8.headers
-                            ), false
-                        )
-                    )
+        var hasAnyContent = false
+        for (match in QUALITY_REGEX.findAll(response)) {
+            hasAnyContent = true
+            var (quality, m3u8Link, m3u8Link2) = match.destructured
+            if (m3u8Link.isEmpty()) m3u8Link = m3u8Link2
+            if (absoluteExtensionDetermination(m3u8Link) == "m3u8") {
+                if (isNotCompleteUrl(m3u8Link)) {
+                    m3u8Link = "$m3u8Parent/$m3u8Link"
                 }
-                yield(
+                if (quality.isEmpty()) {
+                    println(m3u8.streamUrl)
+                }
+                list += m3u8Generation(
                     M3u8Stream(
                         m3u8Link,
                         quality.toIntOrNull(),
                         m3u8.headers
-                    )
+                    ), false
                 )
+
             }
-            if (returnThis ?: !hasAnyContent) {
-                yield(
-                    M3u8Stream(
-                        m3u8.streamUrl,
-                        Qualities.Unknown.value,
-                        m3u8.headers
-                    )
-                )
-            }
+            list += M3u8Stream(
+                m3u8Link,
+                quality.toIntOrNull(),
+                m3u8.headers
+            )
+
         }
-        return generate.toList()
+        if (returnThis ?: !hasAnyContent) {
+            list += M3u8Stream(
+                m3u8.streamUrl,
+                Qualities.Unknown.value,
+                m3u8.headers
+            )
+        }
+
+        return list
     }
+
 
     data class HlsDownloadData(
         val bytes: ByteArray,
@@ -174,7 +169,7 @@ class M3u8Helper {
         val errored: Boolean = false
     )
 
-    fun hlsYield(qualities: List<M3u8Stream>, startIndex: Int = 0): Iterator<HlsDownloadData> {
+    suspend fun hlsYield(qualities: List<M3u8Stream>, startIndex: Int = 0): Iterator<HlsDownloadData> {
         if (qualities.isEmpty()) return listOf(
             HlsDownloadData(
                 byteArrayOf(),
@@ -196,7 +191,13 @@ class M3u8Helper {
         val secondSelection = selectBest(streams.ifEmpty { listOf(selected) })
         if (secondSelection != null) {
             val m3u8Response =
-                runBlocking { app.get(secondSelection.streamUrl, headers = headers).text }
+                runBlocking {
+                    app.get(
+                        secondSelection.streamUrl,
+                        headers = headers,
+                        verify = false
+                    ).text
+                }
 
             var encryptionUri: String?
             var encryptionIv = byteArrayOf()
@@ -215,7 +216,7 @@ class M3u8Helper {
 
                 encryptionIv = match.component3().toByteArray()
                 val encryptionKeyResponse =
-                    runBlocking { app.get(encryptionUri, headers = headers) }
+                    runBlocking { app.get(encryptionUri, headers = headers, verify = false) }
                 encryptionData = encryptionKeyResponse.body?.bytes() ?: byteArrayOf()
             }
 
@@ -238,7 +239,8 @@ class M3u8Helper {
 
                     while (lastYield != c) {
                         try {
-                            val tsResponse = runBlocking { app.get(url, headers = headers) }
+                            val tsResponse =
+                                runBlocking { app.get(url, headers = headers, verify = false) }
                             var tsData = tsResponse.body?.bytes() ?: byteArrayOf()
 
                             if (encryptionState) {

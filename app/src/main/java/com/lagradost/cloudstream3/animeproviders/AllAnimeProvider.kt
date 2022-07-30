@@ -312,7 +312,7 @@ class AllAnimeProvider : MainAPI() {
         @JsonProperty("episodeIframeHead") val episodeIframeHead: String
     )
 
-    private fun getM3u8Qualities(
+    private suspend fun getM3u8Qualities(
         m3u8Link: String,
         referer: String,
         qualityName: String,
