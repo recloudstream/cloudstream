@@ -94,6 +94,7 @@ object APIHolder {
             StreamingcommunityProvider(),
             TantifilmProvider(),
             CineblogProvider(),
+            IlGenioDelloStreamingProvider(),
             AltadefinizioneProvider(),
             FilmpertuttiProvider(),
             HDMovie5(),

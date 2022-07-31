@@ -55,7 +55,7 @@ object ShortLink {
         while (true) {
             val oldurl = currentUrl
             val domain =
-                URI(currentUrl).host ?: throw IllegalArgumentException("No domain found in URI!")
+                URI(currentUrl.trim()).host ?: throw IllegalArgumentException("No domain found in URI!")
             currentUrl = shortList.firstOrNull {
                 it.regex.find(domain) != null || type == it.type
             }?.function?.let { it(currentUrl) } ?: break
@@ -63,7 +63,7 @@ object ShortLink {
                 break
             }
         }
-        return currentUrl
+        return currentUrl.trim()
     }
 
     suspend fun unshortenAdfly(uri: String): String {
