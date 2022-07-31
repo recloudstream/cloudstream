@@ -26,7 +26,7 @@ class KdramaHoodProvider : MainAPI() {
         @JsonProperty("file") val file: String
     )
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val doc = app.get("$mainUrl/home2").document
         val home = ArrayList<HomePageList>()
 

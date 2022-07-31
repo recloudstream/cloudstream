@@ -17,7 +17,7 @@ class PeliSmartProvider: MainAPI() {
     )
     override val vpnStatus = VPNStatus.MightBeNeeded //Due to evoload sometimes not loading
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
             Pair("$mainUrl/peliculas/", "Peliculas"),

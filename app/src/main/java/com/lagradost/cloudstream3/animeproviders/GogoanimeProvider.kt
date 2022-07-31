@@ -202,16 +202,15 @@ class GogoanimeProvider : MainAPI() {
 
     override suspend fun getMainPage(
         page: Int,
-        categoryName: String,
-        categoryData: String
+        request : MainPageRequest
     ): HomePageResponse {
-        val params = mapOf("page" to page.toString(), "type" to categoryData)
+        val params = mapOf("page" to page.toString(), "type" to request.data)
         val html = app.get(
             "https://ajax.gogo-load.com/ajax/page-recent-release.html",
             headers = headers,
             params = params
         )
-        val isSub = listOf(1, 3).contains(categoryData.toInt())
+        val isSub = listOf(1, 3).contains(request.data.toInt())
 
         val home = parseRegex.findAll(html.text).map {
             val (link, epNum, title, poster) = it.destructured
@@ -221,7 +220,7 @@ class GogoanimeProvider : MainAPI() {
             }
         }.toList()
 
-        return newHomePageResponse(categoryName, home)
+        return newHomePageResponse(request.name, home)
     }
 
     override suspend fun search(query: String): ArrayList<SearchResponse> {

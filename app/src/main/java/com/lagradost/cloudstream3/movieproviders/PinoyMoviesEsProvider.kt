@@ -90,7 +90,7 @@ class PinoyMoviesEsProvider : MainAPI() {
         return all
     }
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val all = ArrayList<HomePageList>()
         val document = app.get(mainUrl).document
         val mainbody = document.getElementsByTag("body")

@@ -17,7 +17,7 @@ class KimCartoonProvider : MainAPI() {
         return if (url.startsWith("/")) mainUrl + url else url
     }
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val doc = app.get(mainUrl).document.select("#container")
         val response = mutableListOf(
             HomePageList(

@@ -25,10 +25,9 @@ class TantifilmProvider : MainAPI() {
 
     override suspend fun getMainPage(
         page: Int,
-        categoryName: String,
-        categoryData: String
+        request : MainPageRequest
     ): HomePageResponse {
-        val url = categoryData + page
+        val url = request.data + page
         val soup = app.get(url).document
         val home = soup.select("div.media3").map {
             val title = it.selectFirst("p")!!.text().substringBefore("(")
@@ -43,7 +42,7 @@ class TantifilmProvider : MainAPI() {
                 null,
             )
         }
-        return newHomePageResponse(categoryName, home)
+        return newHomePageResponse(request.name, home)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {

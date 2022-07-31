@@ -14,7 +14,7 @@ class DramaSeeProvider : MainAPI() {
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.AsianDrama)
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val headers = mapOf("X-Requested-By" to mainUrl)
         val document = app.get(mainUrl, headers = headers).document
         val mainbody = document.getElementsByTag("body")

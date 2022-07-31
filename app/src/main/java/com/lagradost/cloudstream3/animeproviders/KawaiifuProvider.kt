@@ -14,7 +14,7 @@ class KawaiifuProvider : MainAPI() {
 
     override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie)
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val resp = app.get(mainUrl).text
 

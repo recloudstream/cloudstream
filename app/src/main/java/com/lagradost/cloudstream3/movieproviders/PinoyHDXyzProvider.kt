@@ -15,7 +15,7 @@ class PinoyHDXyzProvider : MainAPI() {
     override val hasMainPage = true
     override val hasQuickSearch = false
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val all = ArrayList<HomePageList>()
         val document = app.get(mainUrl, referer = mainUrl).document
         val mainbody = document.getElementsByTag("body")

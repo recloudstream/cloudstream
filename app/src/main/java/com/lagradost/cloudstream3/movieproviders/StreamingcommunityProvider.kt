@@ -174,7 +174,7 @@ class StreamingcommunityProvider : MainAPI() {
         val posterMap = hashMapOf<String, String>()
     }
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val document = app.get(mainUrl).document
         document.select("slider-title").subList(0, 3).map { it ->

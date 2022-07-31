@@ -37,7 +37,7 @@ class EjaTv : MainAPI() {
         )
     }
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         // Maybe this based on app language or as setting?
         val language = "English"
         val dataMap = mapOf(

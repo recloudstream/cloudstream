@@ -23,12 +23,8 @@ class AltadefinizioneProvider : MainAPI() {
         Pair("$mainUrl/cinema/page/", "Ora al cinema")
     )
 
-    override suspend fun getMainPage(
-        page: Int,
-        categoryName: String,
-        categoryData: String
-    ): HomePageResponse {
-        val url = categoryData + page
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
+        val url = request.data + page
 
         val soup = app.get(url).document
         val home = soup.select("div.box").map {
@@ -48,7 +44,7 @@ class AltadefinizioneProvider : MainAPI() {
                 quality,
             )
         }
-        return newHomePageResponse(categoryName, home)
+        return newHomePageResponse(request.name, home)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {

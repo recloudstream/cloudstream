@@ -43,7 +43,7 @@ open class SflixProvider : MainAPI() {
     )
     override val vpnStatus = VPNStatus.None
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val html = app.get("$mainUrl/home").text
         val document = Jsoup.parse(html)
 

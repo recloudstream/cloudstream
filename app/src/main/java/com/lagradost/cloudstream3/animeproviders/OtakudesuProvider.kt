@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.util.ArrayList
 
 class OtakudesuProvider : MainAPI() {
     override var mainUrl = "https://otakudesu.watch"
@@ -38,7 +37,7 @@ class OtakudesuProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val document = app.get(mainUrl).document
 
         val homePageList = ArrayList<HomePageList>()

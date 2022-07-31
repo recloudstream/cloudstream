@@ -9,7 +9,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ShortLink
 import com.lagradost.cloudstream3.utils.loadExtractor
-import com.lagradost.nicehttp.NiceResponse
 import org.jsoup.nodes.Element
 
 
@@ -32,10 +31,9 @@ class FilmpertuttiProvider : MainAPI() {
 
     override suspend fun getMainPage(
         page: Int,
-        categoryName: String,
-        categoryData: String
+        request: MainPageRequest
     ): HomePageResponse {
-        val url = categoryData + page
+        val url = request.data + page
 
         val soup = app.get(url).document
         val home = soup.select("ul.posts > li").map {
@@ -58,7 +56,7 @@ class FilmpertuttiProvider : MainAPI() {
             }
         }
 
-        return newHomePageResponse(categoryName, home)
+        return newHomePageResponse(request.name, home)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {

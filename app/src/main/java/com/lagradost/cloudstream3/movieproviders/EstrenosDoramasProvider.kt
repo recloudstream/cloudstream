@@ -28,7 +28,7 @@ class EstrenosDoramasProvider : MainAPI() {
         TvType.AsianDrama,
     )
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val urls = listOf(
             Pair(mainUrl, "Últimas series"),
             Pair("$mainUrl/category/peliculas", "Películas"),

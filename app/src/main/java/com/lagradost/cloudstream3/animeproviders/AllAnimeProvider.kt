@@ -104,7 +104,7 @@ class AllAnimeProvider : MainAPI() {
         @JsonProperty("__typename") val _typename: String? = null
     )
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
 //            Pair(

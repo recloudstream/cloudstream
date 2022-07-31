@@ -196,7 +196,7 @@ open class TmdbProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
 
         // SAME AS DISCOVER IT SEEMS
 //        val popularSeries = tmdb.tvService().popular(1, "en-US").execute().body()?.results?.map {

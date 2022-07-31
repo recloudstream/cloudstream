@@ -39,7 +39,7 @@ class TocanimeProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val document = app.get(mainUrl).document
 
         val homePageList = ArrayList<HomePageList>()

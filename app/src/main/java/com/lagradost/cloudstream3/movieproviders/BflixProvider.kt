@@ -23,7 +23,7 @@ open class BflixProvider : MainAPI() {
 
     //override val uniqueId: Int by lazy { "BflixProvider".hashCode() }
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val soup = app.get("$mainUrl/home").document
         val testa = listOf(

@@ -22,7 +22,7 @@ class AnimeflvIOProvider:MainAPI() {
         TvType.OVA,
         TvType.Anime,
     )
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
             Pair("$mainUrl/series", "Series actualizadas",),

@@ -148,10 +148,9 @@ class NineAnimeProvider : MainAPI() {
 
     override suspend fun getMainPage(
         page: Int,
-        categoryName: String,
-        categoryData: String
+        request: MainPageRequest
     ): HomePageResponse {
-        val url = categoryData + page
+        val url = request.data + page
         val home = Jsoup.parse(
             app.get(
                 url
@@ -175,7 +174,7 @@ class NineAnimeProvider : MainAPI() {
             }
         }
 
-        return newHomePageResponse(categoryName, home)
+        return newHomePageResponse(request.name, home)
     }
 
     data class Response(
@@ -238,9 +237,10 @@ class NineAnimeProvider : MainAPI() {
         val title = (info.selectFirst(".title") ?: info.selectFirst(".d-title"))?.text()
             ?: throw ErrorLoadingException("Could not find title")
 
-        val body =
-            app.get("$mainUrl/ajax/episode/list/$id?vrf=${encodeVrf(id, cipherKey)}")
-                .parsed<Response>().html
+        val vrf = encodeVrf(id, cipherKey)
+        val req = app.get("$mainUrl/ajax/episode/list/$id?vrf=$vrf")
+        val body = req.parsedSafe<Response>()?.html
+            ?: throw ErrorLoadingException("Could not parse json with cipherKey=$cipherKey code=${req.code}")
 
         val subEpisodes = ArrayList<Episode>()
         val dubEpisodes = ArrayList<Episode>()

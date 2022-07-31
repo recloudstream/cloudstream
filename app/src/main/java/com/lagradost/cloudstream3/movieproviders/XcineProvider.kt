@@ -40,7 +40,7 @@ class XcineProvider : MainAPI() {
         )
     }
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val document = app.get(mainUrl).document
         val sections = document.select("div.group-film")
         return HomePageResponse(sections.mapNotNull { section ->

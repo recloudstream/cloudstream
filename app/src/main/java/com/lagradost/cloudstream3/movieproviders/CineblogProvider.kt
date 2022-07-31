@@ -26,10 +26,9 @@ class CineblogProvider : MainAPI() {
 
     override suspend fun getMainPage(
         page: Int,
-        categoryName: String,
-        categoryData: String
+        request : MainPageRequest
     ): HomePageResponse {
-        val url = categoryData.replace("number", page.toString())
+        val url = request.data.replace("number", page.toString())
         val soup = app.get(url, referer = url.substringBefore("page")).document
         val home = soup.select("article.item").map {
             val title = it.selectFirst("div.data > h3 > a")!!.text().substringBefore("(")
@@ -46,7 +45,7 @@ class CineblogProvider : MainAPI() {
                 quality = quality
             )
         }
-        return newHomePageResponse(categoryName, home)
+        return newHomePageResponse(request.name, home)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {

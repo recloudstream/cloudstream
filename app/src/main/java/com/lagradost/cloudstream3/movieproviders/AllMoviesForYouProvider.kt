@@ -27,7 +27,7 @@ class AllMoviesForYouProvider : MainAPI() {
         TvType.TvSeries
     )
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val items = ArrayList<HomePageList>()
         val soup = app.get(mainUrl).document
         val urls = listOf(

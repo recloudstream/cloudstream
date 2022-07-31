@@ -14,7 +14,7 @@ class IHaveNoTvProvider : MainAPI() {
 
     override val supportedTypes = setOf(TvType.Documentary)
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         // Uhh, I am too lazy to scrape the "latest documentaries" and "recommended documentaries",
         // so I am just scraping 3 random categories
         val allCategories = listOf(

@@ -63,9 +63,9 @@ class APIRepository(val api: MainAPI) {
     suspend fun getMainPage(page: Int, nameIndex: Int? = null): Resource<List<HomePageResponse?>> {
         return safeApiCall {
             nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
-                listOf(api.getMainPage(page, data.name, data.data))
+                listOf(api.getMainPage(page, MainPageRequest(data.name, data.data)))
             } ?: api.mainPage.apmap { data ->
-                api.getMainPage(page, data.name, data.data)
+                api.getMainPage(page, MainPageRequest(data.name, data.data))
             }
         }
     }

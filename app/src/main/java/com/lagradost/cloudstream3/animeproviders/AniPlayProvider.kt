@@ -114,7 +114,7 @@ class AniPlayProvider : MainAPI() {
         @JsonProperty("videoUrl") val url: String
     )
 
-    override suspend fun getMainPage(page: Int, categoryName: String, categoryData: String): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val response = app.get("$mainUrl/api/home/latest-episodes?page=0").parsed<List<ApiMainPageAnime>>()
 
         val results = response.map{
