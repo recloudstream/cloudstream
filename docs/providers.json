@@ -278,6 +278,12 @@
         "status": 1,
         "url": "https://94.103.82.88"
     },
+    "IlGenioDelloStreamingProvider": {
+        "language": "it",
+        "name": "IlGenioDelloStreaming",
+        "status": 1,
+        "url": "https://ilgeniodellostreaming.quest"
+    },
     "JKAnimeProvider": {
         "language": "es",
         "name": "JKAnime",
