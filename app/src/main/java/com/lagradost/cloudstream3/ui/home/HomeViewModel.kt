@@ -158,7 +158,7 @@ class HomeViewModel : ViewModel() {
 
     val lock: MutableSet<String> = mutableSetOf()
 
-    suspend fun expandAndReturn(name: String) : ExpandableHomepageList? {
+    suspend fun expandAndReturn(name: String): ExpandableHomepageList? {
         if (lock.contains(name)) return null
         lock += name
 
@@ -256,6 +256,8 @@ class HomeViewModel : ViewModel() {
                 }
                 else -> Unit
             }
+        } else {
+            _page.postValue(Resource.Success(emptyMap()))
         }
     }
 
