@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,16 +8,18 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
+import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider
 import com.lagradost.cloudstream3.animeproviders.NineAnimeProvider
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.player.IGenerator
-import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
-import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.FillerEpisodeCheck
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.*
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -55,7 +58,19 @@ data class ResultData(
     val yearText: UiText?,
     val nextAiringDate: UiText?,
     val nextAiringEpisode: UiText?,
+    val playMovieText: UiText?,
+    val plotHeaderText: UiText,
 )
+
+fun txt(status: DubStatus?): UiText? {
+    return txt(
+        when (status) {
+            DubStatus.Dubbed -> R.string.app_dubbed_text
+            DubStatus.Subbed -> R.string.app_subbed_text
+            else -> null
+        }
+    )
+}
 
 fun LoadResponse.toResultData(repo: APIRepository): ResultData {
     debugAssert({ repo.name == apiName }) {
@@ -101,6 +116,20 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
     }
 
     return ResultData(
+        plotHeaderText = txt(
+            when (this.type) {
+                TvType.Torrent -> R.string.torrent_plot
+                else -> R.string.result_plot
+            }
+        ),
+        playMovieText = txt(
+            when (this.type) {
+                TvType.Live -> R.string.play_livestream_button
+                TvType.Torrent -> R.string.play_torrent_button
+                TvType.Movie, TvType.AnimeMovie -> R.string.play_movie_button
+                else -> null
+            }
+        ),
         nextAiringDate = nextAiringDate,
         nextAiringEpisode = nextAiringEpisode,
         posterImage = img(
@@ -174,6 +203,8 @@ class ResultViewModel2 : ViewModel() {
     /** map<dub, map<season, List<episode>>> */
     private var currentEpisodes: Map<EpisodeIndexer, List<ResultEpisode>> = mapOf()
     private var currentRanges: Map<EpisodeIndexer, List<EpisodeRange>> = mapOf()
+    private var currentMeta: SyncAPI.SyncResult? = null
+    private var currentSync: Map<String, String>? = null
     private var currentIndex: EpisodeIndexer? = null
     private var currentRange: EpisodeRange? = null
     private var currentShowFillers: Boolean = false
@@ -193,20 +224,42 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData(Resource.Loading())
     val episodes: LiveData<Resource<List<ResultEpisode>>> = _episodes
 
-    private val _episodesCount: MutableLiveData<Int> =
-        MutableLiveData(0)
-    val episodesCount: LiveData<Int> = _episodesCount
+    private val _episodesCountText: MutableLiveData<UiText?> =
+        MutableLiveData(null)
+    val episodesCountText: LiveData<UiText?> = _episodesCountText
 
     private val _trailers: MutableLiveData<List<TrailerData>> = MutableLiveData(mutableListOf())
     val trailers: LiveData<List<TrailerData>> = _trailers
 
-    private val _dubStatus: MutableLiveData<DubStatus?> = MutableLiveData(null)
-    val dubStatus: LiveData<DubStatus?> = _dubStatus
 
-    private val _dubSubSelections: MutableLiveData<List<DubStatus>> = MutableLiveData(emptyList())
-    val dubSubSelections: LiveData<List<DubStatus>> = _dubSubSelections
+    private val _dubSubSelections: MutableLiveData<List<Pair<UiText?, DubStatus>>> =
+        MutableLiveData(emptyList())
+    val dubSubSelections: LiveData<List<Pair<UiText?, DubStatus>>> = _dubSubSelections
+
+    private val _rangeSelections: MutableLiveData<List<Pair<UiText?, EpisodeRange>>> = MutableLiveData(emptyList())
+    val rangeSelections: LiveData<List<Pair<UiText?, EpisodeRange>>> = _rangeSelections
+
+    private val _seasonSelections: MutableLiveData<List<Pair<UiText?, Int>>> = MutableLiveData(emptyList())
+    val seasonSelections: LiveData<List<Pair<UiText?, Int>>> = _seasonSelections
+
+
+    private val _recommendations: MutableLiveData<List<SearchResponse>> =
+        MutableLiveData(emptyList())
+    val recommendations: LiveData<List<SearchResponse>> = _recommendations
+
+    private val _selectedRange: MutableLiveData<UiText?> =
+        MutableLiveData(null)
+    val selectedRange: LiveData<UiText?> = _selectedRange
+
+    private val _selectedSeason: MutableLiveData<UiText?> =
+        MutableLiveData(null)
+    val selectedSeason: LiveData<UiText?> = _selectedSeason
+
+    private val _selectedDubStatus: MutableLiveData<UiText?> = MutableLiveData(null)
+    val selectedDubStatus: LiveData<UiText?> = _selectedDubStatus
 
     companion object {
+        const val TAG = "RVM2"
         private const val EPISODE_RANGE_SIZE = 50
         private const val EPISODE_RANGE_OVERLOAD = 60
 
@@ -324,6 +377,102 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
+    private suspend fun applyMeta(
+        resp: LoadResponse,
+        meta: SyncAPI.SyncResult?,
+        syncs: Map<String, String>? = null
+    ): Pair<LoadResponse, Boolean> {
+        if (meta == null) return resp to false
+        var updateEpisodes = false
+        val out = resp.apply {
+            Log.i(ResultViewModel.TAG, "applyMeta")
+
+            duration = duration ?: meta.duration
+            rating = rating ?: meta.publicScore
+            tags = tags ?: meta.genres
+            plot = if (plot.isNullOrBlank()) meta.synopsis else plot
+            posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
+            actors = actors ?: meta.actors
+
+            if (this is EpisodeResponse) {
+                nextAiring = nextAiring ?: meta.nextAiring
+            }
+
+            for ((k, v) in syncs ?: emptyMap()) {
+                syncData[k] = v
+            }
+
+            val realRecommendations = ArrayList<SearchResponse>()
+            val apiNames = listOf(GogoanimeProvider().name, NineAnimeProvider().name)
+            meta.recommendations?.forEach { rec ->
+                apiNames.forEach { name ->
+                    realRecommendations.add(rec.copy(apiName = name))
+                }
+            }
+
+            recommendations = recommendations?.union(realRecommendations)?.toList()
+                ?: realRecommendations
+
+            argamap({
+                addTrailer(meta.trailers)
+            }, {
+                if (this !is AnimeLoadResponse) return@argamap
+                val map =
+                    Kitsu.getEpisodesDetails(getMalId(), getAniListId(), isResponseRequired = false)
+                if (map.isNullOrEmpty()) return@argamap
+                updateEpisodes = DubStatus.values().map { dubStatus ->
+                    val current =
+                        this.episodes[dubStatus]?.mapIndexed { index, episode ->
+                            episode.apply {
+                                this.episode = this.episode ?: (index + 1)
+                            }
+                        }?.sortedBy { it.episode ?: 0 }?.toMutableList()
+                    if (current.isNullOrEmpty()) return@map false
+                    val episodeNumbers = current.map { ep -> ep.episode!! }
+                    var updateCount = 0
+                    map.forEach { (episode, node) ->
+                        episodeNumbers.binarySearch(episode).let { index ->
+                            current.getOrNull(index)?.let { currentEp ->
+                                current[index] = currentEp.apply {
+                                    updateCount++
+                                    val currentBack = this
+                                    this.description = this.description ?: node.description?.en
+                                    this.name = this.name ?: node.titles?.canonical
+                                    this.episode = this.episode ?: node.num ?: episodeNumbers[index]
+                                    this.posterUrl = this.posterUrl ?: node.thumbnail?.original?.url
+                                }
+                            }
+                        }
+                    }
+                    this.episodes[dubStatus] = current
+                    updateCount > 0
+                }.any { it }
+            })
+        }
+        return out to updateEpisodes
+    }
+
+    fun setMeta(meta: SyncAPI.SyncResult, syncs: Map<String, String>?) =
+        viewModelScope.launch {
+            Log.i(TAG, "setMeta")
+            currentMeta = meta
+            currentSync = syncs
+            val (value, updateEpisodes) = Coroutines.ioWork {
+                currentResponse?.let { resp ->
+                    return@ioWork applyMeta(resp, meta, syncs)
+                }
+                return@ioWork null to null
+            }
+
+            postSuccessful(
+                value ?: return@launch,
+                currentRepo ?: return@launch,
+                updateEpisodes ?: return@launch,
+                false
+            )
+        }
+
+
     private suspend fun updateFillers(name: String) {
         fillers =
             try {
@@ -341,6 +490,10 @@ class ResultViewModel2 : ViewModel() {
 
     fun changeRange(range: EpisodeRange) {
         postEpisodeRange(currentIndex, range)
+    }
+
+    fun changeSeason(season: Int) {
+        postEpisodeRange(currentIndex?.copy(season = season), currentRange)
     }
 
     private fun getEpisodes(indexer: EpisodeIndexer, range: EpisodeRange): List<ResultEpisode> {
@@ -377,8 +530,33 @@ class ResultViewModel2 : ViewModel() {
             return
         }
 
+        val size = currentEpisodes[indexer]?.size
+
+        _episodesCountText.postValue(
+            txt(
+                R.string.episode_format,
+                if (size == 1) R.string.episode else R.string.episodes,
+                size
+            )
+        )
+
         currentIndex = indexer
         currentRange = range
+
+        _selectedSeason.postValue(
+            when (indexer.season) {
+                0 -> txt(R.string.no_season)
+                else -> txt(R.string.season_format, R.string.season, indexer.season) //TODO FIX
+            }
+        )
+        _selectedRange.postValue(
+            if ((currentRanges[indexer]?.size ?: 0) > 1) {
+                txt(R.string.episodes_range, range.startEpisode, range.endEpisode)
+            } else {
+                null
+            }
+        )
+        _selectedDubStatus.postValue(txt(indexer.dubStatus))
 
         //TODO SET KEYS
         preferStartEpisode = range.startEpisode
@@ -587,9 +765,12 @@ class ResultViewModel2 : ViewModel() {
 
     // this instantly updates the metadata on the page
     private fun postPage(loadResponse: LoadResponse, apiRepository: APIRepository) {
+        _recommendations.postValue(loadResponse.recommendations ?: emptyList())
         _page.postValue(Resource.Success(loadResponse.toResultData(apiRepository)))
         _trailers.postValue(loadResponse.trailers)
     }
+
+    fun hasLoaded() = currentResponse != null
 
     fun load(
         url: String,
@@ -647,7 +828,9 @@ class ResultViewModel2 : ViewModel() {
                     _page.postValue(data)
                 }
                 is Resource.Success -> {
-                    val loadResponse = data.value
+                    val loadResponse = Coroutines.ioWork {
+                        applyMeta(data.value, currentMeta, currentSync).first
+                    }
                     val mainId = loadResponse.getId()
 
                     AcraApplication.setKey(

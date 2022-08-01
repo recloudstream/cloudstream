@@ -7,6 +7,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
@@ -18,7 +19,12 @@ sealed class UiText {
     ) : UiText()
 
     fun asStringNull(context: Context?): String? {
-        return asString(context ?: return null)
+        try {
+            return asString(context ?: return null)
+        } catch (e: Exception) {
+            logError(e)
+            return null
+        }
     }
 
     fun asString(context: Context): String {

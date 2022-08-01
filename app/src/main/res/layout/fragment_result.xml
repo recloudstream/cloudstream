@@ -290,15 +290,15 @@
 
                         <androidx.cardview.widget.CardView
                                 android:id="@+id/result_poster_holder"
-                                android:layout_width="100dp"
-                                android:layout_height="140dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 app:cardCornerRadius="@dimen/rounded_image_radius">
 
                             <ImageView
                                     android:id="@+id/result_poster"
 
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
+                                    android:layout_width="100dp"
+                                    android:layout_height="140dp"
                                     android:contentDescription="@string/result_poster_img_des"
                                     android:foreground="@drawable/outline_drawable"
                                     android:scaleType="centerCrop"

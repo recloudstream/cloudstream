@@ -21,7 +21,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
@@ -39,7 +38,6 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getId
-import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
@@ -84,7 +82,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFileName
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import kotlinx.android.synthetic.main.fragment_result.*
@@ -95,10 +92,8 @@ import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.android.synthetic.main.trailer_custom_layout.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 const val START_ACTION_NORMAL = 0
 const val START_ACTION_RESUME_LATEST = 1
@@ -458,11 +453,6 @@ class ResultFragment : ResultTrailerPlayer() {
         0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
     private lateinit var viewModel: ResultViewModel2 //by activityViewModels()
     private lateinit var syncModel: SyncViewModel
-    private var currentHeaderName: String? = null
-    private var currentType: TvType? = null
-    private var currentEpisodes: List<ResultEpisode>? = null
-    private var downloadButton: EasyDownloadButton? = null
-    private var syncdata: Map<String, String>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -488,13 +478,6 @@ class ResultFragment : ResultTrailerPlayer() {
             PanelsChildGestureRegionObserver.Provider.get().unregister(it)
         }
         super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        //requireActivity().viewModelStore.clear() // REMEMBER THE CLEAR
-
-
-        super.onDestroy()
     }
 
     override fun onResume() {
@@ -562,52 +545,6 @@ class ResultFragment : ResultTrailerPlayer() {
 
     var startAction: Int? = null
     private var startValue: Int? = null
-
-    private fun setFormatText(textView: TextView?, @StringRes format: Int, arg: Any?) {
-        // java.util.IllegalFormatConversionException: f != java.lang.Integer
-        // This can fail with malformed formatting
-        normalSafeApiCall {
-            if (arg == null) {
-                textView?.isVisible = false
-            } else {
-                val text = context?.getString(format)?.format(arg)
-                if (text == null) {
-                    textView?.isVisible = false
-                } else {
-                    textView?.isVisible = true
-                    textView?.text = text
-                }
-            }
-        }
-    }
-
-    private fun setDuration(duration: Int?) {
-        setFormatText(result_meta_duration, R.string.duration_format, duration)
-    }
-
-    private fun setShow(showStatus: ShowStatus?) {
-        val status = when (showStatus) {
-            null -> null
-            ShowStatus.Ongoing -> R.string.status_ongoing
-            ShowStatus.Completed -> R.string.status_completed
-        }
-
-        if (status == null) {
-            result_meta_status?.isVisible = false
-        } else {
-            context?.getString(status)?.let {
-                result_meta_status?.text = it
-            }
-        }
-    }
-
-    private fun setYear(year: Int?) {
-        setFormatText(result_meta_year, R.string.year_format, year)
-    }
-
-    private fun setRating(rating: Int?) {
-        setFormatText(result_meta_rating, R.string.rating_format, rating?.div(1000f))
-    }
 
     var currentTrailers: List<ExtractorLink> = emptyList()
     var currentTrailerIndex = 0
@@ -1339,54 +1276,7 @@ class ResultFragment : ResultTrailerPlayer() {
         result_episode_select?.isFocusableInTouchMode = context?.isTvSettings() == true
         result_dub_select?.isFocusableInTouchMode = context?.isTvSettings() == true
 
-        observe(viewModel.selectedSeason) { season ->
-            result_season_button?.text = fromIndexToSeasonText(season)
-        }
 
-        observe(viewModel.seasonSelections) { seasonList ->
-            result_season_button?.visibility = if (seasonList.size <= 1) GONE else VISIBLE.also {
-
-                // If the season button is visible the result season button will be next focus down
-                if (result_series_parent?.isVisible == true)
-                    setFocusUpAndDown(result_resume_series_button, result_season_button)
-                else
-                    setFocusUpAndDown(result_bookmark_button, result_season_button)
-            }
-
-            result_season_button?.setOnClickListener {
-                result_season_button?.popupMenuNoIconsAndNoStringRes(
-                    items = seasonList
-                        .map { (name, season) ->
-                            Pair(
-                                season ?: -2,
-                                name ?: fromIndexToSeasonText(season)
-                            )
-                        },
-                ) {
-                    val id = this.itemId
-
-                    viewModel.changeSeason(if (id == -2) null else id)
-                }
-            }
-        }
-
-        observe(viewModel.selectedRange) { range ->
-            result_episode_select?.text = range
-        }
-
-        observe(viewModel.rangeOptions) { range ->
-            episodeRanges = range
-            result_episode_select?.visibility = if (range.size <= 1) GONE else VISIBLE.also {
-
-                // If Season button is invisible then the bookmark button next focus is episode select
-                if (result_season_button?.isVisible != true) {
-                    if (result_series_parent?.isVisible == true)
-                        setFocusUpAndDown(result_resume_series_button, result_episode_select)
-                    else
-                        setFocusUpAndDown(result_bookmark_button, result_episode_select)
-                }
-            }
-        }
 
         context?.let { ctx ->
             val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
@@ -1546,6 +1436,7 @@ class ResultFragment : ResultTrailerPlayer() {
             result_overlapping_panels?.setStartPanelLockState(if (closed) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
         }
 
+        /*
         observe(viewModel.episodes) { episodeList ->
             lateFixDownloadButton(episodeList.size <= 1) // movies can have multible parts but still be *movies* this will fix this
             var isSeriesVisible = false
@@ -1666,7 +1557,7 @@ class ResultFragment : ResultTrailerPlayer() {
             startAction = null
             startValue = null
         }
-
+*/
         observe(viewModel.episodes) { episodes ->
             when (episodes) {
                 is Resource.Failure -> {
@@ -1689,25 +1580,91 @@ class ResultFragment : ResultTrailerPlayer() {
             }
         }
 
-        observe(viewModel.dubStatus) { status ->
-            result_dub_select?.apply {
-                isVisible = status != null
-                status?.toString()?.let {
-                    text = it
+        observe(viewModel.selectedSeason) { text ->
+            result_season_button?.setText(text)
+
+            // If the season button is visible the result season button will be next focus down
+            if (result_season_button?.isVisible == true)
+                if (result_series_parent?.isVisible == true)
+                    setFocusUpAndDown(result_resume_series_button, result_season_button)
+                else
+                    setFocusUpAndDown(result_bookmark_button, result_season_button)
+        }
+
+        observe(viewModel.selectedDubStatus) { status ->
+            result_dub_select?.setText(status)
+
+            if (result_dub_select?.isVisible == true)
+                if (result_season_button?.isVisible != true && result_episode_select?.isVisible != true) {
+                    if (result_series_parent?.isVisible == true)
+                        setFocusUpAndDown(result_resume_series_button, result_dub_select)
+                    else
+                        setFocusUpAndDown(result_bookmark_button, result_dub_select)
                 }
-            }
+        }
+
+        observe(viewModel.selectedRange) { range ->
+            result_episode_select.setText(range)
+
+            // If Season button is invisible then the bookmark button next focus is episode select
+            if (result_episode_select?.isVisible == true)
+                if (result_season_button?.isVisible != true) {
+                    if (result_series_parent?.isVisible == true)
+                        setFocusUpAndDown(result_resume_series_button, result_episode_select)
+                    else
+                        setFocusUpAndDown(result_bookmark_button, result_episode_select)
+                }
         }
 
 //        val preferDub = context?.getApiDubstatusSettings()?.all { it == DubStatus.Dubbed } == true
 
         observe(viewModel.dubSubSelections) { range ->
-            result_dub_select?.visibility = if (range.size <= 1) GONE else VISIBLE
+            result_dub_select.setOnClickListener { view ->
+                view?.context?.let { ctx ->
+                    view.popupMenuNoIconsAndNoStringRes(range
+                        .mapNotNull { (text, status) ->
+                            Pair(
+                                status.ordinal,
+                                text?.asStringNull(ctx) ?: return@mapNotNull null
+                            )
+                        }) {
+                        viewModel.changeDubStatus(DubStatus.values()[itemId])
+                    }
+                }
+            }
+        }
 
-            if (result_season_button?.isVisible != true && result_episode_select?.isVisible != true) {
-                if (result_series_parent?.isVisible == true)
-                    setFocusUpAndDown(result_resume_series_button, result_dub_select)
-                else
-                    setFocusUpAndDown(result_bookmark_button, result_dub_select)
+        observe(viewModel.rangeSelections) { range ->
+            result_episode_select.setOnClickListener { view ->
+                view?.context?.let { ctx ->
+                    val names = range
+                        .mapNotNull { (text, r) ->
+                            r to (text?.asStringNull(ctx) ?: return@mapNotNull null)
+                        }
+
+                    view.popupMenuNoIconsAndNoStringRes(names.mapIndexed { index, (_, name) ->
+                        index to name
+                    }) {
+                        viewModel.changeRange(names[itemId].first)
+                    }
+                }
+            }
+        }
+
+        observe(viewModel.seasonSelections) { seasonList ->
+            result_season_button?.setOnClickListener { view ->
+                view?.context?.let { ctx ->
+                    val names = seasonList
+                        .mapNotNull { (text, r) ->
+                            r to (text?.asStringNull(ctx) ?: return@mapNotNull null)
+                        }
+
+                    view.popupMenuNoIconsAndNoStringRes(names.mapIndexed { index, (_, name) ->
+                        index to name
+                    }) {
+                        viewModel.changeSeason(names[itemId].first)
+                    }
+                }
             }
         }
 
@@ -1716,48 +1673,20 @@ class ResultFragment : ResultTrailerPlayer() {
             if (hasFocus) result_bookmark_button?.requestFocus()
         }
 
-        result_dub_select.setOnClickListener {
-            val ranges = dubRange
-            if (ranges != null) {
-                it.popupMenuNoIconsAndNoStringRes(ranges
-                    .map { status ->
-                        Pair(
-                            status.ordinal,
-                            status.toString()
-                        )
-                    }
-                    .toList()) {
-                    viewModel.changeDubStatus(DubStatus.values()[itemId])
-                }
-            }
-        }
-
-        result_episode_select?.setOnClickListener {
-            val ranges = episodeRanges
-            if (ranges != null) {
-                it.popupMenuNoIconsAndNoStringRes(ranges.mapIndexed { index, s -> Pair(index, s) }
-                    .toList()) {
-                    viewModel.changeRange(itemId)
-                }
-            }
-        }
-
         result_sync_set_score?.setOnClickListener {
             syncModel.publishUserData()
         }
 
-        observe(viewModel.episodesCount) { count ->
-            if (count < 0) {
-                result_episodes_text?.isVisible = false
-            } else {
-                // result_episodes_text?.isVisible = true
-                result_episodes_text?.text =
-                    "$count ${if (count == 1) getString(R.string.episode) else getString(R.string.episodes)}"
-            }
+        observe(viewModel.episodesCountText) { count ->
+            result_episodes_text.setText(count)
         }
 
-        observe(viewModel.id) {
-            currentId = it
+        observe(viewModel.trailers) { trailers ->
+            setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
+        }
+
+        observe(viewModel.recommendations) { recommendations ->
+            setRecommendations(recommendations, null)
         }
 
         observe(viewModel.page) { data ->
@@ -1778,16 +1707,10 @@ class ResultFragment : ResultTrailerPlayer() {
                     result_meta_rating.setText(d.ratingText)
                     result_description.setTextHtml(d.plotText)
                     result_cast_text.setText(d.actorsText)
-                    setRecommendations.setText(d.nextAiringEpisode)
+                    result_next_airing.setText(d.nextAiringEpisode)
                     result_next_airing_time.setText(d.nextAiringDate)
 
                     result_poster.setImage(d.posterImage)
-
-                    if(!d.posterUrl.isNullOrBlank()) {
-                        result_poster?.setImage(d.posterUrl, d.posterHeaders)
-                    } else {
-                        result_poster?.setImageResource(R.drawable.default_cover)
-                    }
 
 
                     result_cast_items?.isVisible = d.actors != null
@@ -1821,11 +1744,6 @@ class ResultFragment : ResultTrailerPlayer() {
                         }
                     }
 
-                    setRecommendations(d.recommendations, null)
-                    setActors(d.actors)
-                    setNextEpisode(if (d is EpisodeResponse) d.nextAiring else null)
-                    setTrailers(d.trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
-
                     if (syncModel.addSyncs(d.syncData)) {
                         syncModel.updateMetaAndUser()
                         syncModel.updateSynced()
@@ -1833,70 +1751,20 @@ class ResultFragment : ResultTrailerPlayer() {
                         syncModel.addFromUrl(d.url)
                     }
 
-                    result_meta_site?.text = d.apiName
-                    val posterImageLink = d.posterUrl
-                    if (!posterImageLink.isNullOrEmpty()) {
+                    result_play_movie.setText(d.playMovieText)
 
-                        //result_poster_blur?.setImageBlur(posterImageLink, 10, 3, d.posterHeaders)
-                        //Full screen view of Poster image
-                        if (context?.isTrueTvSettings() == false) // Poster not clickable on tv
-                            result_poster_holder?.setOnClickListener {
-                                try {
-                                    context?.let { ctx ->
-                                        runBlocking {
-                                            val sourceBuilder = AlertDialog.Builder(ctx)
-                                            sourceBuilder.setView(R.layout.result_poster)
-
-                                            val sourceDialog = sourceBuilder.create()
-                                            sourceDialog.show()
-
-                                            sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
-                                                ?.apply {
-                                                    setImage(posterImageLink)
-                                                    setOnClickListener {
-                                                        sourceDialog.dismissSafe()
-                                                    }
-                                                }
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    logError(e)
-                                }
-                            }
-
-                    } else {
-                        result_poster?.setImageResource(R.drawable.default_cover)
-                        //result_poster_blur?.setImageResource(R.drawable.default_cover)
-                    }
-
-                    result_poster_holder?.visibility = VISIBLE
-
-                    result_play_movie?.text =
-                        if (d.typeText == TvType.Live) getString(R.string.play_livestream_button) else getString(
-                            R.string.play_movie_button
-                        )
-                    //result_plot_header?.text =
-                    //    if (d.type == TvType.Torrent) getString(R.string.torrent_plot) else getString(R.string.result_plot)
-                    val syno = d.plot
-                    if (!syno.isNullOrEmpty()) {
-                        result_description?.setOnClickListener {
+                    result_description?.setOnClickListener { view ->
+                        view.context?.let { ctx ->
                             val builder: AlertDialog.Builder =
-                                AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
-                            builder.setMessage(syno.html())
-                                .setTitle(if (d.typeText == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
+                                AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                            builder.setMessage(d.plotText.asString(ctx).html())
+                                .setTitle(d.plotHeaderText.asString(ctx))
                                 .show()
                         }
-                        result_description?.text = syno.html()
-                    } else {
-                        result_description?.text =
-                            if (d.typeText == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(
-                                R.string.normal_no_plot
-                            )
                     }
 
+
                     result_tag?.removeAllViews()
-                    //result_tag_holder?.visibility = GONE
-                    // result_status.visibility = GONE
 
                     d.comingSoon.let { soon ->
                         result_coming_soon?.isVisible = soon
@@ -1905,7 +1773,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
                     val tags = d.tags
                     result_tag_holder?.isVisible = tags.isNotEmpty()
-                    if (tags.isNotEmpty())  {
+                    if (tags.isNotEmpty()) {
                         //result_tag_holder?.visibility = VISIBLE
                         val isOnTv = context?.isTrueTvSettings() == true
                         for ((index, tag) in tags.withIndex()) {
@@ -1918,6 +1786,8 @@ class ResultFragment : ResultTrailerPlayer() {
                         }
                     }
 
+                    //TODO FIX
+                    /*
                     if (d.typeText.isMovieType()) {
                         val hasDownloadSupport = api.hasDownloadSupport
                         lateFixDownloadButton(true)
@@ -1941,11 +1811,6 @@ class ResultFragment : ResultTrailerPlayer() {
                             handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
                             return@setOnLongClickListener true
                         }
-
-//                            result_options.setOnClickListener {
-//                                val card = currentEpisodes?.first() ?: return@setOnClickListener
-//                                handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
-//                            }
 
                         result_movie_progress_downloaded_holder?.isVisible = hasDownloadSupport
                         if (hasDownloadSupport) {
@@ -2045,19 +1910,7 @@ class ResultFragment : ResultTrailerPlayer() {
                     } else {
                         lateFixDownloadButton(false)
                     }
-
-
-                    when (d) {
-                        is AnimeLoadResponse -> {
-
-                            // val preferEnglish = true
-                            //val titleName = (if (preferEnglish) d.engName else d.japName) ?: d.name
-                            val titleName = d.name
-                            result_title.text = titleName
-                            //result_toolbar.title = titleName
-                        }
-                        else -> result_title.text = d.name
-                    }
+                    */
                 }
                 is Resource.Failure -> {
                     result_error_text.text = url?.plus("\n") + data.errorString
@@ -2091,7 +1944,7 @@ class ResultFragment : ResultTrailerPlayer() {
             val tempUrl = url
             if (tempUrl != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(tempUrl, apiName, showFillers)
+                    viewModel.load(tempUrl, apiName, showFillers, DubStatus.Dubbed, 0, 0) //TODO FIX
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
@@ -2124,9 +1977,9 @@ class ResultFragment : ResultTrailerPlayer() {
                     result_meta_site?.isFocusable = false
                 }
 
-                if (restart || viewModel.result.value == null) {
+                if (restart || !viewModel.hasLoaded()) {
                     //viewModel.clear()
-                    viewModel.load(tempUrl, apiName, showFillers)
+                    viewModel.load(tempUrl, apiName, showFillers, DubStatus.Dubbed, 0, 0) //TODO FIX
                 }
             }
         }
