@@ -111,7 +111,8 @@ data class ResultEpisode(
     val name: String?,
     val poster: String?,
     val episode: Int,
-    val season: Int?,
+    val seasonIndex: Int?,  // this is the "season" index used season names
+    val season: Int?, // this is the display
     val data: String,
     val apiName: String,
     val id: Int,
@@ -146,6 +147,7 @@ fun buildResultEpisode(
     name: String? = null,
     poster: String? = null,
     episode: Int,
+    seasonIndex: Int? = null,
     season: Int? = null,
     data: String,
     apiName: String,
@@ -163,6 +165,7 @@ fun buildResultEpisode(
         name,
         poster,
         episode,
+        seasonIndex,
         season,
         data,
         apiName,
@@ -453,7 +456,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
     private var currentLoadingCount =
         0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
-    private lateinit var viewModel: ResultViewModel //by activityViewModels()
+    private lateinit var viewModel: ResultViewModel2 //by activityViewModels()
     private lateinit var syncModel: SyncViewModel
     private var currentHeaderName: String? = null
     private var currentType: TvType? = null
@@ -467,7 +470,7 @@ class ResultFragment : ResultTrailerPlayer() {
         savedInstanceState: Bundle?,
     ): View? {
         viewModel =
-            ViewModelProvider(this)[ResultViewModel::class.java]
+            ViewModelProvider(this)[ResultViewModel2::class.java]
         syncModel =
             ViewModelProvider(this)[SyncViewModel::class.java]
 
@@ -701,77 +704,6 @@ class ResultFragment : ResultTrailerPlayer() {
         if (!LoadResponse.isTrailersEnabled) return
         currentTrailers = trailers?.sortedBy { -it.quality } ?: emptyList()
         loadTrailer()
-    }
-
-    private fun setNextEpisode(nextAiring: NextAiring?) {
-        result_next_airing_holder?.isVisible =
-            if (nextAiring == null || nextAiring.episode <= 0 || nextAiring.unixTime <= unixTime) {
-                false
-            } else {
-                val seconds = nextAiring.unixTime - unixTime
-                val days = TimeUnit.SECONDS.toDays(seconds)
-                val hours: Long = TimeUnit.SECONDS.toHours(seconds) - days * 24
-                val minute =
-                    TimeUnit.SECONDS.toMinutes(seconds) - TimeUnit.SECONDS.toHours(seconds) * 60
-                // val second =
-                //    TimeUnit.SECONDS.toSeconds(seconds) - TimeUnit.SECONDS.toMinutes(seconds) * 60
-                try {
-                    val ctx = context
-                    if (ctx == null) {
-                        false
-                    } else {
-                        when {
-                            days > 0 -> {
-                                ctx.getString(R.string.next_episode_time_day_format).format(
-                                    days,
-                                    hours,
-                                    minute
-                                )
-                            }
-                            hours > 0 -> ctx.getString(R.string.next_episode_time_hour_format)
-                                .format(
-                                    hours,
-                                    minute
-                                )
-                            minute > 0 -> ctx.getString(R.string.next_episode_time_min_format)
-                                .format(
-                                    minute
-                                )
-                            else -> null
-                        }?.also { text ->
-                            result_next_airing_time?.text = text
-                            result_next_airing?.text =
-                                ctx.getString(R.string.next_episode_format)
-                                    .format(nextAiring.episode)
-                        } != null
-                    }
-                } catch (e: Exception) { // mistranslation
-                    result_next_airing_holder?.isVisible = false
-                    logError(e)
-                    false
-                }
-            }
-    }
-
-    private fun setActors(actors: List<ActorData>?) {
-        if (actors.isNullOrEmpty()) {
-            result_cast_text?.isVisible = false
-            result_cast_items?.isVisible = false
-        } else {
-            val isImage = actors.first().actor.image != null
-            if (isImage) {
-                (result_cast_items?.adapter as ActorAdaptor?)?.apply {
-                    updateList(actors)
-                }
-                result_cast_text?.isVisible = false
-                result_cast_items?.isVisible = true
-            } else {
-                result_cast_text?.isVisible = true
-                result_cast_items?.isVisible = false
-                setFormatText(result_cast_text, R.string.cast_format,
-                    actors.joinToString { it.actor.name })
-            }
-        }
     }
 
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
@@ -1424,7 +1356,12 @@ class ResultFragment : ResultTrailerPlayer() {
             result_season_button?.setOnClickListener {
                 result_season_button?.popupMenuNoIconsAndNoStringRes(
                     items = seasonList
-                        .map { Pair(it ?: -2, fromIndexToSeasonText(it)) },
+                        .map { (name, season) ->
+                            Pair(
+                                season ?: -2,
+                                name ?: fromIndexToSeasonText(season)
+                            )
+                        },
                 ) {
                     val id = this.itemId
 
@@ -1730,7 +1667,7 @@ class ResultFragment : ResultTrailerPlayer() {
             startValue = null
         }
 
-        observe(viewModel.publicEpisodes) { episodes ->
+        observe(viewModel.episodes) { episodes ->
             when (episodes) {
                 is Resource.Failure -> {
                     result_episode_loading?.isVisible = false
@@ -1753,18 +1690,17 @@ class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.dubStatus) { status ->
-            result_dub_select?.text = status.toString()
+            result_dub_select?.apply {
+                isVisible = status != null
+                status?.toString()?.let {
+                    text = it
+                }
+            }
         }
 
 //        val preferDub = context?.getApiDubstatusSettings()?.all { it == DubStatus.Dubbed } == true
 
         observe(viewModel.dubSubSelections) { range ->
-            dubRange = range
-
-//            if (preferDub && dubRange?.contains(DubStatus.Dubbed) == true) {
-//                viewModel.changeDubStatus(DubStatus.Dubbed)
-//            }
-
             result_dub_select?.visibility = if (range.size <= 1) GONE else VISIBLE
 
             if (result_season_button?.isVisible != true && result_episode_select?.isVisible != true) {
@@ -1810,7 +1746,7 @@ class ResultFragment : ResultTrailerPlayer() {
             syncModel.publishUserData()
         }
 
-        observe(viewModel.publicEpisodesCount) { count ->
+        observe(viewModel.episodesCount) { count ->
             if (count < 0) {
                 result_episodes_text?.isVisible = false
             } else {
@@ -1824,43 +1760,40 @@ class ResultFragment : ResultTrailerPlayer() {
             currentId = it
         }
 
-        observe(viewModel.result) { data ->
+        observe(viewModel.page) { data ->
             when (data) {
                 is Resource.Success -> {
                     val d = data.value
-                    if (d !is AnimeLoadResponse && result_episode_loading.isVisible) { // no episode loading when not anime
-                        result_episode_loading.isVisible = false
-                    }
 
                     updateVisStatus(2)
 
-                    result_vpn?.text = when (api.vpnStatus) {
-                        VPNStatus.MightBeNeeded -> getString(R.string.vpn_might_be_needed)
-                        VPNStatus.Torrent -> getString(R.string.vpn_torrent)
-                        else -> ""
+                    result_vpn.setText(d.vpnText)
+                    result_info.setText(d.metaText)
+                    result_no_episodes.setText(d.noEpisodesFoundText)
+                    result_title.setText(d.titleText)
+                    result_meta_site.setText(d.apiName)
+                    result_meta_type.setText(d.typeText)
+                    result_meta_year.setText(d.yearText)
+                    result_meta_duration.setText(d.durationText)
+                    result_meta_rating.setText(d.ratingText)
+                    result_description.setTextHtml(d.plotText)
+                    result_cast_text.setText(d.actorsText)
+                    setRecommendations.setText(d.nextAiringEpisode)
+                    result_next_airing_time.setText(d.nextAiringDate)
+
+                    result_poster.setImage(d.posterImage)
+
+                    if(!d.posterUrl.isNullOrBlank()) {
+                        result_poster?.setImage(d.posterUrl, d.posterHeaders)
+                    } else {
+                        result_poster?.setImageResource(R.drawable.default_cover)
                     }
-                    result_vpn?.isGone = api.vpnStatus == VPNStatus.None
 
-                    result_info?.text = when (api.providerType) {
-                        ProviderType.MetaProvider -> getString(R.string.provider_info_meta)
-                        else -> ""
+
+                    result_cast_items?.isVisible = d.actors != null
+                    (result_cast_items?.adapter as ActorAdaptor?)?.apply {
+                        updateList(d.actors ?: emptyList())
                     }
-                    result_info?.isVisible = api.providerType == ProviderType.MetaProvider
-
-                    if (d.type.isEpisodeBased()) {
-                        val ep = d as? TvSeriesLoadResponse
-                        val epCount = ep?.episodes?.size ?: 1
-                        if (epCount < 1) {
-                            result_info?.text = getString(R.string.no_episodes_found)
-                            result_info?.isVisible = true
-                        }
-                    }
-
-                    currentHeaderName = d.name
-                    currentType = d.type
-
-                    currentPoster = d.posterUrl
-                    currentIsMovie = !d.isEpisodeBased()
 
                     result_open_in_browser?.setOnClickListener {
                         val i = Intent(ACTION_VIEW)
@@ -1873,31 +1806,21 @@ class ResultFragment : ResultTrailerPlayer() {
                     }
 
                     result_search?.setOnClickListener {
-                        QuickSearchFragment.pushSearch(activity, d.name)
+                        QuickSearchFragment.pushSearch(activity, d.title)
                     }
 
                     result_share?.setOnClickListener {
                         try {
                             val i = Intent(ACTION_SEND)
                             i.type = "text/plain"
-                            i.putExtra(EXTRA_SUBJECT, d.name)
+                            i.putExtra(EXTRA_SUBJECT, d.title)
                             i.putExtra(EXTRA_TEXT, d.url)
-                            startActivity(createChooser(i, d.name))
+                            startActivity(createChooser(i, d.title))
                         } catch (e: Exception) {
                             logError(e)
                         }
                     }
 
-                    val showStatus = when (d) {
-                        is TvSeriesLoadResponse -> d.showStatus
-                        is AnimeLoadResponse -> d.showStatus
-                        else -> null
-                    }
-
-                    setShow(showStatus)
-                    setDuration(d.duration)
-                    setYear(d.year)
-                    setRating(d.rating)
                     setRecommendations(d.recommendations, null)
                     setActors(d.actors)
                     setNextEpisode(if (d is EpisodeResponse) d.nextAiring else null)
@@ -1911,10 +1834,9 @@ class ResultFragment : ResultTrailerPlayer() {
                     }
 
                     result_meta_site?.text = d.apiName
-
                     val posterImageLink = d.posterUrl
                     if (!posterImageLink.isNullOrEmpty()) {
-                        result_poster?.setImage(posterImageLink, d.posterHeaders)
+
                         //result_poster_blur?.setImageBlur(posterImageLink, 10, 3, d.posterHeaders)
                         //Full screen view of Poster image
                         if (context?.isTrueTvSettings() == false) // Poster not clickable on tv
@@ -1950,7 +1872,7 @@ class ResultFragment : ResultTrailerPlayer() {
                     result_poster_holder?.visibility = VISIBLE
 
                     result_play_movie?.text =
-                        if (d.type == TvType.Live) getString(R.string.play_livestream_button) else getString(
+                        if (d.typeText == TvType.Live) getString(R.string.play_livestream_button) else getString(
                             R.string.play_movie_button
                         )
                     //result_plot_header?.text =
@@ -1961,13 +1883,13 @@ class ResultFragment : ResultTrailerPlayer() {
                             val builder: AlertDialog.Builder =
                                 AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
                             builder.setMessage(syno.html())
-                                .setTitle(if (d.type == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
+                                .setTitle(if (d.typeText == TvType.Torrent) R.string.torrent_plot else R.string.result_plot)
                                 .show()
                         }
                         result_description?.text = syno.html()
                     } else {
                         result_description?.text =
-                            if (d.type == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(
+                            if (d.typeText == TvType.Torrent) getString(R.string.torrent_no_plot) else getString(
                                 R.string.normal_no_plot
                             )
                     }
@@ -1982,9 +1904,8 @@ class ResultFragment : ResultTrailerPlayer() {
                     }
 
                     val tags = d.tags
-                    if (tags.isNullOrEmpty()) {
-                        //result_tag_holder?.visibility = GONE
-                    } else {
+                    result_tag_holder?.isVisible = tags.isNotEmpty()
+                    if (tags.isNotEmpty())  {
                         //result_tag_holder?.visibility = VISIBLE
                         val isOnTv = context?.isTrueTvSettings() == true
                         for ((index, tag) in tags.withIndex()) {
@@ -1997,7 +1918,7 @@ class ResultFragment : ResultTrailerPlayer() {
                         }
                     }
 
-                    if (d.type.isMovieType()) {
+                    if (d.typeText.isMovieType()) {
                         val hasDownloadSupport = api.hasDownloadSupport
                         lateFixDownloadButton(true)
 
@@ -2125,22 +2046,6 @@ class ResultFragment : ResultTrailerPlayer() {
                         lateFixDownloadButton(false)
                     }
 
-                    context?.getString(
-                        when (d.type) {
-                            TvType.TvSeries -> R.string.tv_series_singular
-                            TvType.Anime -> R.string.anime_singular
-                            TvType.OVA -> R.string.ova_singular
-                            TvType.AnimeMovie -> R.string.movies_singular
-                            TvType.Cartoon -> R.string.cartoons_singular
-                            TvType.Documentary -> R.string.documentaries_singular
-                            TvType.Movie -> R.string.movies_singular
-                            TvType.Torrent -> R.string.torrent_singular
-                            TvType.AsianDrama -> R.string.asian_drama_singular
-                            TvType.Live -> R.string.live_singular
-                        }
-                    )?.let {
-                        result_meta_type?.text = it
-                    }
 
                     when (d) {
                         is AnimeLoadResponse -> {

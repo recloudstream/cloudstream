@@ -464,6 +464,14 @@
                             android:textColor="?attr/grayTextColor"
                             android:textSize="15sp"
                             tools:text="@string/provider_info_meta" />
+                    <TextView
+                            android:id="@+id/result_no_episodes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:textColor="?attr/grayTextColor"
+                            android:textSize="15sp"
+                            tools:text="@string/no_episodes_found" />
 
                     <TextView
                             android:id="@+id/result_tag_holder"

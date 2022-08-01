@@ -635,6 +635,7 @@ enum class ShowStatus {
 }
 
 enum class DubStatus(val id: Int) {
+    None(-1),
     Dubbed(1),
     Subbed(0),
 }

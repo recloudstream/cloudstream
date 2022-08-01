@@ -77,7 +77,7 @@ class ResultViewModel : ViewModel() {
 
     val id: MutableLiveData<Int> = MutableLiveData()
     val selectedSeason: MutableLiveData<Int> = MutableLiveData(-2)
-    val seasonSelections: MutableLiveData<List<Int?>> = MutableLiveData()
+    val seasonSelections: MutableLiveData<List<Pair<String?, Int?>>> = MutableLiveData()
 
     val dubSubSelections: LiveData<Set<DubStatus>> get() = _dubSubSelections
     private val _dubSubSelections: MutableLiveData<Set<DubStatus>> = MutableLiveData()
@@ -228,14 +228,17 @@ class ResultViewModel : ViewModel() {
                 seasonTypes[i.season] = true
             }
         }
-        val seasons = seasonTypes.toList().map { it.first }.sortedBy { it }
+        val seasons = seasonTypes.toList().map { null to it.first }.sortedBy { it.second }
+
+
         seasonSelections.postValue(seasons)
         if (seasons.isEmpty()) { // WHAT THE FUCK DID YOU DO????? HOW DID YOU DO THIS
             _publicEpisodes.postValue(Resource.Success(emptyList()))
             return
         }
 
-        val realSelection = if (!seasonTypes.containsKey(selection)) seasons.first() else selection
+        val realSelection =
+            if (!seasonTypes.containsKey(selection)) seasons.first().second else selection
         val internalId = id.value
 
         if (internalId != null) setResultSeason(internalId, realSelection)
@@ -386,7 +389,6 @@ class ResultViewModel : ViewModel() {
                         return
                     }
 
-//                      val status = getDub(mainId)
                     val statuses = loadResponse.episodes.map { it.key }
 
                     // Extremely bruh to have to take in context here, but I'm not sure how to do this in a better way :(
