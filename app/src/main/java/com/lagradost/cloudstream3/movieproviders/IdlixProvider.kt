@@ -37,7 +37,7 @@ class IdlixProvider : MainAPI() {
     ): HomePageResponse {
         val url = request.data.split("?")
         val document = app.get("${url.first()}$page/?${url.lastOrNull()}").document
-        val home = document.select("article").mapNotNull {
+        val home = document.select("div.items.full article").mapNotNull {
             it.toSearchResult()
         }
         return newHomePageResponse(request.name, home)

@@ -55,7 +55,8 @@ class KisskhProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        val searchResponse = app.get("$mainUrl/api/DramaList/Search?q=$query&type=0", referer = "$mainUrl/").text
+        val searchResponse =
+            app.get("$mainUrl/api/DramaList/Search?q=$query&type=0", referer = "$mainUrl/").text
         return tryParseJson<ArrayList<Media>>(searchResponse)?.mapNotNull { media ->
             media.toSearchResponse()
         } ?: throw ErrorLoadingException("Invalid Json reponse")
@@ -142,13 +143,16 @@ class KisskhProvider : MainAPI() {
             }
         }
 
-        app.get("$mainUrl/api/Sub/${loadData.epsId}").parsedSafe<List<Subtitle>>()?.map { sub ->
-            subtitleCallback.invoke(
-                SubtitleFile(
-                    getLanguage(sub.label ?: return@map),
-                    sub.src ?: return@map
+        // parsedSafe doesn't work in <List<Object>>
+        app.get("$mainUrl/api/Sub/${loadData.epsId}").text.let { res ->
+            tryParseJson<List<Subtitle>>(res)?.map { sub ->
+                subtitleCallback.invoke(
+                    SubtitleFile(
+                        getLanguage(sub.label ?: return@map),
+                        sub.src ?: return@map
+                    )
                 )
-            )
+            }
         }
 
         return true
