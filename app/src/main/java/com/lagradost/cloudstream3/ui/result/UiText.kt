@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.content.Context
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
@@ -12,16 +13,25 @@ import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 sealed class UiText {
-    data class DynamicString(val value: String) : UiText()
+    companion object {
+        const val TAG = "UiText"
+    }
+
+    data class DynamicString(val value: String) : UiText() {
+        override fun toString(): String = value
+    }
     class StringResource(
         @StringRes val resId: Int,
-        vararg val args: Any
-    ) : UiText()
+        val args: List<Any>
+    ) : UiText() {
+        override fun toString(): String = "resId = $resId\nargs = ${args.toList().map { "(${it::class} = $it)"  }}"
+    }
 
     fun asStringNull(context: Context?): String? {
         try {
             return asString(context ?: return null)
         } catch (e: Exception) {
+            Log.e(TAG, "Got invalid data from $this")
             logError(e)
             return null
         }
@@ -30,7 +40,19 @@ sealed class UiText {
     fun asString(context: Context): String {
         return when (this) {
             is DynamicString -> value
-            is StringResource -> context.getString(resId, *args)
+            is StringResource -> {
+                val str = context.getString(resId)
+                if (args.isEmpty()) {
+                    str
+                } else {
+                    str.format(*args.map {
+                        when (it) {
+                            is UiText -> it.asString(context)
+                            else -> it
+                        }
+                    }.toTypedArray())
+                }
+            }
         }
     }
 }
@@ -98,7 +120,7 @@ fun txt(value: String?): UiText? {
 }
 
 fun txt(@StringRes resId: Int, vararg args: Any): UiText {
-    return UiText.StringResource(resId, args)
+    return UiText.StringResource(resId, args.toList())
 }
 
 @JvmName("txtNull")
@@ -106,7 +128,7 @@ fun txt(@StringRes resId: Int?, vararg args: Any?): UiText? {
     if (resId == null || args.any { it == null }) {
         return null
     }
-    return UiText.StringResource(resId, args)
+    return UiText.StringResource(resId, args.filterNotNull().toList())
 }
 
 fun TextView?.setText(text: UiText?) {

@@ -1,6 +1,14 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,9 +16,11 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
+import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
+import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider
 import com.lagradost.cloudstream3.animeproviders.NineAnimeProvider
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
@@ -18,9 +28,26 @@ import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.IGenerator
+import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
+import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
+import com.lagradost.cloudstream3.utils.CastHelper.startCast
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 
@@ -43,6 +70,7 @@ data class ResultData(
     val comingSoon: Boolean,
     val backgroundPosterUrl: String?,
     val title: String,
+    var syncData: Map<String, String>,
 
     val posterImage: UiImage?,
     val plotText: UiText,
@@ -73,7 +101,7 @@ fun txt(status: DubStatus?): UiText? {
 }
 
 fun LoadResponse.toResultData(repo: APIRepository): ResultData {
-    debugAssert({ repo.name == apiName }) {
+    debugAssert({ repo.name != apiName }) {
         "Api returned wrong apiName"
     }
 
@@ -116,6 +144,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
     }
 
     return ResultData(
+        syncData = syncData,
         plotHeaderText = txt(
             when (this.type) {
                 TvType.Torrent -> R.string.torrent_plot
@@ -165,7 +194,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         ),
         yearText = txt(year),
         apiName = txt(apiName),
-        ratingText = rating?.div(1000f)?.let { UiText.StringResource(R.string.rating_format, it) },
+        ratingText = rating?.div(1000f)?.let { txt(R.string.rating_format, it) },
         vpnText = txt(
             when (repo.vpnStatus) {
                 VPNStatus.None -> null
@@ -192,6 +221,48 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
     )
 }
 
+
+data class LinkProgress(
+    val linksLoaded: Int,
+    val subsLoaded: Int,
+)
+
+data class LinkLoadingResult(
+    val links: List<ExtractorLink>,
+    val subs: List<SubtitleData>,
+)
+
+sealed class SelectPopup {
+    data class SelectText(
+        val text: UiText,
+        val options: List<UiText>,
+        val callback: (Int?) -> Unit
+    ) : SelectPopup()
+
+    data class SelectArray(
+        val text: UiText,
+        val options: Int,
+        val map: Int?,
+        val callback: (Int?) -> Unit
+    ) : SelectPopup()
+
+    fun SelectPopup.transformResult(context: Context, input: Int?): Int? {
+        if (input == null) return null
+        return when (this) {
+            is SelectArray -> context.resources.getIntArray(map ?: return input).getOrNull(input)
+                ?: input
+            is SelectText -> input
+        }
+    }
+
+    fun SelectPopup.getOptions(context: Context): List<String> {
+        return when (this) {
+            is SelectArray -> context.resources.getStringArray(options).toList()
+            is SelectText -> options.map { it.asString(context) }
+        }
+    }
+}
+
 class ResultViewModel2 : ViewModel() {
     private var currentResponse: LoadResponse? = null
 
@@ -215,6 +286,9 @@ class ResultViewModel2 : ViewModel() {
     private var preferDubStatus: DubStatus? = null
     private var preferStartEpisode: Int? = null
     private var preferStartSeason: Int? = null
+    //private val currentIsMovie get() = currentResponse?.isEpisodeBased() == false
+    //private val currentHeaderName get() = currentResponse?.name
+
 
     private val _page: MutableLiveData<Resource<ResultData>> =
         MutableLiveData(Resource.Loading())
@@ -236,10 +310,12 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData(emptyList())
     val dubSubSelections: LiveData<List<Pair<UiText?, DubStatus>>> = _dubSubSelections
 
-    private val _rangeSelections: MutableLiveData<List<Pair<UiText?, EpisodeRange>>> = MutableLiveData(emptyList())
+    private val _rangeSelections: MutableLiveData<List<Pair<UiText?, EpisodeRange>>> =
+        MutableLiveData(emptyList())
     val rangeSelections: LiveData<List<Pair<UiText?, EpisodeRange>>> = _rangeSelections
 
-    private val _seasonSelections: MutableLiveData<List<Pair<UiText?, Int>>> = MutableLiveData(emptyList())
+    private val _seasonSelections: MutableLiveData<List<Pair<UiText?, Int>>> =
+        MutableLiveData(emptyList())
     val seasonSelections: LiveData<List<Pair<UiText?, Int>>> = _seasonSelections
 
 
@@ -257,6 +333,9 @@ class ResultViewModel2 : ViewModel() {
 
     private val _selectedDubStatus: MutableLiveData<UiText?> = MutableLiveData(null)
     val selectedDubStatus: LiveData<UiText?> = _selectedDubStatus
+
+    private val _loadedLinks: MutableLiveData<LinkProgress?> = MutableLiveData(null)
+    val loadedLinks: LiveData<LinkProgress?> = _loadedLinks
 
     companion object {
         const val TAG = "RVM2"
@@ -375,6 +454,607 @@ class ResultViewModel2 : ViewModel() {
                 index to list
             }.toMap()
         }
+
+        private fun downloadSubtitle(
+            context: Context?,
+            link: ExtractorSubtitleLink,
+            fileName: String,
+            folder: String
+        ) {
+            ioSafe {
+                VideoDownloadManager.downloadThing(
+                    context ?: return@ioSafe,
+                    link,
+                    "$fileName ${link.name}",
+                    folder,
+                    if (link.url.contains(".srt")) ".srt" else "vtt",
+                    false,
+                    null
+                ) {
+                    // no notification
+                }
+            }
+        }
+
+        private fun getFolder(currentType: TvType, titleName: String): String {
+            val sanitizedFileName = VideoDownloadManager.sanitizeFilename(titleName)
+            return when (currentType) {
+                TvType.Anime -> "Anime/$sanitizedFileName"
+                TvType.Movie -> "Movies"
+                TvType.AnimeMovie -> "Movies"
+                TvType.TvSeries -> "TVSeries/$sanitizedFileName"
+                TvType.OVA -> "OVA"
+                TvType.Cartoon -> "Cartoons/$sanitizedFileName"
+                TvType.Torrent -> "Torrent"
+                TvType.Documentary -> "Documentaries"
+                TvType.AsianDrama -> "AsianDrama"
+                TvType.Live -> "LiveStreams"
+            }
+        }
+
+        private fun downloadSubtitle(
+            context: Context?,
+            link: SubtitleData,
+            meta: VideoDownloadManager.DownloadEpisodeMetadata,
+        ) {
+            context?.let { ctx ->
+                val fileName = VideoDownloadManager.getFileName(ctx, meta)
+                val folder = getFolder(meta.type ?: return, meta.mainName)
+                downloadSubtitle(
+                    ctx,
+                    ExtractorSubtitleLink(link.name, link.url, ""),
+                    fileName,
+                    folder
+                )
+            }
+        }
+
+        fun startDownload(
+            context: Context?,
+            episode: ResultEpisode,
+            currentIsMovie: Boolean,
+            currentHeaderName: String,
+            currentType: TvType,
+            currentPoster: String?,
+            apiName: String,
+            parentId: Int,
+            url: String,
+            links: List<ExtractorLink>,
+            subs: List<SubtitleData>?
+        ) {
+            try {
+                if (context == null) return
+
+                val meta =
+                    getMeta(
+                        episode,
+                        currentHeaderName,
+                        apiName,
+                        currentPoster,
+                        currentIsMovie,
+                        currentType
+                    )
+
+                val folder = getFolder(currentType, currentHeaderName)
+
+                val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
+
+                // SET VISUAL KEYS
+                AcraApplication.setKey(
+                    DOWNLOAD_HEADER_CACHE,
+                    parentId.toString(),
+                    VideoDownloadHelper.DownloadHeaderCached(
+                        apiName,
+                        url,
+                        currentType,
+                        currentHeaderName,
+                        currentPoster,
+                        parentId,
+                        System.currentTimeMillis(),
+                    )
+                )
+
+                AcraApplication.setKey(
+                    DataStore.getFolderName(
+                        DOWNLOAD_EPISODE_CACHE,
+                        parentId.toString()
+                    ), // 3 deep folder for faster acess
+                    episode.id.toString(),
+                    VideoDownloadHelper.DownloadEpisodeCached(
+                        episode.name,
+                        episode.poster,
+                        episode.episode,
+                        episode.season,
+                        episode.id,
+                        parentId,
+                        episode.rating,
+                        episode.description,
+                        System.currentTimeMillis(),
+                    )
+                )
+
+                // DOWNLOAD VIDEO
+                VideoDownloadManager.downloadEpisodeUsingWorker(
+                    context,
+                    src,//url ?: return,
+                    folder,
+                    meta,
+                    links
+                )
+
+                // 1. Checks if the lang should be downloaded
+                // 2. Makes it into the download format
+                // 3. Downloads it as a .vtt file
+                val downloadList = SubtitlesFragment.getDownloadSubsLanguageISO639_1()
+                subs?.let { subsList ->
+                    subsList.filter {
+                        downloadList.contains(
+                            SubtitleHelper.fromLanguageToTwoLetters(
+                                it.name,
+                                true
+                            )
+                        )
+                    }
+                        .map { ExtractorSubtitleLink(it.name, it.url, "") }
+                        .forEach { link ->
+                            val fileName = VideoDownloadManager.getFileName(context, meta)
+                            downloadSubtitle(context, link, fileName, folder)
+                        }
+                }
+            } catch (e: Exception) {
+                logError(e)
+            }
+        }
+
+        suspend fun downloadEpisode(
+            activity: Activity?,
+            episode: ResultEpisode,
+            currentIsMovie: Boolean,
+            currentHeaderName: String,
+            currentType: TvType,
+            currentPoster: String?,
+            apiName: String,
+            parentId: Int,
+            url: String,
+        ) {
+            safeApiCall {
+                val generator = RepoLinkGenerator(listOf(episode))
+                val currentLinks = mutableSetOf<ExtractorLink>()
+                val currentSubs = mutableSetOf<SubtitleData>()
+                generator.generateLinks(clearCache = false, isCasting = false, callback = {
+                    it.first?.let { link ->
+                        currentLinks.add(link)
+                    }
+                }, subtitleCallback = { sub ->
+                    currentSubs.add(sub)
+                })
+
+                if (currentLinks.isEmpty()) {
+                    Coroutines.main {
+                        CommonActivity.showToast(
+                            activity,
+                            R.string.no_links_found_toast,
+                            Toast.LENGTH_SHORT
+                        )
+                    }
+                    return@safeApiCall
+                }
+
+                startDownload(
+                    activity,
+                    episode,
+                    currentIsMovie,
+                    currentHeaderName,
+                    currentType,
+                    currentPoster,
+                    apiName,
+                    parentId,
+                    url,
+                    sortUrls(currentLinks),
+                    sortSubs(currentSubs),
+                )
+            }
+        }
+
+        private fun getMeta(
+            episode: ResultEpisode,
+            titleName: String,
+            apiName: String,
+            currentPoster: String?,
+            currentIsMovie: Boolean,
+            tvType: TvType,
+        ): VideoDownloadManager.DownloadEpisodeMetadata {
+            return VideoDownloadManager.DownloadEpisodeMetadata(
+                episode.id,
+                VideoDownloadManager.sanitizeFilename(titleName),
+                apiName,
+                episode.poster ?: currentPoster,
+                episode.name,
+                if (currentIsMovie) null else episode.season,
+                if (currentIsMovie) null else episode.episode,
+                tvType,
+            )
+        }
+    }
+
+    private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData(WatchType.NONE)
+    val watchStatus: LiveData<WatchType> get() = _watchStatus
+
+    private val _selectPopup: MutableLiveData<SelectPopup?> = MutableLiveData(null)
+    val selectPopup: LiveData<SelectPopup?> get() = _selectPopup
+
+    fun updateWatchStatus(status: WatchType) {
+        val currentId = currentId ?: return
+        val resultPage = currentResponse ?: return
+        _watchStatus.postValue(status)
+
+        DataStoreHelper.setResultWatchState(currentId, status.internalId)
+        val current = DataStoreHelper.getBookmarkedData(currentId)
+        val currentTime = System.currentTimeMillis()
+        DataStoreHelper.setBookmarkedData(
+            currentId,
+            DataStoreHelper.BookmarkedData(
+                currentId,
+                current?.bookmarkedTime ?: currentTime,
+                currentTime,
+                resultPage.name,
+                resultPage.url,
+                resultPage.apiName,
+                resultPage.type,
+                resultPage.posterUrl,
+                resultPage.year
+            )
+        )
+    }
+
+    private suspend fun startChromecast(
+        activity: Activity?,
+        result: ResultEpisode,
+        isVisible: Boolean = true
+    ) {
+        if (activity == null) return
+        val data = loadLinks(result, isVisible = isVisible, isCasting = true)
+        startChromecast(activity, result, data.links, data.subs, 0)
+    }
+
+    private fun startChromecast(
+        activity: Activity?,
+        result: ResultEpisode,
+        links: List<ExtractorLink>,
+        subs: List<SubtitleData>,
+        startIndex: Int,
+    ) {
+        if (activity == null) return
+        val response = currentResponse ?: return
+        val eps = currentEpisodes[currentIndex ?: return] ?: return
+
+        activity.getCastSession()?.startCast(
+            response.apiName,
+            response.isMovie(),
+            response.name,
+            response.posterUrl,
+            result.index,
+            eps,
+            links,
+            subs,
+            startTime = result.getRealPosition(),
+            startIndex = startIndex
+        )
+    }
+
+    private val popupCallback: ((Int) -> Unit)? = null
+
+    fun cancelLinks() {
+        currentLoadLinkJob?.cancel()
+        _loadedLinks.postValue(null)
+    }
+
+    private var currentLoadLinkJob: Job? = null
+    private suspend fun acquireSingleLink(
+        result: ResultEpisode,
+        isCasting: Boolean,
+        text: UiText,
+        callback: (Pair<LinkLoadingResult, Int>) -> Unit,
+    ) {
+        currentLoadLinkJob = viewModelScope.launch {
+            val links = loadLinks(result, isVisible = true, isCasting = isCasting)
+
+            _selectPopup.postValue(
+                SelectPopup.SelectText(
+                    text,
+                    links.links.map { txt("${it.name} ${Qualities.getStringByInt(it.quality)}") }) {
+                    callback.invoke(links to (it ?: return@SelectText))
+                })
+        }
+    }
+
+    private suspend fun acquireSingleSubtitle(
+        result: ResultEpisode,
+        isCasting: Boolean,
+        text: UiText,
+        callback: (Pair<LinkLoadingResult, Int>) -> Unit,
+    ) {
+        currentLoadLinkJob = viewModelScope.launch {
+            val links = loadLinks(result, isVisible = true, isCasting = isCasting)
+
+            _selectPopup.postValue(
+                SelectPopup.SelectText(
+                    text,
+                    links.subs.map { txt(it.name) }) {
+                    callback.invoke(links to (it ?: return@SelectText))
+                })
+        }
+    }
+
+    suspend fun loadLinks(
+        result: ResultEpisode,
+        isVisible: Boolean,
+        isCasting: Boolean,
+        clearCache: Boolean = false,
+    ): LinkLoadingResult {
+        val tempGenerator = RepoLinkGenerator(listOf(result))
+
+        val links: MutableSet<ExtractorLink> = mutableSetOf()
+        val subs: MutableSet<SubtitleData> = mutableSetOf()
+        fun updatePage() {
+            if (isVisible) {
+                _loadedLinks.postValue(LinkProgress(links.size, subs.size))
+            }
+        }
+        try {
+            tempGenerator.generateLinks(clearCache, isCasting, { (link, _) ->
+                if (link != null) {
+                    links += link
+                    updatePage()
+                }
+            }, { sub ->
+                subs += sub
+                updatePage()
+            })
+        } catch (e: Exception) {
+            logError(e)
+        } finally {
+            _loadedLinks.postValue(null)
+        }
+
+        return LinkLoadingResult(sortUrls(links), sortSubs(subs))
+    }
+
+    private fun playWithVlc(act: Activity?, data: LinkLoadingResult, id: Int) = ioSafe {
+        if (act == null) return@ioSafe
+        try {
+            if (!act.checkWrite()) {
+                act.requestRW()
+                if (act.checkWrite()) return@ioSafe
+            }
+
+            val outputDir = act.cacheDir
+            val outputFile = withContext(Dispatchers.IO) {
+                File.createTempFile("mirrorlist", ".m3u8", outputDir)
+            }
+            var text = "#EXTM3U"
+            for (sub in data.subs) {
+                text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.name}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.name}\",URI=\"${sub.url}\""
+            }
+            for (link in data.links) {
+                text += "\n#EXTINF:, ${link.name}\n${link.url}"
+            }
+            outputFile.writeText(text)
+
+            val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
+
+            vlcIntent.setPackage(VLC_PACKAGE)
+            vlcIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            vlcIntent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
+            vlcIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            vlcIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+
+            vlcIntent.setDataAndType(
+                FileProvider.getUriForFile(
+                    act,
+                    act.applicationContext.packageName + ".provider",
+                    outputFile
+                ), "video/*"
+            )
+
+            val startId = VLC_FROM_PROGRESS
+
+            var position = startId
+            if (startId == VLC_FROM_START) {
+                position = 1
+            } else if (startId == VLC_FROM_PROGRESS) {
+                position = 0
+            }
+
+            vlcIntent.putExtra("position", position)
+
+            vlcIntent.component = VLC_COMPONENT
+            act.setKey(VLC_LAST_ID_KEY, id)
+            act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
+        } catch (e: Exception) {
+            logError(e)
+            CommonActivity.showToast(act, e.toString(), Toast.LENGTH_LONG)
+        }
+    }
+
+    fun handleAction(activity: Activity?, click: EpisodeClickEvent) = viewModelScope.launch {
+        handleEpisodeClickEvent(activity, click)
+    }
+
+    private suspend fun handleEpisodeClickEvent(activity: Activity?, click: EpisodeClickEvent) {
+        when (click.action) {
+            ACTION_SHOW_OPTIONS -> {
+                _selectPopup.postValue(
+                    SelectPopup.SelectArray(
+                        txt(""), // TODO FIX
+                        R.array.episode_long_click_options,
+                        R.array.episode_long_click_options_values
+                    ) { result ->
+                        if (result == null) return@SelectArray
+                        viewModelScope.launch {
+                            handleEpisodeClickEvent(
+                                activity,
+                                click.copy(action = result)
+                            )
+                        }
+                    })
+            }
+            ACTION_CLICK_DEFAULT -> {
+                activity?.let { ctx ->
+                    if (ctx.isConnectedToChromecast()) {
+                        handleEpisodeClickEvent(
+                            activity,
+                            click.copy(action = ACTION_CHROME_CAST_EPISODE)
+                        )
+                    } else {
+                        handleEpisodeClickEvent(
+                            activity,
+                            click.copy(action = ACTION_PLAY_EPISODE_IN_PLAYER)
+                        )
+                    }
+                }
+            }
+            ACTION_DOWNLOAD_EPISODE_SUBTITLE -> {
+                val response = currentResponse ?: return
+
+                acquireSingleSubtitle(
+                    click.data,
+                    false,
+                    txt(R.string.episode_action_download_subtitle)
+                ) { (links, index) ->
+                    downloadSubtitle(
+                        activity,
+                        links.subs[index],
+                        getMeta(
+                            click.data,
+                            response.name,
+                            response.apiName,
+                            response.posterUrl,
+                            response.isMovie(),
+                            response.type
+                        )
+                    )
+                    CommonActivity.showToast(
+                        activity,
+                        R.string.download_started,
+                        Toast.LENGTH_SHORT
+                    )
+                }
+            }
+            ACTION_SHOW_TOAST -> {
+                CommonActivity.showToast(activity, R.string.play_episode_toast, Toast.LENGTH_SHORT)
+            }
+            ACTION_DOWNLOAD_EPISODE -> {
+                val response = currentResponse ?: return
+                downloadEpisode(
+                    activity,
+                    click.data,
+                    response.isMovie(),
+                    response.name,
+                    response.type,
+                    response.posterUrl,
+                    response.apiName,
+                    response.getId(),
+                    response.url
+                )
+            }
+            ACTION_DOWNLOAD_MIRROR -> {
+                val response = currentResponse ?: return
+                acquireSingleLink(
+                    click.data,
+                    false,
+                    txt(R.string.episode_action_download_mirror)
+                ) { (result, index) ->
+                    startDownload(
+                        activity,
+                        click.data,
+                        response.isMovie(),
+                        response.name,
+                        response.type,
+                        response.posterUrl,
+                        response.apiName,
+                        response.getId(),
+                        response.url,
+                        listOf(result.links[index]),
+                        result.subs,
+                    )
+                    CommonActivity.showToast(
+                        activity,
+                        R.string.download_started,
+                        Toast.LENGTH_SHORT
+                    )
+                }
+            }
+            ACTION_RELOAD_EPISODE -> {
+                loadLinks(click.data, isVisible = false, isCasting = false, clearCache = true)
+            }
+            ACTION_CHROME_CAST_MIRROR -> {
+                acquireSingleLink(
+                    click.data,
+                    false,
+                    txt(R.string.episode_action_chromecast_mirror)
+                ) { (result, index) ->
+                    startChromecast(activity, click.data, result.links, result.subs, index)
+                }
+            }
+            ACTION_PLAY_EPISODE_IN_BROWSER -> acquireSingleLink(
+                click.data,
+                false,
+                txt(R.string.episode_action_play_in_browser)
+            ) { (result, index) ->
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(result.links[index].url)
+                    activity?.startActivity(i)
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+            ACTION_COPY_LINK -> {
+                acquireSingleLink(
+                    click.data,
+                    false,
+                    txt(R.string.episode_action_copy_link)
+                ) { (result, index) ->
+                    val act = activity ?: return@acquireSingleLink
+                    val serviceClipboard =
+                        (act.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?)
+                            ?: return@acquireSingleLink
+                    val link = result.links[index]
+                    val clip = ClipData.newPlainText(link.name, link.url)
+                    serviceClipboard.setPrimaryClip(clip)
+                    CommonActivity.showToast(act, R.string.copy_link_toast, Toast.LENGTH_SHORT)
+                }
+            }
+            ACTION_CHROME_CAST_EPISODE -> {
+                startChromecast(activity, click.data)
+            }
+            ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> {
+                currentLoadLinkJob = viewModelScope.launch {
+                    playWithVlc(activity, loadLinks(click.data, true, true), click.data.id)
+                }
+            }
+            ACTION_PLAY_EPISODE_IN_PLAYER -> {
+                val data = currentResponse?.syncData?.toList() ?: emptyList()
+                val list =
+                    HashMap<String, String>().apply { putAll(data) }
+
+                activity?.navigate(
+                    R.id.global_to_navigation_player,
+                    GeneratorPlayer.newInstance(
+                        generator?.also {
+                            it.getAll() // I know kinda shit to itterate all, but it is 100% sure to work
+                                ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
+                                ?.let { index ->
+                                    if (index > 0)
+                                        it.goto(index)
+                                }
+
+                        } ?: return, list
+                    )
+                )
+            }
+        }
     }
 
     private suspend fun applyMeta(
@@ -385,7 +1065,7 @@ class ResultViewModel2 : ViewModel() {
         if (meta == null) return resp to false
         var updateEpisodes = false
         val out = resp.apply {
-            Log.i(ResultViewModel.TAG, "applyMeta")
+            Log.i(TAG, "applyMeta")
 
             duration = duration ?: meta.duration
             rating = rating ?: meta.publicScore
@@ -497,8 +1177,6 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun getEpisodes(indexer: EpisodeIndexer, range: EpisodeRange): List<ResultEpisode> {
-        //TODO ADD GENERATOR
-
         val startIndex = range.startIndex
         val length = range.length
 
@@ -535,7 +1213,7 @@ class ResultViewModel2 : ViewModel() {
         _episodesCountText.postValue(
             txt(
                 R.string.episode_format,
-                if (size == 1) R.string.episode else R.string.episodes,
+                txt(if (size == 1) R.string.episode else R.string.episodes),
                 size
             )
         )
@@ -562,6 +1240,10 @@ class ResultViewModel2 : ViewModel() {
         preferStartEpisode = range.startEpisode
         preferStartSeason = indexer.season
         preferDubStatus = indexer.dubStatus
+
+        generator = currentEpisodes[indexer]?.let { list ->
+            RepoLinkGenerator(list)
+        }
 
         val ret = getEpisodes(indexer, range)
         _episodes.postValue(Resource.Success(ret))

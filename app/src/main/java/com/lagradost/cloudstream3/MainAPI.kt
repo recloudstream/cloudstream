@@ -970,6 +970,10 @@ interface LoadResponse {
         private val aniListIdPrefix = aniListApi.idPrefix
         var isTrailersEnabled = true
 
+        fun LoadResponse.isMovie() : Boolean {
+            return this.type.isMovieType()
+        }
+
         @JvmName("addActorNames")
         fun LoadResponse.addActors(actors: List<String>?) {
             this.actors = actors?.map { ActorData(Actor(it)) }
