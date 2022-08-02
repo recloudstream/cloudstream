@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.animeproviders
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -41,51 +40,41 @@ class GomunimeProvider : MainAPI() {
         }
     }
 
-    private data class Response(
-        @JsonProperty("status") val status: Boolean,
-        @JsonProperty("html") val html: String
+    override val mainPage = mainPageOf(
+        "e" to "Episode Baru",
+        "c" to "Completed",
+        "la" to "Live Action",
+        "t" to "Trending"
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val urls = listOf(
-            Pair("e", "Episode Baru"),
-            Pair("c", "Completed"),
-            Pair("la", "Live Action"),
-            Pair("t", "Trending"),
-        )
-
-        val items = ArrayList<HomePageList>()
-
-        for ((payload, name) in urls) {
-            try {
-                val home = Jsoup.parse(
-                    parseJson<Response>(
-                        app.post(
-                            url = "$mainUrl/wp-admin/admin-ajax.php/wp-admin/admin-ajax.php",
-                            headers = mapOf("Referer" to mainUrl),
-                            data = mapOf("action" to "home_ajax", "fungsi" to payload, "pag" to "1")
-                        ).text
-                    ).html
-                ).select("li").map {
-                    val title = it.selectFirst("a.name")!!.text().trim()
-                    val href = getProperAnimeLink(it.selectFirst("a")!!.attr("href"))
-                    val posterUrl = it.selectFirst("img")!!.attr("src")
-                    val type = getType(it.selectFirst(".taglist > span")!!.text().trim())
-                    val epNum = it.select(".tag.ep").text().replace(Regex("[^0-9]"), "").trim()
-                        .toIntOrNull()
-                    newAnimeSearchResponse(title, href, type) {
-                        this.posterUrl = posterUrl
-                        addSub(epNum)
-                    }
-                }
-                items.add(HomePageList(name, home))
-            } catch (e: Exception) {
-                logError(e)
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val home = Jsoup.parse(
+            (app.post(
+                url = "$mainUrl/wp-admin/admin-ajax.php/wp-admin/admin-ajax.php",
+                headers = mapOf("Referer" to mainUrl),
+                data = mapOf(
+                    "action" to "home_ajax",
+                    "fungsi" to request.data,
+                    "pag" to "$page"
+                )
+            ).parsedSafe<Response>()?.html ?: throw ErrorLoadingException("Invalid Json reponse"))
+        ).select("li").mapNotNull {
+            val title = it.selectFirst("a.name")?.text()?.trim() ?: return@mapNotNull null
+            val href = getProperAnimeLink(it.selectFirst("a")!!.attr("href"))
+            val posterUrl = it.selectFirst("img")?.attr("src")
+            val type = getType(it.selectFirst(".taglist > span")!!.text().trim())
+            val epNum = it.select(".tag.ep").text().replace(Regex("[^0-9]"), "").trim()
+                .toIntOrNull()
+            newAnimeSearchResponse(title, href, type) {
+                this.posterUrl = posterUrl
+                addSub(epNum)
             }
         }
 
-        if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(request.name, home)
     }
 
     private fun getProperAnimeLink(uri: String): String {
@@ -118,14 +107,6 @@ class GomunimeProvider : MainAPI() {
             }
         }
     }
-
-    private data class EpisodeElement(
-        @JsonProperty("data-index") val dataIndex: Long?,
-        @JsonProperty("ep-num") val epNum: String?,
-        @JsonProperty("ep-title") val epTitle: String?,
-        @JsonProperty("ep-link") val epLink: String,
-        @JsonProperty("ep-date") val epDate: String?
-    )
 
     override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
@@ -163,12 +144,6 @@ class GomunimeProvider : MainAPI() {
             addTrailer(trailer)
         }
     }
-
-    data class MobiSource(
-        @JsonProperty("file") val file: String,
-        @JsonProperty("label") val label: String,
-        @JsonProperty("type") val type: String
-    )
 
     override suspend fun loadLinks(
         data: String,
@@ -234,4 +209,24 @@ class GomunimeProvider : MainAPI() {
 
         return true
     }
+
+    private data class Response(
+        @JsonProperty("status") val status: Boolean,
+        @JsonProperty("html") val html: String
+    )
+
+    data class MobiSource(
+        @JsonProperty("file") val file: String,
+        @JsonProperty("label") val label: String,
+        @JsonProperty("type") val type: String
+    )
+
+    private data class EpisodeElement(
+        @JsonProperty("data-index") val dataIndex: Long?,
+        @JsonProperty("ep-num") val epNum: String?,
+        @JsonProperty("ep-title") val epTitle: String?,
+        @JsonProperty("ep-link") val epLink: String,
+        @JsonProperty("ep-date") val epDate: String?
+    )
+
 }

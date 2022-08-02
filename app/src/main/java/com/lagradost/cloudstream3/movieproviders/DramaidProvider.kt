@@ -8,7 +8,6 @@ import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.util.ArrayList
 
 class DramaidProvider : MainAPI() {
     override var mainUrl = "https://185.224.83.103"
@@ -30,20 +29,18 @@ class DramaidProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "&status=&type=&order=update" to "Drama Terbaru",
+        "&order=latest" to "Baru Ditambahkan",
+        "&status=&type=&order=popular" to "Drama Popular",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select(".bixbox").forEach { block ->
-            val header = block.selectFirst(".releases > h3")!!.text().trim()
-            val dramas = block.select("article[itemscope=itemscope]").mapNotNull {
-                it.toSearchResult()
-            }
-            if (dramas.isNotEmpty()) homePageList.add(HomePageList(header, dramas))
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
+        val document = app.get("$mainUrl/series/?page=$page${request.data}").document
+        val home = document.select("article[itemscope=itemscope]").mapNotNull {
+            it.toSearchResult()
         }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
     private fun getProperDramaLink(uri: String): String {
@@ -55,10 +52,10 @@ class DramaidProvider : MainAPI() {
         }
     }
 
-    private fun Element.toSearchResult(): SearchResponse {
+    private fun Element.toSearchResult(): SearchResponse? {
         val href = getProperDramaLink(this.selectFirst("a.tip")!!.attr("href"))
-        val title = this.selectFirst("h2[itemprop=headline]")!!.text().trim()
-        val posterUrl = this.selectFirst(".limit > noscript > img")!!.attr("src")
+        val title = this.selectFirst("h2[itemprop=headline]")?.text()?.trim() ?: return null
+        val posterUrl = fixUrlNull(this.selectFirst(".limit > noscript > img")?.attr("src"))
 
         return newTvSeriesSearchResponse(title, href, TvType.AsianDrama) {
             this.posterUrl = posterUrl

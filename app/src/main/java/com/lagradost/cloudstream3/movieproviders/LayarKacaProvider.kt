@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.util.*
 
 class LayarKacaProvider : MainAPI() {
     override var mainUrl = "https://lk21.xn--6frz82g"
@@ -21,90 +20,33 @@ class LayarKacaProvider : MainAPI() {
         TvType.AsianDrama
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/populer/page/" to "Film Terplopuler",
+        "$mainUrl/latest-series/page/" to "Series Terbaru",
+        "$mainUrl/series/asian/page/" to "Film Asian Terbaru",
+        "$mainUrl/latest/page/" to "Film Upload Terbaru",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select("section.hot-block,section#newseries").forEach { block ->
-            val header = fixTitle(block.select("footer.load-more > a").text().trim())
-            val items = block.select("div.slider-item").mapNotNull {
-                it.toTopSearchResult()
-            }
-            if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val document = app.get(request.data + page).document
+        val home = document.select("article.mega-item").mapNotNull {
+            it.toSearchResult()
         }
-
-        document.select("div#newest").forEach { block ->
-            val header = fixTitle(block.select(".header > h2 > a").text())
-            val items = block.select("div.item").mapNotNull {
-                it.toMainSearchResult()
-            }
-            if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
-        }
-
-        document.select("section#recomendation,section#populer,section#seriespopuler")
-            .forEach { block ->
-                val header = fixTitle(block.select(".header > h2 > a").text())
-                val items = block.select("div.item").mapNotNull {
-                    it.toBottomSearchResult()
-                }
-                if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
-            }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
-    private fun Element.toTopSearchResult(): SearchResponse {
-        val title = this.selectFirst("h3.caption")!!.text().trim()
-        val href = this.selectFirst("a")!!.attr("href")
-        val posterUrl = fixUrl(this.selectFirst("a > img")?.attr("src").toString())
-        val type =
-            if (this.select("div.quality-top").isNotEmpty()) TvType.Movie else TvType.TvSeries
-        return if (type == TvType.Movie) {
-            val quality = getQualityFromString(this.select("div.quality-top").text().trim())
-            newMovieSearchResponse(title, href, TvType.Movie) {
-                this.posterUrl = posterUrl
-                this.quality = quality
-            }
-        } else {
-            val episode = this.select("div.last-episode > span").text().toIntOrNull()
-            newAnimeSearchResponse(title, href, TvType.TvSeries) {
-                this.posterUrl = posterUrl
-                addSub(episode)
-            }
-        }
-
-    }
-
-    private fun Element.toMainSearchResult(): SearchResponse {
-        val title = this.selectFirst("h3.caption")!!.text().trim()
-        val href = this.selectFirst("a")!!.attr("href")
-        val posterUrl = fixUrl(this.select("a > img").attr("src").toString())
-        val quality = getQualityFromString(this.select("div.quality-top").text().trim())
+    private fun Element.toSearchResult(): SearchResponse? {
+        val title = this.selectFirst("h1.grid-title > a")?.ownText()?.trim() ?: return null
+        val href = fixUrl(this.selectFirst("h1.grid-title > a")!!.attr("href"))
+        val posterUrl = fixUrlNull(this.selectFirst(".grid-poster > a > img")?.attr("src"))
+        val quality = this.select("div.quality").text().trim()
         return newMovieSearchResponse(title, href, TvType.Movie) {
             this.posterUrl = posterUrl
-            this.quality = quality
+            addQuality(quality)
         }
-
-    }
-
-    private fun Element.toBottomSearchResult(): SearchResponse {
-        val title = this.selectFirst("h1.grid-title > a")!!.ownText().trim()
-        val href = this.selectFirst("h1.grid-title > a")!!.attr("href")
-        val posterUrl = fixUrl(this.selectFirst(".grid-poster > a > img")?.attr("src").toString())
-        val type = if (this.select("div.quality").isNotEmpty()) TvType.Movie else TvType.TvSeries
-        return if (type == TvType.Movie) {
-            val quality = getQualityFromString(this.select("div.quality").text().trim())
-            return newMovieSearchResponse(title, href, TvType.Movie) {
-                this.posterUrl = posterUrl
-                this.quality = quality
-            }
-        } else {
-            newTvSeriesSearchResponse(title, href, TvType.TvSeries) {
-                this.posterUrl = posterUrl
-            }
-        }
-
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -138,12 +80,14 @@ class LayarKacaProvider : MainAPI() {
         val trailer = document.selectFirst("div.action-player li > a.fancybox")?.attr("href")
         val rating =
             document.selectFirst("div.content > div:nth-child(6) > h3")?.text()?.toRatingInt()
-        val actors = document.select("div.col-xs-9.content > div:nth-child(3) > h3 > a").map { it.text() }
+        val actors =
+            document.select("div.col-xs-9.content > div:nth-child(3) > h3 > a").map { it.text() }
 
         val recommendations = document.select("div.row.item-media").map {
             val recName = it.selectFirst("h3")?.text()?.trim().toString()
             val recHref = it.selectFirst(".content-media > a")!!.attr("href")
-            val recPosterUrl = fixUrl(it.selectFirst(".poster-media > a > img")?.attr("src").toString())
+            val recPosterUrl =
+                fixUrl(it.selectFirst(".poster-media > a > img")?.attr("src").toString())
             newTvSeriesSearchResponse(recName, recHref, TvType.TvSeries) {
                 this.posterUrl = recPosterUrl
             }
@@ -172,8 +116,7 @@ class LayarKacaProvider : MainAPI() {
                 this.recommendations = recommendations
                 addTrailer(trailer)
             }
-        }
-        else {
+        } else {
             newMovieLoadResponse(title, url, TvType.Movie, url) {
                 this.posterUrl = poster
                 this.year = year
@@ -196,10 +139,11 @@ class LayarKacaProvider : MainAPI() {
 
         val document = app.get(data).document
 
-        val sources = if(data.contains("-episode-")) {
+        val sources = if (data.contains("-episode-")) {
             document.select("script").mapNotNull { script ->
-                if(script.data().contains("var data =")) {
-                    val scriptData = script.toString().substringAfter("var data = '").substringBefore("';")
+                if (script.data().contains("var data =")) {
+                    val scriptData =
+                        script.toString().substringAfter("var data = '").substringBefore("';")
                     Jsoup.parse(scriptData).select("li").map {
                         fixUrl(it.select("a").attr("href"))
                     }
@@ -214,7 +158,7 @@ class LayarKacaProvider : MainAPI() {
         }
 
         sources.apmap {
-            val link = if(it.startsWith("https://layarkacaxxi.icu")) {
+            val link = if (it.startsWith("https://layarkacaxxi.icu")) {
                 it.substringBeforeLast("/")
             } else {
                 it

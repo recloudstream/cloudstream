@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import java.util.ArrayList
 
 class OtakudesuProvider : MainAPI() {
     override var mainUrl = "https://otakudesu.watch"
@@ -37,24 +38,24 @@ class OtakudesuProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/ongoing-anime/page/" to "Anime Ongoing",
+        "$mainUrl/complete-anime/page/" to "Anime Completed"
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select("div.rseries").forEach { block ->
-            val header = block.selectFirst("div.rvad > h1")!!.text().trim()
-            val items = block.select("div.venz > ul > li").map {
-                it.toSearchResult()
-            }
-            if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val document = app.get(request.data + page).document
+        val home = document.select("div.venz > ul > li").mapNotNull {
+            it.toSearchResult()
         }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
-    private fun Element.toSearchResult(): AnimeSearchResponse {
-        val title = this.selectFirst("h2.jdlflm")!!.text().trim()
+    private fun Element.toSearchResult(): AnimeSearchResponse? {
+        val title = this.selectFirst("h2.jdlflm")?.text()?.trim() ?: return null
         val href = this.selectFirst("a")!!.attr("href")
         val posterUrl = this.select("div.thumbz > img").attr("src").toString()
         val epNum = this.selectFirst("div.epz")?.ownText()?.replace(Regex("[^0-9]"), "")?.trim()
@@ -103,7 +104,9 @@ class OtakudesuProvider : MainAPI() {
         val description = document.select("div.sinopc > p").text()
 
         val episodes = document.select("div.episodelist")[1].select("ul > li").mapNotNull {
-            val name = Regex("(Episode\\s?[0-9]+)").find(it.selectFirst("a")?.text().toString())?.groupValues?.getOrNull(0) ?: it.selectFirst("a")?.text()
+            val name = Regex("(Episode\\s?[0-9]+)").find(
+                it.selectFirst("a")?.text().toString()
+            )?.groupValues?.getOrNull(0) ?: it.selectFirst("a")?.text()
             val link = fixUrl(it.selectFirst("a")!!.attr("href"))
             Episode(link, name)
         }.reversed()
@@ -180,7 +183,10 @@ class OtakudesuProvider : MainAPI() {
             ).select("iframe").attr("src")
 
             if (sources.startsWith("https://desustream.me")) {
-                if (!sources.contains("/arcg/") && !sources.contains("/odchan/") && !sources.contains("/desudrive/")) {
+                if (!sources.contains("/arcg/") && !sources.contains("/odchan/") && !sources.contains(
+                        "/desudrive/"
+                    )
+                ) {
                     sources = app.get(sources).document.select("iframe").attr("src")
                 }
                 if (sources.startsWith("https://yourupload.com")) {

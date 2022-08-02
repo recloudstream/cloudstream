@@ -177,6 +177,12 @@
         "status": 1,
         "url": "https://bestdubbedanime.com"
     },
+    "DubokuProvider": {
+        "language": "zh",
+        "name": "Duboku",
+        "status": 1,
+        "url": "https://www.duboku.tv"
+    },
     "EgyBestProvider": {
         "language": "ar",
         "name": "EgyBest",
@@ -307,6 +313,12 @@
         "name": "Kim Cartoon",
         "status": 1,
         "url": "https://kimcartoon.li"
+    },
+    "KisskhProvider": {
+        "language": "en",
+        "name": "Kisskh",
+        "status": 1,
+        "url": "https://kisskh.me"
     },
     "KuramanimeProvider": {
         "language": "id",
@@ -466,7 +478,7 @@
         "language": "id",
         "name": "Rebahin",
         "status": 1,
-        "url": "http://167.88.14.149"
+        "url": "http://104.237.198.194"
     },
     "SeriesflixProvider": {
         "language": "es",
@@ -594,6 +606,12 @@
         "status": 1,
         "url": "https://wcostream.cc"
     },
+    "WcofunProvider": {
+        "language": "en",
+        "name": "WCO Fun",
+        "status": 1,
+        "url": "https://www.wcofun.com"
+    },
     "XcineProvider": {
         "language": "de",
         "name": "Xcine",
@@ -604,7 +622,7 @@
         "language": "hi",
         "name": "Yomovies",
         "status": 1,
-        "url": "https://yomovies.vip"
+        "url": "https://yomovies.skin"
     },
     "ZoroProvider": {
         "language": "en",

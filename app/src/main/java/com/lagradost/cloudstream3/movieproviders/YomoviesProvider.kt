@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
 
 class YomoviesProvider : MainAPI() {
-    override var mainUrl = "https://yomovies.vip"
+    override var mainUrl = "https://yomovies.skin"
     override var name = "Yomovies"
     override val hasMainPage = true
     override var lang = "hi"
@@ -19,21 +19,25 @@ class YomoviesProvider : MainAPI() {
         TvType.TvSeries,
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/most-favorites/page/" to "Most Viewed",
+        "$mainUrl/genre/web-series/page/" to "Web Series Movies",
+        "$mainUrl/genre/dual-audio/page/" to "Dual Audio Movies",
+        "$mainUrl/genre/bollywood/page/" to "Bollywood Movies",
+        "$mainUrl/genre/tv-shows/page/" to "TV Shows Movies",
+        "$mainUrl/genre/hollywood/page/" to "Hollywood Movies",
+        "$mainUrl/series/page/" to "All TV Series",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select("div.movies-list-wrap.mlw-topview,div.movies-list-wrap.mlw-latestmovie")
-            .forEach { block ->
-                val header = fixTitle(block.selectFirst("div.ml-title span")?.text() ?: "")
-                val items = block.select("div.ml-item").mapNotNull {
-                    it.toSearchResult()
-                }
-                if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
-            }
-
-        return HomePageResponse(homePageList)
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val document = app.get(request.data + page).document
+        val home = document.select("div.ml-item").mapNotNull {
+            it.toSearchResult()
+        }
+        return newHomePageResponse(request.name, home)
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
@@ -63,8 +67,9 @@ class YomoviesProvider : MainAPI() {
         val year = document.select("div.mvici-right p:nth-child(3) a").text().trim()
             .toIntOrNull()
         val tvType = if (document.selectFirst("div.les-content")
-                ?.select("a")?.size!! <= 1
-        ) TvType.Movie else TvType.TvSeries
+                ?.select("a")?.size!! > 1 || document.selectFirst("ul.idTabs li strong")?.text()
+                ?.contains(Regex("(?i)(EP\\s?[0-9]+)|(episode\\s?[0-9]+)")) == true
+        ) TvType.TvSeries else TvType.Movie
         val description = document.selectFirst("p.f-desc")?.text()?.trim()
         val trailer = fixUrlNull(document.select("iframe#iframe-trailer").attr("src"))
         val rating = document.select("div.mvici-right > div.imdb_r span").text().toRatingInt()
@@ -74,14 +79,25 @@ class YomoviesProvider : MainAPI() {
         }
 
         return if (tvType == TvType.TvSeries) {
-            val episodes = document.select("div.les-content a").map {
-                val href = it.attr("href")
-                val name = it.text().trim()
-                Episode(
-                    data = href,
-                    name = name,
-                )
+            val episodes = if (document.selectFirst("div.les-title strong")?.text().toString()
+                    .contains(Regex("(?i)EP\\s?[0-9]+|Episode\\s?[0-9]+"))
+            ) {
+                document.select("ul.idTabs li").map {
+                    val id = it.select("a").attr("href")
+                    Episode(
+                        data = fixUrl(document.select("div$id iframe").attr("src")),
+                        name = it.select("strong").text(),
+                    )
+                }
+            } else {
+                document.select("div.les-content a").map {
+                    Episode(
+                        data = it.attr("href"),
+                        name = it.text().trim(),
+                    )
+                }
             }
+
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = poster
                 this.year = year
@@ -113,26 +129,30 @@ class YomoviesProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
 
-        app.get(data).document.select("div.movieplay iframe").map { fixUrl(it.attr("src")) }
-            .apmap { source ->
-                safeApiCall {
-                    when {
-                        source.startsWith("https://membed.net") -> app.get(
-                            source,
-                            referer = "$mainUrl/"
-                        ).document.select("ul.list-server-items li")
-                            .apmap {
-                                loadExtractor(
-                                    it.attr("data-video").substringBefore("=https://msubload"),
-                                    "$mainUrl/",
-                                    subtitleCallback,
-                                    callback
-                                )
-                            }
-                        else -> loadExtractor(source, "$mainUrl/", subtitleCallback, callback)
+        if (data.startsWith(mainUrl)) {
+            app.get(data).document.select("div.movieplay iframe").map { fixUrl(it.attr("src")) }
+                .apmap { source ->
+                    safeApiCall {
+                        when {
+                            source.startsWith("https://membed.net") -> app.get(
+                                source,
+                                referer = "$mainUrl/"
+                            ).document.select("ul.list-server-items li")
+                                .apmap {
+                                    loadExtractor(
+                                        it.attr("data-video").substringBefore("=https://msubload"),
+                                        "$mainUrl/",
+                                        subtitleCallback,
+                                        callback
+                                    )
+                                }
+                            else -> loadExtractor(source, "$mainUrl/", subtitleCallback, callback)
+                        }
                     }
                 }
-            }
+        } else {
+            loadExtractor(data, "$mainUrl/", subtitleCallback, callback)
+        }
 
         return true
     }

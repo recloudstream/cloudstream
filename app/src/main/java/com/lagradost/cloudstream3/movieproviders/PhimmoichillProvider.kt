@@ -23,20 +23,25 @@ class PhimmoichillProvider : MainAPI() {
         TvType.AsianDrama
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/genre/phim-chieu-rap/page-" to "Phim Chiếu Rạp",
+        "$mainUrl/list/phim-le/page-" to "Phim Lẻ",
+        "$mainUrl/list/phim-bo/page-" to "Phim Bộ",
+        "$mainUrl/genre/phim-hoat-hinh/page-" to "Phim Hoạt Hình",
+        "$mainUrl/country/phim-han-quoc/page-" to "Phim Hàn Quốc",
+        "$mainUrl/country/phim-trung-quoc/page-" to "Phim Trung Quốc",
+        "$mainUrl/country/phim-thai-lan/page-" to "Phim Thái Lan",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select("div.container div.block").forEach { block ->
-            val header = fixTitle(block.selectFirst("h2")!!.text())
-            val items = block.select("li.item").mapNotNull {
-                it.toSearchResult()
-            }
-            if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val document = app.get(request.data + page).document
+        val home = document.select("li.item").mapNotNull {
+            it.toSearchResult()
         }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
     private fun decode(input: String): String? = URLDecoder.decode(input, "utf-8")
@@ -176,11 +181,11 @@ class PhimmoichillProvider : MainAPI() {
                 } else {
                     val playList = app.get(link, referer = "$mainUrl/")
                         .parsedSafe<ResponseM3u>()?.main?.segments?.map { segment ->
-                        PlayListItem(
-                            segment.link,
-                            (segment.du.toFloat() * 1_000_000).toLong()
-                        )
-                    }
+                            PlayListItem(
+                                segment.link,
+                                (segment.du.toFloat() * 1_000_000).toLong()
+                            )
+                        }
 
                     callback.invoke(
                         ExtractorLinkPlayList(

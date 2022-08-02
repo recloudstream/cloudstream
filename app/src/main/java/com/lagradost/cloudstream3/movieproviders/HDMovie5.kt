@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.httpsify
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 
 class HDMovie5 : MainAPI() {
     override var mainUrl = "https://hdmovie2.click"
@@ -19,29 +20,27 @@ class HDMovie5 : MainAPI() {
         TvType.TvSeries,
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val doc = app.get(mainUrl).document.select("div.content")
-        val list = mapOf(
-            "Featured Movies" to "featured",
-            "Updated Movies" to "normal"
-        )
-        return HomePageResponse(list.map { item ->
-            HomePageList(item.key,
-                doc.select("div.${item.value}>.item").map {
-                    val data = it.select(".data")
-                    val a = data.select("a")
-                    MovieSearchResponse(
-                        a.text(),
-                        a.attr("href"),
+    override val mainPage = mainPageOf(
+        "$mainUrl/genre/tv-movie/page/" to "TV Movie",
+        "$mainUrl/genre/tv-show/page/" to "TV- Show",
+        "$mainUrl/genre/hindi-dubbed/page/" to "Hindi Dubbed",
+        "$mainUrl/genre/netflix/page/" to "NETFLIX",
+    )
 
-                        this.name,
-                        TvType.Movie,
-                        it.select("img").attr("src"),
-                        data.select("span").text().toIntOrNull()
-                    )
-                }
-            )
-        })
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
+        val home = app.get(request.data + page).document.select("article.item").mapNotNull {
+            it.toSearchResult()
+        }
+        return newHomePageResponse(request.name, home)
+    }
+
+    private fun Element.toSearchResult(): SearchResponse? {
+        val title = this.selectFirst("h3 > a")?.text()?.trim() ?: return null
+        val href = fixUrl(this.selectFirst("a")!!.attr("href"))
+        val posterUrl = this.selectFirst("img")?.attr("src")
+        return newMovieSearchResponse(title, href, TvType.Movie) {
+            addPoster(posterUrl)
+        }
     }
 
     private data class QuickSearchResponse(

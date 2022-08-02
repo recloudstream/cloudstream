@@ -62,20 +62,20 @@ class AnimeIndoProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = request(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/anime-terbaru/page/" to "Anime Terbaru",
+        "$mainUrl/donghua-terbaru/page/" to "Donghua Terbaru"
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select("div.widget_senction").forEach { block ->
-            val header = block.selectFirst("div.widget-title > h3")!!.text().trim()
-            val items = block.select("div.post-show > article").map {
-                it.toSearchResult()
-            }
-            if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val document = request(request.data + page).document
+        val home = document.select("div.post-show > article").mapNotNull {
+            it.toSearchResult()
         }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
     private fun getProperAnimeLink(uri: String): String {
@@ -96,8 +96,8 @@ class AnimeIndoProvider : MainAPI() {
         }
     }
 
-    private fun Element.toSearchResult(): AnimeSearchResponse {
-        val title = this.selectFirst("div.title")!!.text().trim()
+    private fun Element.toSearchResult(): AnimeSearchResponse? {
+        val title = this.selectFirst("div.title")?.text()?.trim() ?: return null
         val href = getProperAnimeLink(this.selectFirst("a")!!.attr("href"))
         val posterUrl = this.select("img[itemprop=image]").attr("src").toString()
         val type = getType(this.select("div.type").text().trim())

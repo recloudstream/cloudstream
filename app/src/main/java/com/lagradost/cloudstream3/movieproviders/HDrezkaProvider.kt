@@ -28,27 +28,25 @@ class HDrezkaProvider : MainAPI() {
         TvType.AsianDrama
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
+    override val mainPage = mainPageOf(
+        "$mainUrl/films/?filter=watching" to "фильмы",
+        "$mainUrl/series/?filter=watching" to "сериалы",
+        "$mainUrl/cartoons/?filter=watching" to "мультфильмы",
+        "$mainUrl/animation/?filter=watching" to "аниме",
+    )
 
-        val items = ArrayList<HomePageList>()
-
-        listOf(
-            Pair("фильмы", "$mainUrl/films/?filter=watching"),
-            Pair("сериалы", "$mainUrl/series/?filter=watching"),
-            Pair("мультфильмы", "$mainUrl/cartoons/?filter=watching"),
-            Pair("аниме", "$mainUrl/animation/?filter=watching"),
-        ).apmap { (header, url) ->
-            safeApiCall {
-                val home = app.get(url).document.select(
-                    "div.b-content__inline_items div.b-content__inline_item"
-                ).map {
-                    it.toSearchResult()
-                }
-                items.add(HomePageList(fixTitle(header), home))
-            }
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val url = request.data.split("?")
+        val home = app.get("${url.first()}page/$page/?${url.last()}").document.select(
+            "div.b-content__inline_items div.b-content__inline_item"
+        ).map {
+            it.toSearchResult()
         }
-        if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+
+        return newHomePageResponse(request.name, home)
     }
 
     private fun Element.toSearchResult(): SearchResponse {
