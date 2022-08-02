@@ -23,20 +23,24 @@ class UakinoProvider : MainAPI() {
         TvType.Anime
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/filmy/page/" to "Фільми",
+        "$mainUrl/seriesss/page/" to "Серіали",
+        "$mainUrl/seriesss/doramy/page/" to "Дорами",
+        "$mainUrl/animeukr/page/" to "Аніме",
+        "$mainUrl/cartoon/page/" to "Мультфільми",
+        "$mainUrl/cartoon/cartoonseries/page/" to "Мультсеріали",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select("div.main-section-inner").forEach { block ->
-            val header = block.selectFirst("p.sidebar-title")?.text()?.trim().toString()
-            val items = block.select("div.owl-item, div.movie-item").map {
-                it.toSearchResponse()
-            }
-            if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val document = app.get(request.data + page).document
+        val home = document.select("div.owl-item, div.movie-item").map {
+            it.toSearchResponse()
         }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
     private fun Element.toSearchResponse(): SearchResponse {
@@ -70,7 +74,8 @@ class UakinoProvider : MainAPI() {
         val poster = fixUrl(document.selectFirst("div.film-poster img")?.attr("src").toString())
         val tags = document.select("div.film-info > div:nth-child(4) a").map { it.text() }
         val year = document.select("div.film-info > div:nth-child(2) a").text().toIntOrNull()
-        val tvType = if (url.contains(Regex("(/anime-series)|(/seriesss)|(/cartoonseries)"))) TvType.TvSeries else TvType.Movie
+        val tvType =
+            if (url.contains(Regex("(/anime-series)|(/seriesss)|(/cartoonseries)"))) TvType.TvSeries else TvType.Movie
         val description = document.selectFirst("div[itemprop=description]")?.text()?.trim()
         val trailer = document.selectFirst("iframe#pre")?.attr("data-src")
         val rating = document.selectFirst("div.film-info > div:nth-child(8) div.fi-desc")?.text()
@@ -83,21 +88,22 @@ class UakinoProvider : MainAPI() {
 
         return if (tvType == TvType.TvSeries) {
             val id = url.split("/").last().split("-").first()
-            val episodes = app.get("$mainUrl/engine/ajax/playlists.php?news_id=$id&xfield=playlist&time=${Date().time}")
-                .parsedSafe<Responses>()?.response.let {
-                    Jsoup.parse(it.toString()).select("ul > li").mapNotNull { eps ->
-                        val href = fixUrl(eps.attr("data-file"))
-                        val name = eps.text().trim()
-                        if (href.isNotEmpty()) {
-                            Episode(
-                                href,
-                                name,
-                            )
-                        } else {
-                            null
+            val episodes =
+                app.get("$mainUrl/engine/ajax/playlists.php?news_id=$id&xfield=playlist&time=${Date().time}")
+                    .parsedSafe<Responses>()?.response.let {
+                        Jsoup.parse(it.toString()).select("ul > li").mapNotNull { eps ->
+                            val href = fixUrl(eps.attr("data-file"))
+                            val name = eps.text().trim()
+                            if (href.isNotEmpty()) {
+                                Episode(
+                                    href,
+                                    name,
+                                )
+                            } else {
+                                null
+                            }
                         }
                     }
-                }
             newTvSeriesLoadResponse(title, url, TvType.TvSeries, episodes) {
                 this.posterUrl = poster
                 this.year = year

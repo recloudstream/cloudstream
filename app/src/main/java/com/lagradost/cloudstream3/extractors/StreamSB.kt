@@ -7,6 +7,10 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
+class Ssbstream : StreamSB() {
+    override var mainUrl = "https://ssbstream.net"
+}
+
 class SBfull : StreamSB() {
     override var mainUrl = "https://sbfull.com"
 }

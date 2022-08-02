@@ -232,6 +232,7 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
     SBfull(),
     // Streamhub(), cause Streamhub2() works
     Streamhub2(),
+    Ssbstream(),
 
     FEmbed(),
     FeHD(),

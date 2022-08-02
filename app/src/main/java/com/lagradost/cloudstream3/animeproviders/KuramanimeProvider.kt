@@ -2,11 +2,9 @@ package com.lagradost.cloudstream3.animeproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
-import com.lagradost.cloudstream3.network.DdosGuardKiller
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.util.*
 
 class KuramanimeProvider : MainAPI() {
     override var mainUrl = "https://kuramanime.com"
@@ -38,28 +36,24 @@ class KuramanimeProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/anime/ongoing?order_by=updated&page=" to "Sedang Tayang",
+        "$mainUrl/anime/finished?order_by=updated&page=" to "Selesai Tayang",
+        "$mainUrl/properties/season/summer-2022?order_by=most_viewed&page=" to "Dilihat Terbanyak Musim Ini",
+        "$mainUrl/anime/movie?order_by=updated&page=" to "Film Layar Lebar",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val document = app.get(request.data + page).document
 
-        document.select("div.trending__product").forEach { block ->
-            val header = block.selectFirst("h4")?.text().toString()
-            val animes = block.select("div.col-lg-4.col-md-6.col-sm-6").map {
-                it.toSearchResult()
-            }
-            if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
+        val home = document.select("div.col-lg-4.col-md-6.col-sm-6").mapNotNull {
+            it.toSearchResult()
         }
 
-        document.select("div.product__sidebar__view").forEach { block ->
-            val header = block.selectFirst("h5")?.text().toString()
-            val animes = block.select("div.product__sidebar__comment__item").map {
-                it.toSearchResultView()
-            }
-            if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
-        }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
     private fun getProperAnimeLink(uri: String): String {
@@ -70,30 +64,13 @@ class KuramanimeProvider : MainAPI() {
         }
     }
 
-    private fun Element.toSearchResult(): AnimeSearchResponse {
+    private fun Element.toSearchResult(): AnimeSearchResponse? {
         val href = getProperAnimeLink(fixUrl(this.selectFirst("a")!!.attr("href")))
-        val title = this.selectFirst("h5 a")?.text().toString()
+        val title = this.selectFirst("h5 a")?.text() ?: return null
         val posterUrl = fixUrl(this.select("div.product__item__pic.set-bg").attr("data-setbg"))
         val episode = Regex("([0-9*])\\s?/").find(
             this.select("div.ep span").text()
         )?.groupValues?.getOrNull(1)?.toIntOrNull()
-
-        return newAnimeSearchResponse(title, href, TvType.Anime) {
-            this.posterUrl = posterUrl
-            addSub(episode)
-        }
-
-    }
-
-    private fun Element.toSearchResultView(): AnimeSearchResponse {
-        val href = getProperAnimeLink(fixUrl(this.selectFirst("a")?.attr("href").toString()))
-        val title = this.selectFirst("h5")?.text()?.trim().toString()
-        val posterUrl = fixUrlNull(
-            this.selectFirst("div.product__sidebar__comment__item__pic.set-bg")?.attr("data-setbg")
-        )
-        val episode =
-            this.selectFirst("h5")?.nextElementSibling()?.text()?.replace(Regex("[^0-9]"), "")
-                ?.toIntOrNull()
 
         return newAnimeSearchResponse(title, href, TvType.Anime) {
             this.posterUrl = posterUrl

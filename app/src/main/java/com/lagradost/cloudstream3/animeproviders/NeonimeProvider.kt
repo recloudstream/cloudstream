@@ -40,20 +40,18 @@ class NeonimeProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/episode/page/" to "Episode Terbaru",
+        "$mainUrl/tvshows/page/" to "Anime Terbaru",
+        "$mainUrl/movies/page/" to "Movie",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-        
-        document.select("div.item_1.items,div#slid01").forEach { block ->
-            val header = block.previousElementSibling()?.select("h1")?.text() ?: block.selectFirst("h3")?.text().toString()
-            val animes = block.select("div.item").map {
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
+        val document = app.get(request.data + page).document
+        val home = document.select("tbody tr,div.item").mapNotNull {
                 it.toSearchResult()
             }
-            if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
-        }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
     private fun getProperAnimeLink(uri: String): String {
@@ -80,11 +78,13 @@ class NeonimeProvider : MainAPI() {
         }
     }
 
-    private fun Element.toSearchResult(): AnimeSearchResponse {
+    private fun Element.toSearchResult(): AnimeSearchResponse? {
+        val title = this.selectFirst("td.bb a")?.ownText() ?: this.selectFirst("h2")?.text() ?: return null
         val href = getProperAnimeLink(fixUrl(this.select("a").attr("href")))
-        val title = this.select("span.tt.title-episode,h2.title-episode-movie,span.ttps").text()
         val posterUrl = fixUrl(this.select("img").attr("data-src"))
-        val epNum = this.select(".fixyear > h2.text-center").text().replace(Regex("[^0-9]"), "").trim().toIntOrNull()
+        val epNum = this.selectFirst("td.bb span")?.text()?.let { eps ->
+            Regex("Episode\\s?([0-9]+)").find(eps)?.groupValues?.getOrNull(1)?.toIntOrNull()
+        }
 
         return newAnimeSearchResponse(title, href, TvType.Anime) {
             this.posterUrl = posterUrl

@@ -40,20 +40,21 @@ class OploverzProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "&status=&type=&order=update" to "Episode Terbaru",
+        "&status=&type=&order=latest" to "Anime Terbaru",
+        "&sub=&order=popular" to "Popular Anime",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select(".bixbox.bbnofrm").forEach { block ->
-            val header = block.selectFirst("h3")!!.text().trim()
-            val animes = block.select("article[itemscope=itemscope]").map {
-                it.toSearchResult()
-            }
-            if (animes.isNotEmpty()) homePageList.add(HomePageList(header, animes))
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val document = app.get("$mainUrl/anime/?page=$page${request.data}").document
+        val home = document.select("article[itemscope=itemscope]").mapNotNull {
+            it.toSearchResult()
         }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
     private fun getProperAnimeLink(uri: String): String {
@@ -68,7 +69,8 @@ class OploverzProvider : MainAPI() {
                 )?.groupValues?.get(1).toString()
                 (title.contains("-ova")) -> Regex("(.+)-ova").find(title)?.groupValues?.get(1)
                     .toString()
-                (title.contains("-movie")) -> Regex("(.+)-subtitle").find(title)?.groupValues?.get(1).toString()
+                (title.contains("-movie")) -> Regex("(.+)-subtitle").find(title)?.groupValues?.get(1)
+                    .toString()
                 else -> Regex("(.+)-subtitle").find(title)?.groupValues?.get(1).toString()
                     .replace(Regex("-\\d+"), "")
             }
@@ -87,16 +89,14 @@ class OploverzProvider : MainAPI() {
 
     }
 
-    private fun Element.toSearchResult(): AnimeSearchResponse {
+    private fun Element.toSearchResult(): AnimeSearchResponse? {
         val href = getProperAnimeLink(this.selectFirst("a.tip")!!.attr("href"))
-        val title = this.selectFirst("h2[itemprop=headline]")?.text()?.trim() ?: ""
+        val title = this.selectFirst("h2[itemprop=headline]")?.text()?.trim() ?: return null
         val posterUrl = fixUrlNull(this.selectFirst("img")?.attr("src"))
         val type = getType(this.selectFirst(".eggtype, .typez")?.text()?.trim().toString())
-        val epNum = this.selectFirst(".eggepisode, span.epx")?.text()?.replace(Regex("[^0-9]"), "")?.trim()?.toIntOrNull()
 
         return newAnimeSearchResponse(title, href, type) {
             this.posterUrl = posterUrl
-            addSub(epNum)
         }
     }
 
@@ -144,7 +144,8 @@ class OploverzProvider : MainAPI() {
 
         val episodes = document.select(".eplister > ul > li").map {
             val header = it.select(".epl-title").text()
-            val name = Regex("(Episode\\s?[0-9]+)").find(header)?.groupValues?.getOrNull(0) ?: header
+            val name =
+                Regex("(Episode\\s?[0-9]+)").find(header)?.groupValues?.getOrNull(0) ?: header
             val link = fixUrl(it.select("a").attr("href"))
             Episode(link, name)
         }.reversed()

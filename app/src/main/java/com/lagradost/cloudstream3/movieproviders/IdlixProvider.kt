@@ -22,22 +22,25 @@ class IdlixProvider : MainAPI() {
         TvType.TvSeries,
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/trending/page/?get=movies" to "Trending Movies",
+        "$mainUrl/trending/page/?get=tv" to "Trending TV Series",
+        "$mainUrl/movie/page/" to "Movie Terbaru",
+        "$mainUrl/tvseries/page/" to "TV Series Terbaru",
+        "$mainUrl/season/page/" to "Season Terbaru",
+        "$mainUrl/episode/page/" to "Episode Terbaru",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select("div.items").forEach { block ->
-            val header =
-                fixTitle(block.previousElementSibling()?.previousElementSibling()?.select("header > h2")
-                    ?.text()!!.trim())
-            val items = block.select("article.item").mapNotNull {
-                it.toSearchResult()
-            }
-            if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val url = request.data.split("?")
+        val document = app.get("${url.first()}$page/?${url.lastOrNull()}").document
+        val home = document.select("article").mapNotNull {
+            it.toSearchResult()
         }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
     private fun getProperLink(uri: String): String {
@@ -75,7 +78,8 @@ class IdlixProvider : MainAPI() {
         val document = app.get(link).document
 
         return document.select("div.result-item").map {
-            val title = it.selectFirst("div.title > a")!!.text().replace(Regex("\\(\\d{4}\\)"), "").trim()
+            val title =
+                it.selectFirst("div.title > a")!!.text().replace(Regex("\\(\\d{4}\\)"), "").trim()
             val href = getProperLink(it.selectFirst("div.title > a")!!.attr("href"))
             val posterUrl = it.selectFirst("img")!!.attr("src").toString()
             newMovieSearchResponse(title, href, TvType.TvSeries) {
@@ -87,7 +91,9 @@ class IdlixProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
 
-        val title = document.selectFirst("div.data > h1")?.text()?.replace(Regex("\\(\\d{4}\\)"), "")?.trim().toString()
+        val title =
+            document.selectFirst("div.data > h1")?.text()?.replace(Regex("\\(\\d{4}\\)"), "")
+                ?.trim().toString()
         val poster = document.select("div.poster > img").attr("src").toString()
         val tags = document.select("div.sgeneros > a").map { it.text() }
 
@@ -157,7 +163,8 @@ class IdlixProvider : MainAPI() {
 
     private fun getLanguage(str: String): String {
         return when {
-            str.lowercase().contains("indonesia") || str.lowercase().contains("bahasa") -> "Indonesian"
+            str.lowercase().contains("indonesia") || str.lowercase()
+                .contains("bahasa") -> "Indonesian"
             else -> str
         }
     }
@@ -203,7 +210,8 @@ class IdlixProvider : MainAPI() {
 
         document.select("script").map { script ->
             if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
-                val subData = getAndUnpack(script.data()).substringAfter("\"tracks\":[").substringBefore("],")
+                val subData =
+                    getAndUnpack(script.data()).substringAfter("\"tracks\":[").substringBefore("],")
                 tryParseJson<List<Tracks>>("[$subData]")?.map { subtitle ->
                     subCallback.invoke(
                         SubtitleFile(

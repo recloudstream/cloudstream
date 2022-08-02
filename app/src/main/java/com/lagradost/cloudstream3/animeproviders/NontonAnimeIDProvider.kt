@@ -228,7 +228,7 @@ class NontonAnimeIDProvider : MainAPI() {
         val document = app.get(data).document
         val sources = ArrayList<String>()
 
-        document.select(".container1 > ul > li").apmap {
+        document.select(".container1 > ul > li:not(.boxtab)").apmap {
             val dataPost = it.attr("data-post")
             val dataNume = it.attr("data-nume")
             val dataType = it.attr("data-type")
@@ -240,7 +240,9 @@ class NontonAnimeIDProvider : MainAPI() {
                     "post" to dataPost,
                     "nume" to dataNume,
                     "type" to dataType
-                )
+                ),
+                referer = data,
+                headers = mapOf("X-Requested-With" to "XMLHttpRequest")
             ).document.select("iframe").attr("src")
 
             sources.add(fixUrl(iframe))

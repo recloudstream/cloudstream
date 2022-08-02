@@ -8,7 +8,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import org.jsoup.nodes.Element
-import java.util.ArrayList
 
 class MultiplexProvider : MainAPI() {
     override var mainUrl = "https://146.19.24.137"
@@ -22,45 +21,30 @@ class MultiplexProvider : MainAPI() {
         TvType.AsianDrama
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
+    override val mainPage = mainPageOf(
+        "$mainUrl/genre/top-popular-movies/page/" to "Top Popolar Movies",
+        "$mainUrl/genre/series-ongoing/page/" to "Series Ongoing",
+        "$mainUrl/genre/series-barat/page/" to "Series Barat",
+        "$mainUrl/genre/series-korea/page/" to "Series Korea",
+    )
 
-        val homePageList = ArrayList<HomePageList>()
-
-        document.select("div.col-md-12 > div.home-widget").forEach { block ->
-            val header = fixTitle(block.select("h3.homemodule-title").text())
-            val items = block.select("div.col-md-125").mapNotNull {
-                it.toSearchResult()
-            }
-            if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val document = app.get(request.data + page).document
+        val home = document.select("article.item").mapNotNull {
+            it.toSearchResult()
         }
-
-        document.select("div.container.gmr-maincontent")
-            .forEach { block ->
-                val header = fixTitle(block.select("h3.homemodule-title").text())
-                val items = block.select("article.item").mapNotNull {
-                    it.toSearchResult()
-                }
-                if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
-            }
-
-        document.select("div#idmuvi-rp-2").forEach { block ->
-            val header = fixTitle(block.selectFirst("h3.widget-title")?.ownText()!!.trim())
-            val items = block.select("div.idmuvi-rp ul li").mapNotNull {
-                it.toBottomSearchResult()
-            }
-            if (items.isNotEmpty()) homePageList.add(HomePageList(header, items))
-        }
-
-        return HomePageResponse(homePageList)
+        return newHomePageResponse(request.name, home)
     }
 
-    private fun Element.toSearchResult(): SearchResponse {
-        val title = this.selectFirst("h2.entry-title > a")!!.text().trim()
-        val href = this.selectFirst("a")!!.attr("href")
-        val posterUrl = fixUrl(this.selectFirst("a > img")?.attr("data-src").toString())
-        val quality = getQualityFromString(this.select("div.gmr-quality-item > a").text().trim())
-        return if (quality == null) {
+    private fun Element.toSearchResult(): SearchResponse? {
+        val title = this.selectFirst("h2.entry-title > a")?.text()?.trim() ?: return null
+        val href = fixUrl(this.selectFirst("a")!!.attr("href"))
+        val posterUrl = fixUrlNull(this.selectFirst("a > img")?.attr("data-src"))
+        val quality = this.select("div.gmr-quality-item > a").text().trim()
+        return if (quality.isEmpty()) {
             val episode = this.select("div.gmr-numbeps > span").text().toIntOrNull()
             newAnimeSearchResponse(title, href, TvType.TvSeries) {
                 this.posterUrl = posterUrl
@@ -69,27 +53,24 @@ class MultiplexProvider : MainAPI() {
         } else {
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = posterUrl
-                this.quality = quality
+                addQuality(quality)
             }
         }
-
     }
 
-    private fun Element.toBottomSearchResult(): SearchResponse {
-        val title = this.selectFirst("a > span.idmuvi-rp-title")!!.text().trim()
+    private fun Element.toBottomSearchResult(): SearchResponse? {
+        val title = this.selectFirst("a > span.idmuvi-rp-title")?.text()?.trim() ?: return null
         val href = this.selectFirst("a")!!.attr("href")
         val posterUrl = fixUrl(this.selectFirst("a > img")?.attr("data-src").toString())
         return newMovieSearchResponse(title, href, TvType.Movie) {
             this.posterUrl = posterUrl
         }
-
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
         val link = "$mainUrl/?s=$query&post_type[]=post&post_type[]=tv"
         val document = app.get(link).document
-
-        return document.select("div#gmr-main-load > article.item").map {
+        return document.select("article.item").mapNotNull {
             it.toSearchResult()
         }
     }
@@ -112,9 +93,10 @@ class MultiplexProvider : MainAPI() {
         val rating =
             document.selectFirst("div.gmr-meta-rating > span[itemprop=ratingValue]")?.text()
                 ?.toRatingInt()
-        val actors = document.select("div.gmr-moviedata").last()?.select("span[itemprop=actors]")?.map { it.select("a").text() }
+        val actors = document.select("div.gmr-moviedata").last()?.select("span[itemprop=actors]")
+            ?.map { it.select("a").text() }
 
-        val recommendations = document.select("div.idmuvi-rp ul li").map {
+        val recommendations = document.select("div.idmuvi-rp ul li").mapNotNull {
             it.toBottomSearchResult()
         }
 
