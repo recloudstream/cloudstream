@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.tvprovider.media.tv.PreviewChannelHelper
 import androidx.tvprovider.media.tv.TvContractCompat
@@ -56,6 +57,13 @@ object AppUtils {
     fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
         for (i in 0..maxViewTypeId)
             recycledViewPool.setMaxRecycledViews(i, maxPoolSize)
+    }
+
+    fun RecyclerView.isRecyclerScrollable(): Boolean {
+        val layoutManager =
+            this.layoutManager as? LinearLayoutManager?
+        val adapter = adapter
+        return if (layoutManager == null || adapter == null) false else layoutManager.findLastCompletelyVisibleItemPosition() < adapter.itemCount - 2
     }
 
     //fun Context.deleteFavorite(data: SearchResponse) {

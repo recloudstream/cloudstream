@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setMaxViewPoolSize
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -211,7 +212,8 @@ class HomeFragment : Fragment() {
 
                     val count = adapter.itemCount
                     val currentHasNext = adapter.hasNext
-                    if (!recyclerView.canScrollVertically(1) && currentHasNext && expandCount != count) {
+                    //!recyclerView.canScrollVertically(1)
+                    if (!recyclerView.isRecyclerScrollable() && currentHasNext && expandCount != count) {
                         expandCount = count
                         ioSafe {
                             expandCallback?.invoke(name)?.let { newExpand ->

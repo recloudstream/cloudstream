@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
-import com.lagradost.cloudstream3.ui.search.SearchResponseDiffCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.utils.UIHelper.IsBottomLayout
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -24,7 +23,7 @@ class HomeChildItemAdapter(
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isHorizontal: Boolean = false
-    var hasNext : Boolean = false
+    var hasNext: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layout = overrideLayout
@@ -43,6 +42,7 @@ class HomeChildItemAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is CardViewHolder -> {
+                holder.itemCount = itemCount // i know ugly af
                 holder.bind(cardList[position], position)
             }
         }
@@ -58,7 +58,7 @@ class HomeChildItemAdapter(
 
     fun updateList(newList: List<SearchResponse>) {
         val diffResult = DiffUtil.calculateDiff(
-            SearchResponseDiffCallback(this.cardList, newList)
+            HomeChildDiffCallback(this.cardList, newList)
         )
 
         cardList.clear()
@@ -71,7 +71,7 @@ class HomeChildItemAdapter(
     constructor(
         itemView: View,
         private val clickCallback: (SearchClickCallback) -> Unit,
-        private val itemCount: Int,
+        var itemCount: Int,
         private val nextFocusUp: Int? = null,
         private val nextFocusDown: Int? = null,
         private val isHorizontal: Boolean = false
@@ -127,4 +127,20 @@ class HomeChildItemAdapter(
             //itemView.startAnimation(ani)
         }
     }
+}
+
+class HomeChildDiffCallback(
+    private val oldList: List<SearchResponse>,
+    private val newList: List<SearchResponse>
+) :
+    DiffUtil.Callback() {
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition].name == newList[newItemPosition].name
+
+    override fun getOldListSize() = oldList.size
+
+    override fun getNewListSize() = newList.size
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition] == newList[newItemPosition] && oldItemPosition < oldList.size - 1 // always update the last item
 }

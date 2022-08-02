@@ -29,7 +29,7 @@ class NineAnimeProvider : MainAPI() {
                 encrypt(
                     cipher(mainKey, encode(text)),
                     nineAnimeKey
-                )//.replace("""=+$""".toRegex(), "")
+            )//.replace("""=+$""".toRegex(), "")
             )
         }
 

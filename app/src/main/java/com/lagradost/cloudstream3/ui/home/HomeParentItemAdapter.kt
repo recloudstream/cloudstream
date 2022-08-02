@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
 import kotlinx.android.synthetic.main.homepage_parent.view.*
 
 
@@ -181,7 +182,15 @@ class ParentItemAdapter(
 
                     val count = adapter.itemCount
                     val hasNext = adapter.hasNext
-                    if (!recyclerView.canScrollHorizontally(1) && hasNext && expandCount != count) {
+                    /*println(
+                        "scolling ${recyclerView.isRecyclerScrollable()} ${
+                            recyclerView.canScrollHorizontally(
+                                1
+                            )
+                        }"
+                    )*/
+                    //!recyclerView.canScrollHorizontally(1)
+                    if (!recyclerView.isRecyclerScrollable() && hasNext && expandCount != count) {
                         expandCount = count
                         expandCallback?.invoke(name)
                     }
@@ -211,9 +220,4 @@ class SearchDiffCallback(
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
         oldList[oldItemPosition] == newList[newItemPosition]
-    //{
-    //    val ret = oldList[oldItemPosition].list.list.size == newList[newItemPosition].list.list.size
-    //    println(">>>>>>>>>>>>>>>> $ret ${oldList[oldItemPosition].list.list.size} == ${newList[newItemPosition].list.list.size}")
-    //    return ret
-    //}
 }
