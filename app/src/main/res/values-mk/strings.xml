@@ -20,7 +20,7 @@
     <string name="result_share">Сподели</string>
     <string name="result_open_in_browser">Отвори во прелистувач</string>
     <string name="skip_loading">Прескокни вчитување</string>
-    <string name="loading_chromecast">Вчитување…</string>
+    <string name="loading">Вчитување…</string>
 
     <string name="type_watching">Моментални гледања</string>
     <string name="type_on_hold">Ставено на чекање</string>

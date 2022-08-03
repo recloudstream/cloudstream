@@ -52,7 +52,7 @@
     <string name="result_share">Bagikan</string>
     <string name="result_open_in_browser">Buka Di Browser</string>
     <string name="skip_loading">Skip Loading</string>
-    <string name="loading_chromecast">Loading…</string>
+    <string name="loading">Loading…</string>
 
     <string name="type_watching">Sedang Menonton</string>
     <string name="type_on_hold">Tertahan</string>

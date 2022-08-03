@@ -16,7 +16,7 @@
             android:textColor="?attr/textColor"
             android:layout_width="match_parent"
             android:layout_rowWeight="1"
-            android:text="@string/loading_chromecast"
+            android:text="@string/loading"
             android:layout_height="wrap_content" />
 
     <androidx.core.widget.ContentLoadingProgressBar

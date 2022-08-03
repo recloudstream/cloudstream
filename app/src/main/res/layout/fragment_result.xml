@@ -5,6 +5,7 @@
         android:id="@+id/result_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        style="@style/DarkFragment"
         android:background="?attr/primaryBlackBackground"
         android:clickable="true"
         android:focusable="true">

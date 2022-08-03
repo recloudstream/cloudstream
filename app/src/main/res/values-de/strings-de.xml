@@ -24,7 +24,7 @@
     <string name="result_share">Teilen</string>
     <string name="result_open_in_browser">Im Browser öffnen</string>
     <string name="skip_loading">Buffern überspringen</string>
-    <string name="loading_chromecast">Lädt…</string>
+    <string name="loading">Lädt…</string>
     <string name="type_watching">Am schauen</string>
     <string name="type_on_hold">Pausiert</string>
     <string name="type_completed">Abgeschlossen</string>

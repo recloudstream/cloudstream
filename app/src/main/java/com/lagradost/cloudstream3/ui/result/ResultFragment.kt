@@ -680,6 +680,7 @@ class ResultFragment : ResultTrailerPlayer() {
                     val d = meta.value
                     result_sync_episodes?.progress = currentSyncProgress * 1000
                     setSyncMaxEpisodes(d.totalEpisodes)
+
                     viewModel.setMeta(d, syncModel.getSyncs())
                 }
                 is Resource.Loading -> {
@@ -904,7 +905,6 @@ class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.selectPopup) { popup ->
-            println("POPUPSTATUS:$popup")
             when (popup) {
                 is Some.Success -> {
                     popupDialog?.dismissSafe(activity)
@@ -917,10 +917,10 @@ class ResultFragment : ResultTrailerPlayer() {
                         act.showBottomDialogInstant(
                             options, title, {
                                 popupDialog = null
-                                pop.callback(context ?: return@showBottomDialogInstant, null)
+                                pop.callback(null)
                             }, {
                                 popupDialog = null
-                                pop.callback(context ?: return@showBottomDialogInstant, it)
+                                pop.callback(it)
                             }
                         )
                     }
@@ -938,7 +938,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
             when (load) {
                 is Some.Success -> {
-                    if(loadingDialog?.isShowing != true) {
+                    if (loadingDialog?.isShowing != true) {
                         loadingDialog?.dismissSafe(activity)
                         loadingDialog = null
                     }
@@ -999,7 +999,6 @@ class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.rangeSelections) { range ->
-            println("RANGE:$range")
             result_episode_select?.setOnClickListener { view ->
                 view?.context?.let { ctx ->
                     val names = range

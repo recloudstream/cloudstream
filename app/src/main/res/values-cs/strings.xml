@@ -101,7 +101,7 @@
     <string name="result_share">Sdílet</string>
     <string name="result_open_in_browser">Otevřít v prohlížeči</string>
     <string name="skip_loading">Přeskočit načítání</string>
-    <string name="loading_chromecast">Načítání…</string>
+    <string name="loading">Načítání…</string>
 
     <string name="type_watching">Sledování</string>
     <string name="type_on_hold">Pozastaveno</string>

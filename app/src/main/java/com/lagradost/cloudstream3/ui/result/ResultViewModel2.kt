@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
@@ -37,6 +38,7 @@ import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
+import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
 import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -234,26 +236,23 @@ sealed class SelectPopup {
 
     data class SelectArray(
         val text: UiText,
-        val options: Int,
-        val map: Int?,
+        val options: List<Pair<UiText, Int>>,
         val callback: (Int?) -> Unit
     ) : SelectPopup()
 }
 
-fun SelectPopup.callback(context: Context, input: Int?) {
-    val ret = transformResult(context, input)
+fun SelectPopup.callback(index: Int?) {
+    val ret = transformResult(index)
     return when (this) {
         is SelectPopup.SelectArray -> callback(ret)
         is SelectPopup.SelectText -> callback(ret)
     }
 }
 
-fun SelectPopup.transformResult(context: Context, input: Int?): Int? {
+fun SelectPopup.transformResult(input: Int?): Int? {
     if (input == null) return null
     return when (this) {
-        is SelectPopup.SelectArray -> context.resources.getIntArray(map ?: return input)
-            .getOrNull(input)
-            ?: input
+        is SelectPopup.SelectArray -> options.getOrNull(input)?.second
         is SelectPopup.SelectText -> input
     }
 }
@@ -268,11 +267,7 @@ fun SelectPopup.getTitle(context: Context): String {
 fun SelectPopup.getOptions(context: Context): List<String> {
     return when (this) {
         is SelectPopup.SelectArray -> {
-            val cmap = this.map?.let { context.resources.getIntArray(it) }
-            context.resources.getStringArray(options).toList().filterIndexed { index, s ->
-
-                true
-            }
+            this.options.map { it.first.asString(context) }
         }
         is SelectPopup.SelectText -> options.map { it.asString(context) }
     }
@@ -637,7 +632,7 @@ class ResultViewModel2 : ViewModel() {
             parentId: Int,
             url: String,
         ) {
-            safeApiCall {
+            ioSafe {
                 val generator = RepoLinkGenerator(listOf(episode))
                 val currentLinks = mutableSetOf<ExtractorLink>()
                 val currentSubs = mutableSetOf<SubtitleData>()
@@ -657,7 +652,15 @@ class ResultViewModel2 : ViewModel() {
                             Toast.LENGTH_SHORT
                         )
                     }
-                    return@safeApiCall
+                    return@ioSafe
+                } else {
+                    Coroutines.main {
+                        CommonActivity.showToast(
+                            activity,
+                            R.string.download_started,
+                            Toast.LENGTH_SHORT
+                        )
+                    }
                 }
 
                 startDownload(
@@ -784,17 +787,16 @@ class ResultViewModel2 : ViewModel() {
         )
     }
 
+    @JvmName("postPopupArray")
     private fun postPopup(
         text: UiText,
-        options: Int,
-        values: Int,
+        options: List<Pair<UiText, Int>>,
         callback: suspend (Int?) -> Unit
     ) {
         _selectPopup.postValue(
             some(SelectPopup.SelectArray(
                 text,
                 options,
-                values
             ) { value ->
                 viewModelScope.launch {
                     _selectPopup.value = Some.None
@@ -893,6 +895,10 @@ class ResultViewModel2 : ViewModel() {
 
     private fun playWithVlc(act: Activity?, data: LinkLoadingResult, id: Int) = ioSafe {
         if (act == null) return@ioSafe
+        if (data.links.isEmpty()) {
+            showToast(act, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+            return@ioSafe
+        }
         try {
             if (!act.checkWrite()) {
                 act.requestRW()
@@ -955,6 +961,31 @@ class ResultViewModel2 : ViewModel() {
     private suspend fun handleEpisodeClickEvent(activity: Activity?, click: EpisodeClickEvent) {
         when (click.action) {
             ACTION_SHOW_OPTIONS -> {
+                val options = mutableListOf<Pair<UiText, Int>>()
+                if (activity?.isConnectedToChromecast() == true) {
+                    options.addAll(
+                        listOf(
+                            txt(R.string.episode_action_chromecast_episode) to ACTION_CHROME_CAST_EPISODE,
+                            txt(R.string.episode_action_chromecast_mirror) to ACTION_CHROME_CAST_MIRROR,
+                        )
+                    )
+                }
+                options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
+
+                if (activity?.isAppInstalled(VLC_PACKAGE) == true) {
+                    options.add(txt(R.string.episode_action_play_in_vlc) to ACTION_PLAY_EPISODE_IN_VLC_PLAYER)
+                }
+                options.addAll(
+                    listOf(
+                        txt(R.string.episode_action_play_in_browser) to ACTION_PLAY_EPISODE_IN_BROWSER,
+                        txt(R.string.episode_action_copy_link) to ACTION_COPY_LINK,
+                        txt(R.string.episode_action_auto_download) to ACTION_DOWNLOAD_EPISODE,
+                        txt(R.string.episode_action_download_mirror) to ACTION_DOWNLOAD_MIRROR,
+                        txt(R.string.episode_action_download_subtitle) to ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR,
+                        txt(R.string.episode_action_reload_links) to ACTION_RELOAD_EPISODE,
+                    )
+                )
+
                 postPopup(
                     txt(
                         activity?.getNameFull(
@@ -963,8 +994,7 @@ class ResultViewModel2 : ViewModel() {
                             click.data.season
                         ) ?: ""
                     ), // TODO FIX
-                    R.array.episode_long_click_options,
-                    R.array.episode_long_click_options_values
+                    options
                 ) { result ->
                     handleEpisodeClickEvent(
                         activity,
@@ -987,7 +1017,13 @@ class ResultViewModel2 : ViewModel() {
                     }
                 }
             }
+            /* not implemented, not used
             ACTION_DOWNLOAD_EPISODE_SUBTITLE -> {
+                loadLinks(click.data, isVisible =  false, isCasting = false) { links ->
+                    downloadSubtitle(activity,links.subs,)
+                }
+            }*/
+            ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR -> {
                 val response = currentResponse ?: return
 
                 acquireSingleSubtitle(
@@ -1071,7 +1107,7 @@ class ResultViewModel2 : ViewModel() {
             ACTION_CHROME_CAST_MIRROR -> {
                 acquireSingleLink(
                     click.data,
-                    false,
+                    isCasting = true,
                     txt(R.string.episode_action_chromecast_mirror)
                 ) { (result, index) ->
                     startChromecast(activity, click.data, result.links, result.subs, index)
@@ -1079,7 +1115,7 @@ class ResultViewModel2 : ViewModel() {
             }
             ACTION_PLAY_EPISODE_IN_BROWSER -> acquireSingleLink(
                 click.data,
-                false,
+                isCasting = true,
                 txt(R.string.episode_action_play_in_browser)
             ) { (result, index) ->
                 try {
@@ -1093,7 +1129,7 @@ class ResultViewModel2 : ViewModel() {
             ACTION_COPY_LINK -> {
                 acquireSingleLink(
                     click.data,
-                    false,
+                    isCasting = true,
                     txt(R.string.episode_action_copy_link)
                 ) { (result, index) ->
                     val act = activity ?: return@acquireSingleLink
@@ -1216,9 +1252,14 @@ class ResultViewModel2 : ViewModel() {
         return out to updateEpisodes
     }
 
-    fun setMeta(meta: SyncAPI.SyncResult, syncs: Map<String, String>?) =
+    fun setMeta(meta: SyncAPI.SyncResult, syncs: Map<String, String>?) {
+        // I dont want to update everything if the metadata is not relevant
+        if (currentMeta == meta && currentSync == syncs) {
+            Log.i(TAG, "setMeta same")
+            return
+        }
+        Log.i(TAG, "setMeta")
         viewModelScope.launch {
-            Log.i(TAG, "setMeta")
             currentMeta = meta
             currentSync = syncs
             val (value, updateEpisodes) = Coroutines.ioWork {
@@ -1235,6 +1276,7 @@ class ResultViewModel2 : ViewModel() {
                 false
             )
         }
+    }
 
 
     private suspend fun updateFillers(name: String) {

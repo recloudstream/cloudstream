@@ -266,6 +266,7 @@
     </style>
 
     <style name="AppBottomSheetDialogTheme">
+        <item name="android:navigationBarColor">?attr/boxItemBackground</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
@@ -278,7 +279,7 @@
         <item name="behavior_skipCollapsed">true</item>
         <item name="shapeAppearance">@null</item>
         <item name="shapeAppearanceOverlay">@null</item>
-        <item name="backgroundTint">?android:attr/colorBackground</item>
+        <item name="backgroundTint">@color/transparent</item>
         <item name="android:background">@drawable/rounded_dialog</item>
         <item name="behavior_peekHeight">512dp</item>
     </style>
@@ -334,6 +335,9 @@
         <item name="tabMode">scrollable</item>-->
     </style>
 
+    <style name="DarkFragment" parent="AppTheme">
+        <item name="android:navigationBarColor">?attr/colorPrimary</item>
+    </style>
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowFullscreen">true</item>
         <item name="android:textColor">?attr/textColor</item>
