@@ -167,6 +167,10 @@ object APIHolder {
         apiMap = null
     }
 
+    fun String.capitalize(): String {
+        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+    }
+
     var apis: List<MainAPI> = arrayListOf()
     var apiMap: Map<String, Int>? = null
 

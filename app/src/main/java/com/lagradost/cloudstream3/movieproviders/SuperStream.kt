@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.movieproviders
 import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.capitalize
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
@@ -33,6 +34,9 @@ class SuperStream : MainAPI() {
         TvType.Anime,
         TvType.AnimeMovie,
     )
+
+    // 0 to get nsfw
+    private val hideNsfw = 1
 
     override val instantLinkLoading = true
 
@@ -214,7 +218,7 @@ class SuperStream : MainAPI() {
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val json = queryApi(
-            """{"childmode":"0","app_version":"11.5","appid":"$appId","module":"Home_list_type_v2","channel":"Website","page":"$page","lang":"en","type":"all","pagelimit":"10","expired_date":"${getExpiryDate()}","platform":"android"}
+            """{"childmode":"$hideNsfw","app_version":"11.5","appid":"$appId","module":"Home_list_type_v2","channel":"Website","page":"$page","lang":"en","type":"all","pagelimit":"10","expired_date":"${getExpiryDate()}","platform":"android"}
             """.trimIndent()
         ).text
 
@@ -261,7 +265,7 @@ class SuperStream : MainAPI() {
 
         val apiQuery =
             // Originally 8 pagelimit
-            """{"childmode":"0","app_version":"11.5","appid":"$appId","module":"Search3","channel":"Website","page":"1","lang":"en","type":"all","keyword":"$query","pagelimit":"20","expired_date":"${getExpiryDate()}","platform":"android"}"""
+            """{"childmode":"$hideNsfw","app_version":"11.5","appid":"$appId","module":"Search3","channel":"Website","page":"1","lang":"en","type":"all","keyword":"$query","pagelimit":"20","expired_date":"${getExpiryDate()}","platform":"android"}"""
         val searchResponse = parseJson<MainData>(queryApi(apiQuery).text).data.mapNotNull {
             val type = if (it.boxType == 1) TvType.Movie else TvType.TvSeries
             newMovieSearchResponse(
@@ -273,7 +277,6 @@ class SuperStream : MainAPI() {
                 posterUrl = it.posterOrg ?: it.poster
                 year = it.year
                 quality = getQualityFromString(it.qualityTag?.replace("-", "") ?: "")
-
             }
         }
         return searchResponse
@@ -319,6 +322,11 @@ class SuperStream : MainAPI() {
         @JsonProperty("data") val data: SeriesData? = SeriesData()
     )
 
+    private data class SeriesSeasonProp(
+        @JsonProperty("code") val code: Int? = null,
+        @JsonProperty("msg") val msg: String? = null,
+        @JsonProperty("data") val data: ArrayList<SeriesEpisode>? = arrayListOf()
+    )
 //    data class PlayProgress (
 //
 //  @JsonProperty("over"      ) val over     : Int? = null,
@@ -448,7 +456,7 @@ class SuperStream : MainAPI() {
 
         if (isMovie) { // 1 = Movie
             val apiQuery =
-                """{"childmode":"0","uid":"","app_version":"11.5","appid":"$appId","module":"Movie_detail","channel":"Website","mid":"${loadData.id}","lang":"en","expired_date":"${getExpiryDate()}","platform":"android","oss":"","group":""}"""
+                """{"childmode":"$hideNsfw","uid":"","app_version":"11.5","appid":"$appId","module":"Movie_detail","channel":"Website","mid":"${loadData.id}","lang":"en","expired_date":"${getExpiryDate()}","platform":"android","oss":"","group":""}"""
             val data = (queryApiParsed<MovieDataProp>(apiQuery)).data
                 ?: throw RuntimeException("API error")
 
@@ -466,22 +474,28 @@ class SuperStream : MainAPI() {
                 this.posterUrl = data.posterOrg ?: data.poster
                 this.year = data.year
                 this.plot = data.description
-                this.tags = data.cats?.split(",")
+                this.tags = data.cats?.split(",")?.map { it.capitalize() }
                 this.rating = data.imdbRating?.split("/")?.get(0)?.toIntOrNull()
                 addTrailer(data.trailerUrl)
                 this.addImdbId(data.imdbId)
             }
         } else { // 2 Series
             val apiQuery =
-                """{"childmode":"0","uid":"","app_version":"11.5","appid":"$appId","module":"TV_detail_1","display_all":"1","channel":"Website","lang":"en","expired_date":"${getExpiryDate()}","platform":"android","tid":"${loadData.id}"}"""
+                """{"childmode":"$hideNsfw","uid":"","app_version":"11.5","appid":"$appId","module":"TV_detail_1","display_all":"1","channel":"Website","lang":"en","expired_date":"${getExpiryDate()}","platform":"android","tid":"${loadData.id}"}"""
             val data = (queryApiParsed<SeriesDataProp>(apiQuery)).data
                 ?: throw RuntimeException("API error")
+
+            val episodes = data.season.mapNotNull {
+                val seasonQuery =
+                    """{"childmode":"$hideNsfw","app_version":"11.5","year":"0","appid":"$appId","module":"TV_episode","display_all":"1","channel":"Website","season":"$it","lang":"en","expired_date":"${getExpiryDate()}","platform":"android","tid":"${loadData.id}"}"""
+                (queryApiParsed<SeriesSeasonProp>(seasonQuery)).data
+            }.flatten()
 
             return newTvSeriesLoadResponse(
                 data.title ?: "",
                 data.imdbLink ?: data.tomatoUrl ?: "",
                 TvType.TvSeries,
-                data.episode.mapNotNull {
+                episodes.mapNotNull {
                     Episode(
                         LinkData(
                             it.tid ?: it.id ?: return@mapNotNull null,
@@ -504,7 +518,7 @@ class SuperStream : MainAPI() {
                 this.plot = data.description
                 this.posterUrl = data.posterOrg ?: data.poster
                 this.rating = data.imdbRating?.split("/")?.get(0)?.toIntOrNull()
-                this.tags = data.cats?.split(",")
+                this.tags = data.cats?.split(",")?.map { it.capitalize() }
                 this.addImdbId(data.imdbId)
             }
         }
@@ -615,11 +629,11 @@ class SuperStream : MainAPI() {
         val parsed = parseJson<LinkData>(data)
 
         val query = if (parsed.type == TYPE_MOVIES) {
-            """{"childmode":"0","uid":"","app_version":"11.5","appid":"$appId","module":"Movie_downloadurl_v3","channel":"Website","mid":"${parsed.id}","lang":"","expired_date":"${getExpiryDate()}","platform":"android","oss":"1","group":""}"""
+            """{"childmode":"$hideNsfw","uid":"","app_version":"11.5","appid":"$appId","module":"Movie_downloadurl_v3","channel":"Website","mid":"${parsed.id}","lang":"","expired_date":"${getExpiryDate()}","platform":"android","oss":"1","group":""}"""
         } else {
             val episode = parsed.episode ?: throw RuntimeException("No episode number!")
             val season = parsed.season ?: throw RuntimeException("No season number!")
-            """{"childmode":"0","app_version":"11.5","module":"TV_downloadurl_v3","channel":"Website","episode":"$episode","expired_date":"${getExpiryDate()}","platform":"android","tid":"${parsed.id}","oss":"1","uid":"","appid":"$appId","season":"$season","lang":"en","group":""}"""
+            """{"childmode":"$hideNsfw","app_version":"11.5","module":"TV_downloadurl_v3","channel":"Website","episode":"$episode","expired_date":"${getExpiryDate()}","platform":"android","tid":"${parsed.id}","oss":"1","uid":"","appid":"$appId","season":"$season","lang":"en","group":""}"""
         }
 
         val linkData = queryApiParsed<LinkDataProp>(query)
@@ -631,9 +645,9 @@ class SuperStream : MainAPI() {
         val fid = linkData.data?.list?.firstOrNull { it.fid != null }?.fid
 
         val subtitleQuery = if (parsed.type == TYPE_MOVIES) {
-            """{"childmode":"0","fid":"$fid","uid":"","app_version":"11.5","appid":"$appId","module":"Movie_srt_list_v2","channel":"Website","mid":"${parsed.id}","lang":"en","expired_date":"${getExpiryDate()}","platform":"android"}"""
+            """{"childmode":"$hideNsfw","fid":"$fid","uid":"","app_version":"11.5","appid":"$appId","module":"Movie_srt_list_v2","channel":"Website","mid":"${parsed.id}","lang":"en","expired_date":"${getExpiryDate()}","platform":"android"}"""
         } else {
-            """{"childmode":"0","fid":"$fid","app_version":"11.5","module":"TV_srt_list_v2","channel":"Website","episode":"${parsed.episode}","expired_date":"${getExpiryDate()}","platform":"android","tid":"${parsed.id}","uid":"","appid":"$appId","season":"${parsed.season}","lang":"en"}"""
+            """{"childmode":"$hideNsfw","fid":"$fid","app_version":"11.5","module":"TV_srt_list_v2","channel":"Website","episode":"${parsed.episode}","expired_date":"${getExpiryDate()}","platform":"android","tid":"${parsed.id}","uid":"","appid":"$appId","season":"${parsed.season}","lang":"en"}"""
         }
 
         val subtitles = queryApiParsed<SubtitleDataProp>(subtitleQuery).data
