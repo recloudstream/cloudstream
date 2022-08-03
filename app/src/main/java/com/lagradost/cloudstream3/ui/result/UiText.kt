@@ -154,10 +154,10 @@ fun TextView?.setTextHtml(text: UiText?) {
     }
 }
 
-fun TextView?.setTextHtml(text: Some<UiText>) {
+fun TextView?.setTextHtml(text: Some<UiText>?) {
     setTextHtml(if(text is Some.Success) text.value else null)
 }
 
-fun TextView?.setText(text: Some<UiText>) {
+fun TextView?.setText(text: Some<UiText>?) {
     setText(if(text is Some.Success) text.value else null)
 }

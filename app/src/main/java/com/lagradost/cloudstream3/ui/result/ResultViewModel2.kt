@@ -44,6 +44,7 @@ import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
@@ -222,6 +223,18 @@ data class LinkProgress(
     val subsLoaded: Int,
 )
 
+data class ResumeProgress(
+    val progress: Int,
+    val maxProgress: Int,
+    val progressLeft: UiText,
+)
+
+data class ResumeWatchingStatus(
+    val progress: ResumeProgress?,
+    val isMovie: Boolean,
+    val result: ResultEpisode,
+)
+
 data class LinkLoadingResult(
     val links: List<ExtractorLink>,
     val subs: List<SubtitleData>,
@@ -351,6 +364,10 @@ class ResultViewModel2 : ViewModel() {
 
     private val _loadedLinks: MutableLiveData<Some<LinkProgress>> = MutableLiveData(Some.None)
     val loadedLinks: LiveData<Some<LinkProgress>> = _loadedLinks
+
+    private val _resumeWatching: MutableLiveData<Some<ResumeWatchingStatus>> =
+        MutableLiveData(Some.None)
+    val resumeWatching: LiveData<Some<ResumeWatchingStatus>> = _resumeWatching
 
     companion object {
         const val TAG = "RVM2"
@@ -646,7 +663,7 @@ class ResultViewModel2 : ViewModel() {
 
                 if (currentLinks.isEmpty()) {
                     Coroutines.main {
-                        CommonActivity.showToast(
+                        showToast(
                             activity,
                             R.string.no_links_found_toast,
                             Toast.LENGTH_SHORT
@@ -655,7 +672,7 @@ class ResultViewModel2 : ViewModel() {
                     return@ioSafe
                 } else {
                     Coroutines.main {
-                        CommonActivity.showToast(
+                        showToast(
                             activity,
                             R.string.download_started,
                             Toast.LENGTH_SHORT
@@ -950,7 +967,7 @@ class ResultViewModel2 : ViewModel() {
             act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
         } catch (e: Exception) {
             logError(e)
-            CommonActivity.showToast(act, e.toString(), Toast.LENGTH_LONG)
+            showToast(act, e.toString(), Toast.LENGTH_LONG)
         }
     }
 
@@ -1043,7 +1060,7 @@ class ResultViewModel2 : ViewModel() {
                             response.type
                         )
                     )
-                    CommonActivity.showToast(
+                    showToast(
                         activity,
                         R.string.download_started,
                         Toast.LENGTH_SHORT
@@ -1051,7 +1068,7 @@ class ResultViewModel2 : ViewModel() {
                 }
             }
             ACTION_SHOW_TOAST -> {
-                CommonActivity.showToast(activity, R.string.play_episode_toast, Toast.LENGTH_SHORT)
+                showToast(activity, R.string.play_episode_toast, Toast.LENGTH_SHORT)
             }
             ACTION_DOWNLOAD_EPISODE -> {
                 val response = currentResponse ?: return
@@ -1087,7 +1104,7 @@ class ResultViewModel2 : ViewModel() {
                         listOf(result.links[index]),
                         result.subs,
                     )
-                    CommonActivity.showToast(
+                    showToast(
                         activity,
                         R.string.download_started,
                         Toast.LENGTH_SHORT
@@ -1139,7 +1156,7 @@ class ResultViewModel2 : ViewModel() {
                     val link = result.links[index]
                     val clip = ClipData.newPlainText(link.name, link.url)
                     serviceClipboard.setPrimaryClip(clip)
-                    CommonActivity.showToast(act, R.string.copy_link_toast, Toast.LENGTH_SHORT)
+                    showToast(act, R.string.copy_link_toast, Toast.LENGTH_SHORT)
                 }
             }
             ACTION_CHROME_CAST_EPISODE -> {
@@ -1304,7 +1321,7 @@ class ResultViewModel2 : ViewModel() {
 
     private fun getMovie(): ResultEpisode? {
         return currentEpisodes.entries.firstOrNull()?.value?.firstOrNull()?.let { ep ->
-            val posDur = DataStoreHelper.getViewPos(ep.id)
+            val posDur = getViewPos(ep.id)
             ep.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
         }
     }
@@ -1318,7 +1335,7 @@ class ResultViewModel2 : ViewModel() {
                 val start = minOf(list.size, startIndex)
                 val end = minOf(list.size, start + length)
                 list.subList(start, end).map {
-                    val posDur = DataStoreHelper.getViewPos(it.id)
+                    val posDur = getViewPos(it.id)
                     it.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
                 }
             }
@@ -1369,6 +1386,7 @@ class ResultViewModel2 : ViewModel() {
             )
             _movie.postValue(ResourceSome.None)
         }
+        postResume()
     }
 
     private fun postEpisodeRange(indexer: EpisodeIndexer?, range: EpisodeRange?) {
@@ -1667,7 +1685,37 @@ class ResultViewModel2 : ViewModel() {
         } ?: ranger?.lastOrNull()
 
         postEpisodeRange(min, range)
+        postResume()
     }
+
+    fun postResume() {
+        _resumeWatching.postValue(some(resume()))
+    }
+
+    private fun resume(): ResumeWatchingStatus? {
+        val correctId = currentId ?: return null
+        val resume = DataStoreHelper.getLastWatched(correctId)
+        val resumeParentId = resume?.parentId
+        if (resumeParentId != correctId) return null // is null or smth went wrong with getLastWatched
+        val resumeId = resume.episodeId ?: return null// invalid episode id
+        val response = currentResponse ?: return null
+        // kinda ugly ik
+        val episode =
+            currentEpisodes.values.flatten().firstOrNull { it.id == resumeId } ?: return null
+
+        val isMovie = response.isMovie()
+
+        val progress = getViewPos(resume.episodeId)?.let { viewPos ->
+            ResumeProgress(
+                progress = (viewPos.position / 1000).toInt(),
+                maxProgress = (viewPos.duration / 1000).toInt(),
+                txt(R.string.resume_time_left, (viewPos.duration - viewPos.position) / (60_000))
+            )
+        }
+
+        return ResumeWatchingStatus(progress = progress, isMovie = isMovie, result = episode)
+    }
+
 
     // this instantly updates the metadata on the page
     private fun postPage(loadResponse: LoadResponse, apiRepository: APIRepository) {

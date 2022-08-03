@@ -40,22 +40,24 @@ import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
-import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.Coroutines.ioWork
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
-import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -225,10 +227,11 @@ class ResultFragment : ResultTrailerPlayer() {
         return inflater.inflate(R.layout.fragment_result_swipe, container, false)
     }
 
+    private var downloadButton: EasyDownloadButton? = null
     override fun onDestroyView() {
         updateUIListener = null
         (result_episodes?.adapter as EpisodeAdapter?)?.killAdapter()
-        //downloadButton?.dispose() //TODO READD
+        downloadButton?.dispose()
         //somehow this still leaks and I dont know why????
         // todo look at https://github.com/discord/OverlappingPanels/blob/70b4a7cf43c6771873b1e091029d332896d41a1a/sample_app/src/main/java/com/discord/sampleapp/MainActivity.kt
         PanelsChildGestureRegionObserver.Provider.get().removeGestureRegionsUpdateListener(this)
@@ -741,128 +744,53 @@ class ResultFragment : ResultTrailerPlayer() {
             result_overlapping_panels?.setStartPanelLockState(if (closed) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
         }
 
-        /*
-        observe(viewModel.episodes) { episodeList ->
-            lateFixDownloadButton(episodeList.size <= 1) // movies can have multible parts but still be *movies* this will fix this
-            var isSeriesVisible = false
-            var isProgressVisible = false
-            DataStoreHelper.getLastWatched(currentId)?.let { resume ->
-                if (currentIsMovie == false) {
-                    isSeriesVisible = true
+        observe(viewModel.resumeWatching) { resume ->
+            when (resume) {
+                is Some.Success -> {
+                    result_resume_parent?.isVisible = true
+                    val value = resume.value
+                    value.progress?.let { progress ->
+                        //TODO FIX
+                        result_resume_series_title?.apply {
+                            isVisible = !value.isMovie
+                            text =
+                                if (value.isMovie) null else activity?.getNameFull(
+                                    value.result.name,
+                                    value.result.episode,
+                                    value.result.season
+                                )
+                        }
+                        result_resume_series_progress_text.setText(progress.progressLeft)
+                        result_resume_series_progress?.apply {
+                            isVisible = true
+                            this.max = progress.maxProgress
+                            this.progress = progress.progress
+                        }
+                        result_resume_progress_holder?.isVisible = true
+                    } ?: run {
+                        result_resume_progress_holder?.isVisible = false
+                        result_resume_series_progress?.isVisible = false
+                        result_resume_series_title?.isVisible = false
+                        result_resume_series_progress_text?.isVisible = false
+                    }
+
+                    result_resume_series_button?.isVisible = !value.isMovie
 
                     result_resume_series_button?.setOnClickListener {
-                        episodeList.firstOrNull { it.id == resume.episodeId }?.let {
-                            handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, it))
-                        }
-                    }
-
-                    result_resume_series_title?.text =
-                        if (resume.season == null)
-                            "${getString(R.string.episode)} ${resume.episode}"
-                        else
-                            " \"${getString(R.string.season_short)}${resume.season}:${getString(R.string.episode_short)}${resume.episode}\""
-                }
-
-                getViewPos(resume.episodeId)?.let { viewPos ->
-                    if (viewPos.position > 30_000L || currentIsMovie == false) { // first 30s will not show for movies
-                        result_resume_series_progress?.apply {
-                            max = (viewPos.duration / 1000).toInt()
-                            progress = (viewPos.position / 1000).toInt()
-                        }
-                        result_resume_series_progress_text?.text =
-                            getString(R.string.resume_time_left).format((viewPos.duration - viewPos.position) / (60_000))
-                        isProgressVisible = true
-                    } else {
-                        isProgressVisible = false
-                        isSeriesVisible = false
-                    }
-                } ?: run {
-                    isProgressVisible = false
-                    isSeriesVisible = false
-                }
-            }
-
-            result_series_parent?.isVisible = isSeriesVisible
-            if (isSeriesVisible && activity?.currentFocus?.id == R.id.result_back && context?.isTrueTvSettings() == true) {
-                result_resume_series_button?.requestFocus()
-            }
-
-            if (isSeriesVisible) {
-                val down = when {
-                    result_season_button?.isVisible == true -> result_season_button
-                    result_episode_select?.isVisible == true -> result_episode_select
-                    result_dub_select?.isVisible == true -> result_dub_select
-                    else -> null
-                }
-                setFocusUpAndDown(result_resume_series_button, down)
-                setFocusUpAndDown(result_bookmark_button, result_resume_series_button)
-            }
-
-            result_resume_progress_holder?.isVisible = isProgressVisible
-            context?.getString(
-                when {
-                    currentType?.isLiveStream() == true -> R.string.play_livestream_button
-                    isProgressVisible -> R.string.resume
-                    else -> R.string.play_movie_button
-                }
-            )?.let {
-                result_play_movie?.text = it
-            }
-            //println("startAction = $startAction")
-
-            when (startAction) {
-                START_ACTION_RESUME_LATEST -> {
-                    for (ep in episodeList) {
-                        //println("WATCH STATUS::: S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
-                        if (ep.getWatchProgress() > 0.90f) { // watched too much
-                            continue
-                        }
-                        handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
-                        break
-                    }
-                }
-                START_ACTION_LOAD_EP -> {
-                    if (episodeList.size == 1) {
-                        handleAction(
+                        viewModel.handleAction(
+                            activity,
                             EpisodeClickEvent(
-                                ACTION_PLAY_EPISODE_IN_PLAYER,
-                                episodeList.first()
+                                ACTION_PLAY_EPISODE_IN_PLAYER, value.result
                             )
                         )
-                    } else {
-                        var found = false
-                        for (ep in episodeList) {
-                            if (ep.id == startValue) { // watched too much
-                                //println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
-                                handleAction(EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep))
-                                found = true
-                                break
-                            }
-                        }
-                        if (!found)
-                            for (ep in episodeList) {
-                                if (ep.episode == resumeEpisode && ep.season == resumeSeason) {
-                                    //println("WATCH STATUS::: START_ACTION_LOAD_EP S${ep.season} E ${ep.episode} - ${ep.getWatchProgress()}")
-                                    handleAction(
-                                        EpisodeClickEvent(
-                                            ACTION_PLAY_EPISODE_IN_PLAYER,
-                                            ep
-                                        )
-                                    )
-                                    break
-                                }
-                            }
                     }
-
                 }
-                else -> Unit
+                is Some.None -> {
+                    result_resume_parent?.isVisible = false
+                }
             }
-            arguments?.remove("startValue")
-            arguments?.remove("startAction")
-            startAction = null
-            startValue = null
         }
-*/
+
         observe(viewModel.episodes) { episodes ->
             when (episodes) {
                 is ResourceSome.None -> {
@@ -886,7 +814,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
             // If the season button is visible the result season button will be next focus down
             if (result_season_button?.isVisible == true)
-                if (result_series_parent?.isVisible == true)
+                if (result_resume_parent?.isVisible == true)
                     setFocusUpAndDown(result_resume_series_button, result_season_button)
                 else
                     setFocusUpAndDown(result_bookmark_button, result_season_button)
@@ -897,7 +825,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
             if (result_dub_select?.isVisible == true)
                 if (result_season_button?.isVisible != true && result_episode_select?.isVisible != true) {
-                    if (result_series_parent?.isVisible == true)
+                    if (result_resume_parent?.isVisible == true)
                         setFocusUpAndDown(result_resume_series_button, result_dub_select)
                     else
                         setFocusUpAndDown(result_bookmark_button, result_dub_select)
@@ -973,7 +901,7 @@ class ResultFragment : ResultTrailerPlayer() {
             // If Season button is invisible then the bookmark button next focus is episode select
             if (result_episode_select?.isVisible == true)
                 if (result_season_button?.isVisible != true) {
-                    if (result_series_parent?.isVisible == true)
+                    if (result_resume_parent?.isVisible == true)
                         setFocusUpAndDown(result_resume_series_button, result_episode_select)
                     else
                         setFocusUpAndDown(result_bookmark_button, result_episode_select)
@@ -1071,11 +999,60 @@ class ResultFragment : ResultTrailerPlayer() {
                             )
                             return@setOnLongClickListener true
                         }
+
+                        main {
+                            val file =
+                                ioWork {
+                                    context?.let {
+                                        VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
+                                            it,
+                                            ep.id
+                                        )
+                                    }
+                                }
+
+                            downloadButton?.dispose()
+                            downloadButton = EasyDownloadButton()
+                            downloadButton?.setUpMoreButton(
+                                file?.fileLength,
+                                file?.totalBytes,
+                                result_movie_progress_downloaded,
+                                result_movie_download_icon,
+                                result_movie_download_text,
+                                result_movie_download_text_precentage,
+                                result_download_movie,
+                                true,
+                                VideoDownloadHelper.DownloadEpisodeCached(
+                                    ep.name,
+                                    ep.poster,
+                                    0,
+                                    null,
+                                    ep.id,
+                                    ep.id,
+                                    null,
+                                    null,
+                                    System.currentTimeMillis(),
+                                )
+                            ) { click ->
+                                //when(click.action) {
+                                //    DOWNLOAD_ACTION_LONG_CLICK -> {
+                                //        viewModel.handleAction(
+                                //            activity,
+                                //            EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, ep)
+                                //        )
+                                //    }
+                                //
+                                //}
+                                handleDownloadClick(activity, click)
+                                // handleDownloadClick(activity,)
+                            }
+                            result_movie_progress_downloaded_holder?.isVisible = true
+                        }
                     }
                 }
                 else -> {
+                    result_movie_progress_downloaded_holder?.isVisible = false
                     result_play_movie?.isVisible = false
-
                 }
             }
         }
