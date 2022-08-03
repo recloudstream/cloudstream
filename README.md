@@ -6,6 +6,9 @@
 <!--![Build](https://img.shields.io/github/workflow/status/lagradost/CloudStream-3/Pre-release?style=for-the-badge)-->
 [![Discord](https://img.shields.io/discord/737724143126052974?style=for-the-badge)](https://discord.gg/5Hus6fM)
 
+**Download:** (Third-party distributor, not related to this repository)
+
+https://github.com/rereleased/release/releases/
 
 ***Features:***
 + **AdFree**, No ads whatsoever
@@ -15,6 +18,7 @@
 + Chromecast
 
 ***Screenshots:***
+
 <img src="./.github/home.jpg" height="400"/><img src="./.github/search.jpg" height="400"/><img src="./.github/downloads.jpg" height="400"/><img src="./.github/results.jpg" height="400"/>
 <img src="./.github/player.jpg" height="200"/>
 
