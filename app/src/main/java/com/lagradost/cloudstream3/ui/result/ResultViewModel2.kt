@@ -1659,9 +1659,9 @@ class ResultViewModel2 : ViewModel() {
         if (loadResponse is EpisodeResponse) {
             _seasonSelections.postValue(seasonsSelection.map { seasonNumber ->
                 val name =
-                    loadResponse.seasonNames?.firstOrNull { it.season == seasonNumber }?.name?.let { seasonData ->
+                    /*loadResponse.seasonNames?.firstOrNull { it.season == seasonNumber }?.name?.let { seasonData ->
                         txt(seasonData)
-                    } ?: txt(R.string.season_format, txt(R.string.season), seasonNumber)
+                    } ?:*/ txt(R.string.season_format, txt(R.string.season), seasonNumber) //TODO FIX
                 name to seasonNumber
             })
         }

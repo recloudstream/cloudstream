@@ -39,6 +39,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
@@ -286,14 +287,6 @@ class ResultFragment : ResultTrailerPlayer() {
                 result_finish_loading?.isVisible = true
                 result_loading_error?.isVisible = false
             }
-        }
-    }
-
-    private fun fromIndexToSeasonText(selection: Int?): String {
-        return when (selection) {
-            null -> getString(R.string.no_season)
-            -2 -> getString(R.string.no_season)
-            else -> "${getString(R.string.season)} $selection"
         }
     }
 
@@ -863,7 +856,6 @@ class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.loadedLinks) { load ->
-
             when (load) {
                 is Some.Success -> {
                     if (loadingDialog?.isShowing != true) {
@@ -1034,17 +1026,15 @@ class ResultFragment : ResultTrailerPlayer() {
                                     System.currentTimeMillis(),
                                 )
                             ) { click ->
-                                //when(click.action) {
-                                //    DOWNLOAD_ACTION_LONG_CLICK -> {
-                                //        viewModel.handleAction(
-                                //            activity,
-                                //            EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, ep)
-                                //        )
-                                //    }
-                                //
-                                //}
-                                handleDownloadClick(activity, click)
-                                // handleDownloadClick(activity,)
+                                when(click.action) {
+                                    DOWNLOAD_ACTION_DOWNLOAD -> {
+                                        viewModel.handleAction(
+                                            activity,
+                                            EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
+                                        )
+                                    }
+                                    else -> handleDownloadClick(activity, click)
+                                }
                             }
                             result_movie_progress_downloaded_holder?.isVisible = true
                         }
@@ -1176,132 +1166,6 @@ class ResultFragment : ResultTrailerPlayer() {
                             result_tag?.addView(viewBtt, index)
                         }
                     }
-
-                    //TODO FIX
-                    /*
-                    if (d.typeText.isMovieType()) {
-                        val hasDownloadSupport = api.hasDownloadSupport
-                        lateFixDownloadButton(true)
-
-                        result_play_movie?.setOnClickListener {
-                            val card =
-                                currentEpisodes?.firstOrNull() ?: return@setOnClickListener
-                            handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
-                        }
-
-                        result_play_movie?.setOnLongClickListener {
-                            val card = currentEpisodes?.firstOrNull()
-                                ?: return@setOnLongClickListener true
-                            handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
-                            return@setOnLongClickListener true
-                        }
-
-                        result_download_movie?.setOnLongClickListener {
-                            val card = currentEpisodes?.firstOrNull()
-                                ?: return@setOnLongClickListener true
-                            handleAction(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
-                            return@setOnLongClickListener true
-                        }
-
-                        result_movie_progress_downloaded_holder?.isVisible = hasDownloadSupport
-                        if (hasDownloadSupport) {
-                            val localId = d.getId()
-
-                            val file =
-                                VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
-                                    requireContext(),
-                                    localId
-                                )
-                            downloadButton?.dispose()
-                            downloadButton = EasyDownloadButton()
-                            downloadButton?.setUpMoreButton(
-                                file?.fileLength,
-                                file?.totalBytes,
-                                result_movie_progress_downloaded,
-                                result_movie_download_icon,
-                                result_movie_download_text,
-                                result_movie_download_text_precentage,
-                                result_download_movie,
-                                true,
-                                VideoDownloadHelper.DownloadEpisodeCached(
-                                    d.name,
-                                    d.posterUrl,
-                                    0,
-                                    null,
-                                    localId,
-                                    localId,
-                                    d.rating,
-                                    d.plot,
-                                    System.currentTimeMillis(),
-                                ),
-                                ::handleDownloadButton
-                            )
-
-                            result_download_movie?.setOnLongClickListener {
-                                val card =
-                                    currentEpisodes?.firstOrNull()
-                                        ?: return@setOnLongClickListener false
-                                handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, card))
-                                return@setOnLongClickListener true
-                            }
-
-                            /*downloadButton?.setUpMaterialButton(
-                                file?.fileLength,
-                                file?.totalBytes,
-                                result_movie_progress_downloaded,
-                                result_download_movie,
-                                null, //result_movie_text_progress
-                                VideoDownloadHelper.DownloadEpisodeCached(
-                                    d.name,
-                                    d.posterUrl,
-                                    0,
-                                    null,
-                                    localId,
-                                    localId,
-                                    d.rating,
-                                    d.plot,
-                                    System.currentTimeMillis(),
-                                )
-                            ) { downloadClickEvent ->
-                                if (downloadClickEvent.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                                    currentEpisodes?.firstOrNull()?.let { episode ->
-                                        handleAction(
-                                            EpisodeClickEvent(
-                                                ACTION_DOWNLOAD_EPISODE,
-                                                ResultEpisode(
-                                                    d.name,
-                                                    d.name,
-                                                    null,
-                                                    0,
-                                                    null,
-                                                    episode.data,
-                                                    d.apiName,
-                                                    localId,
-                                                    0,
-                                                    0L,
-                                                    0L,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    d.type,
-                                                    localId,
-                                                )
-                                            )
-                                        )
-                                    }
-                                } else {
-                                    handleDownloadClick(
-                                        activity,
-                                        currentHeaderName,
-                                        downloadClickEvent
-                                    )
-                                }
-                            }*/
-                        }
-                    } else {
-                        lateFixDownloadButton(false)
-                    }
-                    */
                 }
                 is Resource.Failure -> {
                     result_error_text.text = url?.plus("\n") + data.errorString
