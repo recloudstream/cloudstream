@@ -12,6 +12,9 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSet
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import kotlinx.android.synthetic.main.add_account_input.*
+import kotlinx.android.synthetic.main.add_account_input.text1
+import kotlinx.android.synthetic.main.bottom_selection_dialog_direct.*
 
 object SingleSelectionHelper {
     fun Activity?.showOptionSelectStringRes(
@@ -21,7 +24,7 @@ object SingleSelectionHelper {
         tvOptions: List<Int> = listOf(),
         callback: (Pair<Boolean, Int>) -> Unit
     ) {
-        if(this == null) return
+        if (this == null) return
 
         this.showOptionSelect(
             view,
@@ -39,7 +42,7 @@ object SingleSelectionHelper {
         tvOptions: List<String>,
         callback: (Pair<Boolean, Int>) -> Unit
     ) {
-        if(this == null) return
+        if (this == null) return
 
         if (this.isTvSettings()) {
             val builder =
@@ -86,42 +89,44 @@ object SingleSelectionHelper {
         showApply: Boolean,
         isMultiSelect: Boolean,
         callback: (List<Int>) -> Unit,
-        dismissCallback: () -> Unit
+        dismissCallback: () -> Unit,
+        itemLayout: Int = R.layout.sort_bottom_single_choice
     ) {
-        if(this == null) return
+        if (this == null) return
 
         val realShowApply = showApply || isMultiSelect
-        val listView = dialog.findViewById<ListView>(R.id.listview1)!!
-        val textView = dialog.findViewById<TextView>(R.id.text1)!!
-        val applyButton = dialog.findViewById<TextView>(R.id.apply_btt)!!
-        val cancelButton = dialog.findViewById<TextView>(R.id.cancel_btt)!!
-        val applyHolder = dialog.findViewById<LinearLayout>(R.id.apply_btt_holder)!!
+        val listView = dialog.listview1//.findViewById<ListView>(R.id.listview1)!!
+        val textView = dialog.text1//.findViewById<TextView>(R.id.text1)!!
+        val applyButton = dialog.apply_btt//.findViewById<TextView>(R.id.apply_btt)
+        val cancelButton = dialog.cancel_btt//findViewById<TextView>(R.id.cancel_btt)
+        val applyHolder = dialog.apply_btt_holder//.findViewById<LinearLayout>(R.id.apply_btt_holder)
 
-        applyHolder.isVisible = realShowApply
+        applyHolder?.isVisible = realShowApply
         if (!realShowApply) {
             val params = listView.layoutParams as LinearLayout.LayoutParams
             params.setMargins(listView.marginLeft, listView.marginTop, listView.marginRight, 0)
             listView.layoutParams = params
         }
 
-        textView.text = name
+        textView?.text = name
+        textView?.isGone = name.isBlank()
 
-        val arrayAdapter = ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice)
+        val arrayAdapter = ArrayAdapter<String>(this, itemLayout)
         arrayAdapter.addAll(items)
 
-        listView.adapter = arrayAdapter
+        listView?.adapter = arrayAdapter
         if (isMultiSelect) {
-            listView.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
+            listView?.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
         } else {
-            listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+            listView?.choiceMode = AbsListView.CHOICE_MODE_SINGLE
         }
 
         for (select in selectedIndex) {
-            listView.setItemChecked(select, true)
+            listView?.setItemChecked(select, true)
         }
 
         selectedIndex.minOrNull()?.let {
-            listView.setSelection(it)
+            listView?.setSelection(it)
         }
 
         //  var lastSelectedIndex = if(selectedIndex.isNotEmpty()) selectedIndex.first() else -1
@@ -130,7 +135,7 @@ object SingleSelectionHelper {
             dismissCallback.invoke()
         }
 
-        listView.setOnItemClickListener { _, _, which, _ ->
+        listView?.setOnItemClickListener { _, _, which, _ ->
             //  lastSelectedIndex = which
             if (realShowApply) {
                 if (!isMultiSelect) {
@@ -142,7 +147,7 @@ object SingleSelectionHelper {
             }
         }
         if (realShowApply) {
-            applyButton.setOnClickListener {
+            applyButton?.setOnClickListener {
                 val list = ArrayList<Int>()
                 for (index in 0 until listView.count) {
                     if (listView.checkedItemPositions[index])
@@ -151,7 +156,7 @@ object SingleSelectionHelper {
                 callback.invoke(list)
                 dialog.dismissSafe(this)
             }
-            cancelButton.setOnClickListener {
+            cancelButton?.setOnClickListener {
                 dialog.dismissSafe(this)
             }
         }
@@ -166,7 +171,7 @@ object SingleSelectionHelper {
         callback: (String) -> Unit,
         dismissCallback: () -> Unit
     ) {
-        if(this == null) return
+        if (this == null) return
 
         val inputView = dialog.findViewById<EditText>(R.id.nginx_text_input)!!
         val textView = dialog.findViewById<TextView>(R.id.text1)!!
@@ -205,7 +210,7 @@ object SingleSelectionHelper {
         dismissCallback: () -> Unit,
         callback: (List<Int>) -> Unit,
     ) {
-        if(this == null) return
+        if (this == null) return
 
         val builder =
             AlertDialog.Builder(this, R.style.AlertDialogCustom)
@@ -224,7 +229,7 @@ object SingleSelectionHelper {
         dismissCallback: () -> Unit,
         callback: (Int) -> Unit,
     ) {
-        if(this == null) return
+        if (this == null) return
 
         val builder =
             AlertDialog.Builder(this, R.style.AlertDialogCustom)
@@ -269,6 +274,31 @@ object SingleSelectionHelper {
             { if (it.isNotEmpty()) callback.invoke(it.first()) },
             dismissCallback
         )
+    }
+
+    fun Activity.showBottomDialogInstant(
+        items: List<String>,
+        name: String,
+        dismissCallback: () -> Unit,
+        callback: (Int) -> Unit,
+    ): BottomSheetDialog {
+        val builder =
+            BottomSheetDialog(this)
+        builder.setContentView(R.layout.bottom_selection_dialog_direct)
+
+        builder.show()
+        showDialog(
+            builder,
+            items,
+            listOf(),
+            name,
+            showApply = false,
+            isMultiSelect = false,
+            callback = { if (it.isNotEmpty()) callback.invoke(it.first()) },
+            dismissCallback = dismissCallback,
+            itemLayout = R.layout.sort_bottom_single_choice_no_checkmark
+        )
+        return builder
     }
 
     fun Activity.showNginxTextInputDialog(

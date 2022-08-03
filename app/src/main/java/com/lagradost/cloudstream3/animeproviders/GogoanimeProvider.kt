@@ -54,7 +54,7 @@ class GogoanimeProvider : MainAPI() {
             secretKeyString: String,
             encrypt: Boolean = true
         ): String {
-            println("IV: $iv, Key: $secretKeyString, encrypt: $encrypt, Message: $string")
+            //println("IV: $iv, Key: $secretKeyString, encrypt: $encrypt, Message: $string")
             val ivParameterSpec = IvParameterSpec(iv.toByteArray())
             val secretKey = SecretKeySpec(secretKeyString.toByteArray(), "AES")
             val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")

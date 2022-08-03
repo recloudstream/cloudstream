@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.content.Intent.*
 import android.content.res.ColorStateList
@@ -15,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
@@ -28,15 +30,13 @@ import com.discord.panels.PanelsChildGestureRegionObserver
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
@@ -54,8 +54,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -68,6 +70,7 @@ import kotlinx.android.synthetic.main.fragment_trailer.*
 import kotlinx.android.synthetic.main.result_recommendations.*
 import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.android.synthetic.main.trailer_custom_layout.*
+import kotlinx.coroutines.runBlocking
 
 const val START_ACTION_NORMAL = 0
 const val START_ACTION_RESUME_LATEST = 1
@@ -206,8 +209,6 @@ class ResultFragment : ResultTrailerPlayer() {
         private var updateUIListener: (() -> Unit)? = null
     }
 
-    private var currentLoadingCount =
-        0 // THIS IS USED TO PREVENT LATE EVENTS, AFTER DISMISS WAS CLICKED
     private lateinit var viewModel: ResultViewModel2 //by activityViewModels()
     private lateinit var syncModel: SyncViewModel
 
@@ -418,7 +419,8 @@ class ResultFragment : ResultTrailerPlayer() {
         viewModel.reloadEpisodes()
     }
 
-    var apiName: String = ""
+    var loadingDialog: Dialog? = null
+    var popupDialog: Dialog? = null
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -466,7 +468,7 @@ class ResultFragment : ResultTrailerPlayer() {
         // activity?.fixPaddingStatusbar(result_toolbar)
 
         val url = arguments?.getString(URL_BUNDLE)
-        apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
+        val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
         startAction = arguments?.getInt(START_ACTION_BUNDLE) ?: START_ACTION_NORMAL
         startValue = arguments?.getInt(START_VALUE_BUNDLE)
         val resumeEpisode = arguments?.getInt(EPISODE_BUNDLE)
@@ -862,16 +864,16 @@ class ResultFragment : ResultTrailerPlayer() {
 */
         observe(viewModel.episodes) { episodes ->
             when (episodes) {
-                is Resource.Failure -> {
+                is ResourceSome.None -> {
                     result_episode_loading?.isVisible = false
-                    //result_episodes?.isVisible = false
+                    result_episodes?.isVisible = false
                 }
-                is Resource.Loading -> {
+                is ResourceSome.Loading -> {
                     result_episode_loading?.isVisible = true
-                    // result_episodes?.isVisible = false
+                    result_episodes?.isVisible = false
                 }
-                is Resource.Success -> {
-                    //result_episodes?.isVisible = true
+                is ResourceSome.Success -> {
+                    result_episodes?.isVisible = true
                     result_episode_loading?.isVisible = false
                     (result_episodes?.adapter as? EpisodeAdapter?)?.updateList(episodes.value)
                 }
@@ -879,7 +881,7 @@ class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.selectedSeason) { text ->
-            result_season_button?.setText(text)
+            result_season_button.setText(text)
 
             // If the season button is visible the result season button will be next focus down
             if (result_season_button?.isVisible == true)
@@ -899,6 +901,70 @@ class ResultFragment : ResultTrailerPlayer() {
                     else
                         setFocusUpAndDown(result_bookmark_button, result_dub_select)
                 }
+        }
+
+        observe(viewModel.selectPopup) { popup ->
+            println("POPUPSTATUS:$popup")
+            when (popup) {
+                is Some.Success -> {
+                    popupDialog?.dismissSafe(activity)
+
+                    popupDialog = activity?.let { act ->
+                        val pop = popup.value
+                        val options = pop.getOptions(act)
+                        val title = pop.getTitle(act)
+
+                        act.showBottomDialogInstant(
+                            options, title, {
+                                popupDialog = null
+                                pop.callback(context ?: return@showBottomDialogInstant, null)
+                            }, {
+                                popupDialog = null
+                                pop.callback(context ?: return@showBottomDialogInstant, it)
+                            }
+                        )
+                    }
+                }
+                is Some.None -> {
+                    popupDialog?.dismissSafe(activity)
+                    popupDialog = null
+                }
+            }
+
+            //showBottomDialogInstant
+        }
+
+        observe(viewModel.loadedLinks) { load ->
+
+            when (load) {
+                is Some.Success -> {
+                    if(loadingDialog?.isShowing != true) {
+                        loadingDialog?.dismissSafe(activity)
+                        loadingDialog = null
+                    }
+                    loadingDialog = loadingDialog ?: context?.let { ctx ->
+                        val builder =
+                            BottomSheetDialog(ctx)
+                        builder.setContentView(R.layout.bottom_loading)
+                        builder.setOnDismissListener {
+                            loadingDialog = null
+                            viewModel.cancelLinks()
+                        }
+                        //builder.setOnCancelListener {
+                        //    it?.dismiss()
+                        //}
+                        builder.setCanceledOnTouchOutside(true)
+
+                        builder.show()
+
+                        builder
+                    }
+                }
+                is Some.None -> {
+                    loadingDialog?.dismissSafe(activity)
+                    loadingDialog = null
+                }
+            }
         }
 
         observe(viewModel.selectedRange) { range ->
@@ -933,7 +999,8 @@ class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.rangeSelections) { range ->
-            result_episode_select.setOnClickListener { view ->
+            println("RANGE:$range")
+            result_episode_select?.setOnClickListener { view ->
                 view?.context?.let { ctx ->
                     val names = range
                         .mapNotNull { (text, r) ->
@@ -987,6 +1054,33 @@ class ResultFragment : ResultTrailerPlayer() {
             setRecommendations(recommendations, null)
         }
 
+        observe(viewModel.movie) { data ->
+            when (data) {
+                is ResourceSome.Success -> {
+                    data.value.let { (text, ep) ->
+                        result_play_movie.setText(text)
+                        result_play_movie?.setOnClickListener {
+                            viewModel.handleAction(
+                                activity,
+                                EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
+                            )
+                        }
+                        result_play_movie?.setOnLongClickListener {
+                            viewModel.handleAction(
+                                activity,
+                                EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
+                            )
+                            return@setOnLongClickListener true
+                        }
+                    }
+                }
+                else -> {
+                    result_play_movie?.isVisible = false
+
+                }
+            }
+        }
+
         observe(viewModel.page) { data ->
             when (data) {
                 is Resource.Success -> {
@@ -1006,9 +1100,32 @@ class ResultFragment : ResultTrailerPlayer() {
                     result_cast_text.setText(d.actorsText)
                     result_next_airing.setText(d.nextAiringEpisode)
                     result_next_airing_time.setText(d.nextAiringDate)
-
                     result_poster.setImage(d.posterImage)
-                    result_play_movie.setText(d.playMovieText)
+
+                    if (d.posterImage != null && context?.isTrueTvSettings() == false)
+                        result_poster_holder?.setOnClickListener {
+                            try {
+                                context?.let { ctx ->
+                                    runBlocking {
+                                        val sourceBuilder = AlertDialog.Builder(ctx)
+                                        sourceBuilder.setView(R.layout.result_poster)
+
+                                        val sourceDialog = sourceBuilder.create()
+                                        sourceDialog.show()
+
+                                        sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
+                                            ?.apply {
+                                                setImage(d.posterImage)
+                                                setOnClickListener {
+                                                    sourceDialog.dismissSafe()
+                                                }
+                                            }
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                logError(e)
+                            }
+                        }
 
 
                     result_cast_items?.isVisible = d.actors != null
@@ -1016,6 +1133,7 @@ class ResultFragment : ResultTrailerPlayer() {
                         updateList(d.actors ?: emptyList())
                     }
 
+                    result_open_in_browser?.isGone = d.url.isBlank()
                     result_open_in_browser?.setOnClickListener {
                         val i = Intent(ACTION_VIEW)
                         i.data = Uri.parse(d.url)
@@ -1238,15 +1356,14 @@ class ResultFragment : ResultTrailerPlayer() {
             Kitsu.isEnabled =
                 settingsManager.getBoolean(ctx.getString(R.string.show_kitsu_posters_key), true)
 
-            val tempUrl = url
-            if (tempUrl != null) {
+            if (url != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(tempUrl, apiName, showFillers, DubStatus.Dubbed, 0, 0) //TODO FIX
+                    viewModel.load(url, apiName, showFillers, DubStatus.Dubbed, 0, 0) //TODO FIX
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
                     val i = Intent(ACTION_VIEW)
-                    i.data = Uri.parse(tempUrl)
+                    i.data = Uri.parse(url)
                     try {
                         startActivity(i)
                     } catch (e: Exception) {
@@ -1256,7 +1373,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
                 result_open_in_browser?.setOnClickListener {
                     val i = Intent(ACTION_VIEW)
-                    i.data = Uri.parse(tempUrl)
+                    i.data = Uri.parse(url)
                     try {
                         startActivity(i)
                     } catch (e: Exception) {
@@ -1267,7 +1384,7 @@ class ResultFragment : ResultTrailerPlayer() {
                 // bloats the navigation on tv
                 if (context?.isTrueTvSettings() == false) {
                     result_meta_site?.setOnClickListener {
-                        it.context?.openBrowser(tempUrl)
+                        it.context?.openBrowser(url)
                     }
                     result_meta_site?.isFocusable = true
                 } else {
@@ -1276,7 +1393,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
                 if (restart || !viewModel.hasLoaded()) {
                     //viewModel.clear()
-                    viewModel.load(tempUrl, apiName, showFillers, DubStatus.Dubbed, 0, 0) //TODO FIX
+                    viewModel.load(url, apiName, showFillers, DubStatus.Dubbed, 0, 0) //TODO FIX
                 }
             }
         }

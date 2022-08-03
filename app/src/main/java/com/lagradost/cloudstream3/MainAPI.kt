@@ -1114,6 +1114,7 @@ data class NextAiring(
 data class SeasonData(
     val season: Int,
     val name: String? = null,
+    val displaySeason : Int? = null, // will use season if null
 )
 
 interface EpisodeResponse {

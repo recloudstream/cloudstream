@@ -36,17 +36,16 @@ import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -86,7 +85,6 @@ data class ResultData(
     val yearText: UiText?,
     val nextAiringDate: UiText?,
     val nextAiringEpisode: UiText?,
-    val playMovieText: UiText?,
     val plotHeaderText: UiText,
 )
 
@@ -118,7 +116,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             val hours: Long = TimeUnit.SECONDS.toHours(seconds) - days * 24
             val minute =
                 TimeUnit.SECONDS.toMinutes(seconds) - TimeUnit.SECONDS.toHours(seconds) * 60
-            nextAiringEpisode = when {
+            nextAiringDate = when {
                 days > 0 -> {
                     txt(
                         R.string.next_episode_time_day_format,
@@ -138,25 +136,17 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 )
                 else -> null
             }?.also {
-                nextAiringDate = txt(R.string.next_episode_format, airing.episode)
+                nextAiringEpisode = txt(R.string.next_episode_format, airing.episode)
             }
         }
     }
-
+    val dur = duration
     return ResultData(
         syncData = syncData,
         plotHeaderText = txt(
             when (this.type) {
                 TvType.Torrent -> R.string.torrent_plot
                 else -> R.string.result_plot
-            }
-        ),
-        playMovieText = txt(
-            when (this.type) {
-                TvType.Live -> R.string.play_livestream_button
-                TvType.Torrent -> R.string.play_torrent_button
-                TvType.Movie, TvType.AnimeMovie -> R.string.play_movie_button
-                else -> null
             }
         ),
         nextAiringDate = nextAiringDate,
@@ -192,7 +182,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Live -> R.string.live_singular
             }
         ),
-        yearText = txt(year),
+        yearText = txt(year?.toString()),
         apiName = txt(apiName),
         ratingText = rating?.div(1000f)?.let { txt(R.string.rating_format, it) },
         vpnText = txt(
@@ -204,7 +194,10 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         ),
         metaText =
         if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
-        durationText = txt(R.string.duration_format, duration),
+        durationText = if (dur == null || dur <= 0) null else txt(
+            R.string.duration_format,
+            dur
+        ),
         onGoingText = if (this is EpisodeResponse) {
             txt(
                 when (showStatus) {
@@ -245,21 +238,43 @@ sealed class SelectPopup {
         val map: Int?,
         val callback: (Int?) -> Unit
     ) : SelectPopup()
+}
 
-    fun SelectPopup.transformResult(context: Context, input: Int?): Int? {
-        if (input == null) return null
-        return when (this) {
-            is SelectArray -> context.resources.getIntArray(map ?: return input).getOrNull(input)
-                ?: input
-            is SelectText -> input
-        }
+fun SelectPopup.callback(context: Context, input: Int?) {
+    val ret = transformResult(context, input)
+    return when (this) {
+        is SelectPopup.SelectArray -> callback(ret)
+        is SelectPopup.SelectText -> callback(ret)
     }
+}
 
-    fun SelectPopup.getOptions(context: Context): List<String> {
-        return when (this) {
-            is SelectArray -> context.resources.getStringArray(options).toList()
-            is SelectText -> options.map { it.asString(context) }
+fun SelectPopup.transformResult(context: Context, input: Int?): Int? {
+    if (input == null) return null
+    return when (this) {
+        is SelectPopup.SelectArray -> context.resources.getIntArray(map ?: return input)
+            .getOrNull(input)
+            ?: input
+        is SelectPopup.SelectText -> input
+    }
+}
+
+fun SelectPopup.getTitle(context: Context): String {
+    return when (this) {
+        is SelectPopup.SelectArray -> text.asString(context)
+        is SelectPopup.SelectText -> text.asString(context)
+    }
+}
+
+fun SelectPopup.getOptions(context: Context): List<String> {
+    return when (this) {
+        is SelectPopup.SelectArray -> {
+            val cmap = this.map?.let { context.resources.getIntArray(it) }
+            context.resources.getStringArray(options).toList().filterIndexed { index, s ->
+
+                true
+            }
         }
+        is SelectPopup.SelectText -> options.map { it.asString(context) }
     }
 }
 
@@ -274,6 +289,8 @@ class ResultViewModel2 : ViewModel() {
     /** map<dub, map<season, List<episode>>> */
     private var currentEpisodes: Map<EpisodeIndexer, List<ResultEpisode>> = mapOf()
     private var currentRanges: Map<EpisodeIndexer, List<EpisodeRange>> = mapOf()
+    private var currentSeasons: Set<Int> = setOf()
+    private var currentDubStatus: Set<DubStatus> = setOf()
     private var currentMeta: SyncAPI.SyncResult? = null
     private var currentSync: Map<String, String>? = null
     private var currentIndex: EpisodeIndexer? = null
@@ -294,13 +311,17 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData(Resource.Loading())
     val page: LiveData<Resource<ResultData>> = _page
 
-    private val _episodes: MutableLiveData<Resource<List<ResultEpisode>>> =
-        MutableLiveData(Resource.Loading())
-    val episodes: LiveData<Resource<List<ResultEpisode>>> = _episodes
+    private val _episodes: MutableLiveData<ResourceSome<List<ResultEpisode>>> =
+        MutableLiveData(ResourceSome.Loading())
+    val episodes: LiveData<ResourceSome<List<ResultEpisode>>> = _episodes
 
-    private val _episodesCountText: MutableLiveData<UiText?> =
-        MutableLiveData(null)
-    val episodesCountText: LiveData<UiText?> = _episodesCountText
+    private val _movie: MutableLiveData<ResourceSome<Pair<UiText, ResultEpisode>>> =
+        MutableLiveData(ResourceSome.None)
+    val movie: LiveData<ResourceSome<Pair<UiText, ResultEpisode>>> = _movie
+
+    private val _episodesCountText: MutableLiveData<Some<UiText>> =
+        MutableLiveData(Some.None)
+    val episodesCountText: LiveData<Some<UiText>> = _episodesCountText
 
     private val _trailers: MutableLiveData<List<TrailerData>> = MutableLiveData(mutableListOf())
     val trailers: LiveData<List<TrailerData>> = _trailers
@@ -318,24 +339,23 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData(emptyList())
     val seasonSelections: LiveData<List<Pair<UiText?, Int>>> = _seasonSelections
 
-
     private val _recommendations: MutableLiveData<List<SearchResponse>> =
         MutableLiveData(emptyList())
     val recommendations: LiveData<List<SearchResponse>> = _recommendations
 
-    private val _selectedRange: MutableLiveData<UiText?> =
-        MutableLiveData(null)
-    val selectedRange: LiveData<UiText?> = _selectedRange
+    private val _selectedRange: MutableLiveData<Some<UiText>> =
+        MutableLiveData(Some.None)
+    val selectedRange: LiveData<Some<UiText>> = _selectedRange
 
-    private val _selectedSeason: MutableLiveData<UiText?> =
-        MutableLiveData(null)
-    val selectedSeason: LiveData<UiText?> = _selectedSeason
+    private val _selectedSeason: MutableLiveData<Some<UiText>> =
+        MutableLiveData(Some.None)
+    val selectedSeason: LiveData<Some<UiText>> = _selectedSeason
 
-    private val _selectedDubStatus: MutableLiveData<UiText?> = MutableLiveData(null)
-    val selectedDubStatus: LiveData<UiText?> = _selectedDubStatus
+    private val _selectedDubStatus: MutableLiveData<Some<UiText>> = MutableLiveData(Some.None)
+    val selectedDubStatus: LiveData<Some<UiText>> = _selectedDubStatus
 
-    private val _loadedLinks: MutableLiveData<LinkProgress?> = MutableLiveData(null)
-    val loadedLinks: LiveData<LinkProgress?> = _loadedLinks
+    private val _loadedLinks: MutableLiveData<Some<LinkProgress>> = MutableLiveData(Some.None)
+    val loadedLinks: LiveData<Some<LinkProgress>> = _loadedLinks
 
     companion object {
         const val TAG = "RVM2"
@@ -680,8 +700,8 @@ class ResultViewModel2 : ViewModel() {
     private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData(WatchType.NONE)
     val watchStatus: LiveData<WatchType> get() = _watchStatus
 
-    private val _selectPopup: MutableLiveData<SelectPopup?> = MutableLiveData(null)
-    val selectPopup: LiveData<SelectPopup?> get() = _selectPopup
+    private val _selectPopup: MutableLiveData<Some<SelectPopup>> = MutableLiveData(Some.None)
+    val selectPopup: LiveData<Some<SelectPopup>> get() = _selectPopup
 
     fun updateWatchStatus(status: WatchType) {
         val currentId = currentId ?: return
@@ -707,14 +727,15 @@ class ResultViewModel2 : ViewModel() {
         )
     }
 
-    private suspend fun startChromecast(
+    private fun startChromecast(
         activity: Activity?,
         result: ResultEpisode,
         isVisible: Boolean = true
     ) {
         if (activity == null) return
-        val data = loadLinks(result, isVisible = isVisible, isCasting = true)
-        startChromecast(activity, result, data.links, data.subs, 0)
+        loadLinks(result, isVisible = isVisible, isCasting = true) { data ->
+            startChromecast(activity, result, data.links, data.subs, 0)
+        }
     }
 
     private fun startChromecast(
@@ -742,51 +763,100 @@ class ResultViewModel2 : ViewModel() {
         )
     }
 
-    private val popupCallback: ((Int) -> Unit)? = null
-
     fun cancelLinks() {
+        println("called::cancelLinks")
         currentLoadLinkJob?.cancel()
-        _loadedLinks.postValue(null)
+        currentLoadLinkJob = null
+        _loadedLinks.postValue(Some.None)
+    }
+
+    private fun postPopup(text: UiText, options: List<UiText>, callback: suspend (Int?) -> Unit) {
+        _selectPopup.postValue(
+            some(SelectPopup.SelectText(
+                text,
+                options
+            ) { value ->
+                viewModelScope.launch {
+                    _selectPopup.postValue(Some.None)
+                    callback.invoke(value)
+                }
+            })
+        )
+    }
+
+    private fun postPopup(
+        text: UiText,
+        options: Int,
+        values: Int,
+        callback: suspend (Int?) -> Unit
+    ) {
+        _selectPopup.postValue(
+            some(SelectPopup.SelectArray(
+                text,
+                options,
+                values
+            ) { value ->
+                viewModelScope.launch {
+                    _selectPopup.value = Some.None
+                    callback.invoke(value)
+                }
+            })
+        )
+    }
+
+    fun loadLinks(
+        result: ResultEpisode,
+        isVisible: Boolean,
+        isCasting: Boolean,
+        clearCache: Boolean = false,
+        work: suspend (CoroutineScope.(LinkLoadingResult) -> Unit)
+    ) {
+        currentLoadLinkJob?.cancel()
+        currentLoadLinkJob = ioSafe {
+            val links = loadLinks(
+                result,
+                isVisible = isVisible,
+                isCasting = isCasting,
+                clearCache = clearCache
+            )
+            if (!this.isActive) return@ioSafe
+            work(links)
+        }
     }
 
     private var currentLoadLinkJob: Job? = null
-    private suspend fun acquireSingleLink(
+    private fun acquireSingleLink(
         result: ResultEpisode,
         isCasting: Boolean,
         text: UiText,
         callback: (Pair<LinkLoadingResult, Int>) -> Unit,
     ) {
-        currentLoadLinkJob = viewModelScope.launch {
-            val links = loadLinks(result, isVisible = true, isCasting = isCasting)
-
-            _selectPopup.postValue(
-                SelectPopup.SelectText(
-                    text,
-                    links.links.map { txt("${it.name} ${Qualities.getStringByInt(it.quality)}") }) {
-                    callback.invoke(links to (it ?: return@SelectText))
-                })
+        loadLinks(result, isVisible = true, isCasting = isCasting) { links ->
+            postPopup(
+                text,
+                links.links.map { txt("${it.name} ${Qualities.getStringByInt(it.quality)}") }) {
+                callback.invoke(links to (it ?: return@postPopup))
+            }
         }
     }
 
-    private suspend fun acquireSingleSubtitle(
+    private fun acquireSingleSubtitle(
         result: ResultEpisode,
         isCasting: Boolean,
         text: UiText,
         callback: (Pair<LinkLoadingResult, Int>) -> Unit,
     ) {
-        currentLoadLinkJob = viewModelScope.launch {
-            val links = loadLinks(result, isVisible = true, isCasting = isCasting)
-
-            _selectPopup.postValue(
-                SelectPopup.SelectText(
-                    text,
-                    links.subs.map { txt(it.name) }) {
-                    callback.invoke(links to (it ?: return@SelectText))
-                })
+        loadLinks(result, isVisible = true, isCasting = isCasting) { links ->
+            postPopup(
+                text,
+                links.subs.map { txt(it.name) })
+            {
+                callback.invoke(links to (it ?: return@postPopup))
+            }
         }
     }
 
-    suspend fun loadLinks(
+    suspend fun CoroutineScope.loadLinks(
         result: ResultEpisode,
         isVisible: Boolean,
         isCasting: Boolean,
@@ -797,11 +867,12 @@ class ResultViewModel2 : ViewModel() {
         val links: MutableSet<ExtractorLink> = mutableSetOf()
         val subs: MutableSet<SubtitleData> = mutableSetOf()
         fun updatePage() {
-            if (isVisible) {
-                _loadedLinks.postValue(LinkProgress(links.size, subs.size))
+            if (isVisible && isActive) {
+                _loadedLinks.postValue(some(LinkProgress(links.size, subs.size)))
             }
         }
         try {
+            updatePage()
             tempGenerator.generateLinks(clearCache, isCasting, { (link, _) ->
                 if (link != null) {
                     links += link
@@ -814,7 +885,7 @@ class ResultViewModel2 : ViewModel() {
         } catch (e: Exception) {
             logError(e)
         } finally {
-            _loadedLinks.postValue(null)
+            _loadedLinks.postValue(Some.None)
         }
 
         return LinkLoadingResult(sortUrls(links), sortSubs(subs))
@@ -884,20 +955,22 @@ class ResultViewModel2 : ViewModel() {
     private suspend fun handleEpisodeClickEvent(activity: Activity?, click: EpisodeClickEvent) {
         when (click.action) {
             ACTION_SHOW_OPTIONS -> {
-                _selectPopup.postValue(
-                    SelectPopup.SelectArray(
-                        txt(""), // TODO FIX
-                        R.array.episode_long_click_options,
-                        R.array.episode_long_click_options_values
-                    ) { result ->
-                        if (result == null) return@SelectArray
-                        viewModelScope.launch {
-                            handleEpisodeClickEvent(
-                                activity,
-                                click.copy(action = result)
-                            )
-                        }
-                    })
+                postPopup(
+                    txt(
+                        activity?.getNameFull(
+                            click.data.name,
+                            click.data.episode,
+                            click.data.season
+                        ) ?: ""
+                    ), // TODO FIX
+                    R.array.episode_long_click_options,
+                    R.array.episode_long_click_options_values
+                ) { result ->
+                    handleEpisodeClickEvent(
+                        activity,
+                        click.copy(action = result ?: return@postPopup)
+                    )
+                }
             }
             ACTION_CLICK_DEFAULT -> {
                 activity?.let { ctx ->
@@ -986,7 +1059,14 @@ class ResultViewModel2 : ViewModel() {
                 }
             }
             ACTION_RELOAD_EPISODE -> {
-                loadLinks(click.data, isVisible = false, isCasting = false, clearCache = true)
+                ioSafe {
+                    loadLinks(
+                        click.data,
+                        isVisible = false,
+                        isCasting = false,
+                        clearCache = true
+                    )
+                }
             }
             ACTION_CHROME_CAST_MIRROR -> {
                 acquireSingleLink(
@@ -1030,8 +1110,12 @@ class ResultViewModel2 : ViewModel() {
                 startChromecast(activity, click.data)
             }
             ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> {
-                currentLoadLinkJob = viewModelScope.launch {
-                    playWithVlc(activity, loadLinks(click.data, true, true), click.data.id)
+                loadLinks(click.data, isVisible = true, isCasting = true) { links ->
+                    playWithVlc(
+                        activity,
+                        links,
+                        click.data.id
+                    )
                 }
             }
             ACTION_PLAY_EPISODE_IN_PLAYER -> {
@@ -1176,6 +1260,13 @@ class ResultViewModel2 : ViewModel() {
         postEpisodeRange(currentIndex?.copy(season = season), currentRange)
     }
 
+    private fun getMovie(): ResultEpisode? {
+        return currentEpisodes.entries.firstOrNull()?.value?.firstOrNull()?.let { ep ->
+            val posDur = DataStoreHelper.getViewPos(ep.id)
+            ep.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
+        }
+    }
+
     private fun getEpisodes(indexer: EpisodeIndexer, range: EpisodeRange): List<ResultEpisode> {
         val startIndex = range.startIndex
         val length = range.length
@@ -1192,15 +1283,50 @@ class ResultViewModel2 : ViewModel() {
             ?: emptyList()
     }
 
+    private fun postMovie() {
+        val response = currentResponse
+        _episodes.postValue(ResourceSome.None)
+
+        if (response == null) {
+            _movie.postValue(ResourceSome.None)
+            return
+        }
+
+        val text = txt(
+            when (response.type) {
+                TvType.Torrent -> R.string.play_torrent_button
+                else -> {
+                    if (response.type.isLiveStream())
+                        R.string.play_livestream_button
+                    else if (response.type.isMovieType()) // this wont break compatibility as you only need to override isMovieType
+                        R.string.play_movie_button
+                    else null
+                }
+            }
+        )
+        val data = getMovie()
+        _episodes.postValue(ResourceSome.None)
+        if (text == null || data == null) {
+            _movie.postValue(ResourceSome.None)
+        } else {
+            _movie.postValue(ResourceSome.Success(text to data))
+        }
+    }
+
     fun reloadEpisodes() {
-        _episodes.postValue(
-            Resource.Success(
-                getEpisodes(
-                    currentIndex ?: return,
-                    currentRange ?: return
+        if (currentResponse?.isMovie() == true) {
+            postMovie()
+        } else {
+            _episodes.postValue(
+                ResourceSome.Success(
+                    getEpisodes(
+                        currentIndex ?: return,
+                        currentRange ?: return
+                    )
                 )
             )
-        )
+            _movie.postValue(ResourceSome.None)
+        }
     }
 
     private fun postEpisodeRange(indexer: EpisodeIndexer?, range: EpisodeRange?) {
@@ -1208,45 +1334,79 @@ class ResultViewModel2 : ViewModel() {
             return
         }
 
-        val size = currentEpisodes[indexer]?.size
-
-        _episodesCountText.postValue(
-            txt(
-                R.string.episode_format,
-                txt(if (size == 1) R.string.episode else R.string.episodes),
-                size
-            )
-        )
-
+        val episodes = currentEpisodes[indexer]
+        val ranges = currentRanges[indexer]
+        val size = episodes?.size
+        val isMovie = currentResponse?.isMovie() == true
         currentIndex = indexer
         currentRange = range
 
+
+        _rangeSelections.postValue(ranges?.map { r ->
+            val text = txt(R.string.episodes_range, r.startEpisode, r.endEpisode)
+            text to r
+        } ?: emptyList())
+
+        _episodesCountText.postValue(
+            some(
+                if (isMovie) null else
+                    txt(
+                        R.string.episode_format,
+                        size,
+                        txt(if (size == 1) R.string.episode else R.string.episodes),
+                    )
+            )
+        )
+
         _selectedSeason.postValue(
-            when (indexer.season) {
-                0 -> txt(R.string.no_season)
-                else -> txt(R.string.season_format, R.string.season, indexer.season) //TODO FIX
-            }
+            some(
+                if (isMovie || currentSeasons.size <= 1) null else
+                    when (indexer.season) {
+                        0 -> txt(R.string.no_season)
+                        else -> txt(
+                            R.string.season_format,
+                            txt(R.string.season),
+                            indexer.season
+                        ) //TODO FIX DISPLAYNAME
+                    }
+            )
         )
+
         _selectedRange.postValue(
-            if ((currentRanges[indexer]?.size ?: 0) > 1) {
-                txt(R.string.episodes_range, range.startEpisode, range.endEpisode)
-            } else {
-                null
-            }
+            some(
+                if (isMovie) null else if ((currentRanges[indexer]?.size ?: 0) > 1) {
+                    txt(R.string.episodes_range, range.startEpisode, range.endEpisode)
+                } else {
+                    null
+                }
+            )
         )
-        _selectedDubStatus.postValue(txt(indexer.dubStatus))
+        _selectedDubStatus.postValue(
+            some(
+                if (isMovie || currentDubStatus.size <= 1) null else
+                    txt(indexer.dubStatus)
+            )
+        )
 
         //TODO SET KEYS
         preferStartEpisode = range.startEpisode
         preferStartSeason = indexer.season
         preferDubStatus = indexer.dubStatus
 
-        generator = currentEpisodes[indexer]?.let { list ->
-            RepoLinkGenerator(list)
+        generator = if (isMovie) {
+            getMovie()?.let { RepoLinkGenerator(listOf(it)) }
+        } else {
+            episodes?.let { list ->
+                RepoLinkGenerator(list)
+            }
         }
 
-        val ret = getEpisodes(indexer, range)
-        _episodes.postValue(Resource.Success(ret))
+        if (isMovie) {
+            postMovie()
+        } else {
+            val ret = getEpisodes(indexer, range)
+            _episodes.postValue(ResourceSome.Success(ret))
+        }
     }
 
     private suspend fun postSuccessful(
@@ -1262,10 +1422,12 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private suspend fun postEpisodes(loadResponse: LoadResponse, updateFillers: Boolean) {
-        _episodes.postValue(Resource.Loading())
+        _episodes.postValue(ResourceSome.Loading())
 
         val mainId = loadResponse.getId()
         currentId = mainId
+
+        _watchStatus.postValue(getResultWatchState(mainId))
 
         if (updateFillers && loadResponse is AnimeLoadResponse) {
             updateFillers(loadResponse.name)
@@ -1425,9 +1587,29 @@ class ResultViewModel2 : ViewModel() {
             }
         }
 
+        val seasonsSelection = mutableSetOf<Int>()
+        val dubSelection = mutableSetOf<DubStatus>()
+        allEpisodes.keys.forEach { key ->
+            seasonsSelection += key.season
+            dubSelection += key.dubStatus
+        }
+        currentDubStatus = dubSelection
+        currentSeasons = seasonsSelection
+        _dubSubSelections.postValue(dubSelection.map { txt(it) to it })
+        if (loadResponse is EpisodeResponse) {
+            _seasonSelections.postValue(seasonsSelection.map { seasonNumber ->
+                val name =
+                    loadResponse.seasonNames?.firstOrNull { it.season == seasonNumber }?.name?.let { seasonData ->
+                        txt(seasonData)
+                    } ?: txt(R.string.season_format, txt(R.string.season), seasonNumber)
+                name to seasonNumber
+            })
+        }
+
         currentEpisodes = allEpisodes
         val ranges = getRanges(allEpisodes)
         currentRanges = ranges
+
 
         // this takes the indexer most preferable by the user given the current sorting
         val min = ranges.keys.minByOrNull { index ->
@@ -1464,7 +1646,7 @@ class ResultViewModel2 : ViewModel() {
     ) =
         viewModelScope.launch {
             _page.postValue(Resource.Loading(url))
-            _episodes.postValue(Resource.Loading(url))
+            _episodes.postValue(ResourceSome.Loading())
 
             preferDubStatus = dubStatus
             currentShowFillers = showFillers

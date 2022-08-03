@@ -332,6 +332,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (str.contains(appString)) {
                 for (api in OAuth2Apis) {
                     if (str.contains("/${api.redirectUrl}")) {
+                        val activity = this
                         ioSafe {
                             Log.i(TAG, "handleAppIntent $str")
                             val isSuccessful = api.handleRedirect(str)
@@ -342,10 +343,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 Log.i(TAG, "failed to authenticate ${api.name}")
                             }
 
-                            this.runOnUiThread {
+                            activity.runOnUiThread {
                                 try {
                                     showToast(
-                                        this,
+                                        activity,
                                         getString(if (isSuccessful) R.string.authenticated_user else R.string.authenticated_user_fail).format(
                                             api.name
                                         )

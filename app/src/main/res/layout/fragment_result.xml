@@ -843,7 +843,6 @@
                             <LinearLayout
                                     android:id="@+id/result_next_airing_holder"
                                     android:layout_gravity="start"
-                                    android:paddingBottom="15dp"
                                     android:orientation="horizontal"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content">

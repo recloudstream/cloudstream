@@ -125,6 +125,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun loadExtractorJob(extractorLink: ExtractorLink?) {
         currentVerifyLink?.cancel()
+
         extractorLink?.let {
             currentVerifyLink = ioSafe {
                 if (it.extractorData != null) {
@@ -488,7 +489,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                     .setView(R.layout.player_select_source_and_subs)
 
                 val sourceDialog = sourceBuilder.create()
+
                 selectSourceDialog = sourceDialog
+
                 sourceDialog.show()
                 val providerList = sourceDialog.sort_providers
                 val subtitleList = sourceDialog.sort_subtitles
