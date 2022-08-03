@@ -75,7 +75,7 @@ body:
           required: true
         - label: I have written a short but informative title.
           required: true
-        - label: I have updated the app to pre-release version **[Latest](https://github.com/LagradOst/CloudStream-3/releases)**.
+        - label: I have updated the app to pre-release version **[Latest](https://github.com/rereleased/release/releases)**.
           required: true
         - label: If related to a provider, I have checked the site and it works, but not the app. 
           required: true
