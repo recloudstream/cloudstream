@@ -139,25 +139,28 @@ class LayarKacaProvider : MainAPI() {
 
         val document = app.get(data).document
 
-        val sources = if (data.contains("-episode-")) {
-            document.select("script").mapNotNull { script ->
-                if (script.data().contains("var data =")) {
-                    val scriptData =
-                        script.toString().substringAfter("var data = '").substringBefore("';")
-                    Jsoup.parse(scriptData).select("li").map {
-                        fixUrl(it.select("a").attr("href"))
-                    }
-                } else {
-                    null
-                }
-            }[0]
-        } else {
-            document.select("ul#loadProviders > li").map {
-                fixUrl(it.select("a").attr("href"))
-            }
-        }
+//        maybe will need this in future
+//        val sources = if (data.contains("-episode-")) {
+//            document.select("script").mapNotNull { script ->
+//                if (script.data().contains("var data =")) {
+//                    val scriptData =
+//                        script.toString().substringAfter("var data = '").substringBefore("';")
+//                    Jsoup.parse(scriptData).select("li").map {
+//                        fixUrl(it.select("a").attr("href"))
+//                    }
+//                } else {
+//                    null
+//                }
+//            }[0]
+//        } else {
+//            document.select("ul#loadProviders > li").map {
+//                fixUrl(it.select("a").attr("href"))
+//            }
+//        }
 
-        sources.apmap {
+        document.select("ul#loadProviders > li").map {
+            fixUrl(it.select("a").attr("href"))
+        }.apmap {
             val link = if (it.startsWith("https://layarkacaxxi.icu")) {
                 it.substringBeforeLast("/")
             } else {

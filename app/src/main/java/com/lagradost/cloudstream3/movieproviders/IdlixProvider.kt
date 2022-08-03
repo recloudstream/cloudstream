@@ -9,7 +9,6 @@ import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import org.jsoup.nodes.Element
 import java.net.URI
-import java.util.ArrayList
 
 class IdlixProvider : MainAPI() {
     override var mainUrl = "https://94.103.82.88"
@@ -37,7 +36,7 @@ class IdlixProvider : MainAPI() {
     ): HomePageResponse {
         val url = request.data.split("?")
         val document = app.get("${url.first()}$page/?${url.lastOrNull()}").document
-        val home = document.select("div.items.full article").mapNotNull {
+        val home = document.select("div.items.full article, div#archive-content article").mapNotNull {
             it.toSearchResult()
         }
         return newHomePageResponse(request.name, home)
