@@ -44,12 +44,12 @@ jobs:
         SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
         SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-    - name: Create pre-release
-      uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "pre-release"
-        prerelease: true
-        title: "Pre-release Build"
-        files: |
-          app/build/outputs/apk/prerelease/*.apk
+    #- name: Create pre-release
+    #  uses: "marvinpinto/action-automatic-releases@latest"
+    #  with:
+    #    repo_token: "${{ secrets.GITHUB_TOKEN }}"
+    #    automatic_release_tag: "pre-release"
+    #    prerelease: true
+    #    title: "Pre-release Build"
+    #    files: |
+    #      app/build/outputs/apk/prerelease/*.apk
