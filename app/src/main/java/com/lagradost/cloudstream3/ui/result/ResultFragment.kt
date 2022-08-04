@@ -33,6 +33,7 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -56,6 +57,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
@@ -75,11 +77,8 @@ import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.android.synthetic.main.trailer_custom_layout.*
 import kotlinx.coroutines.runBlocking
 
-const val START_ACTION_NORMAL = 0
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
-
-const val START_VALUE_NORMAL = 0
 
 data class ResultEpisode(
     val headerName: String,
@@ -177,7 +176,6 @@ class ResultFragment : ResultTrailerPlayer() {
                 putString(URL_BUNDLE, card.url)
                 putString(API_NAME_BUNDLE, card.apiName)
                 if (card is DataStoreHelper.ResumeWatchingResult) {
-//                    println("CARD::::: $card")
                     if (card.season != null)
                         putInt(SEASON_BUNDLE, card.season)
                     if (card.episode != null)
@@ -186,6 +184,8 @@ class ResultFragment : ResultTrailerPlayer() {
                 putInt(START_ACTION_BUNDLE, startAction)
                 if (startValue != null)
                     putInt(START_VALUE_BUNDLE, startValue)
+
+
                 putBoolean(RESTART_BUNDLE, true)
             }
         }
@@ -289,9 +289,6 @@ class ResultFragment : ResultTrailerPlayer() {
             }
         }
     }
-
-    var startAction: Int? = null
-    private var startValue: Int? = null
 
     var currentTrailers: List<ExtractorLink> = emptyList()
     var currentTrailerIndex = 0
@@ -465,10 +462,16 @@ class ResultFragment : ResultTrailerPlayer() {
 
         val url = arguments?.getString(URL_BUNDLE)
         val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
-        startAction = arguments?.getInt(START_ACTION_BUNDLE) ?: START_ACTION_NORMAL
-        startValue = arguments?.getInt(START_VALUE_BUNDLE)
-        val resumeEpisode = arguments?.getInt(EPISODE_BUNDLE)
-        val resumeSeason = arguments?.getInt(SEASON_BUNDLE)
+        val startAction = arguments?.getInt(START_ACTION_BUNDLE)
+        val start = startAction?.let { action ->
+            val startValue = arguments?.getInt(START_VALUE_BUNDLE)
+            val resumeEpisode = arguments?.getInt(EPISODE_BUNDLE)
+            val resumeSeason = arguments?.getInt(SEASON_BUNDLE)
+
+            arguments?.remove(START_VALUE_BUNDLE)
+            arguments?.remove(START_ACTION_BUNDLE)
+            AutoResume(startAction = action, id = startValue, episode = resumeEpisode, season = resumeSeason)
+        }
         syncModel.addFromUrl(url)
 
         val api = getApiFromName(apiName)
@@ -1185,8 +1188,9 @@ class ResultFragment : ResultTrailerPlayer() {
                 SearchHelper.handleSearchClickCallback(activity, callback)
             }
 
-
         context?.let { ctx ->
+            val dubStatus = if(ctx.getApiDubstatusSettings().contains(DubStatus.Dubbed)) DubStatus.Dubbed else DubStatus.Subbed
+
             result_bookmark_button?.isVisible = ctx.isTvSettings()
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -1198,7 +1202,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
             if (url != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(url, apiName, showFillers, DubStatus.Dubbed, 0, 0) //TODO FIX
+                    viewModel.load(activity, url, apiName, showFillers, dubStatus, start) //TODO FIX
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
@@ -1233,7 +1237,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
                 if (restart || !viewModel.hasLoaded()) {
                     //viewModel.clear()
-                    viewModel.load(url, apiName, showFillers, DubStatus.Dubbed, 0, 0) //TODO FIX
+                    viewModel.load(activity, url, apiName, showFillers, dubStatus, start) //TODO FIX
                 }
             }
         }

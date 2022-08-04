@@ -191,7 +191,7 @@ object APIHolder {
         return null
     }
 
-    fun getLoadResponseIdFromUrl(url: String, apiName: String): Int {
+    private fun getLoadResponseIdFromUrl(url: String, apiName: String): Int {
         return url.replace(getApiFromName(apiName).mainUrl, "").replace("/", "").hashCode()
     }
 

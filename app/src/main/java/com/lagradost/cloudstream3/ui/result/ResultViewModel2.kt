@@ -42,9 +42,16 @@ import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
 import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultEpisode
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
@@ -61,6 +68,13 @@ data class EpisodeRange(
     // used to display data
     val startEpisode: Int,
     val endEpisode: Int,
+)
+
+data class AutoResume(
+    val season: Int?,
+    val episode: Int?,
+    val id: Int?,
+    val startAction: Int,
 )
 
 data class ResultData(
@@ -371,8 +385,8 @@ class ResultViewModel2 : ViewModel() {
 
     companion object {
         const val TAG = "RVM2"
-        private const val EPISODE_RANGE_SIZE = 50
-        private const val EPISODE_RANGE_OVERLOAD = 60
+        private const val EPISODE_RANGE_SIZE = 20
+        private const val EPISODE_RANGE_OVERLOAD = 30
 
         private fun filterName(name: String?): String? {
             if (name == null) return null
@@ -434,7 +448,6 @@ class ResultViewModel2 : ViewModel() {
 
                     val length = currentIndex - startIndex
                     if (length <= 0) continue
-
                     list.add(
                         EpisodeRange(
                             startIndex,
@@ -443,6 +456,8 @@ class ResultViewModel2 : ViewModel() {
                             currentMax
                         )
                     )
+                    currentMin = Int.MAX_VALUE
+                    currentMax = Int.MIN_VALUE
                 }
 
                 /*var currentMin = Int.MAX_VALUE
@@ -1091,19 +1106,21 @@ class ResultViewModel2 : ViewModel() {
                     false,
                     txt(R.string.episode_action_download_mirror)
                 ) { (result, index) ->
-                    startDownload(
-                        activity,
-                        click.data,
-                        response.isMovie(),
-                        response.name,
-                        response.type,
-                        response.posterUrl,
-                        response.apiName,
-                        response.getId(),
-                        response.url,
-                        listOf(result.links[index]),
-                        result.subs,
-                    )
+                    ioSafe {
+                        startDownload(
+                            activity,
+                            click.data,
+                            response.isMovie(),
+                            response.name,
+                            response.type,
+                            response.posterUrl,
+                            response.apiName,
+                            response.getId(),
+                            response.url,
+                            listOf(result.links[index]),
+                            result.subs,
+                        )
+                    }
                     showToast(
                         activity,
                         R.string.download_started,
@@ -1279,7 +1296,7 @@ class ResultViewModel2 : ViewModel() {
         viewModelScope.launch {
             currentMeta = meta
             currentSync = syncs
-            val (value, updateEpisodes) = Coroutines.ioWork {
+            val (value, updateEpisodes) = ioWork {
                 currentResponse?.let { resp ->
                     return@ioWork applyMeta(resp, meta, syncs)
                 }
@@ -1298,13 +1315,14 @@ class ResultViewModel2 : ViewModel() {
 
     private suspend fun updateFillers(name: String) {
         fillers =
-            try {
-                FillerEpisodeCheck.getFillerEpisodes(name)
-            } catch (e: Exception) {
-                logError(e)
-                null
+            ioWork {
+                try {
+                    FillerEpisodeCheck.getFillerEpisodes(name)
+                } catch (e: Exception) {
+                    logError(e)
+                    null
+                }
             } ?: emptyMap()
-
     }
 
     fun changeDubStatus(status: DubStatus) {
@@ -1401,7 +1419,6 @@ class ResultViewModel2 : ViewModel() {
         currentIndex = indexer
         currentRange = range
 
-
         _rangeSelections.postValue(ranges?.map { r ->
             val text = txt(R.string.episodes_range, r.startEpisode, r.endEpisode)
             text to r
@@ -1448,7 +1465,12 @@ class ResultViewModel2 : ViewModel() {
             )
         )
 
-        //TODO SET KEYS
+        currentId?.let { id ->
+            setDub(id, indexer.dubStatus)
+            setResultSeason(id, indexer.season)
+            setResultEpisode(id, range.startEpisode)
+        }
+
         preferStartEpisode = range.startEpisode
         preferStartSeason = indexer.season
         preferDubStatus = indexer.dubStatus
@@ -1661,7 +1683,7 @@ class ResultViewModel2 : ViewModel() {
                 val name =
                     /*loadResponse.seasonNames?.firstOrNull { it.season == seasonNumber }?.name?.let { seasonData ->
                         txt(seasonData)
-                    } ?:*/ txt(R.string.season_format, txt(R.string.season), seasonNumber) //TODO FIX
+                    } ?:*/txt(R.string.season_format, txt(R.string.season), seasonNumber) //TODO FIX
                 name to seasonNumber
             })
         }
@@ -1726,13 +1748,47 @@ class ResultViewModel2 : ViewModel() {
 
     fun hasLoaded() = currentResponse != null
 
+    private fun handleAutoStart(activity: Activity?, autostart: AutoResume?) =
+        viewModelScope.launch {
+            if (autostart == null || activity == null) return@launch
+
+            when (autostart.startAction) {
+                START_ACTION_RESUME_LATEST -> {
+                    currentEpisodes[currentIndex]?.let { currentRange ->
+                        for (ep in currentRange) {
+                            if (ep.getWatchProgress() > 0.9) continue
+                            handleAction(
+                                activity,
+                                EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep)
+                            )
+                            break
+                        }
+                    }
+                }
+                START_ACTION_LOAD_EP -> {
+                    val all = currentEpisodes.values.flatten()
+                    val episode =
+                        autostart.id?.let { id -> all.firstOrNull { it.id == id } }
+                            ?: autostart.episode?.let { ep ->
+                                currentEpisodes[currentIndex]?.firstOrNull { it.episode == ep && it.season == autostart.episode }
+                                    ?: all.firstOrNull { it.episode == ep && it.season == autostart.episode }
+                            }
+                            ?: return@launch
+                    handleAction(
+                        activity,
+                        EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, episode)
+                    )
+                }
+            }
+        }
+
     fun load(
+        activity: Activity?,
         url: String,
         apiName: String,
         showFillers: Boolean,
         dubStatus: DubStatus,
-        startEpisode: Int,
-        startSeason: Int
+        autostart: AutoResume?,
     ) =
         viewModelScope.launch {
             _page.postValue(Resource.Loading(url))
@@ -1740,8 +1796,6 @@ class ResultViewModel2 : ViewModel() {
 
             preferDubStatus = dubStatus
             currentShowFillers = showFillers
-            preferStartEpisode = startEpisode
-            preferStartSeason = startSeason
 
             // set api
             val api = APIHolder.getApiFromNameNull(apiName) ?: APIHolder.getApiFromUrlNull(url)
@@ -1782,10 +1836,16 @@ class ResultViewModel2 : ViewModel() {
                     _page.postValue(data)
                 }
                 is Resource.Success -> {
-                    val loadResponse = Coroutines.ioWork {
+                    if (!isActive) return@launch
+                    val loadResponse = ioWork {
                         applyMeta(data.value, currentMeta, currentSync).first
                     }
+                    if (!isActive) return@launch
                     val mainId = loadResponse.getId()
+
+                    preferDubStatus = getDub(mainId) ?: preferDubStatus
+                    preferStartEpisode = getResultEpisode(mainId)
+                    preferStartSeason = getResultSeason(mainId)
 
                     AcraApplication.setKey(
                         DOWNLOAD_HEADER_CACHE,
@@ -1807,6 +1867,8 @@ class ResultViewModel2 : ViewModel() {
                         updateFillers = showFillers,
                         apiRepository = repo
                     )
+                    if (!isActive) return@launch
+                    handleAutoStart(activity, autostart)
                 }
                 is Resource.Loading -> {
                     debugException { "Invalid load result" }

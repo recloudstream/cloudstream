@@ -104,15 +104,6 @@ class EpisodeAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    @LayoutRes
-    private var layout: Int = 0
-    fun updateLayout() {
-        // layout =
-        //     if (cardList.filter { it.poster != null }.size >= cardList.size / 2f) // If over half has posters then use the large layout
-        //          R.layout.result_episode_large
-        //      else R.layout.result_episode
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         /*val layout = if (cardList.filter { it.poster != null }.size >= cardList.size / 2)
             R.layout.result_episode_large
