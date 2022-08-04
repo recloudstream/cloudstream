@@ -40,16 +40,16 @@ jobs:
     #     echo $ENCODED_STRING | base64 -di > "${TMP_KEYSTORE_FILE_PATH}"/prerelease_keystore.keystore
     - name: Run Gradle
       run: ./gradlew app:assembleDebug
-      env:
-        SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-        SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+    #  env:
+    #    SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+    #    SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+    #    SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
     - name: Create pre-release
-     uses: "marvinpinto/action-automatic-releases@latest"
-     with:
-       repo_token: "${{ secrets.GITHUB_TOKEN }}"
-       automatic_release_tag: "pre-release"
-       prerelease: true
-       title: "Pre-release Build"
-       files: |
-         app/build/outputs/apk/prerelease/*.apk
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "pre-release"
+        prerelease: true
+        title: "Pre-release Build"
+        files: |
+          app/build/outputs/apk/prerelease/*.apk
