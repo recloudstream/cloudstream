@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- unless you only use cs3 as a player for downloaded stuff, you need this -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Downloads -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Downloads on low api devices-->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- Plugin API -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- some dependency needs this -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Used for player vertical slide-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!--Used for app update-->

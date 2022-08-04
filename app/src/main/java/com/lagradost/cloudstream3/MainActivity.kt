@@ -88,6 +88,7 @@ import org.schabi.newpipe.extractor.NewPipe
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
+import com.lagradost.cloudstream3.plugins.PluginManager
 
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -398,6 +399,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        PluginManager.loadAllPlugins(applicationContext)
+
         // init accounts
         for (api in accountManagers) {
             api.init()
