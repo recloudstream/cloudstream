@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.extractors.*
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
+import kotlin.collections.MutableList
 
 /**
  * For use in the ConcatenatingMediaSource.
@@ -189,133 +190,7 @@ suspend fun loadExtractor(
     return false
 }
 
-val extractorApis: Array<ExtractorApi> = arrayOf(
-    //AllProvider(),
-    WcoStream(),
-    Vidstreamz(),
-    Vizcloud(),
-    Vizcloud2(),
-    VizcloudOnline(),
-    VizcloudXyz(),
-    VizcloudLive(),
-    VizcloudInfo(),
-    MwvnVizcloudInfo(),
-    VizcloudDigital(),
-    VizcloudCloud(),
-    VizcloudSite(),
-    VideoVard(),
-    VideovardSX(),
-    Mp4Upload(),
-    StreamTape(),
-
-    //mixdrop extractors
-    MixDropBz(),
-    MixDropCh(),
-    MixDropTo(),
-
-    MixDrop(),
-
-    Mcloud(),
-    XStreamCdn(),
-
-    StreamSB(),
-    StreamSB1(),
-    StreamSB2(),
-    StreamSB3(),
-    StreamSB4(),
-    StreamSB5(),
-    StreamSB6(),
-    StreamSB7(),
-    StreamSB8(),
-    StreamSB9(),
-    StreamSB10(),
-    SBfull(),
-    // Streamhub(), cause Streamhub2() works
-    Streamhub2(),
-    Ssbstream(),
-
-    FEmbed(),
-    FeHD(),
-    Fplayer(),
-    DBfilm(),
-    Luxubu(),
-    LayarKaca(),
-    //  WatchSB(), 'cause StreamSB.kt works
-    Uqload(),
-    Uqload1(),
-    Evoload(),
-    Evoload1(),
-    VoeExtractor(),
-    // UpstreamExtractor(), GenericM3U8.kt works
-
-    Tomatomatela(),
-    Cinestart(),
-    OkRu(),
-    OkRuHttps(),
-
-    // dood extractors
-    DoodCxExtractor(),
-    DoodPmExtractor(),
-    DoodToExtractor(),
-    DoodSoExtractor(),
-    DoodLaExtractor(),
-    DoodWsExtractor(),
-    DoodShExtractor(),
-    DoodWatchExtractor(),
-
-    AsianLoad(),
-
-    // GenericM3U8(),
-    Jawcloud(),
-    Zplayer(),
-    ZplayerV2(),
-    Upstream(),
-
-    Maxstream(),
-    Tantifilm(),
-    Userload(),
-    Supervideo(),
-    GuardareStream(),
-
-    // StreamSB.kt works
-    //  SBPlay(),
-    //  SBPlay1(),
-    //  SBPlay2(),
-
-    PlayerVoxzer(),
-
-    BullStream(),
-    GMPlayer(),
-
-    Blogger(),
-    Solidfiles(),
-    YourUpload(),
-
-    Hxfile(),
-    KotakAnimeid(),
-    Neonime8n(),
-    Neonime7n(),
-    Yufiles(),
-    Aico(),
-
-    JWPlayer(),
-    Meownime(),
-    DesuArcg(),
-    DesuOdchan(),
-    DesuOdvip(),
-    DesuDrive(),
-
-    Filesim(),
-    Linkbox(),
-    Acefile(),
-    SpeedoStream(),
-
-    YoutubeExtractor(),
-    YoutubeShortLinkExtractor(),
-    Streamlare(),
-    VidSrcExtractor(),
-    VidSrcExtractor2(),
-)
+val extractorApis: MutableList<ExtractorApi> = arrayListOf()
 
 fun getExtractorApiFromName(name: String): ExtractorApi {
     for (api in extractorApis) {

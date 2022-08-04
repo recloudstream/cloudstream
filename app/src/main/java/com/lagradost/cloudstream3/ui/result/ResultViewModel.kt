@@ -15,8 +15,6 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
-import com.lagradost.cloudstream3.animeproviders.GogoanimeProvider
-import com.lagradost.cloudstream3.animeproviders.NineAnimeProvider
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -151,12 +149,13 @@ class ResultViewModel : ViewModel() {
             }
 
             val realRecommendations = ArrayList<SearchResponse>()
-            val apiNames = listOf(GogoanimeProvider().name, NineAnimeProvider().name)
-            meta.recommendations?.forEach { rec ->
-                apiNames.forEach { name ->
-                    realRecommendations.add(rec.copy(apiName = name))
-                }
-            }
+            // TODO: fix
+            //val apiNames = listOf(GogoanimeProvider().name, NineAnimeProvider().name)
+            // meta.recommendations?.forEach { rec ->
+            //     apiNames.forEach { name ->
+            //         realRecommendations.add(rec.copy(apiName = name))
+            //     }
+            // }
 
             recommendations = recommendations?.union(realRecommendations)?.toList()
                 ?: realRecommendations
@@ -563,13 +562,20 @@ class ResultViewModel : ViewModel() {
             return@launch
         }
 
-        val validUrlResource = safeApiCall {
+        var validUrlResource = safeApiCall {
             SyncRedirector.redirect(
                 url,
-                api.mainUrl.replace(NineAnimeProvider().mainUrl, "9anime")
-                    .replace(GogoanimeProvider().mainUrl, "gogoanime")
+                api.mainUrl
             )
         }
+        // TODO: fix
+        // val validUrlResource = safeApiCall {
+        //     SyncRedirector.redirect(
+        //         url,
+        //         api.mainUrl.replace(NineAnimeProvider().mainUrl, "9anime")
+        //             .replace(GogoanimeProvider().mainUrl, "gogoanime")
+        //     )
+        // }
 
         if (validUrlResource !is Resource.Success) {
             if (validUrlResource is Resource.Failure) {

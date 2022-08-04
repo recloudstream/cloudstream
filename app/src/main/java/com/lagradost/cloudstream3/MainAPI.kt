@@ -10,10 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.lagradost.cloudstream3.animeproviders.*
-import com.lagradost.cloudstream3.liveproviders.EjaTv
-import com.lagradost.cloudstream3.metaproviders.CrossTmdbProvider
-import com.lagradost.cloudstream3.movieproviders.*
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
@@ -26,6 +22,7 @@ import okhttp3.Interceptor
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
+import kotlin.collections.MutableList
 
 const val USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -42,122 +39,7 @@ object APIHolder {
 
     private const val defProvider = 0
 
-    val allProviders =
-        arrayListOf(
-            // Movie providers
-            ElifilmsProvider(),
-            EstrenosDoramasProvider(),
-            PelisplusProvider(),
-            PelisplusHDProvider(),
-            PeliSmartProvider(),
-            MeloMovieProvider(), // Captcha for links
-            DoramasYTProvider(),
-            CinecalidadProvider(),
-            CuevanaProvider(),
-            EntrepeliculasyseriesProvider(),
-            PelisflixProvider(),
-            SeriesflixProvider(),
-            IHaveNoTvProvider(), // Documentaries provider
-            VMoveeProvider(),
-            AllMoviesForYouProvider(),
-            VidEmbedProvider(),
-            VfFilmProvider(),
-            VfSerieProvider(),
-            FrenchStreamProvider(),
-            AsianLoadProvider(),
-            AsiaFlixProvider(), // This should be removed in favor of asianembed.io, same source
-            EjaTv(),
-            BflixProvider(),
-            FmoviesToProvider(),
-            SflixProProvider(),
-            FilmanProvider(),
-            SflixProvider(),
-            DopeboxProvider(),
-            SolarmovieProvider(),
-            PinoyMoviePediaProvider(),
-            PinoyHDXyzProvider(),
-            PinoyMoviesEsProvider(),
-            TrailersTwoProvider(),
-            TwoEmbedProvider(),
-            DramaSeeProvider(),
-            WatchAsianProvider(),
-            DramaidProvider(),
-            KdramaHoodProvider(),
-            AkwamProvider(),
-            MyCimaProvider(),
-            CimaNowProvider(),
-            EgyBestProvider(),
-            FaselHDProvider(),
-            SoaptwoDayProvider(),
-            HDMProvider(),// disabled due to cloudflare
-            TheFlixToProvider(),
-            StreamingcommunityProvider(),
-            TantifilmProvider(),
-            CineblogProvider(),
-            IlGenioDelloStreamingProvider(),
-            AltadefinizioneProvider(),
-            FilmpertuttiProvider(),
-            HDMovie5(),
-            RebahinProvider(),
-            LayarKacaProvider(),
-            HDTodayProvider(),
-            OpenVidsProvider(),
-            IdlixProvider(),
-            MultiplexProvider(),
-            VidSrcProvider(),
-            UakinoProvider(),
-            PhimmoichillProvider(),
-            HDrezkaProvider(),
-            YomoviesProvider(),
-            DubokuProvider(),
-            KisskhProvider(),
-
-            // Metadata providers
-            //TmdbProvider(),
-            CrossTmdbProvider(),
-
-            // Anime providers
-            WatchCartoonOnlineProvider(),
-            GogoanimeProvider(),
-            AllAnimeProvider(),
-            AnimekisaProvider(),
-            //ShiroProvider(), // v2 fucked me
-            AnimeFlickProvider(),
-            AnimeflvnetProvider(),
-            AnimefenixProvider(),
-            AnimeflvIOProvider(),
-            JKAnimeProvider(),
-            TenshiProvider(),
-            WcoProvider(),
-            AnimePaheProvider(),
-            NineAnimeProvider(),
-            AnimeWorldProvider(),
-            AnimeSaturnProvider(),
-            AniPlayProvider(),
-            ZoroProvider(),
-            DubbedAnimeProvider(),
-            MonoschinosProvider(),
-            MundoDonghuaProvider(),
-            KawaiifuProvider(), // disabled due to cloudflare
-            NeonimeProvider(),
-            KuramanimeProvider(),
-            OploverzProvider(),
-            GomunimeProvider(),
-            NontonAnimeIDProvider(),
-            KuronimeProvider(),
-            OtakudesuProvider(),
-            AnimeIndoProvider(),
-            AnimeSailProvider(),
-            TocanimeProvider(),
-            WcofunProvider(),
-            //MultiAnimeProvider(),
-            NginxProvider(),
-            OlgplyProvider(),
-            AniflixProvider(),
-            KimCartoonProvider(),
-            XcineProvider(),
-            SuperStream()
-        )
+    val allProviders: MutableList<MainAPI> = arrayListOf()
 
 
     fun initAll() {
