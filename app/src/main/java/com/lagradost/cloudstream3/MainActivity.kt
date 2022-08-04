@@ -156,7 +156,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         // Fucks up anime info layout since that has its own layout
         cast_mini_controller_holder?.isVisible =
-            !listOf(R.id.navigation_results, R.id.navigation_player).contains(destination.id)
+            !listOf(
+                R.id.navigation_results_phone,
+                R.id.navigation_results_tv,
+                R.id.navigation_player
+            ).contains(destination.id)
 
         val isNavVisible = listOf(
             R.id.navigation_home,

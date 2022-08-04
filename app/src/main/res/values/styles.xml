@@ -338,6 +338,7 @@
     <style name="DarkFragment" parent="AppTheme">
         <item name="android:navigationBarColor">?attr/colorPrimary</item>
     </style>
+
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowFullscreen">true</item>
         <item name="android:textColor">?attr/textColor</item>
@@ -460,7 +461,7 @@
         <item name="drawableStartCompat">@drawable/ic_baseline_check_24_listview</item>
     </style>
 
-    <style name="NoCheckLabel"  parent="@style/AppTextViewStyle">
+    <style name="NoCheckLabel" parent="@style/AppTextViewStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
@@ -474,7 +475,6 @@
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:drawablePadding">20dp</item>
     </style>
-
 
 
     <style name="BlackButton" parent="NiceButton">
@@ -544,6 +544,23 @@
     <style name="MultiSelectButton" parent="BlackButton">
         <item name="android:layout_height">40dp</item>
         <item name="android:layout_width">wrap_content</item>
+
+        <item name="strokeColor">?attr/textColor</item>
+        <item name="backgroundTint">?attr/iconGrayBackground</item>
+        <item name="iconTint">?attr/textColor</item>
+        <item name="android:textColor">?attr/textColor</item>
+        <item name="rippleColor">?attr/textColor</item>
+    </style>
+
+    <style name="SelectableButton" parent="NiceButton">
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_width">wrap_content</item>
+
+        <item name="strokeColor">@color/selectable_black</item>
+        <item name="backgroundTint">@color/selectable_white</item>
+        <item name="iconTint">@color/selectable_black</item>
+        <item name="android:textColor">@color/selectable_black</item>
+        <item name="rippleColor">@color/selectable_black</item>
     </style>
 
     <style name="VideoButton">

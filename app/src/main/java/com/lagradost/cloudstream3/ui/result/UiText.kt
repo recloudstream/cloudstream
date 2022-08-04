@@ -21,11 +21,13 @@ sealed class UiText {
     data class DynamicString(val value: String) : UiText() {
         override fun toString(): String = value
     }
+
     class StringResource(
         @StringRes val resId: Int,
         val args: List<Any>
     ) : UiText() {
-        override fun toString(): String = "resId = $resId\nargs = ${args.toList().map { "(${it::class} = $it)"  }}"
+        override fun toString(): String =
+            "resId = $resId\nargs = ${args.toList().map { "(${it::class} = $it)" }}"
     }
 
     fun asStringNull(context: Context?): String? {
@@ -137,7 +139,14 @@ fun TextView?.setText(text: UiText?) {
     if (text == null) {
         this.isVisible = false
     } else {
-        val str = text.asStringNull(context)
+        val str = text.asStringNull(context)?.let {
+            if (this.maxLines == 1) {
+                it.replace("\n", " ")
+            } else {
+                it
+            }
+        }
+
         this.isGone = str.isNullOrBlank()
         this.text = str
     }
@@ -155,9 +164,9 @@ fun TextView?.setTextHtml(text: UiText?) {
 }
 
 fun TextView?.setTextHtml(text: Some<UiText>?) {
-    setTextHtml(if(text is Some.Success) text.value else null)
+    setTextHtml(if (text is Some.Success) text.value else null)
 }
 
 fun TextView?.setText(text: Some<UiText>?) {
-    setText(if(text is Some.Success) text.value else null)
+    setText(if (text is Some.Success) text.value else null)
 }
