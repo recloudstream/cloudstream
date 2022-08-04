@@ -57,7 +57,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
@@ -746,7 +745,6 @@ class ResultFragment : ResultTrailerPlayer() {
                     result_resume_parent?.isVisible = true
                     val value = resume.value
                     value.progress?.let { progress ->
-                        //TODO FIX
                         result_resume_series_title?.apply {
                             isVisible = !value.isMovie
                             text =
@@ -1202,7 +1200,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
             if (url != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(activity, url, apiName, showFillers, dubStatus, start) //TODO FIX
+                    viewModel.load(activity, url, apiName, showFillers, dubStatus, start)
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
@@ -1237,7 +1235,7 @@ class ResultFragment : ResultTrailerPlayer() {
 
                 if (restart || !viewModel.hasLoaded()) {
                     //viewModel.clear()
-                    viewModel.load(activity, url, apiName, showFillers, dubStatus, start) //TODO FIX
+                    viewModel.load(activity, url, apiName, showFillers, dubStatus, start)
                 }
             }
         }

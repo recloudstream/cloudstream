@@ -176,7 +176,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         tags = tags ?: emptyList(),
         comingSoon = comingSoon,
         actors = if (hasActorImages) actors else null,
-        actorsText = if (hasActorImages) null else txt(
+        actorsText = if (hasActorImages || actors.isNullOrEmpty()) null else txt(
             R.string.cast_format,
             actors?.joinToString { it.actor.name }),
         plotText =
