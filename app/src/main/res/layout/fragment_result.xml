@@ -5,6 +5,7 @@
         android:id="@+id/result_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        style="@style/DarkFragment"
         android:background="?attr/primaryBlackBackground"
         android:clickable="true"
         android:focusable="true">
@@ -290,15 +291,15 @@
 
                         <androidx.cardview.widget.CardView
                                 android:id="@+id/result_poster_holder"
-                                android:layout_width="100dp"
-                                android:layout_height="140dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 app:cardCornerRadius="@dimen/rounded_image_radius">
 
                             <ImageView
                                     android:id="@+id/result_poster"
 
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
+                                    android:layout_width="100dp"
+                                    android:layout_height="140dp"
                                     android:contentDescription="@string/result_poster_img_des"
                                     android:foreground="@drawable/outline_drawable"
                                     android:scaleType="centerCrop"
@@ -464,6 +465,14 @@
                             android:textColor="?attr/grayTextColor"
                             android:textSize="15sp"
                             tools:text="@string/provider_info_meta" />
+                    <TextView
+                            android:id="@+id/result_no_episodes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:textColor="?attr/grayTextColor"
+                            android:textSize="15sp"
+                            tools:text="@string/no_episodes_found" />
 
                     <TextView
                             android:id="@+id/result_tag_holder"
@@ -669,7 +678,7 @@
                         </LinearLayout>
 
                         <LinearLayout
-                                android:id="@+id/result_series_parent"
+                                android:id="@+id/result_resume_parent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="5dp"
@@ -835,7 +844,6 @@
                             <LinearLayout
                                     android:id="@+id/result_next_airing_holder"
                                     android:layout_gravity="start"
-                                    android:paddingBottom="15dp"
                                     android:orientation="horizontal"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content">

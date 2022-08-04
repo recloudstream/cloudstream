@@ -51,6 +51,32 @@ fun <T> LifecycleOwner.observeDirectly(liveData: LiveData<T>, action: (t: T) -> 
         action(currentValue)
 }
 
+inline fun <reified T : Any> some(value: T?): Some<T> {
+    return if (value == null) {
+        Some.None
+    } else {
+        Some.Success(value)
+    }
+}
+
+sealed class Some<out T> {
+    data class Success<out T>(val value: T) : Some<T>()
+    object None : Some<Nothing>()
+
+    override fun toString(): String {
+        return when(this) {
+            is None -> "None"
+            is Success -> "Some(${value.toString()})"
+        }
+    }
+}
+
+sealed class ResourceSome<out T> {
+    data class Success<out T>(val value: T) : ResourceSome<T>()
+    object None : ResourceSome<Nothing>()
+    data class Loading(val data: Any? = null) : ResourceSome<Nothing>()
+}
+
 sealed class Resource<out T> {
     data class Success<out T>(val value: T) : Resource<T>()
     data class Failure(

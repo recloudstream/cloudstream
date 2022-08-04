@@ -29,7 +29,7 @@
     <string name="result_share">شارك</string>
     <string name="result_open_in_browser">فتح في الويب </string>
     <string name="skip_loading">تخطي التحميل</string>
-    <string name="loading_chromecast">…تحميل</string>
+    <string name="loading">…تحميل</string>
 
     <string name="type_watching">مشاهدة</string>
     <string name="type_on_hold">في الانتظار</string>

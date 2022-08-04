@@ -17,7 +17,7 @@
     <string name="result_share">Deel</string>
     <string name="result_open_in_browser">Openen in Browser</string>
     <string name="skip_loading">Laden overslaan</string>
-    <string name="loading_chromecast">Laden…</string>
+    <string name="loading">Laden…</string>
 
     <string name="type_watching">Aan het kijken</string>
     <string name="type_on_hold">In de wacht</string>

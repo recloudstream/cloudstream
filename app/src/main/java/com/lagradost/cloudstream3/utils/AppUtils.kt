@@ -187,21 +187,21 @@ object AppUtils {
     @WorkerThread
     fun Context.addProgramsToContinueWatching(data: List<DataStoreHelper.ResumeWatchingResult>) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-
+        val context = this
         ioSafe {
             data.forEach { episodeInfo ->
                 try {
-                    val (program, id) = getWatchNextProgramByVideoId(episodeInfo.url, this)
-                    val nextProgram = buildWatchNextProgramUri(this, episodeInfo)
+                    val (program, id) = getWatchNextProgramByVideoId(episodeInfo.url, context)
+                    val nextProgram = buildWatchNextProgramUri(context, episodeInfo)
 
                     // If the program is already in the Watch Next row, update it
                     if (program != null && id != null) {
-                        PreviewChannelHelper(this).updateWatchNextProgram(
+                        PreviewChannelHelper(context).updateWatchNextProgram(
                             nextProgram,
                             id,
                         )
                     } else {
-                        PreviewChannelHelper(this)
+                        PreviewChannelHelper(context)
                             .publishWatchNextProgram(nextProgram)
                     }
                 } catch (e: Exception) {

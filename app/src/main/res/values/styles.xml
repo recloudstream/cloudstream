@@ -266,6 +266,7 @@
     </style>
 
     <style name="AppBottomSheetDialogTheme">
+        <item name="android:navigationBarColor">?attr/boxItemBackground</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
@@ -278,7 +279,7 @@
         <item name="behavior_skipCollapsed">true</item>
         <item name="shapeAppearance">@null</item>
         <item name="shapeAppearanceOverlay">@null</item>
-        <item name="backgroundTint">?android:attr/colorBackground</item>
+        <item name="backgroundTint">@color/transparent</item>
         <item name="android:background">@drawable/rounded_dialog</item>
         <item name="behavior_peekHeight">512dp</item>
     </style>
@@ -334,6 +335,9 @@
         <item name="tabMode">scrollable</item>-->
     </style>
 
+    <style name="DarkFragment" parent="AppTheme">
+        <item name="android:navigationBarColor">?attr/colorPrimary</item>
+    </style>
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowFullscreen">true</item>
         <item name="android:textColor">?attr/textColor</item>
@@ -448,7 +452,15 @@
         <item name="android:textColor">?attr/textColor</item>
     </style>
 
-    <style name="CheckLabel" parent="@style/AppTextViewStyle">
+    <style name="CheckLabel" parent="@style/NoCheckLabel">
+
+        <!--        <item name="drawableTint">@color/check_selection_color</item>-->
+        <!--        Set color in the drawable instead of tint to allow multiple drawables-->
+        <item name="android:checkMark">?android:attr/listChoiceIndicatorSingle</item>
+        <item name="drawableStartCompat">@drawable/ic_baseline_check_24_listview</item>
+    </style>
+
+    <style name="NoCheckLabel"  parent="@style/AppTextViewStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
@@ -458,14 +470,12 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingEnd">12dp</item>
-        <item name="android:checkMark">?android:attr/listChoiceIndicatorSingle</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:drawablePadding">20dp</item>
-<!--        <item name="drawableTint">@color/check_selection_color</item>-->
-<!--        Set color in the drawable instead of tint to allow multiple drawables-->
-        <item name="drawableStartCompat">@drawable/ic_baseline_check_24_listview</item>
     </style>
+
+
 
     <style name="BlackButton" parent="NiceButton">
         <item name="strokeColor">?attr/textColor</item>

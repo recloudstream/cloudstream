@@ -10,6 +10,7 @@ import androidx.annotation.LayoutRes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.R
@@ -56,7 +57,7 @@ const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
-    var cardList: List<ResultEpisode>,
+    private var cardList: MutableList<ResultEpisode>,
     private val hasDownloadSupport: Boolean,
     private val clickCallback: (EpisodeClickEvent) -> Unit,
     private val downloadClickCallback: (DownloadClickEvent) -> Unit,
@@ -92,13 +93,15 @@ class EpisodeAdapter(
         }
     }
 
-    @LayoutRes
-    private var layout: Int = 0
-    fun updateLayout() {
-        // layout =
-        //     if (cardList.filter { it.poster != null }.size >= cardList.size / 2f) // If over half has posters then use the large layout
-        //          R.layout.result_episode_large
-        //      else R.layout.result_episode
+    fun updateList(newList: List<ResultEpisode>) {
+        val diffResult = DiffUtil.calculateDiff(
+            ResultDiffCallback(this.cardList, newList)
+        )
+
+        cardList.clear()
+        cardList.addAll(newList)
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -262,4 +265,20 @@ class EpisodeAdapter(
             }
         }
     }
+}
+
+class ResultDiffCallback(
+    private val oldList: List<ResultEpisode>,
+    private val newList: List<ResultEpisode>
+) :
+    DiffUtil.Callback() {
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition].id == newList[newItemPosition].id
+
+    override fun getOldListSize() = oldList.size
+
+    override fun getNewListSize() = newList.size
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition] == newList[newItemPosition]
 }

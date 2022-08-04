@@ -17,7 +17,7 @@
     <string name="result_share">Μοίρασε</string>
     <string name="result_open_in_browser">Άνοιγμα στον περιηγητή</string>
     <string name="skip_loading">Προσπέραση φορτώματος</string>
-    <string name="loading_chromecast">Φόρτωση…</string>
+    <string name="loading">Φόρτωση…</string>
 
     <string name="type_watching">Watching</string>
     <string name="type_on_hold">On-Hold</string>

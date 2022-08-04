@@ -108,7 +108,7 @@
     <string name="result_share">Chia sẻ</string>
     <string name="result_open_in_browser">Mở bằng trình duyệt</string>
     <string name="skip_loading">Bỏ qua</string>
-    <string name="loading_chromecast">Đang tải…</string>
+    <string name="loading">Đang tải…</string>
 
     <string name="type_watching">Đang xem</string>
     <string name="type_on_hold">Đang chờ</string>

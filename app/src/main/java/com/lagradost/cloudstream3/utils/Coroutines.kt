@@ -12,7 +12,7 @@ object Coroutines {
         }
     }
 
-    fun ioSafe(work: suspend (() -> Unit)): Job {
+    fun ioSafe(work: suspend (CoroutineScope.() -> Unit)): Job {
         return CoroutineScope(Dispatchers.IO).launch {
             try {
                 work()
@@ -22,7 +22,7 @@ object Coroutines {
         }
     }
 
-    suspend fun <T> ioWork(work: suspend (() -> T)): T {
+    suspend fun <T> ioWork(work: suspend (CoroutineScope.() -> T)): T {
         return withContext(Dispatchers.IO) {
             work()
         }

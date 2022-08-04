@@ -108,7 +108,7 @@
     <string name="result_share">Compartilhar</string>
     <string name="result_open_in_browser">Abrir no Navegador</string>
     <string name="skip_loading">Pular Carregamento</string>
-    <string name="loading_chromecast">Carregando…</string>
+    <string name="loading">Carregando…</string>
 
     <string name="type_watching">Assistindo</string>
     <string name="type_on_hold">Em espera</string>

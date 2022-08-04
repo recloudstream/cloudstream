@@ -27,7 +27,7 @@ object SearchHelper {
                     } else {
                         if (card.isFromDownload) {
                             handleDownloadClick(
-                                activity, card.name, DownloadClickEvent(
+                                activity, DownloadClickEvent(
                                     DOWNLOAD_ACTION_PLAY_FILE,
                                     VideoDownloadHelper.DownloadEpisodeCached(
                                         card.name,
