@@ -89,7 +89,9 @@ object BackupUtils {
                         val newFile = ContentValues().apply {
                             put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                             put(MediaStore.MediaColumns.TITLE, displayName)
-                            put(MediaStore.MediaColumns.MIME_TYPE, "application/json")
+                            // While it a json file we store as txt because not
+                            // all file managers support mimetype json
+                            put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
                             //put(MediaStore.MediaColumns.RELATIVE_PATH, folder)
                         }
 
