@@ -376,7 +376,7 @@ class SuperStream : MainAPI() {
         @JsonProperty("thumbs_min") val thumbsMin: String? = null,
         @JsonProperty("thumbs_org") val thumbsOrg: String? = null,
         @JsonProperty("imdb_link") val imdbLink: String? = null,
-        @JsonProperty("quality_tags") val qualityTags: ArrayList<String> = arrayListOf(),
+//        @JsonProperty("quality_tags") val qualityTags: ArrayList<String> = arrayListOf(),
 //  @JsonProperty("play_progress"         ) val playProgress        : PlayProgress?     = PlayProgress()
 
     )
@@ -462,7 +462,7 @@ class SuperStream : MainAPI() {
 
             return newMovieLoadResponse(
                 data.title ?: "",
-                data.imdbLink ?: "",
+                url,
                 TvType.Movie,
                 LinkData(
                     data.id ?: throw RuntimeException("No movie ID"),
@@ -493,7 +493,7 @@ class SuperStream : MainAPI() {
 
             return newTvSeriesLoadResponse(
                 data.title ?: "",
-                data.imdbLink ?: data.tomatoUrl ?: "",
+                url,
                 TvType.TvSeries,
                 episodes.mapNotNull {
                     Episode(
