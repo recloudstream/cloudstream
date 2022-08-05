@@ -44,6 +44,7 @@ import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -316,12 +317,11 @@ object AppUtils {
     //private val viewModel: ResultViewModel by activityViewModels()
 
     private fun getResultsId(context: Context) : Int {
-        return R.id.global_to_navigation_results_phone
-        //return if(context.isTvSettings()) {
-        //    R.id.global_to_navigation_results_tv
-        //} else {
-        //    R.id.global_to_navigation_results_phone
-        //}
+        return if(context.isTrueTvSettings()) {
+            R.id.global_to_navigation_results_tv
+        } else {
+            R.id.global_to_navigation_results_phone
+        }
     }
 
     fun AppCompatActivity.loadResult(

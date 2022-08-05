@@ -57,11 +57,11 @@ const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
-    private var cardList: MutableList<ResultEpisode>,
     private val hasDownloadSupport: Boolean,
     private val clickCallback: (EpisodeClickEvent) -> Unit,
     private val downloadClickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var cardList: MutableList<ResultEpisode> = mutableListOf()
 
     private val mBoundViewHolders: HashSet<DownloadButtonViewHolder> = HashSet()
     private fun getAllBoundViewHolders(): Set<DownloadButtonViewHolder?>? {
@@ -104,6 +104,8 @@ class EpisodeAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
+    var layout = R.layout.result_episode_both
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         /*val layout = if (cardList.filter { it.poster != null }.size >= cardList.size / 2)
             R.layout.result_episode_large
@@ -111,7 +113,7 @@ class EpisodeAdapter(
 
         return EpisodeCardViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.result_episode_both, parent, false),
+                .inflate(layout, parent, false),
             hasDownloadSupport,
             clickCallback,
             downloadClickCallback
@@ -148,6 +150,8 @@ class EpisodeAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
             localCard = card
+
+            val isTrueTv = itemView.context?.isTrueTvSettings() == true
 
             val (parentView, otherView) = if (card.poster == null) {
                 itemView.episode_holder to itemView.episode_holder_large
@@ -199,20 +203,22 @@ class EpisodeAdapter(
                 }
             }
 
-            episodePoster?.setOnClickListener {
-                clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
-            }
+            if (!isTrueTv) {
+                episodePoster?.setOnClickListener {
+                    clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
+                }
 
-            episodePoster?.setOnLongClickListener {
-                clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_TOAST, card))
-                return@setOnLongClickListener true
+                episodePoster?.setOnLongClickListener {
+                    clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_TOAST, card))
+                    return@setOnLongClickListener true
+                }
             }
 
             parentView.setOnClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
             }
 
-            if (parentView.context.isTrueTvSettings()) {
+            if (isTrueTv) {
                 parentView.isFocusable = true
                 parentView.isFocusableInTouchMode = true
                 parentView.touchscreenBlocksFocus = false

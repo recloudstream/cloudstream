@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import com.discord.panels.OverlappingPanelsLayout
 import com.discord.panels.PanelsChildGestureRegionObserver
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -18,6 +19,7 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
@@ -30,6 +32,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
+import kotlinx.android.synthetic.main.fragment_trailer.*
 import kotlinx.android.synthetic.main.result_recommendations.*
 import kotlinx.android.synthetic.main.trailer_custom_layout.*
 
@@ -129,10 +132,10 @@ class ResultFragmentPhone : ResultFragment() {
                 context?.openBrowser(it.url)
             }
         }
-        result_recommendations?.spanCount = 3
         result_overlapping_panels?.setStartPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
         result_overlapping_panels?.setEndPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
 
+        result_recommendations?.spanCount = 3
         result_recommendations?.adapter =
             SearchAdapter(
                 ArrayList(),
@@ -174,6 +177,21 @@ class ResultFragmentPhone : ResultFragment() {
                 }
             })
 
+
+        result_scroll?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+            val dy = scrollY - oldScrollY
+            if (dy > 0) { //check for scroll down
+                result_bookmark_fab?.shrink()
+            } else if (dy < -5) {
+                result_bookmark_fab?.extend()
+            }
+            if (!isFullScreenPlayer && player.getIsPlaying()) {
+                if (scrollY > (player_background?.height ?: scrollY)) {
+                    player.handleEvent(CSPlayerEvent.Pause)
+                }
+            }
+            //result_poster_blur_holder?.translationY = -scrollY.toFloat()
+        })
 
         observe(viewModel.selectPopup) { popup ->
             when (popup) {

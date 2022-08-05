@@ -2,8 +2,6 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-
-        android:nextFocusLeft="@id/result_episode_download"
         android:nextFocusRight="@id/result_episode_download"
 
         android:id="@+id/episode_holder"
@@ -15,6 +13,10 @@
         app:cardElevation="0dp"
         android:foreground="@drawable/outline_drawable"
         android:layout_marginBottom="5dp">
+    <!--
+        android:nextFocusLeft="@id/result_episode_download"
+        -->
+
     <!-- IDK BUT THIS DOES NOT SEAM LIKE A GOOD WAY OF DOING IT -->
     <!--<LinearLayout
             android:layout_width="fill_parent"
@@ -110,9 +112,10 @@
                 android:progress="0"
                 android:visibility="visible" />
 
+        <!--
+        android:nextFocusRight="@id/episode_holder"-->
         <ImageView
                 android:nextFocusLeft="@id/episode_holder"
-                android:nextFocusRight="@id/episode_holder"
                 app:tint="?attr/white"
                 android:id="@+id/result_episode_download"
                 android:visibility="visible"

@@ -6,9 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@style/DarkFragment"
-        android:background="?attr/primaryBlackBackground"
-        android:clickable="true"
-        android:focusable="true">
+        android:background="?attr/primaryBlackBackground">
 
     <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/result_loading"
@@ -271,7 +269,7 @@
                             tools:text="Cast: Joe Ligma" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                            tools:visibility="gone"
+                            tools:visibility="visible"
                             android:nextFocusUp="@id/result_bookmark_button"
                             android:nextFocusDown="@id/result_play_movie"
 
@@ -305,6 +303,7 @@
                             android:textColor="?attr/grayTextColor"
                             android:textSize="15sp"
                             tools:text="@string/provider_info_meta" />
+
                     <TextView
                             android:id="@+id/result_no_episodes"
                             android:layout_width="match_parent"
@@ -373,6 +372,10 @@
                                 tools:visibility="visible">
 
                             <com.google.android.material.button.MaterialButton
+                                    android:nextFocusRight="@id/result_download_movie"
+                                    android:nextFocusUp="@id/result_cast_items"
+                                    android:nextFocusDown="@id/result_resume_series_button_play"
+
                                     android:id="@+id/result_play_movie"
                                     style="@style/WhiteButton"
                                     android:layout_width="0dp"
@@ -381,13 +384,9 @@
                                     android:layout_marginStart="0dp"
                                     android:layout_marginEnd="5dp"
                                     android:layout_marginBottom="10dp"
-                                    android:nextFocusUp="@id/result_bookmark_button"
-                                    android:nextFocusDown="@id/result_download_movie"
                                     android:text="@string/play_movie_button"
                                     android:visibility="visible"
                                     app:icon="@drawable/ic_baseline_play_arrow_24">
-
-                                <requestFocus />
 
                             </com.google.android.material.button.MaterialButton>
 
@@ -400,6 +399,10 @@
                                     android:layout_height="wrap_content">
 
                                 <com.google.android.material.button.MaterialButton
+                                        android:nextFocusLeft="@id/result_play_movie"
+                                        android:nextFocusUp="@id/result_cast_items"
+                                        android:nextFocusDown="@id/result_resume_series_button_play"
+
                                         android:id="@+id/result_download_movie"
                                         style="@style/BlackButton"
 
@@ -410,8 +413,6 @@
                                         android:clickable="true"
                                         android:focusable="true"
 
-                                        android:nextFocusUp="@id/result_play_movie"
-                                        android:nextFocusDown="@id/result_season_button"
                                         android:visibility="visible" />
 
                                 <LinearLayout
@@ -508,8 +509,10 @@
                                     android:layout_height="wrap_content">
 
                                 <ImageView
-                                        android:layout_marginEnd="10dp"
                                         android:id="@+id/result_resume_series_button_play"
+                                        android:nextFocusUp="@id/result_play_movie"
+                                        android:nextFocusDown="@id/result_season_selection"
+
                                         android:layout_width="30dp"
                                         android:layout_height="30dp"
                                         android:layout_gravity="center"
@@ -522,6 +525,8 @@
 
 
                                 <TextView
+                                        android:paddingStart="10dp"
+                                        android:paddingEnd="10dp"
                                         android:layout_gravity="center"
                                         android:gravity="center"
                                         android:id="@+id/result_resume_series_title"
@@ -540,7 +545,6 @@
                                         android:layout_gravity="center"
                                         android:layout_weight="0"
                                         android:gravity="center"
-                                        android:paddingStart="10dp"
                                         android:textColor="?attr/grayTextColor"
                                         tools:ignore="RtlSymmetry"
                                         tools:text="69m remaining" />
@@ -574,42 +578,46 @@
 
                         </LinearLayout>
 
-
                         <LinearLayout
-                                android:id="@+id/result_episodes_tab"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
 
                             <androidx.recyclerview.widget.RecyclerView
-                                    android:paddingBottom="10dp"
+                                    android:nextFocusUp="@id/result_resume_series_button_play"
+                                    android:nextFocusDown="@id/result_range_selection"
                                     android:id="@+id/result_season_selection"
+
+                                    android:paddingBottom="10dp"
                                     tools:listitem="@layout/result_selection"
                                     android:orientation="horizontal"
                                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
+                                    android:layout_height="wrap_content" />
 
-                            </androidx.recyclerview.widget.RecyclerView>
                             <androidx.recyclerview.widget.RecyclerView
-                                    android:paddingBottom="10dp"
+                                    android:nextFocusUp="@id/result_season_selection"
+                                    android:nextFocusDown="@id/result_dub_selection"
                                     android:id="@+id/result_range_selection"
-                                    tools:listitem="@layout/result_selection"
-                                    android:orientation="horizontal"
-                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
-                            </androidx.recyclerview.widget.RecyclerView>
-                            <androidx.recyclerview.widget.RecyclerView
-                                    android:paddingBottom="10dp"
-                                    android:id="@+id/result_dub_selection"
-                                    tools:listitem="@layout/result_selection"
-                                    android:orientation="horizontal"
-                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
 
-                            </androidx.recyclerview.widget.RecyclerView>
+                                    android:paddingBottom="10dp"
+                                    tools:listitem="@layout/result_selection"
+                                    android:orientation="horizontal"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                    android:nextFocusUp="@id/result_range_selection"
+                                    android:nextFocusDown="@id/result_episodes"
+                                    android:id="@+id/result_dub_selection"
+
+                                    android:paddingBottom="10dp"
+                                    tools:listitem="@layout/result_selection"
+                                    android:orientation="horizontal"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
 
                             <LinearLayout
                                     android:id="@+id/result_next_airing_holder"
@@ -643,6 +651,7 @@
                             </LinearLayout>
 
                             <com.facebook.shimmer.ShimmerFrameLayout
+                                    tools:visibility="gone"
                                     android:id="@+id/result_episode_loading"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -652,8 +661,7 @@
                                     app:shimmer_auto_start="true"
                                     app:shimmer_base_alpha="0.2"
                                     app:shimmer_duration="@integer/loading_time"
-                                    app:shimmer_highlight_alpha="0.3"
-                                    tools:visibility="visible">
+                                    app:shimmer_highlight_alpha="0.3">
 
                                 <LinearLayout
                                         android:layout_width="match_parent"
@@ -678,22 +686,21 @@
                                     android:layout_height="50dp" />-->
 
                             <androidx.recyclerview.widget.RecyclerView
+                                    android:nextFocusUp="@id/result_dub_selection"
                                     android:id="@+id/result_episodes"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="0dp"
                                     android:clipToPadding="false"
+                                    android:orientation="horizontal"
                                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                    android:descendantFocusability="afterDescendants"
-                                    android:paddingBottom="100dp"
                                     tools:listitem="@layout/result_episode" />
                         </LinearLayout>
                     </LinearLayout>
+                    <include layout="@layout/result_recommendations" />
 
                 </LinearLayout>
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
     </LinearLayout>
-
 </FrameLayout>

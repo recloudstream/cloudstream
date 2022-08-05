@@ -57,6 +57,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import kotlinx.coroutines.*
 import java.io.File
+import java.lang.Math.abs
 import java.util.concurrent.TimeUnit
 
 
@@ -311,8 +312,8 @@ class ResultViewModel2 : ViewModel() {
     /** map<dub, map<season, List<episode>>> */
     private var currentEpisodes: Map<EpisodeIndexer, List<ResultEpisode>> = mapOf()
     private var currentRanges: Map<EpisodeIndexer, List<EpisodeRange>> = mapOf()
-    private var currentSeasons: Set<Int> = setOf()
-    private var currentDubStatus: Set<DubStatus> = setOf()
+    private var currentSeasons: List<Int> = listOf()
+    private var currentDubStatus: List<DubStatus> = listOf()
     private var currentMeta: SyncAPI.SyncResult? = null
     private var currentSync: Map<String, String>? = null
     private var currentIndex: EpisodeIndexer? = null
@@ -375,6 +376,18 @@ class ResultViewModel2 : ViewModel() {
 
     private val _selectedDubStatus: MutableLiveData<Some<UiText>> = MutableLiveData(Some.None)
     val selectedDubStatus: LiveData<Some<UiText>> = _selectedDubStatus
+
+    private val _selectedRangeIndex: MutableLiveData<Int> =
+        MutableLiveData(-1)
+    val selectedRangeIndex: LiveData<Int> = _selectedRangeIndex
+
+    private val _selectedSeasonIndex: MutableLiveData<Int> =
+        MutableLiveData(-1)
+    val selectedSeasonIndex: LiveData<Int> = _selectedSeasonIndex
+
+    private val _selectedDubStatusIndex: MutableLiveData<Int> = MutableLiveData(-1)
+    val selectedDubStatusIndex: LiveData<Int> = _selectedDubStatusIndex
+
 
     private val _loadedLinks: MutableLiveData<Some<LinkProgress>> = MutableLiveData(Some.None)
     val loadedLinks: LiveData<Some<LinkProgress>> = _loadedLinks
@@ -1414,6 +1427,16 @@ class ResultViewModel2 : ViewModel() {
 
         val episodes = currentEpisodes[indexer]
         val ranges = currentRanges[indexer]
+
+        if (ranges?.contains(range) != true) {
+            // if the current ranges does not include the range then select the range with the closest matching start episode
+            // this usually happends when dub has less episodes then sub -> the range does not exist
+            ranges?.minByOrNull { abs(it.startEpisode - range.startEpisode) }?.let { r ->
+                postEpisodeRange(indexer, r)
+                return
+            }
+        }
+
         val size = episodes?.size
         val isMovie = currentResponse?.isMovie() == true
         currentIndex = indexer
@@ -1435,6 +1458,10 @@ class ResultViewModel2 : ViewModel() {
             )
         )
 
+        _selectedSeasonIndex.postValue(
+            currentSeasons.indexOf(indexer.season)
+        )
+
         _selectedSeason.postValue(
             some(
                 if (isMovie || currentSeasons.size <= 1) null else
@@ -1449,6 +1476,10 @@ class ResultViewModel2 : ViewModel() {
             )
         )
 
+        _selectedRangeIndex.postValue(
+            ranges?.indexOf(range) ?: -1
+        )
+
         _selectedRange.postValue(
             some(
                 if (isMovie) null else if ((currentRanges[indexer]?.size ?: 0) > 1) {
@@ -1458,6 +1489,11 @@ class ResultViewModel2 : ViewModel() {
                 }
             )
         )
+
+        _selectedDubStatusIndex.postValue(
+            currentDubStatus.indexOf(indexer.dubStatus)
+        )
+
         _selectedDubStatus.postValue(
             some(
                 if (isMovie || currentDubStatus.size <= 1) null else
@@ -1487,6 +1523,12 @@ class ResultViewModel2 : ViewModel() {
             postMovie()
         } else {
             val ret = getEpisodes(indexer, range)
+            /*if (ret.isEmpty()) {
+                val index = ranges?.indexOf(range)
+                if(index != null && index > 0) {
+
+                }
+            }*/
             _episodes.postValue(ResourceSome.Success(ret))
         }
     }
@@ -1675,8 +1717,8 @@ class ResultViewModel2 : ViewModel() {
             seasonsSelection += key.season
             dubSelection += key.dubStatus
         }
-        currentDubStatus = dubSelection
-        currentSeasons = seasonsSelection
+        currentDubStatus = dubSelection.toList()
+        currentSeasons = seasonsSelection.toList()
         _dubSubSelections.postValue(dubSelection.map { txt(it) to it })
         if (loadResponse is EpisodeResponse) {
             _seasonSelections.postValue(seasonsSelection.map { seasonNumber ->

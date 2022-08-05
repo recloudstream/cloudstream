@@ -328,6 +328,98 @@ open class ResultFragment : ResultTrailerPlayer() {
         viewModel.reloadEpisodes()
     }
 
+    open fun updateMovie(data : ResourceSome<Pair<UiText, ResultEpisode>>) {
+        when (data) {
+            is ResourceSome.Success -> {
+                data.value.let { (text, ep) ->
+                    result_play_movie.setText(text)
+                    result_play_movie?.setOnClickListener {
+                        viewModel.handleAction(
+                            activity,
+                            EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
+                        )
+                    }
+                    result_play_movie?.setOnLongClickListener {
+                        viewModel.handleAction(
+                            activity,
+                            EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
+                        )
+                        return@setOnLongClickListener true
+                    }
+
+                    main {
+                        val file =
+                            ioWork {
+                                context?.let {
+                                    VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
+                                        it,
+                                        ep.id
+                                    )
+                                }
+                            }
+
+                        downloadButton?.dispose()
+                        downloadButton = EasyDownloadButton()
+                        downloadButton?.setUpMoreButton(
+                            file?.fileLength,
+                            file?.totalBytes,
+                            result_movie_progress_downloaded,
+                            result_movie_download_icon,
+                            result_movie_download_text,
+                            result_movie_download_text_precentage,
+                            result_download_movie,
+                            true,
+                            VideoDownloadHelper.DownloadEpisodeCached(
+                                ep.name,
+                                ep.poster,
+                                0,
+                                null,
+                                ep.id,
+                                ep.id,
+                                null,
+                                null,
+                                System.currentTimeMillis(),
+                            )
+                        ) { click ->
+                            when(click.action) {
+                                DOWNLOAD_ACTION_DOWNLOAD -> {
+                                    viewModel.handleAction(
+                                        activity,
+                                        EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
+                                    )
+                                }
+                                else -> handleDownloadClick(activity, click)
+                            }
+                        }
+                        result_movie_progress_downloaded_holder?.isVisible = true
+                    }
+                }
+            }
+            else -> {
+                result_movie_progress_downloaded_holder?.isVisible = false
+                result_play_movie?.isVisible = false
+            }
+        }
+    }
+
+    open fun updateEpisodes(episodes :  ResourceSome<List<ResultEpisode>>) {
+        when (episodes) {
+            is ResourceSome.None -> {
+                result_episode_loading?.isVisible = false
+                result_episodes?.isVisible = false
+            }
+            is ResourceSome.Loading -> {
+                result_episode_loading?.isVisible = true
+                result_episodes?.isVisible = false
+            }
+            is ResourceSome.Success -> {
+                result_episodes?.isVisible = true
+                result_episode_loading?.isVisible = false
+                (result_episodes?.adapter as? EpisodeAdapter?)?.updateList(episodes.value)
+            }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -401,24 +493,8 @@ open class ResultFragment : ResultTrailerPlayer() {
             }
         }
 
-        result_scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-            val dy = scrollY - oldScrollY
-            if (dy > 0) { //check for scroll down
-                result_bookmark_fab?.shrink()
-            } else if (dy < -5) {
-                result_bookmark_fab?.extend()
-            }
-            if (!isFullScreenPlayer && player.getIsPlaying()) {
-                if (scrollY > (player_background?.height ?: scrollY)) {
-                    player.handleEvent(CSPlayerEvent.Pause)
-                }
-            }
-            //result_poster_blur_holder?.translationY = -scrollY.toFloat()
-        })
-
         result_episodes.adapter =
             EpisodeAdapter(
-                ArrayList(),
                 api.hasDownloadSupport,
                 { episodeClick ->
                     viewModel.handleAction(activity, episodeClick)
@@ -456,9 +532,10 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
 
         // This is to band-aid FireTV navigation
-        result_season_button?.isFocusableInTouchMode = context?.isTvSettings() == true
-        result_episode_select?.isFocusableInTouchMode = context?.isTvSettings() == true
-        result_dub_select?.isFocusableInTouchMode = context?.isTvSettings() == true
+        val isTv = context?.isTvSettings() == true
+        result_season_button?.isFocusableInTouchMode = isTv
+        result_episode_select?.isFocusableInTouchMode = isTv
+        result_dub_select?.isFocusableInTouchMode = isTv
 
         context?.let { ctx ->
             val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
@@ -653,21 +730,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.episodes) { episodes ->
-            when (episodes) {
-                is ResourceSome.None -> {
-                    result_episode_loading?.isVisible = false
-                    result_episodes?.isVisible = false
-                }
-                is ResourceSome.Loading -> {
-                    result_episode_loading?.isVisible = true
-                    result_episodes?.isVisible = false
-                }
-                is ResourceSome.Success -> {
-                    result_episodes?.isVisible = true
-                    result_episode_loading?.isVisible = false
-                    (result_episodes?.adapter as? EpisodeAdapter?)?.updateList(episodes.value)
-                }
-            }
+            updateEpisodes(episodes)
         }
 
         result_cast_items?.setOnFocusChangeListener { _, hasFocus ->
@@ -692,77 +755,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.movie) { data ->
-            when (data) {
-                is ResourceSome.Success -> {
-                    data.value.let { (text, ep) ->
-                        result_play_movie.setText(text)
-                        result_play_movie?.setOnClickListener {
-                            viewModel.handleAction(
-                                activity,
-                                EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
-                            )
-                        }
-                        result_play_movie?.setOnLongClickListener {
-                            viewModel.handleAction(
-                                activity,
-                                EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
-                            )
-                            return@setOnLongClickListener true
-                        }
-
-                        main {
-                            val file =
-                                ioWork {
-                                    context?.let {
-                                        VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
-                                            it,
-                                            ep.id
-                                        )
-                                    }
-                                }
-
-                            downloadButton?.dispose()
-                            downloadButton = EasyDownloadButton()
-                            downloadButton?.setUpMoreButton(
-                                file?.fileLength,
-                                file?.totalBytes,
-                                result_movie_progress_downloaded,
-                                result_movie_download_icon,
-                                result_movie_download_text,
-                                result_movie_download_text_precentage,
-                                result_download_movie,
-                                true,
-                                VideoDownloadHelper.DownloadEpisodeCached(
-                                    ep.name,
-                                    ep.poster,
-                                    0,
-                                    null,
-                                    ep.id,
-                                    ep.id,
-                                    null,
-                                    null,
-                                    System.currentTimeMillis(),
-                                )
-                            ) { click ->
-                                when(click.action) {
-                                    DOWNLOAD_ACTION_DOWNLOAD -> {
-                                        viewModel.handleAction(
-                                            activity,
-                                            EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
-                                        )
-                                    }
-                                    else -> handleDownloadClick(activity, click)
-                                }
-                            }
-                            result_movie_progress_downloaded_holder?.isVisible = true
-                        }
-                    }
-                }
-                else -> {
-                    result_movie_progress_downloaded_holder?.isVisible = false
-                    result_play_movie?.isVisible = false
-                }
-            }
+            updateMovie(data)
         }
 
         observe(viewModel.page) { data ->

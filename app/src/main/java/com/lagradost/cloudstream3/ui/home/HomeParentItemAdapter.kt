@@ -98,7 +98,7 @@ class ParentItemAdapter(
                 recyclerView?.apply {
                     // this loops every viewHolder in the recycle view and checks the position to see if it is within the update range
                     val missingUpdates = (position until (position + count)).toMutableSet()
-                    for (i in 0 until mAdapter.itemCount) {
+                    for (i in 0 until itemCount) {
                         val viewHolder = getChildViewHolder(getChildAt(i))
                         val absolutePosition = viewHolder.absoluteAdapterPosition
                         if (absolutePosition >= position && absolutePosition < position + count) {

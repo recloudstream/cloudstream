@@ -260,10 +260,10 @@ object CommonActivity {
             KeyEvent.KEYCODE_A, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD, KeyEvent.KEYCODE_MEDIA_REWIND -> {
                 PlayerEventType.SeekBack
             }
-            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1 -> {
+            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_N -> {
                 PlayerEventType.NextEpisode
             }
-            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1 -> {
+            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_B -> {
                 PlayerEventType.PrevEpisode
             }
             KeyEvent.KEYCODE_MEDIA_PAUSE -> {
@@ -293,6 +293,9 @@ object CommonActivity {
             }
             KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0 -> {
                 PlayerEventType.Resize
+            }
+            KeyEvent.KEYCODE_C, KeyEvent.KEYCODE_NUMPAD_4 -> {
+                PlayerEventType.SkipOp
             }
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
                 PlayerEventType.PlayPauseToggle
