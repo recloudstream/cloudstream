@@ -20,7 +20,7 @@
     <string name="result_share">Dela</string>
     <string name="result_open_in_browser">Öppna i webbläsaren</string>
     <string name="skip_loading">Hoppa över</string>
-    <string name="loading_chromecast">Laddar…</string>
+    <string name="loading">Laddar…</string>
 
     <string name="type_watching">Tittar på</string>
     <string name="type_on_hold">Pausad</string>

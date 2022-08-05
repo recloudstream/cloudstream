@@ -35,7 +35,7 @@
     <string name="result_share">I-share</string>
     <string name="result_open_in_browser">Buksan sa browser</string>
     <string name="skip_loading">Skip Loading…</string>
-    <string name="loading_chromecast">Loading…</string>
+    <string name="loading">Loading…</string>
 
     <string name="type_watching">Pinapanood</string>
     <string name="type_on_hold">Inihinto</string>

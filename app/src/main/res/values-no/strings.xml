@@ -28,7 +28,7 @@
     <string name="result_share">Dele</string>
     <string name="result_open_in_browser">Åpne i nettleseren</string>
     <string name="skip_loading">Hopp over</string>
-    <string name="loading_chromecast">Laster inn…</string>
+    <string name="loading">Laster inn…</string>
 
     <string name="type_watching">Ser på</string>
     <string name="type_on_hold">På vent</string>

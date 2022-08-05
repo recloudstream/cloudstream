@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -12,8 +11,8 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.SyncUtil
-import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -44,9 +43,13 @@ class SyncViewModel : ViewModel() {
 
     // prefix, id
     private var syncs = mutableMapOf<String, String>()
-    private val _syncIds: MutableLiveData<MutableMap<String, String>> =
-        MutableLiveData(mutableMapOf())
-    val syncIds: LiveData<MutableMap<String, String>> get() = _syncIds
+    //private val _syncIds: MutableLiveData<MutableMap<String, String>> =
+    //    MutableLiveData(mutableMapOf())
+    //val syncIds: LiveData<MutableMap<String, String>> get() = _syncIds
+
+    fun getSyncs() : Map<String,String> {
+        return syncs
+    }
 
     private val _currentSynced: MutableLiveData<List<CurrentSynced>> =
         MutableLiveData(getMissing())
@@ -76,7 +79,7 @@ class SyncViewModel : ViewModel() {
         Log.i(TAG, "addSync $idPrefix = $id")
 
         syncs[idPrefix] = id
-        _syncIds.postValue(syncs)
+        //_syncIds.postValue(syncs)
         return true
     }
 
@@ -99,10 +102,10 @@ class SyncViewModel : ViewModel() {
 
     var hasAddedFromUrl: HashSet<String> = hashSetOf()
 
-    fun addFromUrl(url: String?) = viewModelScope.launch {
+    fun addFromUrl(url: String?) = ioSafe {
         Log.i(TAG, "addFromUrl = $url")
 
-        if (url == null || hasAddedFromUrl.contains(url)) return@launch
+        if (url == null || hasAddedFromUrl.contains(url)) return@ioSafe
         SyncUtil.getIdsFromUrl(url)?.let { (malId, aniListId) ->
             hasAddedFromUrl.add(url)
 
@@ -166,7 +169,7 @@ class SyncViewModel : ViewModel() {
         }
     }
 
-    fun publishUserData() = viewModelScope.launch {
+    fun publishUserData() = ioSafe {
         Log.i(TAG, "publishUserData")
         val user = userData.value
         if (user is Resource.Success) {
@@ -191,7 +194,7 @@ class SyncViewModel : ViewModel() {
 
     /// modifies the current sync data, return null if you don't want to change it
     private fun modifyData(update: ((SyncAPI.SyncStatus) -> (SyncAPI.SyncStatus?))) =
-        viewModelScope.launch {
+        ioSafe {
             syncs.apmap { (prefix, id) ->
                 repos.firstOrNull { it.idPrefix == prefix }?.let { repo ->
                     if (repo.hasAccount()) {
@@ -209,7 +212,7 @@ class SyncViewModel : ViewModel() {
             }
         }
 
-    fun updateUserData() = viewModelScope.launch {
+    fun updateUserData() = ioSafe {
         Log.i(TAG, "updateUserData")
         _userDataResponse.postValue(Resource.Loading())
         var lastError: Resource<SyncAPI.SyncStatus> = Resource.Failure(false, null, null, "No data")
@@ -219,7 +222,7 @@ class SyncViewModel : ViewModel() {
                     val result = repo.getStatus(id)
                     if (result is Resource.Success) {
                         _userDataResponse.postValue(result)
-                        return@launch
+                        return@ioSafe
                     } else if (result is Resource.Failure) {
                         Log.e(TAG, "updateUserData error ${result.errorString}")
                         lastError = result
@@ -230,7 +233,7 @@ class SyncViewModel : ViewModel() {
         _userDataResponse.postValue(lastError)
     }
 
-    private fun updateMetadata() = viewModelScope.launch {
+    private fun updateMetadata() = ioSafe {
         Log.i(TAG, "updateMetadata")
 
         _metaResponse.postValue(Resource.Loading())
@@ -253,7 +256,7 @@ class SyncViewModel : ViewModel() {
                     val result = repo.getResult(id)
                     if (result is Resource.Success) {
                         _metaResponse.postValue(result)
-                        return@launch
+                        return@ioSafe
                     } else if (result is Resource.Failure) {
                         Log.e(
                             TAG,

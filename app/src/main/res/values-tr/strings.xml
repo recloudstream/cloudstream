@@ -56,7 +56,7 @@
     <string name="result_share">Paylaş</string>
     <string name="result_open_in_browser">Tarayıcıda aç</string>
     <string name="skip_loading">Yüklemeyi atla</string>
-    <string name="loading_chromecast">Yükleniyor…</string>
+    <string name="loading">Yükleniyor…</string>
 
     <string name="type_watching">İzleniyor</string>
     <string name="type_on_hold">Beklemede</string>

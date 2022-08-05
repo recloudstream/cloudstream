@@ -16,7 +16,7 @@
     <string name="result_share">Partager</string>
     <string name="result_open_in_browser">Ouvrir dans le naviguateur</string>
     <string name="skip_loading">Passer le chargement</string>
-    <string name="loading_chromecast">Chargement…</string>
+    <string name="loading">Chargement…</string>
     <string name="type_watching">En visionnage</string>
     <string name="type_on_hold">En pose</string>
     <string name="type_completed">Terminé</string>

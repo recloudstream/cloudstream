@@ -56,7 +56,7 @@
     <string name="result_share">Compartir</string> 
     <string name="result_open_in_browser">Abrir en el navegador</string> 
     <string name="skip_loading">Omitir carga</string> 
-    <string name="loading_chromecast">Cargando…</string> 
+    <string name="loading">Cargando…</string>
  
     <string name="type_watching">Viendo</string>
     <string name="type_on_hold">En espera</string> 

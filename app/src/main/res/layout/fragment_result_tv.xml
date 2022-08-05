@@ -67,13 +67,7 @@
             <include layout="@layout/loading_episode" />
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
-    <!--<ProgressBar
-            android:visibility="visible"
-            tools:visibility="gone"
-            android:id="@+id/result_loading"
-            android:layout_gravity="center"
-            android:layout_width="50dp" android:layout_height="50dp">
-    </ProgressBar>-->
+
     <LinearLayout
             android:id="@+id/result_loading_error"
 
@@ -176,103 +170,6 @@
                     <include layout="@layout/fragment_trailer" />
                 </FrameLayout>
 
-                <!--
-                <FrameLayout
-                        android:background="?attr/primaryGrayBackground"
-                        android:paddingStart="@dimen/result_padding"
-                        android:paddingEnd="@dimen/result_padding"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                    <ImageView
-                            android:nextFocusDown="@id/result_bookmark_button"
-                            android:nextFocusRight="@id/result_share"
-                            android:background="?android:attr/selectableItemBackgroundBorderless"
-
-                            android:id="@+id/result_back"
-                            android:clickable="true"
-                            android:focusable="true"
-
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center_vertical|start"
-                            android:src="@drawable/ic_baseline_arrow_back_24"
-                            android:contentDescription="@string/go_back"
-                            app:tint="?attr/white" />
-
-                    <LinearLayout
-                            android:gravity="end"
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:id="@+id/media_route_button_holder"
-                            android:layout_gravity="center_vertical|end">
-
-                        <androidx.mediarouter.app.MediaRouteButton
-                                android:layout_gravity="end|center_vertical"
-                                android:id="@+id/media_route_button"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:mediaRouteTypes="user"
-                                android:visibility="gone"
-                                app:mediaRouteButtonTint="?attr/textColor" />
-
-
-                        <ImageView
-                                android:nextFocusUp="@id/result_back"
-                                android:nextFocusDown="@id/result_descript"
-                                android:nextFocusLeft="@id/result_add_sync"
-                                android:nextFocusRight="@id/result_openinbrower"
-
-                                android:id="@+id/result_share"
-                                android:layout_width="25dp"
-                                android:layout_height="25dp"
-                                android:layout_marginEnd="10dp"
-                                android:elevation="10dp"
-
-                                android:background="?android:attr/selectableItemBackgroundBorderless"
-                                android:src="@drawable/ic_outline_share_24"
-                                android:layout_gravity="end|center_vertical"
-                                android:contentDescription="@string/result_share"
-                                app:tint="?attr/textColor" />
-
-                        <ImageView
-                                android:nextFocusUp="@id/result_back"
-                                android:nextFocusDown="@id/result_descript"
-                                android:nextFocusLeft="@id/result_share"
-                                android:nextFocusRight="@id/result_search"
-
-                                android:id="@+id/result_openinbrower"
-                                android:layout_width="25dp"
-                                android:layout_height="25dp"
-                                android:layout_margin="5dp"
-                                android:elevation="10dp"
-
-                                android:background="?android:attr/selectableItemBackgroundBorderless"
-                                android:src="@drawable/ic_baseline_public_24"
-                                android:layout_gravity="end|center_vertical"
-                                android:contentDescription="@string/result_open_in_browser"
-                                app:tint="?attr/textColor" />
-
-                        <ImageView
-                                android:nextFocusUp="@id/result_back"
-                                android:nextFocusDown="@id/result_descript"
-                                android:nextFocusLeft="@id/result_openinbrower"
-                                android:nextFocusRight="@id/result_bookmark_button"
-
-                                android:id="@+id/result_search"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_margin="5dp"
-                                android:elevation="10dp"
-
-                                android:background="?android:attr/selectableItemBackgroundBorderless"
-                                android:src="@drawable/search_icon"
-                                android:layout_gravity="end|center_vertical"
-                                android:contentDescription="@string/result_open_in_browser"
-                                app:tint="?attr/textColor" />
-                    </LinearLayout>
-                </FrameLayout>-->
-
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -289,30 +186,12 @@
                             android:orientation="horizontal"
                             android:visibility="visible">
 
-                        <androidx.cardview.widget.CardView
-                                android:id="@+id/result_poster_holder"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:cardCornerRadius="@dimen/rounded_image_radius">
-
-                            <ImageView
-                                    android:id="@+id/result_poster"
-
-                                    android:layout_width="100dp"
-                                    android:layout_height="140dp"
-                                    android:contentDescription="@string/result_poster_img_des"
-                                    android:foreground="@drawable/outline_drawable"
-                                    android:scaleType="centerCrop"
-                                    tools:src="@drawable/example_poster" />
-                        </androidx.cardview.widget.CardView>
-
                         <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:orientation="vertical">
 
                             <TextView
-                                    android:layout_marginHorizontal="10dp"
                                     android:id="@+id/result_title"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -324,7 +203,6 @@
                                     tools:text="The Perfect Run The Perfect Run" />
 
                             <com.lagradost.cloudstream3.widget.FlowLayout
-                                    android:layout_marginHorizontal="10dp"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     app:itemSpacing="10dp">
@@ -365,59 +243,21 @@
                             This has half margin and half padding to make TV focus on description look better.
                             The focus outline now settles between the poster and text.
                             -->
-                            <FrameLayout
-                                    android:layout_marginHorizontal="5dp"
+                            <TextView
+                                    android:padding="5dp"
+                                    android:maxLength="1000"
+                                    android:ellipsize="end"
+                                    android:id="@+id/result_description"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent">
-
-                                <TextView
-                                        android:padding="5dp"
-                                        android:maxLength="1000"
-                                        android:ellipsize="end"
-                                        android:id="@+id/result_description"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:foreground="@drawable/outline_drawable"
-                                        android:nextFocusUp="@id/result_back"
-                                        android:nextFocusDown="@id/result_bookmark_button"
-                                        android:textColor="?attr/textColor"
-                                        android:textSize="15sp"
-                                        tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />
-
-                                <ImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="30dp"
-                                        android:layout_gravity="bottom"
-                                        android:src="@drawable/background_shadow"
-                                        tools:ignore="ContentDescription" />
-                            </FrameLayout>
+                                    android:layout_height="wrap_content"
+                                    android:foreground="@drawable/outline_drawable"
+                                    android:nextFocusUp="@id/result_back"
+                                    android:nextFocusDown="@id/result_bookmark_button"
+                                    android:textColor="?attr/textColor"
+                                    android:textSize="15sp"
+                                    tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />
                         </LinearLayout>
                     </LinearLayout>
-
-
-                    <com.google.android.material.button.MaterialButton
-                            android:id="@+id/result_bookmark_button"
-                            style="@style/BlackButton"
-                            android:layout_width="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginStart="0dp"
-                            android:layout_marginTop="0dp"
-
-                            android:layout_marginBottom="10dp"
-                            android:backgroundTint="?attr/primaryBlackBackground"
-
-                            android:minWidth="100dp"
-                            android:nextFocusLeft="@id/result_back"
-                            android:nextFocusRight="@id/result_search"
-                            android:nextFocusUp="@id/result_description"
-
-                            android:nextFocusDown="@id/result_cast_items"
-                            android:paddingTop="0dp"
-                            app:cornerRadius="4dp"
-                            app:icon="@drawable/ic_baseline_bookmark_24"
-                            tools:text="Bookmark"
-                            tools:visibility="visible" />
-
 
                     <TextView
                             android:id="@+id/result_cast_text"
@@ -465,7 +305,6 @@
                             android:textColor="?attr/grayTextColor"
                             android:textSize="15sp"
                             tools:text="@string/provider_info_meta" />
-
                     <TextView
                             android:id="@+id/result_no_episodes"
                             android:layout_width="match_parent"
@@ -524,22 +363,23 @@
                                 android:visibility="gone"
                                 app:icon="@drawable/ic_baseline_add_24" />
 
+
                         <LinearLayout
                                 android:id="@+id/result_movie_parent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="5dp"
-                                android:orientation="vertical"
+                                android:orientation="horizontal"
                                 tools:visibility="visible">
 
                             <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_play_movie"
                                     style="@style/WhiteButton"
-                                    android:layout_width="match_parent"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
 
-                                    android:layout_gravity="center_vertical"
                                     android:layout_marginStart="0dp"
-                                    android:layout_marginEnd="0dp"
+                                    android:layout_marginEnd="5dp"
                                     android:layout_marginBottom="10dp"
                                     android:nextFocusUp="@id/result_bookmark_button"
                                     android:nextFocusDown="@id/result_download_movie"
@@ -552,27 +392,11 @@
                             </com.google.android.material.button.MaterialButton>
 
 
-                            <!--<com.google.android.material.button.MaterialButton
-                                    android:nextFocusUp="@id/result_play_movie"
-                                    android:nextFocusDown="@id/result_season_button"
-                                    android:layout_marginBottom="10dp"
-
-                                    android:id="@+id/result_download_movie"
-                                    style="@style/BlackButton"
-                                    android:layout_marginStart="0dp"
-                                    android:layout_marginEnd="0dp"
-                                    android:visibility="visible"
-                                    android:layout_gravity="center_vertical"
-                                    tools:text="Downloading"
-                                    tools:icon="@drawable/netflix_download"
-
-                                    android:clickable="true"
-                                    android:focusable="true"
-                                    android:layout_width="match_parent" />-->
-
                             <FrameLayout
+                                    android:layout_marginStart="5dp"
                                     android:id="@+id/result_movie_progress_downloaded_holder"
-                                    android:layout_width="match_parent"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
                                     android:layout_height="wrap_content">
 
                                 <com.google.android.material.button.MaterialButton
@@ -652,30 +476,6 @@
                                             tools:text="68%" />
                                 </LinearLayout>
                             </FrameLayout>
-
-
-                            <!--<androidx.core.widget.ContentLoadingProgressBar
-                                    android:layout_width="match_parent"
-                                    android:layout_height="20dp"
-                                    tools:progress="50"
-                                    android:id="@+id/result_movie_progress_downloaded"
-                                    android:indeterminate="false"
-                                    style="?android:attr/progressBarStyleHorizontal"
-                                    android:progressBackgroundTint="?attr/colorPrimary"
-                                    android:max="100"
-                                    android:layout_gravity="end|center_vertical"
-                                    android:progress="0"
-                                    android:visibility="gone"
-                                    tools:visibility="visible" />
-    -->
-                            <!--  <TextView
-                                      android:id="@+id/result_movie_text_progress"
-                                      android:layout_gravity="center_vertical"
-                                      android:gravity="center_vertical"
-                                      tools:text="128MB / 237MB"
-                                      android:textColor="?attr/grayTextColor"
-                                      android:layout_width="wrap_content"
-                                      android:layout_height="match_parent" />-->
                         </LinearLayout>
 
                         <LinearLayout
@@ -689,26 +489,9 @@
 
 
                             <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/result_resume_series_button"
-                                    style="@style/WhiteButton"
-                                    android:layout_width="match_parent"
-
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="0dp"
-                                    android:layout_marginEnd="0dp"
-                                    android:layout_marginBottom="10dp"
-                                    android:nextFocusUp="@id/result_bookmark_button"
-                                    android:nextFocusDown="@id/result_download_movie"
-                                    android:text="@string/resume"
-                                    android:visibility="visible"
-                                    app:icon="@drawable/ic_baseline_play_arrow_24"
-                                    tools:visibility="visible" />
-
-                            <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_next_series_button"
                                     style="@style/WhiteButton"
                                     android:layout_width="match_parent"
-
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginStart="0dp"
                                     android:layout_marginEnd="0dp"
@@ -719,14 +502,50 @@
                                     android:visibility="gone"
                                     app:icon="@drawable/cast_ic_mini_controller_skip_next" />
 
-                            <TextView
-                                    android:id="@+id/result_resume_series_title"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="?attr/textColor"
-                                    android:textSize="17sp"
-                                    android:textStyle="bold"
-                                    tools:text="S1E1 Episode 1" />
+                            <LinearLayout
+                                    android:orientation="horizontal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                <ImageView
+                                        android:layout_marginEnd="10dp"
+                                        android:id="@+id/result_resume_series_button_play"
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+                                        android:layout_gravity="center"
+
+                                        android:background="?selectableItemBackgroundBorderless"
+                                        android:contentDescription="@string/download"
+                                        android:src="@drawable/ic_baseline_play_arrow_24"
+                                        android:visibility="visible"
+                                        app:tint="?attr/white" />
+
+
+                                <TextView
+                                        android:layout_gravity="center"
+                                        android:gravity="center"
+                                        android:id="@+id/result_resume_series_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="?attr/textColor"
+                                        android:textSize="17sp"
+                                        android:textStyle="bold"
+                                        tools:text="S1E1 Episode 1" />
+
+                                <TextView
+                                        android:maxLines="1"
+                                        android:id="@+id/result_resume_series_progress_text"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="0"
+                                        android:gravity="center"
+                                        android:paddingStart="10dp"
+                                        android:textColor="?attr/grayTextColor"
+                                        tools:ignore="RtlSymmetry"
+                                        tools:text="69m remaining" />
+                            </LinearLayout>
+
                         </LinearLayout>
 
                         <LinearLayout
@@ -753,17 +572,6 @@
                                     tools:progress="50"
                                     tools:visibility="visible" />
 
-                            <TextView
-                                    android:id="@+id/result_resume_series_progress_text"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_weight="0"
-                                    android:gravity="center"
-                                    android:paddingStart="10dp"
-                                    android:textColor="?attr/grayTextColor"
-                                    tools:ignore="RtlSymmetry"
-                                    tools:text="69m\nremaining" />
                         </LinearLayout>
 
 
@@ -773,75 +581,36 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
 
-                            <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="10dp"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal">
+                            <androidx.recyclerview.widget.RecyclerView
+                                    android:paddingBottom="10dp"
+                                    android:id="@+id/result_season_selection"
+                                    tools:listitem="@layout/result_selection"
+                                    android:orientation="horizontal"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
 
-                                <com.google.android.material.button.MaterialButton
-                                        android:id="@+id/result_season_button"
-                                        style="@style/MultiSelectButton"
-                                        android:layout_gravity="center_vertical"
-                                        android:layout_marginStart="0dp"
-                                        android:layout_marginEnd="10dp"
-                                        android:nextFocusLeft="@id/result_episode_select"
-                                        android:nextFocusRight="@id/result_episode_select"
-                                        android:nextFocusUp="@id/result_description"
-                                        android:nextFocusDown="@id/result_episodes"
-                                        android:visibility="gone"
-                                        tools:text="Season 1"
-                                        tools:visibility="visible" />
+                            </androidx.recyclerview.widget.RecyclerView>
+                            <androidx.recyclerview.widget.RecyclerView
+                                    android:paddingBottom="10dp"
+                                    android:id="@+id/result_range_selection"
+                                    tools:listitem="@layout/result_selection"
+                                    android:orientation="horizontal"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                            </androidx.recyclerview.widget.RecyclerView>
+                            <androidx.recyclerview.widget.RecyclerView
+                                    android:paddingBottom="10dp"
+                                    android:id="@+id/result_dub_selection"
+                                    tools:listitem="@layout/result_selection"
+                                    android:orientation="horizontal"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
 
-                                <com.google.android.material.button.MaterialButton
-                                        android:id="@+id/result_episode_select"
-                                        style="@style/MultiSelectButton"
+                            </androidx.recyclerview.widget.RecyclerView>
 
-                                        android:layout_gravity="center_vertical"
-                                        android:layout_marginStart="0dp"
-                                        android:layout_marginEnd="10dp"
-
-                                        android:nextFocusLeft="@id/result_season_button"
-                                        android:nextFocusRight="@id/result_season_button"
-
-                                        android:nextFocusUp="@id/result_description"
-                                        android:nextFocusDown="@id/result_episodes"
-                                        android:visibility="gone"
-                                        tools:text="50-100"
-                                        tools:visibility="visible" />
-
-                                <com.google.android.material.button.MaterialButton
-                                        android:id="@+id/result_dub_select"
-                                        style="@style/MultiSelectButton"
-
-                                        android:layout_gravity="center_vertical"
-                                        android:layout_marginStart="0dp"
-                                        android:layout_marginEnd="10dp"
-                                        android:nextFocusLeft="@id/result_season_button"
-                                        android:nextFocusRight="@id/result_season_button"
-
-                                        android:nextFocusUp="@id/result_description"
-                                        android:nextFocusDown="@id/result_episodes"
-                                        android:visibility="gone"
-                                        tools:text="Dubbed"
-                                        tools:visibility="visible" />
-
-                                <TextView
-                                        android:id="@+id/result_episodes_text"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center_vertical"
-                                        android:paddingTop="10dp"
-                                        android:paddingBottom="10dp"
-                                        android:textColor="?attr/textColor"
-                                        android:textSize="17sp"
-                                        android:textStyle="normal"
-                                        tools:text="8 Episodes" />
-                            </LinearLayout>
-
-
-                            <!--TODO add next airing-->
                             <LinearLayout
                                     android:id="@+id/result_next_airing_holder"
                                     android:layout_gravity="start"
@@ -926,25 +695,5 @@
         </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
-
-
-    <!--
-    <androidx.cardview.widget.CardView
-            android:layout_width="100dp"
-            android:layout_height="150dp"
-            app:cardCornerRadius="@dimen/roundedImageRadius"
-            android:elevation="10dp"
-    >
-        <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:id="@+id/result_poster"
-                android:clickable="true"
-                android:focusable="true"
-                tools:src="@drawable/example_poster"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/search_poster_descript"/>
-    </androidx.cardview.widget.CardView>-->
 
 </FrameLayout>
