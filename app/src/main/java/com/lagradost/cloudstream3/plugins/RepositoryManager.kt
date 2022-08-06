@@ -2,10 +2,18 @@ package com.lagradost.cloudstream3.plugins
 
 import android.content.Context
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
+import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
+import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.InputStream
@@ -33,7 +41,9 @@ data class SitePlugin(
 )
 
 
-object RepositoryParser {
+object RepositoryManager {
+    const val ONLINE_PLUGINS_FOLDER = "Extensions"
+
     private suspend fun parseRepository(url: String): Repository? {
         return suspendSafeApiCall {
             // Take manifestVersion and such into account later
@@ -56,19 +66,29 @@ object RepositoryParser {
         }.filterNotNull().flatten()
     }
 
-    private suspend fun downloadSiteTemp(context: Context, pluginUrl: String, name: String): File? {
+    suspend fun downloadPluginToFile(context: Context, pluginUrl: String, name: String): File? {
         return suspendSafeApiCall {
-            val dir = context.cacheDir
-            val file = File.createTempFile(name, ".cs3", dir)
+            val extensionsDir = File(context.filesDir, ONLINE_PLUGINS_FOLDER)
+            if (!extensionsDir.exists())
+                extensionsDir.mkdirs()
+
+            val newFile = File(extensionsDir, "$name.${pluginUrl.hashCode()}.cs3")
+            if (newFile.exists()) return@suspendSafeApiCall newFile
+            newFile.createNewFile()
+
             val body = app.get(pluginUrl).okhttpResponse.body
-            write(body.byteStream(), file.outputStream())
-            file
+            write(body.byteStream(), newFile.outputStream())
+            newFile
         }
     }
 
-    suspend fun loadSiteTemp(context: Context, pluginUrl: String, name: String) {
-        val file = downloadSiteTemp(context, pluginUrl, name)
-        PluginManager.loadPlugin(context, file ?: return)
+    // Don't want to read before we write in another thread
+    private val repoLock = Mutex()
+    suspend fun addRepository(repository: RepositoryData) {
+        repoLock.withLock {
+            val currentRepos = getKey<List<RepositoryData>>(REPOSITORIES_KEY) ?: emptyList()
+            setKey(REPOSITORIES_KEY, currentRepos + repository)
+        }
     }
 
     private fun write(stream: InputStream, output: OutputStream) {
