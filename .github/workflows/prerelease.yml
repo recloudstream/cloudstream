@@ -40,9 +40,9 @@ jobs:
     #     echo $ENCODED_STRING | base64 -di > "${TMP_KEYSTORE_FILE_PATH}"/prerelease_keystore.keystore
     - name: Run Gradle
       run: |
-        ./gradlew app:assembleDebug
-        ./gradlew app:androidSourcesJar
-        ./gradlew build || true
+        ./gradlew assembleDebug
+        ./gradlew androidSourcesJar
+        ./gradlew makeJar
     #  env:
     #    SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
     #    SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
@@ -61,4 +61,4 @@ jobs:
         files: |
           app/build/outputs/apk/debug/*.apk
           app/build/libs/app-sources.jar
-          app/build/intermediates/compile_app_classes_jar/debug/classes.jar
+          app/build/classes.jar
