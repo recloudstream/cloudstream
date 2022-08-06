@@ -172,7 +172,7 @@ class SuperStream : MainAPI() {
     }
 
     private suspend inline fun <reified T : Any> queryApiParsed(query: String): T {
-        return queryApi(query).also { println("queryApiParsed== ${it.text}") }.parsed()
+        return queryApi(query).parsed()
     }
 
     private fun getExpiryDate(): Long {
@@ -530,7 +530,7 @@ class SuperStream : MainAPI() {
                 }
             ) {
                 this.recommendations = data.recommend.mapNotNull { it.toSearchResponse() }
-
+                addTrailer(data.trailerUrl)
                 this.year = data.year
                 this.plot = data.description
                 this.posterUrl = data.posterOrg ?: data.poster

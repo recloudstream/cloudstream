@@ -19,6 +19,13 @@ class YoutubeShortLinkExtractor : YoutubeExtractor() {
     }
 }
 
+class YoutubeMobileExtractor  : YoutubeExtractor() {
+    override val mainUrl = "https://m.youtube.com"
+}
+class YoutubeNoCookieExtractor  : YoutubeExtractor() {
+    override val mainUrl = "https://www.youtube-nocookie.com"
+}
+
 open class YoutubeExtractor : ExtractorApi() {
     override val mainUrl = "https://www.youtube.com"
     override val requiresReferer = false

@@ -312,6 +312,8 @@ val extractorApis: Array<ExtractorApi> = arrayOf(
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),
+    YoutubeMobileExtractor(),
+    YoutubeNoCookieExtractor(),
     Streamlare(),
     VidSrcExtractor(),
     VidSrcExtractor2(),
