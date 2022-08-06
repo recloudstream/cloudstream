@@ -189,16 +189,42 @@
                                 android:layout_height="match_parent"
                                 android:orientation="vertical">
 
-                            <TextView
-                                    android:id="@+id/result_title"
+                            <LinearLayout
+                                    android:orientation="horizontal"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="5dp"
-                                    android:maxLines="2"
-                                    android:textColor="?attr/textColor"
-                                    android:textSize="20sp"
-                                    android:textStyle="bold"
-                                    tools:text="The Perfect Run The Perfect Run" />
+                                    android:layout_marginBottom="10dp"
+                                    android:layout_height="30dp">
+                                <ImageView
+                                        android:layout_gravity="center_vertical"
+                                        android:gravity="center_vertical"
+                                        android:layout_marginEnd="10dp"
+
+                                        android:nextFocusDown="@id/result_description"
+                                        android:background="?android:attr/selectableItemBackgroundBorderless"
+
+                                        android:id="@+id/result_back"
+                                        android:clickable="true"
+                                        android:focusable="true"
+
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+
+                                        android:src="@drawable/ic_baseline_arrow_back_24"
+                                        android:contentDescription="@string/go_back"
+                                        app:tint="?attr/white" />
+                                <TextView
+                                        android:id="@+id/result_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="30dp"
+                                        android:gravity="center_vertical"
+                                        android:layout_marginBottom="5dp"
+                                        android:maxLines="1"
+                                        android:textColor="?attr/textColor"
+                                        android:textSize="20sp"
+                                        android:textStyle="bold"
+                                        tools:text="The Perfect Run The Perfect Run" />
+                            </LinearLayout>
+
 
                             <com.lagradost.cloudstream3.widget.FlowLayout
                                     android:layout_width="match_parent"
@@ -687,6 +713,7 @@
 
                             <androidx.recyclerview.widget.RecyclerView
                                     android:nextFocusUp="@id/result_dub_selection"
+                                    android:nextFocusDown="@id/result_recommendations_filter_selection"
                                     android:id="@+id/result_episodes"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -696,8 +723,49 @@
                                     tools:listitem="@layout/result_episode" />
                         </LinearLayout>
                     </LinearLayout>
-                    <include layout="@layout/result_recommendations" />
 
+                    <LinearLayout
+                            android:id="@+id/result_recommendations_holder"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                                tools:itemCount="2"
+                                android:nextFocusUp="@id/result_episodes"
+                                android:nextFocusDown="@id/result_recommendations"
+                                android:id="@+id/result_recommendations_filter_selection"
+                                android:layout_marginEnd="10dp"
+
+                                tools:listitem="@layout/result_selection"
+                                android:orientation="horizontal"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        <TextView
+                                android:gravity="center_vertical"
+                                android:layout_gravity="center_vertical"
+                                android:textSize="17sp"
+                                android:textColor="?attr/textColor"
+                                android:text="@string/recommended"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                    </LinearLayout>
+                    <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+                            android:nextFocusUp="@id/result_recommendations_filter_selection"
+                            android:descendantFocusability="afterDescendants"
+
+                            android:background="?attr/primaryBlackBackground"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            app:spanCount="8"
+                            android:id="@+id/result_recommendations"
+                            tools:listitem="@layout/search_result_grid"
+                            android:orientation="vertical" />
                 </LinearLayout>
 
             </LinearLayout>

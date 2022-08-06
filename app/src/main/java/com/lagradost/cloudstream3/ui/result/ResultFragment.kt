@@ -243,7 +243,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         private var updateUIListener: (() -> Unit)? = null
     }
 
-    open fun setTrailers(trailers: List<ExtractorLink>?) { }
+    open fun setTrailers(trailers: List<ExtractorLink>?) {}
 
     protected lateinit var viewModel: ResultViewModel2 //by activityViewModels()
     protected lateinit var syncModel: SyncViewModel
@@ -328,7 +328,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         viewModel.reloadEpisodes()
     }
 
-    open fun updateMovie(data : ResourceSome<Pair<UiText, ResultEpisode>>) {
+    open fun updateMovie(data: ResourceSome<Pair<UiText, ResultEpisode>>) {
         when (data) {
             is ResourceSome.Success -> {
                 data.value.let { (text, ep) ->
@@ -381,7 +381,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                                 System.currentTimeMillis(),
                             )
                         ) { click ->
-                            when(click.action) {
+                            when (click.action) {
                                 DOWNLOAD_ACTION_DOWNLOAD -> {
                                     viewModel.handleAction(
                                         activity,
@@ -402,7 +402,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
     }
 
-    open fun updateEpisodes(episodes :  ResourceSome<List<ResultEpisode>>) {
+    open fun updateEpisodes(episodes: ResourceSome<List<ResultEpisode>>) {
         when (episodes) {
             is ResourceSome.None -> {
                 result_episode_loading?.isVisible = false
@@ -462,7 +462,12 @@ open class ResultFragment : ResultTrailerPlayer() {
 
             arguments?.remove(START_VALUE_BUNDLE)
             arguments?.remove(START_ACTION_BUNDLE)
-            AutoResume(startAction = action, id = startValue, episode = resumeEpisode, season = resumeSeason)
+            AutoResume(
+                startAction = action,
+                id = startValue,
+                episode = resumeEpisode,
+                season = resumeSeason
+            )
         }
         syncModel.addFromUrl(url)
 
@@ -845,15 +850,16 @@ open class ResultFragment : ResultTrailerPlayer() {
                     }
 
                     result_description.setTextHtml(d.plotText)
-                    result_description?.setOnClickListener { view ->
-                        view.context?.let { ctx ->
-                            val builder: AlertDialog.Builder =
-                                AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                            builder.setMessage(d.plotText.asString(ctx).html())
-                                .setTitle(d.plotHeaderText.asString(ctx))
-                                .show()
+                    if (this !is ResultFragmentTv) // dont want this clickable on tv layout
+                        result_description?.setOnClickListener { view ->
+                            view.context?.let { ctx ->
+                                val builder: AlertDialog.Builder =
+                                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                                builder.setMessage(d.plotText.asString(ctx).html())
+                                    .setTitle(d.plotHeaderText.asString(ctx))
+                                    .show()
+                            }
                         }
-                    }
 
 
                     result_tag?.removeAllViews()
@@ -889,7 +895,9 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
 
         context?.let { ctx ->
-            val dubStatus = if(ctx.getApiDubstatusSettings().contains(DubStatus.Dubbed)) DubStatus.Dubbed else DubStatus.Subbed
+            val dubStatus = if (ctx.getApiDubstatusSettings()
+                    .contains(DubStatus.Dubbed)
+            ) DubStatus.Dubbed else DubStatus.Subbed
 
             result_bookmark_button?.isVisible = ctx.isTvSettings()
 

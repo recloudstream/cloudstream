@@ -2,11 +2,9 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.discord.panels.OverlappingPanelsLayout
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
@@ -14,13 +12,13 @@ import com.lagradost.cloudstream3.mvvm.ResourceSome
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
-import kotlinx.android.synthetic.main.fragment_result_swipe.*
+import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import kotlinx.android.synthetic.main.fragment_result_tv.*
-import kotlinx.android.synthetic.main.result_recommendations.*
 
 class ResultFragmentTv : ResultFragment() {
     override val resultLayout = R.layout.fragment_result_tv
+
+    private var currentRecommendations: List<SearchResponse> = emptyList()
 
     private fun handleSelection(data: Any) {
         when (data) {
@@ -32,6 +30,9 @@ class ResultFragmentTv : ResultFragment() {
             }
             is DubStatus -> {
                 viewModel.changeDubStatus(data)
+            }
+            is String -> {
+                setRecommendations(currentRecommendations, data)
             }
         }
     }
@@ -72,19 +73,21 @@ class ResultFragmentTv : ResultFragment() {
     }
 
     override fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
+        currentRecommendations = rec ?: emptyList()
         val isInvalid = rec.isNullOrEmpty()
         result_recommendations?.isGone = isInvalid
-        result_recommendations_btt?.isGone = isInvalid
+        result_recommendations_holder?.isGone = isInvalid
         val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
-        (result_recommendations?.adapter as SearchAdapter?)?.updateList(rec?.filter { it.apiName == matchAgainst } ?: emptyList())
+        (result_recommendations?.adapter as SearchAdapter?)?.updateList(rec?.filter { it.apiName == matchAgainst }
+            ?: emptyList())
 
         rec?.map { it.apiName }?.distinct()?.let { apiNames ->
             // very dirty selection
-            result_recommendations_filter_button?.isVisible = apiNames.size > 1
-            result_recommendations_filter_button?.text = matchAgainst
-
+            result_recommendations_filter_selection?.isVisible = apiNames.size > 1
+            result_recommendations_filter_selection?.update(apiNames.map { txt(it) to it })
+            result_recommendations_filter_selection?.select(apiNames.indexOf(matchAgainst))
         } ?: run {
-            result_recommendations_filter_button?.isVisible = false
+            result_recommendations_filter_selection?.isVisible = false
         }
     }
 
@@ -97,6 +100,7 @@ class ResultFragmentTv : ResultFragment() {
         result_season_selection.setAdapter()
         result_range_selection.setAdapter()
         result_dub_selection.setAdapter()
+        result_recommendations_filter_selection.setAdapter()
 
         observe(viewModel.selectedRangeIndex) { selected ->
             result_range_selection.select(selected)
@@ -115,6 +119,10 @@ class ResultFragmentTv : ResultFragment() {
         }
         observe(viewModel.seasonSelections) {
             result_season_selection.update(it)
+        }
+
+        result_back?.setOnClickListener {
+            activity?.popCurrentPage()
         }
 
         result_recommendations?.spanCount = 8
