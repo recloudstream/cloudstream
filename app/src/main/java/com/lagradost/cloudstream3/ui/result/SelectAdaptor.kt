@@ -12,6 +12,7 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.download.DownloadButtonViewHolder
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.settings.AccountAdapter
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
@@ -36,6 +37,12 @@ class SelectAdaptor(val callback: (Any) -> Unit) : RecyclerView.Adapter<Recycler
             is SelectViewHolder -> {
                 holder.bind(selection[position], position == selectedIndex, callback)
             }
+        }
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        if(holder.itemView.hasFocus()) {
+            holder.itemView.clearFocus()
         }
     }
 

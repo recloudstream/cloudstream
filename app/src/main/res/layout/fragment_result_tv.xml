@@ -194,6 +194,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_marginBottom="10dp"
                                     android:layout_height="30dp">
+
                                 <ImageView
                                         android:layout_gravity="center_vertical"
                                         android:gravity="center_vertical"
@@ -212,6 +213,7 @@
                                         android:src="@drawable/ic_baseline_arrow_back_24"
                                         android:contentDescription="@string/go_back"
                                         app:tint="?attr/white" />
+
                                 <TextView
                                         android:id="@+id/result_title"
                                         android:layout_width="wrap_content"
@@ -391,7 +393,7 @@
 
                         <LinearLayout
                                 android:id="@+id/result_movie_parent"
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="5dp"
                                 android:orientation="horizontal"
@@ -404,9 +406,9 @@
 
                                     android:id="@+id/result_play_movie"
                                     style="@style/WhiteButton"
-                                    android:layout_width="0dp"
+                                    android:layout_width="wrap_content"
                                     android:layout_weight="1"
-
+                                    android:minWidth="250dp"
                                     android:layout_marginStart="0dp"
                                     android:layout_marginEnd="5dp"
                                     android:layout_marginBottom="10dp"
@@ -418,9 +420,10 @@
 
 
                             <FrameLayout
+                                    android:minWidth="250dp"
                                     android:layout_marginStart="5dp"
                                     android:id="@+id/result_movie_progress_downloaded_holder"
-                                    android:layout_width="0dp"
+                                    android:layout_width="wrap_content"
                                     android:layout_weight="1"
                                     android:layout_height="wrap_content">
 
@@ -646,12 +649,22 @@
                                     android:layout_height="wrap_content" />
 
                             <LinearLayout
+                                    android:layout_marginBottom="5dp"
                                     android:id="@+id/result_next_airing_holder"
                                     android:layout_gravity="start"
                                     android:orientation="horizontal"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content">
-
+                                <TextView
+                                        android:id="@+id/result_episodes_text"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginEnd="20dp"
+                                        android:textColor="?attr/textColor"
+                                        android:textSize="17sp"
+                                        android:textStyle="normal"
+                                        tools:text="8 Episodes" />
                                 <TextView
                                         android:gravity="center"
 
@@ -754,6 +767,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                     </LinearLayout>
+
                     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
                             android:nextFocusUp="@id/result_recommendations_filter_selection"
                             android:descendantFocusability="afterDescendants"

@@ -75,6 +75,9 @@ class EpisodeAdapter(
     }
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        if(holder.itemView.hasFocus()) {
+            holder.itemView.clearFocus()
+        }
         if (holder is DownloadButtonViewHolder) {
             holder.downloadButton.dispose()
         }

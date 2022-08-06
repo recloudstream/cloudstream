@@ -11,14 +11,10 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -41,7 +37,6 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
-import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -59,8 +54,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_result.result_cast_items
 import kotlinx.android.synthetic.main.fragment_result.result_cast_text
@@ -96,7 +89,6 @@ import kotlinx.android.synthetic.main.fragment_result.result_resume_progress_hol
 import kotlinx.android.synthetic.main.fragment_result.result_resume_series_progress
 import kotlinx.android.synthetic.main.fragment_result.result_resume_series_progress_text
 import kotlinx.android.synthetic.main.fragment_result.result_resume_series_title
-import kotlinx.android.synthetic.main.fragment_result.result_scroll
 import kotlinx.android.synthetic.main.fragment_result.result_tag
 import kotlinx.android.synthetic.main.fragment_result.result_tag_holder
 import kotlinx.android.synthetic.main.fragment_result.result_title
@@ -106,6 +98,13 @@ import kotlinx.android.synthetic.main.fragment_result_tv.*
 import kotlinx.android.synthetic.main.fragment_trailer.*
 import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.coroutines.runBlocking
+import android.widget.EditText
+
+import android.widget.AbsListView
+
+
+
+
 
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
@@ -498,7 +497,7 @@ open class ResultFragment : ResultTrailerPlayer() {
             }
         }
 
-        result_episodes.adapter =
+        result_episodes?.adapter =
             EpisodeAdapter(
                 api.hasDownloadSupport,
                 { episodeClick ->
@@ -747,10 +746,6 @@ open class ResultFragment : ResultTrailerPlayer() {
             syncModel.publishUserData()
         }
 
-        observe(viewModel.episodesCountText) { count ->
-            result_episodes_text.setText(count)
-        }
-
         observe(viewModel.trailers) { trailers ->
             setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
         }
@@ -815,7 +810,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                         updateList(d.actors ?: emptyList())
                     }
 
-                    result_open_in_browser?.isGone = d.url.isBlank()
+                    result_open_in_browser?.isVisible = d.url.startsWith("http")
                     result_open_in_browser?.setOnClickListener {
                         val i = Intent(ACTION_VIEW)
                         i.data = Uri.parse(d.url)
@@ -923,6 +918,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                     }
                 }
 
+                result_open_in_browser?.isVisible = url.startsWith("http")
                 result_open_in_browser?.setOnClickListener {
                     val i = Intent(ACTION_VIEW)
                     i.data = Uri.parse(url)

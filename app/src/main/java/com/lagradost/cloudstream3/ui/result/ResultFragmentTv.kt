@@ -102,6 +102,11 @@ class ResultFragmentTv : ResultFragment() {
         result_dub_selection.setAdapter()
         result_recommendations_filter_selection.setAdapter()
 
+
+        observe(viewModel.episodesCountText) { count ->
+            result_episodes_text.setText(count)
+        }
+
         observe(viewModel.selectedRangeIndex) { selected ->
             result_range_selection.select(selected)
         }

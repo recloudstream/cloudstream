@@ -193,6 +193,10 @@ class ResultFragmentPhone : ResultFragment() {
             //result_poster_blur_holder?.translationY = -scrollY.toFloat()
         })
 
+        observe(viewModel.episodesCountText) { count ->
+            result_episodes_text.setText(count)
+        }
+
         observe(viewModel.selectPopup) { popup ->
             when (popup) {
                 is Some.Success -> {

@@ -106,6 +106,8 @@ class SyncViewModel : ViewModel() {
         Log.i(TAG, "addFromUrl = $url")
 
         if (url == null || hasAddedFromUrl.contains(url)) return@ioSafe
+        if(!url.startsWith("http")) return@ioSafe
+
         SyncUtil.getIdsFromUrl(url)?.let { (malId, aniListId) ->
             hasAddedFromUrl.add(url)
 
