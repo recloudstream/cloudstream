@@ -56,3 +56,4 @@ jobs:
         files: |
           app/build/outputs/apk/debug/*.apk
           app/build/libs/app-sources.jar
+          app/build/intermediates/compile_app_classes_jar/debug/classes.jar
