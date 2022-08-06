@@ -223,8 +223,6 @@ class ResultFragmentPhone : ResultFragment() {
                     popupDialog = null
                 }
             }
-
-            //showBottomDialogInstant
         }
 
         observe(viewModel.loadedLinks) { load ->
@@ -258,6 +256,7 @@ class ResultFragmentPhone : ResultFragment() {
                 }
             }
         }
+
         observe(viewModel.selectedSeason) { text ->
             result_season_button.setText(text)
 

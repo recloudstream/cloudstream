@@ -202,7 +202,8 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         ),
         yearText = txt(year?.toString()),
         apiName = txt(apiName),
-        ratingText = rating?.div(1000f)?.let { txt(R.string.rating_format, it) },
+        ratingText = rating?.div(1000f)
+            ?.let { if (it <= 0.1f) null else txt(R.string.rating_format, it) },
         vpnText = txt(
             when (repo.vpnStatus) {
                 VPNStatus.None -> null

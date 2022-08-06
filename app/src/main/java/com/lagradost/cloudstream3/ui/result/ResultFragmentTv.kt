@@ -1,17 +1,22 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.ResourceSome
+import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import kotlinx.android.synthetic.main.fragment_result_tv.*
 
@@ -90,7 +95,8 @@ class ResultFragmentTv : ResultFragment() {
             result_recommendations_filter_selection?.isVisible = false
         }
     }
-
+    var loadingDialog: Dialog? = null
+    var popupDialog: Dialog? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (result_episodes?.adapter as EpisodeAdapter?)?.apply {
@@ -101,6 +107,66 @@ class ResultFragmentTv : ResultFragment() {
         result_range_selection.setAdapter()
         result_dub_selection.setAdapter()
         result_recommendations_filter_selection.setAdapter()
+
+        observe(viewModel.selectPopup) { popup ->
+            when (popup) {
+                is Some.Success -> {
+                    popupDialog?.dismissSafe(activity)
+
+                    popupDialog = activity?.let { act ->
+                        val pop = popup.value
+                        val options = pop.getOptions(act)
+                        val title = pop.getTitle(act)
+
+                        act.showBottomDialogInstant(
+                            options, title, {
+                                popupDialog = null
+                                pop.callback(null)
+                            }, {
+                                popupDialog = null
+                                pop.callback(it)
+                            }
+                        )
+                    }
+                }
+                is Some.None -> {
+                    popupDialog?.dismissSafe(activity)
+                    popupDialog = null
+                }
+            }
+        }
+
+        observe(viewModel.loadedLinks) { load ->
+            when (load) {
+                is Some.Success -> {
+                    if (loadingDialog?.isShowing != true) {
+                        loadingDialog?.dismissSafe(activity)
+                        loadingDialog = null
+                    }
+                    loadingDialog = loadingDialog ?: context?.let { ctx ->
+                        val builder =
+                            BottomSheetDialog(ctx)
+                        builder.setContentView(R.layout.bottom_loading)
+                        builder.setOnDismissListener {
+                            loadingDialog = null
+                            viewModel.cancelLinks()
+                        }
+                        //builder.setOnCancelListener {
+                        //    it?.dismiss()
+                        //}
+                        builder.setCanceledOnTouchOutside(true)
+
+                        builder.show()
+
+                        builder
+                    }
+                }
+                is Some.None -> {
+                    loadingDialog?.dismissSafe(activity)
+                    loadingDialog = null
+                }
+            }
+        }
 
 
         observe(viewModel.episodesCountText) { count ->
