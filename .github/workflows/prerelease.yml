@@ -42,6 +42,7 @@ jobs:
       run: |
         ./gradlew app:assembleDebug
         ./gradlew app:androidSourcesJar
+        ./gradlew app:build || true
     #  env:
     #    SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
     #    SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
