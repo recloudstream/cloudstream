@@ -89,6 +89,7 @@ import java.io.File
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.RepositoryParser
 
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -399,7 +400,18 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        app.initClient(this)
+
         PluginManager.loadAllPlugins(applicationContext)
+//        ioSafe {
+//            val plugins =
+//                RepositoryParser.getRepoPlugins("https://raw.githubusercontent.com/recloudstream/TestPlugin/master/repo.json")
+//                    ?: emptyList()
+//            plugins.map {
+//                println("Load plugin: ${it.name} ${it.url}")
+//                RepositoryParser.loadSiteTemp(applicationContext, it.url, it.name)
+//            }
+//        }
 
         // init accounts
         for (api in accountManagers) {
@@ -425,7 +437,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         loadThemes(this)
         updateLocale()
-        app.initClient(this)
         super.onCreate(savedInstanceState)
         try {
             if (isCastApiAvailable()) {

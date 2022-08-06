@@ -22,7 +22,6 @@ object PluginManager {
     var loadedPlugins = false
     private val gson = Gson()
     fun loadAllPlugins(context: Context) {
-        println("LOAD PLUGINS")
         val dir = File(PLUGINS_PATH)
         if (!dir.exists()) {
             val res = dir.mkdirs()
@@ -53,7 +52,7 @@ object PluginManager {
         //Utils.showToast("Some plugins failed to load.");
     }
 
-    private fun loadPlugin(context: Context, file: File) {
+    fun loadPlugin(context: Context, file: File) {
         val fileName = file.nameWithoutExtension
         //logger.info("Loading plugin: " + fileName);
         try {
