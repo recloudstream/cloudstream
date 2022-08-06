@@ -172,7 +172,7 @@ class SuperStream : MainAPI() {
     }
 
     private suspend inline fun <reified T : Any> queryApiParsed(query: String): T {
-        return queryApi(query).parsed()
+        return queryApi(query).also { println("queryApiParsed== ${it.text}") }.parsed()
     }
 
     private fun getExpiryDate(): Long {
@@ -247,6 +247,8 @@ class SuperStream : MainAPI() {
 
     private data class Data(
         @JsonProperty("id") val id: Int? = null,
+        @JsonProperty("mid") val mid: Int? = null,
+        @JsonProperty("tid") val tid: Int? = null,
         @JsonProperty("box_type") val boxType: Int? = null,
         @JsonProperty("title") val title: String? = null,
         @JsonProperty("poster_org") val posterOrg: String? = null,
@@ -261,23 +263,33 @@ class SuperStream : MainAPI() {
         @JsonProperty("data") val data: ArrayList<Data> = arrayListOf()
     )
 
+    private fun Data.toSearchResponse(): SearchResponse? {
+        val it = this
+        val type = if (it.boxType == TYPE_MOVIES) TvType.Movie else TvType.TvSeries
+        return newMovieSearchResponse(
+            name = it.title ?: return null,
+            url = (it.id?.let { id -> LoadData(id, it.boxType ?: return@let null) } ?: it.mid?.let { id ->
+                LoadData(
+                    id,
+                    TYPE_MOVIES
+                )
+            } ?: it.tid?.let { id -> LoadData(id, TYPE_SERIES) })?.toJson() ?: return null,
+            type = type,
+            fix = false
+        ) {
+            posterUrl = it.posterOrg ?: it.poster
+            year = it.year
+            quality = getQualityFromString(it.qualityTag?.replace("-", "") ?: "")
+        }
+    }
+
     override suspend fun search(query: String): List<SearchResponse> {
 
         val apiQuery =
             // Originally 8 pagelimit
             """{"childmode":"$hideNsfw","app_version":"11.5","appid":"$appId","module":"Search3","channel":"Website","page":"1","lang":"en","type":"all","keyword":"$query","pagelimit":"20","expired_date":"${getExpiryDate()}","platform":"android"}"""
         val searchResponse = parseJson<MainData>(queryApi(apiQuery).text).data.mapNotNull {
-            val type = if (it.boxType == 1) TvType.Movie else TvType.TvSeries
-            newMovieSearchResponse(
-                name = it.title ?: return@mapNotNull null,
-                url = LoadData(it.id ?: return@mapNotNull null, it.boxType).toJson(),
-                type = type,
-                fix = false
-            ) {
-                posterUrl = it.posterOrg ?: it.poster
-                year = it.year
-                quality = getQualityFromString(it.qualityTag?.replace("-", "") ?: "")
-            }
+            it.toSearchResponse()
         }
         return searchResponse
     }
@@ -309,6 +321,7 @@ class SuperStream : MainAPI() {
         @JsonProperty("trailer_url") val trailerUrl: String? = null,
         @JsonProperty("imdb_link") val imdbLink: String? = null,
         @JsonProperty("box_type") val boxType: Int? = null,
+        @JsonProperty("recommend") val recommend: List<Data> = listOf() // series does not have any recommendations :pensive:
     )
 
     private data class MovieDataProp(
@@ -444,7 +457,8 @@ class SuperStream : MainAPI() {
         @JsonProperty("language") val language: ArrayList<SeriesLanguage> = arrayListOf(),
         @JsonProperty("box_type") val boxType: Int? = null,
         @JsonProperty("year_year") val yearYear: String? = null,
-        @JsonProperty("season_episode") val seasonEpisode: String? = null
+        @JsonProperty("season_episode") val seasonEpisode: String? = null,
+        @JsonProperty("recommend") val recommend: List<Data> = listOf()
     )
 
 
@@ -471,6 +485,7 @@ class SuperStream : MainAPI() {
                     null
                 ),
             ) {
+                this.recommendations = data.recommend.mapNotNull { it.toSearchResponse() }
                 this.posterUrl = data.posterOrg ?: data.poster
                 this.year = data.year
                 this.plot = data.description
@@ -514,6 +529,8 @@ class SuperStream : MainAPI() {
                     )
                 }
             ) {
+                this.recommendations = data.recommend.mapNotNull { it.toSearchResponse() }
+
                 this.year = data.year
                 this.plot = data.description
                 this.posterUrl = data.posterOrg ?: data.poster
