@@ -47,6 +47,10 @@ jobs:
     #    SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
     #    SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
     #    SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+    - name: Display tree
+      run: |
+        sudo apt install tree -y 2>&1 > /dev/null
+        tree app/build
     - name: Create pre-release
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
