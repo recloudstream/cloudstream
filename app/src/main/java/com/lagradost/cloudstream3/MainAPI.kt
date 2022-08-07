@@ -253,8 +253,6 @@ object APIHolder {
 3 = restricted, must donate 30 benenes to use
  */
 const val PROVIDER_STATUS_KEY = "PROVIDER_STATUS_KEY"
-const val PROVIDER_STATUS_URL =
-    "https://raw.githubusercontent.com/reduplicated/Cloudstream/master/docs/providers.json"
 const val PROVIDER_STATUS_BETA_ONLY = 3
 const val PROVIDER_STATUS_SLOW = 2
 const val PROVIDER_STATUS_OK = 1

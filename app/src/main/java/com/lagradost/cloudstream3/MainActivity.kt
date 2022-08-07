@@ -52,6 +52,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
@@ -72,6 +73,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import kotlinx.android.synthetic.main.activity_main.*
@@ -455,6 +457,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         initAll()
         apis = allProviders
+
+        try {
+            getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                list.forEach { custom ->
+                    allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                        ?.let {
+                            allProviders.add(it.javaClass.newInstance().apply {
+                                name = custom.name
+                                lang = custom.lang
+                                mainUrl = custom.url.trimEnd('/')
+                                canBeOverridden = false
+                            })
+                        }
+                }
+            }
+            apis = allProviders
+            APIHolder.apiMap = null
+        } catch (e: Exception) {
+            logError(e)
+        }
 
         loadThemes(this)
         updateLocale()

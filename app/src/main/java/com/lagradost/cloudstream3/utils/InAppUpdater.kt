@@ -31,8 +31,8 @@ import kotlin.concurrent.thread
 
 class InAppUpdater {
     companion object {
-        const val GITHUB_USER_NAME = "rereleased"
-        const val GITHUB_REPO = "release"
+        const val GITHUB_USER_NAME = "recloudstream"
+        const val GITHUB_REPO = "cloudstream"
 
         // === IN APP UPDATER ===
         data class GithubAsset(
