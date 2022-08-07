@@ -341,8 +341,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     )
                     main {
                         showToast(
-                            this,
-                            this.getString(R.string.player_loaded_subtitles, repo.name),
+                            activity,
+                            getString(R.string.player_loaded_subtitles, repo.name),
                             Toast.LENGTH_LONG
                         )
                     }
