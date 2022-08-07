@@ -576,4 +576,5 @@
     <string name="plugin_loaded">Plugin Loaded</string>
     <string name="plugin_deleted">Plugin Deleted</string>
     <string name="plugin_load_fail" formatted="true">Failed to load %s</string>
+    <string name="is_adult">18+</string>
 </resources>

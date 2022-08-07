@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings.extensions
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PluginData
@@ -51,7 +52,8 @@ class PluginAdapter(
                 R.drawable.ic_baseline_delete_outline_24
             else R.drawable.netflix_download
 
-            itemView.action_button.setImageResource(drawableInt)
+            itemView.nsfw_marker?.isVisible = plugin.isAdult == true
+            itemView.action_button?.setImageResource(drawableInt)
 
             itemView.action_button?.setOnClickListener {
                 iconClickCallback.invoke(this@PluginAdapter, plugin, isDownloaded)

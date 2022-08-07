@@ -7,9 +7,9 @@
     android:padding="20dp">
 
     <LinearLayout
-        android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
@@ -28,13 +28,23 @@
             tools:text="https://github.com/..." />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/action_button"
-        android:layout_gravity="center_vertical"
-        android:layout_width="wrap_content"
-        tools:src="@drawable/ic_baseline_add_24"
-        android:layout_height="wrap_content">
 
+    <TextView
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:id="@+id/nsfw_marker"
+        style="@style/SearchBox"
+        android:background="@drawable/sub_bg_color"
+        android:text="@string/is_adult" />
+
+    <ImageView
+        android:layout_marginStart="10dp"
+        android:id="@+id/action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        tools:src="@drawable/ic_baseline_add_24">
     </ImageView>
 
 

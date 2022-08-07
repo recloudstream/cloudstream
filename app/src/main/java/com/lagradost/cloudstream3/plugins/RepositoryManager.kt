@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.PROVIDER_STATUS_OK
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
@@ -27,17 +28,26 @@ data class Repository(
     @JsonProperty("pluginLists") val pluginLists: List<String>
 )
 
+/**
+ * Status int as the following:
+ * 0: Down
+ * 1: Ok
+ * 2: Slow
+ * 3: Beta only
+ * */
 data class SitePlugin(
     @JsonProperty("url") val url: String,
-    @JsonProperty("tvTypes") val tvTypes: List<String>?,
+    @JsonProperty("status") val status: Int,
     @JsonProperty("version") val version: Int,
     @JsonProperty("apiVersion") val apiVersion: Int,
     @JsonProperty("name") val name: String,
     @JsonProperty("authors") val authors: List<String>,
     @JsonProperty("description") val description: String?,
     @JsonProperty("repositoryUrl") val repositoryUrl: String?,
+    @JsonProperty("tvTypes") val tvTypes: List<String>?,
     @JsonProperty("language") val language: String?,
-    @JsonProperty("iconUrl") val iconUrl: String?
+    @JsonProperty("iconUrl") val iconUrl: String?,
+    @JsonProperty("isAdult") val isAdult: Boolean?,
 )
 
 
@@ -63,7 +73,7 @@ object RepositoryManager {
         val repo = parseRepository(repositoryUrl) ?: return null
         return repo.pluginLists.apmap {
             parsePlugins(it)
-        }.filterNotNull().flatten()
+        }.flatten()
     }
 
     suspend fun downloadPluginToFile(context: Context, pluginUrl: String, name: String): File? {
