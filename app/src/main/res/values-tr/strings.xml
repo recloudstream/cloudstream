@@ -181,8 +181,6 @@
     <string name="episode_sync_settings_des">Mevcut bölüm ilerlemesini otomatik güncelle</string>
 
     <string name="restore_settings">Yedekten geri yükle</string>
-    <string name="killswitch_settings">GitHub\'tan en son metadata\'yı indir</string>
-    <string name="killswitch_settings_des">Tüm sağlayıcılara erişmek istiyorsanız (bozuk olanlara bile) bunu kapatın</string>
 
     <string name="backup_settings">Yedekle</string>
     <string name="restore_success">Yedek dosyası yüklendi</string>

@@ -178,9 +178,7 @@
     <string name="episode_sync_settings">Actualizar el progreso visto</string> 
     <string name="episode_sync_settings_des">Sincroniza automáticamente el progreso de tu episodio actual</string> 
  
-    <string name="restore_settings">Restaurar datos desde una copia de seguridad</string> 
-    <string name="killswitch_settings">Descargar los últimos metadatos de github</string> 
-    <string name="killswitch_settings_des">Si desea acceder a todos los proveedores (incluso a los que no funcionan), desactívelo</string> 
+    <string name="restore_settings">Restaurar datos desde una copia de seguridad</string>  
  
     <string name="backup_settings">Copia de seguridad de los datos</string> 
     <string name="restore_success">Archivo de copia de seguridad cargado</string> 

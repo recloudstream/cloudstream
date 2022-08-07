@@ -176,8 +176,6 @@
     <string name="episode_sync_settings_des">Sinkronisasikan progres episode saat ini secara otomatis</string>
 
     <string name="restore_settings">Pulihkan data dari cadangan</string>
-    <string name="killswitch_settings">Download metadata terbaru dari github</string>
-    <string name="killswitch_settings_des">Jika anda ingin askes dari seluruh provider (bahkan yang sudah rusak) matikan ini</string>
 
     <string name="backup_settings">Cadangkan data</string>
     <string name="restore_success">File cadangan termuat</string>

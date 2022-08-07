@@ -150,8 +150,6 @@
     </string>
 
     <string name="restore_settings">从备份中恢复数据</string>
-    <string name="killswitch_settings">从github下载最新元数据</string>
-    <string name="killswitch_settings_des">如果你想访问所有的内容提供者（即使是损坏的），请关闭此选项</string>
 
     <string name="backup_settings">备份数据</string>
     <string name="restore_success">已加载备份文件</string>

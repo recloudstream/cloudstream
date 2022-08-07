@@ -176,8 +176,6 @@
     <string name="episode_sync_settings_des">Sincronizza automaticamente gli episodi guardati</string>
 
     <string name="restore_settings">Ripristinare i dati da backup</string>
-    <string name="killswitch_settings">Scarica gli ultimi metadata da GitHub</string>
-    <string name="killswitch_settings_des">Disattiva se vuoi l\'accesso a tutti i provider (anche quelli non funzionanti)</string>
 
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">File di backup caricato</string>

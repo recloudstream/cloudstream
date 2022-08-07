@@ -40,12 +40,6 @@
         android:title="@string/uprereleases_settings"
         app:defaultValue="false"
         app:key="@string/prerelease_update_key" />
-    <SwitchPreference
-        android:defaultValue="true"
-        android:icon="@drawable/netflix_download"
-        android:key="@string/killswitch_key"
-        android:summary="@string/killswitch_settings_des"
-        android:title="@string/killswitch_settings" />
     <Preference
         app:key="@string/redo_setup_key"
         android:icon="@drawable/ic_baseline_construction_24"
