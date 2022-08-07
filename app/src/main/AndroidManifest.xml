@@ -178,6 +178,7 @@
                 <data android:scheme="https" android:host="aniflix.pro" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="kimcartoon.li" android:pathPrefix="/"/>
                 <data android:scheme="https" android:host="xcine.me" android:pathPrefix="/"/>
+                <data android:scheme="https" android:host="cs.repo" android:pathPrefix="/"/>
             </intent-filter>
 
             <intent-filter>

@@ -43,7 +43,6 @@ class PluginsFragment : Fragment() {
 
         ioSafe {
             val plugins = extensionViewModel.getPlugins(url)
-            println("GET PLUGINS $plugins")
             main {
                 repo_recycler_view?.adapter = PluginAdapter(plugins) { plugin, isDownloaded ->
                     ioSafe {

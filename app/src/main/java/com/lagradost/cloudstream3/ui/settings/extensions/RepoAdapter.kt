@@ -9,8 +9,9 @@ import com.lagradost.cloudstream3.ui.settings.AccountClickCallback
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 class RepoAdapter(
-    private val repositories: Array<RepositoryData>,
-    val clickCallback: (RepositoryData) -> Unit
+    var repositories: Array<RepositoryData>,
+    val clickCallback: RepoAdapter.(RepositoryData) -> Unit,
+    val imageClickCallback: RepoAdapter.(RepositoryData) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -36,6 +37,11 @@ class RepoAdapter(
         fun bind(
             repositoryData: RepositoryData
         ) {
+            itemView.action_button?.setImageResource(R.drawable.ic_baseline_delete_outline_24)
+            itemView.action_button?.setOnClickListener {
+                imageClickCallback(repositoryData)
+            }
+
             itemView.setOnClickListener {
                 clickCallback(repositoryData)
             }

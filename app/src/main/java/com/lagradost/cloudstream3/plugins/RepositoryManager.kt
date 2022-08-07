@@ -44,19 +44,19 @@ data class SitePlugin(
 object RepositoryManager {
     const val ONLINE_PLUGINS_FOLDER = "Extensions"
 
-    private suspend fun parseRepository(url: String): Repository? {
+    suspend fun parseRepository(url: String): Repository? {
         return suspendSafeApiCall {
             // Take manifestVersion and such into account later
             app.get(url).parsedSafe()
         }
     }
 
-    private suspend fun parsePlugins(pluginUrls: String): ArrayList<SitePlugin>? {
+    private suspend fun parsePlugins(pluginUrls: String): List<SitePlugin> {
         // Take manifestVersion and such into account later
         val response = app.get(pluginUrls)
         // Normal parsed function not working?
 //        return response.parsedSafe()
-        return tryParseJson<ArrayList<SitePlugin>>(response.text)
+        return tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
     }
 
     suspend fun getRepoPlugins(repositoryUrl: String): List<SitePlugin>? {
@@ -85,10 +85,21 @@ object RepositoryManager {
     // Don't want to read before we write in another thread
     private val repoLock = Mutex()
     suspend fun addRepository(repository: RepositoryData) {
-        repoLock.withLock {
-            val currentRepos = getKey<List<RepositoryData>>(REPOSITORIES_KEY) ?: emptyList()
-            setKey(REPOSITORIES_KEY, currentRepos + repository)
-        }
+            repoLock.withLock {
+                val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+                // No duplicates
+                if (currentRepos.any { it.url == repository.url }) return
+                setKey(REPOSITORIES_KEY, currentRepos + repository)
+            }
+    }
+
+    suspend fun removeRepository(repository: RepositoryData) {
+            repoLock.withLock {
+                val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+                // No duplicates
+                val newRepos = currentRepos.filter { it.url != repository.url }
+                setKey(REPOSITORIES_KEY, newRepos)
+            }
     }
 
     private fun write(stream: InputStream, output: OutputStream) {

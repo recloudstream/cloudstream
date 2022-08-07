@@ -10,6 +10,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -79,6 +80,9 @@ import java.io.File
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.RepositoryManager
+import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
+import com.lagradost.cloudstream3.utils.Coroutines.main
 
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -320,7 +324,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val str = intent.dataString
         loadCache()
         if (str != null) {
-            if (str.contains(appString)) {
+            if (str.startsWith("https://cs.repo")) {
+                val realUrl = "https://" + str.substringAfter("?")
+                println("Repository url: $realUrl")
+                ioSafe {
+                    val repo = RepositoryManager.parseRepository(realUrl) ?: return@ioSafe
+                    RepositoryManager.addRepository(
+                        RepositoryData(
+                            repo.name,
+                            realUrl
+                        )
+                    )
+                    main {
+                        showToast(
+                            this,
+                            this.getString(R.string.player_loaded_subtitles, repo.name),
+                            Toast.LENGTH_LONG
+                        )
+                    }
+                }
+            } else if (str.contains(appString)) {
                 for (api in OAuth2Apis) {
                     if (str.contains("/${api.redirectUrl}")) {
                         ioSafe {

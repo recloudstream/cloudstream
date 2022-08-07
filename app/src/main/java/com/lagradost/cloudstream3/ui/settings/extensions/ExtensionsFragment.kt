@@ -39,16 +39,23 @@ class ExtensionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         context?.fixPaddingStatusbar(extensions_root)
 
-        observe(extensionViewModel.repositories) {
-            // Kinda cheap to do this instead of updates
-            repo_recycler_view?.adapter = RepoAdapter(it) {
-                findNavController().navigate(
-                    R.id.navigation_settings_extensions_to_navigation_settings_plugins,
-                    Bundle().apply {
-                        putString(PLUGINS_BUNDLE_NAME, it.name)
-                        putString(PLUGINS_BUNDLE_URL, it.url)
-                    })
+        repo_recycler_view?.adapter = RepoAdapter(emptyArray(), {
+            findNavController().navigate(
+                R.id.navigation_settings_extensions_to_navigation_settings_plugins,
+                Bundle().apply {
+                    putString(PLUGINS_BUNDLE_NAME, it.name)
+                    putString(PLUGINS_BUNDLE_URL, it.url)
+                })
+        }, { repo ->
+            ioSafe {
+                RepositoryManager.removeRepository(repo)
+                extensionViewModel.loadRepositories()
             }
+        })
+
+        observe(extensionViewModel.repositories) {
+            (repo_recycler_view?.adapter as? RepoAdapter)?.repositories = it
+            (repo_recycler_view?.adapter as? RepoAdapter)?.notifyDataSetChanged()
         }
 
         add_repo_button?.setOnClickListener {

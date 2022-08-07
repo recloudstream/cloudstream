@@ -46,8 +46,6 @@ class PluginAdapter(
             plugin: SitePlugin
         ) {
             val isDownloaded = storedPlugins.any { it.url == plugin.url }
-println("ISOWNLOADED $isDownloaded ${storedPlugins.map { it.url }} ||||| ${plugin.url}")
-
 
             val drawableInt = if (isDownloaded)
                 R.drawable.ic_baseline_delete_outline_24

@@ -85,7 +85,7 @@ object PluginManager {
     var loadedLocalPlugins = false
     private val gson = Gson()
 
-    fun maybeLoadPlugin(context: Context, file: File) {
+    private fun maybeLoadPlugin(context: Context, file: File) {
         val name = file.name
         if (file.extension == "zip" || file.extension == "cs3") {
             loadPlugin(context, file, PluginData(name, null, false, file.absolutePath))
