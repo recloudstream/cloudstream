@@ -3,16 +3,13 @@ package com.lagradost.cloudstream3.plugins
 import android.content.Context
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.PROVIDER_STATUS_OK
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.apmapIndexed
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.BufferedInputStream
@@ -36,17 +33,28 @@ data class Repository(
  * 3: Beta only
  * */
 data class SitePlugin(
+    // Url to the .cs3 file
     @JsonProperty("url") val url: String,
+    // Status to remotely disable the provider
     @JsonProperty("status") val status: Int,
+    // Integer over 0, any change of this will trigger an auto update
     @JsonProperty("version") val version: Int,
+    // Unused currently, used to make the api backwards compatible?
+    // Set to 1
     @JsonProperty("apiVersion") val apiVersion: Int,
+    // Name to be shown in app
     @JsonProperty("name") val name: String,
+    // Name to be referenced internally. Separate to make name and url changes possible
+    @JsonProperty("internalName") val internalName: String,
     @JsonProperty("authors") val authors: List<String>,
     @JsonProperty("description") val description: String?,
+    // Might be used to go directly to the plugin repo in the future
     @JsonProperty("repositoryUrl") val repositoryUrl: String?,
+    // These types are yet to be mapped and used, ignore for now
     @JsonProperty("tvTypes") val tvTypes: List<String>?,
     @JsonProperty("language") val language: String?,
     @JsonProperty("iconUrl") val iconUrl: String?,
+    // Set to true to get an 18+ symbol next to the plugin
     @JsonProperty("isAdult") val isAdult: Boolean?,
 )
 
@@ -69,21 +77,32 @@ object RepositoryManager {
         return tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
     }
 
-    suspend fun getRepoPlugins(repositoryUrl: String): List<SitePlugin>? {
+    /**
+     * Gets all plugins from repositories and pairs them with the repository url
+     * */
+    suspend fun getRepoPlugins(repositoryUrl: String): List<Pair<String, SitePlugin>>? {
         val repo = parseRepository(repositoryUrl) ?: return null
-        return repo.pluginLists.apmap {
-            parsePlugins(it)
+        return repo.pluginLists.apmapIndexed { index, url ->
+            parsePlugins(url).map {
+                repo.pluginLists[index] to it
+            }
         }.flatten()
     }
 
-    suspend fun downloadPluginToFile(context: Context, pluginUrl: String, name: String): File? {
+    suspend fun downloadPluginToFile(context: Context, pluginUrl: String, fileName: String, folder: String): File? {
         return suspendSafeApiCall {
             val extensionsDir = File(context.filesDir, ONLINE_PLUGINS_FOLDER)
             if (!extensionsDir.exists())
                 extensionsDir.mkdirs()
 
-            val newFile = File(extensionsDir, "$name.${pluginUrl.hashCode()}.cs3")
-            if (newFile.exists()) return@suspendSafeApiCall newFile
+            val newDir = File(extensionsDir, folder)
+            newDir.mkdirs()
+
+            val newFile = File(newDir, "${fileName}.cs3")
+            // Overwrite if exists
+            if (newFile.exists()) {
+                newFile.delete()
+            }
             newFile.createNewFile()
 
             val body = app.get(pluginUrl).okhttpResponse.body
@@ -95,21 +114,20 @@ object RepositoryManager {
     // Don't want to read before we write in another thread
     private val repoLock = Mutex()
     suspend fun addRepository(repository: RepositoryData) {
-            repoLock.withLock {
-                val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
-                // No duplicates
-                if (currentRepos.any { it.url == repository.url }) return
-                setKey(REPOSITORIES_KEY, currentRepos + repository)
-            }
+        repoLock.withLock {
+            val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+            // No duplicates
+            setKey(REPOSITORIES_KEY, (currentRepos + repository).distinctBy { it.url })
+        }
     }
 
     suspend fun removeRepository(repository: RepositoryData) {
-            repoLock.withLock {
-                val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
-                // No duplicates
-                val newRepos = currentRepos.filter { it.url != repository.url }
-                setKey(REPOSITORIES_KEY, newRepos)
-            }
+        repoLock.withLock {
+            val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+            // No duplicates
+            val newRepos = currentRepos.filter { it.url != repository.url }
+            setKey(REPOSITORIES_KEY, newRepos)
+        }
     }
 
     private fun write(stream: InputStream, output: OutputStream) {

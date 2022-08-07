@@ -12,8 +12,8 @@ import com.lagradost.cloudstream3.plugins.SitePlugin
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 class PluginAdapter(
-    var plugins: List<SitePlugin>,
-    val iconClickCallback: PluginAdapter.(plugin: SitePlugin, isDownloaded: Boolean) -> Unit
+    var plugins: List<Pair<String, SitePlugin>>,
+    val iconClickCallback: PluginAdapter.(repositoryUrl: String, plugin: SitePlugin, isDownloaded: Boolean) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -23,9 +23,10 @@ class PluginAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val (repositoryUrl, plugin) = plugins[position]
         when (holder) {
             is PluginViewHolder -> {
-                holder.bind(plugins[position])
+                holder.bind(repositoryUrl, plugin)
             }
         }
     }
@@ -44,7 +45,8 @@ class PluginAdapter(
         RecyclerView.ViewHolder(itemView) {
 
         fun bind(
-            plugin: SitePlugin
+            repositoryUrl: String,
+            plugin: SitePlugin,
         ) {
             val isDownloaded = storedPlugins.any { it.url == plugin.url }
 
@@ -56,7 +58,7 @@ class PluginAdapter(
             itemView.action_button?.setImageResource(drawableInt)
 
             itemView.action_button?.setOnClickListener {
-                iconClickCallback.invoke(this@PluginAdapter, plugin, isDownloaded)
+                iconClickCallback.invoke(this@PluginAdapter, repositoryUrl, plugin, isDownloaded)
             }
 
             itemView.main_text?.text = plugin.name

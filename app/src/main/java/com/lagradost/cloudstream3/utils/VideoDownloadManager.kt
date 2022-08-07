@@ -426,11 +426,12 @@ object VideoDownloadManager {
     }
 
     private const val reservedChars = "|\\?*<\":>+[]/\'"
-    fun sanitizeFilename(name: String): String {
+    fun sanitizeFilename(name: String, removeSpaces: Boolean= false): String {
         var tempName = name
         for (c in reservedChars) {
             tempName = tempName.replace(c, ' ')
         }
+        if (removeSpaces) tempName = tempName.replace(" ", "")
         return tempName.replace("  ", " ").trim(' ')
     }
 

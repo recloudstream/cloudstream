@@ -16,6 +16,7 @@ abstract class Plugin {
     class Manifest {
         var name: String? = null
         var pluginClassName: String? = null
+        var pluginVersion: Int? = null
     }
 
     var resources: Resources? = null

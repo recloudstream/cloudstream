@@ -420,6 +420,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
 
+        PluginManager.updateAllOnlinePlugins(applicationContext)
         PluginManager.loadAllLocalPlugins(applicationContext)
         PluginManager.loadAllOnlinePlugins(applicationContext)
 

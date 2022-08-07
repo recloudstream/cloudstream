@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        package="com.lagradost.cloudstream3">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.lagradost.cloudstream3">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- I dont remember, probs has to do with downloads -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- unless you only use cs3 as a player for downloaded stuff, you need this -->
@@ -12,41 +12,41 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Used for player vertical slide-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!--Used for app update-->
     <!--<uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" /> not used atm, but code exist that requires it that are not run-->
-<!--    <permission android:name="android.permission.QUERY_ALL_PACKAGES" /> &lt;!&ndash; Used for getting if vlc is installed &ndash;&gt;-->
+    <!--    <permission android:name="android.permission.QUERY_ALL_PACKAGES" /> &lt;!&ndash; Used for getting if vlc is installed &ndash;&gt;-->
 
     <!-- Fixes android tv fuckery -->
     <uses-feature
-            android:name="android.hardware.touchscreen"
-            android:required="false" />
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
     <uses-feature
-            android:name="android.software.leanback"
-            android:required="false" />
+        android:name="android.software.leanback"
+        android:required="false" />
 
     <!--TODO https://stackoverflow.com/questions/41799732/chromecast-button-not-visible-in-android-->
     <application
-            android:name=".AcraApplication"
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:banner="@mipmap/ic_banner"
-            android:label="@string/app_name"
-            android:usesCleartextTraffic="true"
-            android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
-            android:theme="@style/AppTheme"
-            android:fullBackupContent="@xml/backup_descriptor"
-            android:appCategory="video"
-            tools:targetApi="o">
+        android:name=".AcraApplication"
+        android:allowBackup="true"
+        android:appCategory="video"
+        android:banner="@mipmap/ic_banner"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="o">
         <meta-data
-                android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-                android:value="com.lagradost.cloudstream3.utils.CastOptionsProvider" />
+            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+            android:value="com.lagradost.cloudstream3.utils.CastOptionsProvider" />
 
         <activity
-                android:name=".ui.player.DownloadedPlayerActivity"
-                android:screenOrientation="userLandscape"
-                android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation"
-                android:resizeableActivity="true"
-                android:supportsPictureInPicture="true"
-                android:exported="true">
+            android:name=".ui.player.DownloadedPlayerActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="userLandscape"
+            android:supportsPictureInPicture="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -57,18 +57,18 @@
 
             <!-- I dont think this label can be translated, but idk -->
             <intent-filter android:label="@string/play_with_app_name">
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="*/*"/>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
 
         <activity
-                android:exported="true"
-                android:name=".MainActivity"
-                android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation"
-                android:resizeableActivity="true"
-                android:supportsPictureInPicture="true">
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true">
             <intent-filter android:exported="true">
                 <action android:name="android.intent.action.MAIN" />
 
@@ -83,35 +83,39 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="cloudstreamapp" />
+                <data
+                    android:host="cs.repo"
+                    android:pathPrefix="/"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
 
         <receiver
-                android:name=".receivers.VideoDownloadRestartReceiver"
-                android:enabled="false"
-                android:exported="true">
+            android:name=".receivers.VideoDownloadRestartReceiver"
+            android:enabled="false"
+            android:exported="true">
             <intent-filter android:exported="true">
                 <action android:name="restart_service" />
             </intent-filter>
         </receiver>
         <service
-                android:name=".services.VideoDownloadService"
-                android:enabled="true"
-                android:exported="false" />
+            android:name=".services.VideoDownloadService"
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
-                android:exported="false"
-                android:name=".ui.ControllerActivity" />
+            android:name=".ui.ControllerActivity"
+            android:exported="false" />
 
         <provider
-                android:name="androidx.core.content.FileProvider"
-                android:authorities="${applicationId}.provider"
-                android:exported="false"
-                android:enabled="true"
-                android:grantUriPermissions="true">
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:enabled="true"
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
-                    android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/provider_paths" />
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 </manifest>

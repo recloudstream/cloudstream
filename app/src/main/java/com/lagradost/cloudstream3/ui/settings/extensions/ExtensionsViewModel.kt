@@ -25,7 +25,7 @@ class ExtensionsViewModel : ViewModel() {
         _repositories.postValue(urls)
     }
 
-    suspend fun getPlugins(repositoryUrl: String): List<SitePlugin> {
+    suspend fun getPlugins(repositoryUrl: String): List<Pair<String, SitePlugin>> {
         return RepositoryManager.getRepoPlugins(repositoryUrl) ?: emptyList()
     }
 }
