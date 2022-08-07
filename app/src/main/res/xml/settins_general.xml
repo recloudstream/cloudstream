@@ -26,10 +26,10 @@
     <Preference
             android:title="@string/github"
             android:icon="@drawable/ic_github_logo"
-            app:summary="https://github.com/rereleased/release/releases">
+            app:summary="https://github.com/recloudstream/cloudstream">
         <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://github.com/rereleased/release/releases" />
+                android:data="https://github.com/recloudstream/cloudstream" />
     </Preference>
 
     <Preference
