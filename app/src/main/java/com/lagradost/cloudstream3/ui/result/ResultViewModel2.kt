@@ -41,6 +41,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
@@ -689,7 +690,7 @@ class ResultViewModel2 : ViewModel() {
                 })
 
                 if (currentLinks.isEmpty()) {
-                    Coroutines.main {
+                    main {
                         showToast(
                             activity,
                             R.string.no_links_found_toast,
@@ -698,7 +699,7 @@ class ResultViewModel2 : ViewModel() {
                     }
                     return@ioSafe
                 } else {
-                    Coroutines.main {
+                    main {
                         showToast(
                             activity,
                             R.string.download_started,

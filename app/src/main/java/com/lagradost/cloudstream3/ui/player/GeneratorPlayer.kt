@@ -126,10 +126,10 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun loadExtractorJob(extractorLink: ExtractorLink?) {
         currentVerifyLink?.cancel()
 
-        extractorLink?.let {
+        extractorLink?.let { link ->
             currentVerifyLink = ioSafe {
-                if (it.extractorData != null) {
-                    getApiFromNameNull(it.source)?.extractorVerifierJob(it.extractorData)
+                if (link.extractorData != null) {
+                    getApiFromNameNull(link.source)?.extractorVerifierJob(link.extractorData)
                 }
             }
         }

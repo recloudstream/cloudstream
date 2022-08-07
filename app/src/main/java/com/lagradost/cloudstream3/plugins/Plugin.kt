@@ -10,7 +10,7 @@ abstract class Plugin {
      * @param context Context
      */
     @Throws(Throwable::class)
-    open fun load(context: Context?) {
+    open fun load(context: Context) {
     }
 
     class Manifest {

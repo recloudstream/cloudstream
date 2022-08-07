@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.widget.TextView
@@ -17,11 +18,13 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
+import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import kotlinx.coroutines.currentCoroutineContext
 import org.schabi.newpipe.extractor.NewPipe
 import java.util.*
 
@@ -42,6 +45,13 @@ object CommonActivity {
 
 
     var currentToast: Toast? = null
+
+    fun showToast(act: Activity?, text: UiText, duration: Int) {
+        if (act == null) return
+        text.asStringNull(act)?.let {
+            showToast(act, it, duration)
+        }
+    }
 
     fun showToast(act: Activity?, @StringRes message: Int, duration: Int) {
         if (act == null) return
