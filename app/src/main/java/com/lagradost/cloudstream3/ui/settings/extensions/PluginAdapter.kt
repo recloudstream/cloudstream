@@ -4,18 +4,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PluginData
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.SitePlugin
+import com.lagradost.cloudstream3.ui.result.ActorAdaptor
+import com.lagradost.cloudstream3.ui.result.DiffCallback
+import com.lagradost.cloudstream3.ui.result.UiText
 import kotlinx.android.synthetic.main.repository_item.view.*
 
+
+data class PluginViewData(
+    val plugin: Plugin,
+    val isDownloaded: Boolean,
+)
+
 class PluginAdapter(
-    var plugins: List<Pair<String, SitePlugin>>,
-    val iconClickCallback: PluginAdapter.(repositoryUrl: String, plugin: SitePlugin, isDownloaded: Boolean) -> Unit
+    val iconClickCallback: (Plugin) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val plugins: MutableList<PluginViewData> = mutableListOf()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return PluginViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.repository_item, parent, false)
@@ -23,10 +34,9 @@ class PluginAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val (repositoryUrl, plugin) = plugins[position]
         when (holder) {
             is PluginViewHolder -> {
-                holder.bind(repositoryUrl, plugin)
+                holder.bind(plugins[position])
             }
         }
     }
@@ -35,34 +45,61 @@ class PluginAdapter(
         return plugins.size
     }
 
+    fun updateList(newList: List<PluginViewData>) {
+        val diffResult = DiffUtil.calculateDiff(
+            PluginDiffCallback(this.plugins, newList)
+        )
+
+        plugins.clear()
+        plugins.addAll(newList)
+
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    /*
     private var storedPlugins: Array<PluginData> = reloadStoredPlugins()
 
-    fun reloadStoredPlugins(): Array<PluginData> {
+    private fun reloadStoredPlugins(): Array<PluginData> {
         return PluginManager.getPluginsOnline().also { storedPlugins = it }
-    }
+    }*/
 
     inner class PluginViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
 
         fun bind(
-            repositoryUrl: String,
-            plugin: SitePlugin,
+            data: PluginViewData,
         ) {
-            val isDownloaded = storedPlugins.any { it.url == plugin.url }
+            val metadata = data.plugin.second
 
-            val drawableInt = if (isDownloaded)
+            val drawableInt = if (data.isDownloaded)
                 R.drawable.ic_baseline_delete_outline_24
             else R.drawable.netflix_download
 
-            itemView.nsfw_marker?.isVisible = plugin.isAdult == true
+            itemView.nsfw_marker?.isVisible = metadata.isAdult == true
             itemView.action_button?.setImageResource(drawableInt)
 
             itemView.action_button?.setOnClickListener {
-                iconClickCallback.invoke(this@PluginAdapter, repositoryUrl, plugin, isDownloaded)
+                iconClickCallback.invoke(data.plugin)
             }
 
-            itemView.main_text?.text = plugin.name
-            itemView.sub_text?.text = plugin.description
+            itemView.main_text?.text = metadata.name
+            itemView.sub_text?.text = metadata.description
         }
     }
+}
+
+class PluginDiffCallback(
+    private val oldList: List<PluginViewData>,
+    private val newList: List<PluginViewData>
+) :
+    DiffUtil.Callback() {
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition].plugin.second.internalName == newList[newItemPosition].plugin.second.internalName && oldList[oldItemPosition].plugin.first == newList[newItemPosition].plugin.first
+
+    override fun getOldListSize() = oldList.size
+
+    override fun getNewListSize() = newList.size
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition] == newList[newItemPosition]
 }

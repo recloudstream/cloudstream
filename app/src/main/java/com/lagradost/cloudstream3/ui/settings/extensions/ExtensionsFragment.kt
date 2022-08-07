@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.plugins.RepositoryManager
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -37,7 +38,9 @@ class ExtensionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        context?.fixPaddingStatusbar(extensions_root)
+        //context?.fixPaddingStatusbar(extensions_root)
+
+        setUpToolbar(R.string.extensions)
 
         repo_recycler_view?.adapter = RepoAdapter(emptyArray(), {
             findNavController().navigate(
@@ -94,7 +97,5 @@ class ExtensionsFragment : Fragment() {
 
 
         extensionViewModel.loadRepositories()
-
-
     }
 }

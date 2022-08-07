@@ -1,34 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/extensions_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/extensions_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
+    <include layout="@layout/standard_toolbar" />
+
+    <androidx.recyclerview.widget.RecyclerView
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:listitem="@layout/repository_item"
             android:id="@+id/repo_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-    </LinearLayout>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/add_repo_button"
-        style="@style/ExtendedFloatingActionButton"
-        android:text="@string/add_repository"
-        android:textColor="?attr/textColor"
-        app:icon="@drawable/ic_baseline_add_24"
-        tools:ignore="ContentDescription" />
+            android:id="@+id/add_repo_button"
+            style="@style/ExtendedFloatingActionButton"
+            android:text="@string/add_repository"
+            android:textColor="?attr/textColor"
+            app:icon="@drawable/ic_baseline_add_24"
+            tools:ignore="ContentDescription" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

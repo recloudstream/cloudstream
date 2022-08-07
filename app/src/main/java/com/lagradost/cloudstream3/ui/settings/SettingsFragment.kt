@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -24,6 +23,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.main_settings.*
 import kotlinx.android.synthetic.main.settings_title_top.*
+import kotlinx.android.synthetic.main.standard_toolbar.*
 import java.io.File
 
 class SettingsFragment : Fragment() {
@@ -41,7 +41,19 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        fun PreferenceFragmentCompat?.setUpToolbar(@StringRes title: Int) {
+        fun Fragment?.setUpToolbar(title: String) {
+            if (this == null) return
+            settings_toolbar?.apply {
+                setTitle(title)
+                setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                setNavigationOnClickListener {
+                    activity?.onBackPressed()
+                }
+            }
+            context.fixPaddingStatusbar(settings_toolbar)
+        }
+
+        fun Fragment?.setUpToolbar(@StringRes title: Int) {
             if (this == null) return
             settings_toolbar?.apply {
                 setTitle(title)
@@ -138,7 +150,10 @@ class SettingsFragment : Fragment() {
             Pair(settings_ui, R.id.action_navigation_settings_to_navigation_settings_ui),
             Pair(settings_lang, R.id.action_navigation_settings_to_navigation_settings_lang),
             Pair(settings_updates, R.id.action_navigation_settings_to_navigation_settings_updates),
-            Pair(settings_extensions, R.id.action_navigation_settings_to_navigation_settings_extensions),
+            Pair(
+                settings_extensions,
+                R.id.action_navigation_settings_to_navigation_settings_extensions
+            ),
         ).forEach { (view, navigationId) ->
             view?.apply {
                 setOnClickListener {

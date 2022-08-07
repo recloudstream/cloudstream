@@ -8,6 +8,7 @@ import android.content.res.Resources
 import android.os.Environment
 import android.widget.Toast
 import android.app.Activity
+import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -52,33 +53,31 @@ object PluginManager {
     // Prevent multiple writes at once
     val lock = Mutex()
 
+    const val TAG = "PluginManager"
+
     /**
      * Store data about the plugin for fetching later
      * */
-    private fun setPluginData(data: PluginData) {
-        ioSafe {
-            lock.withLock {
-                if (data.isOnline) {
-                    val plugins = getPluginsOnline()
-                    setKey(PLUGINS_KEY, plugins + data)
-                } else {
-                    val plugins = getPluginsLocal()
-                    setKey(PLUGINS_KEY_LOCAL, plugins + data)
-                }
+    private suspend fun setPluginData(data: PluginData) {
+        lock.withLock {
+            if (data.isOnline) {
+                val plugins = getPluginsOnline()
+                setKey(PLUGINS_KEY, plugins + data)
+            } else {
+                val plugins = getPluginsLocal()
+                setKey(PLUGINS_KEY_LOCAL, plugins + data)
             }
         }
     }
 
-    private fun deletePluginData(data: PluginData) {
-        ioSafe {
-            lock.withLock {
-                if (data.isOnline) {
-                    val plugins = getPluginsOnline().filter { it.url != data.url }
-                    setKey(PLUGINS_KEY, plugins)
-                } else {
-                    val plugins = getPluginsLocal().filter { it.filePath != data.filePath }
-                    setKey(PLUGINS_KEY_LOCAL, plugins + data)
-                }
+    private suspend fun deletePluginData(data: PluginData) {
+        lock.withLock {
+            if (data.isOnline) {
+                val plugins = getPluginsOnline().filter { it.url != data.url }
+                setKey(PLUGINS_KEY, plugins)
+            } else {
+                val plugins = getPluginsLocal().filter { it.filePath != data.filePath }
+                setKey(PLUGINS_KEY_LOCAL, plugins + data)
             }
         }
     }
@@ -105,11 +104,11 @@ object PluginManager {
     private var loadedLocalPlugins = false
     private val gson = Gson()
 
-    private fun maybeLoadPlugin(context: Context, file: File) {
+    private suspend fun maybeLoadPlugin(activity: Activity, file: File) {
         val name = file.name
         if (file.extension == "zip" || file.extension == "cs3") {
             loadPlugin(
-                context,
+                activity,
                 file,
                 PluginData(name, null, false, file.absolutePath, PLUGIN_VERSION_NOT_SET)
             )
@@ -119,7 +118,7 @@ object PluginManager {
     /**
      * Needs to be run before other plugin loading because plugin loading can not be overwritten
      **/
-    fun updateAllOnlinePlugins(context: Context) {
+    fun updateAllOnlinePlugins(activity: Activity) {
         val urls = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
 
         val onlinePlugins = urls.toList().apmap {
@@ -136,28 +135,28 @@ object PluginManager {
                 }
         }.flatten()
 
-        println("Outdated plugins: $outdatedPlugins")
+        Log.i(TAG, "Outdated plugins: $outdatedPlugins")
 
         outdatedPlugins.apmap {
             downloadAndLoadPlugin(
-                context,
+                activity,
                 it.second.second.url,
                 it.first.internalName,
                 it.second.first
             )
         }
 
-        println("Plugin update done!")
+        Log.i(TAG, "Plugin update done!")
     }
 
-    fun loadAllOnlinePlugins(context: Context) {
-        File(context.filesDir, ONLINE_PLUGINS_FOLDER).listFiles()?.sortedBy { it.name }
-            ?.forEach { file ->
-                maybeLoadPlugin(context, file)
+    fun loadAllOnlinePlugins(activity: Activity) {
+        File(activity.filesDir, ONLINE_PLUGINS_FOLDER).listFiles()?.sortedBy { it.name }
+            ?.apmap { file ->
+                maybeLoadPlugin(activity, file)
             }
     }
 
-    fun loadAllLocalPlugins(context: Context) {
+    fun loadAllLocalPlugins(activity: Activity) {
         val dir = File(LOCAL_PLUGINS_PATH)
         removeKey(PLUGINS_KEY_LOCAL)
 
@@ -172,8 +171,8 @@ object PluginManager {
         val sortedPlugins = dir.listFiles()
         // Always sort plugins alphabetically for reproducible results
 
-        sortedPlugins?.sortedBy { it.name }?.forEach { file ->
-            maybeLoadPlugin(context, file)
+        sortedPlugins?.sortedBy { it.name }?.apmap { file ->
+            maybeLoadPlugin(activity, file)
         }
 
         loadedLocalPlugins = true
@@ -182,14 +181,14 @@ object PluginManager {
     /**
      * @return True if successful, false if not
      * */
-    private fun loadPlugin(context: Context, file: File, data: PluginData): Boolean {
+    private suspend fun loadPlugin(activity: Activity, file: File, data: PluginData): Boolean {
         val fileName = file.nameWithoutExtension
         val filePath = file.absolutePath
-        println("Loading plugin: $data")
+        Log.i(TAG, "Loading plugin: $data")
 
         //logger.info("Loading plugin: " + fileName);
         return try {
-            val loader = PathClassLoader(filePath, context.classLoader)
+            val loader = PathClassLoader(filePath, activity.classLoader)
             var manifest: Plugin.Manifest
             loader.getResourceAsStream("manifest.json").use { stream ->
                 if (stream == null) {
@@ -211,13 +210,14 @@ object PluginManager {
                 loader.loadClass(manifest.pluginClassName) as Class<out Plugin?>
             val pluginInstance: Plugin =
                 pluginClass.newInstance() as Plugin
-            if (plugins.containsKey(filePath)) {
-                println("Plugin with name $name already exists")
-                return true
-            }
 
             // Sets with the proper version
             setPluginData(data.copy(version = version))
+
+            if (plugins.containsKey(filePath)) {
+                Log.i(TAG, "Plugin with name $name already exists")
+                return true
+            }
 
             pluginInstance.__filename = fileName
             if (pluginInstance.needsResources) {
@@ -228,21 +228,21 @@ object PluginManager {
                 addAssetPath.invoke(assets, file.absolutePath)
                 pluginInstance.resources = Resources(
                     assets,
-                    context.resources.displayMetrics,
-                    context.resources.configuration
+                    activity.resources.displayMetrics,
+                    activity.resources.configuration
                 )
             }
             plugins[filePath] = pluginInstance
             classLoaders[loader] = pluginInstance
-            pluginInstance.load(context)
-            println("Loaded plugin ${data.internalName} successfully")
+            pluginInstance.load(activity)
+            Log.i(TAG, "Loaded plugin ${data.internalName} successfully")
             true
         } catch (e: Throwable) {
             failedToLoad[file] = e
             e.printStackTrace()
             showToast(
-                context as Activity,
-                context.getString(R.string.plugin_load_fail).format(fileName),
+                activity,
+                activity.getString(R.string.plugin_load_fail).format(fileName),
                 Toast.LENGTH_LONG
             )
             false
@@ -250,7 +250,7 @@ object PluginManager {
     }
 
     suspend fun downloadAndLoadPlugin(
-        context: Context,
+        activity: Activity,
         pluginUrl: String,
         internalName: String,
         repositoryUrl: String
@@ -260,21 +260,28 @@ object PluginManager {
             true
         ) + "." + repositoryUrl.hashCode()) // Guaranteed unique
         val fileName = (sanitizeFilename(internalName, true) + "." + internalName.hashCode())
-        println("Downloading plugin: $pluginUrl to $folderName/$fileName")
+        Log.i(TAG, "Downloading plugin: $pluginUrl to $folderName/$fileName")
         // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
-        val file = downloadPluginToFile(context, pluginUrl, fileName, folderName)
+        val file = downloadPluginToFile(activity, pluginUrl, fileName, folderName)
         return loadPlugin(
-            context,
+            activity,
             file ?: return false,
             PluginData(internalName, pluginUrl, true, file.absolutePath, PLUGIN_VERSION_NOT_SET)
         )
     }
 
-    fun deletePlugin(context: Context, pluginUrl: String, name: String): Boolean {
+    suspend fun deletePlugin(pluginUrl: String): Boolean {
         val data = getPluginsOnline()
             .firstOrNull { it.url == pluginUrl }
             ?: return false
-        deletePluginData(data)
-        return File(data.filePath).delete()
+        return try {
+            if (File(data.filePath).delete()) {
+                deletePluginData(data)
+                return true
+            }
+            false
+        } catch (e: Exception) {
+            false
+        }
     }
 }

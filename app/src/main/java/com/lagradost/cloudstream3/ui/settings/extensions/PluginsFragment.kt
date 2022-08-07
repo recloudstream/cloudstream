@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -27,53 +29,31 @@ class PluginsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_extensions, container, false)
     }
 
-    private val extensionViewModel: ExtensionsViewModel by activityViewModels()
+    private val pluginViewModel: PluginsViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        context?.fixPaddingStatusbar(extensions_root)
 
         val name = arguments?.getString(PLUGINS_BUNDLE_NAME)
         val url = arguments?.getString(PLUGINS_BUNDLE_URL)
+
         if (url == null) {
             activity?.onBackPressed()
             return
         }
 
-        ioSafe {
-            val plugins = extensionViewModel.getPlugins(url)
-            main {
-                repo_recycler_view?.adapter =
-                    PluginAdapter(plugins) { repositoryUrl, plugin, isDownloaded ->
-                        ioSafe {
-                            val (success, message) = if (isDownloaded) {
-                                PluginManager.deletePlugin(
-                                    view.context,
-                                    plugin.url,
-                                    plugin.name
-                                ) to R.string.plugin_deleted
-                            } else {
-                                PluginManager.downloadAndLoadPlugin(
-                                    view.context,
-                                    plugin.url,
-                                    plugin.name,
-                                    repositoryUrl
-                                ) to R.string.plugin_loaded
-                            }
+        setUpToolbar(name ?: "Unknown")
 
-                            println("Success: $success")
-                            if (success) {
-                                main {
-                                    showToast(activity, message, Toast.LENGTH_SHORT)
-                                    this@PluginAdapter.reloadStoredPlugins()
-                                    // Dirty and needs a fix
-                                    repo_recycler_view?.adapter?.notifyDataSetChanged()
-                                }
-                            }
-                        }
-                    }
+        repo_recycler_view?.adapter =
+            PluginAdapter {
+                pluginViewModel.handlePluginAction(activity, url, it)
             }
+
+        observe(pluginViewModel.plugins) {
+            (repo_recycler_view?.adapter as? PluginAdapter?)?.updateList(it)
         }
+
+        pluginViewModel.updatePluginList(url)
     }
 
     companion object {

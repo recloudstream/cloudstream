@@ -173,6 +173,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_settings_account,
             R.id.navigation_settings_lang,
             R.id.navigation_settings_general,
+            R.id.navigation_settings_extensions,
+            R.id.navigation_settings_plugins,
         ).contains(destination.id)
 
         val landscape = when (resources.configuration.orientation) {
@@ -422,9 +424,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
 
-        PluginManager.updateAllOnlinePlugins(applicationContext)
-        PluginManager.loadAllLocalPlugins(applicationContext)
-        PluginManager.loadAllOnlinePlugins(applicationContext)
+        PluginManager.updateAllOnlinePlugins(this)
+        PluginManager.loadAllLocalPlugins(this)
+        PluginManager.loadAllOnlinePlugins(this)
 
 //        ioSafe {
 //            val plugins =
