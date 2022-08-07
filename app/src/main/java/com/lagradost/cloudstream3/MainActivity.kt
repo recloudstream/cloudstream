@@ -331,6 +331,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (str.startsWith("https://cs.repo")) {
                 val realUrl = "https://" + str.substringAfter("?")
                 println("Repository url: $realUrl")
+                val activity = this
                 ioSafe {
                     val repo = RepositoryManager.parseRepository(realUrl) ?: return@ioSafe
                     RepositoryManager.addRepository(
