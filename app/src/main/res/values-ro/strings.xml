@@ -175,8 +175,6 @@
     <string name="episode_sync_settings_des">Sincronizează automat episoadele vizionate</string>
 
     <string name="restore_settings">Recuperează datele din copia de rezervă</string>
-    <string name="killswitch_settings">Descărcați cele mai recente metadate de pe GitHub</string>
-    <string name="killswitch_settings_des">Dezactivați dacă doriți să aveți acces la toți furnizorii (chiar și la cei care nu funcționează)</string>
 
     <string name="backup_settings">Copie de rezervă a datelor</string>
     <string name="restore_success">Fișier de rezervă încărcat</string>

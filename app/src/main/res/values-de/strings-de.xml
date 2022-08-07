@@ -107,8 +107,6 @@
     <string name="use_system_brightness_settings">Systemhelligkeit benutzen</string>
     <string name="use_system_brightness_settings_des">Benutze Systemhelligkeit im Player anstatt von einem Dunklem Overlay</string>
     <string name="restore_settings">Daten aus der Sicherung wiederherstellen</string>
-    <string name="killswitch_settings">Aktuelle Metadaten von Github herunterladen</string>
-    <string name="killswitch_settings_des">Für Zugang zu allen Anbietern (auch zu defekten), deaktiviere diese Einstellung</string>
     <string name="backup_settings">Daten sichern</string>
     <string name="restore_success">Sicherungsdatei geladen</string>
     <string name="restore_failed_format" formatted="true">Wiederherstellung der Daten aus der Datei %s fehlgeschlagen</string>

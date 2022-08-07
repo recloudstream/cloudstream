@@ -41,7 +41,6 @@
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
     <string name="restore_key" translatable="false">restore_key</string>
-    <string name="killswitch_key" translatable="false">killswitch_key</string>
     <string name="backup_key" translatable="false">backup_key</string>
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
@@ -238,8 +237,6 @@
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
 
     <string name="restore_settings">Restore data from backup</string>
-    <string name="killswitch_settings">Download latest metadata from github</string>
-    <string name="killswitch_settings_des">If you want access to all providers (even broken ones) turn this off</string>
 
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">Loaded backup file</string>
@@ -572,4 +569,11 @@
     <string name="crash_reporting_title">Crash reporting</string>
     <string name="preferred_media_subtext">What do you want to see</string>
     <string name="setup_done">Done</string>
+    <string name="extensions">Extensions</string>
+    <string name="add_repository">Add repository</string>
+    <string name="repository_name_hint">Repository name</string>
+    <string name="repository_url_hint">Repository url</string>
+    <string name="plugin_loaded">Plugin Loaded</string>
+    <string name="plugin_deleted">Plugin Deleted</string>
+    <string name="plugin_load_fail" formatted="true">Failed to load %s</string>
 </resources>

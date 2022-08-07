@@ -51,22 +51,22 @@ android {
     }
 
     buildTypes {
-        release {
-            debuggable false
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        prerelease {
-            applicationIdSuffix ".prerelease"
-            buildConfigField("boolean", "BETA", "true")
-            signingConfig signingConfigs.prerelease
-            versionNameSuffix '-PRE'
-            debuggable false
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
+        // release {
+        //     debuggable false
+        //     minifyEnabled false
+        //     shrinkResources false
+        //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        // }
+        // prerelease {
+        //     applicationIdSuffix ".prerelease"
+        //     buildConfigField("boolean", "BETA", "true")
+        //     signingConfig signingConfigs.prerelease
+        //     versionNameSuffix '-PRE'
+        //     debuggable false
+        //     minifyEnabled false
+        //     shrinkResources false
+        //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        // }
         debug {
             debuggable true
             applicationIdSuffix ".debug"
@@ -82,6 +82,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
         freeCompilerArgs = ['-Xjvm-default=compatibility']
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
 }
 
@@ -183,4 +187,16 @@ dependencies {
     implementation 'com.github.TeamNewPipe:NewPipeExtractor:master-SNAPSHOT'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
+}
+
+task androidSourcesJar(type: Jar) {
+    getArchiveClassifier().set('sources')
+    from android.sourceSets.main.java.srcDirs//full sources
+}
+
+task makeJar(type: Copy) {
+  from('build/intermediates/compile_app_classes_jar/debug') // after modifying here, you can export. Jar
+  into('build') // output location
+  include('classes.jar') // the classes file of the imported rack package
+  dependsOn build
 }

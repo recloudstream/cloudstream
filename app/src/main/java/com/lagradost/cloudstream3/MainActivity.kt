@@ -10,6 +10,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -39,7 +40,6 @@ import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
@@ -52,16 +52,12 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -76,18 +72,17 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import org.schabi.newpipe.extractor.NewPipe
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
+import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.RepositoryManager
+import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
+import com.lagradost.cloudstream3.utils.Coroutines.main
 
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -333,7 +328,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val str = intent.dataString
         loadCache()
         if (str != null) {
-            if (str.contains(appString)) {
+            if (str.startsWith("https://cs.repo")) {
+                val realUrl = "https://" + str.substringAfter("?")
+                println("Repository url: $realUrl")
+                ioSafe {
+                    val repo = RepositoryManager.parseRepository(realUrl) ?: return@ioSafe
+                    RepositoryManager.addRepository(
+                        RepositoryData(
+                            repo.name,
+                            realUrl
+                        )
+                    )
+                    main {
+                        showToast(
+                            this,
+                            this.getString(R.string.player_loaded_subtitles, repo.name),
+                            Toast.LENGTH_LONG
+                        )
+                    }
+                }
+            } else if (str.contains(appString)) {
                 for (api in OAuth2Apis) {
                     if (str.contains("/${api.redirectUrl}")) {
                         val activity = this
@@ -402,66 +416,22 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
-    fun test() {
-        /*thread {
-            val youtubeLink = "https://www.youtube.com/watch?v=Zxem9rqJ5S0"
-
-            val url = YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(youtubeLink)
-            println("ID:::: ${url.id}")
-            NewPipe.init(DownloaderTestImpl.getInstance())
-            val service = ServiceList.YouTube
-            val s = object : YoutubeStreamExtractor(
-                service,
-                url
-            ) {
-
-            }
-            s.fetchPage()
-            val streams = s.videoStreams
-            println("STREAMS: ${streams.map { "url = "+ it.url + " extra= " + it.height + "|" + it.isVideoOnly + "\n" }}")
-        }*/
-        /*
-        runBlocking {
-
-            val query = """
-            query {
-                searchShows(search: "spider", limit: 10) {
-                    id
-                    name
-                    originalName
-                }
-            }
-            """
-            val data =
-                mapOf(
-                    "query" to query,
-                    //"variables" to
-                    //        mapOf(
-                    //            "name" to name,
-                     //       ).toJson()
-                )
-            val txt = app.post(
-                "http://api.anime-skip.com/graphql",
-                headers = mapOf(
-                    "X-Client-ID" to "",
-                    "Content-Type" to "application/json",
-                    "Accept" to "application/json",
-                ),
-                json = data
-            )
-            println("TEXT: $txt")
-        }*/
-        /*runBlocking {
-            //https://test.api.anime-skip.com/graphiql
-            val txt = app.get(
-                "https://api.anime-skip.com/status",
-                headers = mapOf("X-Client-ID" to "")
-            )
-            println("TEXT: $txt")
-        }*/
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        app.initClient(this)
+
+        PluginManager.loadAllLocalPlugins(applicationContext)
+        PluginManager.loadAllOnlinePlugins(applicationContext)
+
+//        ioSafe {
+//            val plugins =
+//                RepositoryParser.getRepoPlugins("https://raw.githubusercontent.com/recloudstream/TestPlugin/master/repo.json")
+//                    ?: emptyList()
+//            plugins.map {
+//                println("Load plugin: ${it.name} ${it.url}")
+//                RepositoryParser.loadSiteTemp(applicationContext, it.url, it.name)
+//            }
+//        }
+
         // init accounts
         for (api in accountManagers) {
             api.init()
@@ -480,118 +450,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         SearchResultBuilder.updateCache(this)
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val downloadFromGithub = try {
-            settingsManager.getBoolean(getString(R.string.killswitch_key), true)
-        } catch (e: Exception) {
-            logError(e)
-            false
-        }
 
-        // must give benenes to get beta providers
-        val hasBenene = try {
-            val count = settingsManager.getInt(getString(R.string.benene_count), 0)
-            count > 30
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-
-        try {
-            getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
-                list.forEach { custom ->
-                    allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                        ?.let {
-                            allProviders.add(it.javaClass.newInstance().apply {
-                                name = custom.name
-                                lang = custom.lang
-                                mainUrl = custom.url.trimEnd('/')
-                                canBeOverridden = false
-                            })
-                        }
-                }
-            }
-            apis = allProviders
-            APIHolder.apiMap = null
-        } catch (e: Exception) {
-            logError(e)
-        }
-
-        // this pulls the latest data so ppl don't have to update to simply change provider url
-        if (downloadFromGithub) {
-            try {
-                runBlocking {
-                    withContext(Dispatchers.IO) {
-                        try {
-                            val cacheStr: String? = getKey(PROVIDER_STATUS_KEY)
-                            val cache: HashMap<String, ProvidersInfoJson>? =
-                                cacheStr?.let { tryParseJson(cacheStr) }
-                            if (cache != null) {
-                                // if cache is found then spin up a new request, but dont wait
-                                main {
-                                    try {
-                                        val txt = app.get(PROVIDER_STATUS_URL).text
-                                        val newCache =
-                                            tryParseJson<HashMap<String, ProvidersInfoJson>>(txt)
-                                        setKey(PROVIDER_STATUS_KEY, txt)
-                                        MainAPI.overrideData = newCache // update all new providers
-
-                                        initAll()
-                                        for (api in apis) { // update current providers
-                                            newCache?.get(api.javaClass.simpleName)
-                                                ?.let { data ->
-                                                    api.overrideWithNewData(data)
-                                                }
-                                        }
-                                    } catch (e: Exception) {
-                                        logError(e)
-                                    }
-                                }
-                                cache
-                            } else {
-                                // if it is the first time the user has used the app then wait for a request to update all providers
-                                val txt = app.get(PROVIDER_STATUS_URL).text
-                                setKey(PROVIDER_STATUS_KEY, txt)
-                                val newCache = tryParseJson<HashMap<String, ProvidersInfoJson>>(txt)
-                                newCache
-                            }?.let { providersJsonMap ->
-                                MainAPI.overrideData = providersJsonMap
-                                initAll()
-                                val acceptableProviders =
-                                    providersJsonMap.filter { it.value.status == PROVIDER_STATUS_OK || it.value.status == PROVIDER_STATUS_SLOW }
-                                        .map { it.key }.toSet()
-
-                                val restrictedApis =
-                                    if (hasBenene) providersJsonMap.filter { it.value.status == PROVIDER_STATUS_BETA_ONLY }
-                                        .map { it.key }.toSet() else emptySet()
-
-                                apis = allProviders.filter { api ->
-                                    val name = api.javaClass.simpleName
-                                    // if the provider does not exist in the json file, then it is shown by default
-                                    !providersJsonMap.containsKey(name) || acceptableProviders.contains(
-                                        name
-                                    ) || restrictedApis.contains(name)
-                                }
-                            }
-                        } catch (e: Exception) {
-                            logError(e)
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                initAll()
-                apis = allProviders
-                e.printStackTrace()
-                logError(e)
-            }
-        } else {
-            initAll()
-            apis = allProviders
-        }
-
+        initAll()
+        apis = allProviders
 
         loadThemes(this)
         updateLocale()
-        app.initClient(this)
         super.onCreate(savedInstanceState)
         try {
             if (isCastApiAvailable()) {
@@ -649,7 +513,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         loadCache()
-        test()
         updateHasTrailers()
         /*nav_view.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {

@@ -20,7 +20,6 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.nginxApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
@@ -209,12 +208,13 @@ class SettingsAccount : PreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_account, rootKey)
 
+        // TODO: fix
         val syncApis =
             listOf(
                 R.string.mal_key to malApi,
                 R.string.anilist_key to aniListApi,
                 R.string.opensubtitles_key to openSubtitlesApi,
-                R.string.nginx_key to nginxApi,
+                //R.string.nginx_key to nginxApi,
             )
 
         for ((key, api) in syncApis) {

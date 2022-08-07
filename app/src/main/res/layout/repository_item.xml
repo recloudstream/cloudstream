@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/main_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            tools:text="Test repository" />
+
+        <TextView
+            android:id="@+id/sub_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/grayTextColor"
+            android:textSize="12sp"
+            tools:text="https://github.com/..." />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/action_button"
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        tools:src="@drawable/ic_baseline_add_24"
+        android:layout_height="wrap_content">
+
+    </ImageView>
+
+
+</LinearLayout>

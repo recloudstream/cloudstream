@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -137,6 +138,7 @@ class SettingsFragment : Fragment() {
             Pair(settings_ui, R.id.action_navigation_settings_to_navigation_settings_ui),
             Pair(settings_lang, R.id.action_navigation_settings_to_navigation_settings_lang),
             Pair(settings_updates, R.id.action_navigation_settings_to_navigation_settings_updates),
+            Pair(settings_extensions, R.id.action_navigation_settings_to_navigation_settings_extensions),
         ).forEach { (view, navigationId) ->
             view?.apply {
                 setOnClickListener {

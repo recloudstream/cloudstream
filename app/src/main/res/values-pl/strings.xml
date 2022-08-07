@@ -152,8 +152,6 @@
     <string name="episode_sync_settings">Aktualizuj postęp oglądania</string>
     <string name="episode_sync_settings_des">Automatycznie synchronizuj postęp aktualnego odcinka</string>
     <string name="restore_settings">Przywracanie danych z kopii zapasowej</string>
-    <string name="killswitch_settings">Pobierz najnowsze metadane z Githuba</string>
-    <string name="killswitch_settings_des">Jeśli chcesz mieć dostęp do wszystkich dostawców (nawet tych uszkodzonych), wyłącz tę opcję</string>
 
     <string name="backup_settings">Kopia zapasowa danych</string>
     <string name="restore_success">Wczytano plik kopii zapasowej</string>

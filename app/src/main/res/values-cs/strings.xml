@@ -39,7 +39,6 @@
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
     <string name="restore_key" translatable="false">restore_key</string>
-    <string name="killswitch_key" translatable="false">killswitch_key</string>
     <string name="backup_key" translatable="false">backup_key</string>
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
@@ -227,8 +226,6 @@
     <string name="episode_sync_settings_des">Automaticky synchronizovat postup sledování současné epizody</string>
 
     <string name="restore_settings">Obnovit data ze zálohy</string>
-    <string name="killswitch_settings">Stáhnout nejnovější metadata z GitHubu</string>
-    <string name="killswitch_settings_des">Pokud chcete přístup ke všem poskytovatelům (i těm rozbitým), vypněte tuto možnost</string>
 
     <string name="backup_settings">Zálohovat data</string>
     <string name="restore_success">Načten soubor zálohy</string>
