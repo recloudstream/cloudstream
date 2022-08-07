@@ -153,7 +153,7 @@ class DownloadFragment : Fragment() {
                 },
                 { downloadClickEvent ->
                     if (downloadClickEvent.data !is VideoDownloadHelper.DownloadEpisodeCached) return@DownloadHeaderAdapter
-                    handleDownloadClick(activity, downloadClickEvent.data.name, downloadClickEvent)
+                    handleDownloadClick(activity, downloadClickEvent)
                     if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
                         context?.let { ctx ->
                             downloadsViewModel.updateList(ctx)

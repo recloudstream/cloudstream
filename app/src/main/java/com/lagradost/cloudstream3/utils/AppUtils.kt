@@ -44,6 +44,9 @@ import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
 import com.lagradost.cloudstream3.utils.JsUnpacker.Companion.load
@@ -187,21 +190,21 @@ object AppUtils {
     @WorkerThread
     fun Context.addProgramsToContinueWatching(data: List<DataStoreHelper.ResumeWatchingResult>) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-
+        val context = this
         ioSafe {
             data.forEach { episodeInfo ->
                 try {
-                    val (program, id) = getWatchNextProgramByVideoId(episodeInfo.url, this)
-                    val nextProgram = buildWatchNextProgramUri(this, episodeInfo)
+                    val (program, id) = getWatchNextProgramByVideoId(episodeInfo.url, context)
+                    val nextProgram = buildWatchNextProgramUri(context, episodeInfo)
 
                     // If the program is already in the Watch Next row, update it
                     if (program != null && id != null) {
-                        PreviewChannelHelper(this).updateWatchNextProgram(
+                        PreviewChannelHelper(context).updateWatchNextProgram(
                             nextProgram,
                             id,
                         )
                     } else {
-                        PreviewChannelHelper(this)
+                        PreviewChannelHelper(context)
                             .publishWatchNextProgram(nextProgram)
                     }
                 } catch (e: Exception) {
@@ -313,6 +316,14 @@ object AppUtils {
 
     //private val viewModel: ResultViewModel by activityViewModels()
 
+    private fun getResultsId(context: Context) : Int {
+        return if(context.isTrueTvSettings()) {
+            R.id.global_to_navigation_results_tv
+        } else {
+            R.id.global_to_navigation_results_phone
+        }
+    }
+
     fun AppCompatActivity.loadResult(
         url: String,
         apiName: String,
@@ -322,7 +333,7 @@ object AppUtils {
         this.runOnUiThread {
             // viewModelStore.clear()
             this.navigate(
-                R.id.global_to_navigation_results,
+                getResultsId(this.applicationContext ?: return@runOnUiThread),
                 ResultFragment.newInstance(url, apiName, startAction, startValue)
             )
         }
@@ -336,7 +347,7 @@ object AppUtils {
         this?.runOnUiThread {
             // viewModelStore.clear()
             this.navigate(
-                R.id.global_to_navigation_results,
+                getResultsId(this),
                 ResultFragment.newInstance(card, startAction, startValue)
             )
         }

@@ -109,7 +109,7 @@
     <string name="result_share">Share</string>
     <string name="result_open_in_browser">Open In Browser</string>
     <string name="skip_loading">Skip Loading</string>
-    <string name="loading_chromecast">Loading…</string>
+    <string name="loading">Loading…</string>
 
     <string name="type_watching">Watching</string>
     <string name="type_on_hold">On-Hold</string>
@@ -283,9 +283,12 @@
     </string>
 
     <string name="season">Season</string>
+    <string name="season_format">%s %d</string>
     <string name="no_season">No Season</string>
     <string name="episode">Episode</string>
     <string name="episodes">Episodes</string>
+    <string name="episodes_range">%d-%d</string>
+    <string name="episode_format" formatted="true">%d %s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">No Episodes found</string>

@@ -52,7 +52,7 @@
     <string name="result_share">Condividi</string>
     <string name="result_open_in_browser">Apri nel browser</string>
     <string name="skip_loading">Salta caricamento</string>
-    <string name="loading_chromecast">Caricamento…</string>
+    <string name="loading">Caricamento…</string>
 
     <string name="type_watching">Guardando</string>
     <string name="type_on_hold">In attesa</string>

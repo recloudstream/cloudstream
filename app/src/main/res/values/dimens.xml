@@ -3,6 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="rounded_image_radius">10dp</dimen>
+    <dimen name="rounded_button_radius">4dp</dimen>
+
     <dimen name="navbar_height">0dp</dimen>
     <dimen name="card_corner_radius">2dp</dimen>
     <dimen name="result_padding">15dp</dimen>

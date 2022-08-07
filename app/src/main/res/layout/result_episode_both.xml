@@ -4,5 +4,5 @@
         android:layout_height="wrap_content">
 
     <include android:visibility="gone" layout="@layout/result_episode" />
-    <include android:visibility="gone" layout="@layout/result_episode_large" />
+    <include android:visibility="visible" layout="@layout/result_episode_large" />
 </FrameLayout>

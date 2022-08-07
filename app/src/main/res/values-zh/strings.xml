@@ -38,7 +38,7 @@
     <string name="result_share">分享</string>
     <string name="result_open_in_browser">在浏览器中打开</string>
     <string name="skip_loading">跳过加载</string>
-    <string name="loading_chromecast">正在加载…</string>
+    <string name="loading">正在加载…</string>
 
     <string name="type_watching">正在观看</string>
     <string name="type_on_hold">暂时搁置</string>

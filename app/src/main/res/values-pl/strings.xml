@@ -31,7 +31,7 @@
     <string name="result_share">Udostępnij</string>
     <string name="result_open_in_browser">Otwórz w przeglądarce</string>
     <string name="skip_loading">Pomiń ładowanie</string>
-    <string name="loading_chromecast">Ładowanie…</string>
+    <string name="loading">Ładowanie…</string>
 
     <string name="type_watching">W trakcie</string>
     <string name="type_on_hold">Zawieszone</string>

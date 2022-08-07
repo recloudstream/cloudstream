@@ -31,6 +31,8 @@ class APIRepository(val api: MainAPI) {
     val mainUrl = api.mainUrl
     val mainPage = api.mainPage
     val hasQuickSearch = api.hasQuickSearch
+    val vpnStatus = api.vpnStatus
+    val providerType = api.providerType
 
     suspend fun load(url: String): Resource<LoadResponse> {
         return safeApiCall {

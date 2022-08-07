@@ -52,7 +52,7 @@
     <string name="result_share">Distribuie</string>
     <string name="result_open_in_browser">Deschide în browser</string>
     <string name="skip_loading">Săriți încărcarea</string>
-    <string name="loading_chromecast">Se încarcă...</string>
+    <string name="loading">Se încarcă...</string>
 
     <string name="type_watching">În curs de vizualizare</string>
     <string name="type_on_hold">În așteptare</string>

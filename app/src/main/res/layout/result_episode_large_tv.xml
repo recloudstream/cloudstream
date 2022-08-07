@@ -32,8 +32,6 @@
                     android:foreground="@drawable/outline_drawable">
 
                 <ImageView
-                        android:nextFocusRight="@id/result_episode_download"
-
                         android:id="@+id/episode_poster"
                         tools:src="@drawable/example_poster"
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
@@ -99,43 +97,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
             </LinearLayout>
-
-            <FrameLayout
-                    android:layout_marginStart="-50dp"
-                    android:layout_gravity="end"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-
-                <androidx.core.widget.ContentLoadingProgressBar
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:id="@+id/result_episode_progress_downloaded"
-                        android:indeterminate="false"
-                        android:progressDrawable="@drawable/circular_progress_bar"
-                        android:background="@drawable/circle_shape"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:max="100"
-                        android:layout_margin="5dp"
-                        android:layout_gravity="end|center_vertical"
-                        android:progress="0"
-                        android:visibility="visible" />
-
-                <ImageView
-                        android:nextFocusLeft="@id/episode_poster"
-                        android:id="@+id/result_episode_download"
-
-                        android:visibility="visible"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:padding="10dp"
-                        android:layout_width="50dp"
-                        android:background="?selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_baseline_play_arrow_24"
-                        android:contentDescription="@string/download"
-                        app:tint="?attr/white" />
-            </FrameLayout>
         </LinearLayout>
 
         <TextView

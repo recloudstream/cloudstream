@@ -84,7 +84,7 @@ class DownloadChildFragment : Fragment() {
             DownloadChildAdapter(
                 ArrayList(),
             ) { click ->
-                handleDownloadClick(activity, name, click)
+                handleDownloadClick(activity, click)
             }
 
         downloadDeleteEventListener = { id: Int ->

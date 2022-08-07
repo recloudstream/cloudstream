@@ -1164,6 +1164,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         openOnlineSubPicker(view.context, null) {}
                     }
                 }
+                PlayerEventType.SkipOp -> {
+                    skipOp()
+                }
             }
         }
 

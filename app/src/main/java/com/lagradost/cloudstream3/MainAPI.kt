@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import okhttp3.Interceptor
 import java.text.SimpleDateFormat
@@ -80,7 +81,7 @@ object APIHolder {
         return null
     }
 
-    fun getLoadResponseIdFromUrl(url: String, apiName: String): Int {
+    private fun getLoadResponseIdFromUrl(url: String, apiName: String): Int {
         return url.replace(getApiFromName(apiName).mainUrl, "").replace("/", "").hashCode()
     }
 
@@ -527,6 +528,7 @@ enum class ShowStatus {
 }
 
 enum class DubStatus(val id: Int) {
+    None(-1),
     Dubbed(1),
     Subbed(0),
 }
@@ -861,6 +863,10 @@ interface LoadResponse {
         private val aniListIdPrefix = aniListApi.idPrefix
         var isTrailersEnabled = true
 
+        fun LoadResponse.isMovie(): Boolean {
+            return this.type.isMovieType()
+        }
+
         @JvmName("addActorNames")
         fun LoadResponse.addActors(actors: List<String>?) {
             this.actors = actors?.map { ActorData(Actor(it)) }
@@ -902,25 +908,71 @@ interface LoadResponse {
         }
 
         /**better to call addTrailer with mutible trailers directly instead of calling this multiple times*/
-        suspend fun LoadResponse.addTrailer(trailerUrl: String?, referer: String? = null) {
-            if (!isTrailersEnabled || trailerUrl == null) return
+        suspend fun LoadResponse.addTrailer(
+            trailerUrl: String?,
+            referer: String? = null,
+            addRaw: Boolean = false
+        ) {
+            if (!isTrailersEnabled || trailerUrl.isNullOrBlank()) return
             val links = arrayListOf<ExtractorLink>()
             val subs = arrayListOf<SubtitleFile>()
-            loadExtractor(trailerUrl, referer, { subs.add(it) }, { links.add(it) })
-            this.trailers.add(TrailerData(links, subs))
+            if (!loadExtractor(
+                    trailerUrl,
+                    referer,
+                    { subs.add(it) },
+                    { links.add(it) }) && addRaw
+            ) {
+                this.trailers.add(
+                    TrailerData(
+                        listOf(
+                            ExtractorLink(
+                                "",
+                                "Trailer",
+                                trailerUrl,
+                                referer ?: "",
+                                Qualities.Unknown.value,
+                                trailerUrl.contains(".m3u8")
+                            )
+                        ), listOf()
+                    )
+                )
+            } else {
+                this.trailers.add(TrailerData(links, subs))
+            }
         }
 
         fun LoadResponse.addTrailer(newTrailers: List<ExtractorLink>) {
             trailers.addAll(newTrailers.map { TrailerData(listOf(it)) })
         }
 
-        suspend fun LoadResponse.addTrailer(trailerUrls: List<String>?, referer: String? = null) {
+        suspend fun LoadResponse.addTrailer(
+            trailerUrls: List<String>?,
+            referer: String? = null,
+            addRaw: Boolean = false
+        ) {
             if (!isTrailersEnabled || trailerUrls == null) return
-            val trailers = trailerUrls.apmap { trailerUrl ->
+            val trailers = trailerUrls.filter { it.isNotBlank() }.apmap { trailerUrl ->
                 val links = arrayListOf<ExtractorLink>()
                 val subs = arrayListOf<SubtitleFile>()
-                loadExtractor(trailerUrl, referer, { subs.add(it) }, { links.add(it) })
-                links to subs
+                if (!loadExtractor(
+                        trailerUrl,
+                        referer,
+                        { subs.add(it) },
+                        { links.add(it) }) && addRaw
+                ) {
+                    arrayListOf(
+                        ExtractorLink(
+                            "",
+                            "Trailer",
+                            trailerUrl,
+                            referer ?: "",
+                            Qualities.Unknown.value,
+                            trailerUrl.contains(".m3u8")
+                        )
+                    ) to arrayListOf()
+                } else {
+                    links to subs
+                }
             }.map { (links, subs) -> TrailerData(links, subs) }
             this.trailers.addAll(trailers)
         }
@@ -1001,6 +1053,7 @@ data class NextAiring(
 data class SeasonData(
     val season: Int,
     val name: String? = null,
+    val displaySeason: Int? = null, // will use season if null
 )
 
 interface EpisodeResponse {

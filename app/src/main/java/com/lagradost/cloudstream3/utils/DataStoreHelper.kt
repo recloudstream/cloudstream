@@ -18,6 +18,7 @@ const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
 const val RESULT_RESUME_WATCHING = "result_resume_watching_2" // changed due to id changes
 const val RESULT_RESUME_WATCHING_OLD = "result_resume_watching"
 const val RESULT_RESUME_WATCHING_HAS_MIGRATED = "result_resume_watching_migrated"
+const val RESULT_EPISODE = "result_episode"
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 
@@ -163,7 +164,7 @@ object DataStoreHelper {
         )
     }
 
-    fun getLastWatchedOld(id: Int?): VideoDownloadHelper.ResumeWatching? {
+    private fun getLastWatchedOld(id: Int?): VideoDownloadHelper.ResumeWatching? {
         if (id == null) return null
         return getKey(
             "$currentAccount/$RESULT_RESUME_WATCHING_OLD",
@@ -192,8 +193,9 @@ object DataStoreHelper {
         return getKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), null)
     }
 
-    fun getDub(id: Int): DubStatus {
-        return DubStatus.values()[getKey("$currentAccount/$RESULT_DUB", id.toString()) ?: 0]
+    fun getDub(id: Int): DubStatus? {
+        return DubStatus.values()
+            .getOrNull(getKey("$currentAccount/$RESULT_DUB", id.toString(), -1) ?: -1)
     }
 
     fun setDub(id: Int, status: DubStatus) {
@@ -221,12 +223,20 @@ object DataStoreHelper {
         )
     }
 
-    fun getResultSeason(id: Int): Int {
-        return getKey("$currentAccount/$RESULT_SEASON", id.toString()) ?: -1
+    fun getResultSeason(id: Int): Int? {
+        return getKey("$currentAccount/$RESULT_SEASON", id.toString(), null)
     }
 
     fun setResultSeason(id: Int, value: Int?) {
         setKey("$currentAccount/$RESULT_SEASON", id.toString(), value)
+    }
+
+    fun getResultEpisode(id: Int): Int? {
+        return getKey("$currentAccount/$RESULT_EPISODE", id.toString(), null)
+    }
+
+    fun setResultEpisode(id: Int, value: Int?) {
+        setKey("$currentAccount/$RESULT_EPISODE", id.toString(), value)
     }
 
     fun addSync(id: Int, idPrefix: String, url: String) {

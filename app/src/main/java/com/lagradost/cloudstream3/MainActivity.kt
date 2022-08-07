@@ -151,7 +151,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         // Fucks up anime info layout since that has its own layout
         cast_mini_controller_holder?.isVisible =
-            !listOf(R.id.navigation_results, R.id.navigation_player).contains(destination.id)
+            !listOf(
+                R.id.navigation_results_phone,
+                R.id.navigation_results_tv,
+                R.id.navigation_player
+            ).contains(destination.id)
 
         val isNavVisible = listOf(
             R.id.navigation_home,
@@ -327,6 +331,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (str.startsWith("https://cs.repo")) {
                 val realUrl = "https://" + str.substringAfter("?")
                 println("Repository url: $realUrl")
+                val activity = this
                 ioSafe {
                     val repo = RepositoryManager.parseRepository(realUrl) ?: return@ioSafe
                     RepositoryManager.addRepository(
@@ -337,8 +342,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     )
                     main {
                         showToast(
-                            this,
-                            this.getString(R.string.player_loaded_subtitles, repo.name),
+                            activity,
+                            getString(R.string.player_loaded_subtitles, repo.name),
                             Toast.LENGTH_LONG
                         )
                     }
@@ -346,6 +351,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             } else if (str.contains(appString)) {
                 for (api in OAuth2Apis) {
                     if (str.contains("/${api.redirectUrl}")) {
+                        val activity = this
                         ioSafe {
                             Log.i(TAG, "handleAppIntent $str")
                             val isSuccessful = api.handleRedirect(str)
@@ -356,10 +362,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 Log.i(TAG, "failed to authenticate ${api.name}")
                             }
 
-                            this.runOnUiThread {
+                            activity.runOnUiThread {
                                 try {
                                     showToast(
-                                        this,
+                                        activity,
                                         getString(if (isSuccessful) R.string.authenticated_user else R.string.authenticated_user_fail).format(
                                             api.name
                                         )
