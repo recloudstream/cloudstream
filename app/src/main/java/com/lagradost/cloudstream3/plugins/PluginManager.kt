@@ -6,13 +6,17 @@ import com.google.gson.Gson
 import android.content.res.AssetManager
 import android.content.res.Resources
 import android.os.Environment
+import android.widget.Toast
+import android.app.Activity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.R
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -89,13 +93,6 @@ object PluginManager {
         val name = file.name
         if (file.extension == "zip" || file.extension == "cs3") {
             loadPlugin(context, file, PluginData(name, null, false, file.absolutePath))
-        } else if (name != "oat") { // Some roms create this
-            if (file.isDirectory) {
-                // Utils.showToast(String.format("Found directory %s in your plugins folder. DO NOT EXTRACT PLUGIN ZIPS!", name), true);
-            } else if (name == "classes.dex" || name.endsWith(".json")) {
-                // Utils.showToast(String.format("Found extracted plugin file %s in your plugins folder. DO NOT EXTRACT PLUGIN ZIPS!", name), true);
-            }
-            // rmrf(f);
         }
     }
 
@@ -126,8 +123,6 @@ object PluginManager {
         }
 
         loadedLocalPlugins = true
-        //if (!PluginManager.failedToLoad.isEmpty())
-        //Utils.showToast("Some plugins failed to load.");
     }
 
     /**
@@ -160,10 +155,10 @@ object PluginManager {
                 loader.loadClass(manifest.pluginClassName) as Class<out Plugin?>
             val pluginInstance: Plugin =
                 pluginClass.newInstance() as Plugin
-//            if (plugins.containsKey(name)) {
-                //logger.error("Plugin with name " + name + " already exists", null);
-//                return false
-//            }
+            if (plugins.containsKey(name)) {
+                println("Plugin with name $name already exists")
+                return false
+            }
             pluginInstance.__filename = fileName
             if (pluginInstance.needsResources) {
                 // based on https://stackoverflow.com/questions/7483568/dynamic-resource-loading-from-other-apk
@@ -184,7 +179,11 @@ object PluginManager {
         } catch (e: Throwable) {
             failedToLoad[file] = e
             e.printStackTrace()
-            //logger.error("Failed to load plugin " + fileName + ":\n", e);
+            showToast(
+                context as Activity,
+                context.getString(R.string.plugin_load_fail).format(fileName),
+                Toast.LENGTH_LONG
+            )
             false
         }
     }
