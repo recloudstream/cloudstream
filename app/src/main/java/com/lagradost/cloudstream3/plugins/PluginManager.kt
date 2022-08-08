@@ -249,17 +249,25 @@ object PluginManager {
         }
     }
 
+    /**
+     * Spits out a unique and safe filename based on name.
+     * Used for repo folders (using repo url) and plugin file names (using internalName)
+     * */
+    fun getPluginSanitizedFileName(name: String): String {
+        return sanitizeFilename(
+            name,
+            true
+        ) + "." + name.hashCode()
+    }
+
     suspend fun downloadAndLoadPlugin(
         activity: Activity,
         pluginUrl: String,
         internalName: String,
         repositoryUrl: String
     ): Boolean {
-        val folderName = (sanitizeFilename(
-            repositoryUrl,
-            true
-        ) + "." + repositoryUrl.hashCode()) // Guaranteed unique
-        val fileName = (sanitizeFilename(internalName, true) + "." + internalName.hashCode())
+        val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
+        val fileName = getPluginSanitizedFileName(internalName)
         Log.i(TAG, "Downloading plugin: $pluginUrl to $folderName/$fileName")
         // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
         val file = downloadPluginToFile(activity, pluginUrl, fileName, folderName)

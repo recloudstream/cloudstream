@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.settings.extensions
 
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,13 +18,12 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import kotlinx.android.synthetic.main.add_repo_input.*
 import kotlinx.android.synthetic.main.add_repo_input.apply_btt
 import kotlinx.android.synthetic.main.add_repo_input.cancel_btt
 import kotlinx.android.synthetic.main.fragment_extensions.*
-import kotlinx.android.synthetic.main.stream_input.*
 
 class ExtensionsFragment : Fragment() {
     override fun onCreateView(
@@ -50,9 +50,29 @@ class ExtensionsFragment : Fragment() {
                     putString(PLUGINS_BUNDLE_URL, it.url)
                 })
         }, { repo ->
-            ioSafe {
-                RepositoryManager.removeRepository(repo)
-                extensionViewModel.loadRepositories()
+            // Prompt user before deleting repo
+            main {
+                val builder = AlertDialog.Builder(context ?: view.context)
+                val dialogClickListener =
+                    DialogInterface.OnClickListener { _, which ->
+                        when (which) {
+                            DialogInterface.BUTTON_POSITIVE -> {
+                                ioSafe {
+                                    RepositoryManager.removeRepository(view.context, repo)
+                                    extensionViewModel.loadRepositories()
+                                }
+                            }
+                            DialogInterface.BUTTON_NEGATIVE -> {}
+                        }
+                    }
+
+                builder.setTitle(R.string.delete_repository)
+                    .setMessage(
+                        context?.getString(R.string.delete_repository_plugins)
+                    )
+                    .setPositiveButton(R.string.delete, dialogClickListener)
+                    .setNegativeButton(R.string.cancel, dialogClickListener)
+                    .show()
             }
         })
 

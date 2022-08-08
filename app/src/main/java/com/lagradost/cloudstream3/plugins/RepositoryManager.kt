@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.apmapIndexed
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
+import com.lagradost.cloudstream3.plugins.PluginManager.getPluginSanitizedFileName
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
@@ -89,7 +90,12 @@ object RepositoryManager {
         }.flatten()
     }
 
-    suspend fun downloadPluginToFile(context: Context, pluginUrl: String, fileName: String, folder: String): File? {
+    suspend fun downloadPluginToFile(
+        context: Context,
+        pluginUrl: String,
+        fileName: String,
+        folder: String
+    ): File? {
         return suspendSafeApiCall {
             val extensionsDir = File(context.filesDir, ONLINE_PLUGINS_FOLDER)
             if (!extensionsDir.exists())
@@ -121,13 +127,23 @@ object RepositoryManager {
         }
     }
 
-    suspend fun removeRepository(repository: RepositoryData) {
+    /**
+     * Also deletes downloaded repository plugins
+     * */
+    suspend fun removeRepository(context: Context, repository: RepositoryData) {
+        val extensionsDir = File(context.filesDir, ONLINE_PLUGINS_FOLDER)
+
         repoLock.withLock {
             val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
             // No duplicates
             val newRepos = currentRepos.filter { it.url != repository.url }
             setKey(REPOSITORIES_KEY, newRepos)
         }
+
+        File(
+            extensionsDir,
+            getPluginSanitizedFileName(repository.url)
+        ).delete()
     }
 
     private fun write(stream: InputStream, output: OutputStream) {

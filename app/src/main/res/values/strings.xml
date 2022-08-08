@@ -581,6 +581,8 @@
     <string name="batch_download_finish_format" formatted="true">Downloaded %d %s successfully</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">All %s already downloaded</string>
     <string name="batch_download">Batch download</string>
-    <string name="plugin_singular" formatted="true">plugin</string>
-    <string name="plugin" formatted="true">plugins</string>
+    <string name="plugin_singular">plugin</string>
+    <string name="plugin">plugins</string>
+    <string name="delete_repository_plugins">This will also delete all repository plugins</string>
+    <string name="delete_repository">Delete repository</string>
 </resources>
