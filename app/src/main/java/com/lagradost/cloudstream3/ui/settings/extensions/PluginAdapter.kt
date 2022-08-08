@@ -6,13 +6,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.plugins.PluginData
-import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.plugins.SitePlugin
-import com.lagradost.cloudstream3.ui.result.ActorAdaptor
-import com.lagradost.cloudstream3.ui.result.DiffCallback
-import com.lagradost.cloudstream3.ui.result.UiText
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 
@@ -70,6 +65,9 @@ class PluginAdapter(
             data: PluginViewData,
         ) {
             val metadata = data.plugin.second
+            val alpha = if (metadata.status == PROVIDER_STATUS_DOWN) 0.6f else 1f
+            itemView.main_text?.alpha = alpha
+            itemView.sub_text?.alpha = alpha
 
             val drawableInt = if (data.isDownloaded)
                 R.drawable.ic_baseline_delete_outline_24

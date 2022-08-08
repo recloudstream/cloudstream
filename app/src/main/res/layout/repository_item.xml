@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/repository_item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -28,24 +29,21 @@
             tools:text="https://github.com/..." />
     </LinearLayout>
 
-
     <TextView
-        android:visibility="gone"
-        android:layout_gravity="center"
-        android:gravity="center"
         android:id="@+id/nsfw_marker"
         style="@style/SearchBox"
-        android:background="@drawable/sub_bg_color"
-        android:text="@string/is_adult" />
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/is_adult"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <ImageView
-        android:layout_marginStart="10dp"
         android:id="@+id/action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        tools:src="@drawable/ic_baseline_add_24">
-    </ImageView>
-
+        android:layout_marginStart="10dp"
+        tools:src="@drawable/ic_baseline_add_24" />
 
 </LinearLayout>

@@ -16,7 +16,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
@@ -115,40 +115,66 @@ object PluginManager {
         }
     }
 
+
+    // Helper class for updateAllOnlinePluginsAndLoadThem
+    private data class OnlinePluginData(
+        val savedData: PluginData,
+        val onlineData: Pair<String, SitePlugin>,
+    ) {
+        val isOutdated =
+            onlineData.second.apiVersion != savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
+        val isDisabled = onlineData.second.status == PROVIDER_STATUS_DOWN
+    }
+
     /**
      * Needs to be run before other plugin loading because plugin loading can not be overwritten
+     * 1. Gets all online data about the downloaded plugins
+     * 2. If disabled do nothing
+     * 3. If outdated download and load the plugin
+     * 4. Else load the plugin normally
      **/
-    fun updateAllOnlinePlugins(activity: Activity) {
+    fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
         val urls = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
 
         val onlinePlugins = urls.toList().apmap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
-        }.flatten()
+        }.flatten().distinctBy { it.second.url }
 
         // Iterates over all offline plugins, compares to remote repo and returns the plugins which are outdated
         val outdatedPlugins = getPluginsOnline().map { savedData ->
             onlinePlugins.filter { onlineData -> savedData.internalName == onlineData.second.internalName }
-                .mapNotNull { onlineData ->
-                    val isOutdated =
-                        onlineData.second.apiVersion != savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
-                    if (isOutdated) savedData to onlineData else null
+                .map { onlineData ->
+                    OnlinePluginData(savedData, onlineData)
                 }
-        }.flatten()
+        }.flatten().distinctBy { it.onlineData.second.url }
 
-        Log.i(TAG, "Outdated plugins: $outdatedPlugins")
+        Log.i(TAG, "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}")
 
         outdatedPlugins.apmap {
-            downloadAndLoadPlugin(
-                activity,
-                it.second.second.url,
-                it.first.internalName,
-                it.second.first
-            )
+            if (it.isDisabled) {
+                return@apmap
+            } else if (it.isOutdated) {
+                downloadAndLoadPlugin(
+                    activity,
+                    it.onlineData.second.url,
+                    it.savedData.internalName,
+                    it.onlineData.first
+                )
+            } else {
+                loadPlugin(
+                    activity,
+                    File(it.savedData.filePath),
+                    it.savedData
+                )
+            }
         }
 
         Log.i(TAG, "Plugin update done!")
     }
 
+    /**
+     * Use updateAllOnlinePluginsAndLoadThem
+     * */
     fun loadAllOnlinePlugins(activity: Activity) {
         File(activity.filesDir, ONLINE_PLUGINS_FOLDER).listFiles()?.sortedBy { it.name }
             ?.apmap { file ->
