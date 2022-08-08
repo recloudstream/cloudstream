@@ -98,13 +98,16 @@ class ExtensionsFragment : Fragment() {
             dialog.apply_btt?.setOnClickListener secondListener@{
                 val name = dialog.repo_name_input?.text?.toString()
                 val url = dialog.repo_url_input?.text?.toString()
-                if (url.isNullOrBlank() || name.isNullOrBlank()) {
+                if (url.isNullOrBlank()) {
                     showToast(activity, R.string.error_invalid_data, Toast.LENGTH_SHORT)
                     return@secondListener
                 }
 
                 ioSafe {
-                    val newRepo = RepositoryData(name, url)
+                    val fixedName = if (!name.isNullOrBlank()) name
+                    else RepositoryManager.parseRepository(url)?.name ?: "No name"
+
+                    val newRepo = RepositoryData(fixedName, url)
                     RepositoryManager.addRepository(newRepo)
                     extensionViewModel.loadRepositories()
                 }
