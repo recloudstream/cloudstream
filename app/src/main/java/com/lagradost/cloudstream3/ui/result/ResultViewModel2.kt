@@ -43,6 +43,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
@@ -798,18 +799,21 @@ class ResultViewModel2 : ViewModel() {
         val response = currentResponse ?: return
         val eps = currentEpisodes[currentIndex ?: return] ?: return
 
-        activity.getCastSession()?.startCast(
-            response.apiName,
-            response.isMovie(),
-            response.name,
-            response.posterUrl,
-            result.index,
-            eps,
-            links,
-            subs,
-            startTime = result.getRealPosition(),
-            startIndex = startIndex
-        )
+        // Main needed because getCastSession needs to be on main thread
+        main {
+            activity.getCastSession()?.startCast(
+                response.apiName,
+                response.isMovie(),
+                response.name,
+                response.posterUrl,
+                result.index,
+                eps,
+                links,
+                subs,
+                startTime = result.getRealPosition(),
+                startIndex = startIndex
+            )
+        }
     }
 
     fun cancelLinks() {
