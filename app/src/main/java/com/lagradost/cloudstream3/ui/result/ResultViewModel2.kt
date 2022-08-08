@@ -797,18 +797,21 @@ class ResultViewModel2 : ViewModel() {
         val response = currentResponse ?: return
         val eps = currentEpisodes[currentIndex ?: return] ?: return
 
-        activity.getCastSession()?.startCast(
-            response.apiName,
-            response.isMovie(),
-            response.name,
-            response.posterUrl,
-            result.index,
-            eps,
-            links,
-            subs,
-            startTime = result.getRealPosition(),
-            startIndex = startIndex
-        )
+        // Main needed because getCastSession needs to be on main thread
+        main {
+            activity.getCastSession()?.startCast(
+                response.apiName,
+                response.isMovie(),
+                response.name,
+                response.posterUrl,
+                result.index,
+                eps,
+                links,
+                subs,
+                startTime = result.getRealPosition(),
+                startIndex = startIndex
+            )
+        }
     }
 
     fun cancelLinks() {
