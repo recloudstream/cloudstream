@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.lagradost.cloudstream3.mvvm.debugWarning
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
@@ -43,7 +42,6 @@ object APIHolder {
 
     val allProviders: MutableList<MainAPI> = arrayListOf()
 
-
     fun initAll() {
         for (api in allProviders) {
             api.init()
@@ -58,8 +56,18 @@ object APIHolder {
     var apis: List<MainAPI> = arrayListOf()
     var apiMap: Map<String, Int>? = null
 
-    private fun initMap() {
-        if (apiMap == null)
+    fun addPluginMapping(plugin: MainAPI) {
+        apis = apis + plugin
+        initMap(true)
+    }
+
+    fun removePluginMapping(plugin: MainAPI) {
+        apis = apis.filter { it != plugin }
+        initMap(true)
+    }
+
+    private fun initMap(forcedUpdate: Boolean = false) {
+        if (apiMap == null || forcedUpdate)
             apiMap = apis.mapIndexed { index, api -> api.name to index }.toMap()
     }
 
@@ -70,11 +78,8 @@ object APIHolder {
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
         initMap()
-        // Fuck it load from allProviders since they're dynamically loaded
-        // This is required right now because apiMap might be outdated
-        // TODO FIX when we switch to LoadPlugin()
-        debugWarning { "FIX LoadPlugin! getApiFromNameNull sucks right now 💀" }
-        return apiMap?.get(apiName)?.let { apis.getOrNull(it) } ?: allProviders.firstOrNull { it.name == apiName }
+        return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
+            ?: allProviders.firstOrNull { it.name == apiName }
     }
 
     fun getApiFromUrlNull(url: String?): MainAPI? {

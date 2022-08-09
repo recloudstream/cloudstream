@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.plugins.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
@@ -80,11 +81,14 @@ class SetupFragmentLanguage : Fragment() {
                 next_btt?.setOnClickListener {
                     // If no plugins go to plugins page
                     val nextDestination = if (PluginManager.getPluginsOnline()
-                            .isEmpty()
+                            .isEmpty() && PREBUILT_REPOSITORIES.isNotEmpty()
                     ) R.id.action_navigation_global_to_navigation_setup_extensions
                     else R.id.action_navigation_setup_language_to_navigation_setup_provider_languages
 
-                    findNavController().navigate(nextDestination, SetupFragmentExtensions.newInstance(true))
+                    findNavController().navigate(
+                        nextDestination,
+                        SetupFragmentExtensions.newInstance(true)
+                    )
                 }
 
                 skip_btt?.setOnClickListener {

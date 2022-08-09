@@ -41,6 +41,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.plugins.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
@@ -673,6 +674,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 // If no plugins bring up extensions screen
             } else if (PluginManager.getPluginsOnline().isEmpty()
                 && PluginManager.getPluginsLocal().isEmpty()
+                && PREBUILT_REPOSITORIES.isNotEmpty()
             ) {
                 navController.navigate(R.id.navigation_setup_extensions)
             }

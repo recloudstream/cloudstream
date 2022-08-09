@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PREBUILT_REPOSITORIES
-import com.lagradost.cloudstream3.ui.settings.AccountClickCallback
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 class RepoAdapter(
