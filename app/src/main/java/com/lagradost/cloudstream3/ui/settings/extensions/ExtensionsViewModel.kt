@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.plugins.PREBUILT_REPOSITORIES
 
 data class RepositoryData(
     @JsonProperty("name") val name: String,
@@ -19,7 +20,7 @@ class ExtensionsViewModel : ViewModel() {
 
     fun loadRepositories() {
         // Crashes weirdly with List<RepositoryData>
-        val urls = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()) + PREBUILT_REPOSITORIES
         _repositories.postValue(urls)
     }
 }
