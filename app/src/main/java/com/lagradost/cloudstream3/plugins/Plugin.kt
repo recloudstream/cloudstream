@@ -53,9 +53,9 @@ abstract class Plugin {
         @JsonProperty("name") var name: String? = null
         @JsonProperty("pluginClassName") var pluginClassName: String? = null
         @JsonProperty("version") var version: Int? = null
+        @JsonProperty("requiresResources") var requiresResources: Boolean = false
     }
 
     var resources: Resources? = null
-    var needsResources = false
     var __filename: String? = null
 }

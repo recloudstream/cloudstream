@@ -251,7 +251,8 @@ object PluginManager {
             }
 
             pluginInstance.__filename = fileName
-            if (pluginInstance.needsResources) {
+            if (manifest.requiresResources) {
+                Log.d(TAG, "Loading resources for ${data.internalName}")
                 // based on https://stackoverflow.com/questions/7483568/dynamic-resource-loading-from-other-apk
                 val assets = AssetManager::class.java.newInstance()
                 val addAssetPath =
