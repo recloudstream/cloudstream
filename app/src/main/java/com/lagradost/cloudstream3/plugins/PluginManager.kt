@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.APIHolder
+import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.extractorApis
@@ -139,7 +140,7 @@ object PluginManager {
      * 4. Else load the plugin normally
      **/
     fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
-        val urls = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()) + PREBUILT_REPOSITORIES
 
         val onlinePlugins = urls.toList().apmap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
@@ -294,8 +295,13 @@ object PluginManager {
         }
 
         // remove all registered apis
+        APIHolder.apis.filter { it -> it.sourcePlugin == plugin.__filename }.forEach {
+            removePluginMapping(it)
+        }
         APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.`__filename` }
         extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.`__filename` }
+
+        classLoaders.values.removeIf { v -> v == plugin}
 
         plugins.remove(absolutePath)
     }
