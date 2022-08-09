@@ -342,6 +342,9 @@ abstract class MainAPI {
     /**Used for testing and can be used to disable the providers if WebView is not available*/
     open val usesWebView = false
 
+    /** Determines which plugin a given provider is from */
+    var sourcePlugin: String? = null
+
     open val hasMainPage = false
     open val hasQuickSearch = false
 

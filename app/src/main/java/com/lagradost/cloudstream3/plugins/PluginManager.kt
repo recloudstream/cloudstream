@@ -23,6 +23,10 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
+import com.lagradost.cloudstream3.APIHolder
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.extractorApis
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -99,8 +103,7 @@ object PluginManager {
 
     private val classLoaders: MutableMap<PathClassLoader, Plugin> =
         HashMap<PathClassLoader, Plugin>()
-
-    private val failedToLoad: MutableMap<File, Any> = LinkedHashMap()
+    
     private var loadedLocalPlugins = false
     private val gson = Gson()
 
@@ -112,6 +115,8 @@ object PluginManager {
                 file,
                 PluginData(name, null, false, file.absolutePath, PLUGIN_VERSION_NOT_SET)
             )
+        } else {
+            Log.i(TAG, "Skipping invalid plugin file: $file")
         }
     }
 
@@ -197,6 +202,8 @@ object PluginManager {
         val sortedPlugins = dir.listFiles()
         // Always sort plugins alphabetically for reproducible results
 
+        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins}")
+
         sortedPlugins?.sortedBy { it.name }?.apmap { file ->
             maybeLoadPlugin(activity, file)
         }
@@ -217,7 +224,6 @@ object PluginManager {
             var manifest: Plugin.Manifest
             loader.getResourceAsStream("manifest.json").use { stream ->
                 if (stream == null) {
-                    failedToLoad[file] = "No manifest found"
                     Log.e(TAG, "Failed to load plugin  $fileName: No manifest found")
                     return false
                 }
@@ -263,7 +269,6 @@ object PluginManager {
             Log.i(TAG, "Loaded plugin ${data.internalName} successfully")
             true
         } catch (e: Throwable) {
-            failedToLoad[file] = e
             Log.e(TAG, "Failed to load $file: ${Log.getStackTraceString(e)}")
             showToast(
                 activity,
@@ -272,6 +277,26 @@ object PluginManager {
             )
             false
         }
+    }
+
+    private suspend fun unloadPlugin(absolutePath: String) {
+        var plugin = plugins.get(absolutePath)
+        if (plugin == null) {
+            Log.w(TAG, "Couldn't find plugin $absolutePath")
+            return
+        }
+
+        try {
+            plugin.beforeUnload()
+        } catch (e: Throwable) {
+            Log.e(TAG, "Failed to run beforeUnload $absolutePath: ${Log.getStackTraceString(e)}")
+        }
+
+        // remove all registered apis
+        APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.`__filename` }
+        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.`__filename` }
+
+        plugins.remove(absolutePath)
     }
 
     /**
@@ -309,6 +334,7 @@ object PluginManager {
             ?: return false
         return try {
             if (File(data.filePath).delete()) {
+                unloadPlugin(data.filePath)
                 deletePluginData(data)
                 return true
             }
