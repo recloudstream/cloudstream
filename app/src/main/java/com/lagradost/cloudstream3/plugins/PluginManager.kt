@@ -280,6 +280,7 @@ object PluginManager {
     }
 
     private suspend fun unloadPlugin(absolutePath: String) {
+        Log.i(TAG, "Unloading plugin: $absolutePath")
         var plugin = plugins.get(absolutePath)
         if (plugin == null) {
             Log.w(TAG, "Couldn't find plugin $absolutePath")
