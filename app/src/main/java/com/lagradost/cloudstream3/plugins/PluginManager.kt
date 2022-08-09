@@ -189,7 +189,7 @@ object PluginManager {
         if (!dir.exists()) {
             val res = dir.mkdirs()
             if (!res) {
-                //logger.error("Failed to create directories!", null);
+                Log.w(TAG, "Failed to create local directories")
                 return
             }
         }
@@ -212,14 +212,13 @@ object PluginManager {
         val filePath = file.absolutePath
         Log.i(TAG, "Loading plugin: $data")
 
-        //logger.info("Loading plugin: " + fileName);
         return try {
             val loader = PathClassLoader(filePath, activity.classLoader)
             var manifest: Plugin.Manifest
             loader.getResourceAsStream("manifest.json").use { stream ->
                 if (stream == null) {
                     failedToLoad[file] = "No manifest found"
-                    //logger.error("Failed to load plugin " + fileName + ": No manifest found", null);
+                    Log.e(TAG, "Failed to load plugin  $fileName: No manifest found")
                     return false
                 }
                 InputStreamReader(stream).use { reader ->
@@ -265,7 +264,7 @@ object PluginManager {
             true
         } catch (e: Throwable) {
             failedToLoad[file] = e
-            e.printStackTrace()
+            Log.e(TAG, "Failed to load $file: ${Log.getStackTraceString(e)}")
             showToast(
                 activity,
                 activity.getString(R.string.plugin_load_fail).format(fileName),
