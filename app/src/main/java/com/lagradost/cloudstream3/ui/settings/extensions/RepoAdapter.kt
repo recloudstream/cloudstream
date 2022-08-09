@@ -5,13 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.plugins.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.ui.settings.AccountClickCallback
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 class RepoAdapter(
     var repositories: Array<RepositoryData>,
+    val isSetup: Boolean,
     val clickCallback: RepoAdapter.(RepositoryData) -> Unit,
-    val imageClickCallback: RepoAdapter.(RepositoryData) -> Unit
+    val imageClickCallback: RepoAdapter.(RepositoryData) -> Unit,
+    /** In setup mode the trash icons will be replaced with download icons */
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -37,7 +40,16 @@ class RepoAdapter(
         fun bind(
             repositoryData: RepositoryData
         ) {
-            itemView.action_button?.setImageResource(R.drawable.ic_baseline_delete_outline_24)
+            val isPrebuilt = PREBUILT_REPOSITORIES.contains(repositoryData)
+            val drawable =
+                if (isSetup) R.drawable.netflix_download else R.drawable.ic_baseline_delete_outline_24
+
+            // Only shows icon if on setup or if it isn't a prebuilt repo.
+            // No delete buttons on prebuilt repos.
+            if (!isPrebuilt || isSetup) {
+                itemView.action_button?.setImageResource(drawable)
+            }
+
             itemView.action_button?.setOnClickListener {
                 imageClickCallback(repositoryData)
             }

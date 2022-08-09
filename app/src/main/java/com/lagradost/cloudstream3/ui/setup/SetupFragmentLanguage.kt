@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -23,6 +24,7 @@ import kotlinx.android.synthetic.main.fragment_setup_media.listview1
 import kotlinx.android.synthetic.main.fragment_setup_media.next_btt
 
 const val HAS_DONE_SETUP_KEY = "HAS_DONE_SETUP"
+
 class SetupFragmentLanguage : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +78,13 @@ class SetupFragmentLanguage : Fragment() {
                 }
 
                 next_btt?.setOnClickListener {
-                    findNavController().navigate(R.id.action_navigation_setup_language_to_navigation_setup_provider_languages)
+                    // If no plugins go to plugins page
+                    val nextDestination = if (PluginManager.getPluginsOnline()
+                            .isEmpty()
+                    ) R.id.action_navigation_global_to_navigation_setup_extensions
+                    else R.id.action_navigation_setup_language_to_navigation_setup_provider_languages
+
+                    findNavController().navigate(nextDestination, SetupFragmentExtensions.newInstance(true))
                 }
 
                 skip_btt?.setOnClickListener {

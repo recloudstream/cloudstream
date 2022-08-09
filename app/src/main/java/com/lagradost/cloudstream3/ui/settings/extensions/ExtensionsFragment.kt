@@ -42,7 +42,7 @@ class ExtensionsFragment : Fragment() {
 
         setUpToolbar(R.string.extensions)
 
-        repo_recycler_view?.adapter = RepoAdapter(emptyArray(), {
+        repo_recycler_view?.adapter = RepoAdapter(emptyArray(), false, {
             findNavController().navigate(
                 R.id.navigation_settings_extensions_to_navigation_settings_plugins,
                 Bundle().apply {

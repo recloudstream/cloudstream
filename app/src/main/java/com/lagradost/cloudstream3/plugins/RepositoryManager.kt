@@ -18,6 +18,16 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 
+/**
+ * Comes with the app, always available in the app, non removable.
+ * */
+val PREBUILT_REPOSITORIES = arrayOf(
+    // TODO FIX
+    RepositoryData(
+        "Testing repository",
+        "https://raw.githubusercontent.com/recloudstream/cs-repos/master/test.json"
+    )
+)
 
 data class Repository(
     @JsonProperty("name") val name: String,

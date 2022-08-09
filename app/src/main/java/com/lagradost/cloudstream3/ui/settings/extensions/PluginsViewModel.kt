@@ -29,75 +29,82 @@ class PluginsViewModel : ViewModel() {
     companion object {
         private val repositoryCache: MutableMap<String, List<Plugin>> = mutableMapOf()
         const val TAG = "PLG"
-    }
 
-    private suspend fun getPlugins(
-        repositoryUrl: String,
-        canUseCache: Boolean = true
-    ): List<Plugin> {
-        Log.i(TAG, "getPlugins = $repositoryUrl")
-        if (canUseCache && repositoryCache.containsKey(repositoryUrl)) {
-            repositoryCache[repositoryUrl]?.let {
-                return it
-            }
+        private fun isDownloaded(plugin: Plugin, data: Set<String>? = null): Boolean {
+            return (data ?: getDownloads()).contains(plugin.second.internalName)
         }
-        return RepositoryManager.getRepoPlugins(repositoryUrl)
-            ?.also { repositoryCache[repositoryUrl] = it } ?: emptyList()
-    }
 
-    private fun getStoredPlugins(): Array<PluginData> {
-        return PluginManager.getPluginsOnline()
-    }
-
-    private fun getDownloads(): Set<String> {
-        return getStoredPlugins().map { it.internalName }.toSet()
-    }
-
-    private fun isDownloaded(plugin: Plugin, data: Set<String>? = null): Boolean {
-        return (data ?: getDownloads()).contains(plugin.second.internalName)
-    }
-
-    fun downloadAll(activity: Activity?, repositoryUrl: String) = ioSafe {
-        if (activity == null) return@ioSafe
-        val stored = getDownloads()
-        val plugins = getPlugins(repositoryUrl)
-
-        plugins.filter { plugin -> !isDownloaded(plugin, stored) }.also { list ->
-            main {
-                showToast(
-                    activity,
-                    if (list.isEmpty()) {
-                        txt(
-                            R.string.batch_download_nothing_to_download_format,
-                            txt(R.string.plugin)
-                        )
-                    } else {
-                        txt(R.string.batch_download_start_format, list.size, txt(if(list.size == 1) R.string.plugin_singular else R.string.plugin))
-                    },
-                    Toast.LENGTH_SHORT
-                )
+        private suspend fun getPlugins(
+            repositoryUrl: String,
+            canUseCache: Boolean = true
+        ): List<Plugin> {
+            Log.i(TAG, "getPlugins = $repositoryUrl")
+            if (canUseCache && repositoryCache.containsKey(repositoryUrl)) {
+                repositoryCache[repositoryUrl]?.let {
+                    return it
+                }
             }
-        }.apmap { (repo, metadata) ->
-            PluginManager.downloadAndLoadPlugin(
-                activity,
-                metadata.url,
-                metadata.name,
-                repo
-            )
-        }.main { list ->
-            if (list.any { it }) {
-                showToast(
+            return RepositoryManager.getRepoPlugins(repositoryUrl)
+                ?.also { repositoryCache[repositoryUrl] = it } ?: emptyList()
+        }
+
+        private fun getStoredPlugins(): Array<PluginData> {
+            return PluginManager.getPluginsOnline()
+        }
+
+        private fun getDownloads(): Set<String> {
+            return getStoredPlugins().map { it.internalName }.toSet()
+        }
+
+        /**
+         * @param viewModel optional, updates the plugins livedata for that viewModel if included
+         * */
+        fun downloadAll(activity: Activity?, repositoryUrl: String, viewModel: PluginsViewModel?) = ioSafe {
+            if (activity == null) return@ioSafe
+            val stored = getDownloads()
+            val plugins = getPlugins(repositoryUrl)
+
+            plugins.filter { plugin -> !isDownloaded(plugin, stored) }.also { list ->
+                main {
+                    showToast(
+                        activity,
+                        if (list.isEmpty()) {
+                            txt(
+                                R.string.batch_download_nothing_to_download_format,
+                                txt(R.string.plugin)
+                            )
+                        } else {
+                            txt(
+                                R.string.batch_download_start_format,
+                                list.size,
+                                txt(if (list.size == 1) R.string.plugin_singular else R.string.plugin)
+                            )
+                        },
+                        Toast.LENGTH_SHORT
+                    )
+                }
+            }.apmap { (repo, metadata) ->
+                PluginManager.downloadAndLoadPlugin(
                     activity,
-                    txt(
-                        R.string.batch_download_finish_format,
-                        list.count { it },
-                        txt(if(list.size == 1) R.string.plugin_singular else R.string.plugin)
-                    ),
-                    Toast.LENGTH_SHORT
+                    metadata.url,
+                    metadata.name,
+                    repo
                 )
-                updatePluginListPrivate(repositoryUrl)
-            } else if (list.isNotEmpty()) {
-                showToast(activity, R.string.download_failed, Toast.LENGTH_SHORT)
+            }.main { list ->
+                if (list.any { it }) {
+                    showToast(
+                        activity,
+                        txt(
+                            R.string.batch_download_finish_format,
+                            list.count { it },
+                            txt(if (list.size == 1) R.string.plugin_singular else R.string.plugin)
+                        ),
+                        Toast.LENGTH_SHORT
+                    )
+                    viewModel?.updatePluginListPrivate(repositoryUrl)
+                } else if (list.isNotEmpty()) {
+                    showToast(activity, R.string.download_failed, Toast.LENGTH_SHORT)
+                }
             }
         }
     }

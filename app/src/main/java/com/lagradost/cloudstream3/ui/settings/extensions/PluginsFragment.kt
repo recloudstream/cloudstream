@@ -40,7 +40,7 @@ class PluginsFragment : Fragment() {
         settings_toolbar?.setOnMenuItemClickListener { menuItem ->
             when (menuItem?.itemId) {
                 R.id.download_all -> {
-                    pluginViewModel.downloadAll(activity, url)
+                    PluginsViewModel.downloadAll(activity, url, pluginViewModel)
                 }
                 else -> {}
             }

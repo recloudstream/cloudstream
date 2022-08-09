@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.lagradost.cloudstream3.mvvm.debugWarning
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
@@ -69,7 +70,11 @@ object APIHolder {
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
         initMap()
-        return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
+        // Fuck it load from allProviders since they're dynamically loaded
+        // This is required right now because apiMap might be outdated
+        // TODO FIX when we switch to LoadPlugin()
+        debugWarning { "FIX LoadPlugin! getApiFromNameNull sucks right now 💀" }
+        return apiMap?.get(apiName)?.let { apis.getOrNull(it) } ?: allProviders.firstOrNull { it.name == apiName }
     }
 
     fun getApiFromUrlNull(url: String?): MainAPI? {

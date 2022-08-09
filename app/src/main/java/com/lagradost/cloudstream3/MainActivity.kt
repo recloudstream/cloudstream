@@ -670,6 +670,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         try {
             if (getKey(HAS_DONE_SETUP_KEY, false) != true) {
                 navController.navigate(R.id.navigation_setup_language)
+                // If no plugins bring up extensions screen
+            } else if (PluginManager.getPluginsOnline().isEmpty()
+                && PluginManager.getPluginsLocal().isEmpty()
+            ) {
+                navController.navigate(R.id.navigation_setup_extensions)
             }
         } catch (e: Exception) {
             logError(e)
