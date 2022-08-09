@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.plugins
 
-import android.content.Context
 import dalvik.system.PathClassLoader
 import com.google.gson.Gson
 import android.content.res.AssetManager
@@ -237,7 +236,7 @@ object PluginManager {
             }
 
             val name: String = manifest.name ?: "NO NAME"
-            val version: Int = manifest.pluginVersion ?: PLUGIN_VERSION_NOT_SET
+            val version: Int = manifest.version ?: PLUGIN_VERSION_NOT_SET
             val pluginClass: Class<*> =
                 loader.loadClass(manifest.pluginClassName) as Class<out Plugin?>
             val pluginInstance: Plugin =
@@ -298,8 +297,8 @@ object PluginManager {
         APIHolder.apis.filter { it -> it.sourcePlugin == plugin.__filename }.forEach {
             removePluginMapping(it)
         }
-        APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.`__filename` }
-        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.`__filename` }
+        APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.__filename }
+        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.__filename }
 
         classLoaders.values.removeIf { v -> v == plugin}
 
