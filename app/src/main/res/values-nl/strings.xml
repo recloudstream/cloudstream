@@ -84,7 +84,6 @@
     <string name="download_failed">Download Mislukt</string>
     <string name="download_canceled">Download Geannuleerd</string>
     <string name="download_done">Download Gereed</string>
-    <string name="download_format" translatable="false">%s - %s</string>
     <string name="stream">Stream</string>
 
     <string name="error_loading_links_toast">Fout bij laden links</string>
@@ -146,7 +145,7 @@
     <string name="vpn_might_be_needed">Een VPN kan nodig zijn om deze provider correct te laten werken</string>
     <string name="vpn_torrent">Deze provider is een torrent, een VPN wordt aanbevolen</string>
 
-    <string name="provider_info_meta">Metadata wordt niet geleverd door de site, het laden van video's zal mislukken als deze niet op de site bestaat.</string>
+    <string name="provider_info_meta">Metadata wordt niet geleverd door de site, het laden van video\'s zal mislukken als deze niet op de site bestaat.</string>
 
     <string name="torrent_plot">Beschrijving</string>
     <string name="normal_no_plot">Geen plot gevonde</string>
@@ -181,8 +180,6 @@
     <string name="episode_sync_settings_des">Automatisch synchroniseren van je huidige episode vooruitgang</string>
 
     <string name="restore_settings">Gegevens herstellen vanaf back-up</string>
-    <string name="killswitch_settings">Download de nieuwste metadata van github</string>
-    <string name="killswitch_settings_des">Als je toegang wilt tot alle providers (zelfs kapotte), zet dit dan uit</string>
 
     <string name="backup_settings">Back-up gegevens</string>
     <string name="restore_success">Geladen back-up bestand</string>
@@ -272,7 +269,7 @@
     <string name="torrent">Torrents</string>
     <string name="documentaries">Documentaires</string>
     <string name="ova">OVA</string>
-    <string name="asian_drama">Aziatische drama's</string>
+    <string name="asian_drama">Aziatische drama\'s</string>
     <string name="livestreams">Livestreams</string>
 
     <!--singular-->
@@ -354,23 +351,6 @@
     <string name="resize_zoom">Zoom</string>
 
     <string name="legal_notice">Disclaimer</string>
-    <string name="legal_notice_key" translatable="false">legal_notice_key</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
-        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
-
-        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
-
-        The app is purely for educational and personal use.
-
-        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
-        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
-        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
-        user-friendly interface.
-
-        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
-        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
-        CloudStream 3 at your own risk.
-    </string>
     <string name="category_general">Algemeen</string>
     <string name="random_button_settings">Willekeurige knop</string>
     <string name="random_button_settings_desc">Toon willekeurige knop op Homepage</string>
@@ -503,7 +483,7 @@
     <string name="network_adress_example">Link naar stream</string>
     <string name="referer">Referer</string>
     <string name="next">Volgende</string>
-    <string name="provider_languages_tip">Bekijk video's in deze talen</string>
+    <string name="provider_languages_tip">Bekijk video\'s in deze talen</string>
     <string name="previous">Vorige</string>
     <string name="skip_setup">Instelling overslaan</string>
     <!-- TODO: Remove or change this placeholder text -->
