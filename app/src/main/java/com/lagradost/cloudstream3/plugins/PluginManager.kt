@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.plugins
 
-import android.content.Context
 import dalvik.system.PathClassLoader
 import com.google.gson.Gson
 import android.content.res.AssetManager
@@ -24,6 +23,7 @@ import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.APIHolder
+import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.extractorApis
@@ -139,7 +139,7 @@ object PluginManager {
      * 4. Else load the plugin normally
      **/
     fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
-        val urls = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()) + PREBUILT_REPOSITORIES
 
         val onlinePlugins = urls.toList().apmap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
@@ -236,7 +236,7 @@ object PluginManager {
             }
 
             val name: String = manifest.name ?: "NO NAME"
-            val version: Int = manifest.pluginVersion ?: PLUGIN_VERSION_NOT_SET
+            val version: Int = manifest.version ?: PLUGIN_VERSION_NOT_SET
             val pluginClass: Class<*> =
                 loader.loadClass(manifest.pluginClassName) as Class<out Plugin?>
             val pluginInstance: Plugin =
@@ -251,7 +251,8 @@ object PluginManager {
             }
 
             pluginInstance.__filename = fileName
-            if (pluginInstance.needsResources) {
+            if (manifest.requiresResources) {
+                Log.d(TAG, "Loading resources for ${data.internalName}")
                 // based on https://stackoverflow.com/questions/7483568/dynamic-resource-loading-from-other-apk
                 val assets = AssetManager::class.java.newInstance()
                 val addAssetPath =
@@ -280,6 +281,7 @@ object PluginManager {
     }
 
     private suspend fun unloadPlugin(absolutePath: String) {
+        Log.i(TAG, "Unloading plugin: $absolutePath")
         var plugin = plugins.get(absolutePath)
         if (plugin == null) {
             Log.w(TAG, "Couldn't find plugin $absolutePath")
@@ -293,8 +295,13 @@ object PluginManager {
         }
 
         // remove all registered apis
-        APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.`__filename` }
-        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.`__filename` }
+        APIHolder.apis.filter { it -> it.sourcePlugin == plugin.__filename }.forEach {
+            removePluginMapping(it)
+        }
+        APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.__filename }
+        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.__filename }
+
+        classLoaders.values.removeIf { v -> v == plugin}
 
         plugins.remove(absolutePath)
     }

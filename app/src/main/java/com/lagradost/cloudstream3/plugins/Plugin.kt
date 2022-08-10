@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.extractorApis
 import android.util.Log
+import com.fasterxml.jackson.annotation.JsonProperty
 
 const val PLUGIN_TAG = "PluginInstance"
 
@@ -33,7 +34,7 @@ abstract class Plugin {
      */
     fun registerMainAPI(element: MainAPI) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) MainAPI")
-        element.sourcePlugin = this.`__filename`
+        element.sourcePlugin = this.__filename
         APIHolder.allProviders.add(element)
         APIHolder.addPluginMapping(element)
     }
@@ -44,17 +45,17 @@ abstract class Plugin {
      */
     fun registerExtractorAPI(element: ExtractorApi) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) ExtractorApi")
-        element.sourcePlugin = this.`__filename`
+        element.sourcePlugin = this.__filename
         extractorApis.add(element)
     }
 
     class Manifest {
-        var name: String? = null
-        var pluginClassName: String? = null
-        var pluginVersion: Int? = null
+        @JsonProperty("name") var name: String? = null
+        @JsonProperty("pluginClassName") var pluginClassName: String? = null
+        @JsonProperty("version") var version: Int? = null
+        @JsonProperty("requiresResources") var requiresResources: Boolean = false
     }
 
     var resources: Resources? = null
-    var needsResources = false
     var __filename: String? = null
 }
