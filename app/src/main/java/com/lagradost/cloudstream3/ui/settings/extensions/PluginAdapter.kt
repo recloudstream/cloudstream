@@ -104,7 +104,11 @@ class PluginAdapter(
                         }
 
                     }
+                } else {
+                    itemView.action_settings?.isVisible = false
                 }
+            } else {
+                itemView.action_settings?.isVisible = false
             }
 
             if (itemView.entry_icon?.setImage(metadata.iconUrl, null) != true) {
