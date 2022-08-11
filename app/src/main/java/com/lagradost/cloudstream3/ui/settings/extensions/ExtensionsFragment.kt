@@ -92,7 +92,15 @@ class ExtensionsFragment : Fragment() {
             (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?)?.primaryClip?.getItemAt(
                 0
             )?.text?.toString()?.let { copy ->
-                dialog.repo_url_input?.setText(copy)
+                // Fix our own repo links and only paste the text if it's a link.
+                if (copy.startsWith("http")) {
+                    val fixedUrl = if (copy.startsWith("https://cs.repo")) {
+                        "https://" + copy.substringAfter("?")
+                    } else {
+                        copy
+                    }
+                    dialog.repo_url_input?.setText(fixedUrl)
+                }
             }
 
 //            dialog.text2?.text = provider.name
