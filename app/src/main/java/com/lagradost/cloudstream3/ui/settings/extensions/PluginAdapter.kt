@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.utils.GlideApp
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.repository_item.view.*
 
@@ -61,6 +62,14 @@ class PluginAdapter(
         return PluginManager.getPluginsOnline().also { storedPlugins = it }
     }*/
 
+    // Clear glide image because setImageResource doesn't override
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        holder.itemView.entry_icon?.let { pluginIcon ->
+            GlideApp.with(pluginIcon).clear(pluginIcon)
+        }
+        super.onViewRecycled(holder)
+    }
+
     inner class PluginViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
 
@@ -98,8 +107,7 @@ class PluginAdapter(
                 }
             }
 
-            if (metadata.iconUrl == null ||
-                itemView.entry_icon?.setImage(metadata.iconUrl, null) != true) {
+            if (itemView.entry_icon?.setImage(metadata.iconUrl, null) != true) {
                 itemView.entry_icon?.setImageResource(R.drawable.ic_baseline_extension_24)
             }
 
