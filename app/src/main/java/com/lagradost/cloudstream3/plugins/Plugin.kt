@@ -65,5 +65,5 @@ abstract class Plugin {
     /**
      * This will add a button in the settings allowing you to add custom settings
      */
-    var openSettings: (() -> Unit)? = null
+    var openSettings: ((context: Context) -> Unit)? = null
 }

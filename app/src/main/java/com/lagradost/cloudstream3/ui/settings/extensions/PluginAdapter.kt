@@ -89,7 +89,7 @@ class PluginAdapter(
                     itemView.action_settings?.isVisible = true
                     itemView.action_settings.setOnClickListener {
                         try {
-                            plugin.openSettings!!.invoke()
+                            plugin.openSettings!!.invoke(itemView.context)
                         } catch (e: Throwable) {
                             Log.e("PluginAdapter", "Failed to open ${metadata.name} settings: ${Log.getStackTraceString(e)}")
                         }
