@@ -424,8 +424,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
-        PluginManager.updateAllOnlinePluginsAndLoadThem(this)
+        if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
+            PluginManager.updateAllOnlinePluginsAndLoadThem(this)
+        } else {
+            PluginManager.loadAllOnlinePlugins(this)
+        }
+
         PluginManager.loadAllLocalPlugins(this)
 
 //        ioSafe {
@@ -455,7 +461,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         SearchResultBuilder.updateCache(this)
 
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         initAll()
         apis = allProviders

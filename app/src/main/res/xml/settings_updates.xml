@@ -29,6 +29,11 @@
         android:summaryOn="@string/bug_report_settings_on"
         android:title="@string/pref_disable_acra" />
     <SwitchPreference
+        android:defaultValue="true"
+        android:icon="@drawable/ic_baseline_extension_24"
+        android:key="@string/auto_update_plugins_key"
+        android:title="@string/automatic_plugin_updates" />
+    <SwitchPreference
         android:icon="@drawable/ic_baseline_notifications_active_24"
         android:summary="@string/updates_settings_des"
         android:title="@string/updates_settings"
@@ -41,7 +46,7 @@
         app:defaultValue="false"
         app:key="@string/prerelease_update_key" />
     <Preference
-        app:key="@string/redo_setup_key"
         android:icon="@drawable/ic_baseline_construction_24"
-        android:title="Redo setup process" />
+        android:title="Redo setup process"
+        app:key="@string/redo_setup_key" />
 </PreferenceScreen>

@@ -5,6 +5,7 @@
     <string name="locale_key" translatable="false">app_locale</string>
     <string name="search_types_list_key" translatable="false">search_type_list</string>
     <string name="auto_update_key" translatable="false">auto_update</string>
+    <string name="auto_update_plugins_key" translatable="false">auto_update_plugins</string>
     <string name="skip_update_key" translatable="false">skip_update_key</string>
     <string name="prerelease_update_key" translatable="false">prerelease_update</string>
     <string name="manual_check_update_key" translatable="false">manual_check_update</string>
@@ -260,6 +261,7 @@
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from kitsu</string>
 
+    <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="updates_settings">Show app updates</string>
     <string name="updates_settings_des">Automatically search for new updates on start</string>
     <string name="uprereleases_settings">Update to prereleases</string>
