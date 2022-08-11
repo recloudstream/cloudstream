@@ -56,6 +56,14 @@ abstract class Plugin {
         @JsonProperty("requiresResources") var requiresResources: Boolean = false
     }
 
+    /**
+     * This will contain your resources if you specified requiresResources in gradle
+     */
     var resources: Resources? = null
     var __filename: String? = null
+
+    /**
+     * This will add a button in the settings allowing you to add custom settings
+     */
+    var openSettings: (() -> Unit)? = null
 }

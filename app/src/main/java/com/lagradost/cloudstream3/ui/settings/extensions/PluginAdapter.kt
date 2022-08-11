@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 
@@ -79,6 +82,29 @@ class PluginAdapter(
             itemView.action_button?.setOnClickListener {
                 iconClickCallback.invoke(data.plugin)
             }
+
+            if (data.isDownloaded) {
+                val plugin = PluginManager.urlPlugins[metadata.url]
+                if (plugin?.openSettings != null) {
+                    itemView.action_settings?.isVisible = true
+                    itemView.action_settings.setOnClickListener {
+                        try {
+                            plugin.openSettings!!.invoke()
+                        } catch (e: Throwable) {
+                            Log.e("PluginAdapter", "Failed to open ${metadata.name} settings: ${Log.getStackTraceString(e)}")
+                        }
+
+                    }
+                }
+            }
+
+            if (metadata.iconUrl == null ||
+                itemView.entry_icon?.setImage(metadata.iconUrl, null) != true) {
+                itemView.entry_icon?.setImageResource(R.drawable.ic_baseline_extension_24)
+            }
+
+            itemView.ext_version?.isVisible = true
+            itemView.ext_version?.text = "v${metadata.version}"
 
             itemView.main_text?.text = metadata.name
             itemView.sub_text?.text = metadata.description

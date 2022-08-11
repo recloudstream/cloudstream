@@ -63,8 +63,8 @@ data class SitePlugin(
     @JsonProperty("repositoryUrl") val repositoryUrl: String?,
     // These types are yet to be mapped and used, ignore for now
 //    @JsonProperty("tvTypes") val tvTypes: List<String>?,
-//    @JsonProperty("language") val language: String?,
-//    @JsonProperty("iconUrl") val iconUrl: String?,
+    @JsonProperty("language") val language: String?,
+    @JsonProperty("iconUrl") val iconUrl: String?,
     // Set to true to get an 18+ symbol next to the plugin
     @JsonProperty("adult") val adult: Boolean?,
 )

@@ -101,6 +101,10 @@ object PluginManager {
     private val plugins: MutableMap<String, Plugin> =
         LinkedHashMap<String, Plugin>()
 
+    // Maps urls to plugin
+    val urlPlugins: MutableMap<String, Plugin> =
+        LinkedHashMap<String, Plugin>()
+
     private val classLoaders: MutableMap<PathClassLoader, Plugin> =
         HashMap<PathClassLoader, Plugin>()
     
@@ -266,6 +270,9 @@ object PluginManager {
             }
             plugins[filePath] = pluginInstance
             classLoaders[loader] = pluginInstance
+            if (data.url != null) { // TODO: make this cleaner
+                urlPlugins[data.url] = pluginInstance
+            }
             pluginInstance.load(activity)
             Log.i(TAG, "Loaded plugin ${data.internalName} successfully")
             true
@@ -280,9 +287,9 @@ object PluginManager {
         }
     }
 
-    private suspend fun unloadPlugin(absolutePath: String) {
+    private fun unloadPlugin(absolutePath: String) {
         Log.i(TAG, "Unloading plugin: $absolutePath")
-        var plugin = plugins.get(absolutePath)
+        val plugin = plugins[absolutePath]
         if (plugin == null) {
             Log.w(TAG, "Couldn't find plugin $absolutePath")
             return
