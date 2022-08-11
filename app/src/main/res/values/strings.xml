@@ -588,4 +588,7 @@
     <string name="delete_repository_plugins">This will also delete all repository plugins</string>
     <string name="delete_repository">Delete repository</string>
     <string name="setup_extensions_subtext">Download the list of sites you want to use</string>
+    <string name="plugins_downloaded" formatted="true">Downloaded: %d</string>
+    <string name="plugins_disabled" formatted="true">Disabled: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Not downloaded: %d</string>
 </resources>

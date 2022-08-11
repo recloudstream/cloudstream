@@ -41,9 +41,9 @@ class SetupFragmentExtensions : Fragment() {
         with(context) {
             if (this == null) return
 
-            repo_recycler_view?.adapter = RepoAdapter(PREBUILT_REPOSITORIES, true, {}, {
+            repo_recycler_view?.adapter = RepoAdapter(true, {}, {
                 PluginsViewModel.downloadAll(activity, it.url, null)
-            })
+            }).apply { updateList(PREBUILT_REPOSITORIES) }
 
             if (!isSetup) {
                 next_btt.setText(R.string.setup_done)

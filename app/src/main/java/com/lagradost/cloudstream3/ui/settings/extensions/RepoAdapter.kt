@@ -3,19 +3,21 @@ package com.lagradost.cloudstream3.ui.settings.extensions
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PREBUILT_REPOSITORIES
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 class RepoAdapter(
-    var repositories: Array<RepositoryData>,
     val isSetup: Boolean,
     val clickCallback: RepoAdapter.(RepositoryData) -> Unit,
     val imageClickCallback: RepoAdapter.(RepositoryData) -> Unit,
     /** In setup mode the trash icons will be replaced with download icons */
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val repositories: MutableList<RepositoryData> = mutableListOf()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return RepoViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.repository_item, parent, false)
@@ -40,6 +42,17 @@ class RepoAdapter(
 
     override fun getItemCount(): Int {
         return repositories.size
+    }
+
+    fun updateList(newList: Array<RepositoryData>) {
+        val diffResult = DiffUtil.calculateDiff(
+            RepoDiffCallback(this.repositories, newList)
+        )
+
+        repositories.clear()
+        repositories.addAll(newList)
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     inner class RepoViewHolder(itemView: View) :
@@ -68,4 +81,20 @@ class RepoAdapter(
             itemView.sub_text?.text = repositoryData.url
         }
     }
+}
+
+class RepoDiffCallback(
+    private val oldList: List<RepositoryData>,
+    private val newList: Array<RepositoryData>
+) :
+    DiffUtil.Callback() {
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition].url == newList[newItemPosition].url
+
+    override fun getOldListSize() = oldList.size
+
+    override fun getNewListSize() = newList.size
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition] == newList[newItemPosition]
 }

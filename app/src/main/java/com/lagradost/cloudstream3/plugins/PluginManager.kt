@@ -107,7 +107,7 @@ object PluginManager {
 
     private val classLoaders: MutableMap<PathClassLoader, Plugin> =
         HashMap<PathClassLoader, Plugin>()
-    
+
     private var loadedLocalPlugins = false
     private val gson = Gson()
 
@@ -126,7 +126,7 @@ object PluginManager {
 
 
     // Helper class for updateAllOnlinePluginsAndLoadThem
-    private data class OnlinePluginData(
+    data class OnlinePluginData(
         val savedData: PluginData,
         val onlineData: Pair<String, SitePlugin>,
     ) {
@@ -134,6 +134,8 @@ object PluginManager {
             onlineData.second.apiVersion != savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
         val isDisabled = onlineData.second.status == PROVIDER_STATUS_DOWN
     }
+
+    var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
 
     /**
      * Needs to be run before other plugin loading because plugin loading can not be overwritten
@@ -143,7 +145,8 @@ object PluginManager {
      * 4. Else load the plugin normally
      **/
     fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
-        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()) + PREBUILT_REPOSITORIES
+        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
+            ?: emptyArray()) + PREBUILT_REPOSITORIES
 
         val onlinePlugins = urls.toList().apmap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
@@ -156,6 +159,7 @@ object PluginManager {
                     OnlinePluginData(savedData, onlineData)
                 }
         }.flatten().distinctBy { it.onlineData.second.url }
+        allCurrentOutDatedPlugins = outdatedPlugins.toSet()
 
         Log.i(TAG, "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}")
 
@@ -308,7 +312,7 @@ object PluginManager {
         APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.__filename }
         extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.__filename }
 
-        classLoaders.values.removeIf { v -> v == plugin}
+        classLoaders.values.removeIf { v -> v == plugin }
 
         plugins.remove(absolutePath)
     }

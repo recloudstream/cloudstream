@@ -7,16 +7,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.plugins.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.RepositoryManager
+import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -35,6 +39,15 @@ class ExtensionsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_extensions, container, false)
     }
 
+    private fun View.setLayoutWidth(weight: Int) {
+        val param = LinearLayout.LayoutParams(
+            0,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            weight.toFloat()
+        )
+        this.layoutParams = param
+    }
+
     private val extensionViewModel: ExtensionsViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,7 +56,7 @@ class ExtensionsFragment : Fragment() {
 
         setUpToolbar(R.string.extensions)
 
-        repo_recycler_view?.adapter = RepoAdapter(PREBUILT_REPOSITORIES, false, {
+        repo_recycler_view?.adapter = RepoAdapter(false, {
             findNavController().navigate(
                 R.id.navigation_settings_extensions_to_navigation_settings_plugins,
                 Bundle().apply {
@@ -60,6 +73,7 @@ class ExtensionsFragment : Fragment() {
                             DialogInterface.BUTTON_POSITIVE -> {
                                 ioSafe {
                                     RepositoryManager.removeRepository(view.context, repo)
+                                    extensionViewModel.loadStats()
                                     extensionViewModel.loadRepositories()
                                 }
                             }
@@ -78,8 +92,32 @@ class ExtensionsFragment : Fragment() {
         })
 
         observe(extensionViewModel.repositories) {
-            (repo_recycler_view?.adapter as? RepoAdapter)?.repositories = it
-            (repo_recycler_view?.adapter as? RepoAdapter)?.notifyDataSetChanged()
+            (repo_recycler_view?.adapter as? RepoAdapter)?.updateList(it)
+        }
+
+        observe(extensionViewModel.pluginStats) {
+            when (it) {
+                is Some.Success -> {
+                    val value = it.value
+
+                    plugin_storage_appbar?.isVisible = true
+                    if (value.total == 0) {
+                        plugin_download?.setLayoutWidth(1)
+                        plugin_disabled?.setLayoutWidth(0)
+                        plugin_not_downloaded?.setLayoutWidth(0)
+                    } else {
+                        plugin_download?.setLayoutWidth(value.downloaded)
+                        plugin_disabled?.setLayoutWidth(value.disabled)
+                        plugin_not_downloaded?.setLayoutWidth(value.notDownloaded)
+                    }
+                    plugin_not_downloaded_txt.setText(value.notDownloadedText)
+                    plugin_disabled_txt.setText(value.disabledText)
+                    plugin_download_txt.setText(value.downloadedText)
+                }
+                is Some.None -> {
+                    plugin_storage_appbar?.isVisible = false
+                }
+            }
         }
 
         add_repo_button?.setOnClickListener {
@@ -118,6 +156,7 @@ class ExtensionsFragment : Fragment() {
 
                     val newRepo = RepositoryData(fixedName, url)
                     RepositoryManager.addRepository(newRepo)
+                    extensionViewModel.loadStats()
                     extensionViewModel.loadRepositories()
                 }
                 dialog.dismissSafe(activity)
@@ -127,7 +166,7 @@ class ExtensionsFragment : Fragment() {
             }
         }
 
-
+        extensionViewModel.loadStats()
         extensionViewModel.loadRepositories()
     }
 }
