@@ -177,6 +177,10 @@
                 android:name="url"
                 android:defaultValue="@null"
                 app:argType="string" />
+            <argument
+                android:name="isLocal"
+                android:defaultValue="false"
+                app:argType="boolean" />
         </action>
     </fragment>
 

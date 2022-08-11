@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_plugins.*
 
 const val PLUGINS_BUNDLE_NAME = "name"
 const val PLUGINS_BUNDLE_URL = "url"
+const val PLUGINS_BUNDLE_LOCAL = "isLocal"
 
 class PluginsFragment : Fragment() {
     override fun onCreateView(
@@ -29,6 +30,7 @@ class PluginsFragment : Fragment() {
 
         val name = arguments?.getString(PLUGINS_BUNDLE_NAME)
         val url = arguments?.getString(PLUGINS_BUNDLE_URL)
+        val isLocal = arguments?.getBoolean(PLUGINS_BUNDLE_LOCAL) == true
 
         if (url == null || name == null) {
             activity?.onBackPressed()
@@ -49,21 +51,28 @@ class PluginsFragment : Fragment() {
 
         plugin_recycler_view?.adapter =
             PluginAdapter {
-                pluginViewModel.handlePluginAction(activity, url, it)
+                pluginViewModel.handlePluginAction(activity, url, it, isLocal)
             }
 
         observe(pluginViewModel.plugins) {
             (plugin_recycler_view?.adapter as? PluginAdapter?)?.updateList(it)
         }
 
-        pluginViewModel.updatePluginList(url)
+        if (isLocal) {
+            // No download button
+            settings_toolbar?.menu?.clear()
+            pluginViewModel.updatePluginListLocal()
+        } else {
+            pluginViewModel.updatePluginList(url)
+        }
     }
 
     companion object {
-        fun newInstance(name: String, url: String): Bundle {
+        fun newInstance(name: String, url: String, isLocal: Boolean): Bundle {
             return Bundle().apply {
                 putString(PLUGINS_BUNDLE_NAME, name)
                 putString(PLUGINS_BUNDLE_URL, url)
+                putBoolean(PLUGINS_BUNDLE_LOCAL, isLocal)
             }
         }
     }

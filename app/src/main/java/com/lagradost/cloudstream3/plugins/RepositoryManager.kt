@@ -4,10 +4,12 @@ import android.content.Context
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.apmapIndexed
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginSanitizedFileName
+import com.lagradost.cloudstream3.plugins.PluginManager.getPluginsLocal
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
@@ -93,9 +95,9 @@ object RepositoryManager {
      * */
     suspend fun getRepoPlugins(repositoryUrl: String): List<Pair<String, SitePlugin>>? {
         val repo = parseRepository(repositoryUrl) ?: return null
-        return repo.pluginLists.apmapIndexed { index, url ->
+        return repo.pluginLists.apmap { url ->
             parsePlugins(url).map {
-                repo.pluginLists[index] to it
+                repositoryUrl to it
             }
         }.flatten()
     }
@@ -150,10 +152,13 @@ object RepositoryManager {
             setKey(REPOSITORIES_KEY, newRepos)
         }
 
-        File(
+        val file = File(
             extensionsDir,
             getPluginSanitizedFileName(repository.url)
-        ).delete()
+        )
+        PluginManager.deleteRepositoryData(file.absolutePath)
+
+        file.delete()
     }
 
     private fun write(stream: InputStream, output: OutputStream) {

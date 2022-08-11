@@ -9,22 +9,18 @@ import android.widget.Toast
 import android.app.Activity
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
-import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
-import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.extractorApis
 import kotlinx.coroutines.sync.Mutex
@@ -45,7 +41,24 @@ data class PluginData(
     @JsonProperty("isOnline") val isOnline: Boolean,
     @JsonProperty("filePath") val filePath: String,
     @JsonProperty("version") val version: Int,
-)
+) {
+    fun toSitePlugin(): SitePlugin {
+        return SitePlugin(
+            this.filePath,
+            PROVIDER_STATUS_OK,
+            maxOf(1, version),
+            1,
+            internalName,
+            internalName,
+            emptyList(),
+            File(this.filePath).name,
+            null,
+            null,
+            null,
+            null
+        )
+    }
+}
 
 // This is used as a placeholder / not set version
 const val PLUGIN_VERSION_NOT_SET = Int.MIN_VALUE
@@ -74,15 +87,25 @@ object PluginManager {
         }
     }
 
-    private suspend fun deletePluginData(data: PluginData) {
+    private suspend fun deletePluginData(data: PluginData?) {
+        if (data == null) return
         lock.withLock {
             if (data.isOnline) {
                 val plugins = getPluginsOnline().filter { it.url != data.url }
                 setKey(PLUGINS_KEY, plugins)
             } else {
                 val plugins = getPluginsLocal().filter { it.filePath != data.filePath }
-                setKey(PLUGINS_KEY_LOCAL, plugins + data)
+                setKey(PLUGINS_KEY_LOCAL, plugins)
             }
+        }
+    }
+
+    suspend fun deleteRepositoryData(repositoryPath: String) {
+        lock.withLock {
+            val plugins = getPluginsOnline().filter {
+                !it.filePath.contains(repositoryPath)
+            }
+            setKey(PLUGINS_KEY, plugins)
         }
     }
 
@@ -346,10 +369,14 @@ object PluginManager {
         )
     }
 
-    suspend fun deletePlugin(pluginUrl: String): Boolean {
-        val data = getPluginsOnline()
-            .firstOrNull { it.url == pluginUrl }
-            ?: return false
+    /**
+     * @param isFilePath will treat the pluginUrl as as the filepath instead of url
+     * */
+    suspend fun deletePlugin(pluginIdentifier: String, isFilePath: Boolean): Boolean {
+        val data =
+            (if (isFilePath) getPluginsLocal().firstOrNull { it.filePath == pluginIdentifier }
+            else getPluginsOnline().firstOrNull { it.url == pluginIdentifier }) ?: return false
+
         return try {
             if (File(data.filePath).delete()) {
                 unloadPlugin(data.filePath)

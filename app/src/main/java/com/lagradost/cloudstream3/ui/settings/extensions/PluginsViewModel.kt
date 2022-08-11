@@ -59,65 +59,76 @@ class PluginsViewModel : ViewModel() {
         /**
          * @param viewModel optional, updates the plugins livedata for that viewModel if included
          * */
-        fun downloadAll(activity: Activity?, repositoryUrl: String, viewModel: PluginsViewModel?) = ioSafe {
-            if (activity == null) return@ioSafe
-            val stored = getDownloads()
-            val plugins = getPlugins(repositoryUrl)
+        fun downloadAll(activity: Activity?, repositoryUrl: String, viewModel: PluginsViewModel?) =
+            ioSafe {
+                if (activity == null) return@ioSafe
+                val stored = getDownloads()
+                val plugins = getPlugins(repositoryUrl)
 
-            plugins.filter { plugin -> !isDownloaded(plugin, stored) }.also { list ->
-                main {
-                    showToast(
+                plugins.filter { plugin -> !isDownloaded(plugin, stored) }.also { list ->
+                    main {
+                        showToast(
+                            activity,
+                            if (list.isEmpty()) {
+                                txt(
+                                    R.string.batch_download_nothing_to_download_format,
+                                    txt(R.string.plugin)
+                                )
+                            } else {
+                                txt(
+                                    R.string.batch_download_start_format,
+                                    list.size,
+                                    txt(if (list.size == 1) R.string.plugin_singular else R.string.plugin)
+                                )
+                            },
+                            Toast.LENGTH_SHORT
+                        )
+                    }
+                }.apmap { (repo, metadata) ->
+                    PluginManager.downloadAndLoadPlugin(
                         activity,
-                        if (list.isEmpty()) {
+                        metadata.url,
+                        metadata.name,
+                        repo
+                    )
+                }.main { list ->
+                    if (list.any { it }) {
+                        showToast(
+                            activity,
                             txt(
-                                R.string.batch_download_nothing_to_download_format,
-                                txt(R.string.plugin)
-                            )
-                        } else {
-                            txt(
-                                R.string.batch_download_start_format,
-                                list.size,
+                                R.string.batch_download_finish_format,
+                                list.count { it },
                                 txt(if (list.size == 1) R.string.plugin_singular else R.string.plugin)
-                            )
-                        },
-                        Toast.LENGTH_SHORT
-                    )
-                }
-            }.apmap { (repo, metadata) ->
-                PluginManager.downloadAndLoadPlugin(
-                    activity,
-                    metadata.url,
-                    metadata.name,
-                    repo
-                )
-            }.main { list ->
-                if (list.any { it }) {
-                    showToast(
-                        activity,
-                        txt(
-                            R.string.batch_download_finish_format,
-                            list.count { it },
-                            txt(if (list.size == 1) R.string.plugin_singular else R.string.plugin)
-                        ),
-                        Toast.LENGTH_SHORT
-                    )
-                    viewModel?.updatePluginListPrivate(repositoryUrl)
-                } else if (list.isNotEmpty()) {
-                    showToast(activity, R.string.download_failed, Toast.LENGTH_SHORT)
+                            ),
+                            Toast.LENGTH_SHORT
+                        )
+                        viewModel?.updatePluginListPrivate(repositoryUrl)
+                    } else if (list.isNotEmpty()) {
+                        showToast(activity, R.string.download_failed, Toast.LENGTH_SHORT)
+                    }
                 }
             }
-        }
     }
 
-    fun handlePluginAction(activity: Activity?, repositoryUrl: String, plugin: Plugin) = ioSafe {
+    /**
+     * @param isLocal defines if the plugin data is from local data instead of repo
+     * Will only allow removal of plugins. Used for the local file management.
+     * */
+    fun handlePluginAction(
+        activity: Activity?,
+        repositoryUrl: String,
+        plugin: Plugin,
+        isLocal: Boolean
+    ) = ioSafe {
         Log.i(TAG, "handlePluginAction = $repositoryUrl, $plugin")
 
         if (activity == null) return@ioSafe
         val (repo, metadata) = plugin
 
-        val (success, message) = if (isDownloaded(plugin)) {
+        val (success, message) = if (isDownloaded(plugin) || isLocal) {
             PluginManager.deletePlugin(
                 metadata.url,
+                isLocal
             ) to R.string.plugin_deleted
         } else {
             PluginManager.downloadAndLoadPlugin(
@@ -136,7 +147,10 @@ class PluginsViewModel : ViewModel() {
         }
 
         if (success)
-            updatePluginListPrivate(repositoryUrl)
+            if (isLocal)
+                updatePluginListLocal()
+            else
+                updatePluginListPrivate(repositoryUrl)
     }
 
     private suspend fun updatePluginListPrivate(repositoryUrl: String) {
@@ -152,5 +166,21 @@ class PluginsViewModel : ViewModel() {
     fun updatePluginList(repositoryUrl: String) = viewModelScope.launch {
         Log.i(TAG, "updatePluginList = $repositoryUrl")
         updatePluginListPrivate(repositoryUrl)
+    }
+
+
+    /**
+     * Update the list but only with the local data. Used for file management.
+     * */
+    fun updatePluginListLocal() = viewModelScope.launch {
+        Log.i(TAG, "updatePluginList = local")
+
+        val downloadedPlugins = (PluginManager.getPluginsOnline() + PluginManager.getPluginsLocal())
+            .distinctBy { it.filePath }
+            .map {
+                PluginViewData("" to it.toSitePlugin(), true)
+            }
+
+        _plugins.postValue(downloadedPlugins)
     }
 }

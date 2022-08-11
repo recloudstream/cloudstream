@@ -59,10 +59,12 @@ class ExtensionsFragment : Fragment() {
         repo_recycler_view?.adapter = RepoAdapter(false, {
             findNavController().navigate(
                 R.id.navigation_settings_extensions_to_navigation_settings_plugins,
-                Bundle().apply {
-                    putString(PLUGINS_BUNDLE_NAME, it.name)
-                    putString(PLUGINS_BUNDLE_URL, it.url)
-                })
+                PluginsFragment.newInstance(
+                    it.name,
+                    it.url,
+                    false
+                )
+            )
         }, { repo ->
             // Prompt user before deleting repo
             main {
@@ -118,6 +120,17 @@ class ExtensionsFragment : Fragment() {
                     plugin_storage_appbar?.isVisible = false
                 }
             }
+        }
+
+        plugin_storage_appbar?.setOnClickListener {
+            findNavController().navigate(
+                R.id.navigation_settings_extensions_to_navigation_settings_plugins,
+                PluginsFragment.newInstance(
+                    getString(R.string.extensions),
+                    "",
+                    true
+                )
+            )
         }
 
         add_repo_button?.setOnClickListener {
