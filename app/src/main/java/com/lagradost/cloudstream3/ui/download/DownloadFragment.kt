@@ -112,6 +112,7 @@ class DownloadFragment : Fragment() {
                     getBytesAsText(it)
                 )
             download_used?.setLayoutWidth(it)
+            download_storage_appbar?.isVisible = it > 0
         }
         observe(downloadsViewModel.downloadBytes) {
             download_app_txt?.text =
@@ -120,7 +121,6 @@ class DownloadFragment : Fragment() {
                     getBytesAsText(it)
                 )
             download_app?.setLayoutWidth(it)
-            download_storage_appbar?.isVisible = it > 0
         }
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
