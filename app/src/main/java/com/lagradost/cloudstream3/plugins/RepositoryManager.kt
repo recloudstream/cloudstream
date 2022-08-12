@@ -23,13 +23,6 @@ import java.io.OutputStream
 /**
  * Comes with the app, always available in the app, non removable.
  * */
-val PREBUILT_REPOSITORIES = arrayOf<RepositoryData>(
-    // TODO FIX
-//    RepositoryData(
-//        "Testing repository",
-//        "https://raw.githubusercontent.com/recloudstream/cs-repos/master/test.json"
-//    )
-)
 
 data class Repository(
     @JsonProperty("name") val name: String,
@@ -74,6 +67,9 @@ data class SitePlugin(
 
 object RepositoryManager {
     const val ONLINE_PLUGINS_FOLDER = "Extensions"
+    val PREBUILT_REPOSITORIES: Array<RepositoryData> by lazy {
+        getKey("PREBUILT_REPOSITORIES") ?: emptyArray()
+    }
 
     suspend fun parseRepository(url: String): Repository? {
         return suspendSafeApiCall {

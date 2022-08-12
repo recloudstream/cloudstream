@@ -17,10 +17,32 @@
         android:layout_marginBottom="80dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-
         app:layout_constraintBottom_toTopOf="@id/download_storage_appbar"
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/repository_item" />
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/blank_repo_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_margin="10dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_baseline_extension_24" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/blank_repo_message"
+            android:textSize="16sp" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/plugin_storage_appbar"
@@ -53,22 +75,22 @@
                 android:id="@+id/plugin_download"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                tools:layout_weight="0.5"
-                android:background="?attr/white" />
+                android:background="?attr/white"
+                tools:layout_weight="0.5" />
 
             <View
                 android:id="@+id/plugin_disabled"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                tools:layout_weight="0.10"
-                android:background="?attr/colorPrimary" />
+                android:background="?attr/colorPrimary"
+                tools:layout_weight="0.10" />
 
             <View
                 android:id="@+id/plugin_not_downloaded"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                tools:layout_weight="0.10"
-                android:background="?attr/grayTextColor" />
+                android:background="?attr/grayTextColor"
+                tools:layout_weight="0.10" />
         </LinearLayout>
 
         <LinearLayout

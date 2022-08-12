@@ -18,7 +18,6 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.plugins.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -94,6 +93,8 @@ class ExtensionsFragment : Fragment() {
         })
 
         observe(extensionViewModel.repositories) {
+            repo_recycler_view?.isVisible = it.isNotEmpty()
+            blank_repo_screen?.isVisible = it.isEmpty()
             (repo_recycler_view?.adapter as? RepoAdapter)?.updateList(it)
         }
 
