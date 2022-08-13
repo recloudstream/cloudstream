@@ -1,4 +1,4 @@
-name: Build
+name: Dokka
 
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#concurrency
 concurrency: 
@@ -43,7 +43,8 @@ jobs:
       - name: Generate Dokka
         run: |
           cd src
-          ./gradlew Aliucord:dokkaHtml
+          chmod +x gradlew
+          ./gradlew app:dokkaHtml
 
       - name: Copy Dokka
         run: |
