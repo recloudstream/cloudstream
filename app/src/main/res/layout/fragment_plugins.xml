@@ -1,38 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/extensions_root"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/extensions_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
-            android:background="@android:color/transparent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent">
 
         <com.google.android.material.appbar.MaterialToolbar
-                app:menu="@menu/repository"
-                android:id="@+id/settings_toolbar"
-                android:paddingTop="@dimen/navbar_height"
-                tools:title="Overlord"
-                android:background="?attr/primaryGrayBackground"
-                app:navigationIconTint="?attr/iconColor"
-                app:titleTextColor="?attr/textColor"
-                app:layout_scrollFlags="scroll|enterAlways"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            android:id="@+id/settings_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/primaryGrayBackground"
+            android:paddingTop="@dimen/navbar_height"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:menu="@menu/repository"
+            app:navigationIconTint="?attr/iconColor"
+            app:titleTextColor="?attr/textColor"
+            tools:title="Overlord" />
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/primaryGrayBackground"
+            android:clipToPadding="true"
+            android:fadingEdge="horizontal"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:requiresFadingEdge="horizontal"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <!--        Man what the fuck we need a recyclerview -->
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!--  android:minWidth="0dp"
+                        app:iconTint="?attr/textColor"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        android:layout_height="35dp"-->
+                <!-- <com.google.android.material.button.MaterialButton
+                         android:nextFocusRight="@id/home_select_tv_series"
+                         app:icon="@drawable/ic_baseline_close_24"
+
+                         android:id="@+id/home_select_none"
+                         style="@style/RoundedSelectableButtonIcon"/>-->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_select_movies"
+
+                    style="@style/RoundedSelectableButton"
+                    android:nextFocusRight="@id/home_select_tv_series"
+                    android:text="@string/movies" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_select_tv_series"
+                    style="@style/RoundedSelectableButton"
+
+                    android:nextFocusLeft="@id/home_select_movies"
+                    android:nextFocusRight="@id/home_select_anime"
+                    android:text="@string/tv_series" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_select_anime"
+                    style="@style/RoundedSelectableButton"
+
+                    android:nextFocusLeft="@id/home_select_tv_series"
+                    android:nextFocusRight="@id/home_select_asian"
+                    android:text="@string/anime" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_select_asian"
+                    style="@style/RoundedSelectableButton"
+
+                    android:nextFocusLeft="@id/home_select_anime"
+                    android:nextFocusRight="@id/home_select_cartoons"
+                    android:text="@string/asian_drama" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_select_cartoons"
+                    style="@style/RoundedSelectableButton"
+
+                    android:nextFocusLeft="@id/home_select_asian"
+                    android:nextFocusRight="@id/home_select_documentaries"
+                    android:text="@string/cartoons" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_select_documentaries"
+
+                    style="@style/RoundedSelectableButton"
+                    android:nextFocusLeft="@id/home_select_cartoons"
+                    android:text="@string/documentaries" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_select_livestreams"
+                    style="@style/RoundedSelectableButton"
+                    android:nextFocusLeft="@id/home_select_documentaries"
+                    android:text="@string/livestreams" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:listitem="@layout/repository_item"
-            android:id="@+id/plugin_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:id="@+id/plugin_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/repository_item" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

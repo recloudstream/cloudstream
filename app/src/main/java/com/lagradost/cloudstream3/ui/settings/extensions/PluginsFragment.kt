@@ -3,10 +3,12 @@ package com.lagradost.cloudstream3.ui.settings.extensions
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.getPairList
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import kotlinx.android.synthetic.main.fragment_plugins.*
 
@@ -55,7 +57,7 @@ class PluginsFragment : Fragment() {
         // Don't go back if active query
         settings_toolbar?.setNavigationOnClickListener {
             if (searchView?.isIconified == false) {
-                searchView?.isIconified = true
+                searchView.isIconified = true
             } else {
                 activity?.onBackPressed()
             }
@@ -88,7 +90,7 @@ class PluginsFragment : Fragment() {
                 pluginViewModel.handlePluginAction(activity, url, it, isLocal)
             }
 
-        observe(pluginViewModel.plugins) {
+        observe(pluginViewModel.filteredPlugins) {
             (plugin_recycler_view?.adapter as? PluginAdapter?)?.updateList(it)
             plugin_recycler_view?.scrollToPosition(0)
         }
@@ -100,6 +102,55 @@ class PluginsFragment : Fragment() {
         } else {
             pluginViewModel.updatePluginList(url)
         }
+
+        // 💀💀💀💀💀💀💀 Recyclerview when
+        val pairList = getPairList(
+            home_select_anime,
+            home_select_cartoons,
+            home_select_tv_series,
+            home_select_documentaries,
+            home_select_movies,
+            home_select_asian,
+            home_select_livestreams
+        )
+
+        // Copy pasted code
+        for ((button, validTypes) in pairList) {
+            val validTypesMapped = validTypes.map { it.name }
+            val isValid =
+                true //validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
+            button?.isVisible = isValid
+            if (isValid) {
+                fun buttonContains(): Boolean {
+                    return pluginViewModel.tvTypes.any { validTypesMapped.contains(it) }
+                }
+
+                button?.isSelected = buttonContains()
+                button?.setOnClickListener {
+                    pluginViewModel.tvTypes.clear()
+                    pluginViewModel.tvTypes.addAll(validTypesMapped)
+                    for ((otherButton, _) in pairList) {
+                        otherButton?.isSelected = false
+                    }
+                    button.isSelected = true
+                    pluginViewModel.updateFilteredPlugins()
+                }
+
+                button?.setOnLongClickListener {
+                    if (!buttonContains()) {
+                        button.isSelected = true
+                        pluginViewModel.tvTypes.addAll(validTypesMapped)
+                    } else {
+                        button.isSelected = false
+                        pluginViewModel.tvTypes.removeAll(validTypesMapped)
+                    }
+                    pluginViewModel.updateFilteredPlugins()
+                    return@setOnLongClickListener true
+                }
+            }
+        }
+
+
     }
 
     companion object {

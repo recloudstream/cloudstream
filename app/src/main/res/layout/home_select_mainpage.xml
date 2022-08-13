@@ -31,6 +31,8 @@
         android:paddingEnd="10dp"
         android:requiresFadingEdge="horizontal">
 
+<!--        Man what the fuck we need a recyclerview -->
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

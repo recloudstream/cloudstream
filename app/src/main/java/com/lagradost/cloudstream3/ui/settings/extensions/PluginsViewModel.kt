@@ -24,8 +24,15 @@ import me.xdrop.fuzzywuzzy.FuzzySearch
 typealias Plugin = Pair<String, SitePlugin>
 
 class PluginsViewModel : ViewModel() {
-    private val _plugins = MutableLiveData<List<PluginViewData>>()
-    val plugins: LiveData<List<PluginViewData>> = _plugins
+    /** plugins is an unaltered list of plugins */
+    private var plugins: List<PluginViewData> = emptyList()
+
+    /** filteredPlugins is a subset of plugins following the current search query and tv type selection */
+    private var _filteredPlugins = MutableLiveData<List<PluginViewData>>()
+    var filteredPlugins: LiveData<List<PluginViewData>> = _filteredPlugins
+
+    val tvTypes = mutableListOf<String>()
+    private var currentQuery: String? = null
 
     companion object {
         private val repositoryCache: MutableMap<String, List<Plugin>> = mutableMapOf()
@@ -161,7 +168,27 @@ class PluginsViewModel : ViewModel() {
             PluginViewData(plugin, isDownloaded(plugin, stored))
         }
 
-        _plugins.postValue(list)
+        this.plugins = list
+        _filteredPlugins.postValue(list.filterTvTypes().sortByQuery(currentQuery))
+    }
+
+    // Perhaps can be optimized?
+    private fun List<PluginViewData>.filterTvTypes(): List<PluginViewData> {
+        if (tvTypes.isEmpty()) return this
+        return this.filter { it.plugin.second.tvTypes?.any { type -> tvTypes.contains(type) } == true }
+    }
+
+    private fun List<PluginViewData>.sortByQuery(query: String?): List<PluginViewData> {
+        return if (query == null) {
+            // Return list to base state if no query
+            this.sortedBy { it.plugin.second.name }
+        } else {
+            this.sortedBy { -FuzzySearch.ratio(it.plugin.second.name, query) }
+        }
+    }
+
+    fun updateFilteredPlugins() {
+        _filteredPlugins.postValue(plugins.filterTvTypes().sortByQuery(currentQuery))
     }
 
     fun updatePluginList(repositoryUrl: String) = viewModelScope.launch {
@@ -170,19 +197,9 @@ class PluginsViewModel : ViewModel() {
     }
 
     fun search(query: String?) {
-        val currentPlugins = plugins.value ?: return
-
-        // Return list to base state if no query
-        val newValue = if (query == null) {
-            currentPlugins.sortedBy { it.plugin.second.name }
-        } else {
-            currentPlugins.sortedBy {
-                -FuzzySearch.ratio(it.plugin.second.name, query)
-            }
-        }
-        _plugins.postValue(newValue)
+        currentQuery = query
+        _filteredPlugins.postValue(filteredPlugins.value?.sortByQuery(query))
     }
-
 
     /**
      * Update the list but only with the local data. Used for file management.
@@ -196,6 +213,7 @@ class PluginsViewModel : ViewModel() {
                 PluginViewData("" to it.toSitePlugin(), true)
             }
 
-        _plugins.postValue(downloadedPlugins)
+        plugins = downloadedPlugins
+        _filteredPlugins.postValue(downloadedPlugins.filterTvTypes().sortByQuery(currentQuery))
     }
 }
