@@ -30,7 +30,7 @@ jobs:
           path: "dokka"
       
       - name: Clean old builds
-        run: rm -rf $GITHUB_WORKSPACE/src/html/*
+        run: rm -rf $GITHUB_WORKSPACE/dokka/html/*
 
       - name: Setup JDK 11
         uses: actions/setup-java@v1
