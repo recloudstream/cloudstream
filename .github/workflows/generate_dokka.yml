@@ -1,0 +1,61 @@
+name: Dokka
+
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#concurrency
+concurrency: 
+  group: "dokka"
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      # choose your default branch
+      - master
+      - main
+    paths-ignore:
+      - '*.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          path: "src"
+
+      - name: Checkout dokka
+        uses: actions/checkout@master
+        with:
+          ref: "dokka"
+          path: "dokka"
+      
+      - name: Clean old builds
+        run: rm -rf $GITHUB_WORKSPACE/dokka/html/*
+
+      - name: Setup JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Generate Dokka
+        run: |
+          cd src
+          chmod +x gradlew
+          ./gradlew app:dokkaHtml
+          cd ..
+
+      - name: Copy Dokka
+        run: |
+          cp -r src/app/build/dokka/html $GITHUB_WORKSPACE/dokka/
+
+      - name: Push builds
+        run: |
+          cd $GITHUB_WORKSPACE/dokka
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit --amend -m "Generate dokka for $GITHUB_SHA" || exit 0   # do not error if nothing to commit
+          git push --force
