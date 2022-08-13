@@ -2,7 +2,7 @@ name: Dokka
 
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#concurrency
 concurrency: 
-  group: "build"
+  group: "dokka"
   cancel-in-progress: true
 
 on:
