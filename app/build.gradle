@@ -100,7 +100,9 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
-    implementation 'com.google.android.material:material:1.5.0' // dont change this to 1.6.0 it looks ugly af
+
+    // dont change this to 1.6.0 it looks ugly af
+    implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.1'
@@ -187,6 +189,8 @@ dependencies {
     implementation 'com.github.TeamNewPipe:NewPipeExtractor:master-SNAPSHOT'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
+    // Library/extensions searching with Levenshtein distance
+    implementation 'me.xdrop:fuzzywuzzy:1.4.0'
 }
 
 task androidSourcesJar(type: Jar) {
@@ -195,8 +199,9 @@ task androidSourcesJar(type: Jar) {
 }
 
 task makeJar(type: Copy) {
-  from('build/intermediates/compile_app_classes_jar/debug') // after modifying here, you can export. Jar
-  into('build') // output location
-  include('classes.jar') // the classes file of the imported rack package
-  dependsOn build
+    // after modifying here, you can export. Jar
+    from('build/intermediates/compile_app_classes_jar/debug')
+    into('build') // output location
+    include('classes.jar') // the classes file of the imported rack package
+    dependsOn build
 }

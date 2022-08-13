@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.view.menu.MenuBuilder
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.R
@@ -49,6 +49,40 @@ class PluginsFragment : Fragment() {
             return@setOnMenuItemClickListener true
         }
 
+        val searchView =
+            settings_toolbar?.menu?.findItem(R.id.search_button)?.actionView as? RepoSearchView
+
+        // Don't go back if active query
+        settings_toolbar?.setNavigationOnClickListener {
+            if (searchView?.isIconified == false) {
+                searchView?.isIconified = true
+            } else {
+                activity?.onBackPressed()
+            }
+        }
+
+//        searchView?.onActionViewCollapsed = {
+//            pluginViewModel.search(null)
+//        }
+
+        // Because onActionViewCollapsed doesn't wanna work we need this workaround :(
+        searchView?.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) pluginViewModel.search(null)
+        }
+
+        searchView?.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                pluginViewModel.search(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                pluginViewModel.search(newText)
+                return true
+            }
+        })
+
+
         plugin_recycler_view?.adapter =
             PluginAdapter {
                 pluginViewModel.handlePluginAction(activity, url, it, isLocal)
@@ -56,11 +90,12 @@ class PluginsFragment : Fragment() {
 
         observe(pluginViewModel.plugins) {
             (plugin_recycler_view?.adapter as? PluginAdapter?)?.updateList(it)
+            plugin_recycler_view?.scrollToPosition(0)
         }
 
         if (isLocal) {
             // No download button
-            settings_toolbar?.menu?.clear()
+            settings_toolbar?.menu?.findItem(R.id.download_all)?.isVisible = false
             pluginViewModel.updatePluginListLocal()
         } else {
             pluginViewModel.updatePluginList(url)
@@ -75,5 +110,14 @@ class PluginsFragment : Fragment() {
                 putBoolean(PLUGINS_BUNDLE_LOCAL, isLocal)
             }
         }
+
+        class RepoSearchView(context: Context) : android.widget.SearchView(context) {
+//            var onActionViewCollapsed = {}
+//
+//            override fun onActionViewCollapsed() {
+//                onActionViewCollapsed()
+//            }
+        }
+
     }
 }

@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-            app:showAsAction="always"
-            android:id="@+id/download_all"
-            android:icon="@drawable/netflix_download"
-            android:title="@string/batch_download" />
+        android:id="@+id/search_button"
+        android:icon="@drawable/search_icon"
+        android:title="@string/title_search"
+        app:actionViewClass="com.lagradost.cloudstream3.ui.settings.extensions.PluginsFragment$Companion$RepoSearchView"
+        app:searchHintIcon="@drawable/search_icon"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/download_all"
+        android:icon="@drawable/netflix_download"
+        android:title="@string/batch_download"
+        app:showAsAction="collapseActionView|ifRoom" />
 </menu>

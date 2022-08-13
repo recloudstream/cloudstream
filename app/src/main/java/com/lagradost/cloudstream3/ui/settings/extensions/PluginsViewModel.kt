@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import kotlinx.coroutines.launch
+import me.xdrop.fuzzywuzzy.FuzzySearch
 
 typealias Plugin = Pair<String, SitePlugin>
 
@@ -166,6 +167,20 @@ class PluginsViewModel : ViewModel() {
     fun updatePluginList(repositoryUrl: String) = viewModelScope.launch {
         Log.i(TAG, "updatePluginList = $repositoryUrl")
         updatePluginListPrivate(repositoryUrl)
+    }
+
+    fun search(query: String?) {
+        val currentPlugins = plugins.value ?: return
+
+        // Return list to base state if no query
+        val newValue = if (query == null) {
+            currentPlugins.sortedBy { it.plugin.second.name }
+        } else {
+            currentPlugins.sortedBy {
+                -FuzzySearch.ratio(it.plugin.second.name, query)
+            }
+        }
+        _plugins.postValue(newValue)
     }
 
 
