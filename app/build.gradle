@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
+    id 'org.jetbrains.dokka'
 }
 
 def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
