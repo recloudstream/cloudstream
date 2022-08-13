@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.result
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -15,10 +16,17 @@ import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.utils.AppUtils.setMaxViewPoolSize
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
+import kotlinx.android.synthetic.main.fragment_result_tv.result_episodes
+import kotlinx.android.synthetic.main.fragment_result_tv.result_episodes_text
+import kotlinx.android.synthetic.main.fragment_result_tv.result_play_movie
+import kotlinx.android.synthetic.main.fragment_result_tv.result_root
 
 class ResultFragmentTv : ResultFragment() {
     override val resultLayout = R.layout.fragment_result_tv
@@ -95,13 +103,21 @@ class ResultFragmentTv : ResultFragment() {
             result_recommendations_filter_selection?.isVisible = false
         }
     }
+
     var loadingDialog: Dialog? = null
     var popupDialog: Dialog? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        result_episodes?.layoutManager =
+            //LinearListLayout(result_episodes ?: return, result_episodes?.context).apply {
+            LinearListLayout(result_episodes?.context).apply {
+                setHorizontal()
+            }
         (result_episodes?.adapter as EpisodeAdapter?)?.apply {
             layout = R.layout.result_episode_both_tv
         }
+        //result_episodes?.setMaxViewPoolSize(0, Int.MAX_VALUE)
 
         result_season_selection.setAdapter()
         result_range_selection.setAdapter()

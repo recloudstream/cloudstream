@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        xmlns:tools="http://schemas.android.com/tools">
+        android:foreground="@drawable/outline_drawable"
+        android:layout_height="wrap_content">
 
     <include
             tools:visibility="visible"

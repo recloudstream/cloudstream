@@ -917,7 +917,7 @@
                                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                     android:descendantFocusability="afterDescendants"
                                     android:paddingBottom="100dp"
-                                    tools:listitem="@layout/result_episode" />
+                                    tools:listitem="@layout/result_episode_both_tv" />
                         </LinearLayout>
                     </LinearLayout>
 
