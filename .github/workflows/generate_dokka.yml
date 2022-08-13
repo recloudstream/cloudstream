@@ -45,10 +45,11 @@ jobs:
           cd src
           chmod +x gradlew
           ./gradlew app:dokkaHtml
+          cd ..
 
       - name: Copy Dokka
         run: |
-          cp -r app/build/dokka/html $GITHUB_WORKSPACE/dokka/
+          cp -r src/app/build/dokka/html $GITHUB_WORKSPACE/dokka/
 
       - name: Push builds
         run: |
