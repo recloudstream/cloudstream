@@ -48,7 +48,7 @@ jobs:
 
       - name: Copy Dokka
         run: |
-          cp -r dokka/html $GITHUB_WORKSPACE/dokka/
+          cp -r app/build/dokka/html $GITHUB_WORKSPACE/dokka/
 
       - name: Push builds
         run: |
