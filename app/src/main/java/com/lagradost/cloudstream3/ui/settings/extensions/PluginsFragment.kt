@@ -96,61 +96,61 @@ class PluginsFragment : Fragment() {
         }
 
         if (isLocal) {
-            // No download button
+            // No download button and no categories on local
             settings_toolbar?.menu?.findItem(R.id.download_all)?.isVisible = false
             pluginViewModel.updatePluginListLocal()
+            tv_types_scroll_view?.isVisible = false
         } else {
             pluginViewModel.updatePluginList(url)
-        }
+            tv_types_scroll_view?.isVisible = true
 
-        // 💀💀💀💀💀💀💀 Recyclerview when
-        val pairList = getPairList(
-            home_select_anime,
-            home_select_cartoons,
-            home_select_tv_series,
-            home_select_documentaries,
-            home_select_movies,
-            home_select_asian,
-            home_select_livestreams
-        )
+            // 💀💀💀💀💀💀💀 Recyclerview when
+            val pairList = getPairList(
+                home_select_anime,
+                home_select_cartoons,
+                home_select_tv_series,
+                home_select_documentaries,
+                home_select_movies,
+                home_select_asian,
+                home_select_livestreams
+            )
 
-        // Copy pasted code
-        for ((button, validTypes) in pairList) {
-            val validTypesMapped = validTypes.map { it.name }
-            val isValid =
-                true //validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
-            button?.isVisible = isValid
-            if (isValid) {
-                fun buttonContains(): Boolean {
-                    return pluginViewModel.tvTypes.any { validTypesMapped.contains(it) }
-                }
-
-                button?.isSelected = buttonContains()
-                button?.setOnClickListener {
-                    pluginViewModel.tvTypes.clear()
-                    pluginViewModel.tvTypes.addAll(validTypesMapped)
-                    for ((otherButton, _) in pairList) {
-                        otherButton?.isSelected = false
+            // Copy pasted code
+            for ((button, validTypes) in pairList) {
+                val validTypesMapped = validTypes.map { it.name }
+                val isValid =
+                    true //validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
+                button?.isVisible = isValid
+                if (isValid) {
+                    fun buttonContains(): Boolean {
+                        return pluginViewModel.tvTypes.any { validTypesMapped.contains(it) }
                     }
-                    button.isSelected = true
-                    pluginViewModel.updateFilteredPlugins()
-                }
 
-                button?.setOnLongClickListener {
-                    if (!buttonContains()) {
-                        button.isSelected = true
+                    button?.isSelected = buttonContains()
+                    button?.setOnClickListener {
+                        pluginViewModel.tvTypes.clear()
                         pluginViewModel.tvTypes.addAll(validTypesMapped)
-                    } else {
-                        button.isSelected = false
-                        pluginViewModel.tvTypes.removeAll(validTypesMapped)
+                        for ((otherButton, _) in pairList) {
+                            otherButton?.isSelected = false
+                        }
+                        button.isSelected = true
+                        pluginViewModel.updateFilteredPlugins()
                     }
-                    pluginViewModel.updateFilteredPlugins()
-                    return@setOnLongClickListener true
+
+                    button?.setOnLongClickListener {
+                        if (!buttonContains()) {
+                            button.isSelected = true
+                            pluginViewModel.tvTypes.addAll(validTypesMapped)
+                        } else {
+                            button.isSelected = false
+                            pluginViewModel.tvTypes.removeAll(validTypesMapped)
+                        }
+                        pluginViewModel.updateFilteredPlugins()
+                        return@setOnLongClickListener true
+                    }
                 }
             }
         }
-
-
     }
 
     companion object {

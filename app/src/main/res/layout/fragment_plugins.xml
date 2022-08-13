@@ -26,6 +26,7 @@
             tools:title="Overlord" />
 
         <HorizontalScrollView
+            android:id="@+id/tv_types_scroll_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/primaryGrayBackground"
