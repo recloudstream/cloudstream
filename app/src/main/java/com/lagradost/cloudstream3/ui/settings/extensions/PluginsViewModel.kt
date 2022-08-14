@@ -22,14 +22,19 @@ import kotlinx.coroutines.launch
 import me.xdrop.fuzzywuzzy.FuzzySearch
 
 typealias Plugin = Pair<String, SitePlugin>
+/**
+ * The boolean signifies if the plugin list should be scrolled to the top, used for searching.
+ * */
+typealias PluginViewDataUpdate = Pair<Boolean, List<PluginViewData>>
 
 class PluginsViewModel : ViewModel() {
+
     /** plugins is an unaltered list of plugins */
     private var plugins: List<PluginViewData> = emptyList()
 
     /** filteredPlugins is a subset of plugins following the current search query and tv type selection */
-    private var _filteredPlugins = MutableLiveData<List<PluginViewData>>()
-    var filteredPlugins: LiveData<List<PluginViewData>> = _filteredPlugins
+    private var _filteredPlugins = MutableLiveData<PluginViewDataUpdate>()
+    var filteredPlugins: LiveData<PluginViewDataUpdate> = _filteredPlugins
 
     val tvTypes = mutableListOf<String>()
     private var currentQuery: String? = null
@@ -169,7 +174,7 @@ class PluginsViewModel : ViewModel() {
         }
 
         this.plugins = list
-        _filteredPlugins.postValue(list.filterTvTypes().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(false to list.filterTvTypes().sortByQuery(currentQuery))
     }
 
     // Perhaps can be optimized?
@@ -191,7 +196,7 @@ class PluginsViewModel : ViewModel() {
     }
 
     fun updateFilteredPlugins() {
-        _filteredPlugins.postValue(plugins.filterTvTypes().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(false to plugins.filterTvTypes().sortByQuery(currentQuery))
     }
 
     fun updatePluginList(repositoryUrl: String) = viewModelScope.launch {
@@ -201,7 +206,7 @@ class PluginsViewModel : ViewModel() {
 
     fun search(query: String?) {
         currentQuery = query
-        _filteredPlugins.postValue(filteredPlugins.value?.sortByQuery(query))
+        _filteredPlugins.postValue(true to (filteredPlugins.value?.second?.sortByQuery(query) ?: emptyList()))
     }
 
     /**
@@ -217,6 +222,6 @@ class PluginsViewModel : ViewModel() {
             }
 
         plugins = downloadedPlugins
-        _filteredPlugins.postValue(downloadedPlugins.filterTvTypes().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(false to downloadedPlugins.filterTvTypes().sortByQuery(currentQuery))
     }
 }

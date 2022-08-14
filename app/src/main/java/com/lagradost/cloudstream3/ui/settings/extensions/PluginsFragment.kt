@@ -90,9 +90,11 @@ class PluginsFragment : Fragment() {
                 pluginViewModel.handlePluginAction(activity, url, it, isLocal)
             }
 
-        observe(pluginViewModel.filteredPlugins) {
-            (plugin_recycler_view?.adapter as? PluginAdapter?)?.updateList(it)
-            plugin_recycler_view?.scrollToPosition(0)
+        observe(pluginViewModel.filteredPlugins) { (scrollToTop, list) ->
+            (plugin_recycler_view?.adapter as? PluginAdapter?)?.updateList(list)
+
+            if (scrollToTop)
+                plugin_recycler_view?.scrollToPosition(0)
         }
 
         if (isLocal) {
