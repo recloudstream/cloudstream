@@ -35,6 +35,7 @@ abstract class Plugin {
     fun registerMainAPI(element: MainAPI) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) MainAPI")
         element.sourcePlugin = this.__filename
+        // Race condition causing which would case duplicates if not for distinctBy
         APIHolder.allProviders.add(element)
         APIHolder.addPluginMapping(element)
     }

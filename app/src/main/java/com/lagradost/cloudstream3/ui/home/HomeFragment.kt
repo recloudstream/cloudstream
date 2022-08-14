@@ -32,6 +32,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
@@ -304,7 +305,8 @@ class HomeFragment : Fragment() {
                 val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
                 val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)
 
-                val pairList = getPairList(anime, cartoons, tvs, docs, movies, asian, livestream, nsfw, others)
+                val pairList =
+                    getPairList(anime, cartoons, tvs, docs, movies, asian, livestream, nsfw, others)
 
                 cancelBtt?.setOnClickListener {
                     dialog.dismissSafe()
@@ -435,12 +437,13 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         reloadStored()
+        afterPluginsLoadedEvent += ::loadHomePage
     }
-/*
+
     override fun onStop() {
-        backEvent -= ::handleBack
+        afterPluginsLoadedEvent -= ::loadHomePage
         super.onStop()
-    }*/
+    }
 
     private fun reloadStored() {
         homeViewModel.loadResumeWatching()
@@ -449,6 +452,14 @@ class HomeFragment : Fragment() {
             list.addAll(it)
         }
         homeViewModel.loadStoredData(list)
+    }
+
+    private fun loadHomePage(successful: Boolean = true) {
+        val apiName = context?.getKey<String>(HOMEPAGE_API)
+        if (homeViewModel.apiName.value != apiName || apiName == null) {
+            //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
+            homeViewModel.loadAndCancel(apiName)
+        }
     }
 
     /*private fun handleBack(poppedFragment: Boolean) {
@@ -948,11 +959,7 @@ class HomeFragment : Fragment() {
         }
 
         reloadStored()
-        val apiName = context?.getKey<String>(HOMEPAGE_API)
-        if (homeViewModel.apiName.value != apiName || apiName == null) {
-            //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
-            homeViewModel.loadAndCancel(apiName)
-        }
+        loadHomePage()
 
         home_loaded.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { view, _, scrollY, _, oldScrollY ->
             val dy = scrollY - oldScrollY

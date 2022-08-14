@@ -87,6 +87,7 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIE
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.Event
 
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -131,6 +132,7 @@ var app = Requests(responseParser = object : ResponseParser {
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     companion object {
         const val TAG = "MAINACT"
+        val afterPluginsLoadedEvent = Event<Boolean>()
     }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
@@ -462,6 +464,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
 
             PluginManager.loadAllLocalPlugins(this@MainActivity)
+            afterPluginsLoadedEvent.invoke(true)
         }
 
 //        ioSafe {
@@ -495,7 +498,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         ioSafe {
             initAll()
-            apis = allProviders
+            // No duplicates (which can happen by registerMainAPI)
+            apis = allProviders.distinctBy { it }
 
             try {
                 getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
@@ -511,7 +515,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                             }
                     }
                 }
-                apis = allProviders
+                apis = allProviders.distinctBy { it }
                 APIHolder.apiMap = null
             } catch (e: Exception) {
                 logError(e)
