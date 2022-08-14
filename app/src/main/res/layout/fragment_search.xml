@@ -146,6 +146,12 @@
                 style="@style/RoundedSelectableButton"
                 android:nextFocusLeft="@id/search_select_documentaries"
                 android:text="@string/livestreams" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/search_select_others"
+                style="@style/RoundedSelectableButton"
+                android:nextFocusLeft="@id/search_select_livestreams"
+                android:text="@string/others" />
         </LinearLayout>
     </HorizontalScrollView>
 

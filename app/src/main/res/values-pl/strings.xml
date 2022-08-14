@@ -427,4 +427,6 @@
     <string name="blank_repo_message">Dodaj repozytorium aby zainstalować rozszerzenia</string>
     <string name="sync_score">Ocenione</string>
     <string name="sync_score_format">%d na 10</string>
+    <string name="others">Inne</string>
+    <string name="other_singular">Wideo</string>
 </resources>
