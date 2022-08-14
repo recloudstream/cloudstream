@@ -555,6 +555,7 @@ enum class TvType {
     Documentary,
     AsianDrama,
     Live,
+    Others
 }
 
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH

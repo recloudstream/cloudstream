@@ -5,23 +5,26 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import com.discord.panels.OverlappingPanelsLayout
 import com.discord.panels.PanelsChildGestureRegionObserver
+import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
-import com.lagradost.cloudstream3.DubStatus
-import com.lagradost.cloudstream3.LoadResponse
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.Some
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -125,6 +128,8 @@ class ResultFragmentPhone : ResultFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
+
         super.onViewCreated(view, savedInstanceState)
 
         player_open_source?.setOnClickListener {
@@ -192,6 +197,37 @@ class ResultFragmentPhone : ResultFragment() {
             }
             //result_poster_blur_holder?.translationY = -scrollY.toFloat()
         })
+        val api = APIHolder.getApiFromName(apiName)
+
+        if (media_route_button != null) {
+            val chromecastSupport = api.hasChromecastSupport
+            media_route_button?.alpha = if (chromecastSupport) 1f else 0.3f
+            if (!chromecastSupport) {
+                media_route_button?.setOnClickListener {
+                    CommonActivity.showToast(
+                        activity,
+                        R.string.no_chromecast_support_toast,
+                        Toast.LENGTH_LONG
+                    )
+                }
+            }
+            activity?.let { act ->
+                if (act.isCastApiAvailable()) {
+                    try {
+                        CastButtonFactory.setUpMediaRouteButton(act, media_route_button)
+                        val castContext = CastContext.getSharedInstance(act.applicationContext)
+                        media_route_button?.isGone =
+                            castContext.castState == CastState.NO_DEVICES_AVAILABLE
+                        // this shit leaks for some reason
+                        //castContext.addCastStateListener { state ->
+                        //    media_route_button?.isGone = state == CastState.NO_DEVICES_AVAILABLE
+                        //}
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
+                }
+            }
+        }
 
         observe(viewModel.episodesCountText) { count ->
             result_episodes_text.setText(count)

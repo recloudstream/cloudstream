@@ -424,71 +424,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
-
-        // Parallelize to speed up startup
-        ioSafe {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-            if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
-                PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
-            } else {
-                PluginManager.loadAllOnlinePlugins(this@MainActivity)
-            }
-
-            PluginManager.loadAllLocalPlugins(this@MainActivity)
-        }
-
-//        ioSafe {
-//            val plugins =
-//                RepositoryParser.getRepoPlugins("https://raw.githubusercontent.com/recloudstream/TestPlugin/master/repo.json")
-//                    ?: emptyList()
-//            plugins.map {
-//                println("Load plugin: ${it.name} ${it.url}")
-//                RepositoryParser.loadSiteTemp(applicationContext, it.url, it.name)
-//            }
-//        }
-
-        // init accounts
-        ioSafe {
-            for (api in accountManagers) {
-                api.init()
-            }
-        }
-
-        ioSafe {
-            inAppAuths.apmap { api ->
-                try {
-                    api.initialize()
-                } catch (e: Exception) {
-                    logError(e)
-                }
-            }
-        }
-
-        SearchResultBuilder.updateCache(this)
-
-        ioSafe {
-            initAll()
-            apis = allProviders
-            try {
-                getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
-                    list.forEach { custom ->
-                        allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                            ?.let {
-                                allProviders.add(it.javaClass.newInstance().apply {
-                                    name = custom.name
-                                    lang = custom.lang
-                                    mainUrl = custom.url.trimEnd('/')
-                                    canBeOverridden = false
-                                })
-                            }
-                    }
-                }
-                apis = allProviders
-                APIHolder.apiMap = null
-            } catch (e: Exception) {
-                logError(e)
-            }
-        }
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         loadThemes(this)
         updateLocale()
@@ -510,6 +446,65 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         changeStatusBarState(isEmulatorSettings())
+
+        if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
+            PluginManager.updateAllOnlinePluginsAndLoadThem(this)
+        } else {
+            PluginManager.loadAllOnlinePlugins(this)
+        }
+
+        PluginManager.loadAllLocalPlugins(this)
+
+//        ioSafe {
+//            val plugins =
+//                RepositoryParser.getRepoPlugins("https://raw.githubusercontent.com/recloudstream/TestPlugin/master/repo.json")
+//                    ?: emptyList()
+//            plugins.map {
+//                println("Load plugin: ${it.name} ${it.url}")
+//                RepositoryParser.loadSiteTemp(applicationContext, it.url, it.name)
+//            }
+//        }
+
+        // init accounts
+        for (api in accountManagers) {
+            api.init()
+        }
+
+        ioSafe {
+            inAppAuths.apmap { api ->
+                try {
+                    api.initialize()
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+        }
+
+        SearchResultBuilder.updateCache(this)
+
+
+        initAll()
+        apis = allProviders
+
+        try {
+            getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                list.forEach { custom ->
+                    allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                        ?.let {
+                            allProviders.add(it.javaClass.newInstance().apply {
+                                name = custom.name
+                                lang = custom.lang
+                                mainUrl = custom.url.trimEnd('/')
+                                canBeOverridden = false
+                            })
+                        }
+                }
+            }
+            apis = allProviders
+            APIHolder.apiMap = null
+        } catch (e: Exception) {
+            logError(e)
+        }
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
         setUpBackup()
@@ -658,7 +653,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         handleAppIntent(intent)
 
-        ioSafe {
+        thread {
             runAutoUpdate()
         }
 

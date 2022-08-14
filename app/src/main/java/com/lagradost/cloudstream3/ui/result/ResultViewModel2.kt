@@ -197,6 +197,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Torrent -> R.string.torrent_singular
                 TvType.AsianDrama -> R.string.asian_drama_singular
                 TvType.Live -> R.string.live_singular
+                TvType.Others -> R.string.other_singular
             }
         ),
         yearText = txt(year?.toString()),
@@ -549,6 +550,7 @@ class ResultViewModel2 : ViewModel() {
                 TvType.Documentary -> "Documentaries"
                 TvType.AsianDrama -> "AsianDrama"
                 TvType.Live -> "LiveStreams"
+                TvType.Others -> "Others"
             }
         }
 

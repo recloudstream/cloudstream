@@ -175,7 +175,10 @@ class PluginsViewModel : ViewModel() {
     // Perhaps can be optimized?
     private fun List<PluginViewData>.filterTvTypes(): List<PluginViewData> {
         if (tvTypes.isEmpty()) return this
-        return this.filter { it.plugin.second.tvTypes?.any { type -> tvTypes.contains(type) } == true }
+        return this.filter {
+            (it.plugin.second.tvTypes?.any { type -> tvTypes.contains(type) } == true) ||
+            (tvTypes.contains("Others") && (it.plugin.second.tvTypes ?: emptyList()).isEmpty())
+        }
     }
 
     private fun List<PluginViewData>.sortByQuery(query: String?): List<PluginViewData> {

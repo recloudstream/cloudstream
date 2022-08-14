@@ -110,6 +110,12 @@
                     android:nextFocusLeft="@id/home_select_documentaries"
                     android:text="@string/livestreams" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_select_others"
+                    style="@style/RoundedSelectableButton"
+                    android:nextFocusLeft="@id/home_select_livestreams"
+                    android:text="@string/others" />
+
             </LinearLayout>
         </HorizontalScrollView>
     </com.google.android.material.appbar.AppBarLayout>

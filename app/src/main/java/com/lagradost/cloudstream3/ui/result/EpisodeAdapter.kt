@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
@@ -75,9 +76,12 @@ class EpisodeAdapter(
     }
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        if(holder.itemView.hasFocus()) {
+        if (holder.itemView.hasFocus()) {
             holder.itemView.clearFocus()
         }
+        //(holder.itemView as? FrameLayout?)?.descendantFocusability =
+        //    ViewGroup.FOCUS_BLOCK_DESCENDANTS
+
         if (holder is DownloadButtonViewHolder) {
             holder.downloadButton.dispose()
         }
@@ -87,11 +91,20 @@ class EpisodeAdapter(
         if (holder is DownloadButtonViewHolder) {
             holder.downloadButton.dispose()
             mBoundViewHolders.remove(holder)
+            //(holder.itemView as? FrameLayout?)?.descendantFocusability =
+            //    ViewGroup.FOCUS_BLOCK_DESCENDANTS
         }
     }
 
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         if (holder is DownloadButtonViewHolder) {
+            //println("onViewAttachedToWindow = ${holder.absoluteAdapterPosition}")
+            //holder.itemView.post {
+            //    if (holder.itemView.isAttachedToWindow)
+            //        (holder.itemView as? FrameLayout?)?.descendantFocusability =
+            //            ViewGroup.FOCUS_AFTER_DESCENDANTS
+            //}
+
             holder.reattachDownloadButton()
         }
     }
@@ -144,7 +157,6 @@ class EpisodeAdapter(
         private val downloadClickCallback: (DownloadClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
         override var downloadButton = EasyDownloadButton()
-
 
         var episodeDownloadBar: ContentLoadingProgressBar? = null
         var episodeDownloadImage: ImageView? = null
@@ -217,17 +229,17 @@ class EpisodeAdapter(
                 }
             }
 
-            parentView.setOnClickListener {
+            itemView.setOnClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
             }
 
             if (isTrueTv) {
-                parentView.isFocusable = true
-                parentView.isFocusableInTouchMode = true
-                parentView.touchscreenBlocksFocus = false
+                itemView.isFocusable = true
+                itemView.isFocusableInTouchMode = true
+                //itemView.touchscreenBlocksFocus = false
             }
 
-            parentView.setOnLongClickListener {
+            itemView.setOnLongClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
 
                 return@setOnLongClickListener true
@@ -242,6 +254,9 @@ class EpisodeAdapter(
             downloadButton.dispose()
             val card = localCard
             if (hasDownloadSupport && card != null) {
+                if (episodeDownloadBar == null ||
+                    episodeDownloadImage == null
+                ) return
                 val downloadInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
                     itemView.context,
                     card.id
