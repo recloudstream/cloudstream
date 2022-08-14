@@ -234,7 +234,7 @@ object PluginManager {
         val sortedPlugins = dir.listFiles()
         // Always sort plugins alphabetically for reproducible results
 
-        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins}")
+        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: $sortedPlugins")
 
         sortedPlugins?.sortedBy { it.name }?.apmap { file ->
             maybeLoadPlugin(activity, file)
@@ -375,7 +375,7 @@ object PluginManager {
      * */
     suspend fun deletePlugin(pluginIdentifier: String, isFilePath: Boolean): Boolean {
         val data =
-            (if (isFilePath) getPluginsLocal().firstOrNull { it.filePath == pluginIdentifier }
+            (if (isFilePath) (getPluginsLocal() + getPluginsOnline()).firstOrNull { it.filePath == pluginIdentifier }
             else getPluginsOnline().firstOrNull { it.url == pluginIdentifier }) ?: return false
 
         return try {

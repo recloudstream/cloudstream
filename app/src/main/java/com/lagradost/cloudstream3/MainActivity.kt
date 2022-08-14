@@ -447,13 +447,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         changeStatusBarState(isEmulatorSettings())
 
-        if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
-            PluginManager.updateAllOnlinePluginsAndLoadThem(this)
-        } else {
-            PluginManager.loadAllOnlinePlugins(this)
-        }
+        ioSafe {
+            if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
+                PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
+            } else {
+                PluginManager.loadAllOnlinePlugins(this@MainActivity)
+            }
 
-        PluginManager.loadAllLocalPlugins(this)
+            PluginManager.loadAllLocalPlugins(this@MainActivity)
+        }
 
 //        ioSafe {
 //            val plugins =
@@ -466,8 +468,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 //        }
 
         // init accounts
-        for (api in accountManagers) {
-            api.init()
+        ioSafe {
+            for (api in accountManagers) {
+                api.init()
+            }
         }
 
         ioSafe {
@@ -482,28 +486,29 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         SearchResultBuilder.updateCache(this)
 
-
-        initAll()
-        apis = allProviders
-
-        try {
-            getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
-                list.forEach { custom ->
-                    allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                        ?.let {
-                            allProviders.add(it.javaClass.newInstance().apply {
-                                name = custom.name
-                                lang = custom.lang
-                                mainUrl = custom.url.trimEnd('/')
-                                canBeOverridden = false
-                            })
-                        }
-                }
-            }
+        ioSafe {
+            initAll()
             apis = allProviders
-            APIHolder.apiMap = null
-        } catch (e: Exception) {
-            logError(e)
+
+            try {
+                getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                    list.forEach { custom ->
+                        allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                            ?.let {
+                                allProviders.add(it.javaClass.newInstance().apply {
+                                    name = custom.name
+                                    lang = custom.lang
+                                    mainUrl = custom.url.trimEnd('/')
+                                    canBeOverridden = false
+                                })
+                            }
+                    }
+                }
+                apis = allProviders
+                APIHolder.apiMap = null
+            } catch (e: Exception) {
+                logError(e)
+            }
         }
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
