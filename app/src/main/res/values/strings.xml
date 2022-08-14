@@ -333,6 +333,7 @@
     <string name="ova">OVA</string>
     <string name="asian_drama">Asian Dramas</string>
     <string name="livestreams">Livestreams</string>
+    <string name="nsfw">NSFW</string>
     <string name="others">Others</string>
 
     <!--singular-->
@@ -345,6 +346,7 @@
     <string name="documentaries_singular">Documentary</string>
     <string name="asian_drama_singular">Asian Drama</string>
     <string name="live_singular">Livestream</string>
+    <string name="nsfw_singular">NSFW</string>
     <string name="other_singular">Video</string>
 
     <string name="source_error">Source error</string>
