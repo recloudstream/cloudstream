@@ -128,7 +128,7 @@ class PluginsViewModel : ViewModel() {
         plugin: Plugin,
         isLocal: Boolean
     ) = ioSafe {
-        Log.i(TAG, "handlePluginAction = $repositoryUrl, $plugin")
+        Log.i(TAG, "handlePluginAction = $repositoryUrl, $plugin, $isLocal")
 
         if (activity == null) return@ioSafe
         val (repo, metadata) = plugin

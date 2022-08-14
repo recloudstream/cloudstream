@@ -424,15 +424,18 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
-        if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
-            PluginManager.updateAllOnlinePluginsAndLoadThem(this)
-        } else {
-            PluginManager.loadAllOnlinePlugins(this)
+        // Parallelize to speed up startup
+        ioSafe {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+            if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
+                PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
+            } else {
+                PluginManager.loadAllOnlinePlugins(this@MainActivity)
+            }
+
+            PluginManager.loadAllLocalPlugins(this@MainActivity)
         }
-
-        PluginManager.loadAllLocalPlugins(this)
 
 //        ioSafe {
 //            val plugins =
@@ -445,8 +448,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 //        }
 
         // init accounts
-        for (api in accountManagers) {
-            api.init()
+        ioSafe {
+            for (api in accountManagers) {
+                api.init()
+            }
         }
 
         ioSafe {
@@ -461,28 +466,28 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         SearchResultBuilder.updateCache(this)
 
-
-        initAll()
-        apis = allProviders
-
-        try {
-            getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
-                list.forEach { custom ->
-                    allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                        ?.let {
-                            allProviders.add(it.javaClass.newInstance().apply {
-                                name = custom.name
-                                lang = custom.lang
-                                mainUrl = custom.url.trimEnd('/')
-                                canBeOverridden = false
-                            })
-                        }
-                }
-            }
+        ioSafe {
+            initAll()
             apis = allProviders
-            APIHolder.apiMap = null
-        } catch (e: Exception) {
-            logError(e)
+            try {
+                getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                    list.forEach { custom ->
+                        allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                            ?.let {
+                                allProviders.add(it.javaClass.newInstance().apply {
+                                    name = custom.name
+                                    lang = custom.lang
+                                    mainUrl = custom.url.trimEnd('/')
+                                    canBeOverridden = false
+                                })
+                            }
+                    }
+                }
+                apis = allProviders
+                APIHolder.apiMap = null
+            } catch (e: Exception) {
+                logError(e)
+            }
         }
 
         loadThemes(this)
@@ -653,7 +658,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         handleAppIntent(intent)
 
-        thread {
+        ioSafe {
             runAutoUpdate()
         }
 
