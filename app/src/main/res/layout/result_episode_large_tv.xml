@@ -11,7 +11,6 @@
         app:cardCornerRadius="@dimen/rounded_image_radius"
         app:cardBackgroundColor="?attr/boxItemBackground"
 
-        android:foreground="@drawable/outline_drawable"
         android:layout_marginBottom="10dp">
 
     <LinearLayout

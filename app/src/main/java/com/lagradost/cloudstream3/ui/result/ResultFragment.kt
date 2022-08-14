@@ -471,31 +471,6 @@ open class ResultFragment : ResultTrailerPlayer() {
         syncModel.addFromUrl(url)
 
         val api = getApiFromName(apiName)
-        if (media_route_button != null) {
-            val chromecastSupport = api.hasChromecastSupport
-            media_route_button?.alpha = if (chromecastSupport) 1f else 0.3f
-            if (!chromecastSupport) {
-                media_route_button?.setOnClickListener {
-                    showToast(activity, R.string.no_chromecast_support_toast, Toast.LENGTH_LONG)
-                }
-            }
-            activity?.let { act ->
-                if (act.isCastApiAvailable()) {
-                    try {
-                        CastButtonFactory.setUpMediaRouteButton(act, media_route_button)
-                        val castContext = CastContext.getSharedInstance(act.applicationContext)
-                        media_route_button?.isGone =
-                            castContext.castState == CastState.NO_DEVICES_AVAILABLE
-                        // this shit leaks for some reason
-                        //castContext.addCastStateListener { state ->
-                        //    media_route_button?.isGone = state == CastState.NO_DEVICES_AVAILABLE
-                        //}
-                    } catch (e: Exception) {
-                        logError(e)
-                    }
-                }
-            }
-        }
 
         result_episodes?.adapter =
             EpisodeAdapter(

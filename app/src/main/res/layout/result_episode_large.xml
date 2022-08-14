@@ -6,19 +6,18 @@
         android:nextFocusRight="@id/result_episode_download"
         android:id="@+id/episode_holder_large"
 
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/rounded_image_radius"
         app:cardBackgroundColor="?attr/boxItemBackground"
 
-        android:foreground="@drawable/outline_drawable"
         android:layout_marginBottom="10dp">
 
     <LinearLayout
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:padding="10dp"
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         <LinearLayout

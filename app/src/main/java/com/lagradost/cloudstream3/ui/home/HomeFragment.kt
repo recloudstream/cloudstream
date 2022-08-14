@@ -42,6 +42,7 @@ import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
@@ -519,6 +520,16 @@ class HomeFragment : Fragment() {
             }
         }
 
+        home_main_poster_recyclerview?.adapter =
+            HomeChildItemAdapter(
+                mutableListOf(),
+                R.layout.home_result_big_grid,
+                nextFocusUp = home_main_poster_recyclerview.nextFocusUpId,
+                nextFocusDown = home_main_poster_recyclerview.nextFocusDownId
+            ) { callback ->
+                homeHandleSearch(callback)
+            }
+        home_main_poster_recyclerview.setLinearListLayout()
         observe(homeViewModel.randomItems) { items ->
             if (items.isNullOrEmpty()) {
                 toggleMainVisibility(false)
@@ -531,15 +542,7 @@ class HomeFragment : Fragment() {
                 }
 
                 val randomSize = items.size
-                home_main_poster_recyclerview?.adapter =
-                    HomeChildItemAdapter(
-                        items.toMutableList(),
-                        R.layout.home_result_big_grid,
-                        nextFocusUp = home_main_poster_recyclerview.nextFocusUpId,
-                        nextFocusDown = home_main_poster_recyclerview.nextFocusDownId
-                    ) { callback ->
-                        homeHandleSearch(callback)
-                    }
+                tempAdapter?.updateList(items)
                 if (context?.isTvSettings() == false) {
                     home_main_poster_recyclerview?.post {
                         (home_main_poster_recyclerview?.layoutManager as CenterZoomLayoutManager?)?.let { manager ->
@@ -813,6 +816,8 @@ class HomeFragment : Fragment() {
                 homeHandleSearch(callback)
             }
         }
+        home_watch_child_recyclerview.setLinearListLayout()
+        home_bookmarked_child_recyclerview.setLinearListLayout()
 
         home_watch_child_recyclerview?.adapter = HomeChildItemAdapter(
             ArrayList(),
@@ -901,6 +906,7 @@ class HomeFragment : Fragment() {
             }, { name ->
                 homeViewModel.expand(name)
             })
+        home_master_recycler.setLinearListLayout()
         home_master_recycler?.setMaxViewPoolSize(0, Int.MAX_VALUE)
         home_master_recycler.layoutManager = object : LinearLayoutManager(context) {
             override fun supportsPredictiveItemAnimations(): Boolean {

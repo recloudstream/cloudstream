@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.result.LinearListLayout
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -153,6 +155,7 @@ class ParentItemAdapter(
                 ).apply {
                     isHorizontal = info.isHorizontalImages
                 }
+                recyclerView.setLinearListLayout()
             }
         }
 
@@ -167,7 +170,7 @@ class ParentItemAdapter(
                 isHorizontal = info.isHorizontalImages
                 hasNext = expand.hasNext
             }
-
+            recyclerView.setLinearListLayout()
             title.text = info.name
 
             recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
