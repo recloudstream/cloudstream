@@ -22,6 +22,8 @@
         <item name="preferenceFragmentCompatStyle">@style/PreferenceTheme</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="searchViewStyle">@style/AppSearchViewStyle</item>
+        <item name="android:searchViewStyle">@style/AndroidSearchView</item>
+
         <item name="tabStyle">@style/Theme.Widget.Tabs</item>
         <item name="android:divider">@color/transparent</item>
         <item name="divider">@color/transparent</item>
@@ -256,6 +258,10 @@
     <style name="LoadedStyle">
         <item name="android:navigationBarColor">?attr/primaryGrayBackground</item>
         <item name="android:windowBackground">?attr/primaryBlackBackground</item>
+    </style>
+
+    <style name="AndroidSearchView" parent="AppSearchViewStyle">
+        <item name="android:paddingStart">-10dp</item>
     </style>
 
     <style name="AppSearchViewStyle" parent="Theme.MaterialComponents.NoActionBar">
