@@ -42,7 +42,7 @@
     <string name="type_re_watching">Ponowne oglądanie</string>
 
     <string name="play_movie_button">Odtwórz film</string>
-    <string name="play_livestream_button">Odtwórz Livestream</string>
+    <string name="play_livestream_button">Odtwórz transmisję na żywo</string>
     <string name="play_torrent_button">Otwórz torrent</string>
     <string name="pick_source">Źródła</string>
     <string name="pick_subtitle">Napisy</string>
@@ -236,7 +236,7 @@
     <string name="ova">OVA</string>
     <string name="asian_drama">Filmy azjatyckie</string>
 
-    <string name="livestreams">Livestreamy</string>
+    <string name="livestreams">Transmisje na żywo</string>
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serial telewizyjny</string>
     <string name="cartoons_singular">Kreskówka</string>
@@ -396,4 +396,35 @@
     <string name="app_layout_subtext">Dostosuj wygląd aplikacji do urządzenia</string>
     <string name="preferred_media_subtext">Preferowany rodzaj filmów</string>
     <string name="setup_done">Gotowe</string>
+    <string name="extras">Dodatki</string>
+    <string name="trailer">Zwiastun</string>
+    <string name="play_with_app_name">Odtwórz w CloudStream</string>
+    <string name="live_singular">Transmisja na żywo</string>
+    <string name="network_adress_example">Link to streamu</string>
+    <string name="referer">Odsyłacz</string>
+    <string name="crash_reporting_title">Przekazywanie błędów</string>
+    <string name="automatic_plugin_updates">Automatyczne aktualizacje rozszerzeń</string>
+    <string name="extensions">Rozszerzenia</string>
+    <string name="add_repository">Dodaj repozytorium</string>
+    <string name="repository_name_hint">Nazwa repozytorium</string>
+    <string name="repository_url_hint">Adres url repozytorium</string>
+    <string name="plugin_loaded">Rozszerzenie załadowane</string>
+    <string name="plugin_deleted">Rozszerzenie usunięte</string>
+    <string name="plugin_load_fail">Błąd ładowania %s</string>
+    <string name="is_adult">+18</string>
+    <string name="batch_download_start_format">Zaczęto pobieranie %d %s</string>
+    <string name="batch_download_finish_format">Pobrano %d %s</string>
+    <string name="batch_download_nothing_to_download_format">Wszystkie %s już pobrane</string>
+    <string name="batch_download">Pobierz wszystko</string>
+    <string name="plugin_singular">rozszerzenie</string>
+    <string name="plugin">rozszerzenia</string>
+    <string name="delete_repository_plugins">Ta akcja usunie także wszystkie rozszerzenia z rrepozytorium</string>
+    <string name="delete_repository">Usuń repozytorium</string>
+    <string name="setup_extensions_subtext">Pobierz strony które Cię interesują</string>
+    <string name="plugins_downloaded">Pobrano: %d</string>
+    <string name="plugins_disabled">Wyłączono: %d</string>
+    <string name="plugins_not_downloaded">Nie pobrano: %d</string>
+    <string name="blank_repo_message">Dodaj repozytorium aby zainstalować rozszerzenia</string>
+    <string name="sync_score">Ocenione</string>
+    <string name="sync_score_format">%d na 10</string>
 </resources>
