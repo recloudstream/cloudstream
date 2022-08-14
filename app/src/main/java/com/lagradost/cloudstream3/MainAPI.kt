@@ -555,6 +555,7 @@ enum class TvType {
     Documentary,
     AsianDrama,
     Live,
+    NSFW,
     Others
 }
 

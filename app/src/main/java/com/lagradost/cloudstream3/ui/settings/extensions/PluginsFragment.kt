@@ -115,6 +115,7 @@ class PluginsFragment : Fragment() {
                 home_select_movies,
                 home_select_asian,
                 home_select_livestreams,
+                home_select_nsfw,
                 home_select_others
             )
 

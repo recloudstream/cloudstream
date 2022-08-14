@@ -85,7 +85,7 @@ class PluginAdapter(
                 R.drawable.ic_baseline_delete_outline_24
             else R.drawable.netflix_download
 
-            itemView.nsfw_marker?.isVisible = metadata.adult == true
+            itemView.nsfw_marker?.isVisible = metadata.tvTypes?.contains("NSFW") ?: false
             itemView.action_button?.setImageResource(drawableInt)
 
             itemView.action_button?.setOnClickListener {

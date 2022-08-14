@@ -167,8 +167,8 @@ class SearchFragment : Fragment() {
                     val docs = dialog.findViewById<MaterialButton>(R.id.home_select_documentaries)
                     val movies = dialog.findViewById<MaterialButton>(R.id.home_select_movies)
                     val asian = dialog.findViewById<MaterialButton>(R.id.home_select_asian)
-                    val livestream =
-                        dialog.findViewById<MaterialButton>(R.id.home_select_livestreams)
+                    val livestream = dialog.findViewById<MaterialButton>(R.id.home_select_livestreams)
+                    val nsfw = dialog.findViewById<MaterialButton>(R.id.home_select_nsfw)
                     val other = dialog.findViewById<MaterialButton>(R.id.home_select_others)
                     val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
                     val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)
@@ -182,6 +182,7 @@ class SearchFragment : Fragment() {
                             movies,
                             asian,
                             livestream,
+                            nsfw,
                             other
                         )
 
@@ -300,6 +301,7 @@ class SearchFragment : Fragment() {
             search_select_movies,
             search_select_asian,
             search_select_livestreams,
+            search_select_nsfw,
             search_select_others
         )
 
