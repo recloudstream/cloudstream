@@ -60,7 +60,7 @@
     <string name="download_canceled">Anulowano pobieranie</string>
     <string name="download_done">Zakończono pobieranie</string>
 
-    <string name="stream">Streamuj</string>
+    <string name="stream">Stream</string>
     <string name="error_loading_links_toast">Błąd przy ładowaniu linków</string>
     <string name="download_storage_text">Pamięć wewnętrzna</string>
 
@@ -418,7 +418,7 @@
     <string name="batch_download">Pobierz wszystko</string>
     <string name="plugin_singular">rozszerzenie</string>
     <string name="plugin">rozszerzenia</string>
-    <string name="delete_repository_plugins">Ta akcja usunie także wszystkie rozszerzenia z rrepozytorium</string>
+    <string name="delete_repository_plugins">Ta akcja usunie także wszystkie rozszerzenia z repozytorium</string>
     <string name="delete_repository">Usuń repozytorium</string>
     <string name="setup_extensions_subtext">Pobierz strony które Cię interesują</string>
     <string name="plugins_downloaded">Pobrano: %d</string>
