@@ -426,6 +426,27 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
+        loadThemes(this)
+        updateLocale()
+        super.onCreate(savedInstanceState)
+        try {
+            if (isCastApiAvailable()) {
+                mSessionManager = CastContext.getSharedInstance(this).sessionManager
+            }
+        } catch (e: Exception) {
+            logError(e)
+        }
+
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+
+        if (isTvSettings()) {
+            setContentView(R.layout.activity_main_tv)
+        } else {
+            setContentView(R.layout.activity_main)
+        }
+
+        changeStatusBarState(isEmulatorSettings())
+
         if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
             PluginManager.updateAllOnlinePluginsAndLoadThem(this)
         } else {
@@ -484,27 +505,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } catch (e: Exception) {
             logError(e)
         }
-
-        loadThemes(this)
-        updateLocale()
-        super.onCreate(savedInstanceState)
-        try {
-            if (isCastApiAvailable()) {
-                mSessionManager = CastContext.getSharedInstance(this).sessionManager
-            }
-        } catch (e: Exception) {
-            logError(e)
-        }
-
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-
-        if (isTvSettings()) {
-            setContentView(R.layout.activity_main_tv)
-        } else {
-            setContentView(R.layout.activity_main)
-        }
-
-        changeStatusBarState(isEmulatorSettings())
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
         setUpBackup()
