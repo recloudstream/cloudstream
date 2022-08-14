@@ -42,6 +42,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
             )
 
         const val appString = "cloudstreamapp"
+        const val appStringRepo = "cloudstreamrepo"
 
         val unixTime: Long
             get() = System.currentTimeMillis() / 1000L

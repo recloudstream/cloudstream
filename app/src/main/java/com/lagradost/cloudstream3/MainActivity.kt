@@ -84,6 +84,7 @@ import kotlin.reflect.KClass
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.main
 
@@ -328,6 +329,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         super.onNewIntent(intent)
     }
 
+    private fun loadRepo(url: String) {
+        ioSafe {
+            val repo = RepositoryManager.parseRepository(url) ?: return@ioSafe
+            RepositoryManager.addRepository(
+                RepositoryData(
+                    repo.name,
+                    url
+                )
+            )
+            main {
+                showToast(
+                    this@MainActivity,
+                    getString(R.string.player_loaded_subtitles, repo.name),
+                    Toast.LENGTH_LONG
+                )
+            }
+        }
+    }
+
     private fun handleAppIntent(intent: Intent?) {
         if (intent == null) return
         val str = intent.dataString
@@ -336,23 +356,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (str.startsWith("https://cs.repo")) {
                 val realUrl = "https://" + str.substringAfter("?")
                 println("Repository url: $realUrl")
-                val activity = this
-                ioSafe {
-                    val repo = RepositoryManager.parseRepository(realUrl) ?: return@ioSafe
-                    RepositoryManager.addRepository(
-                        RepositoryData(
-                            repo.name,
-                            realUrl
-                        )
-                    )
-                    main {
-                        showToast(
-                            activity,
-                            getString(R.string.player_loaded_subtitles, repo.name),
-                            Toast.LENGTH_LONG
-                        )
-                    }
-                }
+                loadRepo(realUrl)
             } else if (str.contains(appString)) {
                 for (api in OAuth2Apis) {
                     if (str.contains("/${api.redirectUrl}")) {
@@ -382,6 +386,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         }
                     }
                 }
+            } else if (str.contains(appStringRepo)) {
+                val url = str.replaceFirst(appStringRepo, "https")
+                loadRepo(url)
             } else {
                 if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                     this.navigate(R.id.navigation_downloads)
