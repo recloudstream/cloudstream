@@ -83,9 +83,9 @@ import kotlin.concurrent.thread
 import kotlin.reflect.KClass
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager
-import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
+import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Event
 
@@ -133,6 +133,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     companion object {
         const val TAG = "MAINACT"
         val afterPluginsLoadedEvent = Event<Boolean>()
+        val afterRepositoryLoadedEvent = Event<Boolean>()
     }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
@@ -347,6 +348,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     Toast.LENGTH_LONG
                 )
             }
+            afterRepositoryLoadedEvent.invoke(true)
         }
     }
 
@@ -695,9 +697,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 // If no plugins bring up extensions screen
             } else if (PluginManager.getPluginsOnline().isEmpty()
                 && PluginManager.getPluginsLocal().isEmpty()
-                && PREBUILT_REPOSITORIES.isNotEmpty()
+//                && PREBUILT_REPOSITORIES.isNotEmpty()
             ) {
-                navController.navigate(R.id.navigation_setup_extensions)
+                navController.navigate(R.id.navigation_setup_extensions, SetupFragmentExtensions.newInstance(false))
             }
         } catch (e: Exception) {
             logError(e)

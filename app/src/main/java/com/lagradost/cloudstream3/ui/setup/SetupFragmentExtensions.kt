@@ -7,8 +7,12 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
+import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
+import com.lagradost.cloudstream3.ui.settings.extensions.PUBLIC_REPOSITORIES_LIST
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -19,6 +23,10 @@ import kotlinx.android.synthetic.main.fragment_setup_media.*
 class SetupFragmentExtensions : Fragment() {
     companion object {
         const val SETUP_EXTENSION_BUNDLE_IS_SETUP = "isSetup"
+
+        /**
+         * If false then this is treated a singular screen with a done button
+         * */
         fun newInstance(isSetup: Boolean): Bundle {
             return Bundle().apply {
                 putBoolean(SETUP_EXTENSION_BUNDLE_IS_SETUP, isSetup)
@@ -33,6 +41,33 @@ class SetupFragmentExtensions : Fragment() {
         return inflater.inflate(R.layout.fragment_setup_extensions, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        afterRepositoryLoadedEvent += ::setRepositories
+    }
+
+    override fun onStop() {
+        super.onStop()
+        afterRepositoryLoadedEvent -= ::setRepositories
+    }
+
+    private fun setRepositories(success: Boolean = true) {
+        val repositories = RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
+        val hasRepos = repositories.isNotEmpty()
+        repo_recycler_view?.isVisible = hasRepos
+        blank_repo_screen?.isVisible = !hasRepos
+
+        if (hasRepos) {
+            repo_recycler_view?.adapter = RepoAdapter(true, {}, {
+                PluginsViewModel.downloadAll(activity, it.url, null)
+            }).apply { updateList(repositories) }
+        } else {
+            list_repositories?.setOnClickListener {
+                openBrowser(PUBLIC_REPOSITORIES_LIST)
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         context?.fixPaddingStatusbar(setup_root)
@@ -40,10 +75,7 @@ class SetupFragmentExtensions : Fragment() {
 
         with(context) {
             if (this == null) return
-
-            repo_recycler_view?.adapter = RepoAdapter(true, {}, {
-                PluginsViewModel.downloadAll(activity, it.url, null)
-            }).apply { updateList(PREBUILT_REPOSITORIES) }
+            setRepositories()
 
             if (!isSetup) {
                 next_btt.setText(R.string.setup_done)

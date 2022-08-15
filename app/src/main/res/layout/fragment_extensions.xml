@@ -19,10 +19,11 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toTopOf="@id/download_storage_appbar"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/repository_item" />
+        tools:listitem="@layout/repository_item"
+        tools:visibility="visible" />
 
     <LinearLayout
-        android:visibility="gone"
+        tools:visibility="gone"
         android:id="@+id/blank_repo_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,17 +32,24 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_margin="10dp"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_margin="10dp"
             android:src="@drawable/ic_baseline_extension_24" />
 
         <TextView
+            android:layout_marginBottom="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/blank_repo_message"
             android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/list_repositories"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:text="@string/view_public_repositories_button" />
     </LinearLayout>
 
     <LinearLayout

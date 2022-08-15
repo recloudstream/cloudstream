@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Some
@@ -25,9 +26,10 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import kotlinx.android.synthetic.main.add_repo_input.*
-import kotlinx.android.synthetic.main.add_repo_input.apply_btt
-import kotlinx.android.synthetic.main.add_repo_input.cancel_btt
 import kotlinx.android.synthetic.main.fragment_extensions.*
+import kotlinx.android.synthetic.main.fragment_extensions.list_repositories
+
+const val PUBLIC_REPOSITORIES_LIST = "https://recloudstream.github.io/repos/"
 
 class ExtensionsFragment : Fragment() {
     override fun onCreateView(
@@ -98,6 +100,10 @@ class ExtensionsFragment : Fragment() {
             (repo_recycler_view?.adapter as? RepoAdapter)?.updateList(it)
         }
 
+        list_repositories?.setOnClickListener {
+            openBrowser(PUBLIC_REPOSITORIES_LIST)
+        }
+
         observe(extensionViewModel.pluginStats) {
             when (it) {
                 is Some.Success -> {
@@ -153,6 +159,9 @@ class ExtensionsFragment : Fragment() {
                     }
                     dialog.repo_url_input?.setText(fixedUrl)
                 }
+            }
+            dialog.list_repositories?.setOnClickListener {
+                openBrowser(PUBLIC_REPOSITORIES_LIST)
             }
 
 //            dialog.text2?.text = provider.name

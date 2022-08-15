@@ -123,11 +123,15 @@ object RepositoryManager {
         }
     }
 
+    fun getRepositories(): Array<RepositoryData> {
+        return getKey(REPOSITORIES_KEY) ?: emptyArray()
+    }
+
     // Don't want to read before we write in another thread
     private val repoLock = Mutex()
     suspend fun addRepository(repository: RepositoryData) {
         repoLock.withLock {
-            val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+            val currentRepos = getRepositories()
             // No duplicates
             setKey(REPOSITORIES_KEY, (currentRepos + repository).distinctBy { it.url })
         }

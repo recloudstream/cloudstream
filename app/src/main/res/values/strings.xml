@@ -596,4 +596,6 @@
     <string name="plugins_disabled" formatted="true">Disabled: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Not downloaded: %d</string>
     <string name="blank_repo_message">Add a repository to install site extensions</string>
+    <string name="view_public_repositories_button">View public repositories</string>
+    <string name="view_public_repositories_button_short">Public list</string>
 </resources>
