@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
@@ -50,6 +51,21 @@ class ExtensionsFragment : Fragment() {
     }
 
     private val extensionViewModel: ExtensionsViewModel by activityViewModels()
+
+    override fun onResume() {
+        super.onResume()
+        afterRepositoryLoadedEvent += ::reloadRepositories
+    }
+
+    override fun onStop() {
+        super.onStop()
+        afterRepositoryLoadedEvent -= ::reloadRepositories
+    }
+
+    private fun reloadRepositories(success: Boolean = true) {
+        extensionViewModel.loadStats()
+        extensionViewModel.loadRepositories()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -160,6 +176,7 @@ class ExtensionsFragment : Fragment() {
                     dialog.repo_url_input?.setText(fixedUrl)
                 }
             }
+
             dialog.list_repositories?.setOnClickListener {
                 openBrowser(PUBLIC_REPOSITORIES_LIST)
             }
@@ -189,7 +206,6 @@ class ExtensionsFragment : Fragment() {
             }
         }
 
-        extensionViewModel.loadStats()
-        extensionViewModel.loadRepositories()
+        reloadRepositories()
     }
 }

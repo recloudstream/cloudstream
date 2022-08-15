@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIE
 import com.lagradost.cloudstream3.ui.settings.extensions.PUBLIC_REPOSITORIES_LIST
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import kotlinx.android.synthetic.main.fragment_extensions.*
 import kotlinx.android.synthetic.main.fragment_setup_media.*
@@ -52,18 +53,20 @@ class SetupFragmentExtensions : Fragment() {
     }
 
     private fun setRepositories(success: Boolean = true) {
-        val repositories = RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
-        val hasRepos = repositories.isNotEmpty()
-        repo_recycler_view?.isVisible = hasRepos
-        blank_repo_screen?.isVisible = !hasRepos
+        main {
+            val repositories = RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
+            val hasRepos = repositories.isNotEmpty()
+            repo_recycler_view?.isVisible = hasRepos
+            blank_repo_screen?.isVisible = !hasRepos
 
-        if (hasRepos) {
-            repo_recycler_view?.adapter = RepoAdapter(true, {}, {
-                PluginsViewModel.downloadAll(activity, it.url, null)
-            }).apply { updateList(repositories) }
-        } else {
-            list_repositories?.setOnClickListener {
-                openBrowser(PUBLIC_REPOSITORIES_LIST)
+            if (hasRepos) {
+                repo_recycler_view?.adapter = RepoAdapter(true, {}, {
+                    PluginsViewModel.downloadAll(activity, it.url, null)
+                }).apply { updateList(repositories) }
+            } else {
+                list_repositories?.setOnClickListener {
+                    openBrowser(PUBLIC_REPOSITORIES_LIST)
+                }
             }
         }
     }
@@ -84,14 +87,15 @@ class SetupFragmentExtensions : Fragment() {
 
             next_btt?.setOnClickListener {
                 // Continue setup
+                println("ISSETUP $isSetup")
                 if (isSetup)
                     findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_provider_languages)
                 else
-                    findNavController().popBackStack()
+                    findNavController().navigate(R.id.navigation_home)
             }
 
             prev_btt?.setOnClickListener {
-                findNavController().popBackStack()
+                findNavController().navigate(R.id.navigation_setup_language)
             }
         }
     }
