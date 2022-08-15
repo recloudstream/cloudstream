@@ -195,6 +195,16 @@
         tools:layout="@layout/fragment_plugins" />
 
     <fragment
+        android:id="@+id/navigation_webview"
+        android:name="com.lagradost.cloudstream3.ui.WebviewFragment"
+        android:label="@string/title_settings"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim"
+        tools:layout="@layout/fragment_webview" />
+
+    <fragment
         android:id="@+id/navigation_settings_lang"
         android:name="com.lagradost.cloudstream3.ui.settings.SettingsLang"
         android:label="@string/title_settings"

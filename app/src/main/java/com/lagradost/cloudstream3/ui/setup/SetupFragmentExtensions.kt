@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEv
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.extensions.PUBLIC_REPOSITORIES_LIST
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter
@@ -65,7 +66,9 @@ class SetupFragmentExtensions : Fragment() {
                 }).apply { updateList(repositories) }
             } else {
                 list_repositories?.setOnClickListener {
-                    openBrowser(PUBLIC_REPOSITORIES_LIST)
+                    // Open webview on tv if browser fails
+                    val isTv = it.context.isTvSettings()
+                    openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
                 }
             }
         }
@@ -87,7 +90,6 @@ class SetupFragmentExtensions : Fragment() {
 
             next_btt?.setOnClickListener {
                 // Continue setup
-                println("ISSETUP $isSetup")
                 if (isSetup)
                     findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_provider_languages)
                 else

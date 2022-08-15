@@ -82,11 +82,9 @@ import java.io.File
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
-import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
-import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.Event
 
 
@@ -332,26 +330,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         super.onNewIntent(intent)
     }
 
-    private fun loadRepo(url: String) {
-        ioSafe {
-            val repo = RepositoryManager.parseRepository(url) ?: return@ioSafe
-            RepositoryManager.addRepository(
-                RepositoryData(
-                    repo.name,
-                    url
-                )
-            )
-            main {
-                showToast(
-                    this@MainActivity,
-                    getString(R.string.player_loaded_subtitles, repo.name),
-                    Toast.LENGTH_LONG
-                )
-            }
-            afterRepositoryLoadedEvent.invoke(true)
-        }
-    }
-
     private fun handleAppIntent(intent: Intent?) {
         if (intent == null) return
         val str = intent.dataString
@@ -360,7 +338,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (str.startsWith("https://cs.repo")) {
                 val realUrl = "https://" + str.substringAfter("?")
                 println("Repository url: $realUrl")
-                loadRepo(realUrl)
+                loadRepository(realUrl)
             } else if (str.contains(appString)) {
                 for (api in OAuth2Apis) {
                     if (str.contains("/${api.redirectUrl}")) {
@@ -392,7 +370,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
             } else if (str.contains(appStringRepo)) {
                 val url = str.replaceFirst(appStringRepo, "https")
-                loadRepo(url)
+                loadRepository(url)
             } else {
                 if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                     this.navigate(R.id.navigation_downloads)

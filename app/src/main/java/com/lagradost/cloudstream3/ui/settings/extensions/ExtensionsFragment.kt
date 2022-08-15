@@ -119,10 +119,12 @@ class ExtensionsFragment : Fragment() {
         }
 
         list_repositories?.setOnClickListener {
-            openBrowser(PUBLIC_REPOSITORIES_LIST)
+            // Open webview on tv if browser fails
+            val isTv = it.context.isTvSettings()
+            openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
 
             // Set clipboard on TV because the browser might not exist or work properly
-            if (it.context.isTvSettings()) {
+            if (isTv) {
                 val serviceClipboard =
                     (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
                         ?: return@setOnClickListener
@@ -189,7 +191,9 @@ class ExtensionsFragment : Fragment() {
             }
 
             dialog.list_repositories?.setOnClickListener {
-                openBrowser(PUBLIC_REPOSITORIES_LIST)
+                // Open webview on tv if browser fails
+                val isTv = it.context.isTvSettings()
+                openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
             }
 
 //            dialog.text2?.text = provider.name

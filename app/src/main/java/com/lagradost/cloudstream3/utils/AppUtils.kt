@@ -20,12 +20,15 @@ import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.text.Spanned
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.tvprovider.media.tv.PreviewChannelHelper
@@ -38,16 +41,20 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
+import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.plugins.RepositoryManager
+import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.AppUtils.loadResult
+import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
 import com.lagradost.cloudstream3.utils.JsUnpacker.Companion.load
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -232,8 +239,35 @@ object AppUtils {
             )
         }
     }
+    fun Activity.loadRepository(url: String) {
+        ioSafe {
+            val repo = RepositoryManager.parseRepository(url) ?: return@ioSafe
+            RepositoryManager.addRepository(
+                RepositoryData(
+                    repo.name,
+                    url
+                )
+            )
+            main {
+                showToast(
+                    this@loadRepository,
+                    getString(R.string.player_loaded_subtitles, repo.name),
+                    Toast.LENGTH_LONG
+                )
+            }
+            afterRepositoryLoadedEvent.invoke(true)
+        }
+    }
 
-    fun Context.openBrowser(url: String) {
+
+    /**
+     * If fallbackWebview is true and a fragment is supplied then it will open a webview with the url if the browser fails.
+     * */
+    fun Context.openBrowser(
+        url: String,
+        fallbackWebview: Boolean = false,
+        fragment: Fragment? = null
+    ) {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
@@ -241,6 +275,15 @@ object AppUtils {
             ContextCompat.startActivity(this, intent, null)
         } catch (e: Exception) {
             logError(e)
+            if (fallbackWebview) {
+                try {
+                    fragment
+                        ?.findNavController()
+                        ?.navigate(R.id.navigation_webview, WebviewFragment.newInstance(url))
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
         }
     }
 
@@ -316,8 +359,8 @@ object AppUtils {
 
     //private val viewModel: ResultViewModel by activityViewModels()
 
-    private fun getResultsId(context: Context) : Int {
-        return if(context.isTrueTvSettings()) {
+    private fun getResultsId(context: Context): Int {
+        return if (context.isTrueTvSettings()) {
             R.id.global_to_navigation_results_tv
         } else {
             R.id.global_to_navigation_results_phone

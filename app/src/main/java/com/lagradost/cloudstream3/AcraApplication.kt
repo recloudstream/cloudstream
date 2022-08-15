@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3
 import android.app.Application
 import android.content.Context
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.google.auto.service.AutoService
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
@@ -135,8 +136,11 @@ class AcraApplication : Application() {
             context?.removeKey(path)
         }
 
-        fun openBrowser(url: String) {
-            context?.openBrowser(url)
+        /**
+         * If fallbackWebview is true and a fragment is supplied then it will open a webview with the url if the browser fails.
+         * */
+        fun openBrowser(url: String, fallbackWebview: Boolean = false, fragment: Fragment? = null) {
+            context?.openBrowser(url, fallbackWebview, fragment)
         }
     }
 }
