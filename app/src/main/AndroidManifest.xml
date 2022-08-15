@@ -6,14 +6,13 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- I dont remember, probs has to do with downloads -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- unless you only use cs3 as a player for downloaded stuff, you need this -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Downloads -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Downloads on low api devices-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Downloads on low api devices -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- Plugin API -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- some dependency needs this -->
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Used for player vertical slide-->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!--Used for app update-->
-    <!--<uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" /> not used atm, but code exist that requires it that are not run-->
-    <!--    <permission android:name="android.permission.QUERY_ALL_PACKAGES" /> &lt;!&ndash; Used for getting if vlc is installed &ndash;&gt;-->
-
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Used for player vertical slide -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- Used for app update -->
+    <!-- <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" /> not used atm, but code exist that requires it that are not run -->
+    <!-- <permission android:name="android.permission.QUERY_ALL_PACKAGES" /> &lt;!&ndash; Used for getting if vlc is installed &ndash;&gt; -->
     <!-- Fixes android tv fuckery -->
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -36,6 +35,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="o">
+
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
             android:value="com.lagradost.cloudstream3.utils.CastOptionsProvider" />
@@ -53,6 +53,7 @@
             android:supportsPictureInPicture="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="content" />
@@ -62,7 +63,9 @@
             <!-- I dont think this label can be translated, but idk -->
             <intent-filter android:label="@string/play_with_app_name">
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
@@ -84,7 +87,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -114,6 +116,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.EasterEggMonke"
+            android:exported="true" />
+
         <receiver
             android:name=".receivers.VideoDownloadRestartReceiver"
             android:enabled="false"
@@ -122,6 +128,7 @@
                 <action android:name="restart_service" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".services.VideoDownloadService"
             android:enabled="true"
@@ -142,4 +149,5 @@
                 android:resource="@xml/provider_paths" />
         </provider>
     </application>
+
 </manifest>

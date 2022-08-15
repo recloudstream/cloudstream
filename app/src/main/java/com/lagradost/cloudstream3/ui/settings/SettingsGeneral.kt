@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.ui.EasterEggMonke
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -271,6 +272,10 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                 pref.setOnPreferenceClickListener {
                     try {
                         SettingsFragment.beneneCount++
+                        if (SettingsFragment.beneneCount%20 == 0) {
+                            val intent = Intent(context, EasterEggMonke::class.java)
+                            startActivity(intent)
+                        }
                         settingsManager.edit().putInt(
                             getString(R.string.benene_count),
                             SettingsFragment.beneneCount
