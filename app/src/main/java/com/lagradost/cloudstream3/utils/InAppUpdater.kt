@@ -167,10 +167,16 @@ class InAppUpdater {
             val tagResponse =
                 parseJson<GithubTag>(app.get(tagUrl, headers = headers).text)
 
-            Log.d(LOG_TAG, "Fetched GitHub tag: ${tagResponse.github_object.sha.take(8)}")
+            Log.d(LOG_TAG, "Fetched GitHub tag: ${tagResponse.github_object.sha.take(7)}")
 
             val shouldUpdate =
-                (getString(R.string.commit_hash) != tagResponse.github_object.sha.take(8))
+                (getString(R.string.commit_hash)
+                    .trim {c->c.isWhitespace()}
+                    .take(7) 
+                != 
+                tagResponse.github_object.sha
+                    .trim {c->c.isWhitespace()}
+                    .take(7))
 
             return@runBlocking if (foundAsset != null) {
                 Update(
