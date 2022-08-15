@@ -1004,12 +1004,25 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var langFilterList = listOf<String>()
+        var filterSubByLang = false
 
         context?.let { ctx ->
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
             titleRez = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_rez_key), 3)
             limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_key), 0)
             updateForcedEncoding(ctx)
+
+            filterSubByLang = settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
+            if (filterSubByLang) {
+                val langFromPrefMedia = settingsManager.getStringSet(
+                    this.getString(R.string.provider_lang_key),
+                    mutableSetOf("en")
+                )
+                langFilterList = langFromPrefMedia?.mapNotNull {
+                    fromTwoLettersToLanguage(it)?.lowercase() ?: return@mapNotNull null
+                } ?: listOf()
+            }
         }
 
         unwrapBundle(savedInstanceState)
@@ -1062,7 +1075,18 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         observe(viewModel.currentSubs) { set ->
-            currentSubs = set
+            val setOfSub = mutableSetOf<SubtitleData>()
+            if (langFilterList.isNotEmpty() && filterSubByLang) {
+                Log.i("subfilter", "Filtering subtitle")
+                langFilterList.forEach { lang ->
+                    Log.i("subfilter", "Lang: $lang")
+                    setOfSub += set.filter { it.name.contains(lang, ignoreCase = true) }
+                        .toMutableSet()
+                }
+                currentSubs = setOfSub
+            } else {
+                currentSubs = set
+            }
             player.setActiveSubtitles(set)
 
             autoSelectSubtitles()
