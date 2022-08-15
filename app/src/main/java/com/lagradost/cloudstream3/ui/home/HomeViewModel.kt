@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.filterHomePageListByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
+import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -225,8 +227,9 @@ class HomeViewModel : ViewModel() {
                         expandable.clear()
                         data.value.forEach { home ->
                             home?.items?.forEach { list ->
+                                val filteredList = context?.filterHomePageListByFilmQuality(list) ?: list
                                 expandable[list.name] =
-                                    ExpandableHomepageList(list, 1, home.hasNext)
+                                    ExpandableHomepageList(filteredList, 1, home.hasNext)
                             }
                         }
                         _page.postValue(Resource.Success(expandable))
@@ -241,7 +244,7 @@ class HomeViewModel : ViewModel() {
                                     .toList()
 
                             if (currentList.isNotEmpty()) {
-                                val randomItems = currentList.shuffled()
+                                val randomItems = context?.filterSearchResultByFilmQuality(currentList.shuffled()) ?: currentList.shuffled()
 
                                 _randomItems.postValue(randomItems)
                             }
