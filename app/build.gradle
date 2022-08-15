@@ -58,16 +58,16 @@ android {
         //     shrinkResources false
         //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         // }
-        // prerelease {
-        //     applicationIdSuffix ".prerelease"
-        //     buildConfigField("boolean", "BETA", "true")
-        //     signingConfig signingConfigs.prerelease
-        //     versionNameSuffix '-PRE'
-        //     debuggable false
-        //     minifyEnabled false
-        //     shrinkResources false
-        //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        // }
+        prerelease {
+            applicationIdSuffix ".prerelease"
+            buildConfigField("boolean", "BETA", "true")
+            signingConfig signingConfigs.prerelease
+            versionNameSuffix '-PRE'
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         debug {
             debuggable true
             applicationIdSuffix ".debug"
