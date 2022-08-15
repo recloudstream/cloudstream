@@ -43,6 +43,8 @@ android {
 
         resValue "string", "commit_hash",
                 ("git rev-parse --short HEAD".execute().text.trim() ?: "")
+        
+        resValue "bool", "is_prerelease", "false"
 
         buildConfigField("String", "BUILDDATE", "new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm\").format(new java.util.Date(" + System.currentTimeMillis() + "L));")
 
@@ -59,7 +61,7 @@ android {
         //     minifyEnabled false
         //     shrinkResources false
         //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        //    resValue "bool", "is_prerelease", "false"
+        //     resValue "bool", "is_prerelease", "false"
         // }
         prerelease {
             applicationIdSuffix ".prerelease"
