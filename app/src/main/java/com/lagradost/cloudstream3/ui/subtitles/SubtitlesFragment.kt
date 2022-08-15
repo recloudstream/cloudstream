@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.annotation.FontRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.android.exoplayer2.text.Cue
 import com.google.android.exoplayer2.ui.CaptionStyleCompat
@@ -413,6 +414,20 @@ class SubtitlesFragment : Fragment() {
             //textView.context.updateState() // font size not changed
             showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
+        }
+
+        //Fetch current value from preference
+        context?.let { ctx ->
+            subtitles_filter_sub_lang?.isChecked = PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(getString(R.string.filter_sub_lang_key), false)
+        }
+        subtitles_filter_sub_lang?.setOnCheckedChangeListener { _, b ->
+            context?.let { ctx ->
+                PreferenceManager.getDefaultSharedPreferences(ctx)
+                    .edit()
+                    .putBoolean(getString(R.string.filter_sub_lang_key), b)
+                    .apply()
+            }
         }
 
         subs_font.setFocusableInTv()
