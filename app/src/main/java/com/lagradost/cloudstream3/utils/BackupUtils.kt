@@ -13,7 +13,21 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
+import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
+import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
+import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_SHOULD_UPDATE_LIST
+import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_TOKEN_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_UNIXTIME_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_USER_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
+import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_REFRESH_TOKEN_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_SHOULD_UPDATE_LIST
+import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_TOKEN_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
@@ -29,6 +43,34 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object BackupUtils {
+
+    /**
+     * No sensitive or breaking data in the backup
+     * */
+    private val nonTransferableKeys = listOf(
+        // When sharing backup we do not want to transfer what is essentially the password
+        ANILIST_TOKEN_KEY,
+        ANILIST_CACHED_LIST,
+        ANILIST_SHOULD_UPDATE_LIST,
+        ANILIST_UNIXTIME_KEY,
+        ANILIST_USER_KEY,
+        MAL_TOKEN_KEY,
+        MAL_REFRESH_TOKEN_KEY,
+        MAL_SHOULD_UPDATE_LIST,
+        MAL_CACHED_LIST,
+        MAL_UNIXTIME_KEY,
+        MAL_USER_KEY,
+
+        // The plugins themselves are not backed up
+        PLUGINS_KEY,
+        PLUGINS_KEY_LOCAL
+    )
+
+    /** false if blacklisted key */
+    private fun String.isTransferable(): Boolean {
+        return !nonTransferableKeys.contains(this)
+    }
+
     var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
 
     // Kinda hack, but I couldn't think of a better way
@@ -54,8 +96,8 @@ object BackupUtils {
                 val ext = "json"
                 val displayName = "CS3_Backup_${date}"
 
-                val allData = getSharedPrefs().all
-                val allSettings = getDefaultSharedPrefs().all
+                val allData = getSharedPrefs().all.filter { it.key.isTransferable() }
+                val allSettings = getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
 
                 val allDataSorted = BackupVars(
                     allData.filter { it.value is Boolean } as? Map<String, Boolean>,
@@ -79,6 +121,7 @@ object BackupUtils {
                     allDataSorted,
                     allSettingsSorted
                 )
+
                 val steam =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && subDir?.isDownloadDir() == true) {
                         val cr = this.contentResolver
@@ -204,7 +247,7 @@ object BackupUtils {
         map: Map<String, T>?,
         isEditingAppSettings: Boolean = false
     ) {
-        map?.forEach {
+        map?.filter { it.key.isTransferable() }?.forEach {
             setKeyRaw(it.key, it.value, isEditingAppSettings)
         }
     }
