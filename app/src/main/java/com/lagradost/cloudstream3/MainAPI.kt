@@ -253,6 +253,26 @@ object APIHolder {
             allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }
         }
     }
+
+    fun Context.filterSearchResultByFilmQuality(data: List<SearchResponse>): List<SearchResponse> {
+        // Filter results omitting entries with certain quality
+        if (data.isEmpty()) {
+            return data
+        }
+        val filteredSearchQuality = PreferenceManager.getDefaultSharedPreferences(this)
+            ?.getStringSet(getString(R.string.pref_filter_search_quality_key), setOf())
+            ?.mapNotNull { entry ->
+                entry.toIntOrNull() ?: return@mapNotNull null
+            } ?: listOf()
+        if (filteredSearchQuality.isNotEmpty()) {
+            return data.filter { item ->
+                val searchQualVal = item.quality?.ordinal ?: -1
+                //Log.i("filterSearch", "QuickSearch item => ${item.toJson()}")
+                !filteredSearchQuality.contains(searchQualVal)
+            }
+        }
+        return data
+    }
 }
 
 
@@ -586,24 +606,24 @@ data class HomePageList(
     val isHorizontalImages: Boolean = false
 )
 
-enum class SearchQuality {
+enum class SearchQuality(value: Int?) {
     //https://en.wikipedia.org/wiki/Pirated_movie_release_types
-    Cam,
-    CamRip,
-    HdCam,
-    Telesync, // TS
-    WorkPrint,
-    Telecine, // TC
-    HQ,
-    HD,
-    HDR, // high dynamic range
-    BlueRay,
-    DVD,
-    SD,
-    FourK,
-    UHD,
-    SDR, // standard dynamic range
-    WebRip
+    Cam(1),
+    CamRip(2),
+    HdCam(3),
+    Telesync(4), // TS
+    WorkPrint(5),
+    Telecine(6), // TC
+    HQ(7),
+    HD(8),
+    HDR(9), // high dynamic range
+    BlueRay(10),
+    DVD(11),
+    SD(12),
+    FourK(13),
+    UHD(14),
+    SDR(15), // standard dynamic range
+    WebRip(16)
 }
 
 /**Add anything to here if you find a site that uses some specific naming convention*/

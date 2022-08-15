@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
+import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
@@ -214,7 +215,7 @@ class QuickSearchFragment : Fragment() {
                 is Resource.Success -> {
                     it.value.let { data ->
                         (quick_search_autofit_results?.adapter as? SearchAdapter?)?.updateList(
-                            data
+                            context?.filterSearchResultByFilmQuality(data) ?: data
                         )
                     }
                     searchExitIcon?.alpha = 1f
