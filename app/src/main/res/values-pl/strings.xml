@@ -429,4 +429,6 @@
     <string name="sync_score_format">%d na 10</string>
     <string name="others">Inne</string>
     <string name="other_singular">Wideo</string>
+    <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
+    <string name="view_public_repositories_button_short">Publiczna lista</string>
 </resources>

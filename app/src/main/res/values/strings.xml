@@ -20,7 +20,6 @@
     <string name="video_buffer_length_key" translatable="false">video_buffer_length_key</string>
     <string name="video_buffer_clear_key" translatable="false">video_buffer_clear_key</string>
     <string name="video_buffer_disk_key" translatable="false">video_buffer_disk_key</string>
-    <string name="prerelease_commit_hash" translatable="false">unknown_prerelease</string>
     <string name="use_system_brightness_key" translatable="false">use_system_brightness_key</string>
     <string name="swipe_enabled_key" translatable="false">swipe_enabled_key</string>
     <string name="playback_speed_enabled_key" translatable="false">playback_speed_enabled_key</string>
@@ -600,6 +599,6 @@
     <string name="plugins_disabled" formatted="true">Disabled: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Not downloaded: %d</string>
     <string name="blank_repo_message">Add a repository to install site extensions</string>
-    <string name="view_public_repositories_button">View public repositories</string>
+    <string name="view_public_repositories_button">View community repositories</string>
     <string name="view_public_repositories_button_short">Public list</string>
 </resources>

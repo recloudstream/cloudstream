@@ -8,16 +8,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -33,6 +30,8 @@ class InAppUpdater {
     companion object {
         const val GITHUB_USER_NAME = "recloudstream"
         const val GITHUB_REPO = "cloudstream"
+
+        const val LOG_TAG = "InAppUpdater"
 
         // === IN APP UPDATER ===
         data class GithubAsset(
@@ -72,13 +71,13 @@ class InAppUpdater {
         private fun Activity.getAppUpdate(): Update {
             return try {
                 val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-                if (settingsManager.getBoolean(getString(R.string.prerelease_update_key), false)) {
+                if (settingsManager.getBoolean(getString(R.string.prerelease_update_key), resources.getBoolean(R.bool.is_prerelease))) {
                     getPreReleaseUpdate()
                 } else {
                     getReleaseUpdate()
                 }
             } catch (e: Exception) {
-                println(e)
+                Log.e(LOG_TAG, Log.getStackTraceString(e))
                 Update(false, null, null, null, null)
             }
         }
@@ -159,15 +158,19 @@ class InAppUpdater {
 
             val found =
                 response.lastOrNull { rel ->
-                    rel.prerelease
+                    rel.prerelease || rel.tag_name == "pre-release"
                 }
-            val foundAsset = found?.assets?.getOrNull(0)
+            val foundAsset = found?.assets?.filter { it ->
+                it.content_type == "application/vnd.android.package-archive"
+            }?.getOrNull(0)
 
             val tagResponse =
                 parseJson<GithubTag>(app.get(tagUrl, headers = headers).text)
 
+            Log.d(LOG_TAG, "Fetched GitHub tag: ${tagResponse.github_object.sha.take(8)}")
+
             val shouldUpdate =
-                (getString(R.string.prerelease_commit_hash) != tagResponse.github_object.sha)
+                (getString(R.string.commit_hash) != tagResponse.github_object.sha.take(8))
 
             return@runBlocking if (foundAsset != null) {
                 Update(
@@ -183,6 +186,8 @@ class InAppUpdater {
         }
 
         private fun Activity.downloadUpdate(url: String): Boolean {
+            Log.d(LOG_TAG, "Downloading update: ${url}")
+
             val downloadManager = getSystemService<DownloadManager>()!!
 
             val request = DownloadManager.Request(Uri.parse(url))

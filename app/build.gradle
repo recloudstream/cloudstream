@@ -13,7 +13,6 @@ if (allFilesFromDir != null) {
     prerelaseStoreFile = allFilesFromDir.first()
 }
 
-
 android {
     testOptions {
         unitTests.returnDefaultValues = true
@@ -42,6 +41,9 @@ android {
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
 
+        resValue "string", "commit_hash",
+                ("git rev-parse --short HEAD".execute().text.trim() ?: "")
+
         buildConfigField("String", "BUILDDATE", "new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm\").format(new java.util.Date(" + System.currentTimeMillis() + "L));")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -57,6 +59,7 @@ android {
         //     minifyEnabled false
         //     shrinkResources false
         //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        //    resValue "bool", "is_prerelease", "false"
         // }
         prerelease {
             applicationIdSuffix ".prerelease"
@@ -67,11 +70,13 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue "bool", "is_prerelease", "true"
         }
         debug {
             debuggable true
             applicationIdSuffix ".debug"
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue "bool", "is_prerelease", "true"
         }
     }
     compileOptions {

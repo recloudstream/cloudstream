@@ -43,7 +43,7 @@
         android:icon="@drawable/ic_baseline_developer_mode_24"
         android:summary="@string/uprereleases_settings_des"
         android:title="@string/uprereleases_settings"
-        app:defaultValue="false"
+        app:defaultValue="@bool/is_prerelease"
         app:key="@string/prerelease_update_key" />
     <Preference
         android:icon="@drawable/ic_baseline_construction_24"
