@@ -69,7 +69,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
 
                 var line: String?
                 while (bufferedReader.readLine().also { line = it } != null) {
-                    log.append(line)
+                    log.append("${line}\n")
                 }
             } catch (e: Exception) {
                 logError(e) // kinda ironic
