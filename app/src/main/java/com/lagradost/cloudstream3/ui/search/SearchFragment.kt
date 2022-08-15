@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -105,11 +106,11 @@ class SearchFragment : Fragment() {
             searchViewModel.searchAndCancel(
                 query = query,
                 providersActive = selectedApis.filter { name ->
-                    settings.contains(name) && getApiFromName(name).supportedTypes.any {
+                    settings.contains(name) && getApiFromNameNull(name)?.supportedTypes?.any {
                         selectedSearchTypes.contains(
                             it
                         )
-                    }
+                    } == true
                 }.toSet()
             )
         }

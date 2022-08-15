@@ -197,10 +197,10 @@ class ResultFragmentPhone : ResultFragment() {
             }
             //result_poster_blur_holder?.translationY = -scrollY.toFloat()
         })
-        val api = APIHolder.getApiFromName(apiName)
+        val api = APIHolder.getApiFromNameNull(apiName)
 
         if (media_route_button != null) {
-            val chromecastSupport = api.hasChromecastSupport
+            val chromecastSupport = api?.hasChromecastSupport == true
             media_route_button?.alpha = if (chromecastSupport) 1f else 0.3f
             if (!chromecastSupport) {
                 media_route_button?.setOnClickListener {

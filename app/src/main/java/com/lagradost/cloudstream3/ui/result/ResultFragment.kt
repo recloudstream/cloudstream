@@ -101,9 +101,7 @@ import kotlinx.coroutines.runBlocking
 import android.widget.EditText
 
 import android.widget.AbsListView
-
-
-
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 
 
 const val START_ACTION_RESUME_LATEST = 1
@@ -470,11 +468,11 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
         syncModel.addFromUrl(url)
 
-        val api = getApiFromName(apiName)
+        val api = getApiFromNameNull(apiName)
 
         result_episodes?.adapter =
             EpisodeAdapter(
-                api.hasDownloadSupport,
+                api?.hasDownloadSupport == true,
                 { episodeClick ->
                     viewModel.handleAction(activity, episodeClick)
                 },
