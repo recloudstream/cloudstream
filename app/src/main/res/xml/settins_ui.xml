@@ -50,4 +50,8 @@
             android:title="@string/random_button_settings"
             android:summary="@string/random_button_settings_desc"
             app:defaultValue="false" />
+    <Preference
+        android:icon="@drawable/ic_baseline_filter_list_24"
+        android:key="@string/pref_filter_search_quality_key"
+        android:title="@string/pref_filter_search_quality" />
 </PreferenceScreen>

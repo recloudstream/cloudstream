@@ -21,6 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
+import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromName
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
@@ -429,9 +430,11 @@ class SearchFragment : Fragment() {
                 listLock.lock()
                 (search_master_recycler?.adapter as ParentItemAdapter?)?.apply {
                     val newItems = list.map { ongoing ->
+                        val dataList = if (ongoing.data is Resource.Success) ongoing.data.value else ArrayList()
+                        val dataListFiltered = context?.filterSearchResultByFilmQuality(dataList) ?: dataList
                         val ongoingList = HomePageList(
                             ongoing.apiName,
-                            if (ongoing.data is Resource.Success) ongoing.data.value else ArrayList()
+                            dataListFiltered
                         )
                         ongoingList
                     }
