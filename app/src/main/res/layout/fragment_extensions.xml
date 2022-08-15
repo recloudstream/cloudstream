@@ -47,12 +47,15 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/list_repositories"
+            android:nextFocusDown="@id/add_repo_button"
             style="@style/WhiteButton"
             android:layout_width="wrap_content"
             android:text="@string/view_public_repositories_button" />
     </LinearLayout>
 
     <LinearLayout
+        android:foreground="@drawable/outline_drawable"
+        android:nextFocusUp="@id/add_repo_button"
         android:id="@+id/plugin_storage_appbar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
@@ -160,6 +163,8 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/add_repo_button"
+        android:nextFocusUp="@id/list_repositories"
+        android:nextFocusDown="@id/plugin_storage_appbar"
         style="@style/ExtendedFloatingActionButton"
         android:text="@string/add_repository"
         android:textColor="?attr/textColor"

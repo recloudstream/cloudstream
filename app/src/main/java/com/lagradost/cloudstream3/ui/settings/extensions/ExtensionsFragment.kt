@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
+import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
@@ -22,6 +23,7 @@ import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.result.setText
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -118,6 +120,15 @@ class ExtensionsFragment : Fragment() {
 
         list_repositories?.setOnClickListener {
             openBrowser(PUBLIC_REPOSITORIES_LIST)
+
+            // Set clipboard on TV because the browser might not exist or work properly
+            if (it.context.isTvSettings()) {
+                val serviceClipboard =
+                    (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
+                        ?: return@setOnClickListener
+                val clip = ClipData.newPlainText("Repository url", PUBLIC_REPOSITORIES_LIST)
+                serviceClipboard.setPrimaryClip(clip)
+            }
         }
 
         observe(extensionViewModel.pluginStats) {
