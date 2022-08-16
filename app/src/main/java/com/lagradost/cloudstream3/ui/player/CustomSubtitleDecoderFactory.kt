@@ -39,6 +39,7 @@ class CustomDecoder : SubtitleDecoder {
         private var overrideEncoding: String? = null
         var regexSubtitlesToRemoveCaptions = false
         var regexSubtitlesToRemoveBloat = false
+        var uppercaseSubtitles = false
         val bloatRegex =
             listOf(
                 Regex(
@@ -193,6 +194,9 @@ class CustomDecoder : SubtitleDecoder {
                             bloatRegex.forEach { rgx ->
                                 str = str.replace(rgx, "\n")
                             }
+                        if (uppercaseSubtitles) {
+                            str = str.uppercase()
+                        }
                     }
                     inputBuffer.setSubtitleText(str)
                 }

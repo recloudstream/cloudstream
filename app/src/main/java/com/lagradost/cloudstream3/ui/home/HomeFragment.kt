@@ -457,7 +457,6 @@ class HomeFragment : Fragment() {
     private fun loadHomePage(successful: Boolean = false) {
         val apiName = context?.getKey<String>(USER_SELECTED_HOMEPAGE_API)
 
-        println("LOAD HOMEPAGE $successful $apiName ${homeViewModel.apiName.value}")
         if (homeViewModel.apiName.value != apiName || apiName == null) {
             //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
             homeViewModel.loadAndCancel(apiName)

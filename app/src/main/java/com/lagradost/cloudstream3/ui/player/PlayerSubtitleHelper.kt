@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.util.MimeTypes
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveBloat
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveCaptions
+import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.uppercaseSubtitles
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.fromSaveToStyle
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -87,6 +88,7 @@ class PlayerSubtitleHelper {
 
     fun setSubStyle(style: SaveCaptionStyle) {
         regexSubtitlesToRemoveBloat = style.removeBloat
+        uppercaseSubtitles = style.upperCase
         regexSubtitlesToRemoveCaptions = style.removeCaptions
         subtitleView?.context?.let { ctx ->
             subStyle = style
