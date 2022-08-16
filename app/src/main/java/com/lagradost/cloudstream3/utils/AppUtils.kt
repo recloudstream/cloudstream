@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Activity.RESULT_CANCELED
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -21,6 +22,7 @@ import android.provider.MediaStore
 import android.text.Spanned
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
@@ -41,13 +43,11 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.isMovieType
-import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
@@ -239,6 +239,7 @@ object AppUtils {
             )
         }
     }
+
     fun Activity.loadRepository(url: String) {
         ioSafe {
             val repo = RepositoryManager.parseRepository(url) ?: return@ioSafe
@@ -259,6 +260,18 @@ object AppUtils {
         }
     }
 
+    private fun Context.hasWebView(): Boolean {
+        return this.packageManager.hasSystemFeature("android.software.webview")
+    }
+
+    private fun openWebView(fragment: Fragment?, url: String) {
+        if (fragment?.context?.hasWebView() == true)
+        normalSafeApiCall {
+            fragment
+                .findNavController()
+                .navigate(R.id.navigation_webview, WebviewFragment.newInstance(url))
+        }
+    }
 
     /**
      * If fallbackWebview is true and a fragment is supplied then it will open a webview with the url if the browser fails.
@@ -266,23 +279,34 @@ object AppUtils {
     fun Context.openBrowser(
         url: String,
         fallbackWebview: Boolean = false,
-        fragment: Fragment? = null
+        fragment: Fragment? = null,
     ) {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            ContextCompat.startActivity(this, intent, null)
+
+            // activityResultRegistry is used to fall back to webview if a browser is missing
+            // On older versions the startActivity just crashes, but on newer android versions
+            // You need to check the result to make sure it failed
+            val activityResultRegistry = fragment?.activity?.activityResultRegistry
+            if (activityResultRegistry != null) {
+                activityResultRegistry.register(
+                    url,
+                    ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    if (result.resultCode == RESULT_CANCELED && fallbackWebview) {
+                        openWebView(fragment, url)
+                    }
+                }.launch(intent)
+            } else {
+                ContextCompat.startActivity(this, intent, null)
+            }
+
         } catch (e: Exception) {
             logError(e)
             if (fallbackWebview) {
-                try {
-                    fragment
-                        ?.findNavController()
-                        ?.navigate(R.id.navigation_webview, WebviewFragment.newInstance(url))
-                } catch (e: Exception) {
-                    logError(e)
-                }
+                openWebView(fragment, url)
             }
         }
     }

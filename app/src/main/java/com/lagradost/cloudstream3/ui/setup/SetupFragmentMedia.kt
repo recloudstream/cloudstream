@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
-import com.lagradost.cloudstream3.utils.HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import kotlinx.android.synthetic.main.fragment_setup_media.*
 
@@ -52,7 +52,7 @@ class SetupFragmentMedia : Fragment() {
                     .apply()
 
                 // Regenerate set homepage
-                removeKey(HOMEPAGE_API)
+                removeKey(USER_SELECTED_HOMEPAGE_API)
             }
 
             next_btt?.setOnClickListener {

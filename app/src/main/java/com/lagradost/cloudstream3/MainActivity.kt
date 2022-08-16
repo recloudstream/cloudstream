@@ -11,6 +11,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -33,6 +36,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.CommonActivity.currentToast
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -85,7 +89,10 @@ import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Event
+import kotlinx.coroutines.delay
+import java.lang.ref.WeakReference
 
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -293,7 +300,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (VLC_REQUEST_CODE == requestCode) {
+        if (requestCode == VLC_REQUEST_CODE) {
             if (resultCode == RESULT_OK && data != null) {
                 val pos: Long =
                     data.getLongExtra(
@@ -677,13 +684,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 && PluginManager.getPluginsLocal().isEmpty()
 //                && PREBUILT_REPOSITORIES.isNotEmpty()
             ) {
-                navController.navigate(R.id.navigation_setup_extensions, SetupFragmentExtensions.newInstance(false))
+                navController.navigate(
+                    R.id.navigation_setup_extensions,
+                    SetupFragmentExtensions.newInstance(false)
+                )
             }
         } catch (e: Exception) {
             logError(e)
         } finally {
             setKey(HAS_DONE_SETUP_KEY, true)
         }
+
+//        Used to check current focus for TV
+//        main {
+//            while (true) {
+//                delay(1000)
+//                println("Current focus: $currentFocus")
+//            }
+//        }
+
 /*
 
         val relativePath = (Environment.DIRECTORY_DOWNLOADS) + File.separatorChar

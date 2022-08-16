@@ -60,8 +60,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -455,8 +454,10 @@ class HomeFragment : Fragment() {
         homeViewModel.loadStoredData(list)
     }
 
-    private fun loadHomePage(successful: Boolean = true) {
-        val apiName = context?.getKey<String>(HOMEPAGE_API)
+    private fun loadHomePage(successful: Boolean = false) {
+        val apiName = context?.getKey<String>(USER_SELECTED_HOMEPAGE_API)
+
+        println("LOAD HOMEPAGE $successful $apiName ${homeViewModel.apiName.value}")
         if (homeViewModel.apiName.value != apiName || apiName == null) {
             //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
             homeViewModel.loadAndCancel(apiName)
@@ -512,7 +513,7 @@ class HomeFragment : Fragment() {
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
-            setKey(HOMEPAGE_API, apiName)
+            // setKey(USER_SELECTED_HOMEPAGE_API, apiName)
             home_api_fab?.text = apiName
             home_provider_name?.text = apiName
             try {
