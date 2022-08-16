@@ -93,6 +93,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Event
 import kotlinx.coroutines.delay
 import java.lang.ref.WeakReference
+import java.net.URI
 
 
 const val VLC_PACKAGE = "org.videolan.vlc"
@@ -375,7 +376,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         }
                     }
                 }
-            } else if (str.contains(appStringRepo)) {
+            } else if (URI(str).scheme == appStringRepo) {
                 val url = str.replaceFirst(appStringRepo, "https")
                 loadRepository(url)
             } else {
