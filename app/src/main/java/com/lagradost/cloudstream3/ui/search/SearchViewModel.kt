@@ -36,7 +36,7 @@ class SearchViewModel : ViewModel() {
     private val _currentHistory: MutableLiveData<List<SearchHistoryItem>> = MutableLiveData()
     val currentHistory: LiveData<List<SearchHistoryItem>> get() = _currentHistory
 
-    private val repos = apis.map { APIRepository(it) }
+    private var repos = apis.map { APIRepository(it) }
 
     fun clearSearch() {
         _searchResponse.postValue(Resource.Success(ArrayList()))
@@ -45,6 +45,11 @@ class SearchViewModel : ViewModel() {
 
     private var currentSearchIndex = 0
     private var onGoingSearch: Job? = null
+
+    fun reloadRepos() {
+        repos = apis.map { APIRepository(it) }
+    }
+
     fun searchAndCancel(
         query: String,
         providersActive: Set<String> = setOf(),
@@ -104,12 +109,12 @@ class SearchViewModel : ViewModel() {
                     (ignoreSettings || (providersActive.isEmpty() || providersActive.contains(a.name))) && (!isQuickSearch || a.hasQuickSearch)
                 }.apmap { a -> // Parallel
                     val search = if (isQuickSearch) a.quickSearch(query) else a.search(query)
-                    if(currentSearchIndex != currentIndex) return@apmap
+                    if (currentSearchIndex != currentIndex) return@apmap
                     currentList.add(OnGoingSearch(a.name, search))
                     _currentSearch.postValue(currentList)
                 }
 
-                if(currentSearchIndex != currentIndex) return@withContext // this should prevent rewrite of existing data bug
+                if (currentSearchIndex != currentIndex) return@withContext // this should prevent rewrite of existing data bug
 
                 _currentSearch.postValue(currentList)
                 val list = ArrayList<SearchResponse>()
