@@ -80,10 +80,11 @@ object PluginManager {
         lock.withLock {
             if (data.isOnline) {
                 val plugins = getPluginsOnline()
-                setKey(PLUGINS_KEY, plugins + data)
+                val newPlugins = plugins.filter { it.filePath != data.filePath } + data
+                setKey(PLUGINS_KEY, newPlugins)
             } else {
                 val plugins = getPluginsLocal()
-                setKey(PLUGINS_KEY_LOCAL, plugins + data)
+                setKey(PLUGINS_KEY_LOCAL, plugins.filter { it.filePath != data.filePath } + data)
             }
         }
     }
@@ -155,7 +156,7 @@ object PluginManager {
         val onlineData: Pair<String, SitePlugin>,
     ) {
         val isOutdated =
-            onlineData.second.apiVersion != savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
+            onlineData.second.version != savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
         val isDisabled = onlineData.second.status == PROVIDER_STATUS_DOWN
     }
 
@@ -267,8 +268,12 @@ object PluginManager {
                 }
             }
 
-            val name: String = manifest.name ?: "NO NAME"
-            val version: Int = manifest.version ?: PLUGIN_VERSION_NOT_SET
+            val name: String = manifest.name ?: "NO NAME".also {
+                Log.d(TAG, "No manifest name for ${data.internalName}")
+            }
+            val version: Int = manifest.version ?: PLUGIN_VERSION_NOT_SET.also {
+                Log.d(TAG, "No manifest version for ${data.internalName}")
+            }
             val pluginClass: Class<*> =
                 loader.loadClass(manifest.pluginClassName) as Class<out Plugin?>
             val pluginInstance: Plugin =
