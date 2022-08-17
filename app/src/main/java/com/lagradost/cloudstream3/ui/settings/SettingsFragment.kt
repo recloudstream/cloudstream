@@ -22,7 +22,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.main_settings.*
-import kotlinx.android.synthetic.main.settings_title_top.*
 import kotlinx.android.synthetic.main.standard_toolbar.*
 import java.io.File
 

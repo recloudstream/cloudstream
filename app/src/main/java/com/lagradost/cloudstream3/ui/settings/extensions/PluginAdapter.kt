@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.utils.GlideApp
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 
@@ -117,6 +118,13 @@ class PluginAdapter(
 
             itemView.ext_version?.isVisible = true
             itemView.ext_version?.text = "v${metadata.version}"
+
+            if (metadata.language != null) {
+                itemView.lang_icon?.isVisible = true
+                itemView.lang_icon.text = getFlagFromIso(metadata.language)
+            } else {
+                itemView.lang_icon?.isVisible = false
+            }
 
             itemView.main_text?.text = metadata.name
             itemView.sub_text?.text = metadata.description
