@@ -194,6 +194,7 @@ class InAppUpdater {
         }
 
 
+        private val updateLock = Mutex()
 
         private fun Activity.downloadUpdate(url: String): Boolean {
 
@@ -204,7 +205,7 @@ class InAppUpdater {
             val downloadedFile = File.createTempFile("CloudStream",".apk")
             val sink: BufferedSink = downloadedFile.sink().buffer()
 
-            val updateLock = Mutex()
+
             ioSafe {
                 updateLock.withLock {
                     sink.writeAll(app.get(url).body.source() )
@@ -216,7 +217,7 @@ class InAppUpdater {
             return true
         }
 
-        fun openApk(context: Context, uri: Uri) {
+        private fun openApk(context: Context, uri: Uri) {
             try {
                 uri.path?.let {
                     val contentUri = FileProvider.getUriForFile(
