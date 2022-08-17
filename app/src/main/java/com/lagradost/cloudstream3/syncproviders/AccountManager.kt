@@ -12,7 +12,6 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         val aniListApi = AniListApi(0)
         val openSubtitlesApi = OpenSubtitlesApi(0)
         val indexSubtitlesApi = IndexSubtitleApi()
-        //val nginxApi = NginxApi(0) // TODO: fix
 
         // used to login via app intent
         val OAuth2Apis

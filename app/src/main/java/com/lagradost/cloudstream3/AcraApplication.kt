@@ -1,7 +1,9 @@
 package com.lagradost.cloudstream3
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.ContextWrapper
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.auto.service.AutoService
@@ -89,6 +91,10 @@ class AcraApplication : Application() {
     }
 
     companion object {
+        /** Use to get activity from Context */
+        tailrec fun Context.getActivity(): Activity? = this as? Activity
+            ?: (this as? ContextWrapper)?.baseContext?.getActivity()
+
         private var _context: WeakReference<Context>? = null
         var context
             get() = _context?.get()

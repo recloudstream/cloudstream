@@ -101,7 +101,12 @@ class PluginAdapter(
                         try {
                             plugin.openSettings!!.invoke(itemView.context)
                         } catch (e: Throwable) {
-                            Log.e("PluginAdapter", "Failed to open ${metadata.name} settings: ${Log.getStackTraceString(e)}")
+                            Log.e(
+                                "PluginAdapter",
+                                "Failed to open ${metadata.name} settings: ${
+                                    Log.getStackTraceString(e)
+                                }"
+                            )
                         }
 
                     }
