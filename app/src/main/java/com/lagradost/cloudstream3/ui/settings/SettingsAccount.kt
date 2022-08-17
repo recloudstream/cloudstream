@@ -63,7 +63,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
             }
         }
 
-        private fun showAccountSwitch(activity: Activity, api: AccountManager) {
+        fun showAccountSwitch(activity: Activity, api: AccountManager) {
             val accounts = api.getAccounts() ?: return
 
             val builder =
@@ -97,7 +97,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
         }
 
         @UiThread
-        private fun addAccount(activity: Activity?, api: AccountManager) {
+        fun addAccount(activity: Activity?, api: AccountManager) {
             try {
                 when (api) {
                     is OAuth2API -> {
