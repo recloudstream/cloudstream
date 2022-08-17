@@ -1,4 +1,4 @@
-name: Artifact Build
+name: Artifact Build.
 
 on: [pull_request]
 
