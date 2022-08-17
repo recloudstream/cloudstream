@@ -11,8 +11,10 @@ import android.webkit.WebViewClient
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import kotlinx.android.synthetic.main.fragment_webview.*
+import java.net.URI
 
 class WebviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -27,10 +29,17 @@ class WebviewFragment : Fragment() {
                 request: WebResourceRequest?
             ): Boolean {
                 val requestUrl = request?.url.toString()
-                if (requestUrl.startsWith("https://cs.repo")) {
-                    val realUrl = "https://" + requestUrl.substringAfter("?")
-                    println("Repository url: $realUrl :::: $requestUrl")
-                    activity?.loadRepository(realUrl)
+
+                val repoUrl = if (requestUrl.startsWith("https://cs.repo")) {
+                    "https://" + requestUrl.substringAfter("?")
+                } else if (URI(requestUrl).scheme == appStringRepo) {
+                    "https://" + requestUrl.replaceFirst(appStringRepo, "https")
+                } else {
+                    null
+                }
+
+                if (repoUrl != null) {
+                    activity?.loadRepository(repoUrl)
                     findNavController().popBackStack()
                     return true
                 }

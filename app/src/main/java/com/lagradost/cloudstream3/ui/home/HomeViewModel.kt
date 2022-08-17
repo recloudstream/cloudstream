@@ -31,7 +31,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -227,7 +227,8 @@ class HomeViewModel : ViewModel() {
                         expandable.clear()
                         data.value.forEach { home ->
                             home?.items?.forEach { list ->
-                                val filteredList = context?.filterHomePageListByFilmQuality(list) ?: list
+                                val filteredList =
+                                    context?.filterHomePageListByFilmQuality(list) ?: list
                                 expandable[list.name] =
                                     ExpandableHomepageList(filteredList, 1, home.hasNext)
                             }
@@ -244,7 +245,9 @@ class HomeViewModel : ViewModel() {
                                     .toList()
 
                             if (currentList.isNotEmpty()) {
-                                val randomItems = context?.filterSearchResultByFilmQuality(currentList.shuffled()) ?: currentList.shuffled()
+                                val randomItems =
+                                    context?.filterSearchResultByFilmQuality(currentList.shuffled())
+                                        ?: currentList.shuffled()
 
                                 _randomItems.postValue(randomItems)
                             }
@@ -266,18 +269,22 @@ class HomeViewModel : ViewModel() {
 
     fun loadAndCancel(preferredApiName: String?) = viewModelScope.launch {
         val api = getApiFromNameNull(preferredApiName)
-        if (preferredApiName == noneApi.name)
+        if (preferredApiName == noneApi.name){
+            setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
             loadAndCancel(noneApi)
+        }
         else if (preferredApiName == randomApi.name || api == null) {
             val validAPIs = context?.filterProviderByPreferredMedia()
             if (validAPIs.isNullOrEmpty()) {
+                // Do not set USER_SELECTED_HOMEPAGE_API when there is no plugins loaded
                 loadAndCancel(noneApi)
             } else {
                 val apiRandom = validAPIs.random()
                 loadAndCancel(apiRandom)
-                setKey(HOMEPAGE_API, apiRandom.name)
+                setKey(USER_SELECTED_HOMEPAGE_API, apiRandom.name)
             }
         } else {
+            setKey(USER_SELECTED_HOMEPAGE_API, api.name)
             loadAndCancel(api)
         }
     }

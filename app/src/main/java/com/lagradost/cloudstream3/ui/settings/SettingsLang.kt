@@ -16,7 +16,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
-import com.lagradost.cloudstream3.utils.HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -116,7 +116,7 @@ class SettingsLang : PreferenceFragmentCompat() {
                     .putInt(getString(R.string.prefer_media_type_key), prefValues[it])
                     .apply()
 
-                removeKey(HOMEPAGE_API)
+                removeKey(USER_SELECTED_HOMEPAGE_API)
 //                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true

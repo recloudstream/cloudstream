@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:nextFocusRight="@id/action_button"
+    android:background="@drawable/outline_drawable"
     android:padding="20dp">
 
     <ImageView
@@ -86,11 +88,16 @@
         tools:visibility="visible" />
 
     <ImageView
+        android:padding="10dp"
+        android:background="@drawable/outline_drawable"
+        android:nextFocusLeft="@id/repository_item_root"
+        android:clickable="true"
         android:id="@+id/action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|end"
         android:layout_marginStart="10dp"
-        tools:src="@drawable/ic_baseline_add_24" />
+        tools:src="@drawable/ic_baseline_add_24"
+        android:focusable="true" />
 
 </LinearLayout>
