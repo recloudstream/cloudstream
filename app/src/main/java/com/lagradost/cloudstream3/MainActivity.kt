@@ -452,6 +452,28 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
 
             PluginManager.loadAllLocalPlugins(this@MainActivity)
+
+            // Load cloned sites after plugins have been loaded since clones depend on plugins.
+            try {
+                getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                    list.forEach { custom ->
+                        allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                            ?.let {
+                                allProviders.add(it.javaClass.newInstance().apply {
+                                    name = custom.name
+                                    lang = custom.lang
+                                    mainUrl = custom.url.trimEnd('/')
+                                    canBeOverridden = false
+                                })
+                            }
+                    }
+                }
+                apis = allProviders.distinctBy { it }
+                APIHolder.apiMap = null
+            } catch (e: Exception) {
+                logError(e)
+            }
+
             afterPluginsLoadedEvent.invoke(true)
         }
 
@@ -488,26 +510,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             initAll()
             // No duplicates (which can happen by registerMainAPI)
             apis = allProviders.distinctBy { it }
-
-            try {
-                getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
-                    list.forEach { custom ->
-                        allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                            ?.let {
-                                allProviders.add(it.javaClass.newInstance().apply {
-                                    name = custom.name
-                                    lang = custom.lang
-                                    mainUrl = custom.url.trimEnd('/')
-                                    canBeOverridden = false
-                                })
-                            }
-                    }
-                }
-                apis = allProviders.distinctBy { it }
-                APIHolder.apiMap = null
-            } catch (e: Exception) {
-                logError(e)
-            }
         }
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
