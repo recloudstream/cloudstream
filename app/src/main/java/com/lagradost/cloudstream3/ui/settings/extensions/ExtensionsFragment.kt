@@ -214,7 +214,7 @@ class ExtensionsFragment : Fragment() {
                     RepositoryManager.addRepository(newRepo)
                     extensionViewModel.loadStats()
                     extensionViewModel.loadRepositories()
-                    this@ExtensionsFragment.activity?.downloadAllPluginsDialog(url)
+                    this@ExtensionsFragment.activity?.downloadAllPluginsDialog(url, fixedName)
                 }
                 dialog.dismissSafe(activity)
             }

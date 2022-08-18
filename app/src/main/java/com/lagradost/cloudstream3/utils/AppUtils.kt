@@ -259,24 +259,26 @@ object AppUtils {
                 )
             }
             afterRepositoryLoadedEvent.invoke(true)
-            downloadAllPluginsDialog(url)
+            downloadAllPluginsDialog(url, repo.name)
         }
     }
 
-    fun Activity.downloadAllPluginsDialog(repositoryUrl: String) {
+    fun Activity.downloadAllPluginsDialog(repositoryUrl: String, repositoryName: String) {
         runOnUiThread {
             val context = this
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
             builder.setTitle(
-                "Download all plugins from this repo?"
+                repositoryName
+            )
+            builder.setMessage(
+                R.string.download_all_plugins_from_repo
             )
             builder.apply {
-                // TODO: R.string Yes No
-                setPositiveButton("Yes") { _, _ ->
+                setPositiveButton(R.string.yes) { _, _ ->
                     downloadAll(context, repositoryUrl, null)
                 }
 
-                setNegativeButton("No") { _, _ -> }
+                setNegativeButton(R.string.no) { _, _ -> }
             }
             builder.show()
         }
