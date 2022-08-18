@@ -18,8 +18,13 @@ import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import kotlinx.android.synthetic.main.fragment_extensions.*
-import kotlinx.android.synthetic.main.fragment_setup_media.*
+import kotlinx.android.synthetic.main.fragment_extensions.blank_repo_screen
+import kotlinx.android.synthetic.main.fragment_extensions.list_repositories
+import kotlinx.android.synthetic.main.fragment_extensions.repo_recycler_view
+import kotlinx.android.synthetic.main.fragment_setup_extensions.*
+import kotlinx.android.synthetic.main.fragment_setup_media.next_btt
+import kotlinx.android.synthetic.main.fragment_setup_media.prev_btt
+import kotlinx.android.synthetic.main.fragment_setup_media.setup_root
 
 
 class SetupFragmentExtensions : Fragment() {
@@ -59,6 +64,7 @@ class SetupFragmentExtensions : Fragment() {
             val hasRepos = repositories.isNotEmpty()
             repo_recycler_view?.isVisible = hasRepos
             blank_repo_screen?.isVisible = !hasRepos
+            view_public_repositories_button?.isVisible = hasRepos
 
             if (hasRepos) {
                 repo_recycler_view?.adapter = RepoAdapter(true, {}, {
@@ -78,6 +84,11 @@ class SetupFragmentExtensions : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         context?.fixPaddingStatusbar(setup_root)
         val isSetup = arguments?.getBoolean(SETUP_EXTENSION_BUNDLE_IS_SETUP) ?: false
+
+        view_public_repositories_button?.setOnClickListener {
+            val isTv = it.context.isTvSettings()
+            openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
+        }
 
         with(context) {
             if (this == null) return
