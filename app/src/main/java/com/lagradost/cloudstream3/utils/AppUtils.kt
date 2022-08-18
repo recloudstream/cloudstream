@@ -25,6 +25,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
@@ -48,6 +49,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
@@ -257,6 +259,32 @@ object AppUtils {
                 )
             }
             afterRepositoryLoadedEvent.invoke(true)
+            downloadAllPluginsDialog(url)
+        }
+    }
+
+    fun Activity.downloadAllPluginsDialog(repositoryUrl: String) {
+        runOnUiThread {
+            val context = this
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setTitle(
+                "Download all plugins from this repo?"
+            )
+            builder.apply {
+                // TODO: R.string Yes No
+                setPositiveButton("Yes") { _, _ ->
+                    showToast(context, R.string.download_started, Toast.LENGTH_LONG)
+                    ioSafe {
+                        PluginManager.downloadAllPluginsFromRepository(
+                            context,
+                            repositoryUrl
+                        )
+                    }
+                }
+
+                setNegativeButton("No") { _, _ -> }
+            }
+            builder.show()
         }
     }
 

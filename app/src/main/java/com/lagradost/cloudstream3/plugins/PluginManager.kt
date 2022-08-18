@@ -373,7 +373,7 @@ object PluginManager {
         )
     }
 
-    private suspend fun downloadAllPluginsFromRepository(
+    suspend fun downloadAllPluginsFromRepository(
         activity: Activity,
         repositoryUrl: String
     ) {
@@ -384,26 +384,6 @@ object PluginManager {
                 it.second.internalName,
                 repositoryUrl
             )
-        }
-    }
-
-    fun Activity.downloadAllPluginsDialog(repositoryUrl: String) {
-        runOnUiThread {
-            val context = this
-            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-            builder.setTitle(
-                "Download all plugins from this repo?"
-            )
-            builder.apply {
-                // TODO: R.string Yes No
-                setPositiveButton("Yes") { _, _ ->
-                    showToast(context, R.string.download_started, Toast.LENGTH_LONG)
-                    ioSafe { downloadAllPluginsFromRepository(context, repositoryUrl) }
-                }
-
-                setNegativeButton("No") { _, _ -> }
-            }
-            builder.show()
         }
     }
 
