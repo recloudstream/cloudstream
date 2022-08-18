@@ -1,18 +1,13 @@
 package com.lagradost.cloudstream3.utils
 
 import android.app.Activity
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
-import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
-import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.BuildConfig
@@ -22,9 +17,14 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import okio.*
 import java.io.File
 import kotlin.concurrent.thread
+
 
 class InAppUpdater {
     companion object {
@@ -191,66 +191,31 @@ class InAppUpdater {
             }
         }
 
+
+        private val updateLock = Mutex()
+
         private fun Activity.downloadUpdate(url: String): Boolean {
-            Log.d(LOG_TAG, "Downloading update: ${url}")
 
-            val downloadManager = getSystemService<DownloadManager>()!!
-
-            val request = DownloadManager.Request(Uri.parse(url))
-                .setMimeType("application/vnd.android.package-archive")
-                .setTitle("CloudStream Update")
-                .setDestinationInExternalPublicDir(
-                    Environment.DIRECTORY_DOWNLOADS,
-                    "CloudStream.apk"
-                )
-                .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                .setAllowedOverRoaming(true)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            Log.d(LOG_TAG, "Downloading update: $url")
 
             val localContext = this
 
-            val id = try {
-                downloadManager.enqueue(request)
-            } catch (e: Exception) {
-                logError(e)
-                showToast(this, R.string.storage_error, Toast.LENGTH_SHORT)
-                -1
+            val downloadedFile = File.createTempFile("CloudStream",".apk")
+            val sink: BufferedSink = downloadedFile.sink().buffer()
+
+
+            ioSafe {
+                updateLock.withLock {
+                    sink.writeAll(app.get(url).body.source() )
+                    sink.close()
+                    openApk(localContext, Uri.fromFile(downloadedFile))
+                }
             }
-            if (id == -1L) return true
-            registerReceiver(
-                object : BroadcastReceiver() {
-                    override fun onReceive(context: Context?, intent: Intent?) {
-                        try {
-                            val downloadId = intent?.getLongExtra(
-                                DownloadManager.EXTRA_DOWNLOAD_ID, id
-                            ) ?: id
 
-                            val query = DownloadManager.Query()
-                            query.setFilterById(downloadId)
-                            val c = downloadManager.query(query)
-
-                            if (c.moveToFirst()) {
-                                val columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS)
-                                if (DownloadManager.STATUS_SUCCESSFUL == c
-                                        .getInt(columnIndex)
-                                ) {
-                                    c.getColumnIndex(DownloadManager.COLUMN_MEDIAPROVIDER_URI)
-                                    val uri = Uri.parse(
-                                        c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
-                                    )
-                                    openApk(localContext, uri)
-                                }
-                            }
-                        } catch (e: Exception) {
-                            logError(e)
-                        }
-                    }
-                }, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-            )
             return true
         }
 
-        fun openApk(context: Context, uri: Uri) {
+        private fun openApk(context: Context, uri: Uri) {
             try {
                 uri.path?.let {
                     val contentUri = FileProvider.getUriForFile(

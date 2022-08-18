@@ -8,9 +8,9 @@ plugins {
 
 def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 def allFilesFromDir = new File(tmpFilePath).listFiles()
-def prerelaseStoreFile = null
+def prereleaseStoreFile = null
 if (allFilesFromDir != null) {
-    prerelaseStoreFile = allFilesFromDir.first()
+    prereleaseStoreFile = allFilesFromDir.first()
 }
 
 android {
@@ -19,8 +19,8 @@ android {
     }
     signingConfigs {
         prerelease {
-            if (prerelaseStoreFile != null) {
-                storeFile = file(prerelaseStoreFile)
+            if (prereleaseStoreFile != null) {
+                storeFile = file(prereleaseStoreFile)
                 storePassword System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias System.getenv("SIGNING_KEY_ALIAS")
                 keyPassword System.getenv("SIGNING_KEY_PASSWORD")
