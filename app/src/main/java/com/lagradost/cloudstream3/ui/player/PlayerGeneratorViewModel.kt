@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -61,7 +62,7 @@ class PlayerGeneratorViewModel : ViewModel() {
     fun preLoadNextLinks() {
         Log.i(TAG, "preLoadNextLinks")
         currentJob?.cancel()
-        currentJob = viewModelScope.launch {
+        currentJob = viewModelScope.launchSafe {
             if (generator?.hasCache == true && generator?.hasNext() == true) {
                 safeApiCall {
                     generator?.generateLinks(
@@ -116,7 +117,7 @@ class PlayerGeneratorViewModel : ViewModel() {
     fun loadLinks(clearCache: Boolean = false, isCasting: Boolean = false) {
         Log.i(TAG, "loadLinks")
         currentJob?.cancel()
-        currentJob = viewModelScope.launch {
+        currentJob = viewModelScope.launchSafe {
             val currentLinks = mutableSetOf<Pair<ExtractorLink?, ExtractorUri?>>()
             val currentSubs = mutableSetOf<SubtitleData>()
 

@@ -41,6 +41,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
+import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
@@ -831,7 +832,7 @@ class ResultViewModel2 : ViewModel() {
                 text,
                 options
             ) { value ->
-                viewModelScope.launch {
+                viewModelScope.launchSafe {
                     _selectPopup.postValue(Some.None)
                     callback.invoke(value)
                 }
@@ -850,7 +851,7 @@ class ResultViewModel2 : ViewModel() {
                 text,
                 options,
             ) { value ->
-                viewModelScope.launch {
+                viewModelScope.launchSafe {
                     _selectPopup.value = Some.None
                     callback.invoke(value)
                 }
@@ -858,7 +859,7 @@ class ResultViewModel2 : ViewModel() {
         )
     }
 
-    fun loadLinks(
+    private fun loadLinks(
         result: ResultEpisode,
         isVisible: Boolean,
         isCasting: Boolean,
@@ -910,7 +911,7 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
-    suspend fun CoroutineScope.loadLinks(
+    private suspend fun CoroutineScope.loadLinks(
         result: ResultEpisode,
         isVisible: Boolean,
         isCasting: Boolean,
@@ -1006,7 +1007,7 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
-    fun handleAction(activity: Activity?, click: EpisodeClickEvent) = viewModelScope.launch {
+    fun handleAction(activity: Activity?, click: EpisodeClickEvent) = viewModelScope.launchSafe {
         handleEpisodeClickEvent(activity, click)
     }
 
@@ -1314,7 +1315,7 @@ class ResultViewModel2 : ViewModel() {
             return
         }
         Log.i(TAG, "setMeta")
-        viewModelScope.launch {
+        viewModelScope.launchSafe {
             currentMeta = meta
             currentSync = syncs
             val (value, updateEpisodes) = ioWork {
@@ -1325,9 +1326,9 @@ class ResultViewModel2 : ViewModel() {
             }
 
             postSuccessful(
-                value ?: return@launch,
-                currentRepo ?: return@launch,
-                updateEpisodes ?: return@launch,
+                value ?: return@launchSafe,
+                currentRepo ?: return@launchSafe,
+                updateEpisodes ?: return@launchSafe,
                 false
             )
         }
@@ -1336,13 +1337,8 @@ class ResultViewModel2 : ViewModel() {
 
     private suspend fun updateFillers(name: String) {
         fillers =
-            ioWork {
-                try {
-                    FillerEpisodeCheck.getFillerEpisodes(name)
-                } catch (e: Exception) {
-                    logError(e)
-                    null
-                }
+            ioWorkSafe {
+                FillerEpisodeCheck.getFillerEpisodes(name)
             } ?: emptyMap()
     }
 
@@ -1799,8 +1795,8 @@ class ResultViewModel2 : ViewModel() {
     fun hasLoaded() = currentResponse != null
 
     private fun handleAutoStart(activity: Activity?, autostart: AutoResume?) =
-        viewModelScope.launch {
-            if (autostart == null || activity == null) return@launch
+        viewModelScope.launchSafe {
+            if (autostart == null || activity == null) return@launchSafe
 
             when (autostart.startAction) {
                 START_ACTION_RESUME_LATEST -> {
@@ -1823,7 +1819,7 @@ class ResultViewModel2 : ViewModel() {
                                 currentEpisodes[currentIndex]?.firstOrNull { it.episode == ep && it.season == autostart.episode }
                                     ?: all.firstOrNull { it.episode == ep && it.season == autostart.episode }
                             }
-                            ?: return@launch
+                            ?: return@launchSafe
                     handleAction(
                         activity,
                         EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, episode)
@@ -1840,7 +1836,7 @@ class ResultViewModel2 : ViewModel() {
         dubStatus: DubStatus,
         autostart: AutoResume?,
     ) =
-        viewModelScope.launch {
+        viewModelScope.launchSafe {
             _page.postValue(Resource.Loading(url))
             _episodes.postValue(ResourceSome.Loading())
 
@@ -1858,12 +1854,12 @@ class ResultViewModel2 : ViewModel() {
                         "This provider does not exist"
                     )
                 )
-                return@launch
+                return@launchSafe
             }
 
 
             // validate url
-            var validUrlResource = safeApiCall {
+            val validUrlResource = safeApiCall {
                 SyncRedirector.redirect(
                     url,
                     api.mainUrl
@@ -1882,7 +1878,7 @@ class ResultViewModel2 : ViewModel() {
                     _page.postValue(validUrlResource)
                 }
 
-                return@launch
+                return@launchSafe
             }
             val validUrl = validUrlResource.value
             val repo = APIRepository(api)
@@ -1893,11 +1889,11 @@ class ResultViewModel2 : ViewModel() {
                     _page.postValue(data)
                 }
                 is Resource.Success -> {
-                    if (!isActive) return@launch
+                    if (!isActive) return@launchSafe
                     val loadResponse = ioWork {
                         applyMeta(data.value, currentMeta, currentSync).first
                     }
-                    if (!isActive) return@launch
+                    if (!isActive) return@launchSafe
                     val mainId = loadResponse.getId()
 
                     preferDubStatus = getDub(mainId) ?: preferDubStatus
@@ -1924,7 +1920,7 @@ class ResultViewModel2 : ViewModel() {
                         updateFillers = showFillers,
                         apiRepository = repo
                     )
-                    if (!isActive) return@launch
+                    if (!isActive) return@launchSafe
                     handleAutoStart(activity, autostart)
                 }
                 is Resource.Loading -> {

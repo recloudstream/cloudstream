@@ -6,11 +6,12 @@ import androidx.lifecycle.LiveData
 import com.bumptech.glide.load.HttpException
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.ErrorLoadingException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 const val DEBUG_EXCEPTION = "THIS IS A DEBUG EXCEPTION!"
 
@@ -44,13 +45,6 @@ fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
     liveData.observe(this) { it?.let { t -> action(t) } }
 }
 
-fun <T> LifecycleOwner.observeDirectly(liveData: LiveData<T>, action: (t: T) -> Unit) {
-    liveData.observe(this) { it?.let { t -> action(t) } }
-    val currentValue = liveData.value
-    if (currentValue != null)
-        action(currentValue)
-}
-
 inline fun <reified T : Any> some(value: T?): Some<T> {
     return if (value == null) {
         Some.None
@@ -64,7 +58,7 @@ sealed class Some<out T> {
     object None : Some<Nothing>()
 
     override fun toString(): String {
-        return when(this) {
+        return when (this) {
             is None -> "None"
             is Success -> "Some(${value.toString()})"
         }
@@ -123,6 +117,22 @@ fun <T> safeFail(throwable: Throwable): Resource<T> {
             "${it.fileName} ${it.lineNumber}"
         }
     return Resource.Failure(false, null, null, stackTraceMsg)
+}
+
+fun CoroutineScope.launchSafe(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+): Job {
+    val obj: suspend CoroutineScope.() -> Unit = {
+        try {
+            block()
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
+    return this.launch(context, start, obj)
 }
 
 suspend fun <T> safeApiCall(

@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.plugins.PluginData
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager
@@ -199,7 +200,7 @@ class PluginsViewModel : ViewModel() {
         _filteredPlugins.postValue(false to plugins.filterTvTypes().sortByQuery(currentQuery))
     }
 
-    fun updatePluginList(repositoryUrl: String) = viewModelScope.launch {
+    fun updatePluginList(repositoryUrl: String) = viewModelScope.launchSafe {
         Log.i(TAG, "updatePluginList = $repositoryUrl")
         updatePluginListPrivate(repositoryUrl)
     }
@@ -212,7 +213,7 @@ class PluginsViewModel : ViewModel() {
     /**
      * Update the list but only with the local data. Used for file management.
      * */
-    fun updatePluginListLocal() = viewModelScope.launch {
+    fun updatePluginListLocal() = viewModelScope.launchSafe {
         Log.i(TAG, "updatePluginList = local")
 
         val downloadedPlugins = (PluginManager.getPluginsOnline() + PluginManager.getPluginsLocal())

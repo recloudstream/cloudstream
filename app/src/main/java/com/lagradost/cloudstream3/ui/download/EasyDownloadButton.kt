@@ -229,7 +229,7 @@ class EasyDownloadButton : IDisposable {
         downloadStatusEventListener?.let { VideoDownloadManager.downloadStatusEvent += it }
 
         downloadView.setOnClickListener {
-            if (currentBytes <= 0) {
+            if (currentBytes <= 0 || totalBytes <= 0) {
                 _clickCallback?.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
             } else {
                 val list = arrayListOf(

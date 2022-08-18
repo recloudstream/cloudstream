@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.isMovieType
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
@@ -38,7 +39,7 @@ class DownloadViewModel : ViewModel() {
     val availableBytes: LiveData<Long> = _availableBytes
     val downloadBytes: LiveData<Long> = _downloadBytes
 
-    fun updateList(context: Context) = viewModelScope.launch {
+    fun updateList(context: Context) = viewModelScope.launchSafe {
         val children = withContext(Dispatchers.IO) {
             val headers = context.getKeys(DOWNLOAD_EPISODE_CACHE)
             headers.mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }

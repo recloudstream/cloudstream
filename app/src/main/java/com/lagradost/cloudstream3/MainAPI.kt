@@ -71,10 +71,6 @@ object APIHolder {
             apiMap = apis.mapIndexed { index, api -> api.name to index }.toMap()
     }
 
-    fun getApiFromName(apiName: String?): MainAPI {
-        return getApiFromNameNull(apiName) ?: apis[defProvider]
-    }
-
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
         initMap()

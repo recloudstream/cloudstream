@@ -4,15 +4,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.GlideApp
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 
@@ -93,6 +95,15 @@ class PluginAdapter(
                 iconClickCallback.invoke(data.plugin)
             }
 
+            //if (itemView.context?.isTrueTvSettings() == false) {
+            //    val siteUrl = metadata.repositoryUrl
+            //    if (siteUrl != null && siteUrl.isNotBlank() && siteUrl != "NONE") {
+            //        itemView.setOnClickListener {
+            //            openBrowser(siteUrl)
+            //        }
+            //    }
+            //}
+
             if (data.isDownloaded) {
                 val plugin = PluginManager.urlPlugins[metadata.url]
                 if (plugin?.openSettings != null) {
@@ -117,7 +128,12 @@ class PluginAdapter(
                 itemView.action_settings?.isVisible = false
             }
 
-            if (itemView.entry_icon?.setImage(metadata.iconUrl, null) != true) {
+            if (itemView.entry_icon?.setImage(
+                    metadata.iconUrl?.replace("&sz=24", "&sz=128"), // lazy fix for better resolution
+                    null,
+                    errorImageDrawable = R.drawable.ic_baseline_extension_24
+                ) != true
+            ) {
                 itemView.entry_icon?.setImageResource(R.drawable.ic_baseline_extension_24)
             }
 
@@ -132,7 +148,8 @@ class PluginAdapter(
             }
 
             itemView.main_text?.text = metadata.name
-            itemView.sub_text?.text = metadata.description
+            itemView.sub_text?.isGone = metadata.description.isNullOrBlank()
+            itemView.sub_text?.text = metadata.description.html()
         }
     }
 }

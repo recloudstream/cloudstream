@@ -266,11 +266,11 @@ object AppUtils {
 
     private fun openWebView(fragment: Fragment?, url: String) {
         if (fragment?.context?.hasWebView() == true)
-        normalSafeApiCall {
-            fragment
-                .findNavController()
-                .navigate(R.id.navigation_webview, WebviewFragment.newInstance(url))
-        }
+            normalSafeApiCall {
+                fragment
+                    .findNavController()
+                    .navigate(R.id.navigation_webview, WebviewFragment.newInstance(url))
+            }
     }
 
     /**

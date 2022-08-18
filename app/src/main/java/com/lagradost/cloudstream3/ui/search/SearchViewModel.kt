@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import kotlinx.coroutines.Dispatchers
@@ -76,11 +77,11 @@ class SearchViewModel : ViewModel() {
         ignoreSettings: Boolean = false,
         isQuickSearch: Boolean = false,
     ) =
-        viewModelScope.launch {
+        viewModelScope.launchSafe {
             val currentIndex = currentSearchIndex
             if (query.length <= 1) {
                 clearSearch()
-                return@launch
+                return@launchSafe
             }
 
             if (!isQuickSearch) {

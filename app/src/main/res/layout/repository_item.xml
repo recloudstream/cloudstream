@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:nextFocusRight="@id/action_button"
-    android:background="@drawable/outline_drawable"
+    android:background="?attr/selectableItemBackground"
     android:padding="20dp">
 
     <ImageView
@@ -16,16 +16,18 @@
         android:layout_height="24dp"
         android:layout_gravity="start|center_vertical"
         android:layout_marginEnd="20dp"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         app:srcCompat="@drawable/ic_github_logo" />
 
     <LinearLayout
+        android:layout_gravity="center_vertical"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
 
         <LinearLayout
+            android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
@@ -78,6 +80,7 @@
         tools:visibility="visible" />
 
     <ImageView
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:id="@+id/action_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,11 +88,12 @@
         android:layout_marginStart="10dp"
         android:visibility="gone"
         app:srcCompat="@drawable/ic_baseline_tune_24"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        android:contentDescription="@string/title_settings" />
 
     <ImageView
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="10dp"
-        android:background="@drawable/outline_drawable"
         android:nextFocusLeft="@id/repository_item_root"
         android:clickable="true"
         android:id="@+id/action_button"
@@ -98,6 +102,7 @@
         android:layout_gravity="center_vertical|end"
         android:layout_marginStart="10dp"
         tools:src="@drawable/ic_baseline_add_24"
-        android:focusable="true" />
+        android:focusable="true"
+        android:contentDescription="@string/download" />
 
 </LinearLayout>

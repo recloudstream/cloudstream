@@ -11,7 +11,9 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AbsListView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -19,14 +21,10 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.discord.panels.OverlappingPanelsLayout
-import com.google.android.gms.cast.framework.CastButtonFactory
-import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
-import com.lagradost.cloudstream3.APIHolder.getApiFromName
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
-import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
@@ -43,10 +41,9 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSet
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
-import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
-import com.lagradost.cloudstream3.utils.Coroutines.ioWork
+import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -95,13 +92,8 @@ import kotlinx.android.synthetic.main.fragment_result.result_title
 import kotlinx.android.synthetic.main.fragment_result.result_vpn
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
-import kotlinx.android.synthetic.main.fragment_trailer.*
 import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.coroutines.runBlocking
-import android.widget.EditText
-
-import android.widget.AbsListView
-import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 
 
 const val START_ACTION_RESUME_LATEST = 1
@@ -346,7 +338,7 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                     main {
                         val file =
-                            ioWork {
+                            ioWorkSafe {
                                 context?.let {
                                     VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
                                         it,
@@ -360,11 +352,11 @@ open class ResultFragment : ResultTrailerPlayer() {
                         downloadButton?.setUpMoreButton(
                             file?.fileLength,
                             file?.totalBytes,
-                            result_movie_progress_downloaded,
-                            result_movie_download_icon,
-                            result_movie_download_text,
-                            result_movie_download_text_precentage,
-                            result_download_movie,
+                            result_movie_progress_downloaded ?: return@main,
+                            result_movie_download_icon ?: return@main,
+                            result_movie_download_text ?: return@main,
+                            result_movie_download_text_precentage ?: return@main,
+                            result_download_movie ?: return@main,
                             true,
                             VideoDownloadHelper.DownloadEpisodeCached(
                                 ep.name,

@@ -734,6 +734,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
 
         val (position, duration) = posDur
+        if(duration == 0L) return // idk how you achieved this, but div by zero crash
+
         viewModel.getId()?.let {
             DataStoreHelper.setViewPos(it, position, duration)
         }

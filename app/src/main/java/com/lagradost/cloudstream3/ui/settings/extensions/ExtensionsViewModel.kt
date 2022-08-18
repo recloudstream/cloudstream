@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginsOnline
 import com.lagradost.cloudstream3.plugins.RepositoryManager
@@ -45,7 +46,7 @@ class ExtensionsViewModel : ViewModel() {
     val pluginStats: LiveData<Some<PluginStats>> = _pluginStats
 
     //TODO CACHE GET REQUESTS
-    fun loadStats() = viewModelScope.launch {
+    fun loadStats() = viewModelScope.launchSafe {
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 

@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.extractorApis
@@ -335,7 +336,7 @@ object PluginManager {
         }
 
         // remove all registered apis
-        APIHolder.apis.filter { it -> it.sourcePlugin == plugin.__filename }.forEach {
+        APIHolder.apis.filter { api -> api.sourcePlugin == plugin.__filename }.forEach {
             removePluginMapping(it)
         }
         APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.__filename }
@@ -363,16 +364,21 @@ object PluginManager {
         internalName: String,
         repositoryUrl: String
     ): Boolean {
-        val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
-        val fileName = getPluginSanitizedFileName(internalName)
-        Log.i(TAG, "Downloading plugin: $pluginUrl to $folderName/$fileName")
-        // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
-        val file = downloadPluginToFile(activity, pluginUrl, fileName, folderName)
-        return loadPlugin(
-            activity,
-            file ?: return false,
-            PluginData(internalName, pluginUrl, true, file.absolutePath, PLUGIN_VERSION_NOT_SET)
-        )
+        try {
+            val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
+            val fileName = getPluginSanitizedFileName(internalName)
+            Log.i(TAG, "Downloading plugin: $pluginUrl to $folderName/$fileName")
+            // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
+            val file = downloadPluginToFile(activity, pluginUrl, fileName, folderName)
+            return loadPlugin(
+                activity,
+                file ?: return false,
+                PluginData(internalName, pluginUrl, true, file.absolutePath, PLUGIN_VERSION_NOT_SET)
+            )
+        } catch (e : Exception) {
+            logError(e)
+            return false
+        }
     }
 
     /**

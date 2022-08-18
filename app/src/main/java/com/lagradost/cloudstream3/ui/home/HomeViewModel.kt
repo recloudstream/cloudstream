@@ -15,10 +15,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.debugAssert
-import com.lagradost.cloudstream3.mvvm.debugWarning
-import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
@@ -63,7 +60,7 @@ class HomeViewModel : ViewModel() {
     private val _resumeWatching = MutableLiveData<List<SearchResponse>>()
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
 
-    fun loadResumeWatching() = viewModelScope.launch {
+    fun loadResumeWatching() = viewModelScope.launchSafe {
         val resumeWatching = withContext(Dispatchers.IO) {
             getAllResumeStateIds()?.mapNotNull { id ->
                 getLastWatched(id)
@@ -99,12 +96,12 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadStoredData(preferredWatchStatus: EnumSet<WatchType>?) = viewModelScope.launch {
+    fun loadStoredData(preferredWatchStatus: EnumSet<WatchType>?) = viewModelScope.launchSafe {
         val watchStatusIds = withContext(Dispatchers.IO) {
             getAllWatchStateIds()?.map { id ->
                 Pair(id, getResultWatchState(id))
             }
-        }?.distinctBy { it.first } ?: return@launch
+        }?.distinctBy { it.first } ?: return@launchSafe
 
         val length = WatchType.values().size
         val currentWatchTypes = EnumSet.noneOf(WatchType::class.java)
@@ -120,7 +117,7 @@ class HomeViewModel : ViewModel() {
 
         if (currentWatchTypes.size <= 0) {
             _bookmarks.postValue(Pair(false, ArrayList()))
-            return@launch
+            return@launchSafe
         }
 
         val watchPrefNotNull = preferredWatchStatus ?: EnumSet.of(currentWatchTypes.first())
@@ -204,11 +201,11 @@ class HomeViewModel : ViewModel() {
     }
 
     // this is soo over engineered, but idk how I can make it clean without making the main api harder to use :pensive:
-    fun expand(name: String) = viewModelScope.launch {
+    fun expand(name: String) = viewModelScope.launchSafe {
         expandAndReturn(name)
     }
 
-    private fun load(api: MainAPI?) = viewModelScope.launch {
+    private fun load(api: MainAPI?) = viewModelScope.launchSafe {
         repo = if (api != null) {
             APIRepository(api)
         } else {
@@ -267,7 +264,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadAndCancel(preferredApiName: String?) = viewModelScope.launch {
+    fun loadAndCancel(preferredApiName: String?) = viewModelScope.launchSafe {
         val api = getApiFromNameNull(preferredApiName)
         if (preferredApiName == noneApi.name){
             setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
