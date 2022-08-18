@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.utils.AppUtils.downloadAllPluginsDialog
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -213,6 +214,7 @@ class ExtensionsFragment : Fragment() {
                     RepositoryManager.addRepository(newRepo)
                     extensionViewModel.loadStats()
                     extensionViewModel.loadRepositories()
+                    this@ExtensionsFragment.activity?.downloadAllPluginsDialog(url)
                 }
                 dialog.dismissSafe(activity)
             }

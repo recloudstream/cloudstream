@@ -49,11 +49,11 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel.Companion.downloadAll
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -273,13 +273,7 @@ object AppUtils {
             builder.apply {
                 // TODO: R.string Yes No
                 setPositiveButton("Yes") { _, _ ->
-                    showToast(context, R.string.download_started, Toast.LENGTH_LONG)
-                    ioSafe {
-                        PluginManager.downloadAllPluginsFromRepository(
-                            context,
-                            repositoryUrl
-                        )
-                    }
+                    downloadAll(context, repositoryUrl, null)
                 }
 
                 setNegativeButton("No") { _, _ -> }

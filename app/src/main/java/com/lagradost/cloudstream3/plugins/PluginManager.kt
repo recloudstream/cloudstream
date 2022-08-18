@@ -7,9 +7,7 @@ import android.content.res.Resources
 import android.os.Environment
 import android.widget.Toast
 import android.app.Activity
-import android.content.Context
 import android.util.Log
-import androidx.appcompat.app.AlertDialog
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -24,7 +22,6 @@ import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.extractorApis
 import kotlinx.coroutines.sync.Mutex
@@ -371,20 +368,6 @@ object PluginManager {
             file ?: return false,
             PluginData(internalName, pluginUrl, true, file.absolutePath, PLUGIN_VERSION_NOT_SET)
         )
-    }
-
-    suspend fun downloadAllPluginsFromRepository(
-        activity: Activity,
-        repositoryUrl: String
-    ) {
-        getRepoPlugins(repositoryUrl)?.apmap {
-            downloadAndLoadPlugin(
-                activity,
-                it.second.url,
-                it.second.internalName,
-                repositoryUrl
-            )
-        }
     }
 
     /**
