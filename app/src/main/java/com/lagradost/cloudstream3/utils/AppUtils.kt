@@ -274,11 +274,11 @@ object AppUtils {
                 R.string.download_all_plugins_from_repo
             )
             builder.apply {
-                setPositiveButton(R.string.yes) { _, _ ->
+                setPositiveButton(R.string.download) { _, _ ->
                     downloadAll(context, repositoryUrl, null)
                 }
 
-                setNegativeButton(R.string.no) { _, _ -> }
+                setNegativeButton(R.string.cancel) { _, _ -> }
             }
             builder.show()
         }

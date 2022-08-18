@@ -603,7 +603,5 @@
     <string name="view_public_repositories_button_short">Public list</string>
     <string name="uppercase_all_subtitles">Uppercase all subtitles</string>
 
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
     <string name="download_all_plugins_from_repo">Download all plugins from this repo?</string>
 </resources>
