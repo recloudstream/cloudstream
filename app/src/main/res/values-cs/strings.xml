@@ -190,9 +190,7 @@
     <string name="search">Search</string>
     <string name="category_account">Účty</string>
     <string name="category_updates">Aktualizace a záloha</string>
-    <string name="nginx_info_title">Co je to Nginx?</string>
-    <string name="nginx_info_summary">Nginx je software, který může být použit ke zobrazení souborů na serveru, který vlastníte. Klikněte pro zobrazení návodu k nastavení Nginx</string>
-
+    
     <string name="settings_info">Informace</string>
     <string name="advanced_search">Pokročilé hledání</string>
     <string name="advanced_search_des">Zobrazí vám výsledky hledání oddělené poskytovatelem</string>

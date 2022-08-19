@@ -187,9 +187,7 @@
     <string name="search">Cerca</string>
     <string name="category_account">Accounts</string>
     <string name="category_updates">Aggiornamenti e Backup</string>
-    <string name="nginx_info_title">Cos\'è Nginx?</string>
-    <string name="nginx_info_summary">Nginx è un software che può essere utilizzato per visualizzare i file da un server di proprietà. Fare clic per vedere la guida all\'installazione di Nginx</string>
-
+    
     <string name="settings_info">Info</string>
     <string name="advanced_search">Ricerca avanzata</string>
     <string name="advanced_search_des">Dividi i risultati della ricerca per provider</string>

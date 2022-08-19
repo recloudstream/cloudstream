@@ -187,9 +187,7 @@
     <string name="search">Cari</string>
     <string name="category_account">Kredit dan akun</string>
     <string name="category_updates">Update dan cadangan</string>
-    <string name="nginx_info_title">Apa itu Nginx ?</string>
-    <string name="nginx_info_summary">Nginx adalah sebuah software yang dapat digunakan untuk menampilkan file dari server yang anda miliki. Klik untuk melihat panduan pengaturan Nginx</string>
-
+    
     <string name="settings_info">Info</string>
     <string name="advanced_search">Pencarian Lanjutan</string>
     <string name="advanced_search_des">Memberikan hasil pencarian yang dipisahkan berdasarkan provider</string>

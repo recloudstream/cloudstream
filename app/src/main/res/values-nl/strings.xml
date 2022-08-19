@@ -191,9 +191,7 @@
     <string name="search">Zoeken</string>
     <string name="category_account">Accounts</string>
     <string name="category_updates">Updates en back-up</string>
-    <string name="nginx_info_title">Wat is Nginx ?</string>
-    <string name="nginx_info_summary">Nginx is een software die kan worden gebruikt om bestanden weer te geven van een server die u bezit. Klik om een Nginx installatiegids te zien</string>
-
+   
     <string name="settings_info">Info</string>
     <string name="advanced_search">Geavanceerd zoeken</string>
     <string name="advanced_search_des">Geeft u de zoekresultaten gescheiden door provider</string>

@@ -186,9 +186,7 @@
     <string name="search">Căutare</string>
     <string name="category_account">Conturi și credite</string>
     <string name="category_updates">Actualizări și copii de rezervă</string>
-    <string name="nginx_info_title">Ce este Nginx?</string>
-    <string name="nginx_info_summary">Nginx este un software care poate fi utilizat pentru a vizualiza fișiere de pe un server proprietar. Faceți clic pentru a vedea ghidul de instalare Nginx</string>
-
+    
     <string name="settings_info">Informații</string>
     <string name="advanced_search">Căutare avansată</string>
     <string name="advanced_search_des">Împărțiți rezultatele căutării în funcție de furnizor</string>

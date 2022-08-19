@@ -192,9 +192,7 @@
     <string name="search">Tìm kiếm</string>
     <string name="category_account">Tài khoản</string>
     <string name="category_updates">Cập nhật và sao lưu</string>
-    <string name="nginx_info_title">Nginx là gì?</string>
-    <string name="nginx_info_summary">Nginx được dùng để hiển thị các tệp từ máy chủ mà bạn sở hữu. Chọn để xem hướng dẫn thiết lập Nginx</string>
-
+    
     <string name="settings_info">Thông tin</string>
     <string name="advanced_search">Tìm kiếm nâng cao</string>
     <string name="advanced_search_des">Cho phép tìm kiếm theo bộ lọc từng nhà cung cấp</string>

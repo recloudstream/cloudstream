@@ -192,9 +192,7 @@
     <string name="search">Ara</string>
     <string name="category_account">Hesaplar</string>
     <string name="category_updates">Güncellemeler ve yedek</string>
-    <string name="nginx_info_title">Nginx nedir?</string>
-    <string name="nginx_info_summary">Nginx, sahip olduğunuz bir sunucudan dosyaları görüntülemek için kullanılabilecek bir yazılımdır. Nginx kurulum kılavuzunu görmek için tıklayın</string>
-
+    
     <string name="settings_info">Bilgi</string>
     <string name="advanced_search">Gelişmiş arama</string>
     <string name="advanced_search_des">Sağlayıcılara göre ayrılmış arama sonuçlarını verir</string>
