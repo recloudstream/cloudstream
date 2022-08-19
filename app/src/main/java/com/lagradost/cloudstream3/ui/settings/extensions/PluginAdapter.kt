@@ -1,8 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
-import android.content.res.Resources
+import android.text.format.Formatter.formatShortFileSize
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -95,7 +94,7 @@ class PluginAdapter(
         }
 
         val iconSize by lazy {
-            findClosestBase2(24.toPx, 16, 512)
+            findClosestBase2(32.toPx, 16, 512)
         }
     }
 
@@ -156,9 +155,9 @@ class PluginAdapter(
 
             if (itemView.entry_icon?.setImage(//itemView.entry_icon?.height ?:
                     metadata.iconUrl?.replace(
-                        "&sz=24",
-                        "&sz=$iconSize"
-                    ), // lazy fix for better resolution
+                        "%size%",
+                        "$iconSize"
+                    ),
                     null,
                     errorImageDrawable = R.drawable.ic_baseline_extension_24
                 ) != true
@@ -174,6 +173,14 @@ class PluginAdapter(
                 itemView.lang_icon.text = getFlagFromIso(metadata.language)
             } else {
                 itemView.lang_icon?.isVisible = false
+            }
+
+
+            if (metadata.fileSize != null) {
+                itemView.ext_filesize?.isVisible = true
+                itemView.ext_filesize?.text = formatShortFileSize(itemView.context, metadata.fileSize)
+            } else {
+                itemView.ext_filesize?.isVisible = false
             }
 
             itemView.main_text?.text = metadata.name

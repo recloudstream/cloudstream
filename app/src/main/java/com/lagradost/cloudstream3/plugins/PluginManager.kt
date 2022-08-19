@@ -57,7 +57,8 @@ data class PluginData(
             null,
             null,
             null,
-            null
+            null,
+            File(this.filePath).length()
         )
     }
 }
