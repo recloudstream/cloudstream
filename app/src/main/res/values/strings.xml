@@ -602,4 +602,5 @@
     <string name="uppercase_all_subtitles">Uppercase all subtitles</string>
 
     <string name="download_all_plugins_from_repo">Download all plugins from this repository?</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
 </resources>

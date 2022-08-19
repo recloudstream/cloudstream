@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.ui.result.setText
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.GlideApp
-import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.repository_item.view.*
@@ -93,8 +95,9 @@ class PluginAdapter(
             Assert.assertEquals(512, findClosestBase2(700))
         }
 
-        val iconSize by lazy {
-            findClosestBase2(32.toPx, 16, 512)
+        private val iconSizeExact = 32.toPx
+        private val iconSize by lazy {
+            findClosestBase2(iconSizeExact, 16, 512)
         }
     }
 
@@ -105,7 +108,8 @@ class PluginAdapter(
             data: PluginViewData,
         ) {
             val metadata = data.plugin.second
-            val alpha = if (metadata.status == PROVIDER_STATUS_DOWN) 0.6f else 1f
+            val disabled = metadata.status == PROVIDER_STATUS_DOWN
+            val alpha = if (disabled) 0.6f else 1f
             itemView.main_text?.alpha = alpha
             itemView.sub_text?.alpha = alpha
 
@@ -157,6 +161,9 @@ class PluginAdapter(
                     metadata.iconUrl?.replace(
                         "%size%",
                         "$iconSize"
+                    )?.replace(
+                        "%exact_size%",
+                        "$iconSizeExact"
                     ),
                     null,
                     errorImageDrawable = R.drawable.ic_baseline_extension_24
@@ -170,7 +177,8 @@ class PluginAdapter(
 
             if (metadata.language != null) {
                 itemView.lang_icon?.isVisible = true
-                itemView.lang_icon.text = getFlagFromIso(metadata.language)
+                //itemView.lang_icon.text = getFlagFromIso(metadata.language)
+                itemView.lang_icon.text = fromTwoLettersToLanguage(metadata.language)
             } else {
                 itemView.lang_icon?.isVisible = false
             }
@@ -182,8 +190,7 @@ class PluginAdapter(
             } else {
                 itemView.ext_filesize?.isVisible = false
             }
-
-            itemView.main_text?.text = metadata.name
+            itemView.main_text.setText(if(disabled) txt(R.string.single_plugin_disabled, metadata.name) else txt(metadata.name))
             itemView.sub_text?.isGone = metadata.description.isNullOrBlank()
             itemView.sub_text?.text = metadata.description.html()
         }

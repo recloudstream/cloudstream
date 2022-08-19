@@ -138,14 +138,14 @@ object SubtitleHelper {
 
     private fun getFlagFromIsoShort(flagAscii: String?): String? {
         if (flagAscii.isNullOrBlank() || flagAscii.length < 2) return null
-        try {
+        return try {
             val firstChar: Int = Character.codePointAt(flagAscii, 0) + offset
             val secondChar: Int = Character.codePointAt(flagAscii, 1) + offset
 
-            return (String(Character.toChars(firstChar)) + String(Character.toChars(secondChar)))
+            (String(Character.toChars(firstChar)) + String(Character.toChars(secondChar)))
         } catch (e: Exception) {
             logError(e)
-            return null
+            null
         }
     }
 

@@ -31,7 +31,7 @@
     <color name="typeColor">#3BF585</color>
     <color name="typeColorBg">?attr/colorPrimaryDark</color>
 
-    <color name="adultColor">#F54A3B</color> <!-- same as sub color -->
+    <color name="adultColor">#FF6F63</color> <!-- same as sub color -->
 
     <color name="video_ripple">#80FFFFFF</color>
     <color name="video_button_ripple">#32FFFFFF</color>

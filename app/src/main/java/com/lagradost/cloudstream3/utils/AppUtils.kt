@@ -75,7 +75,7 @@ object AppUtils {
         val layoutManager =
             this.layoutManager as? LinearLayoutManager?
         val adapter = adapter
-        return if (layoutManager == null || adapter == null) false else layoutManager.findLastCompletelyVisibleItemPosition() < adapter.itemCount - 2
+        return if (layoutManager == null || adapter == null) false else layoutManager.findLastCompletelyVisibleItemPosition() < adapter.itemCount - 7 // bit more than 1 to make it more seamless
     }
 
     //fun Context.deleteFavorite(data: SearchResponse) {
