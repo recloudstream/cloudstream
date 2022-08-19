@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -30,6 +30,10 @@ class PluginsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Since the ViewModel is getting reused the tvTypes must be cleared between uses
+        pluginViewModel.tvTypes.clear()
+        pluginViewModel.search(null)
+
         val name = arguments?.getString(PLUGINS_BUNDLE_NAME)
         val url = arguments?.getString(PLUGINS_BUNDLE_URL)
         val isLocal = arguments?.getBoolean(PLUGINS_BUNDLE_LOCAL) == true
@@ -52,7 +56,7 @@ class PluginsFragment : Fragment() {
         }
 
         val searchView =
-            settings_toolbar?.menu?.findItem(R.id.search_button)?.actionView as? RepoSearchView
+            settings_toolbar?.menu?.findItem(R.id.search_button)?.actionView as? SearchView
 
         // Don't go back if active query
         settings_toolbar?.setNavigationOnClickListener {
@@ -72,7 +76,7 @@ class PluginsFragment : Fragment() {
             if (!hasFocus) pluginViewModel.search(null)
         }
 
-        searchView?.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 pluginViewModel.search(query)
                 return true
@@ -166,13 +170,13 @@ class PluginsFragment : Fragment() {
             }
         }
 
-        class RepoSearchView(context: Context) : android.widget.SearchView(context) {
+//        class RepoSearchView(context: Context) : android.widget.SearchView(context) {
 //            var onActionViewCollapsed = {}
 //
 //            override fun onActionViewCollapsed() {
 //                onActionViewCollapsed()
 //            }
-        }
+//        }
 
     }
 }

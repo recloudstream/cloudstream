@@ -5,7 +5,7 @@
         android:id="@+id/search_button"
         android:icon="@drawable/search_icon"
         android:title="@string/title_search"
-        app:actionViewClass="com.lagradost.cloudstream3.ui.settings.extensions.PluginsFragment$Companion$RepoSearchView"
+        app:actionViewClass="android.widget.SearchView"
         app:searchHintIcon="@drawable/search_icon"
         app:showAsAction="ifRoom" />
     <item
