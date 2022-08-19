@@ -37,7 +37,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         val subtitleProviders
             get() = listOf(
                 openSubtitlesApi,
-                indexSubtitlesApi
+//                indexSubtitlesApi // they got anti scraping measures in place :(
             )
 
         const val appString = "cloudstreamapp"
