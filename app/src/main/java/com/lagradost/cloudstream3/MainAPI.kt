@@ -348,6 +348,10 @@ fun newHomePageResponse(list: HomePageList, hasNext: Boolean? = null): HomePageR
     return HomePageResponse(listOf(list), hasNext = hasNext ?: list.list.isNotEmpty())
 }
 
+fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): HomePageResponse {
+    return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
+}
+
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
 abstract class MainAPI {
     companion object {
