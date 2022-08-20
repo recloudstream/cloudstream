@@ -1,0 +1,37 @@
+name: Issue automatic actions
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  issue-moderator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate access token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_APP_ID }}
+          private_key: ${{ secrets.GH_APP_KEY }}
+      - name: Similarity analysis
+        uses: actions-cool/issues-similarity-analysis@v1
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          filter-threshold: 0.5
+          title-excludes: ''
+          comment-title: '### Your issue looks similar to these issues. Please close if duplicate:'
+          comment-body: '${index}. ${similarity} #${number}'
+      - name: Add eyes reaction to all issues
+        uses: actions-cool/issues-helper@v2
+        with:
+          actions: 'update-issue'
+          token: ${{ steps.generate_token.outputs.token }}
+          contents: 'eyes'
+      - name: Remove duplicates
+        uses: actions-cool/issues-helper@v2
+        with:
+          actions: 'mark-duplicate'
+          token: ${{ steps.generate_token.outputs.token }}
+          close-issue: true
+          duplicate-command: "/d"
