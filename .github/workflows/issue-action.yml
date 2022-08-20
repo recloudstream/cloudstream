@@ -27,4 +27,4 @@ jobs:
         with:
           type: 'issue'
           token: ${{ steps.generate_token.outputs.token }}
-          contents: 'eyes'
+          emoji: 'eyes'
