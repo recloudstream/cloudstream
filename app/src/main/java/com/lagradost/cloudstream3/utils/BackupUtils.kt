@@ -88,6 +88,58 @@ object BackupUtils {
         @JsonProperty("settings") val settings: BackupVars
     )
 
+    fun Context.getBackup(): BackupFile {
+        val allData = getSharedPrefs().all.filter { it.key.isTransferable() }
+        val allSettings = getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
+
+        val allDataSorted = BackupVars(
+            allData.filter { it.value is Boolean } as? Map<String, Boolean>,
+            allData.filter { it.value is Int } as? Map<String, Int>,
+            allData.filter { it.value is String } as? Map<String, String>,
+            allData.filter { it.value is Float } as? Map<String, Float>,
+            allData.filter { it.value is Long } as? Map<String, Long>,
+            allData.filter { it.value as? Set<String> != null } as? Map<String, Set<String>>
+        )
+
+        val allSettingsSorted = BackupVars(
+            allSettings.filter { it.value is Boolean } as? Map<String, Boolean>,
+            allSettings.filter { it.value is Int } as? Map<String, Int>,
+            allSettings.filter { it.value is String } as? Map<String, String>,
+            allSettings.filter { it.value is Float } as? Map<String, Float>,
+            allSettings.filter { it.value is Long } as? Map<String, Long>,
+            allSettings.filter { it.value as? Set<String> != null } as? Map<String, Set<String>>
+        )
+
+        return BackupFile(
+            allDataSorted,
+            allSettingsSorted
+        )
+    }
+
+    fun Context.restore(
+        backupFile: BackupFile,
+        restoreSettings: Boolean,
+        restoreDataStore: Boolean
+    ) {
+        if (restoreSettings) {
+            restoreMap(backupFile.settings._Bool, true)
+            restoreMap(backupFile.settings._Int, true)
+            restoreMap(backupFile.settings._String, true)
+            restoreMap(backupFile.settings._Float, true)
+            restoreMap(backupFile.settings._Long, true)
+            restoreMap(backupFile.settings._StringSet, true)
+        }
+
+        if (restoreDataStore) {
+            restoreMap(backupFile.datastore._Bool)
+            restoreMap(backupFile.datastore._Int)
+            restoreMap(backupFile.datastore._String)
+            restoreMap(backupFile.datastore._Float)
+            restoreMap(backupFile.datastore._Long)
+            restoreMap(backupFile.datastore._StringSet)
+        }
+    }
+
     fun FragmentActivity.backup() {
         try {
             if (checkWrite()) {
@@ -95,32 +147,7 @@ object BackupUtils {
                 val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
                 val ext = "json"
                 val displayName = "CS3_Backup_${date}"
-
-                val allData = getSharedPrefs().all.filter { it.key.isTransferable() }
-                val allSettings = getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
-
-                val allDataSorted = BackupVars(
-                    allData.filter { it.value is Boolean } as? Map<String, Boolean>,
-                    allData.filter { it.value is Int } as? Map<String, Int>,
-                    allData.filter { it.value is String } as? Map<String, String>,
-                    allData.filter { it.value is Float } as? Map<String, Float>,
-                    allData.filter { it.value is Long } as? Map<String, Long>,
-                    allData.filter { it.value as? Set<String> != null } as? Map<String, Set<String>>
-                )
-
-                val allSettingsSorted = BackupVars(
-                    allSettings.filter { it.value is Boolean } as? Map<String, Boolean>,
-                    allSettings.filter { it.value is Int } as? Map<String, Int>,
-                    allSettings.filter { it.value is String } as? Map<String, String>,
-                    allSettings.filter { it.value is Float } as? Map<String, Float>,
-                    allSettings.filter { it.value is Long } as? Map<String, Long>,
-                    allSettings.filter { it.value as? Set<String> != null } as? Map<String, Set<String>>
-                )
-
-                val backupFile = BackupFile(
-                    allDataSorted,
-                    allSettingsSorted
-                )
+                val backupFile = getBackup()
 
                 val steam =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && subDir?.isDownloadDir() == true) {
@@ -249,30 +276,6 @@ object BackupUtils {
     ) {
         map?.filter { it.key.isTransferable() }?.forEach {
             setKeyRaw(it.key, it.value, isEditingAppSettings)
-        }
-    }
-
-    fun Context.restore(
-        backupFile: BackupFile,
-        restoreSettings: Boolean,
-        restoreDataStore: Boolean
-    ) {
-        if (restoreSettings) {
-            restoreMap(backupFile.settings._Bool, true)
-            restoreMap(backupFile.settings._Int, true)
-            restoreMap(backupFile.settings._String, true)
-            restoreMap(backupFile.settings._Float, true)
-            restoreMap(backupFile.settings._Long, true)
-            restoreMap(backupFile.settings._StringSet, true)
-        }
-
-        if (restoreDataStore) {
-            restoreMap(backupFile.datastore._Bool)
-            restoreMap(backupFile.datastore._Int)
-            restoreMap(backupFile.datastore._String)
-            restoreMap(backupFile.datastore._Float)
-            restoreMap(backupFile.datastore._Long)
-            restoreMap(backupFile.datastore._StringSet)
         }
     }
 }
