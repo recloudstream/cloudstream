@@ -20,7 +20,7 @@ jobs:
           token: ${{ steps.generate_token.outputs.token }}
           filter-threshold: 0.5
           title-excludes: ''
-          comment-title: '### Your issue looks similar to these issues. Please close if duplicate:'
+          comment-title: '### Your issue looks similar to these issues:.\n\nPlease close if duplicate.'
           comment-body: '${index}. ${similarity} #${number}'
       - name: Add eyes reaction to all issues
         uses: actions-cool/emoji-helper@v1.0.0
@@ -28,3 +28,11 @@ jobs:
           type: 'issue'
           token: ${{ steps.generate_token.outputs.token }}
           emoji: 'eyes'
+      - name: Automatically close issues that dont follow the issue template
+        uses: lucasbento/auto-close-issues@v1.0.2
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          issue-close-message: "@${issue.user.login}: hello! :wave:\n\nThis issue is being automatically closed because it does not follow the issue template." 
+          losed-issues-label: "invalid"
+          
+          
