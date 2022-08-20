@@ -20,7 +20,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
             <ImageView
-                    android:nextFocusDown="@id/result_bookmark_button"
                     android:nextFocusRight="@id/result_share"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
 
@@ -128,7 +127,6 @@
                     android:nextFocusUp="@id/result_back"
                     android:nextFocusDown="@id/result_description"
                     android:nextFocusLeft="@id/result_search"
-                    android:nextFocusRight="@id/result_bookmark_button"
 
                     android:id="@+id/result_recommendations_btt"
                     android:layout_width="25dp"

@@ -394,7 +394,7 @@
                         </LinearLayout>
                     </LinearLayout>
 
-
+<!--
                     <com.google.android.material.button.MaterialButton
                             android:id="@+id/result_bookmark_button"
                             style="@style/BlackButton"
@@ -417,7 +417,7 @@
                             app:icon="@drawable/ic_baseline_bookmark_24"
                             tools:text="Bookmark"
                             tools:visibility="visible" />
-
+-->
 
                     <TextView
                             android:id="@+id/result_cast_text"

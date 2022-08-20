@@ -159,6 +159,7 @@ class ResultFragmentPhone : ResultFragment() {
             activity?.popCurrentPage()
         }
 
+        /*
         result_bookmark_button?.setOnClickListener {
             it.popupMenuNoIcons(
                 items = WatchType.values()
@@ -167,7 +168,7 @@ class ResultFragmentPhone : ResultFragment() {
             ) {
                 viewModel.updateWatchStatus(WatchType.fromInternalId(this.itemId))
             }
-        }
+        }*/
 
         result_mini_sync?.adapter = ImageAdapter(
             R.layout.result_mini_image,
@@ -300,8 +301,8 @@ class ResultFragmentPhone : ResultFragment() {
             if (result_season_button?.isVisible == true)
                 if (result_resume_parent?.isVisible == true)
                     setFocusUpAndDown(result_resume_series_button, result_season_button)
-                else
-                    setFocusUpAndDown(result_bookmark_button, result_season_button)
+                //else
+                //    setFocusUpAndDown(result_bookmark_button, result_season_button)
         }
 
         observe(viewModel.selectedDubStatus) { status ->
@@ -311,8 +312,8 @@ class ResultFragmentPhone : ResultFragment() {
                 if (result_season_button?.isVisible != true && result_episode_select?.isVisible != true) {
                     if (result_resume_parent?.isVisible == true)
                         setFocusUpAndDown(result_resume_series_button, result_dub_select)
-                    else
-                        setFocusUpAndDown(result_bookmark_button, result_dub_select)
+                   //else
+                   //    setFocusUpAndDown(result_bookmark_button, result_dub_select)
                 }
         }
         observe(viewModel.selectedRange) { range ->
@@ -323,8 +324,8 @@ class ResultFragmentPhone : ResultFragment() {
                 if (result_season_button?.isVisible != true) {
                     if (result_resume_parent?.isVisible == true)
                         setFocusUpAndDown(result_resume_series_button, result_episode_select)
-                    else
-                        setFocusUpAndDown(result_bookmark_button, result_episode_select)
+                    //else
+                    //    setFocusUpAndDown(result_bookmark_button, result_episode_select)
                 }
         }
 

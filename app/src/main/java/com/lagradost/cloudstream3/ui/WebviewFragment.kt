@@ -29,11 +29,10 @@ class WebviewFragment : Fragment() {
                 request: WebResourceRequest?
             ): Boolean {
                 val requestUrl = request?.url.toString()
-
                 val repoUrl = if (requestUrl.startsWith("https://cs.repo")) {
                     "https://" + requestUrl.substringAfter("?")
                 } else if (URI(requestUrl).scheme == appStringRepo) {
-                    "https://" + requestUrl.replaceFirst(appStringRepo, "https")
+                    requestUrl.replaceFirst(appStringRepo, "https")
                 } else {
                     null
                 }

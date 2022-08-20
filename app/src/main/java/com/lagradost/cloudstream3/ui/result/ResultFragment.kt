@@ -287,19 +287,19 @@ open class ResultFragment : ResultTrailerPlayer() {
             2 -> {
                 result_bookmark_fab?.isGone = result_bookmark_fab?.context?.isTvSettings() == true
                 result_bookmark_fab?.extend()
-                if (result_bookmark_button?.context?.isTrueTvSettings() == true) {
-                    when {
-                        result_play_movie?.isVisible == true -> {
-                            result_play_movie?.requestFocus()
-                        }
-                        result_resume_series_button?.isVisible == true -> {
-                            result_resume_series_button?.requestFocus()
-                        }
-                        else -> {
-                            result_bookmark_button?.requestFocus()
-                        }
-                    }
-                }
+                //if (result_bookmark_button?.context?.isTrueTvSettings() == true) {
+                //    when {
+                //        result_play_movie?.isVisible == true -> {
+                //            result_play_movie?.requestFocus()
+                //        }
+                //        result_resume_series_button?.isVisible == true -> {
+                //            result_resume_series_button?.requestFocus()
+                //        }
+                //        else -> {
+                //            result_bookmark_button?.requestFocus()
+                //        }
+                //    }
+                //}
 
                 result_loading?.isVisible = false
                 result_finish_loading?.isVisible = true
@@ -489,6 +489,17 @@ open class ResultFragment : ResultTrailerPlayer() {
             }
 
             result_bookmark_fab?.setOnClickListener { fab ->
+                activity?.showBottomDialog(
+                    WatchType.values().map { fab.context.getString(it.stringRes) }.toList(),
+                    watchType.ordinal,
+                    fab.context.getString(R.string.action_add_to_bookmarks),
+                    showApply = false,
+                    {}) {
+                    viewModel.updateWatchStatus(WatchType.values()[it])
+                }
+            }
+
+            result_bookmark_button?.setOnClickListener { fab ->
                 activity?.showBottomDialog(
                     WatchType.values().map { fab.context.getString(it.stringRes) }.toList(),
                     watchType.ordinal,
@@ -859,7 +870,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                     .contains(DubStatus.Dubbed)
             ) DubStatus.Dubbed else DubStatus.Subbed
 
-            result_bookmark_button?.isVisible = ctx.isTvSettings()
+            //result_bookmark_button?.isVisible = ctx.isTvSettings()
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
             val showFillers =
