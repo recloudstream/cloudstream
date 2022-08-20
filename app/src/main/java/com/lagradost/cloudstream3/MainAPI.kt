@@ -229,9 +229,13 @@ object APIHolder {
     fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
         val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }.map { it.ordinal }
         val defaultSet = default.map { it.toString() }.toSet()
-        val currentPrefMedia = PreferenceManager.getDefaultSharedPreferences(this)
+        val currentPrefMedia = try {
+            PreferenceManager.getDefaultSharedPreferences(this)
             .getStringSet(this.getString(R.string.prefer_media_type_key), defaultSet)
-            ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }?: default
+            ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }
+        } catch (e: Throwable) {
+            null
+        } ?: default
         val langs = this.getApiProviderLangSettings()
         val allApis = apis.filter { langs.contains(it.lang) }
             .filter { api -> api.hasMainPage || !hasHomePageIsRequired }
