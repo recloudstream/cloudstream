@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSubtitlesApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.githubApi
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
@@ -219,6 +220,8 @@ class SettingsAccount : PreferenceFragmentCompat() {
                 R.string.mal_key to malApi,
                 R.string.anilist_key to aniListApi,
                 R.string.opensubtitles_key to openSubtitlesApi,
+                R.string.github_key to githubApi
+
             )
 
         for ((key, api) in syncApis) {

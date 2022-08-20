@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
@@ -28,6 +27,12 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_S
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.BackupUtils.restore
+import com.lagradost.cloudstream3.utils.BackupUtils.restorePromptGithub
+
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
@@ -36,6 +41,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.isDownloadDir
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.transport.URIish
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import java.io.IOException
 import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
@@ -276,6 +284,67 @@ object BackupUtils {
     ) {
         map?.filter { it.key.isTransferable() }?.forEach {
             setKeyRaw(it.key, it.value, isEditingAppSettings)
+        }
+    }
+
+
+    fun FragmentActivity.BackupGithub(){
+        val backup = this.getBackup()
+        ioSafe {
+            val tmpDir = createTempDir()
+            val git = Git.cloneRepository()
+                .setURI("https://github.com/Github_USERNAME/Repo_NAME.git")
+                .setDirectory(tmpDir)
+                .setTimeout(30)
+                .setCredentialsProvider(
+                    UsernamePasswordCredentialsProvider("HERE GOES GITHUB TOKEN", "")
+                )
+                .call()
+
+            tmpDir.listFiles()?.first { it.name != ".git" }?.writeText(backup.toJson())
+            git.add()
+                .addFilepattern(".")
+                .call()
+            git.commit()
+                .setAll(true)
+                .setMessage("Update results")
+                .call()
+            git.remoteAdd()
+                .setName("origin")
+                .setUri(URIish("https://github.com/Github_USERNAME/Repo_NAME.git"))
+                .call()
+            git.push()
+                .setRemote("https://github.com/Github_USERNAME/Repo_NAME.git")
+                .setTimeout(30)
+                .setCredentialsProvider(
+                    UsernamePasswordCredentialsProvider("HERE GOES GITHUB TOKEN", "")
+                )
+                .call();
+        }
+
+
+
+    }
+
+    fun FragmentActivity.restorePromptGithub(){
+        ioSafe {
+            val tmpDir = createTempDir()
+            Git.cloneRepository()
+                .setURI("https://github.com/Github_USERNAME/Repo_NAME.git")
+                .setDirectory(tmpDir)
+                .setTimeout(30)
+                .setCredentialsProvider(
+                    UsernamePasswordCredentialsProvider("", "")
+                )
+                .call()
+            val jsondata = tmpDir.listFiles()?.first { it.name != ".git" }?.readLines()
+                ?.joinToString()
+            val data = parseJson<BackupFile>(jsondata?: "")
+            this@restorePromptGithub.restore(
+                data,
+                restoreSettings = true,
+                restoreDataStore = true
+            )
         }
     }
 }
