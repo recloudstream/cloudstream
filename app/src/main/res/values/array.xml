@@ -29,19 +29,6 @@
         <item>4</item>
     </array>
 
-    <array name="media_type_pref">
-        <item>All</item>
-        <item>Movies and TV</item>
-        <item>Anime</item>
-        <item>Documentary</item>
-    </array>
-    <array name="media_type_pref_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </array>
-
     <array name="limit_title_rez_pref_names">
         <item>@string/resolution_and_title</item>
         <item>@string/title</item>
