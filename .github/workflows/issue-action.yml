@@ -23,15 +23,8 @@ jobs:
           comment-title: '### Your issue looks similar to these issues. Please close if duplicate:'
           comment-body: '${index}. ${similarity} #${number}'
       - name: Add eyes reaction to all issues
-        uses: actions-cool/issues-helper@v2
+        uses: actions-cool/emoji-helper@v1.0.0
         with:
-          actions: 'update-issue'
+          type: 'issue'
           token: ${{ steps.generate_token.outputs.token }}
           contents: 'eyes'
-      - name: Remove duplicates
-        uses: actions-cool/issues-helper@v2
-        with:
-          actions: 'mark-duplicate'
-          token: ${{ steps.generate_token.outputs.token }}
-          close-issue: true
-          duplicate-command: "/d"
