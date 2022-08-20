@@ -226,6 +226,7 @@
                     android:id="@+id/player_video_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layoutDirection="ltr"
                     android:orientation="horizontal">
 
                 <ImageView
