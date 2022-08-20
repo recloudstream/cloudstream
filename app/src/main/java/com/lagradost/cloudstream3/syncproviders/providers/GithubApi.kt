@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
 
 
-class GithubApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
+class GithubApi(index: Int) : InAppAuthAPIManager(index){
     override val idPrefix = "Github"
     override val name = "Github"
     override val icon = R.drawable.ic_github_logo
