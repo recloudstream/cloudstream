@@ -37,7 +37,7 @@ jobs:
           RES="$(python3 ./check_issue.py)"
           echo "::set-output name=name::${RES
       - name: Comment if issue mentions a provider
-        if: ${{ steps.provider_check.outputs.name != "none" }}
+        if: steps.provider_check.outputs.name != "none" 
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'create-comment'
