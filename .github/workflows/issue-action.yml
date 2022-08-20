@@ -22,6 +22,7 @@ jobs:
           title-excludes: ''
           comment-title: '### Your issue looks similar to these issues:.\n\nPlease close if duplicate.'
           comment-body: '${index}. ${similarity} #${number}'
+      - uses: actions/checkout@v2
       - name: Automatically close issues that dont follow the issue template
         uses: lucasbento/auto-close-issues@v1.0.2
         with:
