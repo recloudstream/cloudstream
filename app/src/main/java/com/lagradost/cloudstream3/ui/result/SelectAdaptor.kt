@@ -3,22 +3,11 @@ package com.lagradost.cloudstream3.ui.result
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.lagradost.cloudstream3.ActorData
-import com.lagradost.cloudstream3.ActorRole
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.ui.download.DownloadButtonViewHolder
-import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
-import com.lagradost.cloudstream3.ui.settings.AccountAdapter
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import kotlinx.android.synthetic.main.cast_item.view.*
-import org.schabi.newpipe.extractor.timeago.patterns.it
 
 typealias SelectData = Pair<UiText?, Any>
 

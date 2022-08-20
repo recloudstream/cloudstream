@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -25,7 +26,6 @@ import okhttp3.internal.closeQuietly
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStream
-import kotlin.concurrent.thread
 
 class SettingsUpdates : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -116,8 +116,8 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.manual_check_update_key)?.setOnPreferenceClickListener {
-            thread {
-                if (!requireActivity().runAutoUpdate(false)) {
+            ioSafe {
+                if (activity?.runAutoUpdate(false) == false) {
                     activity?.runOnUiThread {
                         CommonActivity.showToast(
                             activity,

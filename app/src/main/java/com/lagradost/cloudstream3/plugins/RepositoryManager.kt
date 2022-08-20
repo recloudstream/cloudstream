@@ -5,11 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.apmap
-import com.lagradost.cloudstream3.apmapIndexed
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginSanitizedFileName
-import com.lagradost.cloudstream3.plugins.PluginManager.getPluginsLocal
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
@@ -80,10 +79,15 @@ object RepositoryManager {
 
     private suspend fun parsePlugins(pluginUrls: String): List<SitePlugin> {
         // Take manifestVersion and such into account later
-        val response = app.get(pluginUrls)
-        // Normal parsed function not working?
-//        return response.parsedSafe()
-        return tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
+        return try {
+            val response = app.get(pluginUrls)
+            // Normal parsed function not working?
+            // return response.parsedSafe()
+            tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
+        } catch (e : Exception) {
+            logError(e)
+            emptyList()
+        }
     }
 
     /**

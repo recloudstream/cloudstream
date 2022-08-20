@@ -88,7 +88,8 @@ object APIHolder {
     }
 
     private fun getLoadResponseIdFromUrl(url: String, apiName: String): Int {
-        return url.replace(getApiFromNameNull(apiName)?.mainUrl ?: "", "").replace("/", "").hashCode()
+        return url.replace(getApiFromNameNull(apiName)?.mainUrl ?: "", "").replace("/", "")
+            .hashCode()
     }
 
     fun LoadResponse.getId(): Int {
@@ -109,39 +110,43 @@ object APIHolder {
     // Try document.select("script[src*=https://www.google.com/recaptcha/api.js?render=]").attr("src").substringAfter("render=")
     // To get the key
     suspend fun getCaptchaToken(url: String, key: String, referer: String? = null): String? {
-        val uri = Uri.parse(url)
-        val domain = encodeToString(
-            (uri.scheme + "://" + uri.host + ":443").encodeToByteArray(),
-            0
-        ).replace("\n", "").replace("=", ".")
+        try {
+            val uri = Uri.parse(url)
+            val domain = encodeToString(
+                (uri.scheme + "://" + uri.host + ":443").encodeToByteArray(),
+                0
+            ).replace("\n", "").replace("=", ".")
 
-        val vToken =
-            app.get(
-                "https://www.google.com/recaptcha/api.js?render=$key",
-                referer = referer,
-                cacheTime = 0
-            )
-                .text
-                .substringAfter("releases/")
-                .substringBefore("/")
-        val recapToken =
-            app.get("https://www.google.com/recaptcha/api2/anchor?ar=1&hl=en&size=invisible&cb=cs3&k=$key&co=$domain&v=$vToken")
-                .document
-                .selectFirst("#recaptcha-token")?.attr("value")
-        if (recapToken != null) {
-            return app.post(
-                "https://www.google.com/recaptcha/api2/reload?k=$key",
-                data = mapOf(
-                    "v" to vToken,
-                    "k" to key,
-                    "c" to recapToken,
-                    "co" to domain,
-                    "sa" to "",
-                    "reason" to "q"
-                ), cacheTime = 0
-            ).text
-                .substringAfter("rresp\",\"")
-                .substringBefore("\"")
+            val vToken =
+                app.get(
+                    "https://www.google.com/recaptcha/api.js?render=$key",
+                    referer = referer,
+                    cacheTime = 0
+                )
+                    .text
+                    .substringAfter("releases/")
+                    .substringBefore("/")
+            val recapToken =
+                app.get("https://www.google.com/recaptcha/api2/anchor?ar=1&hl=en&size=invisible&cb=cs3&k=$key&co=$domain&v=$vToken")
+                    .document
+                    .selectFirst("#recaptcha-token")?.attr("value")
+            if (recapToken != null) {
+                return app.post(
+                    "https://www.google.com/recaptcha/api2/reload?k=$key",
+                    data = mapOf(
+                        "v" to vToken,
+                        "k" to key,
+                        "c" to recapToken,
+                        "co" to domain,
+                        "sa" to "",
+                        "reason" to "q"
+                    ), cacheTime = 0
+                ).text
+                    .substringAfter("rresp\",\"")
+                    .substringBefore("\"")
+            }
+        } catch (e: Exception) {
+            logError(e)
         }
         return null
     }

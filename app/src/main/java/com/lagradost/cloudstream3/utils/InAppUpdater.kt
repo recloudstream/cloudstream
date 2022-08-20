@@ -15,15 +15,14 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import okio.*
+import okio.BufferedSink
+import okio.buffer
+import okio.sink
 import java.io.File
-import kotlin.concurrent.thread
 
 
 class InAppUpdater {
@@ -68,10 +67,14 @@ class InAppUpdater {
             @JsonProperty("updateNodeId") val updateNodeId: String?
         )
 
-        private fun Activity.getAppUpdate(): Update {
+        private suspend fun Activity.getAppUpdate(): Update {
             return try {
                 val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-                if (settingsManager.getBoolean(getString(R.string.prerelease_update_key), resources.getBoolean(R.bool.is_prerelease))) {
+                if (settingsManager.getBoolean(
+                        getString(R.string.prerelease_update_key),
+                        resources.getBoolean(R.bool.is_prerelease)
+                    )
+                ) {
                     getPreReleaseUpdate()
                 } else {
                     getReleaseUpdate()
@@ -82,16 +85,16 @@ class InAppUpdater {
             }
         }
 
-        private fun Activity.getReleaseUpdate(): Update {
+        private suspend fun Activity.getReleaseUpdate(): Update {
             val url = "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/releases"
             val headers = mapOf("Accept" to "application/vnd.github.v3+json")
             val response =
-                parseJson<List<GithubRelease>>(runBlocking {
+                parseJson<List<GithubRelease>>(
                     app.get(
                         url,
                         headers = headers
                     ).text
-                })
+                )
 
             val versionRegex = Regex("""(.*?((\d+)\.(\d+)\.(\d+))\.apk)""")
             val versionRegexLocal = Regex("""(.*?((\d+)\.(\d+)\.(\d+)).*)""")
@@ -148,7 +151,7 @@ class InAppUpdater {
             return Update(false, null, null, null, null)
         }
 
-        private fun Activity.getPreReleaseUpdate(): Update = runBlocking {
+        private suspend fun Activity.getPreReleaseUpdate(): Update {
             val tagUrl =
                 "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/git/ref/tags/pre-release"
             val releaseUrl = "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/releases"
@@ -171,14 +174,14 @@ class InAppUpdater {
 
             val shouldUpdate =
                 (getString(R.string.commit_hash)
-                    .trim {c->c.isWhitespace()}
-                    .take(7) 
-                != 
-                tagResponse.github_object.sha
-                    .trim {c->c.isWhitespace()}
-                    .take(7))
+                    .trim { c -> c.isWhitespace() }
+                    .take(7)
+                        !=
+                        tagResponse.github_object.sha
+                            .trim { c -> c.isWhitespace() }
+                            .take(7))
 
-            return@runBlocking if (foundAsset != null) {
+            return if (foundAsset != null) {
                 Update(
                     shouldUpdate,
                     foundAsset.browser_download_url,
@@ -194,25 +197,24 @@ class InAppUpdater {
 
         private val updateLock = Mutex()
 
-        private fun Activity.downloadUpdate(url: String): Boolean {
+        private suspend fun Activity.downloadUpdate(url: String): Boolean {
+            try {
+                Log.d(LOG_TAG, "Downloading update: $url")
 
-            Log.d(LOG_TAG, "Downloading update: $url")
+                val localContext = this
 
-            val localContext = this
+                val downloadedFile = File.createTempFile("CloudStream", ".apk")
+                val sink: BufferedSink = downloadedFile.sink().buffer()
 
-            val downloadedFile = File.createTempFile("CloudStream",".apk")
-            val sink: BufferedSink = downloadedFile.sink().buffer()
-
-
-            ioSafe {
                 updateLock.withLock {
-                    sink.writeAll(app.get(url).body.source() )
+                    sink.writeAll(app.get(url).body.source())
                     sink.close()
                     openApk(localContext, Uri.fromFile(downloadedFile))
                 }
+                return true
+            } catch (e: Exception) {
+                return false
             }
-
-            return true
         }
 
         private fun openApk(context: Context, uri: Uri) {
@@ -236,7 +238,7 @@ class InAppUpdater {
             }
         }
 
-        fun Activity.runAutoUpdate(checkAutoUpdate: Boolean = true): Boolean {
+        suspend fun Activity.runAutoUpdate(checkAutoUpdate: Boolean = true): Boolean {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
             if (!checkAutoUpdate || settingsManager.getBoolean(
@@ -247,7 +249,8 @@ class InAppUpdater {
                 val update = getAppUpdate()
                 if (update.shouldUpdate && update.updateURL != null) {
                     //Check if update should be skipped
-                    val updateNodeId = settingsManager.getString(getString(R.string.skip_update_key), "")
+                    val updateNodeId =
+                        settingsManager.getString(getString(R.string.skip_update_key), "")
                     if (update.updateNodeId.equals(updateNodeId)) {
                         return false
                     }
@@ -273,11 +276,8 @@ class InAppUpdater {
                             builder.apply {
                                 setPositiveButton(R.string.update) { _, _ ->
                                     showToast(context, R.string.download_started, Toast.LENGTH_LONG)
-                                    thread {
-                                        val downloadStatus =
-                                            normalSafeApiCall { context.downloadUpdate(update.updateURL) }
-                                                ?: false
-                                        if (!downloadStatus) {
+                                    ioSafe {
+                                        if (!downloadUpdate(update.updateURL))
                                             runOnUiThread {
                                                 showToast(
                                                     context,
@@ -285,7 +285,6 @@ class InAppUpdater {
                                                     Toast.LENGTH_LONG
                                                 )
                                             }
-                                        }
                                     }
                                 }
 
@@ -293,7 +292,10 @@ class InAppUpdater {
 
                                 if (checkAutoUpdate) {
                                     setNeutralButton(R.string.skip_update) { _, _ ->
-                                        settingsManager.edit().putString(getString(R.string.skip_update_key), update.updateNodeId ?: "")
+                                        settingsManager.edit().putString(
+                                            getString(R.string.skip_update_key),
+                                            update.updateNodeId ?: ""
+                                        )
                                             .apply()
                                     }
                                 }

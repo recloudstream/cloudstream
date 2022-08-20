@@ -41,7 +41,7 @@ class SetupFragmentProviderLanguage : Fragment() {
             val langs = APIHolder.apis.map { it.lang }.toSet()
                 .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) }
 
-            val currentList = current.map { langs.indexOf(it) }
+            val currentList = current.map { langs.indexOf(it) }.filter { it != -1 } // TODO LOOK INTO
             val languageNames = langs.map {
                 val emoji = SubtitleHelper.getFlagFromIso(it)
                 val name = SubtitleHelper.fromTwoLettersToLanguage(it)
