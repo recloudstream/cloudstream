@@ -5,19 +5,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.APIHolder
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.CommonActivity
-import com.lagradost.cloudstream3.DubStatus
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -100,25 +96,26 @@ class SettingsLang : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.prefer_media_type_key)?.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.media_type_pref)
-            val prefValues = resources.getIntArray(R.array.media_type_pref_values)
+            val names = enumValues<TvType>().sorted().map { it.name }
+            val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }.map { it.ordinal }
+            val defaultSet = default.map { it.toString() }.toSet()
+            val currentList = settingsManager.getStringSet(getString(R.string.prefer_media_type_key), defaultSet)?.map {
+                it.toInt()
+            } ?: default
 
-            val currentPrefMedia =
-                settingsManager.getInt(getString(R.string.prefer_media_type_key), 0)
-
-            activity?.showBottomDialog(
-                prefNames.toList(),
-                prefValues.indexOf(currentPrefMedia),
+            activity?.showMultiDialog(
+                names,
+                currentList,
                 getString(R.string.preferred_media_settings),
-                true,
-                {}) {
-                settingsManager.edit()
-                    .putInt(getString(R.string.prefer_media_type_key), prefValues[it])
-                    .apply()
-
+                {}) { selectedList ->
+                settingsManager.edit().putStringSet(
+                    this.getString(R.string.prefer_media_type_key),
+                    selectedList.map { it.toString() }.toMutableSet()
+                ).apply()
                 removeKey(USER_SELECTED_HOMEPAGE_API)
-//                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
+                //(context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
+
             return@setOnPreferenceClickListener true
         }
 

@@ -143,8 +143,9 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
     /**
      * Some languages do not use the normal country codes on OpenSubtitles
      * */
-    private val languageExceptions = mapOf(
-        "pt" to "pt-PT"
+    private val languageExceptions = mapOf<String, String>(
+//        "pt" to "pt-PT",
+//        "pt" to "pt-BR"
     )
     private fun fixLanguage(language: String?) : String? {
         return languageExceptions[language] ?: language

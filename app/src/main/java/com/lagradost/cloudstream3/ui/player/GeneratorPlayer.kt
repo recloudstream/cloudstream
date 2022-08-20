@@ -734,7 +734,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
 
         val (position, duration) = posDur
-        if(duration == 0L) return // idk how you achieved this, but div by zero crash
+        if (duration == 0L) return // idk how you achieved this, but div by zero crash
 
         viewModel.getId()?.let {
             DataStoreHelper.setViewPos(it, position, duration)
@@ -1015,7 +1015,8 @@ class GeneratorPlayer : FullScreenPlayer() {
             limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_key), 0)
             updateForcedEncoding(ctx)
 
-            filterSubByLang = settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
+            filterSubByLang =
+                settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
             if (filterSubByLang) {
                 val langFromPrefMedia = settingsManager.getStringSet(
                     this.getString(R.string.provider_lang_key),

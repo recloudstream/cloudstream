@@ -175,12 +175,12 @@ class PluginAdapter(
             itemView.ext_version?.isVisible = true
             itemView.ext_version?.text = "v${metadata.version}"
 
-            if (metadata.language != null) {
+            if (metadata.language.isNullOrBlank()) {
+                itemView.lang_icon?.isVisible = false
+            } else {
                 itemView.lang_icon?.isVisible = true
                 //itemView.lang_icon.text = getFlagFromIso(metadata.language)
                 itemView.lang_icon.text = fromTwoLettersToLanguage(metadata.language)
-            } else {
-                itemView.lang_icon?.isVisible = false
             }
 
 

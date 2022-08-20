@@ -39,11 +39,11 @@ body:
   - type: input
     id: cloudstream-version
     attributes:
-      label: Cloudstream version
+      label: Cloudstream version and commit hash
       description: |
-        You can find your Cloudstream version in **Settings**.
+        You can find your Cloudstream version in **Settings**. Commit hash is the 7 character string next to the version.
       placeholder: |
-        Example: "2.8.16"
+        Example: "2.8.16 a49f466"
     validations:
       required: true
 
@@ -57,6 +57,15 @@ body:
         Example: "Android 12"
     validations:
       required: true
+   
+  - type: textarea
+    id: logcat
+    attributes:
+      label: Logcat
+      placeholder: |
+        To get logcat please go to Settings > Updates and backup > Show logcat 🐈.
+        You can attach a file or link to some pastebin service if the file is too big.
+      render: java
 
   - type: textarea
     id: other-details

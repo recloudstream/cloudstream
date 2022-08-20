@@ -232,26 +232,23 @@ object APIHolder {
     }
 
     fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val currentPrefMedia =
-            settingsManager.getInt(this.getString(R.string.prefer_media_type_key), 0)
+        val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }.map { it.ordinal }
+        val defaultSet = default.map { it.toString() }.toSet()
+        val currentPrefMedia = try {
+            PreferenceManager.getDefaultSharedPreferences(this)
+            .getStringSet(this.getString(R.string.prefer_media_type_key), defaultSet)
+            ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }
+        } catch (e: Throwable) {
+            null
+        } ?: default
         val langs = this.getApiProviderLangSettings()
         val allApis = apis.filter { langs.contains(it.lang) }
             .filter { api -> api.hasMainPage || !hasHomePageIsRequired }
-        return if (currentPrefMedia < 1) {
+        return if (currentPrefMedia.isEmpty()) {
             allApis
         } else {
             // Filter API depending on preferred media type
-            val listEnumAnime = listOf(TvType.Anime, TvType.AnimeMovie, TvType.OVA)
-            val listEnumMovieTv =
-                listOf(TvType.Movie, TvType.TvSeries, TvType.Cartoon, TvType.AsianDrama)
-            val listEnumDoc = listOf(TvType.Documentary)
-            val mediaTypeList = when (currentPrefMedia) {
-                2 -> listEnumAnime
-                3 -> listEnumDoc
-                else -> listEnumMovieTv
-            }
-            allApis.filter { api -> api.supportedTypes.any { it in mediaTypeList } }
+            allApis.filter { api -> api.supportedTypes.any { currentPrefMedia.contains(it.ordinal) } }
         }
     }
 
@@ -591,19 +588,19 @@ enum class DubStatus(val id: Int) {
     Subbed(0),
 }
 
-enum class TvType {
-    Movie,
-    AnimeMovie,
-    TvSeries,
-    Cartoon,
-    Anime,
-    OVA,
-    Torrent,
-    Documentary,
-    AsianDrama,
-    Live,
-    NSFW,
-    Others
+enum class TvType(value: Int?) {
+    Movie(1),
+    AnimeMovie(2),
+    TvSeries(3),
+    Cartoon(4),
+    Anime(5),
+    OVA(6),
+    Torrent(7),
+    Documentary(8),
+    AsianDrama(9),
+    Live(10),
+    NSFW(11),
+    Others(12)
 }
 
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH
