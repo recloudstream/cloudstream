@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
+import androidx.core.util.forEach
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -35,24 +37,34 @@ class SetupFragmentMedia : Fragment() {
             val arrayAdapter =
                 ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice)
 
-            val currentPrefMedia =
-                settingsManager.getInt(getString(R.string.prefer_media_type_key), 0)
+            val names = enumValues<TvType>().sorted().map { it.name }
+            val selected = mutableListOf<Int>()
 
-            val prefNames = resources.getStringArray(R.array.media_type_pref)
-            val prefValues = resources.getIntArray(R.array.media_type_pref_values)
+            arrayAdapter.addAll(names)
+            listview1?.let {
+                it.adapter = arrayAdapter
+                it.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
 
-            arrayAdapter.addAll(prefNames.toList())
-            listview1?.adapter = arrayAdapter
-            listview1?.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-            listview1?.setItemChecked(currentPrefMedia, true)
+                it.setOnItemClickListener { _, _, _, _ ->
+                    it.checkedItemPositions?.forEach { key, value ->
+                        if (value) {
+                            selected.add(key)
+                        } else {
+                            selected.remove(key)
+                        }
+                    }
+                    val prefValues = selected.mapNotNull { pos ->
+                        val item = it.getItemAtPosition(pos)?.toString() ?: return@mapNotNull null
+                        val itemVal = TvType.valueOf(item)
+                        itemVal.ordinal.toString()
+                    }.toSet()
+                    settingsManager.edit()
+                        .putStringSet(getString(R.string.prefer_media_type_key), prefValues)
+                        .apply()
 
-            listview1?.setOnItemClickListener { _, _, position, _ ->
-                settingsManager.edit()
-                    .putInt(getString(R.string.prefer_media_type_key), prefValues[position])
-                    .apply()
-
-                // Regenerate set homepage
-                removeKey(USER_SELECTED_HOMEPAGE_API)
+                    // Regenerate set homepage
+                    removeKey(USER_SELECTED_HOMEPAGE_API)
+                }
             }
 
             next_btt?.setOnClickListener {
