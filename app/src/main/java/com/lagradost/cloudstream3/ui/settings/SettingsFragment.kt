@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.main_settings.*
 import kotlinx.android.synthetic.main.standard_toolbar.*
 import java.io.File
@@ -37,6 +38,15 @@ class SettingsFragment : Fragment() {
             } catch (e: Exception) {
                 logError(e)
                 null
+            }
+        }
+
+        /**
+         * On TV you cannot properly scroll to the bottom of settings, this fixes that.
+         * */
+        fun PreferenceFragmentCompat.setPaddingBottom() {
+            if (this.context?.isTvSettings() == true) {
+                listView?.setPadding(0, 0, 0, 100.toPx)
             }
         }
 

@@ -6,10 +6,22 @@ import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.map
+import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.getPairList
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.ui.settings.appLanguages
+import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
+import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import kotlinx.android.synthetic.main.fragment_plugins.*
 
 const val PLUGINS_BUNDLE_NAME = "name"
@@ -32,6 +44,7 @@ class PluginsFragment : Fragment() {
 
         // Since the ViewModel is getting reused the tvTypes must be cleared between uses
         pluginViewModel.tvTypes.clear()
+        pluginViewModel.languages = listOf()
         pluginViewModel.search(null)
 
         val name = arguments?.getString(PLUGINS_BUNDLE_NAME)
@@ -49,6 +62,27 @@ class PluginsFragment : Fragment() {
             when (menuItem?.itemId) {
                 R.id.download_all -> {
                     PluginsViewModel.downloadAll(activity, url, pluginViewModel)
+                }
+                R.id.lang_filter -> {
+                    val tempLangs = appLanguages.toMutableList()
+                    val languageCodes = mutableListOf("none") + tempLangs.map { (_, _, iso) -> iso }
+                    val languageNames =
+                        mutableListOf(getString(R.string.no_data)) + tempLangs.map { (emoji, name, iso) ->
+                            val flag =
+                                emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
+                            "$flag $name"
+                        }
+                    val selectedList =
+                        pluginViewModel.languages.map { it -> languageCodes.indexOf(it) }
+
+                    activity?.showMultiDialog(
+                        languageNames,
+                        selectedList,
+                        getString(R.string.provider_lang_settings),
+                        {}) { newList ->
+                        pluginViewModel.languages = newList.map { it -> languageCodes[it] }
+                        pluginViewModel.updateFilteredPlugins()
+                    }
                 }
                 else -> {}
             }
@@ -94,6 +128,11 @@ class PluginsFragment : Fragment() {
                 pluginViewModel.handlePluginAction(activity, url, it, isLocal)
             }
 
+        if (context?.isTvSettings() == true) {
+            // Scrolling down does not reveal the whole RecyclerView on TV, add to bypass that.
+            plugin_recycler_view?.setPadding(0, 0, 0, 200.toPx)
+        }
+
         observe(pluginViewModel.filteredPlugins) { (scrollToTop, list) ->
             (plugin_recycler_view?.adapter as? PluginAdapter?)?.updateList(list)
 
@@ -104,6 +143,7 @@ class PluginsFragment : Fragment() {
         if (isLocal) {
             // No download button and no categories on local
             settings_toolbar?.menu?.findItem(R.id.download_all)?.isVisible = false
+            settings_toolbar?.menu?.findItem(R.id.lang_filter)?.isVisible = false
             pluginViewModel.updatePluginListLocal()
             tv_types_scroll_view?.isVisible = false
         } else {
@@ -123,11 +163,14 @@ class PluginsFragment : Fragment() {
                 home_select_others
             )
 
+//            val supportedTypes: Array<String> =
+//                pluginViewModel.filteredPlugins.value!!.second.flatMap { it -> it.plugin.second.tvTypes ?: listOf("Other") }.distinct().toTypedArray()
+
             // Copy pasted code
             for ((button, validTypes) in pairList) {
                 val validTypesMapped = validTypes.map { it.name }
-                val isValid =
-                    true //validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
+                val isValid = true
+                //validTypes.any { it -> supportedTypes.contains(it.name) }
                 button?.isVisible = isValid
                 if (isValid) {
                     fun buttonContains(): Boolean {

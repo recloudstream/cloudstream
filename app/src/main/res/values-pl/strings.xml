@@ -430,4 +430,10 @@
     <string name="other_singular">Wideo</string>
     <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
     <string name="view_public_repositories_button_short">Publiczna lista</string>
+    <string name="example_lang_name">Kod języka (en)</string>
+    <string name="subtitles_filter_lang">Filtrowanie wg preferowanego języka mediów</string>
+    <string name="uppercase_all_subtitles">Wszystkie napisy wielką literą</string>
+    <string name="download_all_plugins_from_repo">Pobrać wszystkie rozszerzenia z tego repozytorium?</string>
+    <string name="single_plugin_disabled">%s (Wyłączone)</string>
+    <string name="pref_filter_search_quality">Ukryj wybraną jakość wideo w wynikach wyszukiwania</string>
 </resources>

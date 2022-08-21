@@ -41,6 +41,7 @@ import com.lagradost.cloudstream3.CommonActivity.updateLocale
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
@@ -78,6 +79,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
+import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import kotlinx.android.synthetic.main.activity_main.*
@@ -130,6 +132,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     companion object {
         const val TAG = "MAINACT"
         val afterPluginsLoadedEvent = Event<Boolean>()
+        val mainPluginsLoadedEvent =
+            Event<Boolean>() // homepage api, used to speed up time to load for homepage
         val afterRepositoryLoadedEvent = Event<Boolean>()
     }
 
@@ -436,6 +440,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         changeStatusBarState(isEmulatorSettings())
 
         ioSafe {
+            getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homeApi ->
+                mainPluginsLoadedEvent.invoke(loadSinglePlugin(this@MainActivity, homeApi))
+            } ?: run {
+                mainPluginsLoadedEvent.invoke(false)
+            }
+
             if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
                 PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
             } else {

@@ -56,10 +56,9 @@
     <string name="pref_filter_search_quality_key" translatable="false">pref_filter_search_quality_key</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" formatted="true" translatable="false">%d %s | %sMB</string>
-    <string name="storage_size_format" formatted="true" translatable="false">%s • %sGB</string>
-    <string name="download_size_format" formatted="true" translatable="false">%sMB / %sMB</string>
-    <string name="mb_format" formatted="true" translatable="false">%dMB</string>
+    <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
+    <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
+    <string name="download_size_format" formatted="true" translatable="false">%s / %s</string>
     <string name="episode_name_format" formatted="true" translatable="false">%s %s</string>
     <string name="ffw_text_format" formatted="true" translatable="false">+%d</string>
     <string name="rew_text_format" formatted="true" translatable="false">-%d</string>

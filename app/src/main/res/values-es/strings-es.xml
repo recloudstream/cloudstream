@@ -1,17 +1,6 @@
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" translatable="false" formatted="true">%d %s | %sMB</string>
-    <string name="storage_size_format" translatable="false" formatted="true">%s • %sGB</string>
-    <string name="download_size_format" translatable="false" formatted="true">%sMB / %sMB</string>
-    <string name="mb_format" translatable="false" formatted="true">%dMB</string>
-    <string name="episode_name_format" translatable="false" formatted="true">%s %s</string>
-    <string name="ffw_text_format" translatable="false" formatted="true">+%d</string>
-    <string name="rew_text_format" translatable="false" formatted="true">-%d</string>
-    <string name="ffw_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="rew_text_regular_format" translatable="false" formatted="true">%d</string>
-    <string name="rating_format" translatable="false" formatted="true">%.1f/10.0</string>
-    <string name="year_format" translatable="false" formatted="true">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Reparto: %s</string>
     <string name="next_episode_format" formatted="true">El episodio %d se publicará en</string>
@@ -26,9 +15,7 @@
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
-    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">Go back</string>
-    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
     
@@ -50,9 +37,8 @@
  
     <string name="no_data">Sin datos</string> 
     <string name="episode_more_options_des">Más opciones</string> 
-    <string name="next_episode">Siguiente episodio</string> 
-    <string name="result_plot" translatable="false">@string/synopsis</string> 
-    <string name="result_tags">Géneros</string> 
+    <string name="next_episode">Siguiente episodio</string>
+    <string name="result_tags">Géneros</string>
     <string name="result_share">Compartir</string> 
     <string name="result_open_in_browser">Abrir en el navegador</string> 
     <string name="skip_loading">Omitir carga</string> 
@@ -82,8 +68,7 @@
     <string name="download_started">Descarga iniciada</string> 
     <string name="download_failed">Descarga fallida</string> 
     <string name="download_canceled">Descarga cancelada</string> 
-    <string name="download_done">Descarga realizada</string> 
-    <string name="download_format" translatable="false">%s - %s</string> 
+    <string name="download_done">Descarga realizada</string>
     <string name="stream">Transmitir</string>
  
     <string name="error_loading_links_toast">Error al cargar enlaces</string> 
@@ -229,9 +214,8 @@
     <string name="no_episodes_found">No se encontraron episodios</string> 
  
     <string name="delete_file">Eliminar archivo</string> 
-    <string name="delete">Eliminar</string> 
-    <string name="cancel" translatable="false">@string/sort_cancel</string> 
-    <string name="pause">Pausar</string> 
+    <string name="delete">Eliminar</string>
+    <string name="pause">Pausar</string>
     <string name="resume">Reanudar</string> 
     <string name="go_back_30">-30</string> 
     <string name="go_forward_30">+30</string> 
@@ -296,12 +280,8 @@
     <string name="show_hd">Etiqueta de calidad</string> 
     <string name="show_dub">Etiqueta de doblaje</string> 
     <string name="show_sub">Etiqueta de subtitulado</string> 
-    <string name="show_title">Título</string> 
-    <string name="show_hd_key" translatable="false">show_hd_key</string> 
-    <string name="show_dub_key" translatable="false">show_dub_key</string> 
-    <string name="show_sub_key" translatable="false">show_sub_key</string> 
-    <string name="show_title_key" translatable="false">show_title_key</string> 
-    <string name="poster_ui_settings">Alternar elementos de la interfaz de usuario en el póster</string> 
+    <string name="show_title">Título</string>
+    <string name="poster_ui_settings">Alternar elementos de la interfaz de usuario en el póster</string>
  
     <string name="no_update_found">No se encontró ninguna actualización</string> 
     <string name="check_for_update">Buscar actualizaciones</string> 
@@ -343,9 +323,8 @@
     <string name="resize_fill">Estirar</string> 
     <string name="resize_zoom">Zoom</string> 
  
-    <string name="legal_notice">Descargo de responsabilidad</string> 
-    <string name="legal_notice_key" translatable="false">legal_notice_key</string> 
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application 
+    <string name="legal_notice">Descargo de responsabilidad</string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
         should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. 
  
         In case of copyright infringement, please directly contact the responsible parties or the streaming websites. 
@@ -382,11 +361,7 @@
     <string name="bottom_title_settings_des">Coloca el título debajo del póster</string> 
  
  
-    <!-- account stuff --> 
-    <string name="anilist_key" translatable="false">anilist_key</string> 
-    <string name="mal_key" translatable="false">mal_key</string> 
-    <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
-    <string name="nginx_key" translatable="false">nginx_key</string>
+    <!-- account stuff -->
     <string name="example_password">contraseña123</string>
     <string name="example_username">MiNombreDeUsuarioGenial</string>
     <string name="example_email">hola@mundo.com</string>
@@ -424,9 +399,8 @@
     <string name="normal">Normal</string> 
     <string name="all">Todo</string> 
     <string name="max">Máximo</string> 
-    <string name="min">Mínimo</string> 
-    <string name="subtitles_none" translatable="false">@string/none</string> 
-    <string name="subtitles_outline">Contorno</string> 
+    <string name="min">Mínimo</string>
+    <string name="subtitles_outline">Contorno</string>
     <string name="subtitles_depressed">Deprimido</string> 
     <string name="subtitles_shadow">Sombra</string> 
     <string name="subtitles_raised">Elevado</string> 

@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.net.http.SslError
 import android.webkit.*
 import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.nicehttp.requestCreator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -15,15 +17,38 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import java.net.URI
-import java.util.concurrent.TimeUnit
 
 /**
  * When used as Interceptor additionalUrls cannot be returned, use WebViewResolver(...).resolveUsingWebView(...)
  * @param interceptUrl will stop the WebView when reaching this url.
  * @param additionalUrls this will make resolveUsingWebView also return all other requests matching the list of Regex.
+ * @param userAgent if null then will use the default user agent
+ * @param useOkhttp will try to use the okhttp client as much as possible, but this might cause some requests to fail. Disable for cloudflare.
  * */
-class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> = emptyList()) :
+class WebViewResolver(
+    val interceptUrl: Regex,
+    val additionalUrls: List<Regex> = emptyList(),
+    val userAgent: String? = USER_AGENT,
+    val useOkhttp: Boolean = true
+) :
     Interceptor {
+
+    companion object {
+        var webViewUserAgent: String? = null
+
+        @JvmName("getWebViewUserAgent1")
+        fun getWebViewUserAgent(): String? {
+            return webViewUserAgent ?: context?.let { ctx ->
+                runBlocking {
+                    mainWork {
+                        WebView(ctx).settings.userAgentString.also { userAgent ->
+                            webViewUserAgent = userAgent
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -38,7 +63,7 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
         referer: String? = null,
         method: String = "GET",
         requestCallBack: (Request) -> Boolean = { false },
-    ) : Pair<Request?, List<Request>> {
+    ): Pair<Request?, List<Request>> {
         return resolveUsingWebView(
             requestCreator(method, url, referer = referer), requestCallBack
         )
@@ -57,12 +82,15 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
         val headers = request.headers
         println("Initial web-view request: $url")
         var webView: WebView? = null
+        // Extra assurance it exits as it should.
+        var shouldExit = false
 
         fun destroyWebView() {
             main {
                 webView?.stopLoading()
                 webView?.destroy()
                 webView = null
+                shouldExit = true
                 println("Destroyed webview")
             }
         }
@@ -72,7 +100,7 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
 
         main {
             // Useful for debugging
-//            WebView.setWebContentsDebuggingEnabled(true)
+            WebView.setWebContentsDebuggingEnabled(true)
             try {
                 webView = WebView(
                     AcraApplication.context
@@ -81,9 +109,14 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                     // Bare minimum to bypass captcha
                     settings.javaScriptEnabled = true
                     settings.domStorageEnabled = true
-                    settings.userAgentString = USER_AGENT
+
+                    webViewUserAgent = settings.userAgentString
+                    // Don't set user agent, setting user agent will make cloudflare break.
+                    if (userAgent != null) {
+                        settings.userAgentString = userAgent
+                    }
                     // Blocks unnecessary images, remove if captcha fucks.
-                    settings.blockNetworkImage = true
+//                    settings.blockNetworkImage = true
                 }
 
                 webView?.webViewClient = object : WebViewClient() {
@@ -92,11 +125,11 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                         request: WebResourceRequest
                     ): WebResourceResponse? = runBlocking {
                         val webViewUrl = request.url.toString()
-//                    println("Loading WebView URL: $webViewUrl")
+                        println("Loading WebView URL: $webViewUrl")
 
                         if (interceptUrl.containsMatchIn(webViewUrl)) {
                             fixedRequest = request.toRequest().also {
-                                if (requestCallBack(it)) destroyWebView()
+                                requestCallBack(it)
                             }
                             println("Web-view request finished: $webViewUrl")
                             destroyWebView()
@@ -158,22 +191,22 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                                     null,
                                     null
                                 )
-
-                                webViewUrl.contains("recaptcha") -> super.shouldInterceptRequest(
+                                webViewUrl.contains("recaptcha") || webViewUrl.contains("/cdn-cgi/") -> super.shouldInterceptRequest(
                                     view,
                                     request
                                 )
 
-                                request.method == "GET" -> app.get(
+                                useOkhttp && request.method == "GET" -> app.get(
                                     webViewUrl,
                                     headers = request.requestHeaders
                                 ).okhttpResponse.toWebResourceResponse()
 
-                                request.method == "POST" -> app.post(
+                                useOkhttp && request.method == "POST" -> app.post(
                                     webViewUrl,
                                     headers = request.requestHeaders
                                 ).okhttpResponse.toWebResourceResponse()
-                                else -> return@runBlocking super.shouldInterceptRequest(
+
+                                else -> super.shouldInterceptRequest(
                                     view,
                                     request
                                 )
@@ -204,7 +237,7 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
         val delayTime = 100L
 
         // A bit sloppy, but couldn't find a better way
-        while (loop < totalTime / delayTime) {
+        while (loop < totalTime / delayTime && !shouldExit) {
             if (fixedRequest != null) return fixedRequest to extraRequestList
             delay(delayTime)
             loop += 1
@@ -212,30 +245,31 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
 
         println("Web-view timeout after ${totalTime / 1000}s")
         destroyWebView()
-        return null to extraRequestList
+        return fixedRequest to extraRequestList
     }
 
-    fun WebResourceRequest.toRequest(): Request {
-        val webViewUrl = this.url.toString()
+}
 
-        return requestCreator(
-            this.method,
-            webViewUrl,
-            this.requestHeaders,
-        )
-    }
+fun WebResourceRequest.toRequest(): Request {
+    val webViewUrl = this.url.toString()
 
-    fun Response.toWebResourceResponse(): WebResourceResponse {
-        val contentTypeValue = this.header("Content-Type")
-        // 1. contentType. 2. charset
-        val typeRegex = Regex("""(.*);(?:.*charset=(.*)(?:|;)|)""")
-        return if (contentTypeValue != null) {
-            val found = typeRegex.find(contentTypeValue)
-            val contentType = found?.groupValues?.getOrNull(1)?.ifBlank { null } ?: contentTypeValue
-            val charset = found?.groupValues?.getOrNull(2)?.ifBlank { null }
-            WebResourceResponse(contentType, charset, this.body?.byteStream())
-        } else {
-            WebResourceResponse("application/octet-stream", null, this.body?.byteStream())
-        }
+    return requestCreator(
+        this.method,
+        webViewUrl,
+        this.requestHeaders,
+    )
+}
+
+fun Response.toWebResourceResponse(): WebResourceResponse {
+    val contentTypeValue = this.header("Content-Type")
+    // 1. contentType. 2. charset
+    val typeRegex = Regex("""(.*);(?:.*charset=(.*)(?:|;)|)""")
+    return if (contentTypeValue != null) {
+        val found = typeRegex.find(contentTypeValue)
+        val contentType = found?.groupValues?.getOrNull(1)?.ifBlank { null } ?: contentTypeValue
+        val charset = found?.groupValues?.getOrNull(2)?.ifBlank { null }
+        WebResourceResponse(contentType, charset, this.body.byteStream())
+    } else {
+        WebResourceResponse("application/octet-stream", null, this.body.byteStream())
     }
 }

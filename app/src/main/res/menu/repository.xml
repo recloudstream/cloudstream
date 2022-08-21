@@ -9,6 +9,11 @@
         app:searchHintIcon="@drawable/search_icon"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/lang_filter"
+        android:icon="@drawable/ic_baseline_language_24"
+        android:title="@string/provider_lang_settings"
+        app:showAsAction="collapseActionView|ifRoom" />
+    <item
         android:id="@+id/download_all"
         android:icon="@drawable/netflix_download"
         android:title="@string/batch_download"

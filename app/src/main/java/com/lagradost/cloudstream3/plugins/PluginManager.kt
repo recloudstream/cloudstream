@@ -125,7 +125,7 @@ object PluginManager {
         Environment.getExternalStorageDirectory().absolutePath + "/Cloudstream3/plugins"
 
     // Maps filepath to plugin
-    private val plugins: MutableMap<String, Plugin> =
+    val plugins: MutableMap<String, Plugin> =
         LinkedHashMap<String, Plugin>()
 
     // Maps urls to plugin
@@ -163,6 +163,18 @@ object PluginManager {
     }
 
     var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
+
+    suspend fun loadSinglePlugin(activity: Activity, apiName: String): Boolean {
+        return (getPluginsOnline().firstOrNull { it.internalName == apiName }
+            ?: getPluginsLocal().firstOrNull { it.internalName == apiName })?.let { savedData ->
+            // OnlinePluginData(savedData, onlineData)
+            loadPlugin(
+                activity,
+                File(savedData.filePath),
+                savedData
+            )
+        } ?: false
+    }
 
     /**
      * Needs to be run before other plugin loading because plugin loading can not be overwritten
@@ -376,7 +388,7 @@ object PluginManager {
                 file ?: return false,
                 PluginData(internalName, pluginUrl, true, file.absolutePath, PLUGIN_VERSION_NOT_SET)
             )
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             logError(e)
             return false
         }

@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
+import android.text.format.Formatter.formatShortFileSize
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -8,6 +9,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getFolderSize
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
@@ -20,6 +22,7 @@ class SettingsPlayer : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_player)
+        setPaddingBottom()
     }
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
@@ -164,8 +167,7 @@ class SettingsPlayer : PreferenceFragmentCompat() {
 
             fun updateSummery() {
                 try {
-                    pref.summary =
-                        getString(R.string.mb_format).format(getFolderSize(cacheDir) / (1024L * 1024L))
+                    pref.summary = formatShortFileSize(view?.context, getFolderSize(cacheDir))
                 } catch (e: Exception) {
                     logError(e)
                 }
