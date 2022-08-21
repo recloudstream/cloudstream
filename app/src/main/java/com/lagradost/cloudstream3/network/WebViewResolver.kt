@@ -82,12 +82,15 @@ class WebViewResolver(
         val headers = request.headers
         println("Initial web-view request: $url")
         var webView: WebView? = null
+        // Extra assurance it exits as it should.
+        var shouldExit = false
 
         fun destroyWebView() {
             main {
                 webView?.stopLoading()
                 webView?.destroy()
                 webView = null
+                shouldExit = true
                 println("Destroyed webview")
             }
         }
@@ -234,7 +237,7 @@ class WebViewResolver(
         val delayTime = 100L
 
         // A bit sloppy, but couldn't find a better way
-        while (loop < totalTime / delayTime) {
+        while (loop < totalTime / delayTime && !shouldExit) {
             if (fixedRequest != null) return fixedRequest to extraRequestList
             delay(delayTime)
             loop += 1
@@ -242,7 +245,7 @@ class WebViewResolver(
 
         println("Web-view timeout after ${totalTime / 1000}s")
         destroyWebView()
-        return null to extraRequestList
+        return fixedRequest to extraRequestList
     }
 
 }

@@ -28,12 +28,12 @@ class CloudflareKiller : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
         val request = chain.request()
         if (savedCookies[request.url.host] == null) {
-            bypassCloudflare(request).also {
-                debugWarning({ it == null }) { "Failed cloudflare at: ${request.url}" }
-            }?.let {
+            bypassCloudflare(request)?.let {
+                Log.d(TAG, "Succeeded bypassing cloudflare: ${request.url}")
                 return@runBlocking it
             }
         }
+        debugWarning({ true }) { "Failed cloudflare at: ${request.url}" }
         return@runBlocking chain.proceed(request)
     }
 
