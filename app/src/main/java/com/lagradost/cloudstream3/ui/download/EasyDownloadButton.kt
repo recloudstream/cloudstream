@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.animation.ObjectAnimator
+import android.text.format.Formatter.formatShortFileSize
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
@@ -171,8 +172,8 @@ class EasyDownloadButton : IDisposable {
                 }
                 textView?.visibility = View.VISIBLE
                 progressBar.visibility = View.VISIBLE
-                val currentMbString = "%.1f".format(setCurrentBytes / 1000000f)
-                val totalMbString = "%.1f".format(setTotalBytes / 1000000f)
+                val currentMbString = formatShortFileSize(textView?.context, setCurrentBytes)
+                val totalMbString = formatShortFileSize(textView?.context, setTotalBytes)
 
                 textView?.text =
                     if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else

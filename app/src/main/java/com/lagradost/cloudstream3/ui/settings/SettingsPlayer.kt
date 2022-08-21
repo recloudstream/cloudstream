@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
+import android.text.format.Formatter.formatShortFileSize
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -164,8 +165,7 @@ class SettingsPlayer : PreferenceFragmentCompat() {
 
             fun updateSummery() {
                 try {
-                    pref.summary =
-                        getString(R.string.mb_format).format(getFolderSize(cacheDir) / (1024L * 1024L))
+                    pref.summary = formatShortFileSize(view?.context, getFolderSize(cacheDir))
                 } catch (e: Exception) {
                     logError(e)
                 }

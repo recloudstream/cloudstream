@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.annotation.SuppressLint
+import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -113,7 +114,7 @@ class DownloadHeaderAdapter(
             }
 
             title.text = d.name
-            val mbString = "%.1f".format(card.totalBytes / 1000000f)
+            val mbString = formatShortFileSize(itemView.context, card.totalBytes)
 
             //val isMovie = d.type.isMovieType()
             if (card.child != null) {
