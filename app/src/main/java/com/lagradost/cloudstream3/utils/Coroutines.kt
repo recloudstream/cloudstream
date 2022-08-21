@@ -43,6 +43,13 @@ object Coroutines {
         }
     }
 
+    suspend fun <T, V> V.mainWork(work: suspend (CoroutineScope.(V) -> T)): T {
+        val value = this
+        return withContext(Dispatchers.Main) {
+            work(value)
+        }
+    }
+
     fun runOnMainThread(work: (() -> Unit)) {
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.post {

@@ -43,10 +43,10 @@ fun Requests.initClient(context: Context): OkHttpClient {
     return baseClient
 }
 
-val Request.cookies: Map<String, String>
-    get() {
-        return this.headers.getCookies("Cookie")
-    }
+//val Request.cookies: Map<String, String>
+//    get() {
+//        return this.headers.getCookies("Cookie")
+//    }
 
 private val DEFAULT_HEADERS = mapOf("user-agent" to USER_AGENT)
 

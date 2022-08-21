@@ -288,7 +288,7 @@ object AppUtils {
         return this.packageManager.hasSystemFeature("android.software.webview")
     }
 
-    private fun openWebView(fragment: Fragment?, url: String) {
+    fun openWebView(fragment: Fragment?, url: String) {
         if (fragment?.context?.hasWebView() == true)
             normalSafeApiCall {
                 fragment

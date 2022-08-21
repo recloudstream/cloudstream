@@ -1,13 +1,10 @@
 package com.lagradost.cloudstream3.network
 
 import androidx.annotation.AnyThread
-import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.nicehttp.Requests.Companion.await
-import com.lagradost.nicehttp.getCookies
+import com.lagradost.nicehttp.cookies
 import kotlinx.coroutines.runBlocking
-import okhttp3.Headers
-import okhttp3.Headers.Companion.toHeaders
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
