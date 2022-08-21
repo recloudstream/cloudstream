@@ -509,8 +509,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         val settingsForProvider = SettingsJson()
         settingsForProvider.enableAdult = settingsManager.getBoolean(getString(R.string.enable_nsfw_on_providers_key), false)
+
+        MainAPI.settingsForProvider = settingsForProvider
+
         ioSafe {
-            initAll(settingsForProvider)
+            initAll()
             // No duplicates (which can happen by registerMainAPI)
             apis = allProviders.distinctBy { it }
         }
