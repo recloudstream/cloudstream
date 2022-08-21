@@ -134,7 +134,8 @@ class PluginAdapter(
             //}
 
             if (data.isDownloaded) {
-                val plugin = PluginManager.urlPlugins[metadata.url]
+                // On local plugins page the filepath is provided instead of url.
+                val plugin = PluginManager.urlPlugins[metadata.url] ?: PluginManager.plugins[metadata.url]
                 if (plugin?.openSettings != null) {
                     itemView.action_settings?.isVisible = true
                     itemView.action_settings.setOnClickListener {

@@ -125,7 +125,7 @@ object PluginManager {
         Environment.getExternalStorageDirectory().absolutePath + "/Cloudstream3/plugins"
 
     // Maps filepath to plugin
-    private val plugins: MutableMap<String, Plugin> =
+    val plugins: MutableMap<String, Plugin> =
         LinkedHashMap<String, Plugin>()
 
     // Maps urls to plugin

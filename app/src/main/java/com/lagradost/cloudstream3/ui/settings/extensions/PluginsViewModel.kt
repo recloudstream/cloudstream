@@ -176,7 +176,7 @@ class PluginsViewModel : ViewModel() {
         }
 
         this.plugins = list
-        _filteredPlugins.postValue(false to list.filterTvTypes().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(false to list.filterTvTypes().filterLang().sortByQuery(currentQuery))
     }
 
     // Perhaps can be optimized?
@@ -234,6 +234,6 @@ class PluginsViewModel : ViewModel() {
             }
 
         plugins = downloadedPlugins
-        _filteredPlugins.postValue(false to downloadedPlugins.filterTvTypes().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(false to downloadedPlugins.filterTvTypes().filterLang().sortByQuery(currentQuery))
     }
 }

@@ -13,12 +13,14 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.getPairList
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import kotlinx.android.synthetic.main.fragment_plugins.*
 
@@ -64,20 +66,23 @@ class PluginsFragment : Fragment() {
                 R.id.lang_filter -> {
                     val tempLangs = appLanguages.toMutableList()
                     val languageCodes = mutableListOf("none") + tempLangs.map { (_, _, iso) -> iso }
-                    val languageNames = mutableListOf(getString(R.string.no_data)) + tempLangs.map { (emoji, name, iso) ->
-                        val flag = emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
-                        "$flag $name"
-                    }
-                    val selectedList = pluginViewModel.languages.map { it -> languageCodes.indexOf(it) }
+                    val languageNames =
+                        mutableListOf(getString(R.string.no_data)) + tempLangs.map { (emoji, name, iso) ->
+                            val flag =
+                                emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
+                            "$flag $name"
+                        }
+                    val selectedList =
+                        pluginViewModel.languages.map { it -> languageCodes.indexOf(it) }
 
                     activity?.showMultiDialog(
                         languageNames,
                         selectedList,
                         getString(R.string.provider_lang_settings),
                         {}) { newList ->
-                            pluginViewModel.languages = newList.map { it -> languageCodes[it] }
-                            pluginViewModel.updateFilteredPlugins()
-                        }
+                        pluginViewModel.languages = newList.map { it -> languageCodes[it] }
+                        pluginViewModel.updateFilteredPlugins()
+                    }
                 }
                 else -> {}
             }
@@ -123,6 +128,11 @@ class PluginsFragment : Fragment() {
                 pluginViewModel.handlePluginAction(activity, url, it, isLocal)
             }
 
+        if (context?.isTvSettings() == true) {
+            // Scrolling down does not reveal the whole RecyclerView on TV, add to bypass that.
+            plugin_recycler_view?.setPadding(0, 0, 0, 200.toPx)
+        }
+
         observe(pluginViewModel.filteredPlugins) { (scrollToTop, list) ->
             (plugin_recycler_view?.adapter as? PluginAdapter?)?.updateList(list)
 
@@ -160,7 +170,7 @@ class PluginsFragment : Fragment() {
             for ((button, validTypes) in pairList) {
                 val validTypesMapped = validTypes.map { it.name }
                 val isValid = true
-                    //validTypes.any { it -> supportedTypes.contains(it.name) }
+                //validTypes.any { it -> supportedTypes.contains(it.name) }
                 button?.isVisible = isValid
                 if (isValid) {
                     fun buttonContains(): Boolean {
