@@ -38,6 +38,7 @@ class PluginsViewModel : ViewModel() {
     var filteredPlugins: LiveData<PluginViewDataUpdate> = _filteredPlugins
 
     val tvTypes = mutableListOf<String>()
+    var languages = listOf<String>()
     private var currentQuery: String? = null
 
     companion object {
@@ -187,6 +188,16 @@ class PluginsViewModel : ViewModel() {
         }
     }
 
+    private fun List<PluginViewData>.filterLang(): List<PluginViewData> {
+        if (languages.isEmpty()) return this
+        return this.filter {
+            if (it.plugin.second.language == null) {
+                return@filter languages.contains("none")
+            }
+            languages.contains(it.plugin.second.language)
+        }
+    }
+
     private fun List<PluginViewData>.sortByQuery(query: String?): List<PluginViewData> {
         return if (query == null) {
             // Return list to base state if no query
@@ -197,7 +208,7 @@ class PluginsViewModel : ViewModel() {
     }
 
     fun updateFilteredPlugins() {
-        _filteredPlugins.postValue(false to plugins.filterTvTypes().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(false to plugins.filterTvTypes().filterLang().sortByQuery(currentQuery))
     }
 
     fun updatePluginList(repositoryUrl: String) = viewModelScope.launchSafe {
