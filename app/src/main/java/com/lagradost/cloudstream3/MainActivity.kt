@@ -131,6 +131,8 @@ var app = Requests(responseParser = object : ResponseParser {
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     companion object {
         const val TAG = "MAINACT"
+        var context : MainActivity? = null
+
         val afterPluginsLoadedEvent = Event<Boolean>()
         val mainPluginsLoadedEvent =
             Event<Boolean>() // homepage api, used to speed up time to load for homepage
@@ -415,6 +417,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        context = this
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 

@@ -145,33 +145,14 @@ class WebViewResolver(
                         // Suppress image requests as we don't display them anywhere
                         // Less data, low chance of causing issues.
                         // blockNetworkImage also does this job but i will keep it for the future.
-                        val blacklistedFiles = listOf(
-                            ".jpg",
-                            ".png",
-                            ".webp",
-                            ".mpg",
-                            ".mpeg",
-                            ".jpeg",
-                            ".webm",
-                            ".mp4",
-                            ".mp3",
-                            ".gifv",
-                            ".flv",
-                            ".asf",
-                            ".mov",
-                            ".mng",
-                            ".mkv",
-                            ".ogg",
-                            ".avi",
-                            ".wav",
-                            ".woff2",
-                            ".woff",
-                            ".ttf",
-                            ".css",
-                            ".vtt",
-                            ".srt",
-                            ".ts",
-                            ".gif",
+                                                val blacklistedFiles = listOf(
+                            ".jpg", ".png", ".webp", ".mpg",
+                            ".mpeg", ".jpeg", ".webm", ".mp4",
+                            ".mp3", ".gifv", ".flv", ".asf",
+                            ".mov", ".mng", ".mkv", ".ogg",
+                            ".avi", ".wav", ".woff2", ".woff",
+                            ".ttf", ".vtt", ".srt",
+                            ".ts", ".gif",
                             // Warning, this might fuck some future sites, but it's used to make Sflix work.
                             "wss://"
                         )
