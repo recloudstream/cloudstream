@@ -164,8 +164,9 @@ object PluginManager {
 
     var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
 
-    suspend fun loadSinglePlugin(activity: Activity, apiName: String) : Boolean {
-        return getPluginsOnline().firstOrNull { it.internalName == apiName }?.let { savedData ->
+    suspend fun loadSinglePlugin(activity: Activity, apiName: String): Boolean {
+        return (getPluginsOnline().firstOrNull { it.internalName == apiName }
+            ?: getPluginsLocal().firstOrNull { it.internalName == apiName })?.let { savedData ->
             // OnlinePluginData(savedData, onlineData)
             loadPlugin(
                 activity,
