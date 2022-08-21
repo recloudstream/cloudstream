@@ -31,8 +31,8 @@ import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
+import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
@@ -60,7 +60,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -70,6 +69,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
+import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.widget.CenterZoomLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.home_api_fab
@@ -437,11 +437,13 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         reloadStored()
-        afterPluginsLoadedEvent += ::loadHomePage
+        afterPluginsLoadedEvent += ::firstLoadHomePage
+        mainPluginsLoadedEvent += ::firstLoadHomePage
     }
 
     override fun onStop() {
-        afterPluginsLoadedEvent -= ::loadHomePage
+        afterPluginsLoadedEvent -= ::firstLoadHomePage
+        mainPluginsLoadedEvent -= ::firstLoadHomePage
         super.onStop()
     }
 
@@ -452,6 +454,14 @@ class HomeFragment : Fragment() {
             list.addAll(it)
         }
         homeViewModel.loadStoredData(list)
+    }
+
+    private var hasBeenConsumed = false
+    private fun firstLoadHomePage(successful: Boolean = false) {
+        // dirty hack to make it only load once
+        if(hasBeenConsumed) return
+        hasBeenConsumed = true
+        loadHomePage(successful)
     }
 
     private fun loadHomePage(successful: Boolean = false) {
@@ -962,13 +972,13 @@ class HomeFragment : Fragment() {
         reloadStored()
         loadHomePage()
 
-        home_loaded.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { view, _, scrollY, _, oldScrollY ->
+        home_loaded.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, oldScrollY ->
             val dy = scrollY - oldScrollY
             if (dy > 0) { //check for scroll down
                 home_api_fab?.shrink() // hide
                 home_random?.shrink()
             } else if (dy < -5) {
-                if (view?.context?.isTvSettings() == false) {
+                if (v.context?.isTvSettings() == false) {
                     home_api_fab?.extend() // show
                     home_random?.extend()
                 }

@@ -164,6 +164,17 @@ object PluginManager {
 
     var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
 
+    suspend fun loadSinglePlugin(activity: Activity, apiName: String) : Boolean {
+        return getPluginsOnline().firstOrNull { it.internalName == apiName }?.let { savedData ->
+            // OnlinePluginData(savedData, onlineData)
+            loadPlugin(
+                activity,
+                File(savedData.filePath),
+                savedData
+            )
+        } ?: false
+    }
+
     /**
      * Needs to be run before other plugin loading because plugin loading can not be overwritten
      * 1. Gets all online data about the downloaded plugins
@@ -376,7 +387,7 @@ object PluginManager {
                 file ?: return false,
                 PluginData(internalName, pluginUrl, true, file.absolutePath, PLUGIN_VERSION_NOT_SET)
             )
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             logError(e)
             return false
         }
