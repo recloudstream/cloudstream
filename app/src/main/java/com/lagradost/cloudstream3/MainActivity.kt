@@ -507,8 +507,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         SearchResultBuilder.updateCache(this)
 
+        val settingsForProvider = SettingsJson()
+        settingsForProvider.enableAdult = settingsManager.getBoolean(getString(R.string.enable_nsfw_on_providers_key), false)
         ioSafe {
-            initAll()
+            initAll(settingsForProvider)
             // No duplicates (which can happen by registerMainAPI)
             apis = allProviders.distinctBy { it }
         }

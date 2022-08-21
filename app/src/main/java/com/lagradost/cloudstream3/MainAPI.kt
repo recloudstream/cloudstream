@@ -42,9 +42,9 @@ object APIHolder {
 
     val allProviders: MutableList<MainAPI> = arrayListOf()
 
-    fun initAll() {
+    fun initAll(settingsForProvider: SettingsJson) {
         for (api in allProviders) {
-            api.init()
+            api.init(settingsForProvider)
         }
         apiMap = null
     }
@@ -315,6 +315,10 @@ data class ProvidersInfoJson(
     @JsonProperty("status") var status: Int,
 )
 
+data class SettingsJson(
+    @JsonProperty("enableAdult") var enableAdult: Boolean = false,
+)
+
 
 data class MainPageData(
     val name: String,
@@ -356,13 +360,16 @@ abstract class MainAPI {
         var overrideData: HashMap<String, ProvidersInfoJson>? = null
     }
 
-    fun init() {
+    fun init(settingsForProvider: SettingsJson) {
         overrideData?.get(this.javaClass.simpleName)?.let { data ->
-            overrideWithNewData(data)
+            overrideWithNewData(data, settingsForProvider)
         }
     }
 
-    fun overrideWithNewData(data: ProvidersInfoJson) {
+    fun overrideWithNewData(data: ProvidersInfoJson, settingsForProvider: SettingsJson) {
+        // Set settings regardless if it can be overriden
+        this.settings = settingsForProvider
+
         if (!canBeOverridden) return
         this.name = data.name
         if (data.url.isNotBlank() && data.url != "NONE")
@@ -374,6 +381,7 @@ abstract class MainAPI {
     open var mainUrl = "NONE"
     open var storedCredentials: String? = null
     open var canBeOverridden: Boolean = true
+    open var settings: SettingsJson = SettingsJson()
 
     //open val uniqueId : Int by lazy { this.name.hashCode() } // in case of duplicate providers you can have a shared id
 
