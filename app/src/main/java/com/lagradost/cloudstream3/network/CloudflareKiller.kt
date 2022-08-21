@@ -23,16 +23,21 @@ class CloudflareKiller : Interceptor {
         }
     }
 
-    val savedCookies: MutableMap<String, String> = mutableMapOf()
+    val savedCookies: MutableMap<String, Map<String, String>> = mutableMapOf()
 
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
         val request = chain.request()
-        if (savedCookies[request.url.host] == null) {
+        val cookies = savedCookies[request.url.host]
+
+        if (cookies == null) {
             bypassCloudflare(request)?.let {
                 Log.d(TAG, "Succeeded bypassing cloudflare: ${request.url}")
                 return@runBlocking it
             }
+        } else {
+            return@runBlocking proceed(request, cookies)
         }
+
         debugWarning({ true }) { "Failed cloudflare at: ${request.url}" }
         return@runBlocking chain.proceed(request)
     }
@@ -49,9 +54,23 @@ class CloudflareKiller : Interceptor {
         // Not sure if this takes expiration into account
         return getWebViewCookie(request.url.toString())?.let { cookie ->
             cookie.contains("cf_clearance").also { solved ->
-                if (solved) savedCookies[request.url.host] = cookie
+                if (solved) savedCookies[request.url.host] = parseCookieMap(cookie)
             }
         } ?: false
+    }
+
+    private suspend fun proceed(request: Request, cookies: Map<String, String>): Response {
+        val userAgentMap = WebViewResolver.getWebViewUserAgent()?.let {
+            mapOf("user-agent" to it)
+        } ?: emptyMap()
+
+        val headers =
+            getHeaders(request.headers.toMap() + userAgentMap, cookies + request.cookies)
+        return app.baseClient.newCall(
+            request.newBuilder()
+                .headers(headers)
+                .build()
+        ).await()
     }
 
     private suspend fun bypassCloudflare(request: Request): Response? {
@@ -78,17 +97,6 @@ class CloudflareKiller : Interceptor {
         }
 
         val cookies = savedCookies[request.url.host] ?: return null
-
-        val mappedCookies = parseCookieMap(cookies)
-        val userAgentMap = WebViewResolver.getWebViewUserAgent()?.let {
-            mapOf("user-agent" to it)
-        } ?: emptyMap()
-
-        val headers = getHeaders(request.headers.toMap() + userAgentMap, mappedCookies + request.cookies)
-        return app.baseClient.newCall(
-            request.newBuilder()
-                .headers(headers)
-                .build()
-        ).await()
+        return proceed(request, cookies)
     }
 }
