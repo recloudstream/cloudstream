@@ -30,8 +30,8 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
     }
     override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
         switchToNewAccount()
-        val username = data.username ?: throw ErrorLoadingException("Requires Username")
-        val password = data.password ?: throw ErrorLoadingException("Requires Password")
+        val username = data.username ?: throw IllegalArgumentException ("Requires Username")
+        val password = data.password ?: throw IllegalArgumentException ("Requires Password")
         try {
             setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(username, password))
             registerAccount()

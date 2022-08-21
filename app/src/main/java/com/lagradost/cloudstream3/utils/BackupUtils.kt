@@ -27,6 +27,8 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_S
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi
+import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.BackupUtils.restore
@@ -71,7 +73,11 @@ object BackupUtils {
 
         // The plugins themselves are not backed up
         PLUGINS_KEY,
-        PLUGINS_KEY_LOCAL
+        PLUGINS_KEY_LOCAL,
+
+        OPEN_SUBTITLES_USER_KEY,
+        "nginx_user", // Nginx user key
+
     )
 
     /** false if blacklisted key */
