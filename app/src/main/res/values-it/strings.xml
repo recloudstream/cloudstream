@@ -69,7 +69,6 @@
     <string name="download_failed">Download fallito</string>
     <string name="download_canceled">Download cancellato</string>
     <string name="download_done">Download completato</string>
-    <string name="download_format" translatable="false">%s - %s</string>
     <string name="stream">Stream</string>
 
     <string name="error_loading_links_toast">Errore durante il caricamento dei link</string>
@@ -217,7 +216,6 @@
 
     <string name="delete_file">Elimina file</string>
     <string name="delete">Elimina</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Pausa</string>
     <string name="resume">Riprendi</string>
     <string name="go_back_30">-30</string>
@@ -380,7 +378,6 @@
     <string name="all">Tutto</string>
     <string name="max">Max</string>
     <string name="min">Min</string>
-    <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">Contorno</string>
     <string name="subtitles_depressed">Bassorilievo</string>
     <string name="subtitles_shadow">Ombra</string>

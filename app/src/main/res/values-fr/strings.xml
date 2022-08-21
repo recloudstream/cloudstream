@@ -293,5 +293,4 @@
     <string name="poster_image">Image de l\'affiche</string>
     <string name="authenticated_user">Connecté %s</string>
     <string name="action_add_to_bookmarks">Définir le statut de visionage</string>
-    <string name="nginx_info_title">Qu\'est-ce qu\'Nginx ?</string>
 </resources>

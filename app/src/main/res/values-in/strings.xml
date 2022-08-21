@@ -11,9 +11,7 @@
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
-    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">Go back</string>
-    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
 
@@ -36,7 +34,6 @@
     <string name="no_data">Tidak Ada Data</string>
     <string name="episode_more_options_des">Opsi Lanjutan</string>
     <string name="next_episode">Episode selanjutnya</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Genre</string>
     <string name="result_share">Bagikan</string>
     <string name="result_open_in_browser">Buka Di Browser</string>
@@ -68,7 +65,6 @@
     <string name="download_failed">Download Gagal</string>
     <string name="download_canceled">Download Dibatalkan</string>
     <string name="download_done">Download Selesai</string>
-    <string name="download_format" translatable="false">%s - %s</string>
 
     <string name="error_loading_links_toast">Error Memuat Tautan</string>
     <string name="download_storage_text">Penyimpanan Internal</string>
@@ -214,7 +210,6 @@
 
     <string name="delete_file">Hapus File</string>
     <string name="delete">Hapus</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Jeda</string>
     <string name="resume">Lanjutkan</string>
     <string name="go_back_30">-30</string>
@@ -281,10 +276,6 @@
     <string name="show_dub">Label dub</string>
     <string name="show_sub">Label sub</string>
     <string name="show_title">Judul</string>
-    <string name="show_hd_key" translatable="false">show_hd_key</string>
-    <string name="show_dub_key" translatable="false">show_dub_key</string>
-    <string name="show_sub_key" translatable="false">show_sub_key</string>
-    <string name="show_title_key" translatable="false">show_title_key</string>
     <string name="poster_ui_settings">Aktifkan atau nonaktifkan elemen UI pada poster</string>
 
     <string name="no_update_found">Tidak Ada Update Yang Ditemukan</string>
@@ -324,7 +315,6 @@
     <string name="resize_zoom">Zoom</string>
 
     <string name="legal_notice">Peringatan</string>
-    <string name="legal_notice_key" translatable="false">legal_notice_key</string>
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
         should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
 
@@ -362,8 +352,6 @@
 
 
     <!-- account stuff -->
-    <string name="anilist_key" translatable="false">anilist_key</string>
-    <string name="mal_key" translatable="false">mal_key</string>
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
     <string name="anilist_account_settings" translatable="false">AniList</string>
@@ -394,7 +382,6 @@
     <string name="all">Semua</string>
     <string name="max">Maks</string>
     <string name="min">Min</string>
-    <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">Garis luar</string>
     <string name="subtitles_depressed">Depresi</string>
     <string name="subtitles_shadow">Bayangan</string>
