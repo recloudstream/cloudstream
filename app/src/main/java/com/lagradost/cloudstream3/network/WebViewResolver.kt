@@ -15,14 +15,18 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import java.net.URI
-import java.util.concurrent.TimeUnit
 
 /**
  * When used as Interceptor additionalUrls cannot be returned, use WebViewResolver(...).resolveUsingWebView(...)
  * @param interceptUrl will stop the WebView when reaching this url.
  * @param additionalUrls this will make resolveUsingWebView also return all other requests matching the list of Regex.
+ * @param userAgent if null then will use the default user agent
  * */
-class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> = emptyList()) :
+class WebViewResolver(
+    val interceptUrl: Regex,
+    val additionalUrls: List<Regex> = emptyList(),
+    val userAgent: String? = USER_AGENT,
+) :
     Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -38,7 +42,7 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
         referer: String? = null,
         method: String = "GET",
         requestCallBack: (Request) -> Boolean = { false },
-    ) : Pair<Request?, List<Request>> {
+    ): Pair<Request?, List<Request>> {
         return resolveUsingWebView(
             requestCreator(method, url, referer = referer), requestCallBack
         )
@@ -81,7 +85,11 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
                     // Bare minimum to bypass captcha
                     settings.javaScriptEnabled = true
                     settings.domStorageEnabled = true
-                    settings.userAgentString = USER_AGENT
+
+                    // Don't set user agent, setting user agent will make cloudflare break.
+                    if (userAgent != null) {
+                        settings.userAgentString = userAgent
+                    }
                     // Blocks unnecessary images, remove if captcha fucks.
                     settings.blockNetworkImage = true
                 }
@@ -233,9 +241,9 @@ class WebViewResolver(val interceptUrl: Regex, val additionalUrls: List<Regex> =
             val found = typeRegex.find(contentTypeValue)
             val contentType = found?.groupValues?.getOrNull(1)?.ifBlank { null } ?: contentTypeValue
             val charset = found?.groupValues?.getOrNull(2)?.ifBlank { null }
-            WebResourceResponse(contentType, charset, this.body?.byteStream())
+            WebResourceResponse(contentType, charset, this.body.byteStream())
         } else {
-            WebResourceResponse("application/octet-stream", null, this.body?.byteStream())
+            WebResourceResponse("application/octet-stream", null, this.body.byteStream())
         }
     }
 }
