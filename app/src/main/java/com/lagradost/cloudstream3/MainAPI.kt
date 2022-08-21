@@ -367,7 +367,7 @@ abstract class MainAPI {
         }
     }
 
-    fun overrideWithNewData(data: ProvidersInfoJson, settingsForProvider: SettingsJson) {
+    fun overrideWithNewData(data: ProvidersInfoJson) {
         if (!canBeOverridden) return
         this.name = data.name
         if (data.url.isNotBlank() && data.url != "NONE")
