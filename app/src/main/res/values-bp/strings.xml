@@ -171,7 +171,7 @@
     <string name="restore_success">Arquivo de Backup carregado</string>
     <string name="restore_failed_format" formatted="true">Falha em restaurar dados do arquivo %s</string>
     <string name="backup_success">Dados salvos com sucesso</string>
-    <string name="backup_failed">Permissões de armazenamento faltando, por favor tente denovo</string>
+    <string name="backup_failed">Permissões de armazenamento faltando, por favor tente de novo</string>
     <string name="backup_failed_error_format">Erro no backup de %s</string>
 
     <string name="search">Procurar</string>
@@ -186,6 +186,9 @@
     <string name="show_fillers_settings">Mostrar episódios de Filler em anime</string>
     <string name="show_trailers_settings">Mostrar trailers</string>
     <string name="kitsu_settings">Mostrar posters do kitsu</string>
+	
+	<string name="pref_filter_search_quality">Esconder qualidades de vídeo selecionadas nos resultados da Pesquisa</string>
+	<string name="automatic_plugin_updates">Atualizações de plugin automáticas</string>
 
     <string name="updates_settings">Mostrar atualizações do app</string>
     <string name="updates_settings_des">Automaticamente procurar por novas atualizações ao abrir</string>
@@ -253,6 +256,8 @@
     <string name="documentaries">Documentários</string>
     <string name="ova">OVA</string>
     <string name="asian_drama">Dramas Asiáticos</string>
+	<string name="livestreams">Transmissões em Direto</string>
+	<string name="others">Outros</string>
 
     <!--singular-->
     <string name="movies_singular">Filme</string>
@@ -263,6 +268,7 @@
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentário</string>
     <string name="asian_drama_singular">Drama Asiático</string>
+	<string name="live_singular">Transmissão em Direto</string>
 
     <string name="source_error">Erro de fornecimento</string>
     <string name="remote_error">Erro remoto</string>
