@@ -181,37 +181,39 @@
 	
     <string name="updates_settings">Mostrar atualizações da app</string>
     <string name="updates_settings_des">Procurar novas atualizações automaticamente ao iniciar</string>
-    <string name="uprereleases_settings">Actualizar à Pré-lançamentos</string>
-    <string name="uprereleases_settings_des">Busca actualizações pré-lançamento em vez de só lançamentos completos</string>
+    <string name="uprereleases_settings">Atualizar para pré-lançamentos</string>
+    <string name="uprereleases_settings_des">Procura atualizações de pré-lançamento em vez de só lançamentos oficiais</string>
     <string name="github">Github</string>
-    <string name="lightnovel">App light novel por os mesmos devs</string>
-    <string name="discord">Junte-se à Discord</string>
-    <string name="benene">Dar um benene à os devs</string>
+    <string name="lightnovel">App light novel pelos mesmos devs</string>
+    <string name="discord">Junte-se ao Discord</string>
+    <string name="benene">Dar um benene aos devs</string>
     <string name="benene_des">Benene dada</string>
 	
-    <string name="app_language">Linguagem do App</string>
+    <string name="app_language">Linguagem da App</string>
 	
     <string name="no_chromecast_support_toast">Este fornecedor não tem suporte para Chromecast</string>
-    <string name="no_links_found_toast">Links Não Encontrados</string>
-    <string name="copy_link_toast">Link copiado para a prancheta</string>
+    <string name="no_links_found_toast">Nenhum Link Encontrado</string>
+    <string name="copy_link_toast">Link copiado para a área de transferência</string>
     <string name="play_episode_toast">Reproduzir episódio</string>
-    <string name="subs_default_reset_toast">Reinicializar para o padrão</string>
-	<string name="acra_report_toast">Desculpe, a aplicação falhou. Um relatório de erro anônimo será enviado para os
+    <string name="subs_default_reset_toast">Restaurar para o padrão</string>
+	<string name="acra_report_toast">Desculpe, a aplicação falhou. Um relatório de erro anónimo será enviado para os
        desenvolvedores
     </string>
 	
     <string name="season">Temporada</string>
-    <string name="no_season">Sem Temporada</string>
+    <string name="no_season">Nenhuma Temporada</string>
     <string name="episode">Episódio</string>
     <string name="episodes">Episódios</string>
     <string name="season_short">T</string>
     <string name="episode_short">E</string>
+    <string name="no_episodes_found">Nenhum Episódio encontrado</string>
 	
-    <string name="delete_file">Eliminar Arquivo</string>
+    <string name="delete_file">Eliminar Ficheiro</string>
     <string name="delete">Eliminar</string>
-    <string name="pause">Pausar</string>
+    <string name="pause">Pôr em Pausa</string>
     <string name="resume">Retomar</string>
-    <string name="delete_message">Isto apagarà %s permanentemente\nVocê tem certeza?</string>
+    <string name="delete_message">Isto apagará %s permanentemente\nTem a certeza?</string>
+	<string name="resume_time_left" formatted="true">%dm\nem falta</string>
 	
     <string name="status_ongoing">Em Curso</string>
     <string name="status_completed">Concluído</string>
@@ -219,12 +221,12 @@
     <string name="year">Ano</string>
     <string name="rating">Classificação</string>
     <string name="duration">Duração</string>
-    <string name="site">Sitio</string>
-    <string name="synopsis">Sinopsis</string>
+    <string name="site">Site</string>
+    <string name="synopsis">Sinopse</string>
 	
-    <string name="queued">Em fila</string>
-    <string name="no_subtitles">Não Há Subtítulos</string>
-    <string name="default_subtitles">Por Padrão</string>
+    <string name="queued">Na fila</string>
+    <string name="no_subtitles">Sem Legendas</string>
+    <string name="default_subtitles">Padrão</string>
 	
     <string name="free_storage">Livre</string>
     <string name="used_storage">Usado</string>
@@ -232,52 +234,85 @@
 	
 	<!--plural-->
     <string name="movies">Filmes</string>
-    <string name="tv_series">Séries de TV</string>
-    <string name="cartoons">Desenhos animados</string>
+    <string name="tv_series">Séries</string>
+    <string name="cartoons">Desenhos Animados</string>
     <string name="anime">Anime</string>
-    <string name="torrent">Torrentes</string>
+    <string name="torrent">Torrents</string>
 	<string name="documentaries">Documentários</string>
+	<string name="ova">OVA</string>
+    <string name="asian_drama">Dramas Asiáticos</string>
+    <string name="livestreams">Transmissões em Direto</string>
+    <string name="nsfw">NSFW</string>
+    <string name="others">Outros</string>
 	
 	<!--singular-->
 	<string name="movies_singular">Filme</string>
-	<string name="tv_series_singular">Sériado</string>
-	<string name="cartoons_singular">Desenho animado</string>
+	<string name="tv_series_singular">Série</string>
+	<string name="cartoons_singular">Desenho Animado</string>
 	<string name="torrent_singular">Torrent</string>
 	<string name="documentaries_singular">Documentário</string>
+	<string name="asian_drama_singular">Drama Asiático</string>
+	<string name="live_singular">Transmissão em Direto</string>
+    <string name="nsfw_singular">NSFW</string>
 	
-    <string name="source_error">Erro de origem</string>
+    <string name="source_error">Erro de fonte</string>
     <string name="remote_error">Erro remoto</string>
-    <string name="render_error">Erro de Renderizador</string>
-    <string name="unexpected_error">Erro inesperado do player reproductor</string>
-    <string name="storage_error">Erro de descàrrega; verifica permissões de armazenamento</string>
+    <string name="render_error">Erro de renderização</string>
+    <string name="unexpected_error">Erro inesperado do player</string>
+    <string name="storage_error">Erro de transferência, verifique permissões de armazenamento</string>
 	
-    <string name="episode_action_chromecast_episode">Chromecast o Episódio</string>
-    <string name="episode_action_chromecast_mirror">Chromecast á o Espelho</string>
-    <string name="episode_action_play_in_app">Assistir no App</string>
-    <string name="episode_action_play_in_vlc">Assistir no VLC</string>
-    <string name="episode_action_play_in_browser">Assistir no Navegador</string>
-    <string name="episode_action_copy_link">Copiar Link</string>
-    <string name="episode_action_auto_download">Auto Descàrrega</string>
-    <string name="episode_action_download_mirror">Descàrregar Espelho</string>
-    <string name="episode_action_reload_links">Recarregar Links</string>
+    <string name="episode_action_chromecast_episode">Episódio pelo Chromecast</string>
+    <string name="episode_action_chromecast_mirror">Alternativa pelo Chromecast</string>
+    <string name="episode_action_play_in_app">Reproduzir na app</string>
+    <string name="episode_action_play_in_vlc">Reproduzir no VLC</string>
+    <string name="episode_action_play_in_browser">Reproduzir no navegador</string>
+    <string name="episode_action_copy_link">Copiar link</string>
+    <string name="episode_action_auto_download">Transferência Automática</string>
+    <string name="episode_action_download_mirror">Transferir por servidor alternativo</string>
+    <string name="episode_action_reload_links">Recarregar links</string>
+	<string name="episode_action_download_subtitle">Transferir legendas</string>
 	
-    <string name="no_update_found">Nenhuma Atualização</string>
-    <string name="check_for_update">Buscar Atualização</string>
+	<string name="show_hd">Etiqueta de qualidade</string>
+    <string name="show_dub">Etiqueta Dub</string>
+    <string name="show_sub">Etiqueta Sub</string>
+    <string name="show_title">Título</string>
+    <string name="poster_ui_settings">Alternar elementos da interface no póster</string>
+	
+    <string name="no_update_found">Nenhuma Atualização Encontrada</string>
+    <string name="check_for_update">Procurar Atualização</string>
 	
     <string name="video_lock">Fixar</string>
     <string name="video_aspect_ratio_resize">Mudar Tamanho</string>
-    <string name="video_source">Origem</string>
-    <string name="video_skip_op">Pular OP</string>
+    <string name="video_source">Fonte</string>
+    <string name="video_skip_op">Saltar OP</string>
 	
-    <string name="dont_show_again">Não mostra de novo</string>
+    <string name="dont_show_again">Não mostrar de novo</string>
+	<string name="skip_update">Saltar esta Atualização</string>
     <string name="update">Atualizar</string>
-    <string name="watch_quality_pref">Calidade Preferida</string>
-    <string name="dns_pref">DNS sobre HTTPS</string>
-    <string name="dns_pref_summary">Útil para contornar blocos do provedor de internet</string>	
-
-	<string name="download_path_pref">Caminho de descarga</string>	
+    <string name="watch_quality_pref">Qualidade Preferida</string>
+	<string name="limit_title">Máximo de caracteres do título de vídeos</string>
+    <string name="limit_title_rez">Resolução do player de vídeo</string>
 	
-    <string name="display_subbed_dubbed_settings">Mostrar Anime Dublado/Subtítulado</string>
+	<string name="video_buffer_size_settings">Tamanho do buffer do vídeo</string>
+    <string name="video_buffer_length_settings">Comprimento do buffer do vídeo</string>
+    <string name="video_buffer_disk_settings">Cache do vídeo em disco</string>
+    <string name="video_buffer_clear_settings">Limpar cache de vídeo e imagem</string>
+	
+    <string name="video_ram_description">Causará travamentos aleatórios se definido muito alto. Não mude se tiver pouca memória RAM, como um Android TV ou um telefone antigo</string>
+    <string name="video_disk_description">Pode causar problemas em sistemas com pouco espaço de armazenamento se definido muito alto, como em dispositivos Android TV</string>
+
+    <string name="dns_pref">DNS sobre HTTPS</string>
+    <string name="dns_pref_summary">Útil para contornar bloqueios do fornecedor de internet</string>
+	
+	<string name="add_site_pref">Clonar site</string>
+    <string name="remove_site_pref">Remover site</string>
+    <string name="add_site_summary">Adiciona um clone de um site existente, com um url diferente</string>
+
+	<string name="download_path_pref">Caminho de transferência</string>	
+	
+    <string name="nginx_url_pref">Url do servidor Nginx</string>
+
+    <string name="display_subbed_dubbed_settings">Mostrar Anime Dobrado/Legendado</string>
 	
     <string name="resize_fit">Ajustar para a Tela</string>
     <string name="resize_fill">Esticar</string>
@@ -301,33 +336,65 @@
        CloudStream 3 por sua própria conta e risco.
     </string>
 	<string name="category_general">Geral</string>
-    <string name="provider_lang_settings">Idiomas dos Origems</string>
-    <string name="app_layout">Layout do App</string>
+	<string name="random_button_settings">Botão Aleatório</string>
+    <string name="random_button_settings_desc">Mostra o botão Aleatório na página inicial</string>
+    <string name="provider_lang_settings">Idioma dos fornecedores</string>
+    <string name="app_layout">Layout da App</string>
     <string name="preferred_media_settings">Mídia preferida</string>
+	<string name="subtitles_encoding">Codificação das legendas</string>
+    <string name="category_preferred_media_and_lang">Linguagem</string>
+    <string name="category_ui">Layout</string>
 
     <string name="automatic">Auto</string>
     <string name="tv_layout">Layout de TV</string>
-    <string name="phone_layout">Layout de Celular</string>
+    <string name="phone_layout">Layout de telemóvel</string>
+	<string name="emulator_layout">Layout de emulador</string>
 
     <string name="primary_color_settings">Cor Primária</string>
     <string name="app_theme_settings">Tema do App</string>
+	<string name="bottom_title_settings">Local do título do poster</string>
+    <string name="bottom_title_settings_des">Coloca o título debaixo do poster</string>
 	
 	<!-- account stuff -->
+	<string name="example_password">senha123</string>
+    <string name="example_username">MeuNomeFixe</string>
+    <string name="example_email">ola@mundo.com</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="example_site_name">MeuSiteFixe</string>
+    <string name="example_site_url">examplo.com</string>
+    <string name="example_lang_name">Codigo da Língua (pt)</string>
+	
     <string name="account">Conta</string>
     <string name="logout">Sair</string>
-    <string name="login">Autenticar</string>
+    <string name="login">Entrar</string>
     <string name="switch_account">Mudar de conta</string>
     <string name="add_account">Adicionar conta</string>
+	<string name="create_account">Criar conta</string>
+    <string name="add_sync">Adicionar sincronização</string>
+    <string name="added_sync_format" formatted="true">%s adicionado</string>
+    <string name="upload_sync">Sincronizar</string>
+    <string name="sync_score">Nota</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="authenticated_user" formatted="true">%s autenticado</string>
+    <string name="authenticated_user_fail" formatted="true">Falha em autenticar para %s</string>
+	
     <!-- ============ -->
     <string name="none">Nenhuma</string>
     <string name="normal">Normal</string>
-    <string name="all">Todos</string>
+    <string name="all">Tudo</string>
     <string name="max">Max</string>
     <string name="min">Min</string>
-    <string name="subtitles_outline">Esboçado</string>
+    <string name="subtitles_outline">Contornado</string>
     <string name="subtitles_depressed">Deprimido</string>
-    <string name="subtitles_shadow">Sombrado</string>
+    <string name="subtitles_shadow">Sombreado</string>
     <string name="subtitles_raised">Em Relevo</string>
+	<string name="subtitle_offset">Sincronizar legendas</string>
+	<string name="subtitle_offset_title">Atraso de legenda</string>
+    <string name="subtitle_offset_extra_hint_later_format">Use isto se as legendas forem mostradas %dms adiantadas</string>
+    <string name="subtitle_offset_extra_hint_before_format">Use isto se as legendas forem mostradas %dms atrasadas</string>
+    <string name="subtitle_offset_extra_hint_none_format">Sem atraso de legenda</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
     see: 
@@ -335,4 +402,31 @@
 	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
     -->
     <string name="subtitles_example_text">Luís argüia à Júlia que «brações, fé, chá, óxido, pôr, zângão» eram palavras do português</string>
+	
+	<string name="recommended">Recomendada</string>
+    <string name="player_loaded_subtitles" formatted="true">%s carregada</string>
+    <string name="player_load_subtitles">Carregar de arquivo</string>
+    <string name="player_load_subtitles_online">Carregar da Internet</string>
+    <string name="downloaded_file">Arquivo baixado</string>
+    <string name="actor_main">Protagonista</string>
+    <string name="actor_supporting">Coadjuvante</string>
+    <string name="actor_background">Figurante</string>
+
+    <string name="home_source">Fonte</string>
+    <string name="home_random">Aleatório</string>
+
+    <string name="coming_soon">Em breve…</string>
+	
+	<string name="poster_image">Imagem de Poster</string>
+    <string name="category_player">Player</string>
+    <string name="resolution_and_title">Resolução e título</string>
+    <string name="title">Título</string>
+    <string name="resolution">Resolução</string>
+    <string name="error_invalid_id">Id invalida</string>
+    <string name="error_invalid_data">Dado invalido</string>
+    <string name="error">Erro</string>
+    <string name="subtitles_remove_captions">Remover legendas ocultas(CC) das legendas</string>
+    <string name="subtitles_remove_bloat">Remover bloat das legendas</string>
+    <string name="extras">Extras</string>
+    <string name="trailer">Trailer</string>
 </resources>
