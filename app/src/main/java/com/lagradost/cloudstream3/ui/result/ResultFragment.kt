@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.*
 import android.content.res.ColorStateList
@@ -26,6 +27,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
@@ -261,11 +263,17 @@ open class ResultFragment : ResultTrailerPlayer() {
     }
 
     override fun onResume() {
+        afterPluginsLoadedEvent += ::reloadViewModel
         super.onResume()
         activity?.let {
             it.window?.navigationBarColor =
                 it.colorFromAttribute(R.attr.primaryBlackBackground)
         }
+    }
+
+    override fun onDestroy() {
+        afterPluginsLoadedEvent -= ::reloadViewModel
+        super.onDestroy()
     }
 
     /// 0 = LOADING, 1 = ERROR LOADING, 2 = LOADED
@@ -409,6 +417,51 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
     }
 
+    data class StoredData(
+        val url: String?,
+        val apiName: String,
+        val showFillers: Boolean,
+        val dubStatus: DubStatus,
+        val start: AutoResume?
+    )
+
+    private fun getStoredData(context: Context): StoredData? {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+        val url = arguments?.getString(URL_BUNDLE)
+        val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return null
+        val showFillers =
+            settingsManager.getBoolean(context.getString(R.string.show_fillers_key), false)
+        val dubStatus = if (context.getApiDubstatusSettings()
+                .contains(DubStatus.Dubbed)
+        ) DubStatus.Dubbed else DubStatus.Subbed
+        val startAction = arguments?.getInt(START_ACTION_BUNDLE)
+
+        val start = startAction?.let { action ->
+            val startValue = arguments?.getInt(START_VALUE_BUNDLE)
+            val resumeEpisode = arguments?.getInt(EPISODE_BUNDLE)
+            val resumeSeason = arguments?.getInt(SEASON_BUNDLE)
+
+            arguments?.remove(START_VALUE_BUNDLE)
+            arguments?.remove(START_ACTION_BUNDLE)
+            AutoResume(
+                startAction = action,
+                id = startValue,
+                episode = resumeEpisode,
+                season = resumeSeason
+            )
+        }
+        return StoredData(url, apiName, showFillers, dubStatus, start)
+    }
+
+    private fun reloadViewModel(success: Boolean = false) {
+        if (!viewModel.hasLoaded()) {
+            val storedData = getStoredData(activity ?: context ?: return) ?: return
+
+            //viewModel.clear()
+            viewModel.load(activity, storedData.url ?: return, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -441,26 +494,12 @@ open class ResultFragment : ResultTrailerPlayer() {
 
         // activity?.fixPaddingStatusbar(result_toolbar)
 
-        val url = arguments?.getString(URL_BUNDLE)
-        val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
-        val startAction = arguments?.getInt(START_ACTION_BUNDLE)
-        val start = startAction?.let { action ->
-            val startValue = arguments?.getInt(START_VALUE_BUNDLE)
-            val resumeEpisode = arguments?.getInt(EPISODE_BUNDLE)
-            val resumeSeason = arguments?.getInt(SEASON_BUNDLE)
-
-            arguments?.remove(START_VALUE_BUNDLE)
-            arguments?.remove(START_ACTION_BUNDLE)
-            AutoResume(
-                startAction = action,
-                id = startValue,
-                episode = resumeEpisode,
-                season = resumeSeason
-            )
+        val storedData = (activity ?: context)?.let {
+            getStoredData(it)
         }
-        syncModel.addFromUrl(url)
+        syncModel.addFromUrl(storedData?.url)
 
-        val api = getApiFromNameNull(apiName)
+        val api = getApiFromNameNull(storedData?.apiName)
 
         result_episodes?.adapter =
             EpisodeAdapter(
@@ -856,7 +895,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                     }
                 }
                 is Resource.Failure -> {
-                    result_error_text.text = url?.plus("\n") + data.errorString
+                    result_error_text.text = storedData?.url?.plus("\n") + data.errorString
                     updateVisStatus(1)
                 }
                 is Resource.Loading -> {
@@ -866,27 +905,23 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
 
         context?.let { ctx ->
-            val dubStatus = if (ctx.getApiDubstatusSettings()
-                    .contains(DubStatus.Dubbed)
-            ) DubStatus.Dubbed else DubStatus.Subbed
 
             //result_bookmark_button?.isVisible = ctx.isTvSettings()
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            val showFillers =
-                settingsManager.getBoolean(ctx.getString(R.string.show_fillers_key), false)
+
 
             Kitsu.isEnabled =
                 settingsManager.getBoolean(ctx.getString(R.string.show_kitsu_posters_key), true)
 
-            if (url != null) {
+            if (storedData?.url != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(activity, url, apiName, showFillers, dubStatus, start)
+                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
                     val i = Intent(ACTION_VIEW)
-                    i.data = Uri.parse(url)
+                    i.data = Uri.parse(storedData.url)
                     try {
                         startActivity(i)
                     } catch (e: Exception) {
@@ -894,10 +929,10 @@ open class ResultFragment : ResultTrailerPlayer() {
                     }
                 }
 
-                result_open_in_browser?.isVisible = url.startsWith("http")
+                result_open_in_browser?.isVisible = storedData.url.startsWith("http")
                 result_open_in_browser?.setOnClickListener {
                     val i = Intent(ACTION_VIEW)
-                    i.data = Uri.parse(url)
+                    i.data = Uri.parse(storedData.url)
                     try {
                         startActivity(i)
                     } catch (e: Exception) {
@@ -908,7 +943,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                 // bloats the navigation on tv
                 if (context?.isTrueTvSettings() == false) {
                     result_meta_site?.setOnClickListener {
-                        it.context?.openBrowser(url)
+                        it.context?.openBrowser(storedData.url)
                     }
                     result_meta_site?.isFocusable = true
                 } else {
@@ -917,7 +952,7 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                 if (restart || !viewModel.hasLoaded()) {
                     //viewModel.clear()
-                    viewModel.load(activity, url, apiName, showFillers, dubStatus, start)
+                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
                 }
             }
         }
