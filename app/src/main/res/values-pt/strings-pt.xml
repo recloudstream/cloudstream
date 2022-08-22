@@ -163,7 +163,7 @@
     <string name="backup_failed">Permissões de armazenamento em falta, por favor tente de novo</string>
     <string name="backup_failed_error_format">Erro no backup de %s</string>
 	
-    <string name="search">Procurar</string
+    <string name="search">Procurar</string>
 		<string name="category_account">Contas</string>
     <string name="category_updates">Atualizações e backup</string>
 	
