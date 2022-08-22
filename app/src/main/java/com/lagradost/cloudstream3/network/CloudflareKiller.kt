@@ -23,6 +23,11 @@ class CloudflareKiller : Interceptor {
         }
     }
 
+    init {
+        // Needs to clear cookies between sessions to generate new cookies.
+        CookieManager.getInstance().removeAllCookies(null)
+    }
+
     val savedCookies: MutableMap<String, Map<String, String>> = mutableMapOf()
 
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
