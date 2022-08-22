@@ -16,11 +16,13 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.githubApi
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_SHOULD_UPDATE_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_USER_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.GithubApi
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_REFRESH_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_SHOULD_UPDATE_LIST
@@ -298,12 +300,14 @@ object BackupUtils {
         val backup = this.getBackup()
         ioSafe {
             val tmpDir = createTempDir()
+            val repoUrl = githubApi.getLatestLoginData()?.username ?: throw IllegalArgumentException ("Requires Username")
+            val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
             val git = Git.cloneRepository()
-                .setURI("https://github.com/Github_USERNAME/Repo_NAME.git")
+                .setURI("$repoUrl.git")
                 .setDirectory(tmpDir)
                 .setTimeout(30)
                 .setCredentialsProvider(
-                    UsernamePasswordCredentialsProvider("HERE GOES GITHUB TOKEN", "")
+                    UsernamePasswordCredentialsProvider(token, "")
                 )
                 .call()
 
@@ -317,13 +321,13 @@ object BackupUtils {
                 .call()
             git.remoteAdd()
                 .setName("origin")
-                .setUri(URIish("https://github.com/Github_USERNAME/Repo_NAME.git"))
+                .setUri(URIish("$repoUrl.git"))
                 .call()
             git.push()
-                .setRemote("https://github.com/Github_USERNAME/Repo_NAME.git")
+                .setRemote("$repoUrl.git")
                 .setTimeout(30)
                 .setCredentialsProvider(
-                    UsernamePasswordCredentialsProvider("HERE GOES GITHUB TOKEN", "")
+                    UsernamePasswordCredentialsProvider(token, "")
                 )
                 .call();
         }
@@ -335,12 +339,14 @@ object BackupUtils {
     fun FragmentActivity.restorePromptGithub(){
         ioSafe {
             val tmpDir = createTempDir()
+            val repoUrl = githubApi.getLatestLoginData()?.username ?: throw IllegalArgumentException ("Requires Username")
+            val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
             Git.cloneRepository()
-                .setURI("https://github.com/Github_USERNAME/Repo_NAME.git")
+                .setURI("$repoUrl.git")
                 .setDirectory(tmpDir)
                 .setTimeout(30)
                 .setCredentialsProvider(
-                    UsernamePasswordCredentialsProvider("", "")
+                    UsernamePasswordCredentialsProvider("$token", "")
                 )
                 .call()
             val jsondata = tmpDir.listFiles()?.first { it.name != ".git" }?.readLines()

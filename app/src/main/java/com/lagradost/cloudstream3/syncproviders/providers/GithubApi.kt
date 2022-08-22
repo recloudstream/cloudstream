@@ -19,7 +19,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
 
     data class GithubOAuthEntity(
         var user: String,
-        var pass: String
+        var token: String
     )
     companion object {
         const val GITHUB_USER_KEY: String = "github_user" // user data like profile
@@ -30,10 +30,10 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
     }
     override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
         switchToNewAccount()
-        val username = data.username ?: throw IllegalArgumentException ("Requires Username")
+        val repoUrl = data.username ?: throw IllegalArgumentException ("Requires Username")
         val password = data.password ?: throw IllegalArgumentException ("Requires Password")
         try {
-            setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(username, password))
+            setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(repoUrl, password))
             registerAccount()
             return true
         } catch (e: Exception) {
@@ -46,11 +46,11 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
 
     override fun getLatestLoginData(): InAppAuthAPI.LoginData? {
         val current = getAuthKey() ?: return null
-        return InAppAuthAPI.LoginData(username = current.user, current.pass)
+        return InAppAuthAPI.LoginData(username = current.user, password = current.token)
     }
     override suspend fun initialize() {
         currentSession = getAuthKey() ?: return // just in case the following fails
-        setKey(currentSession!!.user, currentSession!!.pass)
+        setKey(currentSession!!.user, currentSession!!.token)
     }
     override fun logOut() {
         AcraApplication.removeKey(accountId, GITHUB_USER_KEY)
@@ -63,7 +63,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
             return AuthAPI.LoginInfo(
                 profilePicture = null,
                 name = user.user,
-                accountIndex = accountIndex
+                accountIndex = accountIndex,
             )
         }
         return null
