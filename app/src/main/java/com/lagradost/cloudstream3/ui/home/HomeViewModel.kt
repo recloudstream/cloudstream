@@ -264,25 +264,30 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadAndCancel(preferredApiName: String?) = viewModelScope.launchSafe {
-        val api = getApiFromNameNull(preferredApiName)
-        if (preferredApiName == noneApi.name){
-            setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
-            loadAndCancel(noneApi)
-        }
-        else if (preferredApiName == randomApi.name || api == null) {
-            val validAPIs = context?.filterProviderByPreferredMedia()
-            if (validAPIs.isNullOrEmpty()) {
-                // Do not set USER_SELECTED_HOMEPAGE_API when there is no plugins loaded
-                loadAndCancel(noneApi)
-            } else {
-                val apiRandom = validAPIs.random()
-                loadAndCancel(apiRandom)
-                setKey(USER_SELECTED_HOMEPAGE_API, apiRandom.name)
+    fun loadAndCancel(preferredApiName: String?, forceReload: Boolean = true) =
+        viewModelScope.launchSafe {
+            // Since plugins are loaded in stages this function can get called multiple times.
+            // This makes the home page reload only if it's a failure or loading
+            if (!forceReload && page.value is Resource.Success) {
+                return@launchSafe
             }
-        } else {
-            setKey(USER_SELECTED_HOMEPAGE_API, api.name)
-            loadAndCancel(api)
+            val api = getApiFromNameNull(preferredApiName)
+            if (preferredApiName == noneApi.name) {
+                setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
+                loadAndCancel(noneApi)
+            } else if (preferredApiName == randomApi.name || api == null) {
+                val validAPIs = context?.filterProviderByPreferredMedia()
+                if (validAPIs.isNullOrEmpty()) {
+                    // Do not set USER_SELECTED_HOMEPAGE_API when there is no plugins loaded
+                    loadAndCancel(noneApi)
+                } else {
+                    val apiRandom = validAPIs.random()
+                    loadAndCancel(apiRandom)
+                    setKey(USER_SELECTED_HOMEPAGE_API, apiRandom.name)
+                }
+            } else {
+                setKey(USER_SELECTED_HOMEPAGE_API, api.name)
+                loadAndCancel(api)
+            }
         }
-    }
 }

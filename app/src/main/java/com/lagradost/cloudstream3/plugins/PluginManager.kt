@@ -21,12 +21,15 @@ import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
+import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.extractorApis
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.acra.log.debug
 import java.io.File
 import java.io.InputStreamReader
 import java.util.*
@@ -162,7 +165,7 @@ object PluginManager {
         val isDisabled = onlineData.second.status == PROVIDER_STATUS_DOWN
     }
 
-    var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
+    // var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
 
     suspend fun loadSinglePlugin(activity: Activity, apiName: String): Boolean {
         return (getPluginsOnline().firstOrNull { it.internalName == apiName }
@@ -184,6 +187,19 @@ object PluginManager {
      * 4. Else load the plugin normally
      **/
     fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
+        // Load all plugins as fast as possible!
+        (getPluginsOnline()).toList().apmap { pluginData ->
+            loadPlugin(
+                activity,
+                File(pluginData.filePath),
+                pluginData
+            )
+        }
+
+        ioSafe {
+            afterPluginsLoadedEvent.invoke(true)
+        }
+
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
@@ -198,27 +214,26 @@ object PluginManager {
                     OnlinePluginData(savedData, onlineData)
                 }
         }.flatten().distinctBy { it.onlineData.second.url }
-        allCurrentOutDatedPlugins = outdatedPlugins.toSet()
 
-        Log.i(TAG, "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}")
+        debug {
+            "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}"
+        }
 
-        outdatedPlugins.apmap {
-            if (it.isDisabled) {
-                return@apmap
-            } else if (it.isOutdated) {
+        outdatedPlugins.apmap { pluginData ->
+            if (pluginData.isDisabled) {
+                unloadPlugin(pluginData.savedData.filePath)
+            } else if (pluginData.isOutdated) {
                 downloadAndLoadPlugin(
                     activity,
-                    it.onlineData.second.url,
-                    it.savedData.internalName,
-                    it.onlineData.first
-                )
-            } else {
-                loadPlugin(
-                    activity,
-                    File(it.savedData.filePath),
-                    it.savedData
+                    pluginData.onlineData.second.url,
+                    pluginData.savedData.internalName,
+                    pluginData.onlineData.first
                 )
             }
+        }
+
+        ioSafe {
+            afterPluginsLoadedEvent.invoke(true)
         }
 
         Log.i(TAG, "Plugin update done!")
@@ -256,6 +271,7 @@ object PluginManager {
         }
 
         loadedLocalPlugins = true
+        afterPluginsLoadedEvent.invoke(true)
     }
 
     /**
@@ -380,7 +396,9 @@ object PluginManager {
         try {
             val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
             val fileName = getPluginSanitizedFileName(internalName)
-            Log.i(TAG, "Downloading plugin: $pluginUrl to $folderName/$fileName")
+            unloadPlugin("${activity.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
+
+            Log.d(TAG, "Downloading plugin: $pluginUrl to $folderName/$fileName")
             // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
             val file = downloadPluginToFile(activity, pluginUrl, fileName, folderName)
             return loadPlugin(

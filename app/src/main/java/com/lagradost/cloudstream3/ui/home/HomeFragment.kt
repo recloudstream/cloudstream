@@ -456,20 +456,17 @@ class HomeFragment : Fragment() {
         homeViewModel.loadStoredData(list)
     }
 
-    private var hasBeenConsumed = false
     private fun firstLoadHomePage(successful: Boolean = false) {
         // dirty hack to make it only load once
-        if(hasBeenConsumed) return
-        hasBeenConsumed = true
-        loadHomePage(successful)
+        loadHomePage(false)
     }
 
-    private fun loadHomePage(successful: Boolean = false) {
+    private fun loadHomePage(forceReload: Boolean = true) {
         val apiName = context?.getKey<String>(USER_SELECTED_HOMEPAGE_API)
 
         if (homeViewModel.apiName.value != apiName || apiName == null) {
             //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
-            homeViewModel.loadAndCancel(apiName)
+            homeViewModel.loadAndCancel(apiName, forceReload)
         }
     }
 
