@@ -42,7 +42,7 @@
     <string name="primary_color_key" translatable="false">primary_color_key</string>
     <string name="restore_key" translatable="false">restore_key</string>
     <string name="backup_key" translatable="false">backup_key</string>
-    <string name="prefer_media_type_key" translatable="false">prefer_media_type_key</string>
+    <string name="prefer_media_type_key" translatable="false">prefer_media_type_key_2</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
     <string name="episode_sync_enabled_key" translatable="false">episode_sync_enabled_key</string>
     <string name="log_enabled_key" translatable="false">log_enabled_key</string>
