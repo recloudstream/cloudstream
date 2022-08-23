@@ -101,9 +101,11 @@ class SettingsLang : PreferenceFragmentCompat() {
             val names = enumValues<TvType>().sorted().map { it.name }
             val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }.map { it.ordinal }
             val defaultSet = default.map { it.toString() }.toSet()
-            val currentList = settingsManager.getStringSet(getString(R.string.prefer_media_type_key), defaultSet)?.map {
-                it.toInt()
-            } ?: default
+            val currentList = try {
+                settingsManager.getStringSet(getString(R.string.prefer_media_type_key), defaultSet)?.map {
+                    it.toInt()
+                }
+            } catch (e: Throwable) { null }  ?: default
 
             activity?.showMultiDialog(
                 names,
