@@ -87,7 +87,7 @@
     <string name="vpn_might_be_needed">Damit dieser Anbieter korrekt funktioniert, ist möglicherweise eine VPN erforderlich</string>
     <string name="vpn_torrent">Dies ist ein Torrent Anbieter, eine VPN wird empfohlen</string>
     <string name="torrent_plot">Beschreibung</string>
-    <string name="normal_no_plot">Keine Parzelle gefunden</string>
+    <string name="normal_no_plot">Keine Beschreibung gefunden</string>
     <string name="torrent_no_plot">Keine Beschreibung gefunden</string>
     <string name="picture_in_picture">Bild-in-Bild-Modus</string>
     <string name="picture_in_picture_des">Setzt die Wiedergabe in einem Miniplayer über anderen Anwendungen fort</string>
