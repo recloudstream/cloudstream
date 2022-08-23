@@ -42,7 +42,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         //val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         getPref(R.string.backup_key)?.setOnPreferenceClickListener {
-            activity?.BackupGithub()
+            activity?.backup()
             return@setOnPreferenceClickListener true
         }
 
