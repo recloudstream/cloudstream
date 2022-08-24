@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.A
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.GithubApi
+import com.lagradost.cloudstream3.syncproviders.providers.GithubApi.Companion.GITHUB_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_REFRESH_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_SHOULD_UPDATE_LIST
@@ -76,7 +77,7 @@ object BackupUtils {
         // The plugins themselves are not backed up
         PLUGINS_KEY,
         PLUGINS_KEY_LOCAL,
-
+        GITHUB_USER_KEY,
         OPEN_SUBTITLES_USER_KEY,
         "nginx_user", // Nginx user key
 
@@ -335,7 +336,7 @@ object BackupUtils {
 
     }
 
-    fun FragmentActivity.restorePromptGithub(){
+    fun FragmentActivity.restorePromptGithub() =
         ioSafe {
             val tmpDir = createTempDir()
             val repoUrl = githubApi.getLatestLoginData()?.username ?: throw IllegalArgumentException ("Requires Username")
@@ -348,8 +349,7 @@ object BackupUtils {
                     UsernamePasswordCredentialsProvider("$token", "")
                 )
                 .call()
-            val jsondata = tmpDir.listFiles()?.first { it.name != ".git" }?.readLines()
-                ?.joinToString()
+            val jsondata = tmpDir.listFiles()?.first { it.name != ".git" }?.readText().toString()
             val data = parseJson<BackupFile>(jsondata?: "")
             this@restorePromptGithub.restore(
                 data,
@@ -357,5 +357,4 @@ object BackupUtils {
                 restoreDataStore = true
             )
         }
-    }
 }
