@@ -78,7 +78,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
             .call();
         tmpDir.delete()
     }
-    private class repos (
+    private class reposElements (
         @JsonProperty("full_name") var repoName: String
     )
 
@@ -89,27 +89,49 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
                 "Authorization" to "token $githubToken"
             )
         )
-        val 
-        val response = app.post("https://api.github.com/user/repos",
-            headers= mapOf(
-                "Accept" to "application/vnd.github+json",
-                "Authorization" to "token $githubToken"
-            ),
-            requestBody = """{"name":"sync data for Cloudstream", "description": "Private repo for cloudstream Account", "private": true}""".toRequestBody(
-                RequestBodyTypes.JSON.toMediaTypeOrNull()))
+        if (repoResponse.isSuccessful) {
+            val repo = tryParseJson<List<reposElements>>(repoResponse.text)?.filter {
+                it.repoName == "sync-data-for-Cloudstream"
+            }
+            if (repo?.isEmpty() == true) {
+                val response = app.post(
+                    "https://api.github.com/user/repos",
+                    headers = mapOf(
+                        "Accept" to "application/vnd.github+json",
+                        "Authorization" to "token $githubToken"
+                    ),
+                    requestBody = """{"name":"sync data for Cloudstream", "description": "Private repo for cloudstream Account", "private": true}""".toRequestBody(
+                        RequestBodyTypes.JSON.toMediaTypeOrNull()
+                    )
+                )
 
-        if (!response.isSuccessful) {return false}
-
-        val repoUrl = tryParseJson<repodata>(response.text).let {
-            setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(
-                token = githubToken,
-                repoUrl = it?.repoUrl?: run {
+                if (!response.isSuccessful) {
                     return false
-                }))
-            it.repoUrl
-        }
-        commitFile(repoUrl, githubToken)
-        return true
+                }
+
+                val repoUrl = tryParseJson<repodata>(response.text).let {
+                    setKey(
+                        accountId, GITHUB_USER_KEY, GithubOAuthEntity(
+                            token = githubToken,
+                            repoUrl = it?.repoUrl ?: run {
+                                return false
+                            })
+                    )
+                    it.repoUrl
+                }
+                commitFile(repoUrl, githubToken)
+                return true
+            }
+            else{
+                repo.first().let { {
+                      setKey(
+                          accountId, GITHUB_USER_KEY, GithubOAuthEntity(
+                              token = githubToken,
+                              repoUrl = it?.repoName ?: run {
+                                  return false
+                              })
+                      )
+            }
     }
 
     override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
