@@ -58,6 +58,12 @@
             android:title="@string/swipe_to_change_settings"
             android:summary="@string/swipe_to_change_settings_des"
             app:defaultValue="true" />
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_skip_next_24"
+            app:key="@string/autoplay_next_key"
+            android:title="@string/autoplay_next_settings"
+            android:summary="@string/autoplay_next_settings_des"
+            app:defaultValue="true" />
     <SwitchPreference
             android:icon="@drawable/ic_baseline_touch_app_24"
             app:key="@string/double_tap_enabled_key"

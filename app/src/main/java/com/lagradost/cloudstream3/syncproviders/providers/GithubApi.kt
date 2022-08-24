@@ -148,7 +148,6 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
             }
         } catch (e: Exception) {
             logError(e)
-            switchToOldAccount()
         }
         switchToOldAccount()
         return false
