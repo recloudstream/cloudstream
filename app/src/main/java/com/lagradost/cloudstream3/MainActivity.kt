@@ -84,6 +84,8 @@ import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.net.URI
 import kotlin.reflect.KClass
@@ -131,6 +133,10 @@ var app = Requests(responseParser = object : ResponseParser {
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     companion object {
         const val TAG = "MAINACT"
+
+        /**
+         * Fires every time a new batch of plugins have been loaded, no guarantee about how often this is run and on which thread
+         * */
         val afterPluginsLoadedEvent = Event<Boolean>()
         val mainPluginsLoadedEvent =
             Event<Boolean>() // homepage api, used to speed up time to load for homepage
@@ -236,6 +242,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onResume() {
         super.onResume()
+        afterPluginsLoadedEvent += ::onAllPluginsLoaded
         try {
             if (isCastApiAvailable()) {
                 //mCastSession = mSessionManager.currentCastSession
@@ -325,6 +332,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         broadcastIntent.action = "restart_service"
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
         this.sendBroadcast(broadcastIntent)
+        afterPluginsLoadedEvent -= ::onAllPluginsLoaded
         super.onDestroy()
     }
 
@@ -414,6 +422,36 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    private val pluginsLock = Mutex()
+    private fun onAllPluginsLoaded(success: Boolean = false) {
+        ioSafe {
+            pluginsLock.withLock {
+                // Load cloned sites after plugins have been loaded since clones depend on plugins.
+                try {
+                    getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                        list.forEach { custom ->
+                            allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                                ?.let {
+                                    allProviders.add(it.javaClass.newInstance().apply {
+                                        name = custom.name
+                                        lang = custom.lang
+                                        mainUrl = custom.url.trimEnd('/')
+                                        canBeOverridden = false
+                                    })
+                                }
+                        }
+                    }
+                    // it.hashCode() is not enough to make sure they are distinct
+                    apis = allProviders.distinctBy { it.lang + it.name + it.mainUrl + it.javaClass.name }
+                    APIHolder.apiMap = null
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
@@ -446,36 +484,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 mainPluginsLoadedEvent.invoke(false)
             }
 
-            if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
-                PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
-            } else {
-                PluginManager.loadAllOnlinePlugins(this@MainActivity)
-            }
-
-            PluginManager.loadAllLocalPlugins(this@MainActivity)
-
-            // Load cloned sites after plugins have been loaded since clones depend on plugins.
-            try {
-                getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
-                    list.forEach { custom ->
-                        allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                            ?.let {
-                                allProviders.add(it.javaClass.newInstance().apply {
-                                    name = custom.name
-                                    lang = custom.lang
-                                    mainUrl = custom.url.trimEnd('/')
-                                    canBeOverridden = false
-                                })
-                            }
-                    }
+            ioSafe {
+                if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
+                    PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
+                } else {
+                    PluginManager.loadAllOnlinePlugins(this@MainActivity)
                 }
-                apis = allProviders.distinctBy { it }
-                APIHolder.apiMap = null
-            } catch (e: Exception) {
-                logError(e)
             }
 
-            afterPluginsLoadedEvent.invoke(true)
+            ioSafe {
+                PluginManager.loadAllLocalPlugins(this@MainActivity)
+            }
         }
 
 //        ioSafe {

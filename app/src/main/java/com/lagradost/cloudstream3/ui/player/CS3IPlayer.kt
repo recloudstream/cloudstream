@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.FrameLayout
+import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
@@ -742,7 +743,15 @@ class CS3IPlayer : IPlayer {
 
                             }
                             Player.STATE_ENDED -> {
-                                handleEvent(CSPlayerEvent.NextEpisode)
+                                // Only play next episode if autoplay is on (default)
+                                if (PreferenceManager.getDefaultSharedPreferences(context)
+                                        ?.getBoolean(
+                                            context.getString(com.lagradost.cloudstream3.R.string.autoplay_next_key),
+                                            true
+                                        ) == true
+                                ) {
+                                    handleEvent(CSPlayerEvent.NextEpisode)
+                                }
                             }
                             Player.STATE_BUFFERING -> {
                                 updatedTime()
@@ -780,7 +789,15 @@ class CS3IPlayer : IPlayer {
 
                         }
                         Player.STATE_ENDED -> {
-                            handleEvent(CSPlayerEvent.NextEpisode)
+                            // Only play next episode if autoplay is on (default)
+                            if (PreferenceManager.getDefaultSharedPreferences(context)
+                                    ?.getBoolean(
+                                        context.getString(com.lagradost.cloudstream3.R.string.autoplay_next_key),
+                                        true
+                                    ) == true
+                            ) {
+                                handleEvent(CSPlayerEvent.NextEpisode)
+                            }
                         }
                         Player.STATE_BUFFERING -> {
                             updatedTime()
