@@ -79,59 +79,63 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
         tmpDir.delete()
     }
     private class reposElements (
-        @JsonProperty("full_name") var repoName: String
+        @JsonProperty("full_name") var repoName: String,
+        @JsonProperty("name") var shortRepoName: String
+
     )
 
     private suspend fun initLogin(githubToken: String): Boolean{
-        val repoResponse = app.post("https://api.github.com/user/repos",
+        val repoResponse = app.get("https://api.github.com/user/repos",
             headers= mapOf(
                 "Accept" to "application/vnd.github+json",
                 "Authorization" to "token $githubToken"
             )
         )
-        if (repoResponse.isSuccessful) {
-            val repo = tryParseJson<List<reposElements>>(repoResponse.text)?.filter {
-                it.repoName == "sync-data-for-Cloudstream"
-            }
-            if (repo?.isEmpty() == true) {
-                val response = app.post(
-                    "https://api.github.com/user/repos",
-                    headers = mapOf(
-                        "Accept" to "application/vnd.github+json",
-                        "Authorization" to "token $githubToken"
-                    ),
-                    requestBody = """{"name":"sync data for Cloudstream", "description": "Private repo for cloudstream Account", "private": true}""".toRequestBody(
-                        RequestBodyTypes.JSON.toMediaTypeOrNull()
-                    )
+        if (!repoResponse.isSuccessful) {
+            return false
+        }
+        val repo = tryParseJson<List<reposElements>>(repoResponse.text)?.filter {
+            it.shortRepoName == "sync-data-for-Cloudstream"
+        }
+        if (repo?.isEmpty() == true) {
+            val response = app.post(
+                "https://api.github.com/user/repos",
+                headers = mapOf(
+                    "Accept" to "application/vnd.github+json",
+                    "Authorization" to "token $githubToken"
+                ),
+                requestBody = """{"name":"sync data for Cloudstream", "description": "Private repo for cloudstream Account", "private": true}""".toRequestBody(
+                    RequestBodyTypes.JSON.toMediaTypeOrNull()
                 )
+            )
 
-                if (!response.isSuccessful) {
-                    return false
-                }
+            if (!response.isSuccessful) {
+                return false
+            }
 
-                val repoUrl = tryParseJson<repodata>(response.text).let {
-                    setKey(
-                        accountId, GITHUB_USER_KEY, GithubOAuthEntity(
-                            token = githubToken,
-                            repoUrl = it?.repoUrl ?: run {
-                                return false
-                            })
-                    )
-                    it.repoUrl
-                }
-                commitFile(repoUrl, githubToken)
+            val repoUrl = tryParseJson<repodata>(response.text).let {
+                setKey(
+                    accountId, GITHUB_USER_KEY, GithubOAuthEntity(
+                        token = githubToken,
+                        repoUrl = it?.repoUrl ?: run {
+                            return false
+                        })
+                )
+                it.repoUrl
+            }
+            commitFile(repoUrl, githubToken)
+            return true
+        }
+        else{
+            repo?.first().let {
+                setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(
+                    token = githubToken,
+                    repoUrl = it?.repoName?: run {
+                        return false
+                    }))
                 return true
             }
-            else{
-                repo.first().let { {
-                      setKey(
-                          accountId, GITHUB_USER_KEY, GithubOAuthEntity(
-                              token = githubToken,
-                              repoUrl = it?.repoName ?: run {
-                                  return false
-                              })
-                      )
-            }
+        }
     }
 
     override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
