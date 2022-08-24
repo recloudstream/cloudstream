@@ -9,6 +9,7 @@ import com.lagradost.nicehttp.Requests.Companion.await
 import com.lagradost.nicehttp.cookies
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
+import java.net.URI
 
 
 @AnyThread
@@ -29,6 +30,17 @@ class CloudflareKiller : Interceptor {
     }
 
     val savedCookies: MutableMap<String, Map<String, String>> = mutableMapOf()
+
+    /**
+     * Gets the headers with cookies, webview user agent included!
+     * */
+    fun getCookieHeaders(url: String): Headers {
+        val userAgentHeaders =  WebViewResolver.webViewUserAgent?.let {
+            mapOf("user-agent" to it)
+        } ?: emptyMap()
+
+        return getHeaders(userAgentHeaders, savedCookies[URI(url).host] ?: emptyMap())
+    }
 
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
         val request = chain.request()
