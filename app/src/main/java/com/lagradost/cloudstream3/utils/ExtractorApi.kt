@@ -234,6 +234,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     // Streamhub(), cause Streamhub2() works
     Streamhub2(),
     Ssbstream(),
+    Sbthe(),
 
     Fastream(),
     
@@ -312,6 +313,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Linkbox(),
     Acefile(),
     SpeedoStream(),
+    Zorofile(),
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),
