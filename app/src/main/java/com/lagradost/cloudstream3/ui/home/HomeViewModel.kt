@@ -267,15 +267,18 @@ class HomeViewModel : ViewModel() {
     fun loadAndCancel(preferredApiName: String?, forceReload: Boolean = true) =
         viewModelScope.launchSafe {
             // Since plugins are loaded in stages this function can get called multiple times.
-            // This makes the home page reload only if it's a failure or loading
-            if (!forceReload && page.value is Resource.Success) {
+            // The issue with this is that the homepage may be fetched multiple times while the first request is loading
+            val api = getApiFromNameNull(preferredApiName)
+            if (!forceReload && api?.let { expandable[it.name]?.list?.list?.isNotEmpty() } == true) {
                 return@launchSafe
             }
-            val api = getApiFromNameNull(preferredApiName)
-            if (preferredApiName == noneApi.name) {
+            // If the plugin isn't loaded yet. (Does not set the key)
+            if (api == null) {
+                loadAndCancel(noneApi)
+            } else if (preferredApiName == noneApi.name) {
                 setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
                 loadAndCancel(noneApi)
-            } else if (preferredApiName == randomApi.name || api == null) {
+            } else if (preferredApiName == randomApi.name) {
                 val validAPIs = context?.filterProviderByPreferredMedia()
                 if (validAPIs.isNullOrEmpty()) {
                     // Do not set USER_SELECTED_HOMEPAGE_API when there is no plugins loaded

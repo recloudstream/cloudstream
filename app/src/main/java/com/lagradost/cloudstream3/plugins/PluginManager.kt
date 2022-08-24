@@ -168,8 +168,13 @@ object PluginManager {
     // var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
 
     suspend fun loadSinglePlugin(activity: Activity, apiName: String): Boolean {
-        return (getPluginsOnline().firstOrNull { it.internalName == apiName }
-            ?: getPluginsLocal().firstOrNull { it.internalName == apiName })?.let { savedData ->
+        return (getPluginsOnline().firstOrNull {
+            // Most of the time the provider ends with Provider which isn't part of the api name
+            it.internalName.replace("provider", "", ignoreCase = true) == apiName
+        }
+            ?: getPluginsLocal().firstOrNull {
+                it.internalName.replace("provider", "", ignoreCase = true) == apiName
+            })?.let { savedData ->
             // OnlinePluginData(savedData, onlineData)
             loadPlugin(
                 activity,
