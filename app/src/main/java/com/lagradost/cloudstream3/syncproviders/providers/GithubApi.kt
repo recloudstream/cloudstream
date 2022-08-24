@@ -78,10 +78,18 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
             .call();
         tmpDir.delete()
     }
-private class repos{
+    private class repos (
+        @JsonProperty("full_name") var repoName: String
+    )
 
-}
     private suspend fun initLogin(githubToken: String): Boolean{
+        val repoResponse = app.post("https://api.github.com/user/repos",
+            headers= mapOf(
+                "Accept" to "application/vnd.github+json",
+                "Authorization" to "token $githubToken"
+            )
+        )
+        val 
         val response = app.post("https://api.github.com/user/repos",
             headers= mapOf(
                 "Accept" to "application/vnd.github+json",
