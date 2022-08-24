@@ -330,6 +330,7 @@ object BackupUtils {
                     UsernamePasswordCredentialsProvider(token, "")
                 )
                 .call();
+            tmpDir.deleteRecursively()
         }
 
 
@@ -351,6 +352,7 @@ object BackupUtils {
                 .call()
             val jsondata = tmpDir.listFiles()?.first { it.name != ".git" }?.readText().toString()
             val data = parseJson<BackupFile>(jsondata?: "")
+            tmpDir.deleteRecursively()
             this@restorePromptGithub.restore(
                 data,
                 restoreSettings = true,

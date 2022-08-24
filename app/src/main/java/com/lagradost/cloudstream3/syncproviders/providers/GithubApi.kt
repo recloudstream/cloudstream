@@ -76,7 +76,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
                 UsernamePasswordCredentialsProvider(githubToken, "")
             )
             .call();
-        tmpDir.delete()
+        tmpDir.deleteRecursively()
     }
     private class reposElements (
         @JsonProperty("full_name") var repoName: String,
