@@ -248,10 +248,14 @@ object PluginManager {
      * Use updateAllOnlinePluginsAndLoadThem
      * */
     fun loadAllOnlinePlugins(activity: Activity) {
-        File(activity.filesDir, ONLINE_PLUGINS_FOLDER).listFiles()?.sortedBy { it.name }
-            ?.apmap { file ->
-                maybeLoadPlugin(activity, file)
-            }
+        // Load all plugins as fast as possible!
+        (getPluginsOnline()).toList().apmap { pluginData ->
+            loadPlugin(
+                activity,
+                File(pluginData.filePath),
+                pluginData
+            )
+        }
     }
 
     fun loadAllLocalPlugins(activity: Activity) {
