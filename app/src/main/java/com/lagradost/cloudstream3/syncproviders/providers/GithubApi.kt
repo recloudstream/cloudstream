@@ -33,7 +33,9 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
 
     data class GithubOAuthEntity(
         var repoUrl: String,
-        var token: String
+        var token: String,
+        var userName: String,
+        var userAvatar: String
     )
     companion object {
         const val GITHUB_USER_KEY: String = "github_user" // user data like profile
@@ -42,9 +44,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
     private fun getAuthKey(): GithubOAuthEntity? {
         return getKey(accountId, GITHUB_USER_KEY)
     }
-    private class repodata (
-        @JsonProperty("full_name") val repoUrl: String
-    )
+
 
 
     private fun commitFile(repoUrl: String, githubToken: String){
@@ -78,66 +78,70 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
             .call();
         tmpDir.deleteRecursively()
     }
-    private class reposElements (
-        @JsonProperty("full_name") var repoName: String,
-        @JsonProperty("name") var shortRepoName: String
 
+    private data class gistsElements (
+        @JsonProperty("git_pull_url") val gitUrl: String,
+        @JsonProperty("files") val files: Map<String, File>,
+        @JsonProperty("owner") val owner: OwnerData
+    )
+    private data class OwnerData(
+        @JsonProperty("login") val userName: String,
+        @JsonProperty("avatar_url") val userAvatar : String
+    )
+    data class File (
+        @JsonProperty("filename") val filename: String
     )
 
     private suspend fun initLogin(githubToken: String): Boolean{
-        val repoResponse = app.get("https://api.github.com/user/repos",
+        val response = app.get("https://api.github.com/gists",
             headers= mapOf(
-                "Accept" to "application/vnd.github+json",
-                "Authorization" to "token $githubToken"
+                Pair("Accept" , "application/vnd.github+json"),
+                Pair("Authorization", "token $githubToken"),
             )
         )
-        if (!repoResponse.isSuccessful) {
-            return false
+
+        if (!response.isSuccessful) { return false }
+
+        val repo = tryParseJson<List<gistsElements>>(response.text)?.filter {
+            it.files.keys.first() == "Cloudstream_Backup_data.txt"
         }
-        val repo = tryParseJson<List<reposElements>>(repoResponse.text)?.filter {
-            it.shortRepoName == "sync-data-for-Cloudstream"
-        }
-        if (repo?.isEmpty() == true) {
-            val response = app.post(
-                "https://api.github.com/user/repos",
-                headers = mapOf(
-                    "Accept" to "application/vnd.github+json",
-                    "Authorization" to "token $githubToken"
+
+        if (repo?.isEmpty() == true){
+            val gitresponse = app.post("https://api.github.com/gists",
+                headers= mapOf(
+                    Pair("Accept" , "application/vnd.github+json"),
+                    Pair("Authorization", "token $githubToken"),
                 ),
-                requestBody = """{"name":"sync data for Cloudstream", "description": "Private repo for cloudstream Account", "private": true}""".toRequestBody(
-                    RequestBodyTypes.JSON.toMediaTypeOrNull()
-                )
-            )
-
-            if (!response.isSuccessful) {
-                return false
+                requestBody = """{"description":"Cloudstream private backup gist","public":false,"files":{"Cloudstream_Backup_data.txt":{"content":"initialization"}}}""".toRequestBody(
+                    RequestBodyTypes.JSON.toMediaTypeOrNull()))
+            if (!gitresponse.isSuccessful) {return false}
+            tryParseJson<gistsElements>(gitresponse.text).let {
+                setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(
+                    token = githubToken,
+                    repoUrl = it?.gitUrl?: run {
+                        return false
+                    },
+                    userName = it.owner.userName,
+                    userAvatar = it.owner.userAvatar
+                    ))
             }
-
-            val repoUrl = tryParseJson<repodata>(response.text).let {
-                setKey(
-                    accountId, GITHUB_USER_KEY, GithubOAuthEntity(
-                        token = githubToken,
-                        repoUrl = it?.repoUrl ?: run {
-                            return false
-                        })
-                )
-                it.repoUrl
-            }
-            commitFile(repoUrl, githubToken)
             return true
         }
         else{
             repo?.first().let {
                 setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(
                     token = githubToken,
-                    repoUrl = it?.repoName?: run {
+                    repoUrl = it?.gitUrl?: run {
                         return false
-                    }))
+                    },
+                    userName = it.owner.userName,
+                    userAvatar = it.owner.userAvatar
+                    ))
                 return true
             }
         }
-    }
 
+    }
     override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
         switchToNewAccount()
         val githubToken = data.password ?: throw IllegalArgumentException ("Requires Password")
@@ -155,7 +159,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
 
     override fun getLatestLoginData(): InAppAuthAPI.LoginData? {
         val current = getAuthKey() ?: return null
-        return InAppAuthAPI.LoginData(username = current.repoUrl, password = current.token)
+        return InAppAuthAPI.LoginData(email = current.repoUrl, password = current.token, username = current.userName)
     }
     override suspend fun initialize() {
         currentSession = getAuthKey()
@@ -172,8 +176,8 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
     override fun loginInfo(): AuthAPI.LoginInfo? {
         return getAuthKey()?.let { user ->
              AuthAPI.LoginInfo(
-                profilePicture = null,
-                name = user.repoUrl,
+                profilePicture = user.userAvatar,
+                name = user.userName,
                 accountIndex = accountIndex,
             )
         }

@@ -301,10 +301,10 @@ object BackupUtils {
         val backup = this.getBackup()
         ioSafe {
             val tmpDir = createTempDir()
-            val repoUrl = githubApi.getLatestLoginData()?.username ?: throw IllegalArgumentException ("Requires Username")
+            val gitUrl = githubApi.getLatestLoginData()?.email ?: throw IllegalArgumentException ("Requires Username")
             val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
             val git = Git.cloneRepository()
-                .setURI("https://github.com/$repoUrl.git")
+                .setURI(gitUrl)
                 .setDirectory(tmpDir)
                 .setTimeout(30)
                 .setCredentialsProvider(
@@ -321,10 +321,10 @@ object BackupUtils {
                 .call()
             git.remoteAdd()
                 .setName("origin")
-                .setUri(URIish("https://github.com/$repoUrl.git"))
+                .setUri(URIish(gitUrl))
                 .call()
             git.push()
-                .setRemote("https://github.com/$repoUrl.git")
+                .setRemote(gitUrl)
                 .setTimeout(30)
                 .setCredentialsProvider(
                     UsernamePasswordCredentialsProvider(token, "")
@@ -340,14 +340,14 @@ object BackupUtils {
     fun FragmentActivity.restorePromptGithub() =
         ioSafe {
             val tmpDir = createTempDir()
-            val repoUrl = githubApi.getLatestLoginData()?.username ?: throw IllegalArgumentException ("Requires Username")
+            val gitUrl = githubApi.getLatestLoginData()?.email ?: throw IllegalArgumentException ("Requires Username")
             val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
             Git.cloneRepository()
-                .setURI("https://github.com/$repoUrl.git")
+                .setURI(gitUrl)
                 .setDirectory(tmpDir)
                 .setTimeout(30)
                 .setCredentialsProvider(
-                    UsernamePasswordCredentialsProvider("$token", "")
+                    UsernamePasswordCredentialsProvider(token, "")
                 )
                 .call()
             val jsondata = tmpDir.listFiles()?.first { it.name != ".git" }?.readText().toString()
