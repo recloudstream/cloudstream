@@ -338,7 +338,7 @@ object BackupUtils {
         ioSafe {
             val gistUrl = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
             val jsondata = app.get(gistUrl).text
-            val dataraw = parseJson<GithubApi.gistsElements>(jsondata ?: "").files.values.first().dataRaw
+            val dataraw = parseJson<GithubApi.gistsElements>(jsondata ?: "").files.values.first().dataRaw?: throw IllegalAccessException()
             val data = parseJson<BackupFile>(dataraw)
             this@restorePromptGithub.restore(
                 data,
