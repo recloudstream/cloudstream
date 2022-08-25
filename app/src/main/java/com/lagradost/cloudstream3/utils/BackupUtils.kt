@@ -329,9 +329,11 @@ object BackupUtils {
                 .call();
             tmpDir.deleteRecursively()
         }
-
-
-
+        showToast(
+            this,
+            R.string.backup_success,
+            Toast.LENGTH_LONG
+        )
     }
 
     fun FragmentActivity.restorePromptGithub() =
