@@ -58,7 +58,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
         @JsonProperty("avatar_url") val userAvatar : String
     )
     data class File (
-        @JsonProperty("content") val dataRaw: String
+        @JsonProperty("content") val dataRaw: String?
     )
 
     private suspend fun initLogin(githubToken: String): Boolean{
