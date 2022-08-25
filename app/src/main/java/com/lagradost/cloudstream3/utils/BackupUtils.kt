@@ -336,10 +336,10 @@ object BackupUtils {
 
     fun FragmentActivity.restorePromptGithub() =
         ioSafe {
-            val gitUrl = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
-            val jsondata = app.get(gitUrl).text
-            val dataurl = parseJson<GithubApi.gistsElements>(jsondata ?: "").files.values.first().rawUrl
-            val data = parseJson<BackupFile>(app.get(dataurl).text)
+            val gistUrl = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
+            val jsondata = app.get(gistUrl).text
+            val dataraw = parseJson<GithubApi.gistsElements>(jsondata ?: "").files.values.first().dataRaw
+            val data = parseJson<BackupFile>(dataraw)
             this@restorePromptGithub.restore(
                 data,
                 restoreSettings = true,

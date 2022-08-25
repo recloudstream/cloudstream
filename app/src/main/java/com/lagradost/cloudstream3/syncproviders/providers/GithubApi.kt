@@ -47,39 +47,6 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
     }
 
 
-
-    private fun commitFile(repoUrl: String, githubToken: String){
-        val tmpDir = createTempDir()
-        val git = Git.cloneRepository()
-            .setURI("https://github.com/$repoUrl.git")
-            .setDirectory(tmpDir)
-            .setTimeout(30)
-            .setCredentialsProvider(
-                UsernamePasswordCredentialsProvider(githubToken, "")
-            )
-            .call()
-        createTempFile("backup", "txt", tmpDir)
-        git.add()
-            .addFilepattern(".")
-            .call()
-        git.commit()
-            .setAll(true)
-            .setMessage("Update backup")
-            .call()
-        git.remoteAdd()
-            .setName("origin")
-            .setUri(URIish("https://github.com/$repoUrl.git"))
-            .call()
-        git.push()
-            .setRemote("https://github.com/$repoUrl.git")
-            .setTimeout(30)
-            .setCredentialsProvider(
-                UsernamePasswordCredentialsProvider(githubToken, "")
-            )
-            .call();
-        tmpDir.deleteRecursively()
-    }
-
     data class gistsElements (
         @JsonProperty("git_pull_url") val gitUrl: String,
         @JsonProperty("url") val gistUrl:String,
@@ -91,7 +58,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
         @JsonProperty("avatar_url") val userAvatar : String
     )
     data class File (
-        @JsonProperty("raw_url") val rawUrl: String
+        @JsonProperty("content") val dataRaw: String
     )
 
     private suspend fun initLogin(githubToken: String): Boolean{
