@@ -136,8 +136,8 @@ object UIHelper {
                     navigation, arguments
                 )
             }
-        } catch (e : Exception) {
-            logError(e)
+        } catch (t : Throwable) {
+            logError(t)
         }
     }
 

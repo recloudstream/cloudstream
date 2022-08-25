@@ -304,6 +304,11 @@ fun SelectPopup.getOptions(context: Context): List<String> {
     }
 }
 
+data class ExtractedTrailerData(
+    var mirros: List<ExtractorLink>,
+    var subtitles: List<SubtitleFile> = emptyList(),
+)
+
 class ResultViewModel2 : ViewModel() {
     private var currentResponse: LoadResponse? = null
 
@@ -349,9 +354,9 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData(Some.None)
     val episodesCountText: LiveData<Some<UiText>> = _episodesCountText
 
-    private val _trailers: MutableLiveData<List<TrailerData>> = MutableLiveData(mutableListOf())
-    val trailers: LiveData<List<TrailerData>> = _trailers
-
+    private val _trailers: MutableLiveData<List<ExtractedTrailerData>> =
+        MutableLiveData(mutableListOf())
+    val trailers: LiveData<List<ExtractedTrailerData>> = _trailers
 
     private val _dubSubSelections: MutableLiveData<List<Pair<UiText?, DubStatus>>> =
         MutableLiveData(emptyList())
@@ -1784,12 +1789,58 @@ class ResultViewModel2 : ViewModel() {
         return ResumeWatchingStatus(progress = progress, isMovie = isMovie, result = episode)
     }
 
+    private fun loadTrailers(loadResponse: LoadResponse) = ioSafe {
+        _trailers.postValue(getTrailers(loadResponse, 3)) // we dont want to fetch too many trailers
+    }
+
+    private suspend fun getTrailers(
+        loadResponse: LoadResponse,
+        limit: Int = 0
+    ): List<ExtractedTrailerData> =
+        coroutineScope {
+            var currentCount = 0
+            return@coroutineScope loadResponse.trailers.apmap { trailerData ->
+                try {
+                    val links = arrayListOf<ExtractorLink>()
+                    val subs = arrayListOf<SubtitleFile>()
+                    if (!loadExtractor(
+                            trailerData.extractorUrl,
+                            trailerData.referer,
+                            { subs.add(it) },
+                            { links.add(it) }) && trailerData.raw
+                    ) {
+                        arrayListOf(
+                            ExtractorLink(
+                                "",
+                                "Trailer",
+                                trailerData.extractorUrl,
+                                trailerData.referer ?: "",
+                                Qualities.Unknown.value,
+                                trailerData.extractorUrl.contains(".m3u8")
+                            )
+                        ) to arrayListOf()
+                    } else {
+                        links to subs
+                    }.also { (extractor, _) ->
+                        if (extractor.isNotEmpty() && limit != 0) {
+                            currentCount++
+                            if (currentCount >= limit) {
+                                cancel()
+                            }
+                        }
+                    }
+                } catch (e: Throwable) {
+                    logError(e)
+                    null
+                }
+            }.filterNotNull().map { (links, subs) -> ExtractedTrailerData(links, subs) }
+        }
+
 
     // this instantly updates the metadata on the page
     private fun postPage(loadResponse: LoadResponse, apiRepository: APIRepository) {
         _recommendations.postValue(loadResponse.recommendations ?: emptyList())
         _page.postValue(Resource.Success(loadResponse.toResultData(apiRepository)))
-        _trailers.postValue(loadResponse.trailers)
     }
 
     fun hasLoaded() = currentResponse != null
@@ -1914,6 +1965,7 @@ class ResultViewModel2 : ViewModel() {
                         )
                     )
 
+                    loadTrailers(data.value)
                     postSuccessful(
                         data.value,
                         updateEpisodes = true,

@@ -1612,8 +1612,8 @@ object VideoDownloadManager {
                     .mapIndexed { index, any -> DownloadQueueResumePackage(index, any) }
                     .toTypedArray()
             setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
-        } catch (e : Exception) {
-            logError(e)
+        } catch (t : Throwable) {
+            logError(t)
         }
     }
 

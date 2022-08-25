@@ -279,8 +279,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     val currentPosition = remoteMediaClient?.approximateStreamPosition
                     if (currentDuration != null && currentPosition != null)
                         DataStoreHelper.setViewPos(epData.id, currentPosition, currentDuration)
-                } catch (e : Exception) {
-                    logError(e)
+                } catch (t : Throwable) {
+                    logError(t)
                 }
 
                 if (itemCount != null && itemCount - currentIdIndex == 1 && !isLoadingMore) {

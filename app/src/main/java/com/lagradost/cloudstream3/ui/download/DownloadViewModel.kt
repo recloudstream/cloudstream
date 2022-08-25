@@ -112,9 +112,9 @@ class DownloadViewModel : ViewModel() {
             _usedBytes.postValue(localTotalBytes - localBytesAvailable - localDownloadedBytes)
             _availableBytes.postValue(localBytesAvailable)
             _downloadBytes.postValue(localDownloadedBytes)
-        } catch (e : Exception) {
+        } catch (t : Throwable) {
             _downloadBytes.postValue(0)
-            logError(e)
+            logError(t)
         }
 
         _headerCards.postValue(visual)

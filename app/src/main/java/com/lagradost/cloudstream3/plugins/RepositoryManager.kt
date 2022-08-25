@@ -84,8 +84,8 @@ object RepositoryManager {
             // Normal parsed function not working?
             // return response.parsedSafe()
             tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
-        } catch (e : Exception) {
-            logError(e)
+        } catch (t : Throwable) {
+            logError(t)
             emptyList()
         }
     }

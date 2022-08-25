@@ -127,8 +127,8 @@ fun CoroutineScope.launchSafe(
     val obj: suspend CoroutineScope.() -> Unit = {
         try {
             block()
-        } catch (e: Exception) {
-            logError(e)
+        } catch (throwable: Throwable) {
+            logError(throwable)
         }
     }
 

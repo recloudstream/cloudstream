@@ -246,8 +246,8 @@ class SyncViewModel : ViewModel() {
         if (syncs.containsKey(aniListApi.idPrefix)) {
             try { // swap can throw error
                 Collections.swap(current, current.indexOfFirst { it.first == aniListApi.idPrefix }, 0)
-            } catch (e : Exception) {
-                logError(e)
+            } catch (t : Throwable) {
+                logError(t)
             }
         }
 

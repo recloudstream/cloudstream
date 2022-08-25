@@ -53,8 +53,8 @@ class CenterZoomLayoutManager : LinearLayoutManager {
                             largestTag = tag
                         }
                     }
-                } catch (e : Exception) {
-                    logError(e)
+                } catch (t : Throwable) {
+                    logError(t)
                 }
             }
         }

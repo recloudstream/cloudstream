@@ -236,8 +236,8 @@ object APIHolder {
         val defaultSet = default.map { it.toString() }.toSet()
         val currentPrefMedia = try {
             PreferenceManager.getDefaultSharedPreferences(this)
-            .getStringSet(this.getString(R.string.prefer_media_type_key), defaultSet)
-            ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }
+                .getStringSet(this.getString(R.string.prefer_media_type_key), defaultSet)
+                ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }
         } catch (e: Throwable) {
             null
         } ?: default
@@ -891,8 +891,11 @@ data class TvSeriesSearchResponse(
 ) : SearchResponse
 
 data class TrailerData(
-    var mirros: List<ExtractorLink>,
-    var subtitles: List<SubtitleFile> = emptyList(),
+    val extractorUrl: String,
+    val referer: String?,
+    val raw: Boolean,
+    //var mirros: List<ExtractorLink>,
+    //var subtitles: List<SubtitleFile> = emptyList(),
 )
 
 interface LoadResponse {
@@ -971,7 +974,8 @@ interface LoadResponse {
             addRaw: Boolean = false
         ) {
             if (!isTrailersEnabled || trailerUrl.isNullOrBlank()) return
-            val links = arrayListOf<ExtractorLink>()
+            this.trailers.add(TrailerData(trailerUrl, referer, addRaw))
+            /*val links = arrayListOf<ExtractorLink>()
             val subs = arrayListOf<SubtitleFile>()
             if (!loadExtractor(
                     trailerUrl,
@@ -995,12 +999,13 @@ interface LoadResponse {
                 )
             } else {
                 this.trailers.add(TrailerData(links, subs))
-            }
+            }*/
         }
 
+        /*
         fun LoadResponse.addTrailer(newTrailers: List<ExtractorLink>) {
             trailers.addAll(newTrailers.map { TrailerData(listOf(it)) })
-        }
+        }*/
 
         suspend fun LoadResponse.addTrailer(
             trailerUrls: List<String>?,
@@ -1008,7 +1013,8 @@ interface LoadResponse {
             addRaw: Boolean = false
         ) {
             if (!isTrailersEnabled || trailerUrls == null) return
-            val trailers = trailerUrls.filter { it.isNotBlank() }.apmap { trailerUrl ->
+            trailers.addAll(trailerUrls.map { TrailerData(it, referer, addRaw) })
+            /*val trailers = trailerUrls.filter { it.isNotBlank() }.apmap { trailerUrl ->
                 val links = arrayListOf<ExtractorLink>()
                 val subs = arrayListOf<SubtitleFile>()
                 if (!loadExtractor(
@@ -1031,7 +1037,7 @@ interface LoadResponse {
                     links to subs
                 }
             }.map { (links, subs) -> TrailerData(links, subs) }
-            this.trailers.addAll(trailers)
+            this.trailers.addAll(trailers)*/
         }
 
         fun LoadResponse.addImdbId(id: String?) {

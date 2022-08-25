@@ -148,10 +148,10 @@ class DownloadHeaderAdapter(
                             ),
                             mbString
                         )
-                } catch (e : Exception) {
+                } catch (t : Throwable) {
                     // you probably formatted incorrectly
                     extraInfo.text = "Error"
-                    logError(e)
+                    logError(t)
                 }
 
 
