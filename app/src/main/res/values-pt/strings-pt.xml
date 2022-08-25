@@ -22,7 +22,7 @@
     <string name="title_home">Início</string>
     <string name="title_search">Pesquisa</string>
     <string name="title_downloads">Transferências</string>
-    <string name="title_settings">Configurações</string>
+    <string name="title_settings">Opções</string>
 	
     <string name="search_hint">Procurar…</string>
 	<string name="search_hint_site" formatted="true">Procurar em %s…</string>
@@ -61,7 +61,7 @@
     <string name="download_failed">Transferência Falhou</string>
     <string name="download_canceled">Transferência Cancelada</string>
     <string name="download_done">Transferência Completa</string>
-	<string name="stream">Transmitir</string>
+	<string name="stream">Stream</string>
 	
     <string name="error_loading_links_toast">Erro a Carregar Links</string>
     <string name="download_storage_text">Armazenamento Interno</string>
@@ -189,7 +189,7 @@
     <string name="benene">Dar um benene aos devs</string>
     <string name="benene_des">Benene dada</string>
 	
-    <string name="app_language">Linguagem da App</string>
+    <string name="app_language">Idioma da App</string>
 	
     <string name="no_chromecast_support_toast">Este fornecedor não tem suporte para Chromecast</string>
     <string name="no_links_found_toast">Nenhum Link Encontrado</string>
@@ -422,11 +422,52 @@
     <string name="resolution_and_title">Resolução e título</string>
     <string name="title">Título</string>
     <string name="resolution">Resolução</string>
-    <string name="error_invalid_id">Id invalida</string>
-    <string name="error_invalid_data">Dado invalido</string>
+    <string name="error_invalid_id">Id inválida</string>
+    <string name="error_invalid_data">Dado inválido</string>
+
+<string name="error_invalid_url">URL inválido</string>
     <string name="error">Erro</string>
     <string name="subtitles_remove_captions">Remover legendas ocultas(CC) das legendas</string>
     <string name="subtitles_remove_bloat">Remover bloat das legendas</string>
+
+<string name="subtitles_filter_lang">Filtrar por linguagem preferida</string>
     <string name="extras">Extras</string>
     <string name="trailer">Trailer</string>
+
+    <string name="next">Próximo</string>
+    <string name="provider_languages_tip">Ver vídeos nestas linguagens</string>
+    <string name="previous">Anterior</string>
+    <string name="skip_setup">Saltar setup</string>
+
+    <string name="app_layout_subtext">Change the look of the app to suit your device</string>
+    <string name="crash_reporting_title">Crash reporting</string>
+    <string name="preferred_media_subtext">What do you want to see</string>
+    <string name="setup_done">Feito</string>
+    <string name="extensions">Extensões</string>
+    <string name="add_repository">Adicionar repositório</string>
+    <string name="repository_name_hint">Nome do repositório</string>
+    <string name="repository_url_hint">URL do repositório</string>
+    <string name="plugin_loaded">Plugin Carregado</string>
+    <string name="plugin_deleted">Plugin Apagado</string>
+    <string name="plugin_load_fail" formatted="true">Falha ao carregar %s</string>
+
+    <string name="batch_download_start_format" formatted="true">Iniciada a transferência %d %s</string>
+    <string name="batch_download_finish_format" formatted="true">Transferido %d %s com sucesso</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">Tudo %s já transferido</string>
+    <string name="batch_download">Transferência em batch</string>
+    <string name="plugin_singular">plugin</string>
+    <string name="plugin">plugins</string>
+    <string name="delete_repository_plugins">Isto irá apagar todos os repositórios de plugins</string>
+    <string name="delete_repository">Apagar repositório</string>
+    <string name="setup_extensions_subtext">Transferir lista de sites a usar</string>
+    <string name="plugins_downloaded" formatted="true">Transferido: %d</string>
+    <string name="plugins_disabled" formatted="true">Desativado: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Não transferido: %d</string>
+    <string name="blank_repo_message">Adicionar um repositório para instalar extensões de sites</string>
+    <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
+    <string name="view_public_repositories_button_short">Lista pública</string>
+    <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
+
+    <string name="download_all_plugins_from_repo">Transferir todos os plugins deste repositório?</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Desativado)</string>
 </resources>
