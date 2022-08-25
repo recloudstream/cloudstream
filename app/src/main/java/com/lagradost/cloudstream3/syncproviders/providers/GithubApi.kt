@@ -29,7 +29,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
     override val name = "Github"
     override val icon = R.drawable.ic_github_logo
     override val requiresPassword = true
-    override val createAccountUrl = "https://github.com/settings/tokens/new"
+    override val createAccountUrl = "https://github.com/settings/tokens/new?description=Cloudstream+Backup&scopes=gist"
 
     data class GithubOAuthEntity(
         var repoUrl: String,
