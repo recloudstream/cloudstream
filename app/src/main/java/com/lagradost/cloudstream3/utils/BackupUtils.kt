@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
@@ -30,12 +31,9 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_S
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
-import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import com.lagradost.cloudstream3.utils.BackupUtils.restore
-import com.lagradost.cloudstream3.utils.BackupUtils.restorePromptGithub
 
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
@@ -54,7 +52,6 @@ import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
 import java.text.SimpleDateFormat
 import java.util.*
-
 object BackupUtils {
 
     /**
@@ -297,7 +294,7 @@ object BackupUtils {
     }
 
 
-    fun FragmentActivity.BackupGithub(){
+    fun FragmentActivity.backupGithub(){
         val backup = this.getBackup()
         ioSafe {
             val tmpDir = createTempDir()
@@ -339,20 +336,10 @@ object BackupUtils {
 
     fun FragmentActivity.restorePromptGithub() =
         ioSafe {
-            val tmpDir = createTempDir()
-            val gitUrl = githubApi.getLatestLoginData()?.email ?: throw IllegalArgumentException ("Requires Username")
-            val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
-            Git.cloneRepository()
-                .setURI(gitUrl)
-                .setDirectory(tmpDir)
-                .setTimeout(30)
-                .setCredentialsProvider(
-                    UsernamePasswordCredentialsProvider(token, "")
-                )
-                .call()
-            val jsondata = tmpDir.listFiles()?.first { it.name != ".git" }?.readText().toString()
-            val data = parseJson<BackupFile>(jsondata?: "")
-            tmpDir.deleteRecursively()
+            val gitUrl = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
+            val jsondata = app.get(gitUrl).text
+            val dataurl = parseJson<GithubApi.gistsElements>(jsondata ?: "").files.values.first().rawUrl
+            val data = parseJson<BackupFile>(app.get(dataurl).text)
             this@restorePromptGithub.restore(
                 data,
                 restoreSettings = true,
@@ -360,3 +347,4 @@ object BackupUtils {
             )
         }
 }
+

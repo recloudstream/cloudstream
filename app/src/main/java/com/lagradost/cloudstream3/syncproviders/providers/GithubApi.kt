@@ -35,7 +35,8 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
         var repoUrl: String,
         var token: String,
         var userName: String,
-        var userAvatar: String
+        var userAvatar: String,
+        var gistUrl: String
     )
     companion object {
         const val GITHUB_USER_KEY: String = "github_user" // user data like profile
@@ -79,17 +80,18 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
         tmpDir.deleteRecursively()
     }
 
-    private data class gistsElements (
+    data class gistsElements (
         @JsonProperty("git_pull_url") val gitUrl: String,
+        @JsonProperty("url") val gistUrl:String,
         @JsonProperty("files") val files: Map<String, File>,
         @JsonProperty("owner") val owner: OwnerData
     )
-    private data class OwnerData(
+    data class OwnerData(
         @JsonProperty("login") val userName: String,
         @JsonProperty("avatar_url") val userAvatar : String
     )
     data class File (
-        @JsonProperty("filename") val filename: String
+        @JsonProperty("raw_url") val rawUrl: String
     )
 
     private suspend fun initLogin(githubToken: String): Boolean{
@@ -122,7 +124,8 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
                         return false
                     },
                     userName = it.owner.userName,
-                    userAvatar = it.owner.userAvatar
+                    userAvatar = it.owner.userAvatar,
+                    gistUrl = it.gistUrl
                     ))
             }
             return true
@@ -135,7 +138,8 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
                         return false
                     },
                     userName = it.owner.userName,
-                    userAvatar = it.owner.userAvatar
+                    userAvatar = it.owner.userAvatar,
+                    gistUrl = it.gistUrl
                     ))
                 return true
             }
@@ -159,7 +163,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
 
     override fun getLatestLoginData(): InAppAuthAPI.LoginData? {
         val current = getAuthKey() ?: return null
-        return InAppAuthAPI.LoginData(email = current.repoUrl, password = current.token, username = current.userName)
+        return InAppAuthAPI.LoginData(email = current.repoUrl, password = current.token, username = current.userName, server = current.gistUrl)
     }
     override suspend fun initialize() {
         currentSession = getAuthKey()
