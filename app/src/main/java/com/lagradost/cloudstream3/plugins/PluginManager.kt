@@ -193,13 +193,7 @@ object PluginManager {
      **/
     fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
         // Load all plugins as fast as possible!
-        (getPluginsOnline()).toList().apmap { pluginData ->
-            loadPlugin(
-                activity,
-                File(pluginData.filePath),
-                pluginData
-            )
-        }
+        loadAllOnlinePlugins(activity)
 
         ioSafe {
             afterPluginsLoadedEvent.invoke(true)
