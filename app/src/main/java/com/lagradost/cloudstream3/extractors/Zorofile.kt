@@ -1,10 +1,11 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.APIHolder
+import com.lagradost.cloudstream3.APIHolder.getCaptchaToken
 import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
@@ -14,20 +15,23 @@ class Zorofile : ExtractorApi() {
     override val mainUrl = "https://zorofile.com"
     override val requiresReferer = true
 
-    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
+    override suspend fun getUrl(
+        url: String,
+        referer: String?,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
         val id = url.split("?").first().split("/").last()
         val token = app.get(
             url,
             referer = referer
         ).document.select("button.g-recaptcha").attr("data-sitekey").let { captchaKey ->
-            APIHolder.getCaptchaToken(
+            getCaptchaToken(
                 url,
                 captchaKey,
                 referer = referer
             )
         } ?: throw ErrorLoadingException("can't bypass captcha")
-
-        val sources = mutableListOf<ExtractorLink>()
 
         val data = app.post(
             "$mainUrl/dl",
@@ -41,10 +45,6 @@ class Zorofile : ExtractorApi() {
             referer = url,
             headers = mapOf(
                 "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-//                "Accept-Encoding" to "gzip, deflate, br",
-//                "Accept-Language" to "en-US,en;q=0.5",
-//                "Connection" to "keep-alive",
-                "Content-Length" to "626",
                 "Content-Type" to "application/x-www-form-urlencoded",
                 "Origin" to mainUrl,
                 "Sec-Fetch-Dest" to "iframe",
@@ -57,17 +57,16 @@ class Zorofile : ExtractorApi() {
             ?.substringAfter("sources: [")?.substringBefore("],")?.replace("src", "\"src\"")
             ?.replace("type", "\"type\"")
 
-        AppUtils.tryParseJson<Sources>("$data")?.let { res ->
-            M3u8Helper.generateM3u8(
+        tryParseJson<Sources>("$data")?.let { res ->
+            return M3u8Helper.generateM3u8(
                 name,
                 res.src ?: return@let,
                 "$mainUrl/",
                 headers = mapOf(
                     "Origin" to mainUrl,
                 )
-            ).forEach { m3uData -> sources.add(m3uData) }
+            ).forEach(callback)
         }
-        return sources
     }
 
     private data class Sources(
