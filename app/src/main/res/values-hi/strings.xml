@@ -47,7 +47,7 @@
     <string name="popup_resume_download">डाउनलोड फिर शुरू करे</string>
     <string name="popup_pause_download">डाउनलोड रोके</string>
 
-    <string name="pref_disable_acra">Disable automatic bug reporting</string>
+    <string name="pref_disable_acra">स्वचालित त्रुटि रिपोर्ट रोकें</string>
     <string name="home_more_info">और जानकारी</string>
     <string name="home_expanded_hide">छिपाये</string>
     <string name="home_play">चलाये</string>
@@ -149,7 +149,7 @@
     <string name="video_lock">ताला</string>
     <string name="video_aspect_ratio_resize">आकार</string>
     <string name="video_source">सूत्र</string>
-    <string name="video_skip_op">OP टालें</string>
+    <string name="video_skip_op">OP स्किप करें</string>
 
     <string name="dont_show_again">फिरसे ना दिखाए</string>
     <string name="update">अपडेट</string>
