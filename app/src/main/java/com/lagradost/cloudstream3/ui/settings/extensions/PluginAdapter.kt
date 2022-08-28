@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.GlideApp
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
@@ -36,8 +37,9 @@ class PluginAdapter(
     private val plugins: MutableList<PluginViewData> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val layout = if(isTrueTvSettings()) R.layout.repository_item_tv else R.layout.repository_item
         return PluginViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.repository_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(layout, parent, false)
         )
     }
 
@@ -123,7 +125,6 @@ class PluginAdapter(
             itemView.action_button?.setOnClickListener {
                 iconClickCallback.invoke(data.plugin)
             }
-            testFindClosestBase2()
             //if (itemView.context?.isTrueTvSettings() == false) {
             //    val siteUrl = metadata.repositoryUrl
             //    if (siteUrl != null && siteUrl.isNotBlank() && siteUrl != "NONE") {

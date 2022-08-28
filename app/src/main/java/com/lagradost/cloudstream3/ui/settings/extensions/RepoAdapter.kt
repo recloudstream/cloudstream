@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import kotlinx.android.synthetic.main.repository_item.view.*
 
 class RepoAdapter(
@@ -19,8 +20,9 @@ class RepoAdapter(
     private val repositories: MutableList<RepositoryData> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val layout = if(isTrueTvSettings()) R.layout.repository_item_tv else R.layout.repository_item
         return RepoViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.repository_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(layout, parent, false)
         )
     }
 

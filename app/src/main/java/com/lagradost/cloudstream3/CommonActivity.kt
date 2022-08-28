@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
-import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.widget.TextView
@@ -20,12 +19,12 @@ import com.google.android.gms.cast.framework.CastSession
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
 import com.lagradost.cloudstream3.ui.result.UiText
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import kotlinx.coroutines.currentCoroutineContext
 import org.schabi.newpipe.extractor.NewPipe
 import java.util.*
 
@@ -128,7 +127,7 @@ object CommonActivity {
                     act.hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
 
         act.updateLocale()
-
+        act.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
     }
 

@@ -44,7 +44,7 @@ object SingleSelectionHelper {
     ) {
         if (this == null) return
 
-        if (this.isTvSettings()) {
+        if (isTvSettings()) {
             val builder =
                 AlertDialog.Builder(this, R.style.AlertDialogCustom)
                     .setView(R.layout.options_popup_tv)

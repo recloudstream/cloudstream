@@ -993,7 +993,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         savedInstanceState: Bundle?
     ): View? {
         // this is used instead of layout-television to follow the settings and some TV devices are not classified as TV for some reason
-        isTv = context?.isTvSettings() == true
+        isTv = isTvSettings()
         layout =
             if (isTv) R.layout.fragment_player_tv else R.layout.fragment_player
 

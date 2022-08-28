@@ -117,7 +117,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
                             dialog.login_username_input to api.requiresUsername
                         )
 
-                        if (activity.isTvSettings()) {
+                        if (isTvSettings()) {
                             visibilityMap.forEach { (input, isVisible) ->
                                 input.isVisible = isVisible
 

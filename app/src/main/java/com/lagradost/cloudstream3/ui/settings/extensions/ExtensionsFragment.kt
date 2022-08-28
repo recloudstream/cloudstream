@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,12 +24,14 @@ import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.result.setText
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppUtils.downloadAllPluginsDialog
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.widget.LinearRecycleViewLayoutManager
 import kotlinx.android.synthetic.main.add_repo_input.*
 import kotlinx.android.synthetic.main.fragment_extensions.*
 import kotlinx.android.synthetic.main.fragment_extensions.list_repositories
@@ -119,9 +122,15 @@ class ExtensionsFragment : Fragment() {
             (repo_recycler_view?.adapter as? RepoAdapter)?.updateList(it)
         }
 
+        repo_recycler_view?.apply {
+            context?.let { ctx ->
+                layoutManager = LinearRecycleViewLayoutManager(ctx, nextFocusUpId, nextFocusDownId)
+            }
+        }
+
         list_repositories?.setOnClickListener {
             // Open webview on tv if browser fails
-            val isTv = it.context.isTvSettings()
+            val isTv = isTvSettings()
             openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
 
             // Set clipboard on TV because the browser might not exist or work properly
@@ -170,9 +179,9 @@ class ExtensionsFragment : Fragment() {
             )
         }
 
-        add_repo_button?.setOnClickListener {
+        val addRepositoryClick = View.OnClickListener {
             val builder =
-                AlertDialog.Builder(context ?: return@setOnClickListener, R.style.AlertDialogCustom)
+                AlertDialog.Builder(context ?: return@OnClickListener, R.style.AlertDialogCustom)
                     .setView(R.layout.add_repo_input)
 
             val dialog = builder.create()
@@ -193,8 +202,7 @@ class ExtensionsFragment : Fragment() {
 
             dialog.list_repositories?.setOnClickListener {
                 // Open webview on tv if browser fails
-                val isTv = it.context.isTvSettings()
-                openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
+                openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
             }
 
 //            dialog.text2?.text = provider.name
@@ -222,6 +230,12 @@ class ExtensionsFragment : Fragment() {
                 dialog.dismissSafe(activity)
             }
         }
+
+        val isTv = isTrueTvSettings()
+        add_repo_button?.isGone = isTv
+        add_repo_button_imageview_holder?.isVisible = isTv
+        add_repo_button?.setOnClickListener(addRepositoryClick)
+        add_repo_button_imageview?.setOnClickListener(addRepositoryClick)
 
         reloadRepositories()
     }
