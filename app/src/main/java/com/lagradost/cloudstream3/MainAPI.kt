@@ -315,6 +315,10 @@ data class ProvidersInfoJson(
     @JsonProperty("status") var status: Int,
 )
 
+data class SettingsJson(
+    @JsonProperty("enableAdult") var enableAdult: Boolean = false,
+)
+
 
 data class MainPageData(
     val name: String,
@@ -354,6 +358,7 @@ fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): Hom
 abstract class MainAPI {
     companion object {
         var overrideData: HashMap<String, ProvidersInfoJson>? = null
+        var settingsForProvider: SettingsJson = SettingsJson()
     }
 
     fun init() {

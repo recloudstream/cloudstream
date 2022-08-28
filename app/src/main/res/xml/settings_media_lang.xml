@@ -18,4 +18,11 @@
             android:key="@string/display_sub_key"
             android:title="@string/display_subbed_dubbed_settings"
             android:icon="@drawable/ic_outline_voice_over_off_24" />
+
+    <SwitchPreference
+            android:key="@string/enable_nsfw_on_providers_key"
+            android:title="@string/enable_nsfw_on_providers"
+            android:icon="@drawable/ic_baseline_extension_24"
+            android:summary="@string/apply_on_restart"
+            app:defaultValue="false"/>
 </PreferenceScreen>

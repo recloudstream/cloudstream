@@ -455,6 +455,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        
+        val settingsForProvider = SettingsJson()
+        settingsForProvider.enableAdult = settingsManager.getBoolean(getString(R.string.enable_nsfw_on_providers_key), false)
+
+        MainAPI.settingsForProvider = settingsForProvider
 
         loadThemes(this)
         updateLocale()
