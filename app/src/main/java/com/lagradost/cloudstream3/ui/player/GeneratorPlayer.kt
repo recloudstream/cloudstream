@@ -113,12 +113,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {
         viewModel.addSubtitles(subtitles.toSet())
-
-        val tracks = player.getExoplayerTracks().allTracks
-        val videoTracks = tracks.filter {  it.trackType == TRACK_TYPE_VIDEO }.getFormats().size
-        val audioTracks = tracks.filter {  it.trackType == TRACK_TYPE_AUDIO }.getFormats().size
-
-        player_tracks_btt?.isVisible = videoTracks > 1 || audioTracks > 1
+        val tracks = player.getVideoTracks()
+        player_tracks_btt?.isVisible = tracks.allVideoTracks.size > 1 || tracks.allAudioTracks.size > 1
     }
 
     private fun noSubtitles(): Boolean {
@@ -682,37 +678,19 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    /**
-     * Gets all supported formats in a list
-     * */
-    private fun List<TracksInfo.TrackGroupInfo>.getFormats(): List<Format> {
-        return this.map {
-            (0 until it.trackGroup.length).mapNotNull { i ->
-                if (it.isSupported)
-                    it.trackGroup.getFormat(i) // to it.isSelected
-                else null
-            }
-        }.flatten()
-    }
-
     override fun showTracksDialogue() {
         try {
             //println("CURRENT SELECTED :$currentSelectedSubtitles of $currentSubs")
             context?.let { ctx ->
-                val tracks = player.getExoplayerTracks()
+                val tracks = player.getVideoTracks()
 
                 val isPlaying = player.getIsPlaying()
                 player.handleEvent(CSPlayerEvent.Pause)
 
-                val currentVideoTracks = tracks.allTracks.filter {
-                    it.trackType == TRACK_TYPE_VIDEO
-                }.getFormats().sortedBy {
-                    -it.height
+                val currentVideoTracks = tracks.allVideoTracks.sortedBy {
+                    it.height?.times(-1)
                 }
-
-                val currentAudioTracks = tracks.allTracks.filter {
-                    it.trackType == TRACK_TYPE_AUDIO
-                }.getFormats()
+                val currentAudioTracks = tracks.allAudioTracks
 
                 val trackBuilder = AlertDialog.Builder(ctx, R.style.AlertDialogCustomBlack)
                     .setView(R.layout.player_select_tracks)
@@ -747,10 +725,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                 videosList.adapter = videosArrayAdapter
 
                 // Sometimes the data is not the same because some data gets resolved at different stages i think
-                var videoIndex = currentVideoTracks.indexOf(tracks.currentVideoFormat).takeIf {
+                var videoIndex = currentVideoTracks.indexOf(tracks.currentVideoTrack).takeIf {
                     it != -1
                 } ?: currentVideoTracks.indexOfFirst {
-                    tracks.currentVideoFormat?.id == it.id
+                    tracks.currentVideoTrack?.id == it.id
                 }
 
                 videosList.setSelection(videoIndex)
@@ -766,10 +744,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 //                    selectTracksDialog = null
                 }
 
-                var audioIndexStart = currentAudioTracks.indexOf(tracks.currentAudioFormat).takeIf {
+                var audioIndexStart = currentAudioTracks.indexOf(tracks.currentAudioTrack).takeIf {
                     it != -1
                 } ?: currentVideoTracks.indexOfFirst {
-                    tracks.currentAudioFormat?.id == it.id
+                    tracks.currentAudioTrack?.id == it.id
                 }
 
                 val audioArrayAdapter =
@@ -795,7 +773,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 tracksDialog.apply_btt?.setOnClickListener {
-                    player.setExoplayerAudioTrack(
+                    player.setPreferredAudioTrack(
                         currentAudioTracks.getOrNull(audioIndexStart)?.language
                     )
 
@@ -803,7 +781,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val width = currentVideo?.width ?: NO_VALUE
                     val height = currentVideo?.height ?: NO_VALUE
                     if (width != NO_VALUE && height != NO_VALUE) {
-                        player.setExoplayerVideoSize(width, height)
+                        player.setMaxVideoSize(width, height)
                     }
 
                     tracksDialog.dismissSafe(activity)

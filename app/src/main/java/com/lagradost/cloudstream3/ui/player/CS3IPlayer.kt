@@ -8,6 +8,8 @@ import android.util.Log
 import android.widget.FrameLayout
 import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO
+import com.google.android.exoplayer2.C.TRACK_TYPE_VIDEO
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.*
@@ -212,7 +214,7 @@ class CS3IPlayer : IPlayer {
 
     var currentSubtitles: SubtitleData? = null
 
-    override fun setExoplayerVideoSize(width: Int, height: Int) {
+    override fun setMaxVideoSize(width: Int, height: Int) {
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
             ?.setMaxVideoSize(width, height)
@@ -220,7 +222,7 @@ class CS3IPlayer : IPlayer {
             ?: return
     }
 
-    override fun setExoplayerAudioTrack(trackLanguage: String?) {
+    override fun setPreferredAudioTrack(trackLanguage: String?) {
         preferredAudioTrackLanguage = trackLanguage
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
@@ -229,11 +231,52 @@ class CS3IPlayer : IPlayer {
             ?: return
     }
 
-    override fun getExoplayerTracks(): ExoplayerTracks {
-        return ExoplayerTracks(
-            exoPlayer?.videoFormat,
-            exoPlayer?.audioFormat,
-            exoPlayer?.currentTracksInfo?.trackGroupInfos ?: emptyList()
+
+    /**
+     * Gets all supported formats in a list
+     * */
+    private fun List<TracksInfo.TrackGroupInfo>.getFormats(): List<Format> {
+        return this.map {
+            (0 until it.trackGroup.length).mapNotNull { i ->
+                if (it.isSupported)
+                    it.trackGroup.getFormat(i) // to it.isSelected
+                else null
+            }
+        }.flatten()
+    }
+
+    private fun Format.toAudioTrack(): AudioTrack {
+        return AudioTrack(
+            this.id,
+            this.label,
+//            isPlaying,
+            this.language
+        )
+    }
+
+    private fun Format.toVideoTrack(): VideoTrack {
+        return VideoTrack(
+            this.id,
+            this.label,
+//            isPlaying,
+            this.language,
+            this.width,
+            this.height
+        )
+    }
+
+    override fun getVideoTracks(): CurrentTracks {
+        val allTracks = exoPlayer?.currentTracksInfo?.trackGroupInfos ?: emptyList()
+        val videoTracks = allTracks.filter { it.trackType == TRACK_TYPE_VIDEO }.getFormats()
+            .map { it.toVideoTrack() }
+        val audioTracks = allTracks.filter { it.trackType == TRACK_TYPE_AUDIO }.getFormats()
+            .map { it.toAudioTrack() }
+
+        return CurrentTracks(
+            exoPlayer?.videoFormat?.toVideoTrack(),
+            exoPlayer?.audioFormat?.toAudioTrack(),
+            videoTracks,
+            audioTracks
         )
     }
 

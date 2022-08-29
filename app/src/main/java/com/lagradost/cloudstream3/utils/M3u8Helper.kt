@@ -117,6 +117,7 @@ class M3u8Helper {
     }
 
     suspend fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean? = true): List<M3u8Stream> {
+//        return listOf(m3u8)
         val list = mutableListOf<M3u8Stream>()
 
         val m3u8Parent = getParentLink(m3u8.streamUrl)

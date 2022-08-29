@@ -1,8 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
-import com.google.android.exoplayer2.Format
-import com.google.android.exoplayer2.TracksInfo
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorUri
@@ -48,10 +46,39 @@ enum class CSPlayerLoading {
     //IsDone,
 }
 
-data class ExoplayerTracks(
-    val currentVideoFormat: Format?,
-    val currentAudioFormat: Format?,
-    val allTracks: List<TracksInfo.TrackGroupInfo>
+
+interface Track {
+    /**
+     * Unique among the class, used to check which track is used.
+     * VideoTrack and AudioTrack can have the same id
+     **/
+    val id: String?
+    val label: String?
+//    val isCurrentlyPlaying: Boolean
+    val language: String?
+}
+
+data class VideoTrack(
+    override val id: String?,
+    override val label: String?,
+//    override val isCurrentlyPlaying: Boolean,
+    override val language: String?,
+    val width: Int?,
+    val height: Int?,
+) : Track
+
+data class AudioTrack(
+    override val id: String?,
+    override val label: String?,
+//    override val isCurrentlyPlaying: Boolean,
+    override val language: String?,
+) : Track
+
+data class CurrentTracks(
+    val currentVideoTrack: VideoTrack?,
+    val currentAudioTrack: AudioTrack?,
+    val allVideoTracks: List<VideoTrack>,
+    val allAudioTracks: List<AudioTrack>,
 )
 
 class InvalidFileException(msg: String) : Exception(msg)
@@ -131,11 +158,11 @@ interface IPlayer {
     /** Get if player is actually used */
     fun isActive(): Boolean
 
-    fun getExoplayerTracks(): ExoplayerTracks
+    fun getVideoTracks(): CurrentTracks
 
     /** If no parameters are set it'll default to no set size */
-    fun setExoplayerVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE)
+    fun setMaxVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE)
 
     /** If no trackLanguage is set it'll default to first track */
-    fun setExoplayerAudioTrack(trackLanguage: String?)
+    fun setPreferredAudioTrack(trackLanguage: String?)
 }
