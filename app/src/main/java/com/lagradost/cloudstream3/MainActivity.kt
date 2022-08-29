@@ -183,7 +183,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_settings_updates,
             R.id.navigation_settings_ui,
             R.id.navigation_settings_account,
-            R.id.navigation_settings_lang,
+            R.id.navigation_settings_providers,
             R.id.navigation_settings_general,
             R.id.navigation_settings_extensions,
             R.id.navigation_settings_plugins,

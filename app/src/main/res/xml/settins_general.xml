@@ -2,6 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
+        android:key="@string/locale_key"
+        android:title="@string/app_language"
+        android:icon="@drawable/ic_baseline_language_24" />
+
+    <Preference
             android:key="@string/override_site_key"
             android:title="@string/add_site_pref"
             android:summary="@string/add_site_summary"

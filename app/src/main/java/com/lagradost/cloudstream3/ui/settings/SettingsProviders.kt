@@ -20,54 +20,18 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 
-fun getCurrentLocale(context: Context): String {
-    val res = context.resources
-    // Change locale settings in the app.
-    // val dm = res.displayMetrics
-    val conf = res.configuration
-    return conf?.locale?.language ?: "en"
-}
 
-// idk, if you find a way of automating this it would be great
-// https://www.iemoji.com/view/emoji/1794/flags/antarctica
-// Emoji Character Encoding Data --> C/C++/Java Src
-// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
-val appLanguages = arrayListOf(
-    Triple("", "Spanish", "es"),
-    Triple("", "English", "en"),
-    Triple("", "Viet Nam", "vi"),
-    Triple("", "Dutch", "nl"),
-    Triple("", "French", "fr"),
-    Triple("", "Greek", "el"),
-    Triple("", "Swedish", "sv"),
-    Triple("", "Tagalog", "tl"),
-    Triple("", "Polish", "pl"),
-    Triple("", "Hindi", "hi"),
-    Triple("", "Malayalam", "ml"),
-    Triple("", "Norsk", "no"),
-    Triple("", "German", "de"),
-    Triple("", "Arabic", "ar"),
-    Triple("", "Turkish", "tr"),
-    Triple("", "Macedonian", "mk"),
-    Triple("\uD83C\uDDF5\uD83C\uDDF9", "Portuguese", "pt"),
-    Triple("\uD83C\uDDE7\uD83C\uDDF7", "Brazilian Portuguese", "bp"),
-    Triple("", "Romanian", "ro"),
-    Triple("", "Italian", "it"),
-    Triple("", "Chinese", "zh"),
-    Triple("\uD83C\uDDEE\uD83C\uDDE9", "Indonesian", "in"),
-    Triple("", "Czech", "cs"),
-).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
-class SettingsLang : PreferenceFragmentCompat() {
+class SettingsProviders : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpToolbar(R.string.category_preferred_media_and_lang)
+        setUpToolbar(R.string.category_providers)
         setPaddingBottom()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
-        setPreferencesFromResource(R.xml.settings_media_lang, rootKey)
+        setPreferencesFromResource(R.xml.settings_providers, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         getPref(R.string.display_sub_key)?.setOnPreferenceClickListener {
@@ -120,34 +84,6 @@ class SettingsLang : PreferenceFragmentCompat() {
                 //(context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
 
-            return@setOnPreferenceClickListener true
-        }
-
-        getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
-            val tempLangs = appLanguages.toMutableList()
-            //if (beneneCount > 100) {
-            //    tempLangs.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))
-            //}
-            val current = getCurrentLocale(pref.context)
-            val languageCodes = tempLangs.map { (_, _, iso) -> iso }
-            val languageNames = tempLangs.map { (emoji, name, iso) ->
-                val flag = emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
-                "$flag $name"
-            }
-            val index = languageCodes.indexOf(current)
-
-            activity?.showDialog(
-                languageNames, index, getString(R.string.app_language), true, { }
-            ) { languageIndex ->
-                try {
-                    val code = languageCodes[languageIndex]
-                    CommonActivity.setLocale(activity, code)
-                    settingsManager.edit().putString(getString(R.string.locale_key), code).apply()
-                    activity?.recreate()
-                } catch (e: Exception) {
-                    logError(e)
-                }
-            }
             return@setOnPreferenceClickListener true
         }
 

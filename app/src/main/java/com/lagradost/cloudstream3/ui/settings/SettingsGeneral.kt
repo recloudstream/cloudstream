@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -17,6 +18,7 @@ import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
@@ -30,6 +32,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpTo
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
@@ -38,6 +41,44 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import kotlinx.android.synthetic.main.add_remove_sites.*
 import kotlinx.android.synthetic.main.add_site_input.*
 import java.io.File
+
+fun getCurrentLocale(context: Context): String {
+    val res = context.resources
+    // Change locale settings in the app.
+    // val dm = res.displayMetrics
+    val conf = res.configuration
+    return conf?.locale?.language ?: "en"
+}
+
+// idk, if you find a way of automating this it would be great
+// https://www.iemoji.com/view/emoji/1794/flags/antarctica
+// Emoji Character Encoding Data --> C/C++/Java Src
+// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
+val appLanguages = arrayListOf(
+    Triple("", "Spanish", "es"),
+    Triple("", "English", "en"),
+    Triple("", "Viet Nam", "vi"),
+    Triple("", "Dutch", "nl"),
+    Triple("", "French", "fr"),
+    Triple("", "Greek", "el"),
+    Triple("", "Swedish", "sv"),
+    Triple("", "Tagalog", "tl"),
+    Triple("", "Polish", "pl"),
+    Triple("", "Hindi", "hi"),
+    Triple("", "Malayalam", "ml"),
+    Triple("", "Norsk", "no"),
+    Triple("", "German", "de"),
+    Triple("", "Arabic", "ar"),
+    Triple("", "Turkish", "tr"),
+    Triple("", "Macedonian", "mk"),
+    Triple("\uD83C\uDDF5\uD83C\uDDF9", "Portuguese", "pt"),
+    Triple("\uD83C\uDDE7\uD83C\uDDF7", "Brazilian Portuguese", "bp"),
+    Triple("", "Romanian", "ro"),
+    Triple("", "Italian", "it"),
+    Triple("", "Chinese", "zh"),
+    Triple("\uD83C\uDDEE\uD83C\uDDE9", "Indonesian", "in"),
+    Triple("", "Czech", "cs"),
+).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
 class SettingsGeneral : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,6 +135,35 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             return getKey<Array<CustomSite>>(USER_PROVIDER_API)?.toMutableList()
                 ?: mutableListOf()
         }
+
+        getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
+            val tempLangs = appLanguages.toMutableList()
+            //if (beneneCount > 100) {
+            //    tempLangs.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))
+            //}
+            val current = getCurrentLocale(pref.context)
+            val languageCodes = tempLangs.map { (_, _, iso) -> iso }
+            val languageNames = tempLangs.map { (emoji, name, iso) ->
+                val flag = emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
+                "$flag $name"
+            }
+            val index = languageCodes.indexOf(current)
+
+            activity?.showDialog(
+                languageNames, index, getString(R.string.app_language), true, { }
+            ) { languageIndex ->
+                try {
+                    val code = languageCodes[languageIndex]
+                    CommonActivity.setLocale(activity, code)
+                    settingsManager.edit().putString(getString(R.string.locale_key), code).apply()
+                    activity?.recreate()
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
 
         fun showAdd() {
             val providers = allProviders.distinctBy { it.javaClass }.sortedBy { it.name }
