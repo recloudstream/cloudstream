@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
+import com.google.android.exoplayer2.Format
+import com.google.android.exoplayer2.TracksInfo
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorUri
@@ -46,7 +48,13 @@ enum class CSPlayerLoading {
     //IsDone,
 }
 
-class InvalidFileException(msg : String) : Exception(msg)
+data class ExoplayerTracks(
+    val currentVideoFormat: Format?,
+    val currentAudioFormat: Format?,
+    val allTracks: List<TracksInfo.TrackGroupInfo>
+)
+
+class InvalidFileException(msg: String) : Exception(msg)
 
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
 const val STATE_RESUME_WINDOW = "resumeWindow"
@@ -73,8 +81,8 @@ interface IPlayer {
     fun seekTime(time: Long)
     fun seekTo(time: Long)
 
-    fun getSubtitleOffset() : Long // in ms
-    fun setSubtitleOffset(offset : Long) // in ms
+    fun getSubtitleOffset(): Long // in ms
+    fun setSubtitleOffset(offset: Long) // in ms
 
     fun initCallbacks(
         playerUpdated: (Any?) -> Unit,                              // attach player to view
@@ -89,6 +97,7 @@ interface IPlayer {
         subtitlesUpdates: (() -> Unit)? = null,                     // callback from player to inform that subtitles have updated in some way
         embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null, // callback from player to give all embedded subtitles
     )
+
     fun releaseCallbacks()
 
     fun updateSubtitleStyle(style: SaveCaptionStyle)
@@ -100,16 +109,16 @@ interface IPlayer {
         link: ExtractorLink? = null,
         data: ExtractorUri? = null,
         startPosition: Long? = null,
-        subtitles : Set<SubtitleData>,
-        subtitle : SubtitleData?,
-        autoPlay : Boolean? = true
+        subtitles: Set<SubtitleData>,
+        subtitle: SubtitleData?,
+        autoPlay: Boolean? = true
     )
 
     fun reloadPlayer(context: Context)
 
-    fun setActiveSubtitles(subtitles : Set<SubtitleData>)
-    fun setPreferredSubtitles(subtitle : SubtitleData?) : Boolean // returns true if the player requires a reload, null for nothing
-    fun getCurrentPreferredSubtitle() : SubtitleData?
+    fun setActiveSubtitles(subtitles: Set<SubtitleData>)
+    fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean // returns true if the player requires a reload, null for nothing
+    fun getCurrentPreferredSubtitle(): SubtitleData?
 
     fun handleEvent(event: CSPlayerEvent)
 
@@ -120,5 +129,13 @@ interface IPlayer {
     fun release()
 
     /** Get if player is actually used */
-    fun isActive() : Boolean
+    fun isActive(): Boolean
+
+    fun getExoplayerTracks(): ExoplayerTracks
+
+    /** If no parameters are set it'll default to no set size */
+    fun setExoplayerVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE)
+
+    /** If no trackLanguage is set it'll default to first track */
+    fun setExoplayerAudioTrack(trackLanguage: String?)
 }

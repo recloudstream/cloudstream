@@ -607,4 +607,7 @@
 
     <string name="download_all_plugins_from_repo">Download all plugins from this repository?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
+    <string name="tracks">Tracks</string>
+    <string name="audio_tracks">Audio tracks</string>
+    <string name="video_tracks">Video tracks</string>
 </resources>

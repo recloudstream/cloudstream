@@ -212,6 +212,30 @@ class CS3IPlayer : IPlayer {
 
     var currentSubtitles: SubtitleData? = null
 
+    override fun setExoplayerVideoSize(width: Int, height: Int) {
+        exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
+            ?.buildUpon()
+            ?.setMaxVideoSize(width, height)
+            ?.build()
+            ?: return
+    }
+
+    override fun setExoplayerAudioTrack(trackLanguage: String?) {
+        exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
+            ?.buildUpon()
+            ?.setPreferredAudioLanguage(trackLanguage)
+            ?.build()
+            ?: return
+    }
+
+    override fun getExoplayerTracks(): ExoplayerTracks {
+        return ExoplayerTracks(
+            exoPlayer?.videoFormat,
+            exoPlayer?.audioFormat,
+            exoPlayer?.currentTracksInfo?.trackGroupInfos ?: emptyList()
+        )
+    }
+
     /**
      * @return True if the player should be reloaded
      * */
@@ -465,6 +489,7 @@ class CS3IPlayer : IPlayer {
             trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(context)
                 // .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
                 .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
+                .setTunnelingEnabled(true)
                 .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
                 .clearSelectionOverrides()
                 .build()
