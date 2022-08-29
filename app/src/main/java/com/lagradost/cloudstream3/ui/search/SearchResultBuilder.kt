@@ -164,7 +164,7 @@ object SearchResultBuilder {
             }
         }
 
-        if (bg.context.isTrueTvSettings()) {
+        if (isTrueTvSettings()) {
             bg.isFocusable = true
             bg.isFocusableInTouchMode = true
             bg.touchscreenBlocksFocus = false

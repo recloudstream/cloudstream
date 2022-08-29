@@ -243,7 +243,7 @@ class SubtitlesFragment : Fragment() {
         state = getCurrentSavedStyle()
         context?.updateState()
 
-        val isTvTrueSettings = context?.isTrueTvSettings() == true
+        val isTvTrueSettings = isTrueTvSettings()
 
         fun View.setFocusableInTv() {
             this.isFocusableInTouchMode = isTvTrueSettings

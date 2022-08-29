@@ -164,7 +164,7 @@ class ChromecastSubtitlesFragment : Fragment() {
         state = getCurrentSavedStyle()
         context?.updateState()
 
-        val isTvSettings = context?.isTvSettings() == true
+        val isTvSettings = isTvSettings()
 
         fun View.setFocusableInTv() {
             this.isFocusableInTouchMode = isTvSettings

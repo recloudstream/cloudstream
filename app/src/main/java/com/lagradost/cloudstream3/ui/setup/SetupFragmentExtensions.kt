@@ -73,8 +73,7 @@ class SetupFragmentExtensions : Fragment() {
             } else {
                 list_repositories?.setOnClickListener {
                     // Open webview on tv if browser fails
-                    val isTv = it.context.isTvSettings()
-                    openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
+                    openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
                 }
             }
         }
@@ -86,8 +85,7 @@ class SetupFragmentExtensions : Fragment() {
         val isSetup = arguments?.getBoolean(SETUP_EXTENSION_BUNDLE_IS_SETUP) ?: false
 
         view_public_repositories_button?.setOnClickListener {
-            val isTv = it.context.isTvSettings()
-            openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
+            openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
         }
 
         with(context) {

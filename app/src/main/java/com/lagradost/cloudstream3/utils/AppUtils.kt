@@ -407,8 +407,8 @@ object AppUtils {
 
     //private val viewModel: ResultViewModel by activityViewModels()
 
-    private fun getResultsId(context: Context): Int {
-        return if (context.isTrueTvSettings()) {
+    private fun getResultsId(): Int {
+        return if (isTrueTvSettings()) {
             R.id.global_to_navigation_results_tv
         } else {
             R.id.global_to_navigation_results_phone
@@ -424,7 +424,7 @@ object AppUtils {
         this.runOnUiThread {
             // viewModelStore.clear()
             this.navigate(
-                getResultsId(this.applicationContext ?: return@runOnUiThread),
+                getResultsId(),
                 ResultFragment.newInstance(url, apiName, startAction, startValue)
             )
         }
@@ -438,7 +438,7 @@ object AppUtils {
         this?.runOnUiThread {
             // viewModelStore.clear()
             this.navigate(
-                getResultsId(this),
+                getResultsId(),
                 ResultFragment.newInstance(card, startAction, startValue)
             )
         }
