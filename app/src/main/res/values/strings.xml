@@ -447,7 +447,7 @@
     <string name="preferred_media_settings">Preferred media</string>
     <string name="enable_nsfw_on_providers">Enable NSFW on supported providers</string>
     <string name="subtitles_encoding">Subtitle encoding</string>
-    <string name="category_providers">Provider</string>
+    <string name="category_providers">Providers</string>
     <string name="category_ui">Layout</string>
 
     <string name="automatic">Auto</string>
