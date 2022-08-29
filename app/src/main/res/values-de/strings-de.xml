@@ -1,3 +1,4 @@
+<resources>    
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Vorschaubild</string>
     <string name="search_poster_img_des">@string/result_poster_img_des</string>
@@ -531,3 +532,4 @@
 
     <string name="download_all_plugins_from_repo">Alle Plugins aus diesem Repository herunterladen?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Deaktiviert)</string>
+</resources>
