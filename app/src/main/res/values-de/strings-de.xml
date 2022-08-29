@@ -1,7 +1,4 @@
 <resources>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-
-    <string name="result_poster_img_des">Poster</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Vorschaubild</string>
     <string name="search_poster_img_des">@string/result_poster_img_des</string>
