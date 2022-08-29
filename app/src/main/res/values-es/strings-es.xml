@@ -346,8 +346,7 @@
     <string name="provider_lang_settings">Idiomas del proveedor</string> 
     <string name="app_layout">Diseño de la aplicación</string> 
     <string name="preferred_media_settings">Medios preferidos</string> 
-    <string name="subtitles_encoding">Codificación de subtítulos</string> 
-    <string name="category_preferred_media_and_lang">Idioma</string> 
+    <string name="subtitles_encoding">Codificación de subtítulos</string>
     <string name="category_ui">Diseño</string> 
  
     <string name="automatic">Automático</string>

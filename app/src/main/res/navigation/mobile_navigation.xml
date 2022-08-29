@@ -205,8 +205,8 @@
         tools:layout="@layout/fragment_webview" />
 
     <fragment
-        android:id="@+id/navigation_settings_lang"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsLang"
+        android:id="@+id/navigation_settings_providers"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsProviders"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -326,8 +326,8 @@
             app:popEnterAnim="@anim/enter_anim"
             app:popExitAnim="@anim/exit_anim" />
         <action
-            android:id="@+id/action_navigation_settings_to_navigation_settings_lang"
-            app:destination="@id/navigation_settings_lang"
+            android:id="@+id/action_navigation_settings_to_navigation_settings_providers"
+            app:destination="@id/navigation_settings_providers"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"

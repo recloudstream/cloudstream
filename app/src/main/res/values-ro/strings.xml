@@ -347,7 +347,6 @@
     <string name="app_layout">Aplicație de prezentare</string>
     <string name="preferred_media_settings">Media preferată</string>
     <string name="subtitles_encoding">Codificarea subtitrărilor</string>
-    <string name="category_preferred_media_and_lang">Media și limba preferată</string>
     <string name="category_ui">Interfața utilizatorului</string>
 
     <string name="automatic">Auto</string>
