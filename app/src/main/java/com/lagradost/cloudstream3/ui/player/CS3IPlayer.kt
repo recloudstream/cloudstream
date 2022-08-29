@@ -221,6 +221,7 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun setExoplayerAudioTrack(trackLanguage: String?) {
+        preferredAudioTrackLanguage = trackLanguage
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
             ?.setPreferredAudioLanguage(trackLanguage)
@@ -374,6 +375,12 @@ class CS3IPlayer : IPlayer {
     }
 
     companion object {
+        /**
+         * Fuck it, does not reset after player exit, people probably want that.
+         * It will default to the first audio track if the language does not exist anyways.
+         * // TODO using setKey?
+         **/
+        private var preferredAudioTrackLanguage: String? = null
         private var simpleCache: SimpleCache? = null
 
         var requestSubtitleUpdate: (() -> Unit)? = null
@@ -491,7 +498,11 @@ class CS3IPlayer : IPlayer {
                 .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
                 .setTunnelingEnabled(true)
                 .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
-                .clearSelectionOverrides()
+                .clearVideoSizeConstraints()
+                .setPreferredAudioLanguage(preferredAudioTrackLanguage)
+
+                // This would also clear preferred audio
+//                .clearSelectionOverrides()
                 .build()
             return trackSelector
         }
