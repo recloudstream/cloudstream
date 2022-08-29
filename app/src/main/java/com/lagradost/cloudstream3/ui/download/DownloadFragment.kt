@@ -175,7 +175,7 @@ class DownloadFragment : Fragment() {
 
         download_list?.adapter = adapter
         download_list?.layoutManager = GridLayoutManager(context, 1)
-        download_stream_button?.isGone = context?.isTvSettings() == true
+        download_stream_button?.isGone = isTvSettings()
         download_stream_button?.setOnClickListener {
             val dialog =
                 Dialog(it.context ?: return@setOnClickListener, R.style.AlertDialogCustom)

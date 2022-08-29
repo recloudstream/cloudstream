@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -22,6 +23,7 @@ class SettingsUI : PreferenceFragmentCompat() {
         setUpToolbar(R.string.category_ui)
         setPaddingBottom()
     }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settins_ui, rootKey)
@@ -71,6 +73,7 @@ class SettingsUI : PreferenceFragmentCompat() {
                     settingsManager.edit()
                         .putInt(getString(R.string.app_layout_key), prefValues[it])
                         .apply()
+                    context?.updateTv()
                     activity?.recreate()
                 } catch (e: Exception) {
                     logError(e)
@@ -130,7 +133,10 @@ class SettingsUI : PreferenceFragmentCompat() {
 
         getPref(R.string.pref_filter_search_quality_key)?.setOnPreferenceClickListener {
             val names = enumValues<SearchQuality>().sorted().map { it.name }
-            val currentList = settingsManager.getStringSet(getString(R.string.pref_filter_search_quality_key), setOf())?.map {
+            val currentList = settingsManager.getStringSet(
+                getString(R.string.pref_filter_search_quality_key),
+                setOf()
+            )?.map {
                 it.toInt()
             } ?: listOf()
 

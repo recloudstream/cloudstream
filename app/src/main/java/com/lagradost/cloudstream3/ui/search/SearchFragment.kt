@@ -386,7 +386,7 @@ class SearchFragment : Fragment() {
             }
         }
 
-        if (context?.isTrueTvSettings() == true) {
+        if (isTrueTvSettings()) {
             search_filter.isFocusable = true
             search_filter.isFocusableInTouchMode = true
         }

@@ -83,7 +83,7 @@ class ImageAdapter(
                     this.nextFocusUpId = nextFocusUp
                 }
                 if (clickCallback != null) {
-                    if (context.isTrueTvSettings()) {
+                    if (isTrueTvSettings()) {
                         isClickable = true
                         isLongClickable = true
                         isFocusable = true
