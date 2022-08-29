@@ -124,7 +124,7 @@ class PlayerEpisodeAdapter(
                     clickCallback.invoke(PlayerEpisodeClickEvent(0, card))
                 }
 
-                if (parentView.context.isTrueTvSettings()) {
+                if (isTrueTvSettings()) {
                     parentView.isFocusable = true
                     parentView.isFocusableInTouchMode = true
                     parentView.touchscreenBlocksFocus = false

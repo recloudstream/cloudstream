@@ -128,7 +128,7 @@ class PluginsFragment : Fragment() {
                 pluginViewModel.handlePluginAction(activity, url, it, isLocal)
             }
 
-        if (context?.isTvSettings() == true) {
+        if (isTvSettings()) {
             // Scrolling down does not reveal the whole RecyclerView on TV, add to bypass that.
             plugin_recycler_view?.setPadding(0, 0, 0, 200.toPx)
         }
