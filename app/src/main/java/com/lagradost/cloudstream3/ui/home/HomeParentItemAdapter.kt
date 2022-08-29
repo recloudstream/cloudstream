@@ -29,7 +29,7 @@ class ParentItemAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): ParentViewHolder {
         //println("onCreateViewHolder $i")
         val layout =
-            if (parent.context.isTvSettings()) R.layout.homepage_parent_tv else R.layout.homepage_parent
+            if (isTvSettings()) R.layout.homepage_parent_tv else R.layout.homepage_parent
         return ParentViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
             clickCallback,

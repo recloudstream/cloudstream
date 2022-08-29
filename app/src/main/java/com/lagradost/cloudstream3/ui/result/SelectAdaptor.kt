@@ -85,7 +85,7 @@ class SelectAdaptor(val callback: (Any) -> Unit) : RecyclerView.Adapter<Recycler
         fun bind(
             data: SelectData, isSelected: Boolean, callback: (Any) -> Unit
         ) {
-            val isTrueTv = itemView.context?.isTrueTvSettings() == true
+            val isTrueTv = isTrueTvSettings()
             if (isTrueTv) {
                 item.isFocusable = true
                 item.isFocusableInTouchMode = true

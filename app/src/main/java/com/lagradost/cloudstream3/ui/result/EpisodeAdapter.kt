@@ -166,7 +166,7 @@ class EpisodeAdapter(
         fun bind(card: ResultEpisode) {
             localCard = card
 
-            val isTrueTv = itemView.context?.isTrueTvSettings() == true
+            val isTrueTv = isTrueTvSettings()
 
             val (parentView, otherView) = if (card.poster == null) {
                 itemView.episode_holder to itemView.episode_holder_large
