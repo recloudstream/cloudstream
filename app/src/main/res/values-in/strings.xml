@@ -337,7 +337,6 @@
     <string name="provider_lang_settings">Bahasa provider</string>
     <string name="app_layout">Tata Letak Aplikasi</string>
     <string name="preferred_media_settings">Media yang lebih diinginkan</string>
-    <string name="category_preferred_media_and_lang">Media dan bahasa yang lebih diinginkan</string>
     <string name="category_ui">Antarmuka pengguna</string>
 
     <string name="automatic">Otomatis</string>

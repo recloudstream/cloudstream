@@ -350,7 +350,6 @@
     <string name="app_layout">Uygulama düzeni</string>
     <string name="preferred_media_settings">Tercih edilen medya</string>
     <string name="subtitles_encoding">Alt yazı kodlaması</string>
-    <string name="category_preferred_media_and_lang">Dil</string>
     <string name="category_ui">Düzen</string>
 
     <string name="automatic">Otomatik</string>

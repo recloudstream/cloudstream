@@ -342,7 +342,6 @@
     <string name="app_layout">Rozložení aplikace</string>
     <string name="preferred_media_settings">Preferovaná média</string>
     <string name="subtitles_encoding">Kódování titulků</string>
-    <string name="category_preferred_media_and_lang">Jazyk</string>
     <string name="category_ui">Rozložení</string>
 
     <string name="automatic">Automaticky</string>

@@ -337,7 +337,6 @@
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>
     <string name="subtitles_encoding">Subtitle encoding</string>
-    <string name="category_preferred_media_and_lang">Language</string>
     <string name="category_ui">Layout</string>
 
     <string name="automatic">Auto</string>

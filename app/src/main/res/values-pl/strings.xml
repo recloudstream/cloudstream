@@ -311,7 +311,6 @@
     <string name="preferred_media_settings">Preferowane media</string>
 
     <string name="subtitles_encoding">Kodowanie napisów</string>
-    <string name="category_preferred_media_and_lang">Język</string>
     <string name="category_ui">Układ interfejsu</string>
     <string name="automatic">Automatyczny</string>
     <string name="tv_layout">Układ dla telewizorów</string>

@@ -348,7 +348,6 @@
     <string name="app_layout">Giao diện App</string>
     <string name="preferred_media_settings">Thể loại ưu tiên</string>
     <string name="subtitles_encoding">Mã hoá phụ đề</string>
-    <string name="category_preferred_media_and_lang">Ngôn ngữ</string>
     <string name="category_ui">Giao diện</string>
 
     <string name="automatic">Tự động</string>

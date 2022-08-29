@@ -357,7 +357,6 @@
     <string name="app_layout">Layout do App</string>
     <string name="preferred_media_settings">Mídia preferida</string>
     <string name="subtitles_encoding">Codificação das legendas</string>
-    <string name="category_preferred_media_and_lang">Linguagem</string>
     <string name="category_ui">Layout</string>
 
     <string name="automatic">Auto</string>
