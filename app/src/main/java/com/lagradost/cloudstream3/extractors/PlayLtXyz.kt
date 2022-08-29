@@ -2,10 +2,9 @@ package com.lagradost.cloudstream3.extractors
 
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
 class PlayLtXyz: ExtractorApi() {
     override val name: String = "PlayLt"
@@ -13,7 +12,7 @@ class PlayLtXyz: ExtractorApi() {
     override val requiresReferer = true
 
     private data class ResponseData(
-        @JsonProperty("data") val data: String?
+        @JsonProperty("data") val data: String? = null
     )
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
@@ -36,12 +35,12 @@ class PlayLtXyz: ExtractorApi() {
         //Log.i(this.name, "Result => (bodyText) $bodyText")
         if (bodyText.isNotBlank()) {
             idUser = "(?<=var idUser = \")(.*)(?=\";)".toRegex().find(bodyText)
-                ?.groupValues?.get(0).toString()
+                ?.groupValues?.get(0) ?: ""
 
             idFile = "(?<=var idfile = \")(.*)(?=\";)".toRegex().find(bodyText)
-                ?.groupValues?.get(0).toString()
+                ?.groupValues?.get(0) ?: ""
         }
-        Log.i(this.name, "Result => (idUser, idFile) $idUser / $idFile")
+        //Log.i(this.name, "Result => (idUser, idFile) $idUser / $idFile")
         if (idUser.isNotBlank() && idFile.isNotBlank()) {
             //val sess = HttpSession()
             val ajaxHead = mapOf(
@@ -59,11 +58,11 @@ class PlayLtXyz: ExtractorApi() {
             //idUser = 608f7c85cf0743547f1f1b4e
             val posturl = "https://api-plhq.playlt.xyz/apiv5/$idUser/$idFile"
             val data = app.post(posturl, headers = ajaxHead, data = ajaxData)
-            Log.i(this.name, "Result => (posturl) $posturl")
+            //Log.i(this.name, "Result => (posturl) $posturl")
             if (data.isSuccessful) {
                 val itemstr = data.text
                 Log.i(this.name, "Result => (data) $itemstr")
-                mapper.readValue<ResponseData>(itemstr).let { item ->
+                tryParseJson<ResponseData?>(itemstr)?.let { item ->
                     val linkUrl = item.data ?: ""
                     if (linkUrl.isNotBlank()) {
                         extractedLinksList.add(
