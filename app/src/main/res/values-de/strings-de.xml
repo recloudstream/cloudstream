@@ -37,7 +37,7 @@
     <string name="skip_loading">Buffern überspringen</string>
     <string name="loading">Lädt…</string>
 
-    <string name="type_watching">Watching</string>
+    <string name="type_watching">Am schauen</string>
     <string name="type_on_hold">Pausiert</string>
     <string name="type_completed">Abgeschlossen</string>
     <string name="type_dropped">Abgebrochen</string>
