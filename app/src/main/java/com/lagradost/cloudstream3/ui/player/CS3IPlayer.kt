@@ -26,6 +26,8 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.video.VideoSize
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
@@ -41,6 +43,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
 
 const val TAG = "CS3ExoPlayer"
+const val PREFERRED_AUDIO_LANGUAGE_KEY = "preferred_audio_language"
 
 /** Cache */
 
@@ -419,11 +422,19 @@ class CS3IPlayer : IPlayer {
 
     companion object {
         /**
-         * Fuck it, does not reset after player exit, people probably want that.
-         * It will default to the first audio track if the language does not exist anyways.
-         * // TODO using setKey?
+         * Setting this variable is permanent across app sessions.
          **/
         private var preferredAudioTrackLanguage: String? = null
+            get() {
+                return field ?: getKey(PREFERRED_AUDIO_LANGUAGE_KEY, field)?.also {
+                    field = it
+                }
+            }
+            set(value) {
+                setKey(PREFERRED_AUDIO_LANGUAGE_KEY, value)
+                field = value
+            }
+
         private var simpleCache: SimpleCache? = null
 
         var requestSubtitleUpdate: (() -> Unit)? = null
@@ -534,14 +545,17 @@ class CS3IPlayer : IPlayer {
             return getMediaItemBuilder(mimeType).setUri(url).build()
         }
 
-        private fun getTrackSelector(context: Context): TrackSelector {
+        private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
             val trackSelector = DefaultTrackSelector(context)
             trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(context)
                 // .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
                 .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
+                // Experimental
                 .setTunnelingEnabled(true)
                 .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
-                .clearVideoSizeConstraints()
+                // This will not force higher quality videos to fail
+                // but will make the m3u8 pick the correct preferred
+                .setMaxVideoSize(Int.MAX_VALUE, maxVideoHeight ?: Int.MAX_VALUE)
                 .setPreferredAudioLanguage(preferredAudioTrackLanguage)
 
                 // This would also clear preferred audio
@@ -565,6 +579,11 @@ class CS3IPlayer : IPlayer {
             playWhenReady: Boolean = true,
             cacheFactory: CacheDataSource.Factory? = null,
             trackSelector: TrackSelector? = null,
+            /**
+             * Sets the m3u8 preferred video quality, will not force stop anything with higher quality.
+             * Does not work if trackSelector is defined.
+             **/
+            maxVideoHeight: Int? = null
         ): ExoPlayer {
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
@@ -587,7 +606,7 @@ class CS3IPlayer : IPlayer {
                             } else it
                         }.toTypedArray()
                     }
-                    .setTrackSelector(trackSelector ?: getTrackSelector(context))
+                    .setTrackSelector(trackSelector ?: getTrackSelector(context, maxVideoHeight))
                     .setLoadControl(
                         DefaultLoadControl.Builder()
                             .setTargetBufferBytes(
@@ -716,6 +735,12 @@ class CS3IPlayer : IPlayer {
         cacheFactory: CacheDataSource.Factory? = null
     ) {
         Log.i(TAG, "loadExo")
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+        val maxVideoHeight = settingsManager.getInt(
+            context.getString(com.lagradost.cloudstream3.R.string.quality_pref_key),
+            Int.MAX_VALUE
+        )
+
         try {
             hasUsedFirstRender = false
 
@@ -732,7 +757,8 @@ class CS3IPlayer : IPlayer {
                 videoBufferMs = videoBufferMs,
                 playWhenReady = isPlaying, // this keep the current state of the player
                 cacheFactory = cacheFactory,
-                subtitleOffset = currentSubtitleOffset
+                subtitleOffset = currentSubtitleOffset,
+                maxVideoHeight = maxVideoHeight
             )
 
             requestSubtitleUpdate = ::reloadSubs
