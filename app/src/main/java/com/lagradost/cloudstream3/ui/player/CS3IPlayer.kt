@@ -8,6 +8,8 @@ import android.util.Log
 import android.widget.FrameLayout
 import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO
+import com.google.android.exoplayer2.C.TRACK_TYPE_VIDEO
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.*
@@ -24,6 +26,8 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.video.VideoSize
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
@@ -39,6 +43,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
 
 const val TAG = "CS3ExoPlayer"
+const val PREFERRED_AUDIO_LANGUAGE_KEY = "preferred_audio_language"
 
 /** Cache */
 
@@ -108,6 +113,7 @@ class CS3IPlayer : IPlayer {
 
     private var playerUpdated: ((Any?) -> Unit)? = null
     private var embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null
+    private var onTracksInfoChanged: (() -> Unit)? = null
 
     override fun releaseCallbacks() {
         playerUpdated = null
@@ -120,7 +126,7 @@ class CS3IPlayer : IPlayer {
         nextEpisode = null
         prevEpisode = null
         subtitlesUpdates = null
-        embeddedSubtitlesFetched = null
+        onTracksInfoChanged = null
         requestSubtitleUpdate = null
     }
 
@@ -136,6 +142,7 @@ class CS3IPlayer : IPlayer {
         prevEpisode: (() -> Unit)?,
         subtitlesUpdates: (() -> Unit)?,
         embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)?,
+        onTracksInfoChanged: (() -> Unit)?,
     ) {
         this.playerUpdated = playerUpdated
         this.updateIsPlaying = updateIsPlaying
@@ -148,6 +155,7 @@ class CS3IPlayer : IPlayer {
         this.prevEpisode = prevEpisode
         this.subtitlesUpdates = subtitlesUpdates
         this.embeddedSubtitlesFetched = embeddedSubtitlesFetched
+        this.onTracksInfoChanged = onTracksInfoChanged
     }
 
     // I know, this is not a perfect solution, however it works for fixing subs
@@ -211,6 +219,72 @@ class CS3IPlayer : IPlayer {
     }
 
     var currentSubtitles: SubtitleData? = null
+
+    override fun setMaxVideoSize(width: Int, height: Int) {
+        exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
+            ?.buildUpon()
+            ?.setMaxVideoSize(width, height)
+            ?.build()
+            ?: return
+    }
+
+    override fun setPreferredAudioTrack(trackLanguage: String?) {
+        preferredAudioTrackLanguage = trackLanguage
+        exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
+            ?.buildUpon()
+            ?.setPreferredAudioLanguage(trackLanguage)
+            ?.build()
+            ?: return
+    }
+
+
+    /**
+     * Gets all supported formats in a list
+     * */
+    private fun List<TracksInfo.TrackGroupInfo>.getFormats(): List<Format> {
+        return this.map {
+            (0 until it.trackGroup.length).mapNotNull { i ->
+                if (it.isSupported)
+                    it.trackGroup.getFormat(i) // to it.isSelected
+                else null
+            }
+        }.flatten()
+    }
+
+    private fun Format.toAudioTrack(): AudioTrack {
+        return AudioTrack(
+            this.id,
+            this.label,
+//            isPlaying,
+            this.language
+        )
+    }
+
+    private fun Format.toVideoTrack(): VideoTrack {
+        return VideoTrack(
+            this.id,
+            this.label,
+//            isPlaying,
+            this.language,
+            this.width,
+            this.height
+        )
+    }
+
+    override fun getVideoTracks(): CurrentTracks {
+        val allTracks = exoPlayer?.currentTracksInfo?.trackGroupInfos ?: emptyList()
+        val videoTracks = allTracks.filter { it.trackType == TRACK_TYPE_VIDEO }.getFormats()
+            .map { it.toVideoTrack() }
+        val audioTracks = allTracks.filter { it.trackType == TRACK_TYPE_AUDIO }.getFormats()
+            .map { it.toAudioTrack() }
+
+        return CurrentTracks(
+            exoPlayer?.videoFormat?.toVideoTrack(),
+            exoPlayer?.audioFormat?.toAudioTrack(),
+            videoTracks,
+            audioTracks
+        )
+    }
 
     /**
      * @return True if the player should be reloaded
@@ -350,6 +424,20 @@ class CS3IPlayer : IPlayer {
     }
 
     companion object {
+        /**
+         * Setting this variable is permanent across app sessions.
+         **/
+        private var preferredAudioTrackLanguage: String? = null
+            get() {
+                return field ?: getKey(PREFERRED_AUDIO_LANGUAGE_KEY, field)?.also {
+                    field = it
+                }
+            }
+            set(value) {
+                setKey(PREFERRED_AUDIO_LANGUAGE_KEY, value)
+                field = value
+            }
+
         private var simpleCache: SimpleCache? = null
 
         var requestSubtitleUpdate: (() -> Unit)? = null
@@ -460,13 +548,21 @@ class CS3IPlayer : IPlayer {
             return getMediaItemBuilder(mimeType).setUri(url).build()
         }
 
-        private fun getTrackSelector(context: Context): TrackSelector {
+        private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
             val trackSelector = DefaultTrackSelector(context)
             trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(context)
                 // .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
                 .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
+                // Experimental
+                .setTunnelingEnabled(true)
                 .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
-                .clearSelectionOverrides()
+                // This will not force higher quality videos to fail
+                // but will make the m3u8 pick the correct preferred
+                .setMaxVideoSize(Int.MAX_VALUE, maxVideoHeight ?: Int.MAX_VALUE)
+                .setPreferredAudioLanguage(preferredAudioTrackLanguage)
+
+                // This would also clear preferred audio
+//                .clearSelectionOverrides()
                 .build()
             return trackSelector
         }
@@ -486,6 +582,11 @@ class CS3IPlayer : IPlayer {
             playWhenReady: Boolean = true,
             cacheFactory: CacheDataSource.Factory? = null,
             trackSelector: TrackSelector? = null,
+            /**
+             * Sets the m3u8 preferred video quality, will not force stop anything with higher quality.
+             * Does not work if trackSelector is defined.
+             **/
+            maxVideoHeight: Int? = null
         ): ExoPlayer {
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
@@ -508,7 +609,7 @@ class CS3IPlayer : IPlayer {
                             } else it
                         }.toTypedArray()
                     }
-                    .setTrackSelector(trackSelector ?: getTrackSelector(context))
+                    .setTrackSelector(trackSelector ?: getTrackSelector(context, maxVideoHeight))
                     .setLoadControl(
                         DefaultLoadControl.Builder()
                             .setTargetBufferBytes(
@@ -637,6 +738,12 @@ class CS3IPlayer : IPlayer {
         cacheFactory: CacheDataSource.Factory? = null
     ) {
         Log.i(TAG, "loadExo")
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+        val maxVideoHeight = settingsManager.getInt(
+            context.getString(com.lagradost.cloudstream3.R.string.quality_pref_key),
+            Int.MAX_VALUE
+        )
+
         try {
             hasUsedFirstRender = false
 
@@ -653,7 +760,8 @@ class CS3IPlayer : IPlayer {
                 videoBufferMs = videoBufferMs,
                 playWhenReady = isPlaying, // this keep the current state of the player
                 cacheFactory = cacheFactory,
-                subtitleOffset = currentSubtitleOffset
+                subtitleOffset = currentSubtitleOffset,
+                maxVideoHeight = maxVideoHeight
             )
 
             requestSubtitleUpdate = ::reloadSubs
@@ -713,6 +821,7 @@ class CS3IPlayer : IPlayer {
                         }
 
                         embeddedSubtitlesFetched?.invoke(exoPlayerReportedTracks)
+                        onTracksInfoChanged?.invoke()
                         subtitlesUpdates?.invoke()
                     }
                     super.onTracksInfoChanged(tracksInfo)

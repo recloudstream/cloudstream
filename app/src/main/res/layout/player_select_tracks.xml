@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:orientation="vertical">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+        <LinearLayout
+                android:id="@+id/video_tracks_holder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="50"
+                android:orientation="vertical">
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_rowWeight="1"
+                    android:layout_marginTop="10dp"
+                    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                    android:paddingBottom="10dp"
+                    android:text="@string/video_tracks"
+                    android:textColor="?attr/textColor"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            <ListView
+                    android:requiresFadingEdge="vertical"
+                    android:id="@+id/video_tracks_list"
+                    android:layout_width="match_parent"
+
+                    android:layout_height="match_parent"
+                    android:layout_rowWeight="1"
+                    android:background="?attr/primaryBlackBackground"
+                    android:nextFocusLeft="@id/sort_subtitles"
+                    android:nextFocusRight="@id/apply_btt"
+                    tools:listitem="@layout/sort_bottom_single_choice" />
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/audio_tracks_holder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="50"
+                android:orientation="vertical">
+
+            <!--   android:id="@+id/subs_settings"                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
+-->
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                <LinearLayout
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:id="@+id/subtitles_click_settings"
+                        android:layout_rowWeight="1"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                            android:text="@string/audio_tracks"
+                            android:textColor="?attr/textColor"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+<!--                    <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:id="@+id/subtitles_encoding_format"-->
+<!--                            android:textColor="?attr/textColor"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:gravity="center"-->
+<!--                            tools:text="Thai (TIS 620-2533/ISO 8859-11)"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content" />-->
+                </LinearLayout>
+
+                <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="10dp"
+
+                        android:contentDescription="@string/home_change_provider_img_des"
+                        android:src="@drawable/ic_outline_settings_24"
+                        android:visibility="gone" />
+            </LinearLayout>
+
+            <ListView
+                    android:requiresFadingEdge="vertical"
+                    android:id="@+id/auto_tracks_list"
+                    android:layout_width="match_parent"
+
+                    android:layout_height="match_parent"
+                    android:layout_rowWeight="1"
+                    android:background="?attr/primaryBlackBackground"
+                    android:nextFocusLeft="@id/sort_providers"
+                    android:nextFocusRight="@id/cancel_btt"
+                    tools:listfooter="@layout/sort_bottom_footer_add_choice"
+                    tools:listitem="@layout/sort_bottom_single_choice" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/apply_btt_holder"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|end"
+            android:layout_marginTop="-60dp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+
+        <com.google.android.material.button.MaterialButton
+                style="@style/WhiteButton"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/sort_apply"
+                android:id="@+id/apply_btt"
+                android:layout_width="wrap_content" />
+
+        <com.google.android.material.button.MaterialButton
+                style="@style/BlackButton"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/sort_cancel"
+                android:id="@+id/cancel_btt"
+                android:layout_width="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

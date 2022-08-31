@@ -176,6 +176,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         throw NotImplementedError()
     }
 
+    open fun showTracksDialogue() {
+        throw NotImplementedError()
+    }
+
     open fun openOnlineSubPicker(
         context: Context,
         imdbId: Long?,
@@ -1101,6 +1105,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // if nothing has loaded these buttons should not be visible
         player_skip_episode?.isVisible = false
+        player_tracks_btt?.isVisible = false
         player_skip_op?.isVisible = false
         shadow_overlay?.isVisible = false
 
@@ -1294,6 +1299,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         player_sources_btt?.setOnClickListener {
             showMirrorsDialogue()
+        }
+
+        player_tracks_btt?.setOnClickListener {
+            showTracksDialogue()
         }
 
         player_intro_play?.setOnClickListener {

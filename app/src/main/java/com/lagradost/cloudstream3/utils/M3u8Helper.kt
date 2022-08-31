@@ -116,15 +116,16 @@ class M3u8Helper {
         return !url.contains("https://") && !url.contains("http://")
     }
 
-    suspend fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean?): List<M3u8Stream> {
+    suspend fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean? = true): List<M3u8Stream> {
+//        return listOf(m3u8)
         val list = mutableListOf<M3u8Stream>()
 
         val m3u8Parent = getParentLink(m3u8.streamUrl)
         val response = app.get(m3u8.streamUrl, headers = m3u8.headers, verify = false).text
 
-        var hasAnyContent = false
+//        var hasAnyContent = false
         for (match in QUALITY_REGEX.findAll(response)) {
-            hasAnyContent = true
+//            hasAnyContent = true
             var (quality, m3u8Link, m3u8Link2) = match.destructured
             if (m3u8Link.isEmpty()) m3u8Link = m3u8Link2
             if (absoluteExtensionDetermination(m3u8Link) == "m3u8") {
@@ -141,16 +142,14 @@ class M3u8Helper {
                         m3u8.headers
                     ), false
                 )
-
             }
             list += M3u8Stream(
                 m3u8Link,
                 quality.toIntOrNull(),
                 m3u8.headers
             )
-
         }
-        if (returnThis ?: !hasAnyContent) {
+        if (returnThis != false) {
             list += M3u8Stream(
                 m3u8.streamUrl,
                 Qualities.Unknown.value,
@@ -169,7 +168,10 @@ class M3u8Helper {
         val errored: Boolean = false
     )
 
-    suspend fun hlsYield(qualities: List<M3u8Stream>, startIndex: Int = 0): Iterator<HlsDownloadData> {
+    suspend fun hlsYield(
+        qualities: List<M3u8Stream>,
+        startIndex: Int = 0
+    ): Iterator<HlsDownloadData> {
         if (qualities.isEmpty()) return listOf(
             HlsDownloadData(
                 byteArrayOf(),

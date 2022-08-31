@@ -18,6 +18,11 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO
+import com.google.android.exoplayer2.C.TRACK_TYPE_VIDEO
+import com.google.android.exoplayer2.Format
+import com.google.android.exoplayer2.Format.NO_VALUE
+import com.google.android.exoplayer2.TracksInfo
 import com.google.android.exoplayer2.util.MimeTypes
 import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
@@ -53,6 +58,8 @@ import kotlinx.android.synthetic.main.dialog_online_subtitles.cancel_btt
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.player_custom_layout.*
 import kotlinx.android.synthetic.main.player_select_source_and_subs.*
+import kotlinx.android.synthetic.main.player_select_source_and_subs.subtitles_click_settings
+import kotlinx.android.synthetic.main.player_select_tracks.*
 import kotlinx.coroutines.Job
 
 class GeneratorPlayer : FullScreenPlayer() {
@@ -107,6 +114,11 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {
         viewModel.addSubtitles(subtitles.toSet())
+    }
+
+    override fun onTracksInfoChanged() {
+        val tracks = player.getVideoTracks()
+        player_tracks_btt?.isVisible = tracks.allVideoTracks.size > 1 || tracks.allAudioTracks.size > 1
     }
 
     private fun noSubtitles(): Boolean {
@@ -477,6 +489,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
     var selectSourceDialog: AlertDialog? = null
+//    var selectTracksDialog: AlertDialog? = null
+
     override fun showMirrorsDialogue() {
         try {
             currentSelectedSubtitles = player.getCurrentPreferredSubtitle()
@@ -667,6 +681,121 @@ class GeneratorPlayer : FullScreenPlayer() {
             logError(e)
         }
     }
+
+    override fun showTracksDialogue() {
+        try {
+            //println("CURRENT SELECTED :$currentSelectedSubtitles of $currentSubs")
+            context?.let { ctx ->
+                val tracks = player.getVideoTracks()
+
+                val isPlaying = player.getIsPlaying()
+                player.handleEvent(CSPlayerEvent.Pause)
+
+                val currentVideoTracks = tracks.allVideoTracks.sortedBy {
+                    it.height?.times(-1)
+                }
+                val currentAudioTracks = tracks.allAudioTracks
+
+                val trackBuilder = AlertDialog.Builder(ctx, R.style.AlertDialogCustomBlack)
+                    .setView(R.layout.player_select_tracks)
+
+                val tracksDialog = trackBuilder.create()
+
+//                selectTracksDialog = tracksDialog
+
+                tracksDialog.show()
+                val videosList = tracksDialog.video_tracks_list
+                val audioList = tracksDialog.auto_tracks_list
+
+                tracksDialog.video_tracks_holder.isVisible = currentVideoTracks.size > 1
+                tracksDialog.audio_tracks_holder.isVisible = currentAudioTracks.size > 1
+
+                fun dismiss() {
+                    if (isPlaying) {
+                        player.handleEvent(CSPlayerEvent.Play)
+                    }
+                    activity?.hideSystemUI()
+                }
+
+                val videosArrayAdapter =
+                    ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+
+                videosArrayAdapter.addAll(currentVideoTracks.mapIndexed { index, format ->
+                    format.label
+                        ?: (if (format.height == NO_VALUE || format.width == NO_VALUE) index else "${format.width}x${format.height}").toString()
+                })
+
+                videosList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                videosList.adapter = videosArrayAdapter
+
+                // Sometimes the data is not the same because some data gets resolved at different stages i think
+                var videoIndex = currentVideoTracks.indexOf(tracks.currentVideoTrack).takeIf {
+                    it != -1
+                } ?: currentVideoTracks.indexOfFirst {
+                    tracks.currentVideoTrack?.id == it.id
+                }
+
+                videosList.setSelection(videoIndex)
+                videosList.setItemChecked(videoIndex, true)
+
+                videosList.setOnItemClickListener { _, _, which, _ ->
+                    videoIndex = which
+                    videosList.setItemChecked(which, true)
+                }
+
+                tracksDialog.setOnDismissListener {
+                    dismiss()
+//                    selectTracksDialog = null
+                }
+
+                var audioIndexStart = currentAudioTracks.indexOf(tracks.currentAudioTrack).takeIf {
+                    it != -1
+                } ?: currentVideoTracks.indexOfFirst {
+                    tracks.currentAudioTrack?.id == it.id
+                }
+
+                val audioArrayAdapter =
+                    ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+//                audioArrayAdapter.add(ctx.getString(R.string.no_subtitles))
+                audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, format ->
+                    format.label ?: format.language?.let { fromTwoLettersToLanguage(it) } ?: index.toString()
+                })
+
+                audioList.adapter = audioArrayAdapter
+                audioList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+
+                audioList.setSelection(audioIndexStart)
+                audioList.setItemChecked(audioIndexStart, true)
+
+                audioList.setOnItemClickListener { _, _, which, _ ->
+                    audioIndexStart = which
+                    audioList.setItemChecked(which, true)
+                }
+
+                tracksDialog.cancel_btt?.setOnClickListener {
+                    tracksDialog.dismissSafe(activity)
+                }
+
+                tracksDialog.apply_btt?.setOnClickListener {
+                    player.setPreferredAudioTrack(
+                        currentAudioTracks.getOrNull(audioIndexStart)?.language
+                    )
+
+                    val currentVideo = currentVideoTracks.getOrNull(videoIndex)
+                    val width = currentVideo?.width ?: NO_VALUE
+                    val height = currentVideo?.height ?: NO_VALUE
+                    if (width != NO_VALUE && height != NO_VALUE) {
+                        player.setMaxVideoSize(width, height)
+                    }
+
+                    tracksDialog.dismissSafe(activity)
+                }
+            }
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
 
     override fun playerError(exception: Exception) {
         Log.i(TAG, "playerError = $currentSelectedLink")

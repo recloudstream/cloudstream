@@ -75,11 +75,14 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
     }
 
     override fun showMirrorsDialogue() {}
+    override fun showTracksDialogue() {}
+
     override fun openOnlineSubPicker(context: Context, imdbId: Long?, dismissCallback: () -> Unit) {}
 
     override fun subtitlesChanged() {}
 
     override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {}
+    override fun onTracksInfoChanged() {}
 
     override fun exitedPipMode() {}
 
