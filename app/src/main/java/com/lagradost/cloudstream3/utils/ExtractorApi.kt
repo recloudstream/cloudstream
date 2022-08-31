@@ -244,6 +244,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DBfilm(),
     Luxubu(),
     LayarKaca(),
+    Rasacintaku(),
     //  WatchSB(), 'cause StreamSB.kt works
     Uqload(),
     Uqload1(),
