@@ -99,6 +99,10 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
+    open fun onTracksInfoChanged() {
+        throw NotImplementedError()
+    }
+
     open fun exitedPipMode() {
         throw NotImplementedError()
     }
@@ -369,6 +373,7 @@ abstract class AbstractPlayerFragment(
             ),
             subtitlesUpdates = ::subtitlesChanged,
             embeddedSubtitlesFetched = ::embeddedSubtitlesFetched,
+            onTracksInfoChanged = ::onTracksInfoChanged
         )
 
         if (player is CS3IPlayer) {

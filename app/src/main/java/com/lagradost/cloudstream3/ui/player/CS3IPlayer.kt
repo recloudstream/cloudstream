@@ -113,6 +113,7 @@ class CS3IPlayer : IPlayer {
 
     private var playerUpdated: ((Any?) -> Unit)? = null
     private var embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null
+    private var onTracksInfoChanged: (() -> Unit)? = null
 
     override fun releaseCallbacks() {
         playerUpdated = null
@@ -125,7 +126,7 @@ class CS3IPlayer : IPlayer {
         nextEpisode = null
         prevEpisode = null
         subtitlesUpdates = null
-        embeddedSubtitlesFetched = null
+        onTracksInfoChanged = null
         requestSubtitleUpdate = null
     }
 
@@ -141,6 +142,7 @@ class CS3IPlayer : IPlayer {
         prevEpisode: (() -> Unit)?,
         subtitlesUpdates: (() -> Unit)?,
         embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)?,
+        onTracksInfoChanged: (() -> Unit)?,
     ) {
         this.playerUpdated = playerUpdated
         this.updateIsPlaying = updateIsPlaying
@@ -153,6 +155,7 @@ class CS3IPlayer : IPlayer {
         this.prevEpisode = prevEpisode
         this.subtitlesUpdates = subtitlesUpdates
         this.embeddedSubtitlesFetched = embeddedSubtitlesFetched
+        this.onTracksInfoChanged = onTracksInfoChanged
     }
 
     // I know, this is not a perfect solution, however it works for fixing subs
@@ -818,6 +821,7 @@ class CS3IPlayer : IPlayer {
                         }
 
                         embeddedSubtitlesFetched?.invoke(exoPlayerReportedTracks)
+                        onTracksInfoChanged?.invoke()
                         subtitlesUpdates?.invoke()
                     }
                     super.onTracksInfoChanged(tracksInfo)

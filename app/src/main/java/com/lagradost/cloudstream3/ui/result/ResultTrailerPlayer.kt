@@ -82,6 +82,7 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
     override fun subtitlesChanged() {}
 
     override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {}
+    override fun onTracksInfoChanged() {}
 
     override fun exitedPipMode() {}
 

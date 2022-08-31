@@ -113,6 +113,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {
         viewModel.addSubtitles(subtitles.toSet())
+    }
+
+    override fun onTracksInfoChanged() {
         val tracks = player.getVideoTracks()
         player_tracks_btt?.isVisible = tracks.allVideoTracks.size > 1 || tracks.allAudioTracks.size > 1
     }
