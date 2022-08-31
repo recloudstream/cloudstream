@@ -1226,7 +1226,7 @@ class ResultViewModel2 : ViewModel() {
                             it.getAll() // I know kinda shit to itterate all, but it is 100% sure to work
                                 ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
                                 ?.let { index ->
-                                    if (index > 0)
+                                    if (index >= 0)
                                         it.goto(index)
                                 }
 

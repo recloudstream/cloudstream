@@ -101,6 +101,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun setSubtitles(sub: SubtitleData?): Boolean {
         currentSelectedSubtitles = sub
+        //Log.i(TAG, "setSubtitles = $sub")
         return player.setPreferredSubtitles(sub)
     }
 
@@ -849,17 +850,33 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun autoSelectFromSettings(): Boolean {
         // auto select subtitle based of settings
         val langCode = preferredAutoSelectSubtitles
-        if (!langCode.isNullOrEmpty() && player.getCurrentPreferredSubtitle() == null) {
-            getAutoSelectSubtitle(currentSubs, settings = true, downloads = false)?.let { sub ->
-                context?.let { ctx ->
-                    if (setSubtitles(sub)) {
-                        player.saveData()
-                        player.reloadPlayer(ctx)
-                        player.handleEvent(CSPlayerEvent.Play)
-                        return true
+        val current = player.getCurrentPreferredSubtitle()
+        Log.i(TAG, "autoSelectFromSettings = $current")
+        context?.let { ctx ->
+            if (current != null) {
+                if (setSubtitles(current)) {
+                    player.saveData()
+                    player.reloadPlayer(ctx)
+                    player.handleEvent(CSPlayerEvent.Play)
+                    return true
+                }
+            } else
+                if (!langCode.isNullOrEmpty()) {
+                    getAutoSelectSubtitle(
+                        currentSubs,
+                        settings = true,
+                        downloads = false
+                    )?.let { sub ->
+
+                        if (setSubtitles(sub)) {
+                            player.saveData()
+                            player.reloadPlayer(ctx)
+                            player.handleEvent(CSPlayerEvent.Play)
+                            return true
+                        }
+
                     }
                 }
-            }
         }
         return false
     }
@@ -881,6 +898,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun autoSelectSubtitles() {
+        //Log.i(TAG, "autoSelectSubtitles")
         normalSafeApiCall {
             if (!autoSelectFromSettings()) {
                 autoSelectFromDownloads()

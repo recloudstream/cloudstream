@@ -32,9 +32,9 @@ class CustomReportSender : ReportSender {
     override fun send(context: Context, errorContent: CrashReportData) {
         println("Sending report")
         val url =
-            "https://docs.google.com/forms/u/0/d/e/1FAIpQLSeFmyBChi6HF3IkhTVWPiDXJtxt8W0Hf4Agljm_0-0_QuEYFg/formResponse"
+            "https://docs.google.com/forms/u/0/d/e/1FAIpQLSe9Vff8oHGMRXcjgCXZwkjvx3eBdNpn4DzjO0FkcWEU1gEQpA/formResponse"
         val data = mapOf(
-            "entry.134906550" to errorContent.toJSON()
+            "entry.1586460852" to errorContent.toJSON()
         )
 
         thread { // to not run it on main thread
