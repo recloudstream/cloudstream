@@ -576,8 +576,6 @@
     <string name="provider_languages_tip">Watch videos in these languages</string>
     <string name="previous">Previous</string>
     <string name="skip_setup">Skip setup</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="app_layout_subtext">Change the look of the app to suit your device</string>
     <string name="crash_reporting_title">Crash reporting</string>
     <string name="preferred_media_subtext">What do you want to see</string>

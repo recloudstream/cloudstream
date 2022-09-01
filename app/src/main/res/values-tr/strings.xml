@@ -472,8 +472,6 @@
     <string name="provider_languages_tip">Videoları bu dillerde izle</string>
     <string name="previous">Geri</string>
     <string name="skip_setup">Kurulumu atla</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Merhaba boş parça</string>
     <string name="app_layout_subtext">Cihazınıza uygun görünümü seçin</string>
     <string name="crash_reporting_title">Çökme raporları</string>
     <string name="preferred_media_subtext">Ne izlemek istiyorsunuz?</string>

@@ -458,8 +458,6 @@
     <string name="provider_languages_tip">Videos in diesen Sprachen ansehen</string>
     <string name="previous">Vorherige</string>
     <string name="skip_setup">Einrichtung überspringen</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hallo leeres Fragment</string>
     <string name="app_layout_subtext">Aussehen der App passend zu dem des Geräts ändern</string>
     <string name="crash_reporting_title">Absturzmeldung</string>
     <string name="preferred_media_subtext">Was möchtest du anschauen?</string>
@@ -491,4 +489,13 @@
 
     <string name="download_all_plugins_from_repo">Alle Plugins aus diesem Repository herunterladen?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Deaktiviert)</string>
+    <string name="safe_mode_title">Abgesicherter Modus aktiviert</string>
+    <string name="safe_mode_description">Ein nicht behebbarer Absturz ist aufgetreten, und wir haben automatisch alle Erweiterungen deaktiviert, damit du die Erweiterung finden und entfernen kannst, die das Problem verursacht.</string>
+    <string name="safe_mode_crash_info">Absturzinfo ansehen</string>
+    <string name="apply_on_restart">Bei Neustart anwenden</string>
+    <string name="audio_tracks">Audiospuren</string>
+    <string name="video_tracks">Videospuren</string>
+    <string name="tracks">Spuren</string>
+    <string name="enable_nsfw_on_providers">Aktivieren der NSFW auf unterstützten Anbietern</string>
+    <string name="category_providers">Anbieter</string>
 </resources>

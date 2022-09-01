@@ -459,8 +459,6 @@
     <string name="provider_languages_tip">Bekijk video\'s in deze talen</string>
     <string name="previous">Vorige</string>
     <string name="skip_setup">Instelling overslaan</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hallo leeg fragment</string>
     <string name="app_layout_subtext">Pas het uiterlijk van de app aan uw apparaat aan</string>
     <string name="crash_reporting_title">Crashrapportage</string>
     <string name="preferred_media_subtext">Wat wil je zien?</string>

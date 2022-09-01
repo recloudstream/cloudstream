@@ -435,4 +435,15 @@
     <string name="download_all_plugins_from_repo">Pobrać wszystkie rozszerzenia z tego repozytorium?</string>
     <string name="single_plugin_disabled">%s (Wyłączone)</string>
     <string name="pref_filter_search_quality">Ukryj wybraną jakość wideo w wynikach wyszukiwania</string>
+    <string name="enable_nsfw_on_providers">Włącz NSFW u obsługiwanych dostawców</string>
+    <string name="category_providers">Dostawcy</string>
+    <string name="safe_mode_title">Tryb bezpieczny włączony</string>
+    <string name="safe_mode_description">Wystąpiła nieoczekiwana awaria i automatycznie wyłączyliśmy wszystkie rozszerzenia, abyś mógł znaleźć i usunąć rozszerzenie, które powoduje problemy.</string>
+    <string name="safe_mode_crash_info">Wyświetl informacje o awarii</string>
+    <string name="audio_tracks">Ścieżki audio</string>
+    <string name="video_tracks">Ścieżki wideo</string>
+    <string name="tracks">Ścieżki</string>
+    <string name="apply_on_restart">Zastosuj po ponownym uruchomieniu</string>
+    <string name="autoplay_next_settings_des">Rozpocznij następny odcinek po zakończeniu bieżącego</string>
+    <string name="autoplay_next_settings">Autoodtwarzanie następnego odcinka</string>
 </resources>
