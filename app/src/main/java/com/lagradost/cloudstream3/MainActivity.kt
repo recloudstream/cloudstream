@@ -10,7 +10,9 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.IdRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
@@ -88,6 +90,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.net.URI
+import java.nio.charset.Charset
 import kotlin.reflect.KClass
 
 
@@ -455,6 +458,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+
+        val errorFile = filesDir.resolve("last_error")
+        var lastError: String? = null
+        if (errorFile.exists() && errorFile.isFile) {
+            lastError = errorFile.readText(Charset.defaultCharset())
+            errorFile.delete()
+        }
         
         val settingsForProvider = SettingsJson()
         settingsForProvider.enableAdult = settingsManager.getBoolean(getString(R.string.enable_nsfw_on_providers_key), false)
@@ -482,25 +492,43 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         changeStatusBarState(isEmulatorSettings())
 
-        ioSafe {
-            getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homeApi ->
-                mainPluginsLoadedEvent.invoke(loadSinglePlugin(this@MainActivity, homeApi))
-            } ?: run {
-                mainPluginsLoadedEvent.invoke(false)
-            }
-
+        if (lastError == null) {
             ioSafe {
-                if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
-                    PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
-                } else {
-                    PluginManager.loadAllOnlinePlugins(this@MainActivity)
+                getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homeApi ->
+                    mainPluginsLoadedEvent.invoke(loadSinglePlugin(this@MainActivity, homeApi))
+                } ?: run {
+                    mainPluginsLoadedEvent.invoke(false)
+                }
+
+                ioSafe {
+                    if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
+                        PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
+                    } else {
+                        PluginManager.loadAllOnlinePlugins(this@MainActivity)
+                    }
+                }
+
+                ioSafe {
+                    PluginManager.loadAllLocalPlugins(this@MainActivity)
                 }
             }
+        } else {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.safe_mode_title)
+            builder.setMessage(R.string.safe_mode_description)
+            builder.apply {
+                setPositiveButton(R.string.safe_mode_crash_info) { _, _ ->
+                    val tbBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
+                    tbBuilder.setTitle(R.string.safe_mode_title)
+                    tbBuilder.setMessage(lastError)
+                    tbBuilder.show()
+                }
 
-            ioSafe {
-                PluginManager.loadAllLocalPlugins(this@MainActivity)
+                setNegativeButton("Ok") { _, _ -> }
             }
+            builder.show()
         }
+
 
 //        ioSafe {
 //            val plugins =

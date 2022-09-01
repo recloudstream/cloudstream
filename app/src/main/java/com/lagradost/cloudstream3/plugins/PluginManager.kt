@@ -127,6 +127,8 @@ object PluginManager {
     private val LOCAL_PLUGINS_PATH =
         Environment.getExternalStorageDirectory().absolutePath + "/Cloudstream3/plugins"
 
+    public var currentlyLoading: String? = null
+
     // Maps filepath to plugin
     val plugins: MutableMap<String, Plugin> =
         LinkedHashMap<String, Plugin>()
@@ -283,6 +285,7 @@ object PluginManager {
     private suspend fun loadPlugin(activity: Activity, file: File, data: PluginData): Boolean {
         val fileName = file.nameWithoutExtension
         val filePath = file.absolutePath
+        currentlyLoading = fileName
         Log.i(TAG, "Loading plugin: $data")
 
         return try {
@@ -341,6 +344,7 @@ object PluginManager {
             }
             pluginInstance.load(activity)
             Log.i(TAG, "Loaded plugin ${data.internalName} successfully")
+            currentlyLoading = null
             true
         } catch (e: Throwable) {
             Log.e(TAG, "Failed to load $file: ${Log.getStackTraceString(e)}")
@@ -349,6 +353,7 @@ object PluginManager {
                 activity.getString(R.string.plugin_load_fail).format(fileName),
                 Toast.LENGTH_LONG
             )
+            currentlyLoading = null
             false
         }
     }
