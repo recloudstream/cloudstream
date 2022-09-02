@@ -203,6 +203,7 @@ class ExtensionsFragment : Fragment() {
             dialog.list_repositories?.setOnClickListener {
                 // Open webview on tv if browser fails
                 openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
+                dialog.dismissSafe()
             }
 
 //            dialog.text2?.text = provider.name
