@@ -23,15 +23,10 @@ class PlayLtXyz: ExtractorApi() {
         var bodyText = ""
         val doc = app.get(url, referer = referer).document
         //Log.i(this.name, "Result => (url, script) $url / ${doc.select("script")}")
-        doc.select("script").forEach {
+        bodyText = doc.select("script").firstOrNull {
             val text = it?.toString() ?: ""
-            if (text.isNotBlank()) {
-                if (text.contains("var idUser")) {
-                    bodyText = text
-                    //Log.i(this.name, "Result => (bodyText) $bodyText")
-                }
-            }
-        }
+            text.contains("var idUser")
+        }?.toString() ?: ""
         //Log.i(this.name, "Result => (bodyText) $bodyText")
         if (bodyText.isNotBlank()) {
             idUser = "(?<=var idUser = \")(.*)(?=\";)".toRegex().find(bodyText)
