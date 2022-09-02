@@ -235,6 +235,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Streamhub2(),
     Ssbstream(),
     Sbthe(),
+    Vidgomunime(),
 
     Fastream(),
     
