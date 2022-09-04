@@ -238,7 +238,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidgomunime(),
 
     Fastream(),
-    
+
     FEmbed(),
     FeHD(),
     Fplayer(),
@@ -246,13 +246,14 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Luxubu(),
     LayarKaca(),
     Rasacintaku(),
+    FEnet(),
     //  WatchSB(), 'cause StreamSB.kt works
     Uqload(),
     Uqload1(),
     Evoload(),
     Evoload1(),
     VoeExtractor(),
-    // UpstreamExtractor(), GenericM3U8.kt works
+    UpstreamExtractor(),
 
     Tomatomatela(),
     Cinestart(),
@@ -316,6 +317,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Acefile(),
     SpeedoStream(),
     Zorofile(),
+    Embedgram(),
+    Mvidoo(),
+    Streamplay(),
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),
