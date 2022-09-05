@@ -553,8 +553,8 @@ class CS3IPlayer : IPlayer {
             trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(context)
                 // .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
                 .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
-                // Experimental
-                .setTunnelingEnabled(true)
+                // Experimental, I think this causes issues with audio track init 5001
+//                .setTunnelingEnabled(true)
                 .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
                 // This will not force higher quality videos to fail
                 // but will make the m3u8 pick the correct preferred
