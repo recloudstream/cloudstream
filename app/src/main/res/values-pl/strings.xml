@@ -446,4 +446,11 @@
     <string name="apply_on_restart">Zastosuj po ponownym uruchomieniu</string>
     <string name="autoplay_next_settings_des">Rozpocznij następny odcinek po zakończeniu bieżącego</string>
     <string name="autoplay_next_settings">Autoodtwarzanie następnego odcinka</string>
+    <string name="votes_format">Głosy: %s</string>
+    <string name="extension_description">Opis</string>
+    <string name="extension_version">Versja</string>
+    <string name="extension_status">Status</string>
+    <string name="extension_size">Rozmiar</string>
+    <string name="extension_authors">Autorzy</string>
+    <string name="extension_types">Wspierane</string>
 </resources>
