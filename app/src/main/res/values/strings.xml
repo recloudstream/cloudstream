@@ -615,4 +615,5 @@
     <string name="safe_mode_title">Safe Mode enabled</string>
     <string name="safe_mode_description">An unrecoverable crash occurred and we\'ve automatically disabled all extensions, so you can find and remove the extension which is causing trouble.</string>
     <string name="safe_mode_crash_info">View crash info</string>
+    <string name="hls_playlist">HLS Playlist</string>
 </resources>

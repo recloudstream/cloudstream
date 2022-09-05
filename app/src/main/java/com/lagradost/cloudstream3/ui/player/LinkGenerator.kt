@@ -1,12 +1,15 @@
 package com.lagradost.cloudstream3.ui.player
 
 import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.*
+import java.net.URI
 
 class LinkGenerator(
     private val links: List<String>,
     private val extract: Boolean = true,
     private val referer: String? = null,
+    private val isM3u8: Boolean? = null
 ) : IGenerator {
     override val hasCache = false
 
@@ -57,7 +60,9 @@ class LinkGenerator(
                         link,
                         unshortenLinkSafe(link), // unshorten because it might be a raw link
                         referer ?: "",
-                        Qualities.Unknown.value, link.contains(".m3u") // TODO USE REAL PARSER
+                        Qualities.Unknown.value, isM3u8 ?: normalSafeApiCall {
+                            URI(link).path?.substringAfterLast(".")?.contains("m3u")
+                        } ?: false
                     ) to null
                 )
             }
