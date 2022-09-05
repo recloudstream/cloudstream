@@ -124,8 +124,8 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
     }
 
     override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
-        val username = data.username ?: throw ErrorLoadingException("Requires Username")
-        val password = data.password ?: throw ErrorLoadingException("Requires Password")
+        val username = data.username ?: throw IllegalArgumentException ("Requires Username")
+        val password = data.password ?: throw IllegalArgumentException ("Requires Password")
         switchToNewAccount()
         try {
             if (initLogin(username, password)) {
