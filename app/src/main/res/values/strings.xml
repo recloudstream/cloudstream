@@ -623,4 +623,6 @@
     <string name="extension_size">Size</string>
     <string name="extension_authors">Authors</string>
     <string name="extension_types">Supported</string>
+    
+    <string name="hls_playlist">HLS Playlist</string>
 </resources>
