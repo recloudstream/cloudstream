@@ -34,6 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
@@ -41,6 +42,14 @@
             android:textSize="20sp"
             android:textStyle="normal"
             tools:text="Hello world" />
+
+        <ImageView
+            android:id="@+id/github_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_github_logo" />
     </LinearLayout>
 
     <LinearLayout

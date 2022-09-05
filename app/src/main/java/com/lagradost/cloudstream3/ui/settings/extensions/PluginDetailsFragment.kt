@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.plugins.VotingApi.vote
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 
 
 class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragment() {
@@ -67,6 +68,13 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
         plugin_author?.text = if (metadata.authors.isEmpty()) getString(R.string.no_data) else metadata.authors.joinToString(", ")
         plugin_status?.text = resources.getStringArray(R.array.extension_statuses)[metadata.status]
         plugin_types?.text = if ((metadata.tvTypes == null) || metadata.tvTypes.isEmpty()) getString(R.string.no_data) else metadata.tvTypes.joinToString(", ")
+
+        github_btn.setOnClickListener {
+            if (metadata.repositoryUrl != null) {
+                openBrowser(metadata.repositoryUrl)
+            }
+
+        }
 
         upvote.setOnClickListener {
             ioSafe {

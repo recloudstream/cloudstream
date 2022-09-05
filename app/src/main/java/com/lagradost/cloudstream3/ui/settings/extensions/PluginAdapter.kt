@@ -135,7 +135,7 @@ class PluginAdapter(
             val metadata = data.plugin.second
             val disabled = metadata.status == PROVIDER_STATUS_DOWN
             val alpha = if (disabled) 0.6f else 1f
-            val isLocal = data.plugin.second.repositoryUrl == null
+            val isLocal = !data.plugin.second.url.startsWith("http")
             itemView.main_text?.alpha = alpha
             itemView.sub_text?.alpha = alpha
 
@@ -216,11 +216,17 @@ class PluginAdapter(
                 itemView.lang_icon.text = fromTwoLettersToLanguage(metadata.language)
             }
 
-            ioSafe {
-                metadata.getVotes().main {
-                    itemView.ext_votes?.setText(txt(R.string.votes_format, prettyCount(it)))
+            if (isLocal) {
+                itemView.ext_votes?.isVisible = false
+            } else {
+                itemView.ext_votes?.isVisible = true
+                ioSafe {
+                    metadata.getVotes().main {
+                        itemView.ext_votes?.setText(txt(R.string.votes_format, prettyCount(it)))
+                    }
                 }
             }
+
 
             if (metadata.fileSize != null) {
                 itemView.ext_filesize?.isVisible = true
