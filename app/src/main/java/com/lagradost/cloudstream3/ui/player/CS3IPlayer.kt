@@ -427,7 +427,7 @@ class CS3IPlayer : IPlayer {
         /**
          * Setting this variable is permanent across app sessions.
          **/
-        private var preferredAudioTrackLanguage: String? = null
+        var preferredAudioTrackLanguage: String? = null
             get() {
                 return field ?: getKey(PREFERRED_AUDIO_LANGUAGE_KEY, field)?.also {
                     field = it
@@ -559,10 +559,7 @@ class CS3IPlayer : IPlayer {
                 // This will not force higher quality videos to fail
                 // but will make the m3u8 pick the correct preferred
                 .setMaxVideoSize(Int.MAX_VALUE, maxVideoHeight ?: Int.MAX_VALUE)
-                .setPreferredAudioLanguage(preferredAudioTrackLanguage)
-
-                // This would also clear preferred audio
-//                .clearSelectionOverrides()
+                .setPreferredAudioLanguage(null)
                 .build()
             return trackSelector
         }

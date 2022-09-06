@@ -18,11 +18,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO
-import com.google.android.exoplayer2.C.TRACK_TYPE_VIDEO
-import com.google.android.exoplayer2.Format
 import com.google.android.exoplayer2.Format.NO_VALUE
-import com.google.android.exoplayer2.TracksInfo
 import com.google.android.exoplayer2.util.MimeTypes
 import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
@@ -34,6 +30,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
+import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
@@ -119,6 +116,11 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun onTracksInfoChanged() {
         val tracks = player.getVideoTracks()
         player_tracks_btt?.isVisible = tracks.allVideoTracks.size > 1 || tracks.allAudioTracks.size > 1
+        // Only set the preferred language if it is available.
+        // Otherwise it may give some users audio track init failed!
+        if (tracks.allAudioTracks.any { it.language == preferredAudioTrackLanguage }){
+            player.setPreferredAudioTrack(preferredAudioTrackLanguage)
+        }
     }
 
     private fun noSubtitles(): Boolean {
