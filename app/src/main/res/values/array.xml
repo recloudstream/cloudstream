@@ -257,6 +257,14 @@
         <item>Light</item>
     </string-array>
 
+    <string-array name="extension_statuses">
+        <item>Down</item>
+        <!-- "Ok" is usually capitalized as "OK". Ok android studio 🤓-->
+        <item>Ok</item>
+        <item>Slow</item>
+        <item>Beta</item>
+    </string-array>
+
     <!--https://github.com/videolan/vlc-android/blob/72ccfb93db027b49855760001d1a930fa657c5a8/application/resources/src/main/res/values/arrays.xml#L266-->
     <string-array name="subtitles_encoding_list" tools:ignore="TypographyDashes">
         <item>@string/automatic</item>

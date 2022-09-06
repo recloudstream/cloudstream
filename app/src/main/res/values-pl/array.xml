@@ -29,18 +29,14 @@
         <item>4</item>
     </array>
 
-    <array name="media_type_pref">
-        <item>Wszystko</item>
-        <item>Filmy i TV</item>
-        <item>Anime</item>
-        <item>Dokumentalne</item>
-    </array>
-    <array name="media_type_pref_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </array>
+    <string-array name="extension_statuses">
+        <item>Nie działa</item>
+        <!-- "Ok" is usually capitalized as "OK". Ok android studio 🤓-->
+        <item>Ok</item>
+        <item>Wolny</item>
+        <item>Beta</item>
+    </string-array>
+
 
     <array name="limit_title_rez_pref_names">
         <item>@string/resolution_and_title</item>

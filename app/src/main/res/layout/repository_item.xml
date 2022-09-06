@@ -74,6 +74,17 @@
                 tools:visibility="visible" />
 
             <TextView
+                android:id="@+id/ext_votes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="5dp"
+                android:textColor="?attr/grayTextColor"
+                tools:text="Votes: 10K"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
                 android:id="@+id/nsfw_marker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,6 +99,7 @@
             android:id="@+id/sub_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:textColor="?attr/grayTextColor"
             android:textSize="12sp"
             tools:text="https://github.com/..." />
