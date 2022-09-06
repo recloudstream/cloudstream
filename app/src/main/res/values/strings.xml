@@ -624,4 +624,6 @@
     <string name="extension_authors">Authors</string>
     <string name="extension_types">Supported</string>
     <string name="extension_language">Language</string>
+    
+    <string name="hls_playlist">HLS Playlist</string>
 </resources>

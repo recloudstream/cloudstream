@@ -1,73 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
 
         <TextView
-                android:id="@+id/text1"
-
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:textColor="?attr/textColor"
-                android:layout_width="match_parent"
-                android:layout_rowWeight="1"
-                android:text="@string/stream"
-                android:layout_height="wrap_content" />
-
-        <EditText
-                android:layout_weight="20"
-                android:id="@+id/stream_url"
-                android:inputType="textUri"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/network_adress_example"
-                tools:ignore="LabelFor" />
+            android:id="@+id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/stream"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <EditText
-                android:layout_weight="20"
-                android:id="@+id/stream_referer"
-                android:inputType="textUri"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/referer"
-                tools:ignore="LabelFor" />
+            android:id="@+id/stream_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+            android:hint="@string/network_adress_example"
+            android:inputType="textUri"
+            tools:ignore="LabelFor" />
+
+        <EditText
+            android:id="@+id/stream_referer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+            android:hint="@string/referer"
+            android:inputType="textUri"
+            tools:ignore="LabelFor" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/hls_switch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:text="@string/hls_playlist"
+            android:textColor="?attr/textColor"
+            android:textSize="16sp" />
     </LinearLayout>
 
 
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_gravity="bottom"
-            android:gravity="bottom|end"
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:gravity="bottom|end"
+        android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
-                style="@style/WhiteButton"
-                android:layout_gravity="center_vertical|end"
-                android:visibility="visible"
-                android:text="@string/home_play"
-                android:id="@+id/apply_btt"
-                android:layout_width="wrap_content">
+            android:id="@+id/apply_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/home_play"
+            android:visibility="visible">
 
             <requestFocus />
         </com.google.android.material.button.MaterialButton>
 
         <com.google.android.material.button.MaterialButton
-                style="@style/BlackButton"
-                android:layout_gravity="center_vertical|end"
-                android:text="@string/sort_cancel"
-                android:id="@+id/cancel_btt"
-                android:layout_width="wrap_content" />
+            android:id="@+id/cancel_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/sort_cancel" />
     </LinearLayout>
 </LinearLayout>
