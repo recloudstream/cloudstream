@@ -37,10 +37,15 @@ object VotingApi { // please do not cheat the votes lol
         return getVoteType(url)
     }
 
+    // Plugin url to Int
+    private val votesCache = mutableMapOf<String, Int>()
+
     suspend fun getVotes(pluginUrl: String): Int {
         val url = "${apiDomain}/get/cs3-votes/${transformUrl(pluginUrl)}"
         Log.d(LOGKEY, "Requesting: $url")
-        return app.get(url).parsedSafe<Result>()?.value ?: (0.also {
+        return votesCache[pluginUrl] ?: app.get(url).parsedSafe<Result>()?.value?.also {
+            votesCache[pluginUrl] = it
+        } ?: (0.also {
           ioSafe {
               createBucket(pluginUrl)
           }
@@ -74,6 +79,7 @@ object VotingApi { // please do not cheat the votes lol
         val res = app.get(url).parsedSafe<Result>()?.value
         if (res != null) {
             setKey("cs3-votes/${transformUrl(pluginUrl)}", newType)
+            votesCache[pluginUrl] = res
         }
         return res ?: 0
     }
