@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.GlideApp
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.repository_item.view.*
@@ -212,17 +213,17 @@ class PluginAdapter(
                 itemView.lang_icon?.isVisible = false
             } else {
                 itemView.lang_icon?.isVisible = true
-                //itemView.lang_icon.text = getFlagFromIso(metadata.language)
-                itemView.lang_icon.text = fromTwoLettersToLanguage(metadata.language)
+                itemView.lang_icon.text = "${getFlagFromIso(metadata.language)} ${fromTwoLettersToLanguage(metadata.language)}"
             }
 
             if (isLocal) {
                 itemView.ext_votes?.isVisible = false
             } else {
-                itemView.ext_votes?.isVisible = true
+                itemView.ext_votes?.isVisible = false
                 ioSafe {
                     metadata.getVotes().main {
-                        itemView.ext_votes?.setText(txt(R.string.votes_format, prettyCount(it)))
+                        itemView.ext_votes?.setText(txt(R.string.extension_rating, prettyCount(it)))
+                        itemView.ext_votes?.isVisible = true
                     }
                 }
             }

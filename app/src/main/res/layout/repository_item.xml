@@ -79,8 +79,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="5dp"
-                android:text="10K"
                 android:textColor="?attr/grayTextColor"
+                tools:text="Votes: 10K"
                 android:visibility="gone"
                 tools:visibility="visible" />
 

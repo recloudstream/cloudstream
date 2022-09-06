@@ -616,11 +616,12 @@
     <string name="safe_mode_description">An unrecoverable crash occurred and we\'ve automatically disabled all extensions, so you can find and remove the extension which is causing trouble.</string>
     <string name="safe_mode_crash_info">View crash info</string>
 
-    <string name="votes_format" formatted="true">Votes: %s</string>
+    <string name="extension_rating" formatted="true">Rating: %s</string>
     <string name="extension_description">Description</string>
     <string name="extension_version">Version</string>
     <string name="extension_status">Status</string>
     <string name="extension_size">Size</string>
     <string name="extension_authors">Authors</string>
     <string name="extension_types">Supported</string>
+    <string name="extension_language">Language</string>
 </resources>

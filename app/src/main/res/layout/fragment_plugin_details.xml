@@ -233,6 +233,36 @@
                 tools:text="Lolem ipsum kek" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp">
+
+            <!--marquee_forever-->
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/SmallBlackButton"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/extension_language" />
+
+            <TextView
+                android:id="@+id/plugin_lang"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:ellipsize="marquee"
+
+                android:gravity="center_vertical"
+
+                android:singleLine="false"
+
+                android:textColor="?attr/textColor"
+                tools:text="Lolem ipsum kek" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
