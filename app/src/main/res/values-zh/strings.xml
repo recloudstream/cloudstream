@@ -211,7 +211,7 @@
     <string name="show_log_cat">显示日志</string>
 
     <string name="picture_in_picture">画中画</string>
-    <string name="picture_in_picture_des">>在其他应用之上的迷你播放器中继续播放</string>
+    <string name="picture_in_picture_des">在其他应用之上的迷你播放器中继续播放</string>
     <string name="player_size_settings">播放器画面调整按钮</string>
     <string name="player_size_settings_des">移除黑色边框</string>
     <string name="player_subtitles_settings">字幕</string>
