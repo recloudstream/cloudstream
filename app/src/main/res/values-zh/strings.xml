@@ -88,7 +88,7 @@
     <string name="preview_background_img_des">预览背景</string>
 
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
-    <string name="player_speed_text_format" formatted="true">速度 (%.2fx)</string>
+    <string name="player_speed_text_format" formatted="true">速度 （%.2fx）</string>
     <string name="rated_format" formatted="true">评分： %.1f</string>
     <string name="new_update_format" formatted="true">发现新版本！\n%s -> %s</string>
     <string name="filler" formatted="true">填充</string>
@@ -127,7 +127,7 @@
     <string name="play_torrent_button">播放种子</string>
     <string name="pick_source">来源</string>
     <string name="pick_subtitle">字幕</string>
-    <string name="reload_error">重新连接…</string>
+    <string name="reload_error">重试连接…</string>
     <string name="go_back">返回</string>
     <string name="play_episode">播放剧集</string>
     <!--<string name="need_storage">允许下载剧集</string>-->
@@ -211,7 +211,7 @@
     <string name="show_log_cat">显示日志</string>
 
     <string name="picture_in_picture">画中画</string>
-    <string name="picture_in_picture_des">>在其他应用之上的迷你播放器中继续播</string>
+    <string name="picture_in_picture_des">>在其他应用之上的迷你播放器中继续播放</string>
     <string name="player_size_settings">播放器画面调整按钮</string>
     <string name="player_size_settings_des">移除黑色边框</string>
     <string name="player_subtitles_settings">字幕</string>
@@ -220,9 +220,9 @@
     <string name="chromecast_subtitles_settings_des">投屏字幕设置</string>
 
     <string name="eigengraumode_settings">本征模式</string>
-    <string name="eigengraumode_settings_des">在播放器中添加播放速度选</string>
+    <string name="eigengraumode_settings_des">在播放器中添加播放速度选项</string>
     <string name="swipe_to_seek_settings">滑动控制进度</string>
-    <string name="swipe_to_seek_settings_des">向屏幕左侧或右侧滑动来控制播放进</string>
+    <string name="swipe_to_seek_settings_des">向屏幕左侧或右侧滑动来控制播放进度</string>
     <string name="swipe_to_change_settings">滑动更改设置</string>
     <string name="swipe_to_change_settings_des">在屏幕左侧或右侧滑动来更改亮度或音量</string>
 
@@ -342,7 +342,7 @@
 
     <!--singular-->
     <string name="movies_singular">电影</string>
-    <string name="tv_series_singular">系列</string>
+    <string name="tv_series_singular">剧集</string>
     <string name="cartoons_singular">卡通</string>
     <string name="anime_singular">动漫</string>
     <string name="ova_singular">原创影像动画</string>
