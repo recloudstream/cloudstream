@@ -569,8 +569,8 @@
     <string name="subtitles_filter_lang">按首选媒体语言过滤</string>
     <string name="extras">附加</string>
     <string name="trailer">预告片</string>
-    <string name="network_adress_example">直播的链接</string>
-    <string name="referer">首选</string>
+    <string name="network_adress_example">流媒体链接</string>
+    <string name="referer">Referer</string>
     <string name="next">Next</string>
     <string name="provider_languages_tip">观看此些语言的视频</string>
     <string name="previous">上一个</string>
