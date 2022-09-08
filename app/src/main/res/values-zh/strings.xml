@@ -350,7 +350,7 @@
 
     <string name="add_site_pref">克隆网站</string>
     <string name="remove_site_pref">移除网站</string>
-    <string name="add_site_summary">添加现有站点具有不同的URL的克隆</string>
+    <string name="add_site_summary">添加现有站点具有不同的 URL 的克隆</string>
 
     <string name="download_path_pref">下载路径</string>
 
