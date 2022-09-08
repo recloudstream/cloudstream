@@ -356,7 +356,7 @@
 
     <string name="nginx_url_pref">Nginx 服务器 URL</string>
 
-    <string name="display_subbed_dubbed_settings">显示有配音/字幕的动画</string>
+    <string name="display_subbed_dubbed_settings">显示有配音或字幕的动画</string>
 
     <string name="resize_fit">适应屏幕</string>
     <string name="resize_fill">拉伸</string>
