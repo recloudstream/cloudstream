@@ -55,7 +55,7 @@ jobs:
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "pre-release"
-        prerelease: false
+        prerelease: true
         title: "Pre-release Build"
         files: |
           app/build/outputs/apk/prerelease/*.apk

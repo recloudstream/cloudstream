@@ -35,8 +35,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
 
-        versionCode 50
-        versionName "3.1.4"
+        versionCode 51
+        versionName "3.1.5"
 
         resValue "string", "app_version",
                 "${defaultConfig.versionName}${versionNameSuffix ?: ""}"
@@ -194,7 +194,7 @@ dependencies {
     //implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
 
     // newpipe yt
-    implementation 'com.github.recloudstream:NewPipeExtractor:0.22.1'
+    implementation 'com.github.recloudstream:NewPipeExtractor:master-SNAPSHOT'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     // Library/extensions searching with Levenshtein distance
