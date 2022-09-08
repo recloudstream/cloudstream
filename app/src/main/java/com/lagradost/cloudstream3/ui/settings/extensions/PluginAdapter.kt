@@ -135,7 +135,7 @@ class PluginAdapter(
         ) {
             val metadata = data.plugin.second
             val disabled = metadata.status == PROVIDER_STATUS_DOWN
-            val name = if (metadata.name.contains("Provider")) metadata.name.replace("Provider", "") else metadata.name
+            val name = metadata.name.removeSuffix("Provider")
             val alpha = if (disabled) 0.6f else 1f
             val isLocal = !data.plugin.second.url.startsWith("http")
             itemView.main_text?.alpha = alpha
