@@ -440,5 +440,54 @@
     <!--<string name="extras">Extra</string>-->
     <string name="trailer">Trailer</string>
     <string name="network_adress_example">Link allo stream</string>
-    <!--<string name="referer">Referer</string>-->
+    
+    
+    <string name="referer">Referer</string>
+    <string name="next">Prossimo</string>
+    <string name="provider_languages_tip">Guarda video in queste lingue</string>
+    <string name="previous">Precedente</string>
+    <string name="skip_setup">Salta configurazione</string>
+    <string name="app_layout_subtext">Cambia l\'aspetto dell\'app per adattarla al proprio dispositivo</string>
+    <string name="crash_reporting_title">Segnala crash</string>
+    <string name="preferred_media_subtext">Cosa vuoi vedere</string>
+    <string name="setup_done">Fatto</string>
+    <string name="extensions">Estensioni</string>
+    <string name="add_repository">Aggiungi repository</string>
+    <string name="repository_name_hint">Nome repository</string>
+    <string name="repository_url_hint">Url repository</string>
+    <string name="plugin_loaded">Plugin caricato</string>
+    <string name="plugin_deleted">Plugin eliminato</string>
+    <string name="plugin_load_fail" formatted="true">Caricamento non riuscito %s</string>
+    <string name="is_adult">18+</string>
+    <string name="batch_download_start_format" formatted="true">Download iniziato %d %s</string>
+    <string name="batch_download_finish_format" formatted="true">Download %d %s completato</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">Tutti %s già scaricati</string>
+    <string name="batch_download">Download in blocco</string>
+    <string name="plugin_singular">plugin</string>
+    <string name="plugin">plugins</string>
+    <string name="delete_repository_plugins">Questo cancellerà anche tutti i plugin del repository</string>
+    <string name="delete_repository">Cancella repository</string>
+    <string name="setup_extensions_subtext">Scarica la lista dei siti che vuoi usare</string>
+    <string name="plugins_downloaded" formatted="true">Scaricato: %d</string>
+    <string name="plugins_disabled" formatted="true">Disabilitato: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Non scaricato: %d</string>
+    <string name="blank_repo_message">Aggiungi una repository per installare l\'estensione dei siti</string>
+    <string name="view_public_repositories_button">Vedi le repository della community</string>
+    <string name="view_public_repositories_button_short">Lista pubblica</string>
+    <string name="uppercase_all_subtitles">Tutti i sottotitoli in maiuscolo</string>
+
+    <string name="download_all_plugins_from_repo">Scaricare tutti i plugin da questa repository?</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Disabilitato)</string>
+    <string name="tracks">Tracks</string>
+    <string name="audio_tracks">Traccia audio</string>
+    <string name="video_tracks">Traccia video</string>
+    <string name="apply_on_restart">Applica al riavvio</string>
+
+    <string name="safe_mode_title">Safe Mode abilitata</string>
+    <string name="safe_mode_description">Si è verificato un crash irrecuperabile e abbiamo disabilitato automaticamente tutte le estensioni, in modo che possiate trovare e rimuovere l\'estensione che causa il problema.</string>
+    <string name="safe_mode_crash_info">Vedi informazioni del crash</string>
+    <string name="hls_playlist">HLS Playlist</string>
+
+    <!--<string name="refer
+    er">Referer</string>-->
 </resources>
