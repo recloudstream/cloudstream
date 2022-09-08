@@ -21,6 +21,7 @@ You can find the list of community-maintained extension repositories [here
 
 ***The list of supported languages:***
 * 🇱🇧 Arabic
+* 🇭🇷 Croatian
 * 🇨🇿 Czech
 * 🇳🇱 Dutch
 * 🇬🇧 English
