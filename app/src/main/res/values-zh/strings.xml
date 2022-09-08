@@ -433,7 +433,7 @@
     <string name="add_sync">添加同步</string>
     <string name="added_sync_format" formatted="true">已添加 %s</string>
     <string name="upload_sync">同步</string>
-    <string name="sync_score">Rated</string>
+    <string name="sync_score">评分</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
