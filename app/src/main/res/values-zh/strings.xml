@@ -180,7 +180,6 @@
     <string name="double_tap_to_pause_settings_des">双击屏幕中间暂停</string>
     <string name="use_system_brightness_settings">使用系统亮度</string>
     <string name="use_system_brightness_settings_des">在应用播放器中使用系统亮度，而不是黑色遮罩
-        overlay
     </string>
 
     <string name="episode_sync_settings">更新观看进度</string>
@@ -351,13 +350,13 @@
 
     <string name="add_site_pref">克隆网站</string>
     <string name="remove_site_pref">移除网站</string>
-    <string name="add_site_summary">添加现有站点具有不同的URL的克隆</string>
+    <string name="add_site_summary">添加现有站点具有不同的 URL 的克隆</string>
 
     <string name="download_path_pref">下载路径</string>
 
     <string name="nginx_url_pref">Nginx 服务器 URL</string>
 
-    <string name="display_subbed_dubbed_settings">显示有配音/字幕的动画</string>
+    <string name="display_subbed_dubbed_settings">显示有配音或字幕的动画</string>
 
     <string name="resize_fit">适应屏幕</string>
     <string name="resize_fill">拉伸</string>
@@ -434,7 +433,7 @@
     <string name="add_sync">添加同步</string>
     <string name="added_sync_format" formatted="true">已添加 %s</string>
     <string name="upload_sync">同步</string>
-    <string name="sync_score">Rated</string>
+    <string name="sync_score">评分</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
@@ -514,7 +513,7 @@
     <string name="trailer">预告片</string>
     <string name="network_adress_example">流媒体链接</string>
     <string name="referer">Referer</string>
-    <string name="next">Next</string>
+    <string name="next">下一个</string>
     <string name="provider_languages_tip">观看此些语言的视频</string>
     <string name="previous">上一个</string>
     <string name="skip_setup">跳过设置向导</string>
