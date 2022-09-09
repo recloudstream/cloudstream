@@ -135,6 +135,7 @@ class PluginAdapter(
         ) {
             val metadata = data.plugin.second
             val disabled = metadata.status == PROVIDER_STATUS_DOWN
+            val name = metadata.name.removeSuffix("Provider")
             val alpha = if (disabled) 0.6f else 1f
             val isLocal = !data.plugin.second.url.startsWith("http")
             itemView.main_text?.alpha = alpha
@@ -177,7 +178,7 @@ class PluginAdapter(
                         } catch (e: Throwable) {
                             Log.e(
                                 "PluginAdapter",
-                                "Failed to open ${metadata.name} settings: ${
+                                "Failed to open $name settings: ${
                                     Log.getStackTraceString(e)
                                 }"
                             )
@@ -235,7 +236,7 @@ class PluginAdapter(
             } else {
                 itemView.ext_filesize?.isVisible = false
             }
-            itemView.main_text.setText(if(disabled) txt(R.string.single_plugin_disabled, metadata.name) else txt(metadata.name))
+            itemView.main_text.setText(if(disabled) txt(R.string.single_plugin_disabled, name) else txt(name))
             itemView.sub_text?.isGone = metadata.description.isNullOrBlank()
             itemView.sub_text?.text = metadata.description.html()
         }

@@ -64,7 +64,7 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
         ) {
             plugin_icon?.setImageResource(R.drawable.ic_baseline_extension_24)
         }
-        plugin_name?.text = metadata.name
+        plugin_name?.text = metadata.name.removeSuffix("Provider")
         plugin_version?.text = metadata.version.toString()
         plugin_description?.text = metadata.description ?: getString(R.string.no_data)
         plugin_size?.text = if (metadata.fileSize == null) getString(R.string.no_data) else formatFileSize(context, metadata.fileSize)
