@@ -321,6 +321,17 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Mvidoo(),
     Streamplay(),
 
+    Gdriveplayerapi(),
+    Gdriveplayerapp(),
+    Gdriveplayerfun(),
+    Gdriveplayerio(),
+    Gdriveplayerme(),
+    Gdriveplayerbiz(),
+    Gdriveplayerorg(),
+    Gdriveplayerus(),
+    Gdriveplayerco(),
+    Gdriveplayer(),
+
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),
     YoutubeMobileExtractor(),
