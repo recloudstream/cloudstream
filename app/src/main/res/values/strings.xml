@@ -290,7 +290,7 @@
     </string>
 
     <string name="season">Season</string>
-    <string name="season_format">%s %d</string>
+    <string name="season_format">%s %d%s</string>
     <string name="no_season">No Season</string>
     <string name="episode">Episode</string>
     <string name="episodes">Episodes</string>

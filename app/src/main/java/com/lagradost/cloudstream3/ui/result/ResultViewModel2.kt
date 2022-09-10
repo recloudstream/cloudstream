@@ -409,6 +409,11 @@ class ResultViewModel2 : ViewModel() {
         private const val EPISODE_RANGE_SIZE = 20
         private const val EPISODE_RANGE_OVERLOAD = 30
 
+        private fun List<SeasonData>?.getSeason(season: Int?): SeasonData? {
+            if (season == null) return null
+            return this?.firstOrNull { it.season == season }
+        }
+
         private fun filterName(name: String?): String? {
             if (name == null) return null
             Regex("[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
@@ -1476,11 +1481,18 @@ class ResultViewModel2 : ViewModel() {
                 if (isMovie || currentSeasons.size <= 1) null else
                     when (indexer.season) {
                         0 -> txt(R.string.no_season)
-                        else -> txt(
-                            R.string.season_format,
-                            txt(R.string.season),
-                            indexer.season
-                        ) //TODO FIX DISPLAYNAME
+                        else -> {
+                            val seasonNames = (currentResponse as? EpisodeResponse)?.seasonNames
+                            val seasonData =
+                                seasonNames.getSeason(indexer.season)
+                            val suffix = seasonData?.name?.let { " $it" } ?: ""
+                            txt(
+                                R.string.season_format,
+                                txt(R.string.season),
+                                seasonData?.displaySeason ?: indexer.season,
+                                suffix
+                            )
+                        }
                     }
             )
         )
@@ -1578,6 +1590,7 @@ class ResultViewModel2 : ViewModel() {
                         val id = mainId + episode + idIndex * 1000000
                         if (!existingEpisodes.contains(episode)) {
                             existingEpisodes.add(id)
+                            val seasonData = loadResponse.seasonNames.getSeason(i.season)
                             val eps =
                                 buildResultEpisode(
                                     loadResponse.name,
@@ -1585,7 +1598,7 @@ class ResultViewModel2 : ViewModel() {
                                     i.posterUrl,
                                     episode,
                                     null,
-                                    i.season,
+                                    seasonData?.displaySeason ?: i.season,
                                     i.data,
                                     loadResponse.apiName,
                                     id,
@@ -1621,7 +1634,7 @@ class ResultViewModel2 : ViewModel() {
                         existingEpisodes.add(id)
                         val seasonIndex = episode.season?.minus(1)
                         val currentSeason =
-                            loadResponse.seasonNames?.getOrNull(seasonIndex ?: -1)
+                            loadResponse.seasonNames.getSeason(episode.season)
 
                         val ep =
                             buildResultEpisode(
@@ -1630,7 +1643,7 @@ class ResultViewModel2 : ViewModel() {
                                 episode.posterUrl,
                                 episodeIndex,
                                 seasonIndex,
-                                currentSeason?.season ?: episode.season,
+                                currentSeason?.displaySeason ?: episode.season,
                                 episode.data,
                                 loadResponse.apiName,
                                 id,
@@ -1731,10 +1744,19 @@ class ResultViewModel2 : ViewModel() {
         _dubSubSelections.postValue(dubSelection.map { txt(it) to it })
         if (loadResponse is EpisodeResponse) {
             _seasonSelections.postValue(seasonsSelection.map { seasonNumber ->
+                val seasonData = loadResponse.seasonNames.getSeason(seasonNumber)
+                val fixedSeasonNumber = seasonData?.displaySeason ?: seasonNumber
+                val suffix = seasonData?.name?.let { " $it" } ?: ""
+
                 val name =
                     /*loadResponse.seasonNames?.firstOrNull { it.season == seasonNumber }?.name?.let { seasonData ->
                         txt(seasonData)
-                    } ?:*/txt(R.string.season_format, txt(R.string.season), seasonNumber) //TODO FIX
+                    } ?:*/txt(
+                    R.string.season_format,
+                    txt(R.string.season),
+                    fixedSeasonNumber,
+                    suffix
+                )
                 name to seasonNumber
             })
         }

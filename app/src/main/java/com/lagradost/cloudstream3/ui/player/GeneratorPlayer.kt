@@ -399,7 +399,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                             name = getName(currentSubtitle, true),
                             url = url,
                             origin = SubtitleOrigin.URL,
-                            mimeType = url.toSubtitleMimeType()
+                            mimeType = url.toSubtitleMimeType(),
+                            headers = currentSubtitle.headers
                         )
                         runOnMainThread {
                             addAndSelectSubtitles(subtitle)
@@ -483,7 +484,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                     name,
                     uri.toString(),
                     SubtitleOrigin.DOWNLOADED_FILE,
-                    name.toSubtitleMimeType()
+                    name.toSubtitleMimeType(),
+                    emptyMap()
                 )
 
                 addAndSelectSubtitles(subtitleData)

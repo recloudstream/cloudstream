@@ -84,7 +84,8 @@ class DownloadFileGenerator(
                                 realName.ifBlank { ctx.getString(R.string.default_subtitles) },
                                 file.second.toString(),
                                 SubtitleOrigin.DOWNLOADED_FILE,
-                                name.toSubtitleMimeType()
+                                name.toSubtitleMimeType(),
+                                emptyMap()
                             )
                         )
                     }

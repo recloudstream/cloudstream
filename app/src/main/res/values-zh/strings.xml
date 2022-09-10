@@ -231,7 +231,6 @@
     </string>
 
     <string name="season">季</string>
-    <string name="season_format">%s %d</string>
     <string name="no_season">无季</string>
     <string name="episode">集</string>
     <string name="episodes">集</string>
