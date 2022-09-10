@@ -11,6 +11,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.fragment_plugin_details.*
 import android.text.format.Formatter.formatFileSize
+import android.util.Log
+import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.plugins.VotingApi
 import com.lagradost.cloudstream3.plugins.VotingApi.getVoteType
 import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
@@ -19,9 +21,11 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
-import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.VotingApi.canVote
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
+import kotlinx.android.synthetic.main.repository_item.view.*
 
 
 class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragment() {
@@ -80,7 +84,35 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
             if (metadata.repositoryUrl != null) {
                 openBrowser(metadata.repositoryUrl)
             }
+        }
 
+        if (!metadata.canVote()) {
+            downvote.alpha = .6f
+            upvote.alpha = .6f
+        }
+
+        if (data.isDownloaded) {
+            // On local plugins page the filepath is provided instead of url.
+            val plugin = PluginManager.urlPlugins[metadata.url] ?: PluginManager.plugins[metadata.url]
+            if (plugin?.openSettings != null && context != null) {
+                action_settings?.isVisible = true
+                action_settings.setOnClickListener {
+                    try {
+                        plugin.openSettings!!.invoke(requireContext())
+                    } catch (e: Throwable) {
+                        Log.e(
+                            "PluginAdapter",
+                            "Failed to open ${metadata.name} settings: ${
+                                Log.getStackTraceString(e)
+                            }"
+                        )
+                    }
+                }
+            } else {
+                action_settings?.isVisible = false
+            }
+        } else {
+            action_settings?.isVisible = false
         }
 
         upvote.setOnClickListener {

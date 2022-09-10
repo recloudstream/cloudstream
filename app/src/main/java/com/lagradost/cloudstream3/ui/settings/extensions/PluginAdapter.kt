@@ -183,7 +183,6 @@ class PluginAdapter(
                                 }"
                             )
                         }
-
                     }
                 } else {
                     itemView.action_settings?.isVisible = false
@@ -217,10 +216,8 @@ class PluginAdapter(
                 itemView.lang_icon.text = "${getFlagFromIso(metadata.language)} ${fromTwoLettersToLanguage(metadata.language)}"
             }
 
-            if (isLocal) {
-                itemView.ext_votes?.isVisible = false
-            } else {
-                itemView.ext_votes?.isVisible = false
+            itemView.ext_votes?.isVisible = false
+            if (!isLocal) {
                 ioSafe {
                     metadata.getVotes().main {
                         itemView.ext_votes?.setText(txt(R.string.extension_rating, prettyCount(it)))

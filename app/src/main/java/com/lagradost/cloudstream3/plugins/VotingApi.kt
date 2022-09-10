@@ -1,11 +1,15 @@
 package com.lagradost.cloudstream3.plugins
 
 import android.util.Log
+import android.widget.Toast
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.R
 import java.security.MessageDigest
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 
 object VotingApi { // please do not cheat the votes lol
     private const val LOGKEY = "VotingApi"
@@ -33,8 +37,11 @@ object VotingApi { // please do not cheat the votes lol
     }
 
     fun SitePlugin.getVoteType(): VoteType {
-        if (repositoryUrl == null) return VoteType.NONE
         return getVoteType(url)
+    }
+
+    fun SitePlugin.canVote(): Boolean {
+        return canVote(this.url)
     }
 
     // Plugin url to Int
@@ -62,7 +69,18 @@ object VotingApi { // please do not cheat the votes lol
         app.get(url)
     }
 
+    fun canVote(pluginUrl: String): Boolean {
+        if (!PluginManager.urlPlugins.contains(pluginUrl)) return false
+        return true
+    }
+
     suspend fun vote(pluginUrl: String, requestType: VoteType): Int {
+        if (!canVote(pluginUrl)) {
+            main {
+                Toast.makeText(context, R.string.extension_install_first, Toast.LENGTH_SHORT).show()
+            }
+            return getVotes(pluginUrl)
+        }
         val savedType: VoteType = getKey("cs3-votes/${transformUrl(pluginUrl)}") ?: VoteType.NONE
         var newType: VoteType = requestType
         var changeValue = 0

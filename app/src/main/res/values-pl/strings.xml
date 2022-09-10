@@ -454,4 +454,5 @@
     <string name="extension_authors">Autorzy</string>
     <string name="extension_types">Wspierane</string>
     <string name="extension_language">Język</string>
+    <string name="extension_install_first">Najpierw zainstaluj rozszerzenie</string>
 </resources>
