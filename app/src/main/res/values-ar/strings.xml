@@ -21,7 +21,7 @@
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">تشغيل بواسطة CloudStream</string>
     <string name="title_home">الصفحة الرئيسية</string>
-    <string name="title_search">بحث</string>
+    <string name="title_search">البحث</string>
     <string name="title_downloads">التحميلات</string>
     <string name="title_settings">الإعدادات</string>
 
@@ -33,7 +33,7 @@
     <string name="next_episode">الحلقة التالية</string>
     <string name="result_tags">النواع</string>
     <string name="result_share">شارك</string>
-    <string name="result_open_in_browser">فتح في الويب </string>
+    <string name="result_open_in_browser">فتح في الويب</string>
     <string name="skip_loading">تخطي التحميل</string>
     <string name="loading">…تحميل</string>
 
@@ -142,7 +142,7 @@
 
     <string name="eigengraumode_settings">وضع إيغنغرافي</string>
     <string name="eigengraumode_settings_des">يضيف خيار السرعة في المشغل</string>
-    <string name="swipe_to_seek_settings">اسحب للسعي</string>
+    <string name="swipe_to_seek_settings">اسحب للتقدم</string>
     <string name="swipe_to_seek_settings_des">اسحب إلى اليسار أو اليمين للتحكم في الوقت في مشغل الفيديو</string>
     <string name="swipe_to_change_settings">اسحب لتغيير الإعدادات</string>
     <string name="swipe_to_change_settings_des">اسحب على الجانب الأيسر أو الأيمن لتغيير السطوع أو مستوى الصوت</string>
