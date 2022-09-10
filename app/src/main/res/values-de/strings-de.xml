@@ -210,7 +210,6 @@
     </string>
 
     <string name="season">Staffel</string>
-    <string name="season_format">%s %d</string>
     <string name="no_season">Keine Staffel</string>
     <string name="episode">Episode</string>
     <string name="episodes">Episoden</string>

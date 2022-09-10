@@ -208,7 +208,6 @@
     <string name="acra_report_toast">Sorry, de applicatie is gecrasht. Er wordt een anoniem bugrapport naar de ontwikkelaars gestuurd </string>
 
     <string name="season">Seizoen</string>
-    <string name="season_format">%s %d</string>
     <string name="no_season">Geen seizoen</string>
     <string name="episode">Aflevering</string>
     <string name="episodes">afleveringen</string>

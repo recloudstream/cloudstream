@@ -13,7 +13,8 @@ class AbstractSubtitleEntities {
         var epNumber: Int? = null,
         var seasonNumber: Int? = null,
         var year: Int? = null,
-        var isHearingImpaired: Boolean = false
+        var isHearingImpaired: Boolean = false,
+        var headers: Map<String, String> = emptyMap()
     )
 
     data class SubtitleSearch(

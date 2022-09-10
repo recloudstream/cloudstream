@@ -228,7 +228,6 @@
     </string>
 
     <string name="season">Sezona</string>
-    <string name="season_format">%s %d</string>
     <string name="no_season">Nema sezone</string>
     <string name="episode">Epizoda</string>
     <string name="episodes">Epizode</string>

@@ -221,7 +221,6 @@
 
 
     <string name="season">Mùa</string>
-    <string name="season_format">%s %d</string>
     <string name="no_season">Không có mùa nào</string>
     <string name="episode">Tập</string>
     <string name="episodes">Tập</string>
