@@ -4,6 +4,7 @@ import android.util.Log
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.imdbUrlToIdNullable
+import com.lagradost.cloudstream3.network.CloudflareKiller
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -18,6 +19,8 @@ class IndexSubtitleApi : AbstractSubApi {
     override fun loginInfo(): Nothing? = null
 
     override fun logOut() {}
+
+    private val interceptor = CloudflareKiller()
 
     companion object {
         const val host = "https://indexsubtitle.com"
@@ -122,12 +125,13 @@ class IndexSubtitleApi : AbstractSubApi {
                     type = if (seasonNum > 0) TvType.TvSeries else TvType.Movie,
                     epNumber = epNum,
                     seasonNumber = seasonNum,
-                    year = yearNum
+                    year = yearNum,
+                    headers = interceptor.getCookieHeaders(link).toMap()
                 )
             )
         }
 
-        val document = app.get("$host/?search=$queryText").document
+        val document = app.get("$host/?search=$queryText", interceptor = interceptor).document
 
         document.select("div.my-3.p-3 div.media").map { block ->
             if (seasonNum > 0) {
@@ -159,7 +163,7 @@ class IndexSubtitleApi : AbstractSubApi {
                             val urlItem = fixUrl(
                                 it.selectFirst("a")!!.attr("href")
                             )
-                            val itemDoc = app.get(urlItem).document
+                            val itemDoc = app.get(urlItem, interceptor = interceptor).document
                             val id = imdbUrlToIdNullable(
                                 itemDoc.selectFirst("div.d-flex span.badge.badge-primary")?.parent()
                                     ?.attr("href")
@@ -198,7 +202,7 @@ class IndexSubtitleApi : AbstractSubApi {
         val results = mutableListOf<AbstractSubtitleEntities.SubtitleEntity>()
 
         urlItems.forEach { url ->
-            val request = app.get(url)
+            val request = app.get(url, interceptor = interceptor)
             if (request.isSuccessful) {
                 request.document.select("div.my-3.p-3 div.media").map { block ->
                     if (block.select("span.d-block span[data-original-title=Language]").text()
@@ -231,7 +235,7 @@ class IndexSubtitleApi : AbstractSubApi {
         val seasonNum = data.seasonNumber
         val epNum = data.epNumber
 
-        val req = app.get(data.data)
+        val req = app.get(data.data, interceptor = interceptor)
 
         if (req.isSuccessful) {
             val document = req.document

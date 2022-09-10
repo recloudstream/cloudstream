@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.network.WebViewResolver
@@ -46,6 +48,7 @@ class WebviewFragment : Fragment() {
                 return super.shouldOverrideUrlLoading(view, request)
             }
         }
+        web_view.addJavascriptInterface(RepoApi(activity), "RepoApi")
         web_view.settings.javaScriptEnabled = true
         web_view.settings.domStorageEnabled = true
 
@@ -68,5 +71,12 @@ class WebviewFragment : Fragment() {
             Bundle().apply {
                 putString(WEBVIEW_URL, webViewUrl)
             }
+    }
+
+    private class RepoApi(val activity: FragmentActivity?) {
+        @JavascriptInterface
+         fun installRepo(repoUrl: String) {
+            activity?.loadRepository(repoUrl)
+        }
     }
 }
