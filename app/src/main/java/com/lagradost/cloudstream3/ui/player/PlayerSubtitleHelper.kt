@@ -29,12 +29,14 @@ enum class SubtitleOrigin {
 /**
  * @param name To be displayed in the player
  * @param url Url for the subtitle, when EMBEDDED_IN_VIDEO this variable is used as the real backend language
+ * @param headers if empty it will use the base onlineDataSource headers else only the specified headers
  * */
 data class SubtitleData(
     val name: String,
     val url: String,
     val origin: SubtitleOrigin,
     val mimeType: String,
+    val headers: Map<String, String>
 )
 
 class PlayerSubtitleHelper {
@@ -71,7 +73,8 @@ class PlayerSubtitleHelper {
                 name = subtitleFile.lang,
                 url = subtitleFile.url,
                 origin = SubtitleOrigin.URL,
-                mimeType = subtitleFile.url.toSubtitleMimeType()
+                mimeType = subtitleFile.url.toSubtitleMimeType(),
+                headers = emptyMap()
             )
         }
     }

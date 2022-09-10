@@ -290,7 +290,7 @@
     </string>
 
     <string name="season">Season</string>
-    <string name="season_format">%s %d</string>
+    <string name="season_format">%s %d%s</string>
     <string name="no_season">No Season</string>
     <string name="episode">Episode</string>
     <string name="episodes">Episodes</string>
@@ -624,6 +624,7 @@
     <string name="extension_authors">Authors</string>
     <string name="extension_types">Supported</string>
     <string name="extension_language">Language</string>
+    <string name="extension_install_first">Install the extension first</string>
     
     <string name="hls_playlist">HLS Playlist</string>
 </resources>

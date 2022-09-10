@@ -339,9 +339,7 @@ object PluginManager {
             }
             plugins[filePath] = pluginInstance
             classLoaders[loader] = pluginInstance
-            if (data.url != null) { // TODO: make this cleaner
-                urlPlugins[data.url] = pluginInstance
-            }
+            urlPlugins[data.url ?: filePath] = pluginInstance
             pluginInstance.load(activity)
             Log.i(TAG, "Loaded plugin ${data.internalName} successfully")
             currentlyLoading = null
@@ -382,6 +380,7 @@ object PluginManager {
         classLoaders.values.removeIf { v -> v == plugin }
 
         plugins.remove(absolutePath)
+        urlPlugins.values.removeIf { v -> v == plugin }
     }
 
     /**

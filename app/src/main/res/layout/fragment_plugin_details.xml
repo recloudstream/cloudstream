@@ -44,10 +44,23 @@
             tools:text="Hello world" />
 
         <ImageView
+            android:id="@+id/action_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/title_settings"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_baseline_tune_24"
+            tools:visibility="visible" />
+
+        <ImageView
             android:id="@+id/github_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
+            android:layout_marginStart="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_github_logo" />
     </LinearLayout>

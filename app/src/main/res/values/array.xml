@@ -20,6 +20,8 @@
         <item>Cloudflare</item>
         <!--        <item>OpenDns</item>-->
         <item>AdGuard</item>
+        <item>DNS.WATCH</item>
+        <item>Quad9</item>
     </array>
     <array name="dns_pref_values">
         <item>0</item>
@@ -27,6 +29,8 @@
         <item>2</item>
         <!--        <item>3</item>-->
         <item>4</item>
+        <item>5</item>
+        <item>6</item>
     </array>
 
     <array name="limit_title_rez_pref_names">

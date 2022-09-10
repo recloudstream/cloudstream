@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.ui.SubtitleView
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -442,7 +443,14 @@ class CS3IPlayer : IPlayer {
 
         var requestSubtitleUpdate: (() -> Unit)? = null
 
-        private fun createOnlineSource(link: ExtractorLink): DataSource.Factory {
+        private fun createOnlineSource(headers: Map<String, String>): HttpDataSource.Factory {
+            val source = OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
+            return source.apply {
+                setDefaultRequestProperties(headers)
+            }
+        }
+
+        private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
 
@@ -813,7 +821,8 @@ class CS3IPlayer : IPlayer {
                                 // See setPreferredTextLanguage
                                 it.language!!,
                                 SubtitleOrigin.EMBEDDED_IN_VIDEO,
-                                it.sampleMimeType ?: MimeTypes.APPLICATION_SUBRIP
+                                it.sampleMimeType ?: MimeTypes.APPLICATION_SUBRIP,
+                                emptyMap()
                             )
                         }
 
@@ -981,9 +990,10 @@ class CS3IPlayer : IPlayer {
 
             val mediaItem = getMediaItem(MimeTypes.VIDEO_MP4, data.uri)
             val offlineSourceFactory = context.createOfflineSource()
+            val onlineSourceFactory = createOnlineSource(emptyMap())
 
             val (subSources, activeSubtitles) = getSubSources(
-                onlineSourceFactory = offlineSourceFactory,
+                onlineSourceFactory = onlineSourceFactory,
                 offlineSourceFactory = offlineSourceFactory,
                 subtitleHelper,
             )
@@ -997,7 +1007,7 @@ class CS3IPlayer : IPlayer {
     }
 
     private fun getSubSources(
-        onlineSourceFactory: DataSource.Factory?,
+        onlineSourceFactory: HttpDataSource.Factory?,
         offlineSourceFactory: DataSource.Factory?,
         subHelper: PlayerSubtitleHelper,
     ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
@@ -1021,7 +1031,10 @@ class CS3IPlayer : IPlayer {
                 SubtitleOrigin.URL -> {
                     if (onlineSourceFactory != null) {
                         activeSubtitles.add(sub)
-                        SingleSampleMediaSource.Factory(onlineSourceFactory)
+                        SingleSampleMediaSource.Factory(onlineSourceFactory.apply {
+                            if (sub.headers.isNotEmpty())
+                                this.setDefaultRequestProperties(sub.headers)
+                        })
                             .createMediaSource(subConfig, C.TIME_UNSET)
                     } else {
                         null
