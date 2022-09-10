@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
+import com.lagradost.cloudstream3.utils.Qualities
 
 class GMPlayer : ExtractorApi() {
     override val name = "GM Player"
@@ -25,11 +26,16 @@ class GMPlayer : ExtractorApi() {
             data = mapOf("hash" to id, "r" to ref)
         ).parsed<GmResponse>().videoSource ?: return null
 
-        return M3u8Helper.generateM3u8(
-            name,
-            m3u8,
-            ref,
-            headers = mapOf("accept" to "*/*")
+        return listOf(
+            ExtractorLink(
+                this.name,
+                this.name,
+                m3u8,
+                "",
+                Qualities.Unknown.value,
+                headers = mapOf("accept" to "*/*"),
+                isM3u8 = true
+            )
         )
     }
 
