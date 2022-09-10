@@ -14,21 +14,6 @@
         <item>@id/cast_button_type_forward_30_seconds</item>
     </array>
 
-    <array name="dns_pref">
-        <item>@string/none</item>
-        <item>Google</item>
-        <item>Cloudflare</item>
-        <!--        <item>OpenDns</item>-->
-        <item>AdGuard</item>
-    </array>
-    <array name="dns_pref_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <!--        <item>3</item>-->
-        <item>4</item>
-    </array>
-
     <string-array name="extension_statuses">
         <item>Nie działa</item>
         <!-- "Ok" is usually capitalized as "OK". Ok android studio 🤓-->
