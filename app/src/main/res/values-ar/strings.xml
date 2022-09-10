@@ -84,7 +84,7 @@
     <string name="filter_bookmarks">تصفية الاشارات المرجعية</string>
     <string name="error_bookmarks_text">إشارات مرجعية</string>
     <string name="action_remove_from_bookmarks">حذف</string>
-    <string name="action_add_to_bookmarks">إعداد حالةالمشاهدة</string>
+    <string name="action_add_to_bookmarks">إعداد حالة المشاهدة</string>
     <string name="sort_apply">تطبيق</string>
     <string name="sort_cancel">إلغاء</string>
     <string name="sort_copy">نسخ</string>
@@ -179,7 +179,7 @@
     <string name="advanced_search_des">يعطيك نتائج البحث مفصولة عن طريق المزود</string>
     <string name="bug_report_settings_off">إرسال البيانات عن الأعطال فقط</string>
     <string name="bug_report_settings_on">لا ترسل أي بيانات</string>
-    <string name="show_fillers_settings">عرض حلقة فلر للأنيمي</string>
+    <string name="show_fillers_settings">عرض حلقات الفلر للأنمي</string>
     <string name="show_trailers_settings">عرض المقاطع الدعائية</string>
     <string name="kitsu_settings">عرض ملصقات من kitsu</string>
     <string name="pref_filter_search_quality">إخفاء جودة الفيديو المختارة من نتائج البحث</string>
@@ -191,7 +191,7 @@
     <string name="uprereleases_settings_des">ابحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
     <string name="github">Github</string>
     <string name="lightnovel">تطبيق رواية خفيف من نفس المطورين</string>
-    <string name="anim">تطبيق أنيمي من نفس المطورين</string>
+    <string name="anim">تطبيق أنمي من نفس المطورين</string>
     <string name="discord">انضم إلى إلديسكورد</string>
     <string name="benene">أعط موزة للمطورين</string>
     <string name="benene_des">اعط موز</string>
@@ -244,7 +244,7 @@
     <string name="movies">أفلام</string>
     <string name="tv_series">مسلسلات</string>
     <string name="cartoons">رسوم متحركة</string>
-    <string name="anime">أنيمي</string>
+    <string name="anime">أنمي</string>
     <string name="torrent">تورنت</string>
     <string name="documentaries">الافلام الوثائقية</string>
     <string name="ova">اوفا</string>
