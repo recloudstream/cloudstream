@@ -31,7 +31,7 @@ class GMPlayer : ExtractorApi() {
                 this.name,
                 this.name,
                 m3u8,
-                "",
+                ref,
                 Qualities.Unknown.value,
                 headers = mapOf("accept" to "*/*"),
                 isM3u8 = true
