@@ -190,7 +190,7 @@
     <string name="uprereleases_settings">التحديث إلى الاصدارات التجريبيه (بيتا)</string>
     <string name="uprereleases_settings_des">البحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
     <string name="github">Github</string>
-    <string name="lightnovel">تطبيق رواية خفيف من نفس المطورين</string>
+    <string name="lightnovel">تطبيق روايات خفيف من نفس المطورين</string>
     <string name="anim">تطبيق أنمي من نفس المطورين</string>
     <string name="discord">انضم إلى الديسكورد</string>
     <string name="benene">إعط موزة للمطورين</string>
@@ -278,7 +278,7 @@
     <string name="episode_action_play_in_browser">تشغيل في الويب </string>
     <string name="episode_action_copy_link">نسخ الرابط</string>
     <string name="episode_action_auto_download">التحميل التلقائي</string>
-    <string name="episode_action_download_mirror">تحميل نسخة</string>
+    <string name="episode_action_download_mirror">تحميل بجودات مختلفة</string>
     <string name="episode_action_reload_links">إعادة تحميل الروابط</string>
     <string name="episode_action_download_subtitle">تحميل الترجمة</string>
 
@@ -481,7 +481,7 @@
     <string name="subtitles_remove_bloat">ازالة البرمجيات الخبيثة من الترجمة</string>
     <string name="subtitles_filter_lang">فلترة تبعا للغة المحتوي المفضلة</string>
     <string name="extras">اكسترا</string>
-    <string name="trailer">المقاطع الدعائية</string>
+    <string name="trailer">مقطع دعائي</string>
     <string name="network_adress_example">رابط الفيديو</string>
     <string name="referer">Referer</string>
     <string name="next">التالي</string>
