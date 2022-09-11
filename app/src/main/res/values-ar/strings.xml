@@ -31,7 +31,7 @@
     <string name="no_data">لايوجد بيانات</string>
     <string name="episode_more_options_des">المزيد من الخيارات</string>
     <string name="next_episode">الحلقة التالية</string>
-    <string name="result_tags">اصناف</string>
+    <string name="result_tags">أنواع</string>
     <string name="result_share">شارك</string>
     <string name="result_open_in_browser">فتح في الويب</string>
     <string name="skip_loading">تخطي التحميل</string>
@@ -47,7 +47,7 @@
 
     <string name="play_movie_button">مشاهدة الفيلم</string>
     <string name="play_livestream_button">تشغيل بث حي</string>
-    <string name="play_torrent_button">تشغيل التورنت</string>
+    <string name="play_torrent_button">تشغيل تورنت</string>
     <string name="pick_source">المصادر</string>
     <string name="pick_subtitle">الترجمة</string>
     <string name="reload_error">…إعادة محاولة الاتصال</string>
@@ -92,7 +92,7 @@
     <string name="sort_clear">مسح</string>
     <string name="sort_save">حفظ</string>
 
-    <string name="player_speed">سرعة المشغل</string>
+    <string name="player_speed">سرعة المُشغل</string>
 
     <string name="subtitles_settings">إعدادات الترجمة</string>
     <string name="subs_text_color">لون الخط</string>
@@ -113,9 +113,9 @@
     <string name="subs_auto_select_language">تحديد اللغة تلقائيًا</string>
     <string name="subs_download_languages">تحميل اللغات</string>
     <string name="subs_subtitle_languages">لغة الترجمة</string>
-    <string name="subs_hold_to_reset_to_default">اضغط بإستمرار لاعادة التعيين للاعدادات الافتراضية</string>
+    <string name="subs_hold_to_reset_to_default">إضغط بإستمرار لإعادة التعيين للإعدادات الافتراضية</string>
     <string name="subs_import_text" formatted="true">إستيراد خطوط بوضعها هنا %s</string>
-    <string name="continue_watching">استمر في المشاهدة</string>
+    <string name="continue_watching">متابعة المشاهدة</string>
 
     <string name="action_remove_watching">حذف</string>
     <string name="action_open_watching">مزيد من المعلومات</string>
@@ -132,36 +132,36 @@
     <string name="show_log_cat">🐈 logcat عرض</string>
 
     <string name="picture_in_picture">نافذة منبثقة</string>
-    <string name="picture_in_picture_des">يستمر في التشغيل في مشغل مصغر فوق التطبيقات الأخرى</string>
-    <string name="player_size_settings">زر تغيير حجم المشغل</string>
-    <string name="player_size_settings_des">قم بإزالة الحدود السوداء</string>
+    <string name="picture_in_picture_des">يستمر في التشغيل في مُشغل مصغر فوق التطبيقات الأخرى</string>
+    <string name="player_size_settings">زر تغيير حجم المُشغل</string>
+    <string name="player_size_settings_des">إزالة الحدود السوداء</string>
     <string name="player_subtitles_settings">الترجمة</string>
-    <string name="player_subtitles_settings_des">إعدادات ترجمة المشغل</string>
+    <string name="player_subtitles_settings_des">إعدادات ترجمة المُشغل</string>
     <string name="chromecast_subtitles_settings">ترجمة كروم كاست</string>
     <string name="chromecast_subtitles_settings_des">إعدادات ترجمة كروم كاست</string>
 
     <string name="eigengraumode_settings">وضع إيغنغرافي</string>
-    <string name="eigengraumode_settings_des">يضيف خيار السرعة في المشغل</string>
-    <string name="swipe_to_seek_settings">اسحب للتقدم</string>
-    <string name="swipe_to_seek_settings_des">اسحب إلى اليسار أو اليمين للتحكم في الوقت في مشغل الفيديو</string>
-    <string name="swipe_to_change_settings">اسحب لتغيير الإعدادات</string>
-    <string name="swipe_to_change_settings_des">اسحب على الجانب الأيسر أو الأيمن لتغيير السطوع أو مستوى الصوت</string>
+    <string name="eigengraumode_settings_des">يضيف خيار السرعة في المُشغل</string>
+    <string name="swipe_to_seek_settings">السحب للسعي</string>
+    <string name="swipe_to_seek_settings_des">إسحب إلى اليسار أو اليمين للتحكم في الوقت في مُشغل الفيديو</string>
+    <string name="swipe_to_change_settings">السحب لتغيير الإعدادات</string>
+    <string name="swipe_to_change_settings_des">إسحب على الجانب الأيسر أو الأيمن لتغيير السطوع أو مستوى الصوت</string>
 
-    <string name="autoplay_next_settings">تشغيل الحلفة التالة تلقائيًا</string>
-    <string name="autoplay_next_settings_des">ابدأ الحلقة التالية عندما تنتهي الحلقةالحالية</string>
+    <string name="autoplay_next_settings">تشغيل الحلقة التالية تلقائيًا</string>
+    <string name="autoplay_next_settings_des">تبدأ الحلقة التالية عندما تنتهي الحالية</string>
 
-    <string name="double_tap_to_seek_settings">انقر مرتين  للسعي للأمام أو للخلف</string>
-    <string name="double_tap_to_pause_settings">اضغط مرتين لإيقاف مؤقت</string>
-    <string name="double_tap_to_seek_amount_settings">التحكم في سعي المشغل</string>
-    <string name="double_tap_to_seek_settings_des">اضغط مرتين على الجانب الأيمن أو الأيسر للسعي للأمام أو للخلف	</string>
-    <string name="double_tap_to_pause_settings_des">اضغط في الوسط لإيقاف مؤقت</string>
+    <string name="double_tap_to_seek_settings">النقر مرتان  للسعي للأمام أو للخلف</string>
+    <string name="double_tap_to_pause_settings">الضغط مرتان لإيقاف مؤقت</string>
+    <string name="double_tap_to_seek_amount_settings">التحكم في سعي المُشغل</string>
+    <string name="double_tap_to_seek_settings_des">إضغط مرتين على الجانب الأيمن أو الأيسر للسعي للأمام أو للخلف	</string>
+    <string name="double_tap_to_pause_settings_des">إضغط في الوسط لإيقاف مؤقت</string>
     <string name="use_system_brightness_settings">استخدم سطوع النظام</string>
-    <string name="use_system_brightness_settings_des">استخدم سطوع النظام في مشغل التطبيق بدلاً من التراكب الداكن</string>
+    <string name="use_system_brightness_settings_des">استخدم سطوع النظام في مُشغل التطبيق بدلاً من التراكب الداكن</string>
 
     <string name="episode_sync_settings">تحديث تقدم المشاهدة</string>
     <string name="episode_sync_settings_des">مزامنة التقدم في الحلقة الحالية تلقائيًا</string>
 
-    <string name="restore_settings">استرجاع البيانات من نسخة إحتياطية</string>
+    <string name="restore_settings">إسترجاع البيانات من نسخة إحتياطية</string>
 
     <string name="backup_settings">نسخ إحتياطي</string>
     <string name="restore_success">تم تحميل ملف النسخة الاحتياطية</string>
@@ -177,24 +177,24 @@
     <string name="settings_info">معلومات</string>
     <string name="advanced_search">البحث المتقدم</string>
     <string name="advanced_search_des">يعطيك نتائج البحث مفصولة عن طريق المزود</string>
-    <string name="bug_report_settings_off">إرسال البيانات عن الأعطال فقط</string>
+    <string name="bug_report_settings_off">إرسال البيانات عند الأعطال فقط</string>
     <string name="bug_report_settings_on">لا ترسل أي بيانات</string>
     <string name="show_fillers_settings">عرض حلقات الفلر للأنمي</string>
     <string name="show_trailers_settings">عرض المقاطع الدعائية</string>
     <string name="kitsu_settings">عرض ملصقات من kitsu</string>
     <string name="pref_filter_search_quality">إخفاء جودة الفيديو المختارة من نتائج البحث</string>
 
-    <string name="automatic_plugin_updates">تحديث الاضافات تلقائيا</string>
+    <string name="automatic_plugin_updates">تحديث الإضافات تلقائيًا</string>
     <string name="updates_settings">التحديث التلقائي</string>
-    <string name="updates_settings_des">ابحث تلقائيًا عن التحديثات الجديدة عند البداية</string>
+    <string name="updates_settings_des">البحث تلقائيًا عن التحديثات الجديدة عند البداية</string>
     <string name="uprereleases_settings">التحديث إلى الاصدارات التجريبيه (بيتا)</string>
-    <string name="uprereleases_settings_des">ابحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
+    <string name="uprereleases_settings_des">البحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
     <string name="github">Github</string>
     <string name="lightnovel">تطبيق رواية خفيف من نفس المطورين</string>
     <string name="anim">تطبيق أنمي من نفس المطورين</string>
-    <string name="discord">انضم إلى إلديسكورد</string>
-    <string name="benene">أعط موزة للمطورين</string>
-    <string name="benene_des">اعط موز</string>
+    <string name="discord">انضم إلى الديسكورد</string>
+    <string name="benene">إعط موزة للمطورين</string>
+    <string name="benene_des">الموز المُعطي</string>
 
     <string name="app_language">لغة التطبيق</string>
 
@@ -214,7 +214,7 @@
     <string name="episode_short">م</string>
     <string name="no_episodes_found">لم يتم العثور على أي حلقات</string>
 
-    <string name="delete_file">حذف ملف</string>
+    <string name="delete_file">حذف الملف</string>
     <string name="delete">حذف</string>
     <string name="pause">إيقاف مؤقت</string>
     <string name="resume">أكمل</string>
@@ -246,8 +246,8 @@
     <string name="cartoons">رسوم متحركة</string>
     <string name="anime">أنمي</string>
     <string name="torrent">تورنت</string>
-    <string name="documentaries">الافلام الوثائقية</string>
-    <string name="ova">اوفا</string>
+    <string name="documentaries">أفلام وثائقية</string>
+    <string name="ova">أوفا</string>
     <string name="asian_drama">دراما آسيوية</string>
     <string name="livestreams">بث حي</string>
     <string name="nsfw">+18</string>
@@ -276,7 +276,7 @@
     <string name="episode_action_play_in_app">تشغيل في التطبيق</string>
     <string name="episode_action_play_in_vlc">VLC تشغيل في</string>
     <string name="episode_action_play_in_browser">تشغيل في الويب </string>
-    <string name="episode_action_copy_link">انسخ الرابط</string>
+    <string name="episode_action_copy_link">نسخ الرابط</string>
     <string name="episode_action_auto_download">التحميل التلقائي</string>
     <string name="episode_action_download_mirror">تحميل نسخة</string>
     <string name="episode_action_reload_links">إعادة تحميل الروابط</string>
@@ -285,7 +285,7 @@
     <string name="show_hd">ملصق الجودة</string>
     <string name="show_dub">ملصق مدبلج</string>
     <string name="show_sub">ملصق مترجم</string>
-    <string name="show_title">عنوان</string>
+    <string name="show_title">العنوان</string>
     <string name="show_hd_key" translatable="false">show_hd_key</string>
     <string name="show_dub_key" translatable="false">show_dub_key</string>
     <string name="show_sub_key" translatable="false">show_sub_key</string>
@@ -304,23 +304,23 @@
     <string name="skip_update">تخطي هذا التحديث</string>
     <string name="update">تحديث</string>
     <string name="watch_quality_pref">جودة المشاهدة المفضلة</string>
-    <string name="limit_title">أقصي عدد حروف لعنوان مشغل الفيديو</string>
-    <string name="limit_title_rez">أبعاد مشغل الفيديو</string>
+    <string name="limit_title">أقصي عدد حروف لعنوان مُشغل الفيديو</string>
+    <string name="limit_title_rez">أبعاد مُشغل الفيديو</string>
 
     <string name="video_buffer_size_settings">حجم ذاكرة التخزين المؤقت للفيديو</string>
     <string name="video_buffer_length_settings">طول التخزين المؤقت</string>
     <string name="video_buffer_disk_settings">التخزين المؤقت للفيديو علي القرص</string>
     <string name="video_buffer_clear_settings">مسح التخزين المؤقت للصورة والفيديو</string>
 
-    <string name="video_ram_description">سوف يسبب بعض الاعطال اذا تم اعداد قيمة عالية جدا. لا\تغير القيمة اذا كان لديك ذاكرة تخزين عشوائية منخفضة كتلفاز أندرويد أو هاتف قديم</string>
-    <string name="video_disk_description">قد يسبب مشاكل مع حجم ذاكرة التخزين المنخفضة كأجهزة تلفاز الأندرويد اذا اعددت قيمة عالية جدا</string>
+    <string name="video_ram_description">سوف يسبب بعض الأعطال إذا تم إعداد قيمة عالية جدًا. لا\تغير القيمة إذا كان لديك ذاكرة تخزين عشوائية منخفضة كتلفاز أندرويد أو هاتف قديم</string>
+    <string name="video_disk_description">قد يسبب مشاكل مع حجم ذاكرة التخزين المنخفضة كأجهزة تلفاز الأندرويد إذا أعددت قيمة عالية جدًا</string>
 
     <string name="dns_pref">DNS فوق HTTPS</string>
     <string name="dns_pref_summary">مفيد لتجاوز حجب مزود خدمة الإنترنت</string>
 
     <string name="add_site_pref">نسخ موقع</string>
     <string name="remove_site_pref">حذف موقع</string>
-    <string name="add_site_summary">اضافة نسخة من موقع موجود, بعنوان رابط مختلف</string>
+    <string name="add_site_summary">إضافة نسخة من موقع موجود, بعنوان رابط مختلف</string>
 
     <string name="download_path_pref">مسار التنزيل</string>
 
@@ -400,7 +400,7 @@
     <string name="login">تسجيل الدخول</string>
     <string name="switch_account">تبديل الحساب</string>
     <string name="add_account">إضافة حساب</string>
-    <string name="create_account">انشاء حساب</string>
+    <string name="create_account">إنشاء حساب</string>
     <string name="add_sync">إضافة تتبع</string>
     <string name="added_sync_format" formatted="true">تم إضافة %s</string>
     <string name="upload_sync">مزامنة</string>
@@ -425,8 +425,8 @@
     <string name="subtitle_offset">مزامنة الترجمة</string>
     <string name="subtitle_offset_hint">1000ms</string>
     <string name="subtitle_offset_title">تأخير الترجمة</string>
-    <string name="subtitle_offset_extra_hint_later_format">استخدم هذا اذا كانت الترجمة تُعرض %dms مبكرا جدا</string>
-    <string name="subtitle_offset_extra_hint_before_format">استخدم هذا اذا كانت الترجمة تُعرض %dms متأخرا جدا</string>
+    <string name="subtitle_offset_extra_hint_later_format">استخدم هذا إذا كانت الترجمة تُعرض %dms مبكرًا جدًا</string>
+    <string name="subtitle_offset_extra_hint_before_format">استخدم هذا إذا كانت الترجمة تُعرض %dms متأخرًا جدًا</string>
     <string name="subtitle_offset_extra_hint_none_format">لا تأخير في الترجمة</string>
 
     <!--
@@ -470,9 +470,9 @@
 
     <string name="poster_image">صورة الملصق</string>
     <string name="category_player">المُشغل</string>
-    <string name="resolution_and_title">الابعاد والعنوان</string>
-    <string name="title">عنوان</string>
-    <string name="resolution">الابعاد</string>
+    <string name="resolution_and_title">الأبعاد والعنوان</string>
+    <string name="title">العنوان</string>
+    <string name="resolution">الأبعاد</string>
     <string name="error_invalid_id">هوية غير صالحة</string>
     <string name="error_invalid_data">بيانات غير صالحة</string>
     <string name="error_invalid_url">عنون رابط غير صالح</string>
@@ -492,32 +492,32 @@
     <string name="crash_reporting_title">ابلاغ الاعطال</string>
     <string name="preferred_media_subtext">ماذا تريد ان تري</string>
     <string name="setup_done">تم</string>
-    <string name="extensions">الاضافات</string>
+    <string name="extensions">الإضافات</string>
     <string name="add_repository">إضافة مستودع</string>
     <string name="repository_name_hint">إسم المستودع</string>
     <string name="repository_url_hint">عنوان رابط المستودع</string>
-    <string name="plugin_loaded">تم تحميل الاضافة</string>
-    <string name="plugin_deleted">تم إزالة الاضافة</string>
+    <string name="plugin_loaded">تم تحميل الإضافة</string>
+    <string name="plugin_deleted">تم إزالة الإضافة</string>
     <string name="plugin_load_fail" formatted="true">فشل التحميل %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">بدأ تنزيل %d %s</string>
     <string name="batch_download_finish_format" formatted="true">تم تنزيل %d %s بنجاح</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">جميع %s محملة بالفعل</string>
     <string name="batch_download">تحميل مكثف</string>
-    <string name="plugin_singular">اضافة</string>
-    <string name="plugin">اضافات</string>
+    <string name="plugin_singular">إضافة</string>
+    <string name="plugin">إضافات</string>
     <string name="delete_repository_plugins">سوف يتم محو جميع إضافات المستودع</string>
     <string name="delete_repository">ازالة مستودع</string>
     <string name="setup_extensions_subtext">تحميل قائمة المواقع التي تريد استخدامها</string>
-    <string name="plugins_downloaded" formatted="true">تم تنزيله: %d</string>
-    <string name="plugins_disabled" formatted="true">موقوف: %d</string>
-    <string name="plugins_not_downloaded" formatted="true">غير محمل: %d</string>
-    <string name="blank_repo_message">قم باضافة مستودع لكي يتم تثبيت اضافات المواقع</string>
-    <string name="view_public_repositories_button">اعرض مستودعات المجتمع</string>
+    <string name="plugins_downloaded" formatted="true">تم تحميل: %d</string>
+    <string name="plugins_disabled" formatted="true">مُعطل %d</string>
+    <string name="plugins_not_downloaded" formatted="true">غير مُحمل: %d</string>
+    <string name="blank_repo_message">قم بإضافة مستودع لكي يتم تثبيت إضافات المواقع</string>
+    <string name="view_public_repositories_button">عرض مستودعات المجتمع</string>
     <string name="view_public_repositories_button_short">قائمة عامة</string>
     <string name="uppercase_all_subtitles">جميع الترجمات حروف كبيرة</string>
 
-    <string name="download_all_plugins_from_repo">تحميل جميع الاضافات من هذا المستودع?</string>
+    <string name="download_all_plugins_from_repo">تحميل جميع الإضافات من هذا المستودع?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
     <string name="tracks">المسارات</string>
     <string name="audio_tracks">مسار الصوت</string>
