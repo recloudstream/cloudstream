@@ -270,6 +270,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DoodWsExtractor(),
     DoodShExtractor(),
     DoodWatchExtractor(),
+    DoodWfExtractor(),
 
     AsianLoad(),
 
