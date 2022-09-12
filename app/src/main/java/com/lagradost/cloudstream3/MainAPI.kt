@@ -1203,9 +1203,12 @@ data class AnimeLoadResponse(
     override var backgroundPosterUrl: String? = null,
 ) : LoadResponse, EpisodeResponse
 
+/**
+ * If episodes already exist appends the list.
+ * */
 fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<Episode>?) {
     if (episodes.isNullOrEmpty()) return
-    this.episodes[status] = episodes
+    this.episodes[status] = (this.episodes[status] ?: emptyList()) + episodes
 }
 
 suspend fun MainAPI.newAnimeLoadResponse(

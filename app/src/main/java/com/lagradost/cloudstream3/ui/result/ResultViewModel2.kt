@@ -1592,8 +1592,8 @@ class ResultViewModel2 : ViewModel() {
                     val idIndex = ep.key.id
                     for ((index, i) in ep.value.withIndex()) {
                         val episode = i.episode ?: (index + 1)
-                        val id = mainId + episode + idIndex * 1000000
-                        if (!existingEpisodes.contains(episode)) {
+                        val id = mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000) ?: 0)
+                        if (!existingEpisodes.contains(id)) {
                             existingEpisodes.add(id)
                             val seasonData = loadResponse.seasonNames.getSeason(i.season)
                             val eps =
@@ -1602,7 +1602,7 @@ class ResultViewModel2 : ViewModel() {
                                     filterName(i.name),
                                     i.posterUrl,
                                     episode,
-                                    null,
+                                    seasonData?.season ?: i.season,
                                     if (seasonData != null) seasonData.displaySeason else i.season,
                                     i.data,
                                     loadResponse.apiName,
@@ -1615,7 +1615,7 @@ class ResultViewModel2 : ViewModel() {
                                     mainId
                                 )
 
-                            val season = eps.season ?: 0
+                            val season = eps.seasonIndex ?: 0
                             val indexer = EpisodeIndexer(ep.key, season)
                             episodes[indexer]?.add(eps) ?: run {
                                 episodes[indexer] = mutableListOf(eps)
@@ -1630,14 +1630,13 @@ class ResultViewModel2 : ViewModel() {
                     mutableMapOf()
                 val existingEpisodes = HashSet<Int>()
                 for ((index, episode) in loadResponse.episodes.sortedBy {
-                    (it.season?.times(10000) ?: 0) + (it.episode ?: 0)
+                    (it.season?.times(10_000) ?: 0) + (it.episode ?: 0)
                 }.withIndex()) {
                     val episodeIndex = episode.episode ?: (index + 1)
                     val id =
-                        mainId + (episode.season?.times(100000) ?: 0) + episodeIndex + 1
+                        mainId + (episode.season?.times(100_000) ?: 0) + episodeIndex + 1
                     if (!existingEpisodes.contains(id)) {
                         existingEpisodes.add(id)
-                        val seasonIndex = episode.season?.minus(1)
                         val seasonData =
                             loadResponse.seasonNames.getSeason(episode.season)
 
@@ -1647,7 +1646,7 @@ class ResultViewModel2 : ViewModel() {
                                 filterName(episode.name),
                                 episode.posterUrl,
                                 episodeIndex,
-                                seasonIndex,
+                                seasonData?.season ?: episode.season,
                                 if (seasonData != null) seasonData.displaySeason else episode.season,
                                 episode.data,
                                 loadResponse.apiName,
@@ -1660,7 +1659,7 @@ class ResultViewModel2 : ViewModel() {
                                 mainId
                             )
 
-                        val season = episode.season ?: 0
+                        val season = ep.seasonIndex ?: 0
                         val indexer = EpisodeIndexer(DubStatus.None, season)
 
                         episodes[indexer]?.add(ep) ?: kotlin.run {
