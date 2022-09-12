@@ -1118,6 +1118,11 @@ data class NextAiring(
     val unixTime: Long,
 )
 
+/**
+ * @param season To be mapped with episode season, not shown in UI if displaySeason is defined
+ * @param name To be shown next to the season like "Season $displaySeason $name" but if displaySeason is null then "$name"
+ * @param displaySeason What to be displayed next to the season name, if null then the name is the only thing shown.
+ * */
 data class SeasonData(
     val season: Int,
     val name: String? = null,

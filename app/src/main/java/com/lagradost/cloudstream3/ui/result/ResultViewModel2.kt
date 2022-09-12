@@ -1483,15 +1483,20 @@ class ResultViewModel2 : ViewModel() {
                         0 -> txt(R.string.no_season)
                         else -> {
                             val seasonNames = (currentResponse as? EpisodeResponse)?.seasonNames
-                            val seasonData =
-                                seasonNames.getSeason(indexer.season)
-                            val suffix = seasonData?.name?.let { " $it" } ?: ""
-                            txt(
-                                R.string.season_format,
-                                txt(R.string.season),
-                                seasonData?.displaySeason ?: indexer.season,
-                                suffix
-                            )
+                            val seasonData = seasonNames.getSeason(indexer.season)
+
+                            // If displaySeason is null then only show the name!
+                            if (seasonData?.name != null && seasonData.displaySeason == null) {
+                                txt(seasonData.name)
+                            } else {
+                                val suffix = seasonData?.name?.let { " $it" } ?: ""
+                                txt(
+                                    R.string.season_format,
+                                    txt(R.string.season),
+                                    seasonData?.displaySeason ?: indexer.season,
+                                    suffix
+                                )
+                            }
                         }
                     }
             )
@@ -1598,7 +1603,7 @@ class ResultViewModel2 : ViewModel() {
                                     i.posterUrl,
                                     episode,
                                     null,
-                                    seasonData?.displaySeason ?: i.season,
+                                    if (seasonData != null) seasonData.displaySeason else i.season,
                                     i.data,
                                     loadResponse.apiName,
                                     id,
@@ -1633,7 +1638,7 @@ class ResultViewModel2 : ViewModel() {
                     if (!existingEpisodes.contains(id)) {
                         existingEpisodes.add(id)
                         val seasonIndex = episode.season?.minus(1)
-                        val currentSeason =
+                        val seasonData =
                             loadResponse.seasonNames.getSeason(episode.season)
 
                         val ep =
@@ -1643,7 +1648,7 @@ class ResultViewModel2 : ViewModel() {
                                 episode.posterUrl,
                                 episodeIndex,
                                 seasonIndex,
-                                currentSeason?.displaySeason ?: episode.season,
+                                if (seasonData != null) seasonData.displaySeason else episode.season,
                                 episode.data,
                                 loadResponse.apiName,
                                 id,
@@ -1747,16 +1752,17 @@ class ResultViewModel2 : ViewModel() {
                 val seasonData = loadResponse.seasonNames.getSeason(seasonNumber)
                 val fixedSeasonNumber = seasonData?.displaySeason ?: seasonNumber
                 val suffix = seasonData?.name?.let { " $it" } ?: ""
-
-                val name =
-                    /*loadResponse.seasonNames?.firstOrNull { it.season == seasonNumber }?.name?.let { seasonData ->
-                        txt(seasonData)
-                    } ?:*/txt(
-                    R.string.season_format,
-                    txt(R.string.season),
-                    fixedSeasonNumber,
-                    suffix
-                )
+                // If displaySeason is null then only show the name!
+                val name = if (seasonData?.name != null && seasonData.displaySeason == null) {
+                    txt(seasonData.name)
+                } else {
+                    txt(
+                        R.string.season_format,
+                        txt(R.string.season),
+                        fixedSeasonNumber,
+                        suffix
+                    )
+                }
                 name to seasonNumber
             })
         }
@@ -1812,7 +1818,12 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun loadTrailers(loadResponse: LoadResponse) = ioSafe {
-        _trailers.postValue(getTrailers(loadResponse, 3)) // we dont want to fetch too many trailers
+        _trailers.postValue(
+            getTrailers(
+                loadResponse,
+                3
+            )
+        ) // we dont want to fetch too many trailers
     }
 
     private suspend fun getTrailers(
