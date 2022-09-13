@@ -5,15 +5,12 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.nicehttp.Requests
-import com.lagradost.nicehttp.getCookies
 import com.lagradost.nicehttp.ignoreAllSSLErrors
 import okhttp3.Cache
 import okhttp3.Headers
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 
 fun Requests.initClient(context: Context): OkHttpClient {
