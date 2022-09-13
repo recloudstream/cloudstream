@@ -136,21 +136,23 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/search_select_documentaries"
-
                 style="@style/RoundedSelectableButton"
                 android:nextFocusLeft="@id/search_select_cartoons"
+                android:nextFocusRight="@id/search_select_livestreams"
                 android:text="@string/documentaries" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/search_select_livestreams"
                 style="@style/RoundedSelectableButton"
                 android:nextFocusLeft="@id/search_select_documentaries"
+                android:nextFocusRight="@id/search_select_nsfw"
                 android:text="@string/livestreams" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/search_select_nsfw"
                 style="@style/RoundedSelectableButton"
                 android:nextFocusLeft="@id/search_select_livestreams"
+                android:nextFocusRight="@id/search_select_others"
                 android:text="@string/nsfw" />
 
             <com.google.android.material.button.MaterialButton
