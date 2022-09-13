@@ -10,6 +10,10 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+class DatabaseGdrive : Gdriveplayer() {
+    override var mainUrl = "https://series.databasegdriveplayer.co"
+}
+
 class Gdriveplayerapi: Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayerapi.com"
 }

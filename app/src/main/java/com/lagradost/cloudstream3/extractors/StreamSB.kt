@@ -114,15 +114,14 @@ open class StreamSB : ExtractorApi() {
         val id = regexID.findAll(url).map {
             it.value.replace(Regex("(embed-|\\/e\\/)"),"")
         }.first()
-        val bytes = id.toByteArray()
-        val bytesToHex = bytesToHex(bytes)
-        val master = "$mainUrl/sources44/6d6144797752744a454267617c7c${bytesToHex.lowercase()}7c7c4e61755a56456f34385243727c7c73747265616d7362/6b4a33767968506e4e71374f7c7c343837323439333133333462353935333633373836643638376337633462333634663539343137373761333635313533333835333763376333393636363133393635366136323733343435323332376137633763373337343732363536313664373336327c7c504d754478413835306633797c7c73747265616d7362"
+//        val master = "$mainUrl/sources44/6d6144797752744a454267617c7c${bytesToHex.lowercase()}7c7c4e61755a56456f34385243727c7c73747265616d7362/6b4a33767968506e4e71374f7c7c343837323439333133333462353935333633373836643638376337633462333634663539343137373761333635313533333835333763376333393636363133393635366136323733343435323332376137633763373337343732363536313664373336327c7c504d754478413835306633797c7c73747265616d7362"
+        val master = "$mainUrl/sources48/" + bytesToHex("||$id||||streamsb".toByteArray()) + "/"
         val headers = mapOf(
-            "watchsb" to "streamsb",
-            )
-        val urltext = app.get(master,
+            "watchsb" to "sbstream",
+        )
+        val urltext = app.get(master.lowercase(),
             headers = headers,
-            allowRedirects = false
+            referer = url,
         ).text
         val mapped = urltext.let { parseJson<Main>(it) }
         val testurl = app.get(mapped.streamData.file, headers = headers).text
