@@ -8,6 +8,8 @@
     android:background="@drawable/outline_drawable"
     android:nextFocusRight="@id/action_button"
     android:orientation="horizontal"
+    android:clickable="true"
+    android:focusable="true"
     android:padding="12dp">
 
     <ImageView
