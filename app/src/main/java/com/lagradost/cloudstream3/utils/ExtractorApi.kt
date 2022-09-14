@@ -237,6 +237,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Sbthe(),
     Vidgomunime(),
     Sbflix(),
+    Streamsss(),
 
     Fastream(),
 
@@ -333,6 +334,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Gdriveplayerus(),
     Gdriveplayerco(),
     Gdriveplayer(),
+    DatabaseGdrive(),
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),
