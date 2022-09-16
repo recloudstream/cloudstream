@@ -84,7 +84,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.resources.ResourcePackManager
-import com.lagradost.cloudstream3.utils.resources.ResourcePatchActivity
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import kotlinx.android.synthetic.main.activity_main.*
@@ -136,16 +135,11 @@ var app = Requests(responseParser = object : ResponseParser {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
 }
 
-class MainActivity : AppCompatActivity(), ColorPickerDialogListener, ResourcePatchActivity {
+class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     private var resourcePatch: ResourcePatch? = null
 
-    override fun getResources(): Resources = resourcePatch ?: super.getResources()
-    override fun reloadResourcePatch() {
-        resourcePatch = try {
-            ResourcePackManager.activePack?.invoke(super.getResources())
-        } catch (e: Throwable) {
-            null
-        }
+    override fun getResources(): Resources {
+        return resourcePatch ?: super.getResources()
     }
 
     companion object {
@@ -472,6 +466,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, ResourcePat
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        resourcePatch = try {
+            ResourcePackManager.activePack?.invoke(super.getResources())
+        } catch (e: Throwable) {
+            null
+        }
 
         val errorFile = filesDir.resolve("last_error")
         var lastError: String? = null

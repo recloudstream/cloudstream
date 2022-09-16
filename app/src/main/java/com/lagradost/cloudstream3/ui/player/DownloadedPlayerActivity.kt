@@ -18,7 +18,7 @@ import com.lagradost.cloudstream3.utils.resources.ResourcePatchActivity
 
 const val DTAG = "PlayerActivity"
 
-class DownloadedPlayerActivity : AppCompatActivity(), ResourcePatchActivity {
+class DownloadedPlayerActivity : AppCompatActivity() {
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         CommonActivity.dispatchKeyEvent(this, event)?.let {
             return it
@@ -71,6 +71,11 @@ class DownloadedPlayerActivity : AppCompatActivity(), ResourcePatchActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(DTAG, "onCreate")
+        resourcePatch = try {
+            ResourcePackManager.activePack?.invoke(super.getResources())
+        } catch (e: Throwable) {
+            null
+        }
 
         CommonActivity.loadThemes(this)
         super.onCreate(savedInstanceState)
@@ -113,11 +118,4 @@ class DownloadedPlayerActivity : AppCompatActivity(), ResourcePatchActivity {
 
     private var resourcePatch: ResourcePatch? = null
     override fun getResources(): Resources = resourcePatch ?: super.getResources()
-    override fun reloadResourcePatch() {
-        resourcePatch = try {
-            ResourcePackManager.activePack?.invoke(super.getResources())
-        } catch (e: Throwable) {
-            null
-        }
-    }
 }

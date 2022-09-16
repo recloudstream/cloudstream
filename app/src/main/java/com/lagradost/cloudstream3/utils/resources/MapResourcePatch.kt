@@ -22,7 +22,7 @@ open class MapResourcePatch(private val original: Resources): ResourcePatch(orig
         mapping.getMappingKA(id, null) ?: super.getLayout(id)
 
     override fun getDrawable(id: Int, theme: Theme?): Drawable =
-        mapping.getMappingKA(id, theme) ?: super.getDrawable(id, theme)
+        mapping.getMappingKA<Int, Drawable>(id, theme) ?: super.getDrawable(id, theme)
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun getColorStateList(id: Int, theme: Theme?): ColorStateList =

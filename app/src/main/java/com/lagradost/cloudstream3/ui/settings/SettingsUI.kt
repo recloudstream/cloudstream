@@ -146,7 +146,7 @@ class SettingsUI : PreferenceFragmentCompat() {
                 true,
                 {}) {
                 try {
-                    ResourcePackManager.selectPack(prefValues[it], activity as MainActivity)
+                    ResourcePackManager.selectPack(prefValues[it])
                     activity?.recreate()
                 } catch (e: Exception) {
                     logError(e)
