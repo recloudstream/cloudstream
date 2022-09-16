@@ -41,6 +41,7 @@
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
+    <string name="active_resource_pack_key" translatable="false">active_resource_pack_key</string>
     <string name="restore_key" translatable="false">restore_key</string>
     <string name="backup_key" translatable="false">backup_key</string>
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key_2</string>
@@ -457,6 +458,7 @@
 
     <string name="primary_color_settings">Primary color</string>
     <string name="app_theme_settings">App theme</string>
+    <string name="resource_pack">Resource pack</string>
     <string name="bottom_title_settings">Poster title location</string>
     <string name="bottom_title_settings_des">Put the title under the poster</string>
 

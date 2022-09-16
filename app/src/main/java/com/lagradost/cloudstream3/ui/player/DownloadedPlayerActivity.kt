@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -11,10 +12,13 @@ import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.resources.ResourcePackManager
+import com.lagradost.cloudstream3.utils.resources.ResourcePatch
+import com.lagradost.cloudstream3.utils.resources.ResourcePatchActivity
 
 const val DTAG = "PlayerActivity"
 
-class DownloadedPlayerActivity : AppCompatActivity() {
+class DownloadedPlayerActivity : AppCompatActivity(), ResourcePatchActivity {
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         CommonActivity.dispatchKeyEvent(this, event)?.let {
             return it
@@ -104,6 +108,16 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         } else {
             finish()
             return
+        }
+    }
+
+    private var resourcePatch: ResourcePatch? = null
+    override fun getResources(): Resources = resourcePatch ?: super.getResources()
+    override fun reloadResourcePatch() {
+        resourcePatch = try {
+            ResourcePackManager.activePack?.invoke(super.getResources())
+        } catch (e: Throwable) {
+            null
         }
     }
 }

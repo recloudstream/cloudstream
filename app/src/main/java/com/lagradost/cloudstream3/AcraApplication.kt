@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.resources.ResourcePackManager
 import kotlinx.coroutines.runBlocking
 import org.acra.ACRA
 import org.acra.ReportField
@@ -79,6 +80,7 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)): Thread.U
         ACRA.errorReporter.handleException(error)
         try {
             PrintStream(errorFile).use { ps ->
+                ps.println(String.format("Enabled resource pack: ${ResourcePackManager.activePackId ?: "none"}"))
                 ps.println(String.format("Currently loading extension: ${PluginManager.currentlyLoading ?: "none"}"))
                 ps.println(String.format("Fatal exception on thread %s (%d)", thread.name, thread.id))
                 error.printStackTrace(ps)

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.mvvm.logError
@@ -16,6 +17,8 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.resources.ResourcePackManager
+import kotlin.streams.toList
 
 class SettingsUI : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -123,6 +126,27 @@ class SettingsUI : PreferenceFragmentCompat() {
                     settingsManager.edit()
                         .putString(getString(R.string.primary_color_key), prefValues[it])
                         .apply()
+                    activity?.recreate()
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+        getPref(R.string.active_resource_pack_key)?.setOnPreferenceClickListener {
+            val prefNames = ResourcePackManager.packs.keys.toMutableList()
+            prefNames.add(0, getString(R.string.none))
+            val prefValues: MutableList<String?> = ResourcePackManager.packs.keys.toMutableList()
+            prefValues.add(0, null)
+
+            activity?.showDialog(
+                prefNames.toList(),
+                prefValues.indexOf(ResourcePackManager.activePackId),
+                getString(R.string.resource_pack),
+                true,
+                {}) {
+                try {
+                    ResourcePackManager.selectPack(prefValues[it], activity as MainActivity)
                     activity?.recreate()
                 } catch (e: Exception) {
                     logError(e)

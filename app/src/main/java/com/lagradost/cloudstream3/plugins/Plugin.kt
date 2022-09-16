@@ -9,6 +9,8 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.extractorApis
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.utils.resources.ResourcePackManager
+import com.lagradost.cloudstream3.utils.resources.ResourcePatch
 
 const val PLUGIN_TAG = "PluginInstance"
 
@@ -48,6 +50,16 @@ abstract class Plugin {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) ExtractorApi")
         element.sourcePlugin = this.__filename
         extractorApis.add(element)
+    }
+
+    /**
+     * Used to register a new resource pack
+     * @param factory The function that provided the original resources will generate a ResourcePatch instance
+     * You should probably use MapResourcePatch
+     * @see com.lagradost.cloudstream3.utils.resources.MapResourcePatch
+     */
+    fun registerResourcePack(name: String, factory: (Resources) -> ResourcePatch) {
+        ResourcePackManager.registerPack(name, factory, this.__filename)
     }
 
     class Manifest {
