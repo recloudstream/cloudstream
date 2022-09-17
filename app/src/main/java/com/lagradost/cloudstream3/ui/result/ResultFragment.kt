@@ -256,7 +256,6 @@ open class ResultFragment : ResultTrailerPlayer() {
     private var downloadButton: EasyDownloadButton? = null
     override fun onDestroyView() {
         updateUIListener = null
-        (result_episodes?.adapter as EpisodeAdapter?)?.killAdapter()
         downloadButton?.dispose()
 
         super.onDestroyView()

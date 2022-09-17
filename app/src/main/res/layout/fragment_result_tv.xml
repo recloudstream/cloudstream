@@ -460,13 +460,13 @@
                                         android:layout_height="25dp"
                                         android:layout_gravity="end|center_vertical"
                                         android:layout_margin="5dp"
-                                        android:background="@drawable/circle_shape"
+                                        android:background="@drawable/circle_shape_cs3"
                                         android:indeterminate="false"
                                         android:max="100"
                                         android:paddingStart="5dp"
                                         android:paddingEnd="5dp"
                                         android:progress="30"
-                                        android:progressDrawable="@drawable/circular_progress_bar_filled"
+                                        android:progressDrawable="@drawable/circular_progress_bar_filled_cs3"
                                         android:visibility="visible" />
 
                                     <ImageView

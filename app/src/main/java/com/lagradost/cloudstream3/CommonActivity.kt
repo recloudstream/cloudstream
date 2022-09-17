@@ -25,8 +25,11 @@ import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.fetchbutton.aria2c.Aria2Settings
+import com.lagradost.fetchbutton.aria2c.Aria2Starter
 import org.schabi.newpipe.extractor.NewPipe
 import java.util.*
+import kotlin.concurrent.thread
 
 object CommonActivity {
     @MainThread
@@ -129,6 +132,18 @@ object CommonActivity {
         act.updateLocale()
         act.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
+
+        thread {
+            Aria2Starter.start(
+                act,
+                Aria2Settings(
+                    UUID.randomUUID().toString(),
+                    4337,
+                    act.filesDir.path,
+                    "${act.filesDir.path}/session"
+                )
+            )
+        }
     }
 
     private fun Activity.enterPIPMode() {

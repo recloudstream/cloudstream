@@ -199,6 +199,9 @@ dependencies {
 
     // Library/extensions searching with Levenshtein distance
     implementation 'me.xdrop:fuzzywuzzy:1.4.0'
+
+    // aria2c downloader
+    implementation 'com.github.LagradOst:Aria2cButton:master-SNAPSHOT'
 }
 
 task androidSourcesJar(type: Jar) {
