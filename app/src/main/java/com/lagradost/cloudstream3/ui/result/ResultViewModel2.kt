@@ -28,7 +28,6 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
@@ -55,6 +54,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import com.lagradost.fetchbutton.aria2c.Aria2Starter
+import com.lagradost.fetchbutton.aria2c.UriRequest
+import com.lagradost.fetchbutton.aria2c.newUriRequest
 import kotlinx.coroutines.*
 import java.io.File
 import java.lang.Math.abs
@@ -584,8 +587,7 @@ class ResultViewModel2 : ViewModel() {
             }
         }
 
-        fun startDownload(
-            context: Context?,
+        fun getDownloadRequest(
             episode: ResultEpisode,
             currentIsMovie: Boolean,
             currentHeaderName: String,
@@ -596,93 +598,139 @@ class ResultViewModel2 : ViewModel() {
             url: String,
             links: List<ExtractorLink>,
             subs: List<SubtitleData>?
-        ) {
-            try {
-                if (context == null) return
-
-                val meta =
-                    getMeta(
-                        episode,
-                        currentHeaderName,
-                        apiName,
-                        currentPoster,
-                        currentIsMovie,
-                        currentType
-                    )
-
-                val folder = getFolder(currentType, currentHeaderName)
-
-                val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
-
-                // SET VISUAL KEYS
-                AcraApplication.setKey(
-                    DOWNLOAD_HEADER_CACHE,
-                    parentId.toString(),
-                    VideoDownloadHelper.DownloadHeaderCached(
-                        apiName,
-                        url,
-                        currentType,
-                        currentHeaderName,
-                        currentPoster,
-                        parentId,
-                        System.currentTimeMillis(),
-                    )
+        ): DownloadRequest? {
+            val meta =
+                getMeta(
+                    episode,
+                    currentHeaderName,
+                    apiName,
+                    currentPoster,
+                    currentIsMovie,
+                    currentType
                 )
 
-                AcraApplication.setKey(
-                    DataStore.getFolderName(
-                        DOWNLOAD_EPISODE_CACHE,
-                        parentId.toString()
-                    ), // 3 deep folder for faster acess
-                    episode.id.toString(),
-                    VideoDownloadHelper.DownloadEpisodeCached(
-                        episode.name,
-                        episode.poster,
-                        episode.episode,
-                        episode.season,
-                        episode.id,
-                        parentId,
-                        episode.rating,
-                        episode.description,
-                        System.currentTimeMillis(),
-                    )
-                )
+            val topFolder = AcraApplication.context?.getBasePath()?.first?.filePath
 
-                // DOWNLOAD VIDEO
-                VideoDownloadManager.downloadEpisodeUsingWorker(
-                    context,
-                    src,//url ?: return,
-                    folder,
-                    meta,
-                    links
-                )
+            val folder =
+                topFolder + "/" + getFolder(currentType, currentHeaderName).replace(".", "")
+            //val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
 
-                // 1. Checks if the lang should be downloaded
-                // 2. Makes it into the download format
-                // 3. Downloads it as a .vtt file
-                val downloadList = SubtitlesFragment.getDownloadSubsLanguageISO639_1()
-                subs?.let { subsList ->
-                    subsList.filter {
-                        downloadList.contains(
-                            SubtitleHelper.fromLanguageToTwoLetters(
-                                it.name,
-                                true
-                            )
-                        )
-                    }
-                        .map { ExtractorSubtitleLink(it.name, it.url, "") }
-                        .forEach { link ->
-                            val fileName = VideoDownloadManager.getFileName(context, meta)
-                            downloadSubtitle(context, link, fileName, folder)
-                        }
-                }
-            } catch (e: Exception) {
-                logError(e)
+            // SET VISUAL KEYS
+            AcraApplication.setKey(
+                DOWNLOAD_HEADER_CACHE,
+                parentId.toString(),
+                VideoDownloadHelper.DownloadHeaderCached(
+                    apiName,
+                    url,
+                    currentType,
+                    currentHeaderName,
+                    currentPoster,
+                    parentId,
+                    System.currentTimeMillis(),
+                )
+            )
+
+            AcraApplication.setKey(
+                DataStore.getFolderName(
+                    DOWNLOAD_EPISODE_CACHE,
+                    parentId.toString()
+                ), // 3 deep folder for faster acess
+                episode.id.toString(),
+                VideoDownloadHelper.DownloadEpisodeCached(
+                    episode.name,
+                    episode.poster,
+                    episode.episode,
+                    episode.season,
+                    episode.id,
+                    parentId,
+                    episode.rating,
+                    episode.description,
+                    System.currentTimeMillis(),
+                )
+            )
+            val linkRequests = links.filter { link -> !link.isM3u8 }.map { link ->
+                newUriRequest(
+                    episode.id.toLong(), link.url,
+                    VideoDownloadManager.getDisplayName(
+                        VideoDownloadManager.getFileName(
+                            AcraApplication.context ?: return null,
+                            meta
+                        ), ".mp4"
+                    ), folder, link.headers, USER_AGENT
+                )
             }
+
+            val downloadList = SubtitlesFragment.getDownloadSubsLanguageISO639_1()
+            val downloadSubsList = (subs ?: emptyList()).filter {
+                downloadList.contains(
+                    SubtitleHelper.fromLanguageToTwoLetters(
+                        it.name,
+                        true
+                    )
+                )
+            }
+                .map { ExtractorSubtitleLink(it.name, it.url, "") }
+                .map { link ->
+                    val fileName = VideoDownloadManager.getFileName(
+                        AcraApplication.context ?: return null,
+                        meta
+                    )
+                    newUriRequest(0, link.url, fileName, folder, link.headers, USER_AGENT)
+                    //downloadSubtitle(context, link, fileName, folder)
+                }
+
+            return DownloadRequest(linkRequests, downloadSubsList)
+
+            // DOWNLOAD VIDEO
+            //VideoDownloadManager.downloadEpisodeUsingWorker(
+            //    context,
+            //    src,//url ?: return,
+            //    folder,
+            //    meta,
+            //    links
+            //)
+
+            // 1. Checks if the lang should be downloaded
+            // 2. Makes it into the download format
+            // 3. Downloads it as a .vtt file
+            //val downloadList = SubtitlesFragment.getDownloadSubsLanguageISO639_1()
+            //subs?.let { subsList ->
+            //    subsList.filter {
+            //        downloadList.contains(
+            //            SubtitleHelper.fromLanguageToTwoLetters(
+            //                it.name,
+            //                true
+            //            )
+            //        )
+            //    }
+            //        .map { ExtractorSubtitleLink(it.name, it.url, "") }
+            //        .forEach { link ->
+            //            val fileName = VideoDownloadManager.getFileName(context, meta)
+            //            downloadSubtitle(context, link, fileName, folder)
+            //        }
+            //}
         }
 
+        data class DownloadRequest(
+            val links: List<UriRequest>,
+            val subs: List<UriRequest>,
+        )
+
+
+        /*suspend fun download(episode: ResultEpisode): DownloadRequest {
+            val generator = RepoLinkGenerator(listOf(episode))
+            val currentLinks = mutableSetOf<ExtractorLink>()
+            val currentSubs = mutableSetOf<SubtitleData>()
+            generator.generateLinks(clearCache = false, isCasting = false, callback = {
+                it.first?.let { link ->
+                    currentLinks.add(link)
+                }
+            }, subtitleCallback = { sub ->
+                currentSubs.add(sub)
+            })
+        }*/
+
         suspend fun downloadEpisode(
-            activity: Activity?,
             episode: ResultEpisode,
             currentIsMovie: Boolean,
             currentHeaderName: String,
@@ -691,52 +739,49 @@ class ResultViewModel2 : ViewModel() {
             apiName: String,
             parentId: Int,
             url: String,
-        ) {
-            ioSafe {
-                val generator = RepoLinkGenerator(listOf(episode))
-                val currentLinks = mutableSetOf<ExtractorLink>()
-                val currentSubs = mutableSetOf<SubtitleData>()
-                generator.generateLinks(clearCache = false, isCasting = false, callback = {
-                    it.first?.let { link ->
-                        currentLinks.add(link)
-                    }
-                }, subtitleCallback = { sub ->
-                    currentSubs.add(sub)
-                })
-
-                if (currentLinks.isEmpty()) {
-                    main {
-                        showToast(
-                            activity,
-                            R.string.no_links_found_toast,
-                            Toast.LENGTH_SHORT
-                        )
-                    }
-                    return@ioSafe
-                } else {
-                    main {
-                        showToast(
-                            activity,
-                            R.string.download_started,
-                            Toast.LENGTH_SHORT
-                        )
-                    }
+        ): DownloadRequest? {
+            val generator = RepoLinkGenerator(listOf(episode))
+            val currentLinks = mutableSetOf<ExtractorLink>()
+            val currentSubs = mutableSetOf<SubtitleData>()
+            generator.generateLinks(clearCache = false, isCasting = false, callback = {
+                it.first?.let { link ->
+                    currentLinks.add(link)
                 }
+            }, subtitleCallback = { sub ->
+                currentSubs.add(sub)
+            })
 
-                startDownload(
-                    activity,
-                    episode,
-                    currentIsMovie,
-                    currentHeaderName,
-                    currentType,
-                    currentPoster,
-                    apiName,
-                    parentId,
-                    url,
-                    sortUrls(currentLinks),
-                    sortSubs(currentSubs),
-                )
-            }
+            //if (currentLinks.isEmpty()) {
+            //    main {
+            //        showToast(
+            //            activity,
+            //            R.string.no_links_found_toast,
+            //            Toast.LENGTH_SHORT
+            //        )
+            //    }
+            //    return@ioSafe
+            //} else {
+            //    main {
+            //        showToast(
+            //            activity,
+            //            R.string.download_started,
+            //            Toast.LENGTH_SHORT
+            //        )
+            //    }
+            //}
+
+            return getDownloadRequest(
+                episode,
+                currentIsMovie,
+                currentHeaderName,
+                currentType,
+                currentPoster,
+                apiName,
+                parentId,
+                url,
+                sortUrls(currentLinks),
+                sortSubs(currentSubs),
+            )
         }
 
         private fun getMeta(
@@ -1021,6 +1066,20 @@ class ResultViewModel2 : ViewModel() {
         handleEpisodeClickEvent(activity, click)
     }
 
+    suspend fun getRequest(card: ResultEpisode): DownloadRequest? {
+        val response = currentResponse ?: return null
+        return downloadEpisode(
+            card,
+            response.isMovie(),
+            response.name,
+            response.type,
+            response.posterUrl,
+            response.apiName,
+            response.getId(),
+            response.url
+        )
+    }
+
     private suspend fun handleEpisodeClickEvent(activity: Activity?, click: EpisodeClickEvent) {
         when (click.action) {
             ACTION_SHOW_OPTIONS -> {
@@ -1117,18 +1176,11 @@ class ResultViewModel2 : ViewModel() {
                 showToast(activity, R.string.play_episode_toast, Toast.LENGTH_SHORT)
             }
             ACTION_DOWNLOAD_EPISODE -> {
-                val response = currentResponse ?: return
-                downloadEpisode(
-                    activity,
-                    click.data,
-                    response.isMovie(),
-                    response.name,
-                    response.type,
-                    response.posterUrl,
-                    response.apiName,
-                    response.getId(),
-                    response.url
-                )
+                ioSafe {
+                    val response = currentResponse ?: return@ioSafe
+                    val req = getRequest(click.data) ?: return@ioSafe
+                    Aria2Starter.client?.downloadFailQueue(req.links) { _, _ -> }
+                }
             }
             ACTION_DOWNLOAD_MIRROR -> {
                 val response = currentResponse ?: return
@@ -1138,8 +1190,7 @@ class ResultViewModel2 : ViewModel() {
                     txt(R.string.episode_action_download_mirror)
                 ) { (result, index) ->
                     ioSafe {
-                        startDownload(
-                            activity,
+                        val req = getDownloadRequest(
                             click.data,
                             response.isMovie(),
                             response.name,
@@ -1150,7 +1201,8 @@ class ResultViewModel2 : ViewModel() {
                             response.url,
                             listOf(result.links[index]),
                             result.subs,
-                        )
+                        ) ?: return@ioSafe
+                        Aria2Starter.client?.downloadFailQueue(req.links) { _, _ -> }
                     }
                     showToast(
                         activity,
@@ -1592,7 +1644,8 @@ class ResultViewModel2 : ViewModel() {
                     val idIndex = ep.key.id
                     for ((index, i) in ep.value.withIndex()) {
                         val episode = i.episode ?: (index + 1)
-                        val id = mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000) ?: 0)
+                        val id =
+                            mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000) ?: 0)
                         if (!existingEpisodes.contains(id)) {
                             existingEpisodes.add(id)
                             val seasonData = loadResponse.seasonNames.getSeason(i.season)

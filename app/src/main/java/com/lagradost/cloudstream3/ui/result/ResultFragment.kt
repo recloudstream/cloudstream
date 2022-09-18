@@ -36,8 +36,10 @@ import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.download.DownloadViewModel
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2.Companion.getDownloadRequest
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.*
@@ -506,8 +508,9 @@ open class ResultFragment : ResultTrailerPlayer() {
                 { episodeClick ->
                     viewModel.handleAction(activity, episodeClick)
                 },
-                { downloadClickEvent ->
-                    handleDownloadClick(activity, downloadClickEvent)
+                {
+                    viewModel.getRequest(this)?.links ?: emptyList()
+                    //handleDownloadClick(activity, downloadClickEvent)
                 }
             )
 

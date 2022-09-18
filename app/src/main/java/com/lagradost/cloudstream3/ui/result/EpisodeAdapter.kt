@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.fetchbutton.aria2c.UriRequest
 import com.lagradost.fetchbutton.aria2c.newUriRequest
 import kotlinx.android.synthetic.main.result_episode.view.*
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
@@ -52,7 +53,7 @@ data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 class EpisodeAdapter(
     private val hasDownloadSupport: Boolean,
     private val clickCallback: (EpisodeClickEvent) -> Unit,
-    private val downloadClickCallback: (DownloadClickEvent) -> Unit,
+    private val downloadClickCallback: suspend ResultEpisode.() -> List<UriRequest>,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var cardList: MutableList<ResultEpisode> = mutableListOf()
 
@@ -125,7 +126,7 @@ class EpisodeAdapter(
         itemView: View,
         private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
-        private val downloadClickCallback: (DownloadClickEvent) -> Unit,
+        private val downloadClickCallback : suspend ResultEpisode.() -> List<UriRequest>,
     ) : RecyclerView.ViewHolder(itemView) {
         //override var downloadButton = EasyDownloadButton()
 
@@ -153,11 +154,7 @@ class EpisodeAdapter(
             downloadButton.setPersistentId(card.id.toLong())
             downloadButton.isVisible = hasDownloadSupport
             downloadButton.setDefaultClickListener {
-                listOf(
-                    newUriRequest(
-                        card.id.toLong(), "https://speed.hetzner.de/100MB.bin", "Hello World",
-                    )
-                )
+                downloadClickCallback.invoke(card)
             }
 
             val name =

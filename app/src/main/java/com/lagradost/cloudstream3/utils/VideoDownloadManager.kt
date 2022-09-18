@@ -995,7 +995,7 @@ object VideoDownloadManager {
         }
     }
 
-    private fun getDisplayName(name: String, extension: String): String {
+    fun getDisplayName(name: String, extension: String): String {
         return "$name.$extension"
     }
 
