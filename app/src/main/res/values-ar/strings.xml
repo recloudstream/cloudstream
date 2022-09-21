@@ -404,7 +404,7 @@
     <string name="add_sync">إضافة تتبع</string>
     <string name="added_sync_format" formatted="true">تم إضافة %s</string>
     <string name="upload_sync">مزامنة</string>
-    <string name="sync_score">مُقيّم</string>
+    <string name="sync_score">تقييم</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
