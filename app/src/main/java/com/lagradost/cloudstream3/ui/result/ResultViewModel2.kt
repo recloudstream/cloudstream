@@ -52,9 +52,11 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import com.lagradost.fetchbutton.NotificationMetaData
 import com.lagradost.fetchbutton.aria2c.Aria2Starter
 import com.lagradost.fetchbutton.aria2c.UriRequest
 import com.lagradost.fetchbutton.aria2c.newUriRequest
@@ -648,6 +650,29 @@ class ResultViewModel2 : ViewModel() {
                     System.currentTimeMillis(),
                 )
             )
+
+            val notification = AcraApplication.context?.let { ctx ->
+                val rowTwoExtra = if (episode.name != null) " - ${episode.name}\n" else ""
+                val rowTwo = if (episode.season != null && episode.episode > 0) {
+                    "${ctx.getString(R.string.season_short)}${episode.season}:${ctx.getString(R.string.episode_short)}${episode.episode}" + rowTwoExtra
+                } else if (episode.episode > 0) {
+                    "${ctx.getString(R.string.episode)} ${episode.episode}" + rowTwoExtra
+                } else {
+                    (episode.name ?: "") + ""
+                }
+                NotificationMetaData(
+                    episode.id,
+                    iconColor = ctx.colorFromAttribute(R.attr.colorPrimary),
+                    posterUrl = currentPoster,
+                    contentTitle = currentHeaderName,
+                    secondRow = rowTwo,
+                    subText = null,
+                    linkName = currentHeaderName,
+                    rowTwoExtra = null
+                )
+            }
+
+
             val linkRequests = links.filter { link -> !link.isM3u8 }.map { link ->
                 newUriRequest(
                     episode.id.toLong(), link.url,
@@ -656,7 +681,8 @@ class ResultViewModel2 : ViewModel() {
                             AcraApplication.context ?: return null,
                             meta
                         ), ".mp4"
-                    ), folder, link.headers, USER_AGENT
+                    ), folder, link.headers, USER_AGENT,
+                    notificationMetaData = notification
                 )
             }
 
@@ -668,13 +694,14 @@ class ResultViewModel2 : ViewModel() {
                         true
                     )
                 )
-            }
-                .map { ExtractorSubtitleLink(it.name, it.url, "") }
+            }.distinctBy { it.url }
+                //.map { ExtractorSubtitleLink(it.name, it.url, "") }
                 .map { link ->
                     val fileName = VideoDownloadManager.getFileName(
                         AcraApplication.context ?: return null,
                         meta
-                    )
+                    ) + ".vtt"
+
                     newUriRequest(0, link.url, fileName, folder, link.headers, USER_AGENT)
                     //downloadSubtitle(context, link, fileName, folder)
                 }
@@ -1066,6 +1093,19 @@ class ResultViewModel2 : ViewModel() {
         handleEpisodeClickEvent(activity, click)
     }
 
+    private fun downloadFromRequest(req: DownloadRequest) {
+        Aria2Starter.download(req.links)
+        for (sub in req.subs.take(5)) {
+            Aria2Starter.download(sub)
+        }
+    }
+
+    fun download(card: ResultEpisode) = ioSafe {
+        getRequest(card)?.let { req ->
+            downloadFromRequest(req)
+        }
+    }
+
     suspend fun getRequest(card: ResultEpisode): DownloadRequest? {
         val response = currentResponse ?: return null
         return downloadEpisode(
@@ -1202,7 +1242,7 @@ class ResultViewModel2 : ViewModel() {
                             listOf(result.links[index]),
                             result.subs,
                         ) ?: return@ioSafe
-                        Aria2Starter.client?.downloadFailQueue(req.links) { _, _ -> }
+                        downloadFromRequest(req)
                     }
                     showToast(
                         activity,

@@ -9,6 +9,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
@@ -30,6 +31,7 @@ data class VisualDownloadChildCached(
 )
 
 data class DownloadClickEvent(val action: Int, val data: EasyDownloadButton.IMinimumData)
+data class DownloadEpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class DownloadChildAdapter(
     var cardList: List<VisualDownloadChildCached>,

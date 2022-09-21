@@ -14,12 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.download.DownloadButtonViewHolder
-import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
+import com.lagradost.cloudstream3.ui.download.DownloadEpisodeClickEvent
+import com.lagradost.cloudstream3.ui.result.DownloadHelper.setUp
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import com.lagradost.fetchbutton.aria2c.UriRequest
-import com.lagradost.fetchbutton.aria2c.newUriRequest
 import kotlinx.android.synthetic.main.result_episode.view.*
 import kotlinx.android.synthetic.main.result_episode.view.episode_text
 import kotlinx.android.synthetic.main.result_episode_large.view.episode_filler
@@ -53,7 +52,7 @@ data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 class EpisodeAdapter(
     private val hasDownloadSupport: Boolean,
     private val clickCallback: (EpisodeClickEvent) -> Unit,
-    private val downloadClickCallback: suspend ResultEpisode.() -> List<UriRequest>,
+    private val downloadClickCallback: (DownloadEpisodeClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var cardList: MutableList<ResultEpisode> = mutableListOf()
 
@@ -126,7 +125,7 @@ class EpisodeAdapter(
         itemView: View,
         private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
-        private val downloadClickCallback : suspend ResultEpisode.() -> List<UriRequest>,
+        private val downloadClickCallback: (DownloadEpisodeClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
         //override var downloadButton = EasyDownloadButton()
 
@@ -151,11 +150,8 @@ class EpisodeAdapter(
 
             val downloadButton = parentView.result_episode_download
 
-            downloadButton.setPersistentId(card.id.toLong())
             downloadButton.isVisible = hasDownloadSupport
-            downloadButton.setDefaultClickListener {
-                downloadClickCallback.invoke(card)
-            }
+            downloadButton.setUp(card, downloadClickCallback)
 
             val name =
                 if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"

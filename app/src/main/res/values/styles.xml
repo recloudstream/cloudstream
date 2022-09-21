@@ -49,6 +49,7 @@
 
         <item name="android:windowAllowReturnTransitionOverlap">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
+
         <!--<item name="preferenceTheme">@style/PreferencesTheme</item>-->
 
         <!-- DEF STYLE -->
@@ -65,6 +66,9 @@
         <item name="white">#FFF</item>
 
         <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
+        <item name="aria2c_icon_color">?attr/white</item>
+        <item name="aria2c_fill_color">?attr/white</item>
+        <item name="aria2c_outline_color">?attr/white</item>
     </style>
 
     <style name="ListViewStyle" parent="Widget.AppCompat.ListView">

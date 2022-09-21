@@ -201,7 +201,7 @@ dependencies {
     implementation 'me.xdrop:fuzzywuzzy:1.4.0'
 
     // aria2c downloader
-    implementation 'com.github.LagradOst:Aria2cButton:master-SNAPSHOT'
+    implementation 'com.github.LagradOst:Aria2cButton:v0.0.3'
 }
 
 task androidSourcesJar(type: Jar) {

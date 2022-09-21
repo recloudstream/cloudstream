@@ -34,12 +34,8 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
-import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
-import com.lagradost.cloudstream3.ui.download.DownloadViewModel
-import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
-import com.lagradost.cloudstream3.ui.result.ResultViewModel2.Companion.getDownloadRequest
+import com.lagradost.cloudstream3.ui.result.DownloadHelper.setUp
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.*
@@ -47,21 +43,19 @@ import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
-import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
-import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import kotlinx.android.synthetic.main.download_button.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_result.result_cast_items
 import kotlinx.android.synthetic.main.fragment_result.result_cast_text
 import kotlinx.android.synthetic.main.fragment_result.result_coming_soon
 import kotlinx.android.synthetic.main.fragment_result.result_data_holder
 import kotlinx.android.synthetic.main.fragment_result.result_description
-import kotlinx.android.synthetic.main.fragment_result.result_download_movie
 import kotlinx.android.synthetic.main.fragment_result.result_episode_loading
 import kotlinx.android.synthetic.main.fragment_result.result_episodes
 import kotlinx.android.synthetic.main.fragment_result.result_error_text
@@ -74,11 +68,6 @@ import kotlinx.android.synthetic.main.fragment_result.result_meta_rating
 import kotlinx.android.synthetic.main.fragment_result.result_meta_site
 import kotlinx.android.synthetic.main.fragment_result.result_meta_type
 import kotlinx.android.synthetic.main.fragment_result.result_meta_year
-import kotlinx.android.synthetic.main.fragment_result.result_movie_download_icon
-import kotlinx.android.synthetic.main.fragment_result.result_movie_download_text
-import kotlinx.android.synthetic.main.fragment_result.result_movie_download_text_precentage
-import kotlinx.android.synthetic.main.fragment_result.result_movie_progress_downloaded
-import kotlinx.android.synthetic.main.fragment_result.result_movie_progress_downloaded_holder
 import kotlinx.android.synthetic.main.fragment_result.result_next_airing
 import kotlinx.android.synthetic.main.fragment_result.result_next_airing_time
 import kotlinx.android.synthetic.main.fragment_result.result_no_episodes
@@ -255,10 +244,8 @@ open class ResultFragment : ResultTrailerPlayer() {
         return inflater.inflate(resultLayout, container, false)
     }
 
-    private var downloadButton: EasyDownloadButton? = null
     override fun onDestroyView() {
         updateUIListener = null
-        downloadButton?.dispose()
 
         super.onDestroyView()
     }
@@ -345,7 +332,12 @@ open class ResultFragment : ResultTrailerPlayer() {
                         return@setOnLongClickListener true
                     }
 
-                    main {
+
+                    result_download_movie?.setUp(ep) {
+                        viewModel.download(it.data)
+                    }
+                    result_download_movie?.isVisible = true
+                    /*main {
                         val file =
                             ioWorkSafe {
                                 context?.let {
@@ -390,11 +382,12 @@ open class ResultFragment : ResultTrailerPlayer() {
                             }
                         }
                         result_movie_progress_downloaded_holder?.isVisible = true
-                    }
+                    }*/
                 }
             }
             else -> {
-                result_movie_progress_downloaded_holder?.isVisible = false
+                //result_movie_progress_downloaded_holder?.isVisible = false
+                result_download_movie?.isVisible = false
                 result_play_movie?.isVisible = false
             }
         }
@@ -459,7 +452,14 @@ open class ResultFragment : ResultTrailerPlayer() {
             val storedData = getStoredData(activity ?: context ?: return) ?: return
 
             //viewModel.clear()
-            viewModel.load(activity, storedData.url ?: return, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+            viewModel.load(
+                activity,
+                storedData.url ?: return,
+                storedData.apiName,
+                storedData.showFillers,
+                storedData.dubStatus,
+                storedData.start
+            )
         }
     }
 
@@ -508,8 +508,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                 { episodeClick ->
                     viewModel.handleAction(activity, episodeClick)
                 },
-                {
-                    viewModel.getRequest(this)?.links ?: emptyList()
+                { clickEvent ->
+                    viewModel.download(clickEvent.data)
                     //handleDownloadClick(activity, downloadClickEvent)
                 }
             )
@@ -918,7 +918,14 @@ open class ResultFragment : ResultTrailerPlayer() {
 
             if (storedData?.url != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+                    viewModel.load(
+                        activity,
+                        storedData.url,
+                        storedData.apiName,
+                        storedData.showFillers,
+                        storedData.dubStatus,
+                        storedData.start
+                    )
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
@@ -954,7 +961,14 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                 if (restart || !viewModel.hasLoaded()) {
                     //viewModel.clear()
-                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+                    viewModel.load(
+                        activity,
+                        storedData.url,
+                        storedData.apiName,
+                        storedData.showFillers,
+                        storedData.dubStatus,
+                        storedData.start
+                    )
                 }
             }
         }
