@@ -1,13 +1,19 @@
 package com.lagradost.cloudstream3.plugins
 
+import android.app.*
 import dalvik.system.PathClassLoader
 import com.google.gson.Gson
 import android.content.res.AssetManager
 import android.content.res.Resources
 import android.os.Environment
 import android.widget.Toast
-import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -25,7 +31,9 @@ import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.extractorApis
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -38,6 +46,9 @@ import java.util.*
 const val PLUGINS_KEY = "PLUGINS_KEY"
 const val PLUGINS_KEY_LOCAL = "PLUGINS_KEY_LOCAL"
 
+const val EXTENSIONS_CHANNEL_ID = "cloudstream3.extensions"
+const val EXTENSIONS_CHANNEL_NAME = "Extensions"
+const val EXTENSIONS_CHANNEL_DESCRIPT = "Extension notification channel"
 
 // Data class for internal storage
 data class PluginData(
@@ -77,6 +88,8 @@ object PluginManager {
     val lock = Mutex()
 
     const val TAG = "PluginManager"
+
+    private var hasCreatedNotChanel = false
 
     /**
      * Store data about the plugin for fetching later
@@ -220,8 +233,11 @@ object PluginManager {
             "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}"
         }
 
+        val updatedPlugins = mutableListOf<String>()
+
         outdatedPlugins.apmap { pluginData ->
             if (pluginData.isDisabled) {
+                //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
                 unloadPlugin(pluginData.savedData.filePath)
             } else if (pluginData.isOutdated) {
                 downloadAndLoadPlugin(
@@ -229,8 +245,15 @@ object PluginManager {
                     pluginData.onlineData.second.url,
                     pluginData.savedData.internalName,
                     pluginData.onlineData.first
-                )
+                ).let { success ->
+                    if (success)
+                        updatedPlugins.add(pluginData.onlineData.second.name)
+                }
             }
+        }
+
+        main {
+            createNotification(activity, updatedPlugins)
         }
 
         ioSafe {
@@ -436,6 +459,61 @@ object PluginManager {
             false
         } catch (e: Exception) {
             false
+        }
+    }
+
+    private fun Context.createNotificationChannel() {
+        hasCreatedNotChanel = true
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = EXTENSIONS_CHANNEL_NAME //getString(R.string.channel_name)
+            val descriptionText = EXTENSIONS_CHANNEL_DESCRIPT//getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_LOW
+            val channel = NotificationChannel(EXTENSIONS_CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+    private fun createNotification(
+        context: Context,
+        extensionNames: List<String>
+        ): Notification? {
+        try {
+            if (extensionNames.isEmpty()) return null
+
+            val content = extensionNames.joinToString(", ")
+//        main { // DON'T WANT TO SLOW IT DOWN
+            val builder = NotificationCompat.Builder(context, EXTENSIONS_CHANNEL_ID)
+                .setAutoCancel(false)
+                .setColorized(true)
+                .setOnlyAlertOnce(true)
+                .setSilent(true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setColor(context.colorFromAttribute(R.attr.colorPrimary))
+                .setContentTitle(context.getString(R.string.plugins_updated, extensionNames.size))
+                .setSmallIcon(R.drawable.ic_baseline_extension_24)
+                .setStyle(NotificationCompat.BigTextStyle()
+                    .bigText(content))
+                .setContentText(content)
+
+            if (!hasCreatedNotChanel) {
+                context.createNotificationChannel()
+            }
+
+            val notification = builder.build()
+            with(NotificationManagerCompat.from(context)) {
+                // notificationId is a unique int for each notification that you must define
+                notify((System.currentTimeMillis()/1000).toInt(), notification)
+            }
+            return notification
+        } catch (e: Exception) {
+            logError(e)
+            return null
         }
     }
 }
