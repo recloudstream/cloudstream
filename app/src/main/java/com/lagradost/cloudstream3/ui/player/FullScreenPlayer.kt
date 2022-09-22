@@ -611,6 +611,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_lock?.isGone = !isShowing
         //player_media_route_button?.isClickable = !isGone
         player_go_back_holder?.isGone = isGone
+        player_sources_btt?.isGone = isGone
     }
 
     private fun updateLockUI() {

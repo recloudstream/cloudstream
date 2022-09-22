@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -48,9 +49,9 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         removeAccountKeys()
     }
 
-    override fun authenticate() {
+    override fun authenticate(activity: FragmentActivity?) {
         val request = "https://anilist.co/api/v2/oauth/authorize?client_id=$key&response_type=token"
-        openBrowser(request)
+        openBrowser(request, activity)
     }
 
     override suspend fun handleRedirect(url: String): Boolean {

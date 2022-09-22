@@ -455,4 +455,5 @@
     <string name="extension_types">Wspierane</string>
     <string name="extension_language">Język</string>
     <string name="extension_install_first">Najpierw zainstaluj rozszerzenie</string>
+    <string name="plugins_updated">Zaaktualizowano %d rozszerzeń</string>
 </resources>

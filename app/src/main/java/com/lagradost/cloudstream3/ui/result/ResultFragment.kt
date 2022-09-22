@@ -95,6 +95,7 @@ import kotlinx.android.synthetic.main.fragment_result.result_vpn
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
 import kotlinx.android.synthetic.main.result_sync.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 
@@ -293,7 +294,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                 result_reload_connection_open_in_browser?.isVisible = true
             }
             2 -> {
-                result_bookmark_fab?.isGone = isTvSettings()
+                result_bookmark_fab?.isGone = isTrueTvSettings()
                 result_bookmark_fab?.extend()
                 //if (result_bookmark_button?.context?.isTrueTvSettings() == true) {
                 //    when {
@@ -412,7 +413,39 @@ open class ResultFragment : ResultTrailerPlayer() {
             is ResourceSome.Success -> {
                 result_episodes?.isVisible = true
                 result_episode_loading?.isVisible = false
+
+                /*
+                 * Okay so what is this fuckery?
+                 * Basically Android TV will crash if you request a new focus while
+                 * the adapter gets updated.
+                 *
+                 * This means that if you load thumbnails and request a next focus at the same time
+                 * the app will crash without any way to catch it!
+                 *
+                 * How to bypass this?
+                 * This code basically steals the focus for 500ms and puts it in an inescapable view
+                 * then lets out the focus by requesting focus to result_episodes
+                 */
+
+                // Do not use this.isTv, that is the player
+                val isTv = isTvSettings()
+                val hasEpisodes =
+                    !(result_episodes?.adapter as? EpisodeAdapter?)?.cardList.isNullOrEmpty()
+
+                if (isTv && hasEpisodes) {
+                    // Make it impossible to focus anywhere else!
+                    temporary_no_focus?.isFocusable = true
+                    temporary_no_focus?.requestFocus()
+                }
+
                 (result_episodes?.adapter as? EpisodeAdapter?)?.updateList(episodes.value)
+
+                if (isTv && hasEpisodes) main {
+                    delay(500)
+                    temporary_no_focus?.isFocusable = false
+                    // This might make some people sad as it changes the focus when leaving an episode :(
+                    result_episodes?.requestFocus()
+                }
             }
         }
     }
@@ -458,7 +491,14 @@ open class ResultFragment : ResultTrailerPlayer() {
             val storedData = getStoredData(activity ?: context ?: return) ?: return
 
             //viewModel.clear()
-            viewModel.load(activity, storedData.url ?: return, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+            viewModel.load(
+                activity,
+                storedData.url ?: return,
+                storedData.apiName,
+                storedData.showFillers,
+                storedData.dubStatus,
+                storedData.start
+            )
         }
     }
 
@@ -916,7 +956,14 @@ open class ResultFragment : ResultTrailerPlayer() {
 
             if (storedData?.url != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+                    viewModel.load(
+                        activity,
+                        storedData.url,
+                        storedData.apiName,
+                        storedData.showFillers,
+                        storedData.dubStatus,
+                        storedData.start
+                    )
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
@@ -952,7 +999,14 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                 if (restart || !viewModel.hasLoaded()) {
                     //viewModel.clear()
-                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+                    viewModel.load(
+                        activity,
+                        storedData.url,
+                        storedData.apiName,
+                        storedData.showFillers,
+                        storedData.dubStatus,
+                        storedData.start
+                    )
                 }
             }
         }

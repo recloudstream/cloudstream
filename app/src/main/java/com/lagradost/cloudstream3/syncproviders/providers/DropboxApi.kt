@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+import androidx.fragment.app.FragmentActivity
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
 
@@ -15,7 +16,7 @@ class Dropbox : OAuth2API {
     override val icon: Int
         get() = TODO("Not yet implemented")
 
-    override fun authenticate() {
+    override fun authenticate(activity: FragmentActivity?) {
         TODO("Not yet implemented")
     }
 

@@ -420,14 +420,14 @@
 
 
                             <FrameLayout
-                                android:nextFocusRight="@id/result_bookmark_button"
                                 android:id="@+id/result_movie_progress_downloaded_holder"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
                                 android:layout_marginEnd="5dp"
                                 android:layout_weight="1"
-                                android:minWidth="250dp">
+                                android:minWidth="250dp"
+                                android:nextFocusRight="@id/result_bookmark_button">
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_download_movie"
@@ -510,17 +510,17 @@
                             </FrameLayout>
 
                             <com.google.android.material.button.MaterialButton
-                                android:nextFocusLeft="@id/result_movie_progress_downloaded_holder"
-                                android:nextFocusDown="@id/result_resume_series_button_play"
-
                                 android:id="@+id/result_bookmark_button"
                                 style="@style/BlackButton"
+
                                 android:layout_width="wrap_content"
                                 android:layout_marginStart="5dp"
                                 android:layout_marginEnd="5dp"
                                 android:layout_marginBottom="10dp"
                                 android:layout_weight="1"
                                 android:minWidth="250dp"
+                                android:nextFocusLeft="@id/result_movie_progress_downloaded_holder"
+                                android:nextFocusDown="@id/result_resume_series_button_play"
                                 android:text="@string/type_none"
                                 android:visibility="visible" />
                         </LinearLayout>
@@ -753,6 +753,16 @@
                                 android:orientation="horizontal"
                                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                 tools:listitem="@layout/result_episode" />
+
+                            <View
+                                android:id="@+id/temporary_no_focus"
+                                android:layout_width="1dp"
+                                android:layout_height="1dp"
+                                android:focusable="false"
+                                android:nextFocusLeft="@id/temporary_no_focus"
+                                android:nextFocusRight="@id/temporary_no_focus"
+                                android:nextFocusUp="@id/temporary_no_focus"
+                                android:nextFocusDown="@id/temporary_no_focus" />
                         </LinearLayout>
                     </LinearLayout>
 

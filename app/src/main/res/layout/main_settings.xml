@@ -101,7 +101,7 @@
             <TextView
                 android:id="@+id/settings_extensions"
                 style="@style/SettingsItem"
-                android:nextFocusUp="@id/settings_updates"
+                android:nextFocusUp="@id/settings_credits"
                 android:text="@string/extensions" />
 
             <LinearLayout
