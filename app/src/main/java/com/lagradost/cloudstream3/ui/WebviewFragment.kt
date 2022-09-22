@@ -40,13 +40,15 @@ class WebviewFragment : Fragment() {
                 return super.shouldOverrideUrlLoading(view, request)
             }
         }
+
+        WebViewResolver.webViewUserAgent = web_view.settings.userAgentString
+
         web_view.addJavascriptInterface(RepoApi(activity), "RepoApi")
         web_view.settings.javaScriptEnabled = true
         web_view.settings.userAgentString = USER_AGENT
         web_view.settings.domStorageEnabled = true
+//        WebView.setWebContentsDebuggingEnabled(true)
 
-        WebViewResolver.webViewUserAgent = web_view.settings.userAgentString
-//        web_view.settings.userAgentString = USER_AGENT
         web_view.loadUrl(url)
     }
 

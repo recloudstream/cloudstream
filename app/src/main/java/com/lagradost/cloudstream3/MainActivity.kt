@@ -150,7 +150,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
          * */
-        fun handleAppIntentUrl(activity: FragmentActivity?, str: String?, isWebview: Boolean): Boolean =
+        fun handleAppIntentUrl(
+            activity: FragmentActivity?,
+            str: String?,
+            isWebview: Boolean
+        ): Boolean =
             with(activity) {
                 if (str != null && this != null) {
                     if (str.startsWith("https://cs.repo")) {
@@ -191,7 +195,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         val url = str.replaceFirst(appStringRepo, "https")
                         loadRepository(url)
                         return true
-                    } else if (!isWebview){
+                    } else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
                             return true
@@ -565,9 +569,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             for (api in accountManagers) {
                 api.init()
             }
-        }
 
-        ioSafe {
             inAppAuths.apmap { api ->
                 try {
                     api.initialize()
