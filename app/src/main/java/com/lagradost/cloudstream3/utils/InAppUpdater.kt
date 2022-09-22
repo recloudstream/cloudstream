@@ -200,16 +200,23 @@ class InAppUpdater {
         private suspend fun Activity.downloadUpdate(url: String): Boolean {
             try {
                 Log.d(LOG_TAG, "Downloading update: $url")
+                val appUpdateName = "CloudStream"
+                val appUpdateSuffix = "apk"
 
-                val localContext = this
+                // Delete all old updates
+                this.cacheDir.listFiles()?.filter {
+                    it.name.startsWith(appUpdateName) && it.extension == appUpdateSuffix
+                }?.forEach {
+                    it.deleteOnExit()
+                }
 
-                val downloadedFile = File.createTempFile("CloudStream", ".apk")
+                val downloadedFile = File.createTempFile(appUpdateName, ".$appUpdateSuffix")
                 val sink: BufferedSink = downloadedFile.sink().buffer()
 
                 updateLock.withLock {
                     sink.writeAll(app.get(url).body.source())
                     sink.close()
-                    openApk(localContext, Uri.fromFile(downloadedFile))
+                    openApk(this, Uri.fromFile(downloadedFile))
                 }
                 return true
             } catch (e: Exception) {

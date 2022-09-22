@@ -272,11 +272,12 @@ class HomeViewModel : ViewModel() {
             if (!forceReload && api?.let { expandable[it.name]?.list?.list?.isNotEmpty() } == true) {
                 return@launchSafe
             }
-            // If the plugin isn't loaded yet. (Does not set the key)
-            if (api == null) {
-                loadAndCancel(noneApi)
-            } else if (preferredApiName == noneApi.name) {
+
+            if (preferredApiName == noneApi.name) {
                 setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
+                loadAndCancel(noneApi)
+            // If the plugin isn't loaded yet. (Does not set the key)
+            } else if (api == null) {
                 loadAndCancel(noneApi)
             } else if (preferredApiName == randomApi.name) {
                 val validAPIs = context?.filterProviderByPreferredMedia()

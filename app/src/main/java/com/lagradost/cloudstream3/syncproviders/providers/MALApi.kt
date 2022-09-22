@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.util.Base64
+import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
@@ -281,7 +282,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return false
     }
 
-    override fun authenticate() {
+    override fun authenticate(activity: FragmentActivity?) {
         // It is recommended to use a URL-safe string as code_verifier.
         // See section 4 of RFC 7636 for more details.
 
@@ -294,7 +295,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         val codeChallenge = codeVerifier
         val request =
             "$mainUrl/v1/oauth2/authorize?response_type=code&client_id=$key&code_challenge=$codeChallenge&state=RequestID$requestId"
-        openBrowser(request)
+        openBrowser(request, activity)
     }
 
     private var requestId = 0

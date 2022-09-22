@@ -170,7 +170,7 @@ dependencies {
     // Networking
 //    implementation "com.squareup.okhttp3:okhttp:4.9.2"
 //    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1"
-    implementation 'com.github.Blatzar:NiceHttp:0.3.2'
+    implementation 'com.github.Blatzar:NiceHttp:0.3.3'
 
     // Util to skip the URI file fuckery 🙏
     implementation "com.github.tachiyomiorg:unifile:17bec43"
@@ -206,10 +206,28 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs//full sources
 }
 
+// this is used by the gradlew plugin
 task makeJar(type: Copy) {
-    // after modifying here, you can export. Jar
     from('build/intermediates/compile_app_classes_jar/debug')
-    into('build') // output location
-    include('classes.jar') // the classes file of the imported rack package
-    dependsOn build
+    into('build')
+    include('classes.jar')
+    dependsOn('build')
+}
+
+dokkaHtml {
+    moduleName.set("Cloudstream")
+    dokkaSourceSets {
+        main {
+            sourceLink {
+                // Unix based directory relative path to the root of the project (where you execute gradle respectively). 
+                localDirectory.set(file("src/main/java"))
+
+                // URL showing where the source code can be accessed through the web browser
+                remoteUrl.set(new URL(
+                    "https://github.com/recloudstream/cloudstream/tree/master/app/src/main/java"))
+                // Suffix which is used to append the line number to the URL. Use #L for GitHub
+                remoteLineSuffix.set("#L")
+            }
+        }
+    }
 }

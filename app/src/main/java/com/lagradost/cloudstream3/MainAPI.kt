@@ -40,6 +40,7 @@ object APIHolder {
 
     private const val defProvider = 0
 
+    // ConcurrentModificationException is possible!!!
     val allProviders: MutableList<MainAPI> = arrayListOf()
 
     fun initAll() {
@@ -1118,6 +1119,11 @@ data class NextAiring(
     val unixTime: Long,
 )
 
+/**
+ * @param season To be mapped with episode season, not shown in UI if displaySeason is defined
+ * @param name To be shown next to the season like "Season $displaySeason $name" but if displaySeason is null then "$name"
+ * @param displaySeason What to be displayed next to the season name, if null then the name is the only thing shown.
+ * */
 data class SeasonData(
     val season: Int,
     val name: String? = null,
@@ -1198,9 +1204,12 @@ data class AnimeLoadResponse(
     override var backgroundPosterUrl: String? = null,
 ) : LoadResponse, EpisodeResponse
 
+/**
+ * If episodes already exist appends the list.
+ * */
 fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<Episode>?) {
     if (episodes.isNullOrEmpty()) return
-    this.episodes[status] = episodes
+    this.episodes[status] = (this.episodes[status] ?: emptyList()) + episodes
 }
 
 suspend fun MainAPI.newAnimeLoadResponse(

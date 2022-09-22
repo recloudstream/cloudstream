@@ -10,6 +10,9 @@ import java.security.MessageDigest
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 object VotingApi { // please do not cheat the votes lol
     private const val LOGKEY = "VotingApi"
@@ -23,10 +26,10 @@ object VotingApi { // please do not cheat the votes lol
     private val apiDomain = "https://api.countapi.xyz"
 
     private fun transformUrl(url: String): String = // dont touch or all votes get reset
-            MessageDigest
-                .getInstance("SHA-256")
-                .digest("${url}#funny-salt".toByteArray())
-                .fold("") { str, it -> str + "%02x".format(it) }
+        MessageDigest
+            .getInstance("SHA-256")
+            .digest("${url}#funny-salt".toByteArray())
+            .fold("") { str, it -> str + "%02x".format(it) }
 
     suspend fun SitePlugin.getVotes(): Int {
         return getVotes(url)
@@ -53,9 +56,9 @@ object VotingApi { // please do not cheat the votes lol
         return votesCache[pluginUrl] ?: app.get(url).parsedSafe<Result>()?.value?.also {
             votesCache[pluginUrl] = it
         } ?: (0.also {
-          ioSafe {
-              createBucket(pluginUrl)
-          }
+            ioSafe {
+                createBucket(pluginUrl)
+            }
         })
     }
 
@@ -64,7 +67,8 @@ object VotingApi { // please do not cheat the votes lol
     }
 
     private suspend fun createBucket(pluginUrl: String) {
-        val url = "${apiDomain}/create?namespace=cs3-votes&key=${transformUrl(pluginUrl)}&value=0&update_lowerbound=-2&update_upperbound=2&enable_reset=0"
+        val url =
+            "${apiDomain}/create?namespace=cs3-votes&key=${transformUrl(pluginUrl)}&value=0&update_lowerbound=-2&update_upperbound=2&enable_reset=0"
         Log.d(LOGKEY, "Requesting: $url")
         app.get(url)
     }
@@ -74,32 +78,46 @@ object VotingApi { // please do not cheat the votes lol
         return true
     }
 
+    private val voteLock = Mutex()
     suspend fun vote(pluginUrl: String, requestType: VoteType): Int {
-        if (!canVote(pluginUrl)) {
-            main {
-                Toast.makeText(context, R.string.extension_install_first, Toast.LENGTH_SHORT).show()
+        // Prevent multiple requests at the same time.
+        voteLock.withLock {
+            if (!canVote(pluginUrl)) {
+                main {
+                    Toast.makeText(context, R.string.extension_install_first, Toast.LENGTH_SHORT)
+                        .show()
+                }
+                return getVotes(pluginUrl)
             }
-            return getVotes(pluginUrl)
-        }
-        val savedType: VoteType = getKey("cs3-votes/${transformUrl(pluginUrl)}") ?: VoteType.NONE
-        var newType: VoteType = requestType
-        var changeValue = 0
-        if (requestType == savedType) {
-            newType = VoteType.NONE
-            changeValue = -requestType.value
-        } else if (savedType == VoteType.NONE) {
-            changeValue = requestType.value
-        } else if (savedType != requestType) {
-            changeValue = -savedType.value + requestType.value
-        }
-        val url = "${apiDomain}/update/cs3-votes/${transformUrl(pluginUrl)}?amount=${changeValue}"
-        Log.d(LOGKEY, "Requesting: $url")
-        val res = app.get(url).parsedSafe<Result>()?.value
-        if (res != null) {
+
+            val savedType: VoteType =
+                getKey("cs3-votes/${transformUrl(pluginUrl)}") ?: VoteType.NONE
+
+            val newType = if (requestType == savedType) VoteType.NONE else requestType
+            val changeValue = if (requestType == savedType) {
+                -requestType.value
+            } else if (savedType == VoteType.NONE) {
+                requestType.value
+            } else if (savedType != requestType) {
+                -savedType.value + requestType.value
+            } else 0
+
+            // Pre-emptively set vote key
             setKey("cs3-votes/${transformUrl(pluginUrl)}", newType)
-            votesCache[pluginUrl] = res
+
+            val url =
+                "${apiDomain}/update/cs3-votes/${transformUrl(pluginUrl)}?amount=${changeValue}"
+            Log.d(LOGKEY, "Requesting: $url")
+            val res = app.get(url).parsedSafe<Result>()?.value
+
+            if (res == null) {
+                // "Refund" key if the response is invalid
+                setKey("cs3-votes/${transformUrl(pluginUrl)}", savedType)
+            } else {
+                votesCache[pluginUrl] = res
+            }
+            return res ?: 0
         }
-        return res ?: 0
     }
 
     private data class Result(

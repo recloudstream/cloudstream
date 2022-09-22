@@ -20,7 +20,7 @@
 
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Snelheid (%.2fx)</string>
-    <string name="rated_format" formatted="true">Beoordeeld: %.Als</string>
+    <string name="rated_format" formatted="true">Beoordeeld: %.1fAls</string>
     <string name="new_update_format" formatted="true">Nieuwe update gevonden!\n%s -> %s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
