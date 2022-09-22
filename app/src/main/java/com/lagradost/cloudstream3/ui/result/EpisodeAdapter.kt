@@ -60,7 +60,7 @@ class EpisodeAdapter(
     private val clickCallback: (EpisodeClickEvent) -> Unit,
     private val downloadClickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var cardList: MutableList<ResultEpisode> = mutableListOf()
+    var cardList: MutableList<ResultEpisode> = mutableListOf()
 
     private val mBoundViewHolders: HashSet<DownloadButtonViewHolder> = HashSet()
     private fun getAllBoundViewHolders(): Set<DownloadButtonViewHolder?>? {
@@ -239,7 +239,6 @@ class EpisodeAdapter(
 
             itemView.setOnLongClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
-
                 return@setOnLongClickListener true
             }
 
