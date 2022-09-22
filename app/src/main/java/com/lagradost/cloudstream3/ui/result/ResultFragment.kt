@@ -294,7 +294,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                 result_reload_connection_open_in_browser?.isVisible = true
             }
             2 -> {
-                result_bookmark_fab?.isGone = isTvSettings()
+                result_bookmark_fab?.isGone = isTrueTvSettings()
                 result_bookmark_fab?.extend()
                 //if (result_bookmark_button?.context?.isTrueTvSettings() == true) {
                 //    when {
