@@ -195,7 +195,6 @@
 
     <string-array name="themes_overlay_names">
         <item>Mặc định</item>
-        <item>Material You</item>
         <item>Hồng nhạt</item>
         <item>Xanh lam đậm</item>
         <item>Nâu sẫm</item>
@@ -211,10 +210,11 @@
         <item>Vàng</item>
         <item>Hồng</item>
         <item>Hồng đậm</item>
+        <item>Material You</item>
+        <item>Material You (Secondary)</item>
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
-        <item>Monet</item>
         <item>CarnationPink</item>
         <item>DarkGreen</item>
         <item>Maroon</item>
@@ -230,7 +230,10 @@
         <item>Banana</item>
         <item>Party</item>
         <item>Pink</item>
+        <item>Monet</item>
+        <item>Monet2</item>
     </string-array>
+
 
     <string-array name="themes_names">
         <item>Tối</item>

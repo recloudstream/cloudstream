@@ -203,7 +203,6 @@
 
     <string-array name="themes_overlay_names">
         <item>Normalny</item>
-        <item>Material You</item>
         <item>Goździk różowy</item>
         <item>Ciemnozielony</item>
         <item>Kasztanowaty</item>
@@ -219,10 +218,11 @@
         <item>Bananowy</item>
         <item>Łososiowy</item>
         <item>Świnko peppowy</item>
+        <item>Material You</item>
+        <item>Material You (drugorzędny)</item>
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
-        <item>Monet</item>
         <item>CarnationPink</item>
         <item>DarkGreen</item>
         <item>Maroon</item>
@@ -238,7 +238,10 @@
         <item>Banana</item>
         <item>Party</item>
         <item>Pink</item>
+        <item>Monet</item>
+        <item>Monet2</item>
     </string-array>
+
 
     <string-array name="themes_names">
         <item>Ciemny</item>
