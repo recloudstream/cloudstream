@@ -84,7 +84,7 @@ object RepositoryManager {
             // Normal parsed function not working?
             // return response.parsedSafe()
             tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             logError(t)
             emptyList()
         }
@@ -103,8 +103,26 @@ object RepositoryManager {
     }
 
     suspend fun downloadPluginToFile(
+        pluginUrl: String,
+        file: File
+    ): File? {
+        return suspendSafeApiCall {
+            file.mkdirs()
+
+            // Overwrite if exists
+            if (file.exists()) { file.delete() }
+            file.createNewFile()
+
+            val body = app.get(pluginUrl).okhttpResponse.body
+            write(body.byteStream(), file.outputStream())
+            file
+        }
+    }
+
+    suspend fun downloadPluginToFile(
         context: Context,
         pluginUrl: String,
+        /** Filename without .cs3 */
         fileName: String,
         folder: String
     ): File? {

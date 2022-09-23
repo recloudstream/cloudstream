@@ -15,12 +15,19 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 const val DEBUG_EXCEPTION = "THIS IS A DEBUG EXCEPTION!"
+const val DEBUG_PRINT = "DEBUG PRINT"
 
 class DebugException(message: String) : Exception("$DEBUG_EXCEPTION\n$message")
 
 inline fun debugException(message: () -> String) {
     if (BuildConfig.DEBUG) {
         throw DebugException(message.invoke())
+    }
+}
+
+inline fun debugPrint(tag: String = DEBUG_PRINT, message: () -> String) {
+    if (BuildConfig.DEBUG) {
+        Log.d(tag, message.invoke())
     }
 }
 
