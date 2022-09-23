@@ -166,7 +166,8 @@ object CommonActivity {
                 "Light" -> R.style.LightMode
                 "Amoled" -> R.style.AmoledMode
                 "AmoledLight" -> R.style.AmoledModeLight
-                "Monet" -> R.style.MonetMode
+                "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                        R.style.MonetMode else R.style.AppTheme
                 else -> R.style.AppTheme
             }
 
@@ -187,8 +188,10 @@ object CommonActivity {
                 "Banana" -> R.style.OverlayPrimaryColorBanana
                 "Party" -> R.style.OverlayPrimaryColorParty
                 "Pink" -> R.style.OverlayPrimaryColorPink
-                "Monet" -> R.style.OverlayPrimaryColorMonet
-                "Monet2" -> R.style.OverlayPrimaryColorMonetTwo
+                "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    R.style.OverlayPrimaryColorMonet else R.style.OverlayPrimaryColorNormal
+                "Monet2" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    R.style.OverlayPrimaryColorMonetTwo else R.style.OverlayPrimaryColorNormal
                 else -> R.style.OverlayPrimaryColorNormal
             }
         act.theme.applyStyle(currentTheme, true)
