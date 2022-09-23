@@ -13,7 +13,7 @@
 
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">سرعة (%.2fx)</string>
-    <string name="rated_format" formatted="true">مُقيّم: %.1f</string>
+    <string name="rated_format" formatted="true">تقييم: %.1f</string>
 
     <string name="new_update_format" formatted="true">!تم العثور علي تحديث جديد\n%s -> %s</string>
     <string name="duration_format" formatted="true">%d دقيقة</string>
