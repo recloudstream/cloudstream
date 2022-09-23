@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
@@ -83,8 +84,20 @@ class SettingsUI : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.app_theme_key)?.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.themes_names)
-            val prefValues = resources.getStringArray(R.array.themes_names_values)
+            val prefNames = resources.getStringArray(R.array.themes_names).toMutableList()
+            val prefValues = resources.getStringArray(R.array.themes_names_values).toMutableList()
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) { // remove monet on android 11 and less
+                val toRemove = prefValues
+                    .mapIndexed { idx, s -> if (s.startsWith("Monet")) idx else null }
+                    .filterNotNull()
+                var offset = 0
+                toRemove.forEach { idx ->
+                    prefNames.removeAt(idx - offset)
+                    prefValues.removeAt(idx - offset)
+                    offset += 1
+                }
+            }
 
             val currentLayout =
                 settingsManager.getString(getString(R.string.app_theme_key), prefValues.first())
@@ -107,8 +120,20 @@ class SettingsUI : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
         getPref(R.string.primary_color_key)?.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.themes_overlay_names)
-            val prefValues = resources.getStringArray(R.array.themes_overlay_names_values)
+            val prefNames = resources.getStringArray(R.array.themes_overlay_names).toMutableList()
+            val prefValues = resources.getStringArray(R.array.themes_overlay_names_values).toMutableList()
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) { // remove monet on android 11 and less
+                val toRemove = prefValues
+                    .mapIndexed { idx, s -> if (s.startsWith("Monet")) idx else null }
+                    .filterNotNull()
+                var offset = 0
+                toRemove.forEach { idx ->
+                    prefNames.removeAt(idx - offset)
+                    prefValues.removeAt(idx - offset)
+                    offset += 1
+                }
+            }
 
             val currentLayout =
                 settingsManager.getString(getString(R.string.primary_color_key), prefValues.first())
