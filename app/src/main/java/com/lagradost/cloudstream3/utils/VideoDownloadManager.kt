@@ -426,7 +426,7 @@ object VideoDownloadManager {
     }
 
     private const val reservedChars = "|\\?*<\":>+[]/\'"
-    fun sanitizeFilename(name: String, removeSpaces: Boolean= false): String {
+    fun sanitizeFilename(name: String, removeSpaces: Boolean = false): String {
         var tempName = name
         for (c in reservedChars) {
             tempName = tempName.replace(c, ' ')
@@ -941,7 +941,7 @@ object VideoDownloadManager {
      * @param directoryName if null will use the current path.
      * @return UniFile / null if createMissingDirectories = false and folder is not found.
      * */
-    private fun UniFile.gotoDir(
+    fun UniFile.gotoDir(
         directoryName: String?,
         createMissingDirectories: Boolean = true
     ): UniFile? {
@@ -1612,7 +1612,7 @@ object VideoDownloadManager {
                     .mapIndexed { index, any -> DownloadQueueResumePackage(index, any) }
                     .toTypedArray()
             setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             logError(t)
         }
     }

@@ -569,8 +569,12 @@
                                     android:clickable="true"
                                     android:focusable="true"
                                     android:layout_width="match_parent" />-->
-
-                            <include layout="@layout/download_button" />
+                            <com.lagradost.cloudstream3.ui.DownloadButton
+                                android:id="@+id/result_download_movie"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                app:aria2c_layout="@layout/download_button_layout" />
 
                             <!--<androidx.core.widget.ContentLoadingProgressBar
                                     android:layout_width="match_parent"

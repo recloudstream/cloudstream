@@ -109,6 +109,7 @@
                     android:background="?selectableItemBackgroundBorderless"
                     android:id="@+id/result_episode_download"
                     android:layout_gravity="center"
+                    android:padding="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp">
                 </com.lagradost.fetchbutton.ui.PieFetchButton>

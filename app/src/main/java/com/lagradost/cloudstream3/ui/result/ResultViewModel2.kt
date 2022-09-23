@@ -56,10 +56,12 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.gotoDir
 import com.lagradost.fetchbutton.NotificationMetaData
 import com.lagradost.fetchbutton.aria2c.Aria2Starter
 import com.lagradost.fetchbutton.aria2c.UriRequest
 import com.lagradost.fetchbutton.aria2c.newUriRequest
+import com.lagradost.fetchbutton.utils.Coroutines.mainThread
 import kotlinx.coroutines.*
 import java.io.File
 import java.lang.Math.abs
@@ -534,24 +536,16 @@ class ResultViewModel2 : ViewModel() {
         }
 
         private fun downloadSubtitle(
-            context: Context?,
             link: ExtractorSubtitleLink,
             fileName: String,
             folder: String
         ) {
-            ioSafe {
-                VideoDownloadManager.downloadThing(
-                    context ?: return@ioSafe,
-                    link,
-                    "$fileName ${link.name}",
-                    folder,
-                    if (link.url.contains(".srt")) ".srt" else "vtt",
-                    false,
-                    null
-                ) {
-                    // no notification
-                }
-            }
+            Aria2Starter.download(
+                newUriRequest(
+                    null, link.url, fileName, folder, link.headers,
+                    USER_AGENT
+                )
+            )
         }
 
         private fun getFolder(currentType: TvType, titleName: String): String {
@@ -581,7 +575,6 @@ class ResultViewModel2 : ViewModel() {
                 val fileName = VideoDownloadManager.getFileName(ctx, meta)
                 val folder = getFolder(meta.type ?: return, meta.mainName)
                 downloadSubtitle(
-                    ctx,
                     ExtractorSubtitleLink(link.name, link.url, ""),
                     fileName,
                     folder
@@ -611,10 +604,12 @@ class ResultViewModel2 : ViewModel() {
                     currentType
                 )
 
-            val topFolder = AcraApplication.context?.getBasePath()?.first?.filePath
+            val topFolder = VideoDownloadManager.getDownloadDir()?.filePath ?: throw RuntimeException("FUCK YOU")//AcraApplication.context?.getBasePath()?.first //?.second?.also { println("URIIIIII: $it") } ?: throw RuntimeException("FUCK YOU")
+                //?: VideoDownloadManager.getDownloadDir()?.filePath ?: return null
 
-            val folder =
-                topFolder + "/" + getFolder(currentType, currentHeaderName).replace(".", "")
+            val folder = topFolder//topFolder?.gotoDir(getFolder(currentType, currentHeaderName).replace(".", ""), true)?.uri?.toString() ?: throw RuntimeException("FUCK YOU")
+            //val folder =
+            //    topFolder + "/" + getFolder(currentType, currentHeaderName).replace(".", "")
             //val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
 
             // SET VISUAL KEYS
@@ -667,8 +662,7 @@ class ResultViewModel2 : ViewModel() {
                     contentTitle = currentHeaderName,
                     secondRow = rowTwo,
                     subText = null,
-                    linkName = currentHeaderName,
-                    rowTwoExtra = null
+                    linkName = null,
                 )
             }
 
@@ -680,9 +674,16 @@ class ResultViewModel2 : ViewModel() {
                         VideoDownloadManager.getFileName(
                             AcraApplication.context ?: return null,
                             meta
-                        ), ".mp4"
-                    ), folder, link.headers, USER_AGENT,
-                    notificationMetaData = notification
+                        ), "mp4"
+                    ), null,
+                    link.headers, USER_AGENT,
+                    notificationMetaData = notification?.copy(
+                        linkName = "${link.name} ${
+                            Qualities.getStringByInt(
+                                link.quality
+                            )
+                        }"
+                    )
                 )
             }
 
@@ -694,17 +695,24 @@ class ResultViewModel2 : ViewModel() {
                         true
                     )
                 )
-            }.distinctBy { it.url }
-                //.map { ExtractorSubtitleLink(it.name, it.url, "") }
-                .map { link ->
-                    val fileName = VideoDownloadManager.getFileName(
-                        AcraApplication.context ?: return null,
-                        meta
-                    ) + ".vtt"
+            }.distinctBy { it.url }.groupBy { link ->
+                SubtitleHelper.fromLanguageToTwoLetters(
+                    link.name,
+                    true
+                )
+            }.map {
+                it.value.map { link ->
+                    val fileName = VideoDownloadManager.getDisplayName(
+                        VideoDownloadManager.getFileName(
+                            AcraApplication.context ?: return null,
+                            meta
+                        ), "vtt"
+                    )
 
-                    newUriRequest(0, link.url, fileName, folder, link.headers, USER_AGENT)
+                    newUriRequest(null, link.url, fileName, folder, link.headers, USER_AGENT)
                     //downloadSubtitle(context, link, fileName, folder)
                 }
+            }
 
             return DownloadRequest(linkRequests, downloadSubsList)
 
@@ -740,7 +748,7 @@ class ResultViewModel2 : ViewModel() {
 
         data class DownloadRequest(
             val links: List<UriRequest>,
-            val subs: List<UriRequest>,
+            val subs: List<List<UriRequest>>,
         )
 
 
@@ -1093,16 +1101,24 @@ class ResultViewModel2 : ViewModel() {
         handleEpisodeClickEvent(activity, click)
     }
 
-    private fun downloadFromRequest(req: DownloadRequest) {
+    private fun downloadFromRequest(activity: Activity?, req: DownloadRequest) {
         Aria2Starter.download(req.links)
-        for (sub in req.subs.take(5)) {
+        for (sub in req.subs.take(4)) { // download max 4 langs to not block real download
             Aria2Starter.download(sub)
+        }
+        val linksFound = req.links.isNotEmpty()
+        mainThread {
+            showToast(
+                activity,
+                if (linksFound) R.string.download_started else R.string.no_links_found_toast,
+                Toast.LENGTH_SHORT
+            )
         }
     }
 
-    fun download(card: ResultEpisode) = ioSafe {
+    fun download(activity: Activity?, card: ResultEpisode) = ioSafe {
         getRequest(card)?.let { req ->
-            downloadFromRequest(req)
+            downloadFromRequest(activity, req)
         }
     }
 
@@ -1242,13 +1258,8 @@ class ResultViewModel2 : ViewModel() {
                             listOf(result.links[index]),
                             result.subs,
                         ) ?: return@ioSafe
-                        downloadFromRequest(req)
+                        downloadFromRequest(activity, req)
                     }
-                    showToast(
-                        activity,
-                        R.string.download_started,
-                        Toast.LENGTH_SHORT
-                    )
                 }
             }
             ACTION_RELOAD_EPISODE -> {

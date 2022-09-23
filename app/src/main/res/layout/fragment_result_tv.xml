@@ -418,8 +418,8 @@
 
                             </com.google.android.material.button.MaterialButton>
 
-                            <include
-                                layout="@layout/download_button"
+                            <com.lagradost.cloudstream3.ui.DownloadButton
+                                android:id="@+id/result_download_movie"
                                 android:layout_width="wrap_content"
                                 android:layout_weight="1"
                                 android:minWidth="250dp"

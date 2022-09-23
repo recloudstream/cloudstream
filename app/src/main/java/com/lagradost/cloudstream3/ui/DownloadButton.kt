@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.TextView
 import androidx.core.view.isVisible
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.R
 import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
 import com.lagradost.fetchbutton.aria2c.Metadata
@@ -14,10 +15,22 @@ class DownloadButton(context: Context, attributeSet: AttributeSet) :
 
     var progressText: TextView? = null
     var mainText: TextView? = null
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
+    var bigButton: MaterialButton? = null
+
+    override fun onInflate() {
+        overrideLayout = R.layout.download_button_layout
+        super.onInflate()
         progressText = findViewById(R.id.result_movie_download_text_precentage)
         mainText = findViewById(R.id.result_movie_download_text)
+        bigButton = findViewById(R.id.download_big_button)
+    }
+
+    override fun setOnClickListener(l: OnClickListener?) {
+        bigButton?.setOnClickListener(l)
+    }
+
+    override fun setOnLongClickListener(l: OnLongClickListener?) {
+        bigButton?.setOnLongClickListener(l)
     }
 
     override fun setStatus(status: DownloadStatusTell?) {

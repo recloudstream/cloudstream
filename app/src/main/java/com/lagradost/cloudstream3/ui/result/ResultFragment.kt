@@ -34,28 +34,32 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.DownloadHelper.setUp
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import kotlinx.android.synthetic.main.download_button.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_result.result_cast_items
 import kotlinx.android.synthetic.main.fragment_result.result_cast_text
 import kotlinx.android.synthetic.main.fragment_result.result_coming_soon
 import kotlinx.android.synthetic.main.fragment_result.result_data_holder
 import kotlinx.android.synthetic.main.fragment_result.result_description
+import kotlinx.android.synthetic.main.fragment_result.result_download_movie
 import kotlinx.android.synthetic.main.fragment_result.result_episode_loading
 import kotlinx.android.synthetic.main.fragment_result.result_episodes
 import kotlinx.android.synthetic.main.fragment_result.result_error_text
@@ -334,7 +338,13 @@ open class ResultFragment : ResultTrailerPlayer() {
 
 
                     result_download_movie?.setUp(ep) {
-                        viewModel.download(it.data)
+                        when (it.action) {
+                            DOWNLOAD_ACTION_DOWNLOAD -> viewModel.download(activity, it.data)
+                            DOWNLOAD_ACTION_LONG_CLICK -> viewModel.handleAction(
+                                activity,
+                                EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, ep)
+                            )
+                        }
                     }
                     result_download_movie?.isVisible = true
                     /*main {
@@ -509,7 +519,13 @@ open class ResultFragment : ResultTrailerPlayer() {
                     viewModel.handleAction(activity, episodeClick)
                 },
                 { clickEvent ->
-                    viewModel.download(clickEvent.data)
+                    when (clickEvent.action) {
+                        DOWNLOAD_ACTION_DOWNLOAD -> viewModel.download(activity, clickEvent.data)
+                        DOWNLOAD_ACTION_LONG_CLICK -> viewModel.handleAction(
+                            activity,
+                            EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, clickEvent.data)
+                        )
+                    }
                     //handleDownloadClick(activity, downloadClickEvent)
                 }
             )
