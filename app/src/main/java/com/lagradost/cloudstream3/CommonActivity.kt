@@ -166,12 +166,14 @@ object CommonActivity {
                 "Light" -> R.style.LightMode
                 "Amoled" -> R.style.AmoledMode
                 "AmoledLight" -> R.style.AmoledModeLight
+                "Monet" -> R.style.MonetMode
                 else -> R.style.AppTheme
             }
 
         val currentOverlayTheme =
             when (settingsManager.getString(act.getString(R.string.primary_color_key), "Normal")) {
                 "Normal" -> R.style.OverlayPrimaryColorNormal
+                "Monet" -> R.style.OverlayPrimaryColorMonet
                 "CarnationPink" -> R.style.OverlayPrimaryColorCarnationPink
                 "DarkGreen" -> R.style.OverlayPrimaryColorDarkGreen
                 "Maroon" -> R.style.OverlayPrimaryColorMaroon

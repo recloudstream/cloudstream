@@ -14,19 +14,6 @@
         <item>@id/cast_button_type_forward_30_seconds</item>
     </array>
 
-    <array name="media_type_pref">
-        <item>Todos</item>
-        <item>Películas y TV</item>
-        <item>Anime</item>
-        <item>Documental</item>
-    </array>
-    <array name="media_type_pref_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </array>
-
     <array name="limit_title_rez_pref_names">
         <item>@string/resolution_and_title</item>
         <item>@string/title</item>
@@ -207,6 +194,7 @@
 
     <string-array name="themes_overlay_names">
         <item>Normal</item>
+        <item>Material You</item>
         <item>Rosa clavel</item>
         <item>Verde oscuro</item>
         <item>Vino</item>
@@ -225,6 +213,7 @@
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
+        <item>Monet</item>
         <item>CarnationPink</item>
         <item>DarkGreen</item>
         <item>Maroon</item>
@@ -247,12 +236,14 @@
         <item>Gris</item>
         <item>Amoled</item>
         <item>Destello</item>
+        <item>Material You</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
         <item>Black</item>
         <item>Amoled</item>
         <item>Light</item>
+        <item>Monet</item>
     </string-array>
 
     <!--https://github.com/videolan/vlc-android/blob/72ccfb93db027b49855760001d1a930fa657c5a8/application/resources/src/main/res/values/arrays.xml#L266-->
