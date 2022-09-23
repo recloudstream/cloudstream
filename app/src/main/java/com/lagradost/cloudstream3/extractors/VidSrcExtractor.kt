@@ -3,10 +3,9 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.ExtractorApi
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.M3u8Helper
-import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.*
+import kotlinx.coroutines.delay
+import java.net.URI
 
 class VidSrcExtractor2 : VidSrcExtractor() {
     override val mainUrl = "https://vidsrc.me/embed"
@@ -27,6 +26,25 @@ open class VidSrcExtractor : ExtractorApi() {
     override val mainUrl = "$absoluteUrl/embed"
     override val requiresReferer = false
 
+    companion object {
+        /** Infinite function to validate the vidSrc pass */
+        suspend fun validatePass(url: String) {
+            val uri = URI(url)
+            val host = uri.host
+
+            // Basically turn https://tm3p.vidsrc.stream/ -> https://vidsrc.stream/
+            val referer = host.split(".").let {
+                val size = it.size
+                "https://" + it.subList(maxOf(0, size - 2), size).joinToString(".") + "/"
+            }
+
+            while (true) {
+                app.get(url, referer = referer)
+                delay(60_000)
+            }
+        }
+    }
+
     override suspend fun getUrl(
         url: String,
         referer: String?,
@@ -40,7 +58,10 @@ open class VidSrcExtractor : ExtractorApi() {
                 val datahash = it.attr("data-hash")
                 if (datahash.isNotBlank()) {
                     val links = try {
-                        app.get("$absoluteUrl/src/$datahash", referer = "https://source.vidsrc.me/").url
+                        app.get(
+                            "$absoluteUrl/src/$datahash",
+                            referer = "https://source.vidsrc.me/"
+                        ).url
                     } catch (e: Exception) {
                         ""
                     }
@@ -54,11 +75,28 @@ open class VidSrcExtractor : ExtractorApi() {
                 val srcresponse = app.get(server, referer = absoluteUrl).text
                 val m3u8Regex = Regex("((https:|http:)//.*\\.m3u8)")
                 val srcm3u8 = m3u8Regex.find(srcresponse)?.value ?: return@apmap
-                M3u8Helper.generateM3u8(
-                    name,
-                    srcm3u8,
-                    absoluteUrl
-                ).forEach(callback)
+                val passRegex = Regex("""['"](.*set_pass[^"']*)""")
+                val pass = passRegex.find(srcresponse)?.groupValues?.get(1)?.replace(
+                    Regex("""^//"""), "https://"
+                )
+
+                callback.invoke(
+                    ExtractorLink(
+                        this.name,
+                        this.name,
+                        srcm3u8,
+                        this.mainUrl,
+                        Qualities.Unknown.value,
+                        extractorData = pass,
+                        isM3u8 = true
+                    )
+                )
+
+//                M3u8Helper.generateM3u8(
+//                    name,
+//                    srcm3u8,
+//                    absoluteUrl
+//                ).forEach(callback)
             } else {
                 loadExtractor(linkfixed, url, subtitleCallback, callback)
             }
