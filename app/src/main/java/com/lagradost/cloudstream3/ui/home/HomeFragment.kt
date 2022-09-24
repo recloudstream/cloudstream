@@ -256,13 +256,14 @@ class HomeFragment : Fragment() {
             nsfw: MaterialButton?,
             others: MaterialButton?,
         ): List<Pair<MaterialButton?, List<TvType>>> {
+            // This list should be same order as home screen to aid navigation
             return listOf(
-                Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
-                Pair(cartoons, listOf(TvType.Cartoon)),
-                Pair(tvs, listOf(TvType.TvSeries)),
-                Pair(docs, listOf(TvType.Documentary)),
                 Pair(movies, listOf(TvType.Movie, TvType.Torrent)),
+                Pair(tvs, listOf(TvType.TvSeries)),
+                Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
                 Pair(asian, listOf(TvType.AsianDrama)),
+                Pair(cartoons, listOf(TvType.Cartoon)),
+                Pair(docs, listOf(TvType.Documentary)),
                 Pair(livestream, listOf(TvType.Live)),
                 Pair(nsfw, listOf(TvType.NSFW)),
                 Pair(others, listOf(TvType.Others)),
