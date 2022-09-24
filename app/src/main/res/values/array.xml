@@ -228,6 +228,8 @@
         <item>Banana</item>
         <item>Party</item>
         <item>Pink Pain</item>
+        <item>Material You</item>
+        <item>Material You (Secondary)</item>
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
@@ -246,6 +248,8 @@
         <item>Banana</item>
         <item>Party</item>
         <item>Pink</item>
+        <item>Monet</item>
+        <item>Monet2</item>
     </string-array>
 
     <string-array name="themes_names">
@@ -253,12 +257,14 @@
         <item>Gray</item>
         <item>Amoled</item>
         <item>Flashbang</item>
+        <item>Material You</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
         <item>Black</item>
         <item>Amoled</item>
         <item>Light</item>
+        <item>Monet</item>
     </string-array>
 
     <string-array name="extension_statuses">

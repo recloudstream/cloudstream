@@ -95,6 +95,16 @@
         <item name="white">#000</item>
     </style>
 
+    <style name="MonetMode">
+        <item name="primaryGrayBackground">@color/material_dynamic_neutral20</item>
+        <item name="primaryBlackBackground">@color/material_dynamic_neutral10</item>
+        <item name="iconGrayBackground">@color/material_dynamic_neutral20</item>
+        <item name="boxItemBackground">@color/material_dynamic_neutral20</item>
+        <item name="textColor">@color/material_dynamic_neutral90</item>
+        <item name="grayTextColor">@color/material_dynamic_neutral60</item>
+        <item name="white">@color/material_dynamic_neutral90</item>
+    </style>
+
     <style name="OverlayPrimaryColorNormal">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:colorPrimary">@color/colorPrimary</item>
@@ -103,6 +113,26 @@
         <item name="colorOnPrimary">@color/colorAccent</item>
         <!-- Needed for leanback fuckery -->
         <item name="android:colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="OverlayPrimaryColorMonet">
+        <item name="colorPrimary">@color/material_dynamic_primary80</item>
+        <item name="android:colorPrimary">@color/material_dynamic_primary80</item>
+        <item name="colorPrimaryDark">@color/material_dynamic_primary30</item>
+        <item name="colorAccent">@color/material_dynamic_primary80</item>
+        <item name="colorOnPrimary">@color/material_dynamic_primary20</item>
+        <!-- Needed for leanback fuckery -->
+        <item name="android:colorAccent">@color/material_dynamic_primary30</item>
+    </style>
+
+    <style name="OverlayPrimaryColorMonetTwo">
+        <item name="colorPrimary">@color/material_dynamic_tertiary80</item>
+        <item name="android:colorPrimary">@color/material_dynamic_tertiary80</item>
+        <item name="colorPrimaryDark">@color/material_dynamic_tertiary30</item>
+        <item name="colorAccent">@color/material_dynamic_tertiary80</item>
+        <item name="colorOnPrimary">@color/material_dynamic_tertiary20</item>
+        <!-- Needed for leanback fuckery -->
+        <item name="android:colorAccent">@color/material_dynamic_tertiary30</item>
     </style>
 
     <style name="OverlayPrimaryColorBlue">
