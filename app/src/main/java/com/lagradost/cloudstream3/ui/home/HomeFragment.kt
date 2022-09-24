@@ -352,11 +352,25 @@ class HomeFragment : Fragment() {
                     arrayAdapter.notifyDataSetChanged()
                 }
 
+                /**
+                 * Since fire tv is fucked we need to manually define the focus layout.
+                 * Since visible buttons are only known in runtime this is required.
+                 **/
+                var lastButton: MaterialButton? = null
+
                 for ((button, validTypes) in pairList) {
                     val isValid =
                         validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
                     button?.isVisible = isValid
                     if (isValid) {
+
+                        // Set focus navigation
+                        button?.let { currentButton ->
+                            lastButton?.nextFocusRightId = currentButton.id
+                            lastButton?.id?.let { currentButton.nextFocusLeftId = it }
+                            lastButton = currentButton
+                        }
+
                         fun buttonContains(): Boolean {
                             return preSelectedTypes.any { validTypes.contains(it) }
                         }
