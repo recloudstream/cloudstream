@@ -20,10 +20,9 @@ class IndexSubtitleApi : AbstractSubApi {
 
     override fun logOut() {}
 
-    private val interceptor = CloudflareKiller()
 
     companion object {
-        const val host = "https://indexsubtitle.com"
+        const val host = "https://subscene.cyou"
         const val TAG = "INDEXSUBS"
     }
 
@@ -126,16 +125,15 @@ class IndexSubtitleApi : AbstractSubApi {
                     epNumber = epNum,
                     seasonNumber = seasonNum,
                     year = yearNum,
-                    headers = interceptor.getCookieHeaders(link).toMap()
                 )
             )
         }
 
-        val document = app.get("$host/?search=$queryText", interceptor = interceptor).document
+        val document = app.get("$host/?search=$queryText").document
 
         document.select("div.my-3.p-3 div.media").map { block ->
             if (seasonNum > 0) {
-                val name = block.select("strong.text-primary").text().trim()
+                val name = block.select("strong.text-primary, strong.text-info").text().trim()
                 val season = getOrdinal(seasonNum)
                 if ((block.selectFirst("a")?.attr("href")
                         ?.contains(
@@ -163,7 +161,7 @@ class IndexSubtitleApi : AbstractSubApi {
                             val urlItem = fixUrl(
                                 it.selectFirst("a")!!.attr("href")
                             )
-                            val itemDoc = app.get(urlItem, interceptor = interceptor).document
+                            val itemDoc = app.get(urlItem).document
                             val id = imdbUrlToIdNullable(
                                 itemDoc.selectFirst("div.d-flex span.badge.badge-primary")?.parent()
                                     ?.attr("href")
@@ -202,14 +200,14 @@ class IndexSubtitleApi : AbstractSubApi {
         val results = mutableListOf<AbstractSubtitleEntities.SubtitleEntity>()
 
         urlItems.forEach { url ->
-            val request = app.get(url, interceptor = interceptor)
+            val request = app.get(url)
             if (request.isSuccessful) {
                 request.document.select("div.my-3.p-3 div.media").map { block ->
                     if (block.select("span.d-block span[data-original-title=Language]").text()
                             .trim()
                             .contains("$queryLang")
                     ) {
-                        var name = block.select("strong.text-primary").text().trim()
+                        var name = block.select("strong.text-primary, strong.text-info").text().trim()
                         val link = fixUrl(block.selectFirst("a")!!.attr("href"))
                         if (seasonNum > 0) {
                             when {
@@ -235,7 +233,7 @@ class IndexSubtitleApi : AbstractSubApi {
         val seasonNum = data.seasonNumber
         val epNum = data.epNumber
 
-        val req = app.get(data.data, interceptor = interceptor)
+        val req = app.get(data.data)
 
         if (req.isSuccessful) {
             val document = req.document
