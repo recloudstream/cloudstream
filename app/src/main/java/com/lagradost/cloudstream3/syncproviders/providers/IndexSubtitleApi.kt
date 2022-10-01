@@ -244,7 +244,7 @@ class IndexSubtitleApi : AbstractSubApi {
             } else {
                 document.select("div.my-3.p-3 div.media").mapNotNull { block ->
                     val name =
-                        block.selectFirst("strong.d-block.text-primary")?.text()?.trim().toString()
+                        block.selectFirst("strong.d-block")?.text()?.trim().toString()
                     if (seasonNum!! > 0) {
                         if (isRightEps(name, seasonNum, epNum)) {
                             fixUrl(block.selectFirst("a")!!.attr("href"))
