@@ -335,18 +335,18 @@ object BackupUtils {
             Toast.LENGTH_LONG
         )
     }
-
-    fun FragmentActivity.restorePromptGithub() =
-        ioSafe {
-            val gistUrl = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
-            val jsondata = app.get(gistUrl).text
-            val dataraw = parseJson<GithubApi.gistsElements>(jsondata ?: "").files.values.first().dataRaw?: throw IllegalAccessException()
-            val data = parseJson<BackupFile>(dataraw)
-            this@restorePromptGithub.restore(
-                data,
-                restoreSettings = true,
-                restoreDataStore = true
-            )
-        }
+    suspend fun Context.restorePromptGithub() {
+        val gistUrl = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
+        val jsondata = app.get(gistUrl).text
+        val dataraw =
+            parseJson<GithubApi.gistsElements>(jsondata ?: "").files.values.first().dataRaw
+                ?: throw IllegalAccessException()
+        val data = parseJson<BackupFile>(dataraw)
+        restore(
+            data,
+            restoreSettings = true,
+            restoreDataStore = true
+        )
+    }
 }
 
