@@ -53,7 +53,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.restore_key)?.setOnPreferenceClickListener {
-            activity?.restorePromptGithub()
+            activity?.restorePrompt()
             return@setOnPreferenceClickListener true
         }
         getPref(R.string.show_logcat_key)?.setOnPreferenceClickListener { pref ->
