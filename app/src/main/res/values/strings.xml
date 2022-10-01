@@ -56,6 +56,7 @@
     <string name="filter_sub_lang_key" translatable="false">filter_sub_lang_key</string>
     <string name="pref_filter_search_quality_key" translatable="false">pref_filter_search_quality_key</string>
     <string name="enable_nsfw_on_providers_key" translatable="false">enable_nsfw_on_providers_key</string>
+    <string name="automatic_cloud_backups" translatable="false">automatic_cloud_backups</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
@@ -244,6 +245,10 @@
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
 
     <string name="restore_settings">Restore data from backup</string>
+    <string name="automatic_restore_settings">Automatic backup from Github</string>
+
+    <string name="cloud_backups_off">Cloud Backup deactivated</string>
+    <string name="cloud_backups_on">Cloud Backup enabled</string>
 
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">Loaded backup file</string>

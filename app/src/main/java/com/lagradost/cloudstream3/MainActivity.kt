@@ -50,6 +50,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2A
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appString
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.githubApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -64,6 +65,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
+import com.lagradost.cloudstream3.utils.BackupUtils.backupGithub
+import com.lagradost.cloudstream3.utils.BackupUtils.restorePromptGithub
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -399,8 +402,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onDestroy() {
         val broadcastIntent = Intent()
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         broadcastIntent.action = "restart_service"
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
+
+        if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), false)) {
+            this@MainActivity.backupGithub()
+        }
+
         this.sendBroadcast(broadcastIntent)
         afterPluginsLoadedEvent -= ::onAllPluginsLoaded
         super.onDestroy()
@@ -585,6 +594,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             initAll()
             // No duplicates (which can happen by registerMainAPI)
             apis = allProviders.distinctBy { it }
+
+            if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), false)){
+                this@MainActivity.restorePromptGithub()
+            }
         }
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)

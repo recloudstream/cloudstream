@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPadd
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
+import com.lagradost.cloudstream3.utils.BackupUtils.restorePromptGithub
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -52,7 +53,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.restore_key)?.setOnPreferenceClickListener {
-            activity?.restorePrompt()
+            activity?.restorePromptGithub()
             return@setOnPreferenceClickListener true
         }
         getPref(R.string.show_logcat_key)?.setOnPreferenceClickListener { pref ->

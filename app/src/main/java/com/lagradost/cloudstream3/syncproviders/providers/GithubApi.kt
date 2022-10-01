@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -12,7 +13,9 @@ import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.BackupUtils.restorePromptGithub
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -108,6 +111,11 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
                     userAvatar = it.owner.userAvatar,
                     gistUrl = it.gistUrl
                     ))
+                runOnMainThread  {
+                    FragmentActivity().restorePromptGithub()
+                }
+
+
                 return true
             }
         }
