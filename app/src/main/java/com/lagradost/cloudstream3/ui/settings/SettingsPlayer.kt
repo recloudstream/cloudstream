@@ -113,6 +113,22 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.player_pref_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.player_pref_names)
+            val prefValues = resources.getIntArray(R.array.player_pref_values)
+            val current = settingsManager.getInt(getString(R.string.player_pref_key), 1)
+
+            activity?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(current),
+                getString(R.string.player_pref),
+                true,
+                {}) {
+                settingsManager.edit().putInt(getString(R.string.player_pref_key), prefValues[it]).apply()
+            }
+            return@setOnPreferenceClickListener true
+        }
+
         getPref(R.string.subtitle_settings_key)?.setOnPreferenceClickListener {
             SubtitlesFragment.push(activity, false)
             return@setOnPreferenceClickListener true

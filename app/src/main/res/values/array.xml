@@ -33,6 +33,18 @@
         <item>6</item>
     </array>
 
+    <array name="player_pref_names">
+        <item>@string/player_settings_play_in_app</item>
+        <item>@string/player_settings_play_in_vlc</item>
+        <item>@string/player_settings_play_in_browser</item>
+    </array>
+
+    <array name="player_pref_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </array>
+
     <array name="limit_title_rez_pref_names">
         <item>@string/resolution_and_title</item>
         <item>@string/title</item>

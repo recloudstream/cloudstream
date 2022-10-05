@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.*
@@ -455,7 +456,8 @@ open class ResultFragment : ResultTrailerPlayer() {
         val apiName: String,
         val showFillers: Boolean,
         val dubStatus: DubStatus,
-        val start: AutoResume?
+        val start: AutoResume?,
+        val playerAction: Int
     )
 
     private fun getStoredData(context: Context): StoredData? {
@@ -468,6 +470,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                 .contains(DubStatus.Dubbed)
         ) DubStatus.Dubbed else DubStatus.Subbed
         val startAction = arguments?.getInt(START_ACTION_BUNDLE)
+
+        val playerAction = getPlayerAction(context)
 
         val start = startAction?.let { action ->
             val startValue = arguments?.getInt(START_VALUE_BUNDLE)
@@ -483,7 +487,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                 season = resumeSeason
             )
         }
-        return StoredData(url, apiName, showFillers, dubStatus, start)
+        return StoredData(url, apiName, showFillers, dubStatus, start, playerAction)
     }
 
     private fun reloadViewModel(success: Boolean = false) {
@@ -774,7 +778,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                         viewModel.handleAction(
                             activity,
                             EpisodeClickEvent(
-                                ACTION_PLAY_EPISODE_IN_PLAYER, value.result
+                                storedData?.playerAction ?: ACTION_PLAY_EPISODE_IN_PLAYER,
+                                value.result
                             )
                         )
                     }

@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -60,6 +62,22 @@ class EpisodeAdapter(
     private val clickCallback: (EpisodeClickEvent) -> Unit,
     private val downloadClickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    companion object {
+        /**
+         * @return ACTION_PLAY_EPISODE_IN_PLAYER, ACTION_PLAY_EPISODE_IN_BROWSER or ACTION_PLAY_EPISODE_IN_VLC_PLAYER depending on player settings.
+         * See array.xml/player_pref_values
+         **/
+        fun getPlayerAction(context: Context): Int {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+            return when (settingsManager.getInt(context.getString(R.string.player_pref_key), 1)) {
+                1 -> ACTION_PLAY_EPISODE_IN_PLAYER
+                2 -> ACTION_PLAY_EPISODE_IN_VLC_PLAYER
+                3 -> ACTION_PLAY_EPISODE_IN_BROWSER
+                else -> ACTION_PLAY_EPISODE_IN_PLAYER
+            }
+        }
+    }
+
     var cardList: MutableList<ResultEpisode> = mutableListOf()
 
     private val mBoundViewHolders: HashSet<DownloadButtonViewHolder> = HashSet()

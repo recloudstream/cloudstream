@@ -1,10 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -33,6 +30,7 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
@@ -973,9 +971,11 @@ class ResultViewModel2 : ViewModel() {
                 File.createTempFile("mirrorlist", ".m3u8", outputDir)
             }
             var text = "#EXTM3U"
-            for (sub in data.subs) {
-                text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.name}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.name}\",URI=\"${sub.url}\""
-            }
+
+            // With subtitles it doesn't work for no reason :(
+//            for (sub in data.subs) {
+//                text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.name}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.name}\",URI=\"${sub.url}\""
+//            }
             for (link in data.links) {
                 text += "\n#EXTINF:, ${link.name}\n${link.url}"
             }
@@ -999,11 +999,10 @@ class ResultViewModel2 : ViewModel() {
 
             val startId = VLC_FROM_PROGRESS
 
-            var position = startId
-            if (startId == VLC_FROM_START) {
-                position = 1
-            } else if (startId == VLC_FROM_PROGRESS) {
-                position = 0
+            val position = when (startId) {
+                VLC_FROM_START -> 1
+                VLC_FROM_PROGRESS -> 0
+                else -> 0
             }
 
             vlcIntent.putExtra("position", position)
@@ -1013,7 +1012,13 @@ class ResultViewModel2 : ViewModel() {
             act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
         } catch (e: Exception) {
             logError(e)
-            showToast(act, e.toString(), Toast.LENGTH_LONG)
+            main {
+                if (e is ActivityNotFoundException) {
+                    showToast(act, txt(R.string.vlc_not_found_error), Toast.LENGTH_LONG)
+                } else {
+                    showToast(act, e.toString(), Toast.LENGTH_LONG)
+                }
+            }
         }
     }
 
@@ -1073,9 +1078,10 @@ class ResultViewModel2 : ViewModel() {
                             click.copy(action = ACTION_CHROME_CAST_EPISODE)
                         )
                     } else {
+                        val action = getPlayerAction(ctx)
                         handleEpisodeClickEvent(
                             activity,
-                            click.copy(action = ACTION_PLAY_EPISODE_IN_PLAYER)
+                            click.copy(action = action)
                         )
                     }
                 }
@@ -1592,7 +1598,8 @@ class ResultViewModel2 : ViewModel() {
                     val idIndex = ep.key.id
                     for ((index, i) in ep.value.withIndex()) {
                         val episode = i.episode ?: (index + 1)
-                        val id = mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000) ?: 0)
+                        val id =
+                            mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000) ?: 0)
                         if (!existingEpisodes.contains(id)) {
                             existingEpisodes.add(id)
                             val seasonData = loadResponse.seasonNames.getSeason(i.season)
@@ -1888,7 +1895,10 @@ class ResultViewModel2 : ViewModel() {
                             if (ep.getWatchProgress() > 0.9) continue
                             handleAction(
                                 activity,
-                                EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, ep)
+                                EpisodeClickEvent(
+                                    getPlayerAction(activity),
+                                    ep
+                                )
                             )
                             break
                         }
@@ -1905,7 +1915,10 @@ class ResultViewModel2 : ViewModel() {
                             ?: return@launchSafe
                     handleAction(
                         activity,
-                        EpisodeClickEvent(ACTION_PLAY_EPISODE_IN_PLAYER, episode)
+                        EpisodeClickEvent(
+                            getPlayerAction(activity),
+                            episode
+                        )
                     )
                 }
             }

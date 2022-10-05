@@ -21,6 +21,10 @@
         android:name="android.software.leanback"
         android:required="false" />
 
+    <queries>
+        <package android:name="org.videolan.vlc" />
+    </queries>
+
     <!--TODO https://stackoverflow.com/questions/41799732/chromecast-button-not-visible-in-android-->
     <application
         android:name=".AcraApplication"
