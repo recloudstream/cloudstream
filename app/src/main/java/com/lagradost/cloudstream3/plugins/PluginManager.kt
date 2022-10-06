@@ -174,8 +174,12 @@ object PluginManager {
         val onlineData: Pair<String, SitePlugin>,
     ) {
         val isOutdated =
-            onlineData.second.version != savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
+            onlineData.second.version > savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
         val isDisabled = onlineData.second.status == PROVIDER_STATUS_DOWN
+
+        fun validOnlineData(context: Context): Boolean {
+            return getPluginPath(context, savedData.internalName, onlineData.first).absolutePath == savedData.filePath
+        }
     }
 
     // var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
@@ -225,6 +229,8 @@ object PluginManager {
                 .filter { onlineData -> savedData.internalName == onlineData.second.internalName }
                 .map { onlineData ->
                     OnlinePluginData(savedData, onlineData)
+                }.filter {
+                    it.validOnlineData(activity)
                 }
         }.flatten().distinctBy { it.onlineData.second.url }
 
@@ -416,6 +422,18 @@ object PluginManager {
         ) + "." + name.hashCode()
     }
 
+    /**
+     * This should not be changed as it is used to also detect if a plugin is installed!
+     **/
+    fun getPluginPath(
+        context: Context,
+        internalName: String,
+        repositoryUrl: String
+    ): File {
+        val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
+        val fileName = getPluginSanitizedFileName(internalName)
+        return File("${context.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
+    }
 
     /**
      * Used for fresh installs
@@ -426,9 +444,7 @@ object PluginManager {
         internalName: String,
         repositoryUrl: String
     ): Boolean {
-        val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
-        val fileName = getPluginSanitizedFileName(internalName)
-        val file = File("${activity.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
+        val file = getPluginPath(activity, internalName, repositoryUrl)
         downloadAndLoadPlugin(activity, pluginUrl, internalName, file)
         return true
     }
@@ -454,7 +470,13 @@ object PluginManager {
             return loadPlugin(
                 activity,
                 newFile ?: return false,
-                PluginData(internalName, pluginUrl, true, newFile.absolutePath, PLUGIN_VERSION_NOT_SET)
+                PluginData(
+                    internalName,
+                    pluginUrl,
+                    true,
+                    newFile.absolutePath,
+                    PLUGIN_VERSION_NOT_SET
+                )
             )
         } catch (e: Exception) {
             logError(e)
