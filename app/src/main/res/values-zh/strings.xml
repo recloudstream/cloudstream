@@ -203,7 +203,7 @@
     <string name="advanced_search_des">按片源分隔搜索结果</string>
     <string name="bug_report_settings_off">只发送关于崩溃的数据</string>
     <string name="bug_report_settings_on">不发送数据</string>
-    <string name="show_fillers_settings">显示动画的填充插曲</string>
+    <string name="show_fillers_settings">显示动画外传</string>
     <string name="show_trailers_settings">显示预告片</string>
     <string name="kitsu_settings">显示来自 Kitsu 的海报</string>
     <string name="pref_filter_search_quality">在搜索结果中隐藏选中视频画质</string>
