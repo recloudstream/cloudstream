@@ -526,7 +526,6 @@ class HomeFragment : Fragment() {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
             toggleRandomButton =
                 settingsManager.getBoolean(getString(R.string.random_button_key), false)
-            home_random?.isVisible = false
             home_random?.visibility = View.GONE
         }
 
