@@ -41,10 +41,7 @@ object APIHolder {
     private const val defProvider = 0
 
     // ConcurrentModificationException is possible!!!
-    //TamilYogiProvider()
-    val allProviders: MutableList<MainAPI> = arrayListOf(
-        TamilYogiProvider()
-    )
+    val allProviders: MutableList<MainAPI> = arrayListOf()
 
     fun initAll() {
         for (api in allProviders) {
