@@ -143,7 +143,7 @@
     <string name="action_open_play">@string/home_play </string>
 
     <string name="vpn_might_be_needed">此片源可能需要 VPN 才能正常使用</string>
-    <string name="vpn_torrent">此片源是种子，建议使用 VPN</string>
+    <string name="vpn_torrent">此片源是种子, 建议使用 VPN</string>
 
     <string name="provider_info_meta">站点不提供元数据, 如果站点上不存在元数据, 视频加载将失败.</string>
 
