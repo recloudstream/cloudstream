@@ -521,7 +521,7 @@
     <string name="crash_reporting_title">错误报告</string>
     <string name="preferred_media_subtext">首选片源内容</string>
     <string name="setup_done">完成</string>
-    <string name="extensions">片源</string>
+    <string name="extensions">订阅</string>
     <string name="add_repository">添加订阅</string>
     <string name="repository_name_hint">订阅名称</string>
     <string name="repository_url_hint">订阅链接</string>
