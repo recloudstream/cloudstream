@@ -17,8 +17,7 @@ import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import okhttp3.Interceptor
 import java.text.SimpleDateFormat
 import java.util.*
@@ -191,17 +190,26 @@ object APIHolder {
         return list.filter { names.contains(it) }.map { DubStatus.valueOf(it) }.toHashSet()
     }
 
+    /**
+     * Gets all the activated provider languages
+     * Used to obey the preference provider_lang_key
+     * but it turned out too complicated and unnecessary with extensions.
+     **/
     fun Context.getApiProviderLangSettings(): HashSet<String> {
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val hashSet = HashSet<String>()
-        hashSet.add("en") // def is only en
-        val list = settingsManager.getStringSet(
-            this.getString(R.string.provider_lang_key),
-            hashSet.toMutableSet()
-        )
+        val langs = apis.map { it.lang }.toSet()
+            .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) }
+        return langs.toHashSet()
 
-        if (list.isNullOrEmpty()) return hashSet
-        return list.toHashSet()
+//        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+//        val hashSet = HashSet<String>()
+//        hashSet.add("en") // def is only en
+//        val list = settingsManager.getStringSet(
+//            this.getString(R.string.provider_lang_key),
+//            hashSet.toMutableSet()
+//        )
+//
+//        if (list.isNullOrEmpty()) return hashSet
+//        return list.toHashSet()
     }
 
     fun Context.getApiTypeSettings(): HashSet<TvType> {
