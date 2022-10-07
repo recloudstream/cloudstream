@@ -133,11 +133,10 @@ class PluginsViewModel : ViewModel() {
         if (activity == null) return@ioSafe
         val (repo, metadata) = plugin
 
-        val (success, message) = if (isDownloaded(activity, plugin.second.internalName, plugin.first) || isLocal) {
-            PluginManager.deletePlugin(
-                metadata.url,
-                isLocal
-            ) to R.string.plugin_deleted
+        val file = getPluginPath(activity, plugin.second.internalName, plugin.first)
+
+        val (success, message) = if (file.exists() || isLocal) {
+            PluginManager.deletePlugin(file) to R.string.plugin_deleted
         } else {
             PluginManager.downloadAndLoadPlugin(
                 activity,

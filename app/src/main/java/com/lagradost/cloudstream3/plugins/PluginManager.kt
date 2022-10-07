@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -123,6 +124,10 @@ object PluginManager {
             val plugins = getPluginsOnline().filter {
                 !it.filePath.contains(repositoryPath)
             }
+            val file = File(repositoryPath)
+            normalSafeApiCall {
+                if (file.exists()) file.deleteRecursively()
+            }
             setKey(PLUGINS_KEY, plugins)
         }
     }
@@ -178,7 +183,11 @@ object PluginManager {
         val isDisabled = onlineData.second.status == PROVIDER_STATUS_DOWN
 
         fun validOnlineData(context: Context): Boolean {
-            return getPluginPath(context, savedData.internalName, onlineData.first).absolutePath == savedData.filePath
+            return getPluginPath(
+                context,
+                savedData.internalName,
+                onlineData.first
+            ).absolutePath == savedData.filePath
         }
     }
 
@@ -484,18 +493,13 @@ object PluginManager {
         }
     }
 
-    /**
-     * @param isFilePath will treat the pluginUrl as as the filepath instead of url
-     * */
-    suspend fun deletePlugin(pluginIdentifier: String, isFilePath: Boolean): Boolean {
-        val data =
-            (if (isFilePath) (getPluginsLocal() + getPluginsOnline()).firstOrNull { it.filePath == pluginIdentifier }
-            else getPluginsOnline().firstOrNull { it.url == pluginIdentifier }) ?: return false
+    suspend fun deletePlugin(file: File): Boolean {
+        val list = (getPluginsLocal() + getPluginsOnline()).filter { it.filePath == file.absolutePath }
 
         return try {
-            if (File(data.filePath).delete()) {
-                unloadPlugin(data.filePath)
-                deletePluginData(data)
+            if (File(file.absolutePath).delete()) {
+                unloadPlugin(file.absolutePath)
+                list.forEach { deletePluginData(it) }
                 return true
             }
             false
