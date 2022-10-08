@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -954,7 +955,15 @@ class ResultViewModel2 : ViewModel() {
         return LinkLoadingResult(sortUrls(links), sortSubs(subs))
     }
 
-    private fun playWithVlc(act: Activity?, data: LinkLoadingResult, id: Int) = ioSafe {
+    // https://wiki.videolan.org/Android_Player_Intents/
+    private fun playWithVlc(
+        act: Activity?,
+        data: LinkLoadingResult,
+        id: Int,
+        resume: Boolean = true,
+        // if it is only a single link then resume works correctly
+        singleFile: Boolean? = true
+    ) = ioSafe {
         if (act == null) return@ioSafe
         if (data.links.isEmpty()) {
             showToast(act, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
@@ -966,21 +975,6 @@ class ResultViewModel2 : ViewModel() {
                 if (act.checkWrite()) return@ioSafe
             }
 
-            val outputDir = act.cacheDir
-            val outputFile = withContext(Dispatchers.IO) {
-                File.createTempFile("mirrorlist", ".m3u8", outputDir)
-            }
-            var text = "#EXTM3U"
-
-            // With subtitles it doesn't work for no reason :(
-//            for (sub in data.subs) {
-//                text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.name}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.name}\",URI=\"${sub.url}\""
-//            }
-            for (link in data.links) {
-                text += "\n#EXTINF:, ${link.name}\n${link.url}"
-            }
-            outputFile.writeText(text)
-
             val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
 
             vlcIntent.setPackage(VLC_PACKAGE)
@@ -988,24 +982,59 @@ class ResultViewModel2 : ViewModel() {
             vlcIntent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
             vlcIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             vlcIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            val outputDir = act.cacheDir
 
-            vlcIntent.setDataAndType(
-                FileProvider.getUriForFile(
-                    act,
-                    act.applicationContext.packageName + ".provider",
-                    outputFile
-                ), "video/*"
-            )
+            if (singleFile ?: (data.links.size == 1)) {
+                vlcIntent.setDataAndType(data.links.first().url.toUri(), "video/*")
+            } else {
+                val outputFile = File.createTempFile("mirrorlist", ".m3u8", outputDir)
 
-            val startId = VLC_FROM_PROGRESS
+                var text = "#EXTM3U"
 
-            val position = when (startId) {
-                VLC_FROM_START -> 1
-                VLC_FROM_PROGRESS -> 0
-                else -> 0
+                // With subtitles it doesn't work for no reason :(
+//            for (sub in data.subs) {
+//                text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.name}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.name}\",URI=\"${sub.url}\""
+//            }
+                for (link in data.links) {
+                    text += "\n#EXTINF:, ${link.name}\n${link.url}"
+                }
+                outputFile.writeText(text)
+
+                vlcIntent.setDataAndType(
+                    FileProvider.getUriForFile(
+                        act,
+                        act.applicationContext.packageName + ".provider",
+                        outputFile
+                    ), "video/*"
+                )
             }
 
+            val position = if (resume) {
+                getViewPos(id)?.position ?: 0L
+            } else {
+                1L
+            }
+            vlcIntent.putExtra("from_start", !resume)
             vlcIntent.putExtra("position", position)
+            //vlcIntent.putExtra("subtitles_location", data.subs.first().url)
+            /*for (s in data.subs) {
+                if (s.origin == SubtitleOrigin.URL) {
+                    try {
+                        val txt = app.get(s.url, s.headers).text
+                        val subtitleFile = File.createTempFile("subtitle1", ".srt", outputDir)
+                        subtitleFile.writeText(txt)
+                        println("Subtitles::::::${subtitleFile.path}")
+                        vlcIntent.putExtra("subtitles_location", FileProvider.getUriForFile(
+                            act,
+                            act.applicationContext.packageName + ".provider",
+                            subtitleFile
+                        ))
+                        break
+                    } catch (t : Throwable) {
+                        logError(t)
+                    }
+                }
+            }*/
 
             vlcIntent.component = VLC_COMPONENT
             act.setKey(VLC_LAST_ID_KEY, id)
