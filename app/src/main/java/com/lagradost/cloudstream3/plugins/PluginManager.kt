@@ -1,13 +1,17 @@
 package com.lagradost.cloudstream3.plugins
 
+import android.app.*
 import dalvik.system.PathClassLoader
 import com.google.gson.Gson
 import android.content.res.AssetManager
 import android.content.res.Resources
 import android.os.Environment
 import android.widget.Toast
-import android.app.Activity
+import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -22,15 +26,18 @@ import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
+import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.resources.ResourcePackManager
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.acra.log.debug
 import java.io.File
 import java.io.InputStreamReader
 import java.util.*
@@ -39,6 +46,9 @@ import java.util.*
 const val PLUGINS_KEY = "PLUGINS_KEY"
 const val PLUGINS_KEY_LOCAL = "PLUGINS_KEY_LOCAL"
 
+const val EXTENSIONS_CHANNEL_ID = "cloudstream3.extensions"
+const val EXTENSIONS_CHANNEL_NAME = "Extensions"
+const val EXTENSIONS_CHANNEL_DESCRIPT = "Extension notification channel"
 
 // Data class for internal storage
 data class PluginData(
@@ -79,6 +89,8 @@ object PluginManager {
 
     const val TAG = "PluginManager"
 
+    private var hasCreatedNotChanel = false
+
     /**
      * Store data about the plugin for fetching later
      * */
@@ -112,6 +124,10 @@ object PluginManager {
         lock.withLock {
             val plugins = getPluginsOnline().filter {
                 !it.filePath.contains(repositoryPath)
+            }
+            val file = File(repositoryPath)
+            normalSafeApiCall {
+                if (file.exists()) file.deleteRecursively()
             }
             setKey(PLUGINS_KEY, plugins)
         }
@@ -164,8 +180,16 @@ object PluginManager {
         val onlineData: Pair<String, SitePlugin>,
     ) {
         val isOutdated =
-            onlineData.second.version != savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
+            onlineData.second.version > savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
         val isDisabled = onlineData.second.status == PROVIDER_STATUS_DOWN
+
+        fun validOnlineData(context: Context): Boolean {
+            return getPluginPath(
+                context,
+                savedData.internalName,
+                onlineData.first
+            ).absolutePath == savedData.filePath
+        }
     }
 
     // var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
@@ -211,27 +235,40 @@ object PluginManager {
 
         // Iterates over all offline plugins, compares to remote repo and returns the plugins which are outdated
         val outdatedPlugins = getPluginsOnline().map { savedData ->
-            onlinePlugins.filter { onlineData -> savedData.internalName == onlineData.second.internalName }
+            onlinePlugins
+                .filter { onlineData -> savedData.internalName == onlineData.second.internalName }
                 .map { onlineData ->
                     OnlinePluginData(savedData, onlineData)
+                }.filter {
+                    it.validOnlineData(activity)
                 }
         }.flatten().distinctBy { it.onlineData.second.url }
 
-        debug {
+        debugPrint {
             "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}"
         }
 
+        val updatedPlugins = mutableListOf<String>()
+
         outdatedPlugins.apmap { pluginData ->
             if (pluginData.isDisabled) {
+                //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
                 unloadPlugin(pluginData.savedData.filePath)
             } else if (pluginData.isOutdated) {
                 downloadAndLoadPlugin(
                     activity,
                     pluginData.onlineData.second.url,
                     pluginData.savedData.internalName,
-                    pluginData.onlineData.first
-                )
+                    File(pluginData.savedData.filePath)
+                ).let { success ->
+                    if (success)
+                        updatedPlugins.add(pluginData.onlineData.second.name)
+                }
             }
+        }
+
+        main {
+            createNotification(activity, updatedPlugins)
         }
 
         ioSafe {
@@ -396,24 +433,61 @@ object PluginManager {
         ) + "." + name.hashCode()
     }
 
+    /**
+     * This should not be changed as it is used to also detect if a plugin is installed!
+     **/
+    fun getPluginPath(
+        context: Context,
+        internalName: String,
+        repositoryUrl: String
+    ): File {
+        val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
+        val fileName = getPluginSanitizedFileName(internalName)
+        return File("${context.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
+    }
+
+    /**
+     * Used for fresh installs
+     * */
     suspend fun downloadAndLoadPlugin(
         activity: Activity,
         pluginUrl: String,
         internalName: String,
         repositoryUrl: String
     ): Boolean {
-        try {
-            val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
-            val fileName = getPluginSanitizedFileName(internalName)
-            unloadPlugin("${activity.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
+        val file = getPluginPath(activity, internalName, repositoryUrl)
+        downloadAndLoadPlugin(activity, pluginUrl, internalName, file)
+        return true
+    }
 
-            Log.d(TAG, "Downloading plugin: $pluginUrl to $folderName/$fileName")
+    /**
+     * Used for updates.
+     *
+     * Uses a file instead of repository url, as extensions can get moved it is better to directly
+     * update the files instead of getting the filepath from repo url.
+     * */
+    private suspend fun downloadAndLoadPlugin(
+        activity: Activity,
+        pluginUrl: String,
+        internalName: String,
+        file: File,
+    ): Boolean {
+        try {
+            unloadPlugin(file.absolutePath)
+
+            Log.d(TAG, "Downloading plugin: $pluginUrl to ${file.absolutePath}")
             // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
-            val file = downloadPluginToFile(activity, pluginUrl, fileName, folderName)
+            val newFile = downloadPluginToFile(pluginUrl, file)
             return loadPlugin(
                 activity,
-                file ?: return false,
-                PluginData(internalName, pluginUrl, true, file.absolutePath, PLUGIN_VERSION_NOT_SET)
+                newFile ?: return false,
+                PluginData(
+                    internalName,
+                    pluginUrl,
+                    true,
+                    newFile.absolutePath,
+                    PLUGIN_VERSION_NOT_SET
+                )
             )
         } catch (e: Exception) {
             logError(e)
@@ -421,23 +495,77 @@ object PluginManager {
         }
     }
 
-    /**
-     * @param isFilePath will treat the pluginUrl as as the filepath instead of url
-     * */
-    suspend fun deletePlugin(pluginIdentifier: String, isFilePath: Boolean): Boolean {
-        val data =
-            (if (isFilePath) (getPluginsLocal() + getPluginsOnline()).firstOrNull { it.filePath == pluginIdentifier }
-            else getPluginsOnline().firstOrNull { it.url == pluginIdentifier }) ?: return false
+    suspend fun deletePlugin(file: File): Boolean {
+        val list = (getPluginsLocal() + getPluginsOnline()).filter { it.filePath == file.absolutePath }
 
         return try {
-            if (File(data.filePath).delete()) {
-                unloadPlugin(data.filePath)
-                deletePluginData(data)
+            if (File(file.absolutePath).delete()) {
+                unloadPlugin(file.absolutePath)
+                list.forEach { deletePluginData(it) }
                 return true
             }
             false
         } catch (e: Exception) {
             false
+        }
+    }
+
+    private fun Context.createNotificationChannel() {
+        hasCreatedNotChanel = true
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = EXTENSIONS_CHANNEL_NAME //getString(R.string.channel_name)
+            val descriptionText =
+                EXTENSIONS_CHANNEL_DESCRIPT//getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_LOW
+            val channel = NotificationChannel(EXTENSIONS_CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createNotification(
+        context: Context,
+        extensionNames: List<String>
+    ): Notification? {
+        try {
+            if (extensionNames.isEmpty()) return null
+
+            val content = extensionNames.joinToString(", ")
+//        main { // DON'T WANT TO SLOW IT DOWN
+            val builder = NotificationCompat.Builder(context, EXTENSIONS_CHANNEL_ID)
+                .setAutoCancel(false)
+                .setColorized(true)
+                .setOnlyAlertOnce(true)
+                .setSilent(true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setColor(context.colorFromAttribute(R.attr.colorPrimary))
+                .setContentTitle(context.getString(R.string.plugins_updated, extensionNames.size))
+                .setSmallIcon(R.drawable.ic_baseline_extension_24)
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .bigText(content)
+                )
+                .setContentText(content)
+
+            if (!hasCreatedNotChanel) {
+                context.createNotificationChannel()
+            }
+
+            val notification = builder.build()
+            with(NotificationManagerCompat.from(context)) {
+                // notificationId is a unique int for each notification that you must define
+                notify((System.currentTimeMillis() / 1000).toInt(), notification)
+            }
+            return notification
+        } catch (e: Exception) {
+            logError(e)
+            return null
         }
     }
 }

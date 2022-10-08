@@ -256,13 +256,14 @@ class HomeFragment : Fragment() {
             nsfw: MaterialButton?,
             others: MaterialButton?,
         ): List<Pair<MaterialButton?, List<TvType>>> {
+            // This list should be same order as home screen to aid navigation
             return listOf(
-                Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
-                Pair(cartoons, listOf(TvType.Cartoon)),
-                Pair(tvs, listOf(TvType.TvSeries)),
-                Pair(docs, listOf(TvType.Documentary)),
                 Pair(movies, listOf(TvType.Movie, TvType.Torrent)),
+                Pair(tvs, listOf(TvType.TvSeries)),
+                Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
                 Pair(asian, listOf(TvType.AsianDrama)),
+                Pair(cartoons, listOf(TvType.Cartoon)),
+                Pair(docs, listOf(TvType.Documentary)),
                 Pair(livestream, listOf(TvType.Live)),
                 Pair(nsfw, listOf(TvType.NSFW)),
                 Pair(others, listOf(TvType.Others)),
@@ -352,11 +353,25 @@ class HomeFragment : Fragment() {
                     arrayAdapter.notifyDataSetChanged()
                 }
 
+                /**
+                 * Since fire tv is fucked we need to manually define the focus layout.
+                 * Since visible buttons are only known in runtime this is required.
+                 **/
+                var lastButton: MaterialButton? = null
+
                 for ((button, validTypes) in pairList) {
                     val isValid =
                         validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
                     button?.isVisible = isValid
                     if (isValid) {
+
+                        // Set focus navigation
+                        button?.let { currentButton ->
+                            lastButton?.nextFocusRightId = currentButton.id
+                            lastButton?.id?.let { currentButton.nextFocusLeftId = it }
+                            lastButton = currentButton
+                        }
+
                         fun buttonContains(): Boolean {
                             return preSelectedTypes.any { validTypes.contains(it) }
                         }
@@ -506,15 +521,12 @@ class HomeFragment : Fragment() {
             }
         }
 
-        //Disable Random button, if its toggled off on settings
+        //Load value for toggling Random button. Hide at startup
         context?.let {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
             toggleRandomButton =
                 settingsManager.getBoolean(getString(R.string.random_button_key), false)
-            home_random?.isVisible = toggleRandomButton
-            if (!toggleRandomButton) {
-                home_random?.visibility = View.GONE
-            }
+            home_random?.visibility = View.GONE
         }
 
         observe(homeViewModel.apiName) { apiName ->
@@ -611,6 +623,7 @@ class HomeFragment : Fragment() {
                     home_loading_shimmer?.stopShimmer()
 
                     val d = data.value
+                    val mutableListOfResponse = mutableListOf<SearchResponse>()
                     listHomepageItems.clear()
 
                     // println("ITEMCOUNT: ${d.values.size} ${home_master_recycler?.adapter?.itemCount}")
@@ -623,6 +636,11 @@ class HomeFragment : Fragment() {
                     home_loading_error?.isVisible = false
                     home_loaded?.isVisible = true
                     if (toggleRandomButton) {
+                        //Flatten list
+                        d.values.forEach { dlist ->
+                            mutableListOfResponse.addAll(dlist.list.list)
+                        }
+                        listHomepageItems.addAll(mutableListOfResponse.distinctBy { it.url })
                         home_random?.isVisible = listHomepageItems.isNotEmpty()
                     } else {
                         home_random?.isGone = true

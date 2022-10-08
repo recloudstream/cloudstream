@@ -136,7 +136,7 @@
     <string name="episode_action_chromecast_episode">क्रोमकास्ट एपिसोड</string>
     <string name="episode_action_chromecast_mirror">कक्रोमकास्ट मिरर</string>
     <string name="episode_action_play_in_app">एप्प मैं चलाये</string>
-    <string name="episode_action_play_in_vlc">VLC में चलाए</string>
+    <string name="episode_action_play_in_format">%s में चलाए</string>
     <string name="episode_action_play_in_browser">Browser में चलाए</string>
     <string name="episode_action_copy_link">लिंक कॉपी करें</string>
     <string name="episode_action_auto_download">डाउनलोड करे</string>

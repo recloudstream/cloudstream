@@ -11,10 +11,12 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -34,6 +36,8 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -52,7 +56,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
-import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -69,10 +72,11 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
+import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.IOnBackPressed
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
@@ -96,17 +100,65 @@ import java.nio.charset.Charset
 import kotlin.reflect.KClass
 
 
-const val VLC_PACKAGE = "org.videolan.vlc"
-const val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
-val VLC_COMPONENT: ComponentName =
-    ComponentName(VLC_PACKAGE, "org.videolan.vlc.gui.video.VideoPlayerActivity")
-const val VLC_REQUEST_CODE = 42
+//https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
+//https://wiki.videolan.org/Android_Player_Intents/
 
-const val VLC_FROM_START = -1
-const val VLC_FROM_PROGRESS = -2
-const val VLC_EXTRA_POSITION_OUT = "extra_position"
-const val VLC_EXTRA_DURATION_OUT = "extra_duration"
-const val VLC_LAST_ID_KEY = "vlc_last_open_id"
+//https://github.com/mpv-android/mpv-android/blob/0eb3cdc6f1632636b9c30d52ec50e4b017661980/app/src/main/java/is/xyz/mpv/MPVActivity.kt#L904
+//https://mpv-android.github.io/mpv-android/intent.html
+
+// https://www.webvideocaster.com/integrations
+
+//https://github.com/jellyfin/jellyfin-android/blob/6cbf0edf84a3da82347c8d59b5d5590749da81a9/app/src/main/java/org/jellyfin/mobile/bridge/ExternalPlayer.kt#L225
+
+const val VLC_PACKAGE = "org.videolan.vlc"
+const val MPV_PACKAGE = "is.xyz.mpv"
+const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
+
+val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
+val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
+
+//TODO REFACTOR AF
+data class ResultResume(
+    val packageString: String,
+    val action: String = Intent.ACTION_VIEW,
+    val position: String? = null,
+    val duration: String? = null,
+    var launcher: ActivityResultLauncher<Intent>? = null,
+) {
+    val lastId get() = "${packageString}_last_open_id"
+    suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
+        val intent = Intent(action)
+
+        if (id != null)
+            setKey(lastId, id)
+        else
+            removeKey(lastId)
+
+        intent.setPackage(packageString)
+        callback.invoke(intent)
+        launcher?.launch(intent)
+    }
+}
+
+val VLC = ResultResume(
+    VLC_PACKAGE,
+    "org.videolan.vlc.player.result",
+    "extra_position",
+    "extra_duration",
+)
+
+val MPV = ResultResume(
+    MPV_PACKAGE,
+    //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
+     position = "position",
+    duration = "duration",
+)
+
+val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
+
+val resumeApps = arrayOf(
+    VLC, MPV, WEB_VIDEO
+)
 
 // Short name for requests client to make it nicer to use
 
@@ -152,6 +204,72 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val mainPluginsLoadedEvent =
             Event<Boolean>() // homepage api, used to speed up time to load for homepage
         val afterRepositoryLoadedEvent = Event<Boolean>()
+
+        /**
+         * @return true if the str has launched an app task (be it successful or not)
+         * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
+         * */
+        fun handleAppIntentUrl(
+            activity: FragmentActivity?,
+            str: String?,
+            isWebview: Boolean
+        ): Boolean =
+            with(activity) {
+                if (str != null && this != null) {
+                    if (str.startsWith("https://cs.repo")) {
+                        val realUrl = "https://" + str.substringAfter("?")
+                        println("Repository url: $realUrl")
+                        loadRepository(realUrl)
+                        return true
+                    } else if (str.contains(appString)) {
+                        for (api in OAuth2Apis) {
+                            if (str.contains("/${api.redirectUrl}")) {
+                                ioSafe {
+                                    Log.i(TAG, "handleAppIntent $str")
+                                    val isSuccessful = api.handleRedirect(str)
+
+                                    if (isSuccessful) {
+                                        Log.i(TAG, "authenticated ${api.name}")
+                                    } else {
+                                        Log.i(TAG, "failed to authenticate ${api.name}")
+                                    }
+
+                                    this@with.runOnUiThread {
+                                        try {
+                                            showToast(
+                                                this@with,
+                                                getString(if (isSuccessful) R.string.authenticated_user else R.string.authenticated_user_fail).format(
+                                                    api.name
+                                                )
+                                            )
+                                        } catch (e: Exception) {
+                                            logError(e) // format might fail
+                                        }
+                                    }
+                                }
+                                return true
+                            }
+                        }
+                    } else if (URI(str).scheme == appStringRepo) {
+                        val url = str.replaceFirst(appStringRepo, "https")
+                        loadRepository(url)
+                        return true
+                    } else if (!isWebview) {
+                        if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
+                            this.navigate(R.id.navigation_downloads)
+                            return true
+                        } else {
+                            for (api in apis) {
+                                if (str.startsWith(api.mainUrl)) {
+                                    loadResult(str, api.name)
+                                    return true
+                                }
+                            }
+                        }
+                    }
+                }
+                return false
+            }
     }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
@@ -313,31 +431,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == VLC_REQUEST_CODE) {
-            if (resultCode == RESULT_OK && data != null) {
-                val pos: Long =
-                    data.getLongExtra(
-                        VLC_EXTRA_POSITION_OUT,
-                        -1
-                    ) //Last position in media when player exited
-                val dur: Long =
-                    data.getLongExtra(
-                        VLC_EXTRA_DURATION_OUT,
-                        -1
-                    ) //Last position in media when player exited
-                val id = getKey<Int>(VLC_LAST_ID_KEY)
-                println("SET KEY $id at $pos / $dur")
-                if (dur > 0 && pos > 0) {
-                    setViewPos(id, pos, dur)
-                }
-                removeKey(VLC_LAST_ID_KEY)
-                ResultFragment.updateUI()
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onDestroy() {
         val broadcastIntent = Intent()
         broadcastIntent.action = "restart_service"
@@ -356,56 +449,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         if (intent == null) return
         val str = intent.dataString
         loadCache()
-        if (str != null) {
-            if (str.startsWith("https://cs.repo")) {
-                val realUrl = "https://" + str.substringAfter("?")
-                println("Repository url: $realUrl")
-                loadRepository(realUrl)
-            } else if (str.contains(appString)) {
-                for (api in OAuth2Apis) {
-                    if (str.contains("/${api.redirectUrl}")) {
-                        val activity = this
-                        ioSafe {
-                            Log.i(TAG, "handleAppIntent $str")
-                            val isSuccessful = api.handleRedirect(str)
-
-                            if (isSuccessful) {
-                                Log.i(TAG, "authenticated ${api.name}")
-                            } else {
-                                Log.i(TAG, "failed to authenticate ${api.name}")
-                            }
-
-                            activity.runOnUiThread {
-                                try {
-                                    showToast(
-                                        activity,
-                                        getString(if (isSuccessful) R.string.authenticated_user else R.string.authenticated_user_fail).format(
-                                            api.name
-                                        )
-                                    )
-                                } catch (e: Exception) {
-                                    logError(e) // format might fail
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (URI(str).scheme == appStringRepo) {
-                val url = str.replaceFirst(appStringRepo, "https")
-                loadRepository(url)
-            } else {
-                if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
-                    this.navigate(R.id.navigation_downloads)
-                } else {
-                    for (api in apis) {
-                        if (str.startsWith(api.mainUrl)) {
-                            loadResult(str, api.name)
-                            break
-                        }
-                    }
-                }
-            }
-        }
+        handleAppIntentUrl(this, str, false)
     }
 
     private fun NavDestination.matchDestination(@IdRes destId: Int): Boolean =
@@ -453,7 +497,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         }
                     }
                     // it.hashCode() is not enough to make sure they are distinct
-                    apis = allProviders.distinctBy { it.lang + it.name + it.mainUrl + it.javaClass.name }
+                    apis =
+                        allProviders.distinctBy { it.lang + it.name + it.mainUrl + it.javaClass.name }
                     APIHolder.apiMap = null
                 } catch (e: Exception) {
                     logError(e)
@@ -478,9 +523,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             lastError = errorFile.readText(Charset.defaultCharset())
             errorFile.delete()
         }
-        
+
         val settingsForProvider = SettingsJson()
-        settingsForProvider.enableAdult = settingsManager.getBoolean(getString(R.string.enable_nsfw_on_providers_key), false)
+        settingsForProvider.enableAdult =
+            settingsManager.getBoolean(getString(R.string.enable_nsfw_on_providers_key), false)
 
         MainAPI.settingsForProvider = settingsForProvider
 
@@ -514,7 +560,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
 
                 ioSafe {
-                    if (settingsManager.getBoolean(getString(R.string.auto_update_plugins_key), true)) {
+                    if (settingsManager.getBoolean(
+                            getString(R.string.auto_update_plugins_key),
+                            true
+                        )
+                    ) {
                         PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
                     } else {
                         PluginManager.loadAllOnlinePlugins(this@MainActivity)
@@ -558,9 +608,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             for (api in accountManagers) {
                 api.init()
             }
-        }
 
-        ioSafe {
             inAppAuths.apmap { api ->
                 try {
                     api.initialize()

@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.*
@@ -95,6 +96,7 @@ import kotlinx.android.synthetic.main.fragment_result.result_vpn
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
 import kotlinx.android.synthetic.main.result_sync.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 
@@ -293,7 +295,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                 result_reload_connection_open_in_browser?.isVisible = true
             }
             2 -> {
-                result_bookmark_fab?.isGone = isTvSettings()
+                result_bookmark_fab?.isGone = isTrueTvSettings()
                 result_bookmark_fab?.extend()
                 //if (result_bookmark_button?.context?.isTrueTvSettings() == true) {
                 //    when {
@@ -412,7 +414,39 @@ open class ResultFragment : ResultTrailerPlayer() {
             is ResourceSome.Success -> {
                 result_episodes?.isVisible = true
                 result_episode_loading?.isVisible = false
+
+                /*
+                 * Okay so what is this fuckery?
+                 * Basically Android TV will crash if you request a new focus while
+                 * the adapter gets updated.
+                 *
+                 * This means that if you load thumbnails and request a next focus at the same time
+                 * the app will crash without any way to catch it!
+                 *
+                 * How to bypass this?
+                 * This code basically steals the focus for 500ms and puts it in an inescapable view
+                 * then lets out the focus by requesting focus to result_episodes
+                 */
+
+                // Do not use this.isTv, that is the player
+                val isTv = isTvSettings()
+                val hasEpisodes =
+                    !(result_episodes?.adapter as? EpisodeAdapter?)?.cardList.isNullOrEmpty()
+
+                if (isTv && hasEpisodes) {
+                    // Make it impossible to focus anywhere else!
+                    temporary_no_focus?.isFocusable = true
+                    temporary_no_focus?.requestFocus()
+                }
+
                 (result_episodes?.adapter as? EpisodeAdapter?)?.updateList(episodes.value)
+
+                if (isTv && hasEpisodes) main {
+                    delay(500)
+                    temporary_no_focus?.isFocusable = false
+                    // This might make some people sad as it changes the focus when leaving an episode :(
+                    result_episodes?.requestFocus()
+                }
             }
         }
     }
@@ -422,7 +456,8 @@ open class ResultFragment : ResultTrailerPlayer() {
         val apiName: String,
         val showFillers: Boolean,
         val dubStatus: DubStatus,
-        val start: AutoResume?
+        val start: AutoResume?,
+        val playerAction: Int
     )
 
     private fun getStoredData(context: Context): StoredData? {
@@ -435,6 +470,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                 .contains(DubStatus.Dubbed)
         ) DubStatus.Dubbed else DubStatus.Subbed
         val startAction = arguments?.getInt(START_ACTION_BUNDLE)
+
+        val playerAction = getPlayerAction(context)
 
         val start = startAction?.let { action ->
             val startValue = arguments?.getInt(START_VALUE_BUNDLE)
@@ -450,7 +487,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                 season = resumeSeason
             )
         }
-        return StoredData(url, apiName, showFillers, dubStatus, start)
+        return StoredData(url, apiName, showFillers, dubStatus, start, playerAction)
     }
 
     private fun reloadViewModel(success: Boolean = false) {
@@ -458,7 +495,14 @@ open class ResultFragment : ResultTrailerPlayer() {
             val storedData = getStoredData(activity ?: context ?: return) ?: return
 
             //viewModel.clear()
-            viewModel.load(activity, storedData.url ?: return, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+            viewModel.load(
+                activity,
+                storedData.url ?: return,
+                storedData.apiName,
+                storedData.showFillers,
+                storedData.dubStatus,
+                storedData.start
+            )
         }
     }
 
@@ -734,7 +778,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                         viewModel.handleAction(
                             activity,
                             EpisodeClickEvent(
-                                ACTION_PLAY_EPISODE_IN_PLAYER, value.result
+                                storedData?.playerAction ?: ACTION_PLAY_EPISODE_IN_PLAYER,
+                                value.result
                             )
                         )
                     }
@@ -916,7 +961,14 @@ open class ResultFragment : ResultTrailerPlayer() {
 
             if (storedData?.url != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+                    viewModel.load(
+                        activity,
+                        storedData.url,
+                        storedData.apiName,
+                        storedData.showFillers,
+                        storedData.dubStatus,
+                        storedData.start
+                    )
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
@@ -952,7 +1004,14 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                 if (restart || !viewModel.hasLoaded()) {
                     //viewModel.clear()
-                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+                    viewModel.load(
+                        activity,
+                        storedData.url,
+                        storedData.apiName,
+                        storedData.showFillers,
+                        storedData.dubStatus,
+                        storedData.start
+                    )
                 }
             }
         }

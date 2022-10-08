@@ -58,6 +58,7 @@ import kotlinx.android.synthetic.main.player_select_source_and_subs.*
 import kotlinx.android.synthetic.main.player_select_source_and_subs.subtitles_click_settings
 import kotlinx.android.synthetic.main.player_select_tracks.*
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
@@ -115,10 +116,11 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun onTracksInfoChanged() {
         val tracks = player.getVideoTracks()
-        player_tracks_btt?.isVisible = tracks.allVideoTracks.size > 1 || tracks.allAudioTracks.size > 1
+        player_tracks_btt?.isVisible =
+            tracks.allVideoTracks.size > 1 || tracks.allAudioTracks.size > 1
         // Only set the preferred language if it is available.
         // Otherwise it may give some users audio track init failed!
-        if (tracks.allAudioTracks.any { it.language == preferredAudioTrackLanguage }){
+        if (tracks.allAudioTracks.any { it.language == preferredAudioTrackLanguage }) {
             player.setPreferredAudioTrack(preferredAudioTrackLanguage)
         }
     }
@@ -602,8 +604,20 @@ class GeneratorPlayer : FullScreenPlayer() {
                 subtitleList.setItemChecked(subtitleIndex, true)
 
                 subtitleList.setOnItemClickListener { _, _, which, _ ->
-                    subtitleIndex = which
-                    subtitleList.setItemChecked(which, true)
+                    if (which > currentSubtitles.size) {
+                        // Since android TV is funky the setOnItemClickListener will be triggered
+                        // instead of setOnClickListener when selecting. To override this we programmatically
+                        // click the view when selecting an item outside the list.
+
+                        // Cheeky way of getting the view at that position to click it
+                        // to avoid keeping track of the various footers.
+                        // getChildAt() gives null :(
+                        val child = subtitleList.adapter.getView(which, null, subtitleList)
+                        child?.performClick()
+                    } else {
+                        subtitleIndex = which
+                        subtitleList.setItemChecked(which, true)
+                    }
                 }
 
                 sourceDialog.cancel_btt?.setOnClickListener {
@@ -762,7 +776,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                     ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 //                audioArrayAdapter.add(ctx.getString(R.string.no_subtitles))
                 audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, format ->
-                    format.label ?: format.language?.let { fromTwoLettersToLanguage(it) } ?: index.toString()
+                    format.label ?: format.language?.let { fromTwoLettersToLanguage(it) }
+                    ?: index.toString()
                 })
 
                 audioList.adapter = audioArrayAdapter

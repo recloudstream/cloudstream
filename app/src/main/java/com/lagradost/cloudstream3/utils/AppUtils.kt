@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -415,7 +416,7 @@ object AppUtils {
         }
     }
 
-    fun AppCompatActivity.loadResult(
+    fun FragmentActivity.loadResult(
         url: String,
         apiName: String,
         startAction: Int = 0,

@@ -272,7 +272,7 @@
     <string name="episode_action_chromecast_episode">Bölümü Chromecast ile yayınla</string>
     <string name="episode_action_chromecast_mirror">Bağlantıyı Chromecast ile yayınla</string>
     <string name="episode_action_play_in_app">Uygulamada oynat</string>
-    <string name="episode_action_play_in_vlc">VLC\'de oynat</string>
+    <string name="episode_action_play_in_format">%s\'de oynat</string>
     <string name="episode_action_play_in_browser">Tarayıcıda oynat</string>
     <string name="episode_action_copy_link">Linki kopyala</string>
     <string name="episode_action_auto_download">Otomatik indir</string>

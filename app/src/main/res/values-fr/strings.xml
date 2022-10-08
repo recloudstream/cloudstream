@@ -164,7 +164,7 @@
     <string name="episode_action_chromecast_episode">Episode Chromecast</string>
     <string name="episode_action_chromecast_mirror">Miroir Chromecast</string>
     <string name="episode_action_play_in_app">Lecture dans l\'application</string>
-    <string name="episode_action_play_in_vlc">Lecture dans VLC</string>
+    <string name="episode_action_play_in_format">Lecture dans %s</string>
     <string name="episode_action_play_in_browser">Lecture dans le navigateur</string>
     <string name="episode_action_copy_link">Copier le lien</string>
     <string name="episode_action_auto_download">Téléchargement Automatique</string>
