@@ -633,6 +633,7 @@
     <string name="player_pref">Preferred video player</string>
     <string name="player_settings_play_in_app">Internal player</string>
     <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="player_settings_play_in_browser">Browser</string>
     <string name="app_not_found_error">App not found</string>

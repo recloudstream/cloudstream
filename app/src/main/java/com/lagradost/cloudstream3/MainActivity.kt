@@ -10,7 +10,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
-import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +35,8 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -53,7 +55,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
-import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -67,10 +68,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
-import com.lagradost.cloudstream3.utils.DataStoreHelper.setViewPos
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.IOnBackPressed
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
@@ -95,18 +94,65 @@ import java.nio.charset.Charset
 import kotlin.reflect.KClass
 
 
+//https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
+//https://wiki.videolan.org/Android_Player_Intents/
+
+//https://github.com/mpv-android/mpv-android/blob/0eb3cdc6f1632636b9c30d52ec50e4b017661980/app/src/main/java/is/xyz/mpv/MPVActivity.kt#L904
+//https://mpv-android.github.io/mpv-android/intent.html
+
+// https://www.webvideocaster.com/integrations
+
+//https://github.com/jellyfin/jellyfin-android/blob/6cbf0edf84a3da82347c8d59b5d5590749da81a9/app/src/main/java/org/jellyfin/mobile/bridge/ExternalPlayer.kt#L225
+
 const val VLC_PACKAGE = "org.videolan.vlc"
-const val VLC_INTENT_ACTION_RESULT = "org.videolan.vlc.player.result"
-val VLC_COMPONENT: ComponentName =
-    ComponentName(VLC_PACKAGE, "org.videolan.vlc.gui.video.VideoPlayerActivity")
-const val VLC_REQUEST_CODE = 42
-
-const val VLC_EXTRA_POSITION_OUT = "extra_position"
-const val VLC_EXTRA_DURATION_OUT = "extra_duration"
-const val VLC_LAST_ID_KEY = "vlc_last_open_id"
-
+const val MPV_PACKAGE = "is.xyz.mpv"
 const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
 
+val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
+val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
+
+//TODO REFACTOR AF
+data class ResultResume(
+    val packageString: String,
+    val action: String = Intent.ACTION_VIEW,
+    val position: String? = null,
+    val duration: String? = null,
+    var launcher: ActivityResultLauncher<Intent>? = null,
+) {
+    val lastId get() = "${packageString}_last_open_id"
+    suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
+        val intent = Intent(action)
+
+        if (id != null)
+            setKey(lastId, id)
+        else
+            removeKey(lastId)
+
+        intent.setPackage(packageString)
+        callback.invoke(intent)
+        launcher?.launch(intent)
+    }
+}
+
+val VLC = ResultResume(
+    VLC_PACKAGE,
+    "org.videolan.vlc.player.result",
+    "extra_position",
+    "extra_duration",
+)
+
+val MPV = ResultResume(
+    MPV_PACKAGE,
+    //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
+     position = "position",
+    duration = "duration",
+)
+
+val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
+
+val resumeApps = arrayOf(
+    VLC, MPV, WEB_VIDEO
+)
 
 // Short name for requests client to make it nicer to use
 
@@ -371,31 +417,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             } ?: run {
             backPressed()
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == VLC_REQUEST_CODE) {
-            if (resultCode == RESULT_OK && data != null) {
-                val pos: Long =
-                    data.getLongExtra(
-                        VLC_EXTRA_POSITION_OUT,
-                        -1
-                    ) //Last position in media when player exited
-                val dur: Long =
-                    data.getLongExtra(
-                        VLC_EXTRA_DURATION_OUT,
-                        -1
-                    ) //Last position in media when player exited
-                val id = getKey<Int>(VLC_LAST_ID_KEY)
-                println("SET KEY $id at $pos / $dur")
-                if (dur > 0 && pos > 0) {
-                    setViewPos(id, pos, dur)
-                }
-                removeKey(VLC_LAST_ID_KEY)
-                ResultFragment.updateUI()
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onDestroy() {

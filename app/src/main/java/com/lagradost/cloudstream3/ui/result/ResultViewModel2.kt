@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
@@ -43,7 +44,6 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
@@ -613,7 +613,7 @@ class ResultViewModel2 : ViewModel() {
                 val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
 
                 // SET VISUAL KEYS
-                AcraApplication.setKey(
+                setKey(
                     DOWNLOAD_HEADER_CACHE,
                     parentId.toString(),
                     VideoDownloadHelper.DownloadHeaderCached(
@@ -627,7 +627,7 @@ class ResultViewModel2 : ViewModel() {
                     )
                 )
 
-                AcraApplication.setKey(
+                setKey(
                     DataStore.getFolderName(
                         DOWNLOAD_EPISODE_CACHE,
                         parentId.toString()
@@ -956,12 +956,16 @@ class ResultViewModel2 : ViewModel() {
 
     private fun launchActivity(
         activity: Activity?,
-        work: suspend (CoroutineScope.(Activity) -> Unit)
+        resumeApp: ResultResume,
+        id: Int? = null,
+        work: suspend (Intent.(Activity) -> Unit)
     ): Job? {
         val act = activity ?: return null
         return CoroutineScope(Dispatchers.IO).launch {
             try {
-                work(act)
+                resumeApp.launch(id) {
+                    work(act)
+                }
             } catch (t: Throwable) {
                 logError(t)
                 main {
@@ -981,14 +985,12 @@ class ResultViewModel2 : ViewModel() {
         title: String?,
         posterUrl: String?,
         subtitles: List<SubtitleData>
-    ) = launchActivity(activity) { act ->
-        val shareVideo = Intent(Intent.ACTION_VIEW)
+    ) = launchActivity(activity, WEB_VIDEO) {
+        setDataAndType(Uri.parse(link.url), "video/*")
 
-        shareVideo.setDataAndType(Uri.parse(link.url), "video/*")
-        shareVideo.setPackage(WEB_VIDEO_CAST_PACKAGE)
-        shareVideo.putExtra("subs", subtitles.map { it.url.toUri() }.toTypedArray())
-        title?.let { shareVideo.putExtra("title", title) }
-        posterUrl?.let { shareVideo.putExtra("poster", posterUrl) }
+        putExtra("subs", subtitles.map { it.url.toUri() }.toTypedArray())
+        title?.let { putExtra("title", title) }
+        posterUrl?.let { putExtra("poster", posterUrl) }
         val headers = Bundle().apply {
             if (link.referer.isNotBlank())
                 putString("Referer", link.referer)
@@ -997,10 +999,27 @@ class ResultViewModel2 : ViewModel() {
                 putString(key, value)
             }
         }
-        shareVideo.putExtra("android.media.intent.extra.HTTP_HEADERS", headers)
-        shareVideo.putExtra("secure_uri", true)
+        putExtra("android.media.intent.extra.HTTP_HEADERS", headers)
+        putExtra("secure_uri", true)
+    }
 
-        act.startActivity(shareVideo)
+    private fun playWithMpv(
+        activity: Activity?,
+        id: Int,
+        link: ExtractorLink,
+        subtitles: List<SubtitleData>,
+        resume: Boolean = true,
+    ) = launchActivity(activity, MPV, id) {
+        putExtra("subs", subtitles.map { it.url.toUri() }.toTypedArray())
+        putExtra("subs.name", subtitles.map { it.name }.toTypedArray())
+        putExtra("subs.filename", subtitles.map { it.name }.toTypedArray())
+        setDataAndType(Uri.parse(link.url), "video/*")
+        component = MPV_COMPONENT
+        putExtra("secure_uri", true)
+        putExtra("return_result", true)
+        val position = getViewPos(id)?.position
+        if (resume && position != null)
+            putExtra("position", position.toInt())
     }
 
     // https://wiki.videolan.org/Android_Player_Intents/
@@ -1011,18 +1030,16 @@ class ResultViewModel2 : ViewModel() {
         resume: Boolean = true,
         // if it is only a single link then resume works correctly
         singleFile: Boolean? = null
-    ) = launchActivity(activity) { act ->
-        val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
+    ) = launchActivity(activity, VLC, id) { act ->
+        addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
 
-        vlcIntent.setPackage(VLC_PACKAGE)
-        vlcIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-        vlcIntent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
-        vlcIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        vlcIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         val outputDir = act.cacheDir
 
         if (singleFile ?: (data.links.size == 1)) {
-            vlcIntent.setDataAndType(data.links.first().url.toUri(), "video/*")
+            setDataAndType(data.links.first().url.toUri(), "video/*")
         } else {
             val outputFile = File.createTempFile("mirrorlist", ".m3u8", outputDir)
 
@@ -1037,7 +1054,7 @@ class ResultViewModel2 : ViewModel() {
             }
             outputFile.writeText(text)
 
-            vlcIntent.setDataAndType(
+            setDataAndType(
                 FileProvider.getUriForFile(
                     act,
                     act.applicationContext.packageName + ".provider",
@@ -1051,32 +1068,13 @@ class ResultViewModel2 : ViewModel() {
         } else {
             1L
         }
-        vlcIntent.putExtra("from_start", !resume)
-        vlcIntent.putExtra("position", position)
-        //vlcIntent.putExtra("subtitles_location", data.subs.first().url)
-        /*for (s in data.subs) {
-            if (s.origin == SubtitleOrigin.URL) {
-                try {
-                    val txt = app.get(s.url, s.headers).text
-                    val subtitleFile = File.createTempFile("subtitle1", ".srt", outputDir)
-                    subtitleFile.writeText(txt)
-                    println("Subtitles::::::${subtitleFile.path}")
-                    vlcIntent.putExtra("subtitles_location", FileProvider.getUriForFile(
-                        act,
-                        act.applicationContext.packageName + ".provider",
-                        subtitleFile
-                    ))
-                    break
-                } catch (t : Throwable) {
-                    logError(t)
-                }
-            }
-        }*/
 
-        vlcIntent.component = VLC_COMPONENT
-        act.setKey(VLC_LAST_ID_KEY, id)
-        act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
+        component = VLC_COMPONENT
+
+        putExtra("from_start", !resume)
+        putExtra("position", position)
     }
+
 
     fun handleAction(activity: Activity?, click: EpisodeClickEvent) =
         viewModelScope.launchSafe {
@@ -1098,6 +1096,11 @@ class ResultViewModel2 : ViewModel() {
             WEB_VIDEO_CAST_PACKAGE,
             R.string.player_settings_play_in_web,
             ACTION_PLAY_EPISODE_IN_WEB_VIDEO
+        ),
+        ExternalApp(
+            MPV_PACKAGE,
+            R.string.player_settings_play_in_mpv,
+            ACTION_PLAY_EPISODE_IN_MPV
         )
     )
 
@@ -1326,6 +1329,21 @@ class ResultViewModel2 : ViewModel() {
                     result.links[index],
                     click.data.name ?: click.data.headerName,
                     click.data.poster,
+                    result.subs
+                )
+            }
+            ACTION_PLAY_EPISODE_IN_MPV -> acquireSingleLink(
+                click.data,
+                isCasting = true,
+                txt(
+                    R.string.episode_action_play_in_format,
+                    txt(R.string.player_settings_play_in_mpv)
+                )
+            ) { (result, index) ->
+                playWithMpv(
+                    activity,
+                    click.data.id,
+                    result.links[index],
                     result.subs
                 )
             }
@@ -2107,7 +2125,7 @@ class ResultViewModel2 : ViewModel() {
                     preferStartEpisode = getResultEpisode(mainId)
                     preferStartSeason = getResultSeason(mainId)
 
-                    AcraApplication.setKey(
+                    setKey(
                         DOWNLOAD_HEADER_CACHE,
                         mainId.toString(),
                         VideoDownloadHelper.DownloadHeaderCached(

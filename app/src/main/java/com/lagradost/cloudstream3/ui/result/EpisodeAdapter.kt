@@ -56,6 +56,7 @@ const val ACTION_DOWNLOAD_EPISODE_SUBTITLE = 13
 const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
 
 const val ACTION_PLAY_EPISODE_IN_WEB_VIDEO = 16
+const val ACTION_PLAY_EPISODE_IN_MPV = 17
 
 
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
@@ -71,12 +72,14 @@ class EpisodeAdapter(
          * See array.xml/player_pref_values
          **/
         fun getPlayerAction(context: Context): Int {
+
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
             return when (settingsManager.getInt(context.getString(R.string.player_pref_key), 1)) {
                 1 -> ACTION_PLAY_EPISODE_IN_PLAYER
                 2 -> ACTION_PLAY_EPISODE_IN_VLC_PLAYER
                 3 -> ACTION_PLAY_EPISODE_IN_BROWSER
                 4 -> ACTION_PLAY_EPISODE_IN_WEB_VIDEO
+                5 -> ACTION_PLAY_EPISODE_IN_MPV
                 else -> ACTION_PLAY_EPISODE_IN_PLAYER
             }
         }

@@ -10,16 +10,22 @@ import android.util.Log
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
+import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
@@ -33,6 +39,7 @@ object CommonActivity {
     fun Activity?.getCastSession(): CastSession? {
         return (this as MainActivity?)?.mSessionManager?.currentCastSession
     }
+
 
     var canEnterPipMode: Boolean = false
     var canShowPipMode: Boolean = false
@@ -117,7 +124,7 @@ object CommonActivity {
         setLocale(this, localeCode)
     }
 
-    fun init(act: Activity?) {
+    fun init(act: ComponentActivity?) {
         if (act == null) return
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
         //https://developer.android.com/guide/topics/ui/picture-in-picture
@@ -129,6 +136,22 @@ object CommonActivity {
         act.updateLocale()
         act.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
+
+        for (resumeApp in resumeApps) {
+            resumeApp.launcher =
+                act.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    val resultCode = result.resultCode
+                    val data = result.data
+                    if (resultCode == AppCompatActivity.RESULT_OK && data != null && resumeApp.position != null && resumeApp.duration != null) {
+                        val pos = data.getLongExtra(resumeApp.position, -1L)
+                        val dur = data.getLongExtra(resumeApp.duration, -1L)
+                        if (dur > 0L && pos > 0L)
+                            DataStoreHelper.setViewPos(getKey(resumeApp.lastId), pos, dur)
+                        removeKey(resumeApp.lastId)
+                        ResultFragment.updateUI()
+                    }
+                }
+        }
     }
 
     private fun Activity.enterPIPMode() {
@@ -167,7 +190,7 @@ object CommonActivity {
                 "Amoled" -> R.style.AmoledMode
                 "AmoledLight" -> R.style.AmoledModeLight
                 "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                        R.style.MonetMode else R.style.AppTheme
+                    R.style.MonetMode else R.style.AppTheme
                 else -> R.style.AppTheme
             }
 
