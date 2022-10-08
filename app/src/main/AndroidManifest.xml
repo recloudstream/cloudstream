@@ -23,6 +23,7 @@
 
     <queries>
         <package android:name="org.videolan.vlc" />
+        <package android:name="com.instantbits.cast.webvideo" />
     </queries>
 
     <!--TODO https://stackoverflow.com/questions/41799732/chromecast-button-not-visible-in-android-->

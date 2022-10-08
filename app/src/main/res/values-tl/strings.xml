@@ -204,7 +204,7 @@
     <string name="episode_action_chromecast_episode">Chromecast Episode</string>
     <string name="episode_action_chromecast_mirror">Chromecast Mirror</string>
     <string name="episode_action_play_in_app">I-play sa App</string>
-    <string name="episode_action_play_in_vlc">I-play sa VLC</string>
+    <string name="episode_action_play_in_format">I-play sa %s</string>
     <string name="episode_action_play_in_browser">I-play sa browser</string>
     <string name="episode_action_copy_link">Kopyahin ang Link</string>
     <string name="episode_action_auto_download">Awtomatiking i-download</string>

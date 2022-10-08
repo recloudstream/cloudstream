@@ -101,11 +101,12 @@ val VLC_COMPONENT: ComponentName =
     ComponentName(VLC_PACKAGE, "org.videolan.vlc.gui.video.VideoPlayerActivity")
 const val VLC_REQUEST_CODE = 42
 
-const val VLC_FROM_START = -1
-const val VLC_FROM_PROGRESS = -2
 const val VLC_EXTRA_POSITION_OUT = "extra_position"
 const val VLC_EXTRA_DURATION_OUT = "extra_duration"
 const val VLC_LAST_ID_KEY = "vlc_last_open_id"
+
+const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
+
 
 // Short name for requests client to make it nicer to use
 

@@ -364,7 +364,7 @@
     <string name="episode_action_chromecast_episode">Chromecast episode</string>
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_play_in_app">Play in app</string>
-    <string name="episode_action_play_in_vlc">Play in VLC</string>
+    <string name="episode_action_play_in_format">Play in %s</string>
     <string name="episode_action_play_in_browser">Play in browser</string>
     <string name="episode_action_copy_link">Copy link</string>
     <string name="episode_action_auto_download">Auto download</string>
@@ -633,6 +633,7 @@
     <string name="player_pref">Preferred video player</string>
     <string name="player_settings_play_in_app">Internal player</string>
     <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="player_settings_play_in_browser">Browser</string>
-    <string name="vlc_not_found_error">VLC not found</string>
+    <string name="app_not_found_error">App not found</string>
 </resources>

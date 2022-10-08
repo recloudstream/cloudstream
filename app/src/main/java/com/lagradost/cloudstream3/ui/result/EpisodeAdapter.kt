@@ -55,6 +55,9 @@ const val ACTION_SHOW_DESCRIPTION = 15
 const val ACTION_DOWNLOAD_EPISODE_SUBTITLE = 13
 const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
 
+const val ACTION_PLAY_EPISODE_IN_WEB_VIDEO = 16
+
+
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
@@ -73,6 +76,7 @@ class EpisodeAdapter(
                 1 -> ACTION_PLAY_EPISODE_IN_PLAYER
                 2 -> ACTION_PLAY_EPISODE_IN_VLC_PLAYER
                 3 -> ACTION_PLAY_EPISODE_IN_BROWSER
+                4 -> ACTION_PLAY_EPISODE_IN_WEB_VIDEO
                 else -> ACTION_PLAY_EPISODE_IN_PLAYER
             }
         }

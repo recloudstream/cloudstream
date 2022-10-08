@@ -167,7 +167,7 @@
     <string name="episode_action_chromecast_episode">Chromecasta ett Avsnitt</string>
     <string name="episode_action_chromecast_mirror">Chromecasta en Länk</string>
     <string name="episode_action_play_in_app">Spela upp i appen</string>
-    <string name="episode_action_play_in_vlc">Spela upp i VLC</string>
+    <string name="episode_action_play_in_format">Spela upp i %s</string>
     <string name="episode_action_play_in_browser">Spela upp i webbläsaren</string>
     <string name="episode_action_copy_link">Kopiera länk</string>
     <string name="episode_action_auto_download">Automatisk nerladdning</string>

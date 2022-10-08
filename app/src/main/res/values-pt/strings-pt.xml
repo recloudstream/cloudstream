@@ -268,7 +268,7 @@
     <string name="episode_action_chromecast_episode">Episódio pelo Chromecast</string>
     <string name="episode_action_chromecast_mirror">Alternativa pelo Chromecast</string>
     <string name="episode_action_play_in_app">Reproduzir na app</string>
-    <string name="episode_action_play_in_vlc">Reproduzir no VLC</string>
+    <string name="episode_action_play_in_format">Reproduzir no %s</string>
     <string name="episode_action_play_in_browser">Reproduzir no navegador</string>
     <string name="episode_action_copy_link">Copiar link</string>
     <string name="episode_action_auto_download">Transferência Automática</string>

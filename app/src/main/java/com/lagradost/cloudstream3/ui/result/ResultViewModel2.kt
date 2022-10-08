@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.result
 import android.app.Activity
 import android.content.*
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -51,9 +52,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
-import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
-import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import kotlinx.coroutines.*
 import java.io.File
 import java.lang.Math.abs
@@ -955,105 +954,152 @@ class ResultViewModel2 : ViewModel() {
         return LinkLoadingResult(sortUrls(links), sortSubs(subs))
     }
 
+    private fun launchActivity(
+        activity: Activity?,
+        work: suspend (CoroutineScope.(Activity) -> Unit)
+    ): Job? {
+        val act = activity ?: return null
+        return CoroutineScope(Dispatchers.IO).launch {
+            try {
+                work(act)
+            } catch (t: Throwable) {
+                logError(t)
+                main {
+                    if (t is ActivityNotFoundException) {
+                        showToast(activity, txt(R.string.app_not_found_error), Toast.LENGTH_LONG)
+                    } else {
+                        showToast(activity, t.toString(), Toast.LENGTH_LONG)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun playInWebVideo(
+        activity: Activity?,
+        link: ExtractorLink,
+        title: String?,
+        posterUrl: String?,
+        subtitles: List<SubtitleData>
+    ) = launchActivity(activity) { act ->
+        val shareVideo = Intent(Intent.ACTION_VIEW)
+
+        shareVideo.setDataAndType(Uri.parse(link.url), "video/*")
+        shareVideo.setPackage(WEB_VIDEO_CAST_PACKAGE)
+        shareVideo.putExtra("subs", subtitles.map { it.url.toUri() }.toTypedArray())
+        title?.let { shareVideo.putExtra("title", title) }
+        posterUrl?.let { shareVideo.putExtra("poster", posterUrl) }
+        val headers = Bundle().apply {
+            if (link.referer.isNotBlank())
+                putString("Referer", link.referer)
+            putString("User-Agent", USER_AGENT)
+            for ((key, value) in link.headers) {
+                putString(key, value)
+            }
+        }
+        shareVideo.putExtra("android.media.intent.extra.HTTP_HEADERS", headers)
+        shareVideo.putExtra("secure_uri", true)
+
+        act.startActivity(shareVideo)
+    }
+
     // https://wiki.videolan.org/Android_Player_Intents/
     private fun playWithVlc(
-        act: Activity?,
+        activity: Activity?,
         data: LinkLoadingResult,
         id: Int,
         resume: Boolean = true,
         // if it is only a single link then resume works correctly
         singleFile: Boolean? = null
-    ) = ioSafe {
-        if (act == null) return@ioSafe
-        if (data.links.isEmpty()) {
-            showToast(act, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
-            return@ioSafe
-        }
-        try {
-            if (!act.checkWrite()) {
-                act.requestRW()
-                if (act.checkWrite()) return@ioSafe
-            }
+    ) = launchActivity(activity) { act ->
+        val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
 
-            val vlcIntent = Intent(VLC_INTENT_ACTION_RESULT)
+        vlcIntent.setPackage(VLC_PACKAGE)
+        vlcIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        vlcIntent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
+        vlcIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        vlcIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        val outputDir = act.cacheDir
 
-            vlcIntent.setPackage(VLC_PACKAGE)
-            vlcIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-            vlcIntent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
-            vlcIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            vlcIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-            val outputDir = act.cacheDir
+        if (singleFile ?: (data.links.size == 1)) {
+            vlcIntent.setDataAndType(data.links.first().url.toUri(), "video/*")
+        } else {
+            val outputFile = File.createTempFile("mirrorlist", ".m3u8", outputDir)
 
-            if (singleFile ?: (data.links.size == 1)) {
-                vlcIntent.setDataAndType(data.links.first().url.toUri(), "video/*")
-            } else {
-                val outputFile = File.createTempFile("mirrorlist", ".m3u8", outputDir)
+            var text = "#EXTM3U"
 
-                var text = "#EXTM3U"
-
-                // With subtitles it doesn't work for no reason :(
+            // With subtitles it doesn't work for no reason :(
 //            for (sub in data.subs) {
 //                text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${sub.name}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.name}\",URI=\"${sub.url}\""
 //            }
-                for (link in data.links) {
-                    text += "\n#EXTINF:, ${link.name}\n${link.url}"
-                }
-                outputFile.writeText(text)
+            for (link in data.links) {
+                text += "\n#EXTINF:, ${link.name}\n${link.url}"
+            }
+            outputFile.writeText(text)
 
-                vlcIntent.setDataAndType(
-                    FileProvider.getUriForFile(
+            vlcIntent.setDataAndType(
+                FileProvider.getUriForFile(
+                    act,
+                    act.applicationContext.packageName + ".provider",
+                    outputFile
+                ), "video/*"
+            )
+        }
+
+        val position = if (resume) {
+            getViewPos(id)?.position ?: 0L
+        } else {
+            1L
+        }
+        vlcIntent.putExtra("from_start", !resume)
+        vlcIntent.putExtra("position", position)
+        //vlcIntent.putExtra("subtitles_location", data.subs.first().url)
+        /*for (s in data.subs) {
+            if (s.origin == SubtitleOrigin.URL) {
+                try {
+                    val txt = app.get(s.url, s.headers).text
+                    val subtitleFile = File.createTempFile("subtitle1", ".srt", outputDir)
+                    subtitleFile.writeText(txt)
+                    println("Subtitles::::::${subtitleFile.path}")
+                    vlcIntent.putExtra("subtitles_location", FileProvider.getUriForFile(
                         act,
                         act.applicationContext.packageName + ".provider",
-                        outputFile
-                    ), "video/*"
-                )
-            }
-
-            val position = if (resume) {
-                getViewPos(id)?.position ?: 0L
-            } else {
-                1L
-            }
-            vlcIntent.putExtra("from_start", !resume)
-            vlcIntent.putExtra("position", position)
-            //vlcIntent.putExtra("subtitles_location", data.subs.first().url)
-            /*for (s in data.subs) {
-                if (s.origin == SubtitleOrigin.URL) {
-                    try {
-                        val txt = app.get(s.url, s.headers).text
-                        val subtitleFile = File.createTempFile("subtitle1", ".srt", outputDir)
-                        subtitleFile.writeText(txt)
-                        println("Subtitles::::::${subtitleFile.path}")
-                        vlcIntent.putExtra("subtitles_location", FileProvider.getUriForFile(
-                            act,
-                            act.applicationContext.packageName + ".provider",
-                            subtitleFile
-                        ))
-                        break
-                    } catch (t : Throwable) {
-                        logError(t)
-                    }
-                }
-            }*/
-
-            vlcIntent.component = VLC_COMPONENT
-            act.setKey(VLC_LAST_ID_KEY, id)
-            act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
-        } catch (e: Exception) {
-            logError(e)
-            main {
-                if (e is ActivityNotFoundException) {
-                    showToast(act, txt(R.string.vlc_not_found_error), Toast.LENGTH_LONG)
-                } else {
-                    showToast(act, e.toString(), Toast.LENGTH_LONG)
+                        subtitleFile
+                    ))
+                    break
+                } catch (t : Throwable) {
+                    logError(t)
                 }
             }
+        }*/
+
+        vlcIntent.component = VLC_COMPONENT
+        act.setKey(VLC_LAST_ID_KEY, id)
+        act.startActivityForResult(vlcIntent, VLC_REQUEST_CODE)
+    }
+
+    fun handleAction(activity: Activity?, click: EpisodeClickEvent) =
+        viewModelScope.launchSafe {
+            handleEpisodeClickEvent(activity, click)
         }
-    }
 
-    fun handleAction(activity: Activity?, click: EpisodeClickEvent) = viewModelScope.launchSafe {
-        handleEpisodeClickEvent(activity, click)
-    }
+    data class ExternalApp(
+        val packageString: String,
+        val name: Int,
+        val action: Int,
+    )
+
+    private val apps = listOf(
+        ExternalApp(
+            VLC_PACKAGE,
+            R.string.player_settings_play_in_vlc,
+            ACTION_PLAY_EPISODE_IN_VLC_PLAYER
+        ), ExternalApp(
+            WEB_VIDEO_CAST_PACKAGE,
+            R.string.player_settings_play_in_web,
+            ACTION_PLAY_EPISODE_IN_WEB_VIDEO
+        )
+    )
 
     private suspend fun handleEpisodeClickEvent(activity: Activity?, click: EpisodeClickEvent) {
         when (click.action) {
@@ -1069,9 +1115,17 @@ class ResultViewModel2 : ViewModel() {
                 }
                 options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
 
-                if (activity?.isAppInstalled(VLC_PACKAGE) == true) {
-                    options.add(txt(R.string.episode_action_play_in_vlc) to ACTION_PLAY_EPISODE_IN_VLC_PLAYER)
+                for (app in apps) {
+                    if (activity?.isAppInstalled(app.packageString) == true) {
+                        options.add(
+                            txt(
+                                R.string.episode_action_play_in_format,
+                                txt(app.name)
+                            ) to app.action
+                        )
+                    }
                 }
+
                 options.addAll(
                     listOf(
                         txt(R.string.episode_action_play_in_browser) to ACTION_PLAY_EPISODE_IN_BROWSER,
@@ -1247,12 +1301,33 @@ class ResultViewModel2 : ViewModel() {
             }
             ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> {
                 loadLinks(click.data, isVisible = true, isCasting = true) { links ->
+                    if (links.links.isEmpty()) {
+                        showToast(activity, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+                        return@loadLinks
+                    }
+
                     playWithVlc(
                         activity,
                         links,
                         click.data.id
                     )
                 }
+            }
+            ACTION_PLAY_EPISODE_IN_WEB_VIDEO -> acquireSingleLink(
+                click.data,
+                isCasting = true,
+                txt(
+                    R.string.episode_action_play_in_format,
+                    txt(R.string.player_settings_play_in_web)
+                )
+            ) { (result, index) ->
+                playInWebVideo(
+                    activity,
+                    result.links[index],
+                    click.data.name ?: click.data.headerName,
+                    click.data.poster,
+                    result.subs
+                )
             }
             ACTION_PLAY_EPISODE_IN_PLAYER -> {
                 val data = currentResponse?.syncData?.toList() ?: emptyList()
@@ -1319,7 +1394,11 @@ class ResultViewModel2 : ViewModel() {
             }, {
                 if (this !is AnimeLoadResponse) return@argamap
                 val map =
-                    Kitsu.getEpisodesDetails(getMalId(), getAniListId(), isResponseRequired = false)
+                    Kitsu.getEpisodesDetails(
+                        getMalId(),
+                        getAniListId(),
+                        isResponseRequired = false
+                    )
                 if (map.isNullOrEmpty()) return@argamap
                 updateEpisodes = DubStatus.values().map { dubStatus ->
                     val current =
@@ -1339,8 +1418,10 @@ class ResultViewModel2 : ViewModel() {
                                     val currentBack = this
                                     this.description = this.description ?: node.description?.en
                                     this.name = this.name ?: node.titles?.canonical
-                                    this.episode = this.episode ?: node.num ?: episodeNumbers[index]
-                                    this.posterUrl = this.posterUrl ?: node.thumbnail?.original?.url
+                                    this.episode =
+                                        this.episode ?: node.num ?: episodeNumbers[index]
+                                    this.posterUrl =
+                                        this.posterUrl ?: node.thumbnail?.original?.url
                                 }
                             }
                         }
@@ -1628,7 +1709,8 @@ class ResultViewModel2 : ViewModel() {
                     for ((index, i) in ep.value.withIndex()) {
                         val episode = i.episode ?: (index + 1)
                         val id =
-                            mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000) ?: 0)
+                            mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000)
+                                ?: 0)
                         if (!existingEpisodes.contains(id)) {
                             existingEpisodes.add(id)
                             val seasonData = loadResponse.seasonNames.getSeason(i.season)
