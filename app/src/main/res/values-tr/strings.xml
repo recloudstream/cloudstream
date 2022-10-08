@@ -300,7 +300,7 @@
     <string name="episode_action_chromecast_episode">Bölümü Chromecast ile yayınla</string>
     <string name="episode_action_chromecast_mirror">Bağlantıyı Chromecast ile yayınla</string>
     <string name="episode_action_play_in_app">Uygulamada oynat</string>
-    <string name="episode_action_play_in_format">%s\'de\\da oynat</string>
+    <string name="episode_action_play_in_format">%s\'de\/da oynat</string>
     <string name="episode_action_play_in_browser">Tarayıcıda oynat</string>
     <string name="episode_action_copy_link">Linki kopyala</string>
     <string name="episode_action_auto_download">Otomatik indir</string>
@@ -382,7 +382,7 @@
     <string name="provider_lang_settings">Sağlayıcı dilleri</string>
     <string name="app_layout">Uygulama düzeni</string>
     <string name="preferred_media_settings">Tercih edilen medya</string>
-    <string name="enable_nsfw_on_providers">Desteklenen sağlayıcılarda NSFW'yi etkinleştir</string>
+    <string name="enable_nsfw_on_providers">Desteklenen sağlayıcılarda NSFW\'yi etkinleştir</string>
     <string name="subtitles_encoding">Alt yazı kodlaması</string>
     <string name="category_providers">Sağlayıcılar</string>
     <string name="category_ui">Düzen</string>
