@@ -521,15 +521,12 @@ class HomeFragment : Fragment() {
             }
         }
 
-        //Disable Random button, if its toggled off on settings
+        //Load value for toggling Random button. Hide at startup
         context?.let {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
             toggleRandomButton =
                 settingsManager.getBoolean(getString(R.string.random_button_key), false)
-            home_random?.isVisible = toggleRandomButton
-            if (!toggleRandomButton) {
-                home_random?.visibility = View.GONE
-            }
+            home_random?.visibility = View.GONE
         }
 
         observe(homeViewModel.apiName) { apiName ->
@@ -626,6 +623,7 @@ class HomeFragment : Fragment() {
                     home_loading_shimmer?.stopShimmer()
 
                     val d = data.value
+                    val mutableListOfResponse = mutableListOf<SearchResponse>()
                     listHomepageItems.clear()
 
                     // println("ITEMCOUNT: ${d.values.size} ${home_master_recycler?.adapter?.itemCount}")
@@ -638,6 +636,11 @@ class HomeFragment : Fragment() {
                     home_loading_error?.isVisible = false
                     home_loaded?.isVisible = true
                     if (toggleRandomButton) {
+                        //Flatten list
+                        d.values.forEach { dlist ->
+                            mutableListOfResponse.addAll(dlist.list.list)
+                        }
+                        listHomepageItems.addAll(mutableListOfResponse.distinctBy { it.url })
                         home_random?.isVisible = listHomepageItems.isNotEmpty()
                     } else {
                         home_random?.isGone = true

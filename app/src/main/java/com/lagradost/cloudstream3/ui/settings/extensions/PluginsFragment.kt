@@ -147,7 +147,7 @@ class PluginsFragment : Fragment() {
             pluginViewModel.updatePluginListLocal()
             tv_types_scroll_view?.isVisible = false
         } else {
-            pluginViewModel.updatePluginList(url)
+            pluginViewModel.updatePluginList(context, url)
             tv_types_scroll_view?.isVisible = true
 
             // 💀💀💀💀💀💀💀 Recyclerview when

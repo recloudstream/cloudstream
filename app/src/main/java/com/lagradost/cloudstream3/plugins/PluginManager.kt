@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -123,6 +124,10 @@ object PluginManager {
             val plugins = getPluginsOnline().filter {
                 !it.filePath.contains(repositoryPath)
             }
+            val file = File(repositoryPath)
+            normalSafeApiCall {
+                if (file.exists()) file.deleteRecursively()
+            }
             setKey(PLUGINS_KEY, plugins)
         }
     }
@@ -174,8 +179,16 @@ object PluginManager {
         val onlineData: Pair<String, SitePlugin>,
     ) {
         val isOutdated =
-            onlineData.second.version != savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
+            onlineData.second.version > savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
         val isDisabled = onlineData.second.status == PROVIDER_STATUS_DOWN
+
+        fun validOnlineData(context: Context): Boolean {
+            return getPluginPath(
+                context,
+                savedData.internalName,
+                onlineData.first
+            ).absolutePath == savedData.filePath
+        }
     }
 
     // var allCurrentOutDatedPlugins: Set<OnlinePluginData> = emptySet()
@@ -225,6 +238,8 @@ object PluginManager {
                 .filter { onlineData -> savedData.internalName == onlineData.second.internalName }
                 .map { onlineData ->
                     OnlinePluginData(savedData, onlineData)
+                }.filter {
+                    it.validOnlineData(activity)
                 }
         }.flatten().distinctBy { it.onlineData.second.url }
 
@@ -416,6 +431,18 @@ object PluginManager {
         ) + "." + name.hashCode()
     }
 
+    /**
+     * This should not be changed as it is used to also detect if a plugin is installed!
+     **/
+    fun getPluginPath(
+        context: Context,
+        internalName: String,
+        repositoryUrl: String
+    ): File {
+        val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
+        val fileName = getPluginSanitizedFileName(internalName)
+        return File("${context.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
+    }
 
     /**
      * Used for fresh installs
@@ -426,9 +453,7 @@ object PluginManager {
         internalName: String,
         repositoryUrl: String
     ): Boolean {
-        val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
-        val fileName = getPluginSanitizedFileName(internalName)
-        val file = File("${activity.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
+        val file = getPluginPath(activity, internalName, repositoryUrl)
         downloadAndLoadPlugin(activity, pluginUrl, internalName, file)
         return true
     }
@@ -454,7 +479,13 @@ object PluginManager {
             return loadPlugin(
                 activity,
                 newFile ?: return false,
-                PluginData(internalName, pluginUrl, true, newFile.absolutePath, PLUGIN_VERSION_NOT_SET)
+                PluginData(
+                    internalName,
+                    pluginUrl,
+                    true,
+                    newFile.absolutePath,
+                    PLUGIN_VERSION_NOT_SET
+                )
             )
         } catch (e: Exception) {
             logError(e)
@@ -462,18 +493,13 @@ object PluginManager {
         }
     }
 
-    /**
-     * @param isFilePath will treat the pluginUrl as as the filepath instead of url
-     * */
-    suspend fun deletePlugin(pluginIdentifier: String, isFilePath: Boolean): Boolean {
-        val data =
-            (if (isFilePath) (getPluginsLocal() + getPluginsOnline()).firstOrNull { it.filePath == pluginIdentifier }
-            else getPluginsOnline().firstOrNull { it.url == pluginIdentifier }) ?: return false
+    suspend fun deletePlugin(file: File): Boolean {
+        val list = (getPluginsLocal() + getPluginsOnline()).filter { it.filePath == file.absolutePath }
 
         return try {
-            if (File(data.filePath).delete()) {
-                unloadPlugin(data.filePath)
-                deletePluginData(data)
+            if (File(file.absolutePath).delete()) {
+                unloadPlugin(file.absolutePath)
+                list.forEach { deletePluginData(it) }
                 return true
             }
             false

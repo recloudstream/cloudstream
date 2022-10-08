@@ -14,6 +14,7 @@
     <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
     <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
+    <string name="player_pref_key" translatable="false">player_pref_key</string>
     <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
     <string name="prefer_limit_title_rez_key" translatable="false">prefer_limit_title_rez_key</string>
     <string name="video_buffer_size_key" translatable="false">video_buffer_size_key</string>
@@ -260,7 +261,7 @@
     <string name="search">Search</string>
     <string name="category_account">Accounts</string>
     <string name="category_updates">Updates and backup</string>
-    
+
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
@@ -368,7 +369,7 @@
     <string name="episode_action_chromecast_episode">Chromecast episode</string>
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_play_in_app">Play in app</string>
-    <string name="episode_action_play_in_vlc">Play in VLC</string>
+    <string name="episode_action_play_in_format">Play in %s</string>
     <string name="episode_action_play_in_browser">Play in browser</string>
     <string name="episode_action_copy_link">Copy link</string>
     <string name="episode_action_auto_download">Auto download</string>
@@ -632,6 +633,14 @@
     <string name="extension_types">Supported</string>
     <string name="extension_language">Language</string>
     <string name="extension_install_first">Install the extension first</string>
-    
+
     <string name="hls_playlist">HLS Playlist</string>
+
+    <string name="player_pref">Preferred video player</string>
+    <string name="player_settings_play_in_app">Internal player</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="player_settings_play_in_web">Web Video Cast</string>
+    <string name="player_settings_play_in_browser">Browser</string>
+    <string name="app_not_found_error">App not found</string>
 </resources>

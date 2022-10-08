@@ -268,7 +268,7 @@
     <string name="episode_action_chromecast_episode">Chromecastovat epizodu</string>
     <string name="episode_action_chromecast_mirror">Chromecast jako zrcadlo</string>
     <string name="episode_action_play_in_app">Přehrát v aplikace</string>
-    <string name="episode_action_play_in_vlc">Přehrát ve VLC</string>
+    <string name="episode_action_play_in_format">Přehrát ve %s</string>
     <string name="episode_action_play_in_browser">Přehrát v prohlížeči</string>
     <string name="episode_action_copy_link">Zkopírovat odkaz</string>
     <string name="episode_action_auto_download">Automaticky stáhnout</string>

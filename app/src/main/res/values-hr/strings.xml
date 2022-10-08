@@ -299,7 +299,7 @@
     <string name="episode_action_chromecast_episode">Chromecast epizoda</string>
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_play_in_app">Pokreni u aplikaciji</string>
-    <string name="episode_action_play_in_vlc">Pokreni u VLC-u</string>
+    <string name="episode_action_play_in_format">Pokreni u %s</string>
     <string name="episode_action_play_in_browser">Pokreni u pregledniku</string>
     <string name="episode_action_copy_link">Kopiraj poveznicu</string>
     <string name="episode_action_auto_download">Automatsko preuzimanje</string>

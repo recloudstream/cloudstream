@@ -344,6 +344,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidSrcExtractor(),
     VidSrcExtractor2(),
     PlayLtXyz(),
+    AStreamHub(),
 )
 
 
