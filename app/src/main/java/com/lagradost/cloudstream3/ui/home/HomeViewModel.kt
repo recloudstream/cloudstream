@@ -162,6 +162,8 @@ class HomeViewModel : ViewModel() {
         lock += name
 
         repo?.apply {
+            waitForHomeDelay()
+
             expandable[name]?.let { current ->
                 debugAssert({ !current.hasNext }) {
                     "Expand called when not needed"
