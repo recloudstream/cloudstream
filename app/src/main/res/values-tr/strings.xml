@@ -163,7 +163,7 @@
     <string name="chromecast_subtitles_settings_des">Chromecast alt yazı ayarları</string>
 
     <string name="eigengraumode_settings">Eigengravy modu</string>
-    <string name="eigengraumode_settings_des">Oynatıcıya bir hız seçeneği ekler</string>
+    <string name="eigengraumode_settings_des">Oynatıcıya bir hız seçeneği ekle</string>
     <string name="swipe_to_seek_settings">Gözlemek için kaydır</string>
     <string name="swipe_to_seek_settings_des">Zamanı ayarlamak için sağa veya sola kaydır</string>
     <string name="swipe_to_change_settings">Ayarları değiştirmek için kaydır</string>
@@ -198,7 +198,7 @@
 
     <string name="settings_info">Bilgi</string>
     <string name="advanced_search">Gelişmiş arama</string>
-    <string name="advanced_search_des">Sağlayıcılara göre ayrılmış arama sonuçlarını verir</string>
+    <string name="advanced_search_des">Sağlayıcılara göre ayrılmış arama sonuçlarını ver</string>
     <string name="bug_report_settings_off">Yalnızca çökmelerle ilgili verileri gönderir</string>
     <string name="bug_report_settings_on">Hiç veri göndermez</string>
     <string name="show_fillers_settings">Anime için filler bölümleri gösterir</string>
