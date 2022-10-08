@@ -962,7 +962,7 @@ class ResultViewModel2 : ViewModel() {
         id: Int,
         resume: Boolean = true,
         // if it is only a single link then resume works correctly
-        singleFile: Boolean? = true
+        singleFile: Boolean? = null
     ) = ioSafe {
         if (act == null) return@ioSafe
         if (data.links.isEmpty()) {
