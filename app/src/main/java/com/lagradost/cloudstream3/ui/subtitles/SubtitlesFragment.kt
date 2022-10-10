@@ -135,7 +135,8 @@ class SubtitlesFragment : Fragment() {
                 it.mkdir()
             }
             return fontDir.list()?.mapNotNull {
-                if (it.endsWith(".ttf")) {
+                // No idea which formats are supported, but these should be.
+                if (it.endsWith(".ttf") || it.endsWith(".otf")) {
                     File(fontDir.absolutePath + "/" + it)
                 } else null
             } ?: listOf()

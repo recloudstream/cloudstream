@@ -52,6 +52,11 @@
 
                      android:id="@+id/home_select_none"
                      style="@style/RoundedSelectableButtonIcon"/>-->
+
+            <!--
+            If you reorder this fix getPairList() too!
+            That shit is responsible for focus selection
+            -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/home_select_movies"
 

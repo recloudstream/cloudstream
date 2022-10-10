@@ -381,7 +381,16 @@ abstract class MainAPI {
     open var storedCredentials: String? = null
     open var canBeOverridden: Boolean = true
 
-    //open val uniqueId : Int by lazy { this.name.hashCode() } // in case of duplicate providers you can have a shared id
+    /** if this is turned on then it will request the homepage one after the other,
+    used to delay if they block many request at the same time*/
+    open var sequentialMainPage : Boolean = false
+    /** in milliseconds, this can be used to add more delay between homepage requests
+     *  on first load if sequentialMainPage is turned on */
+    open var sequentialMainPageDelay : Long = 0L
+    /** in milliseconds, this can be used to add more delay between homepage requests when scrolling */
+    open var sequentialMainPageScrollDelay : Long = 0L
+    /** used to keep track when last homepage request was in unixtime ms */
+    var lastHomepageRequest : Long = 0L
 
     open var lang = "en" // ISO_639_1 check SubtitleHelper
 

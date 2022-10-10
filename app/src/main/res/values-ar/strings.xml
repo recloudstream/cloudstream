@@ -274,7 +274,7 @@
     <string name="episode_action_chromecast_episode">حلقة كروم كاست</string>
     <string name="episode_action_chromecast_mirror">مرآة كروم كاست</string>
     <string name="episode_action_play_in_app">تشغيل في التطبيق</string>
-    <string name="episode_action_play_in_vlc">VLC تشغيل في</string>
+    <string name="episode_action_play_in_format">%s تشغيل في</string>
     <string name="episode_action_play_in_browser">تشغيل في الويب </string>
     <string name="episode_action_copy_link">نسخ الرابط</string>
     <string name="episode_action_auto_download">التحميل التلقائي</string>

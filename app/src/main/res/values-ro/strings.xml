@@ -267,7 +267,7 @@
     <string name="episode_action_chromecast_episode">Chromecast</string>
     <string name="episode_action_chromecast_mirror">Chromecast alternativ</string>
     <string name="episode_action_play_in_app">Redă în Aplicație</string>
-    <string name="episode_action_play_in_vlc">Redă în VLC</string>
+    <string name="episode_action_play_in_format">Redă în %s</string>
     <string name="episode_action_play_in_browser">Redă în Browser</string>
     <string name="episode_action_copy_link">Copiază link-ul</string>
     <string name="episode_action_auto_download">Auto-descărcare</string>
