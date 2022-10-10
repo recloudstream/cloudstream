@@ -196,7 +196,7 @@
     <string name="episode_action_chromecast_episode">Støpt Episode</string>
     <string name="episode_action_chromecast_mirror">Støpt Speil</string>
     <string name="episode_action_play_in_app">Spill i appen</string>
-    <string name="episode_action_play_in_vlc">Spill i VLC</string>
+    <string name="episode_action_play_in_format">Spill i %s</string>
     <string name="episode_action_play_in_browser">Spill i nettleseren</string>
     <string name="episode_action_copy_link">Kopier link</string>
     <string name="episode_action_auto_download">Automatisk nedlasting</string>

@@ -1,10 +1,12 @@
 package com.lagradost.cloudstream3.ui
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import kotlinx.coroutines.delay
 
 class APIRepository(val api: MainAPI) {
     companion object {
@@ -62,12 +64,33 @@ class APIRepository(val api: MainAPI) {
         }
     }
 
+    suspend fun waitForHomeDelay() {
+        val delta = api.sequentialMainPageScrollDelay + api.lastHomepageRequest - unixTimeMS
+        if(delta < 0) return
+        delay(delta)
+    }
+
     suspend fun getMainPage(page: Int, nameIndex: Int? = null): Resource<List<HomePageResponse?>> {
         return safeApiCall {
+            api.lastHomepageRequest = unixTimeMS
+
             nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
                 listOf(api.getMainPage(page, MainPageRequest(data.name, data.data)))
-            } ?: api.mainPage.apmap { data ->
-                api.getMainPage(page, MainPageRequest(data.name, data.data))
+            } ?: run {
+                if (api.sequentialMainPage) {
+                    var first = true
+                    api.mainPage.map { data ->
+                        if (!first) // dont want to sleep on first request
+                            delay(api.sequentialMainPageDelay)
+                        first = false
+
+                        api.getMainPage(page, MainPageRequest(data.name, data.data))
+                    }
+                } else {
+                    api.mainPage.apmap { data ->
+                        api.getMainPage(page, MainPageRequest(data.name, data.data))
+                    }
+                }
             }
         }
     }

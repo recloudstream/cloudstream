@@ -165,7 +165,7 @@
         <item>@string/episode_action_chromecast_episode</item>
         <item>@string/episode_action_chromecast_mirror</item>
         <item>@string/episode_action_play_in_app</item>
-        <item>@string/episode_action_play_in_vlc</item>
+        <item>@string/episode_action_play_in_format</item>
         <item>@string/episode_action_play_in_browser</item>
         <item>@string/episode_action_copy_link</item>
         <item>@string/episode_action_auto_download</item>

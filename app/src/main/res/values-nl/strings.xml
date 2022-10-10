@@ -274,7 +274,7 @@
     <string name="episode_action_chromecast_episode">Chromecast aflevering</string>
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_play_in_app">Speel in app</string>
-    <string name="episode_action_play_in_vlc">Speel in VLC</string>
+    <string name="episode_action_play_in_format">Speel in %s</string>
     <string name="episode_action_play_in_browser">Speel in browser</string>
     <string name="episode_action_copy_link">Kopieer link</string>
     <string name="episode_action_auto_download">Automatisch downloaden</string>

@@ -19,6 +19,11 @@
             android:icon="@drawable/ic_baseline_hd_24" />
 
     <Preference
+            android:key="@string/player_pref_key"
+            android:title="@string/player_pref"
+            android:icon="@drawable/netflix_play" />
+
+    <Preference
             android:key="@string/prefer_limit_title_key"
             android:title="@string/limit_title"
             android:icon="@drawable/ic_baseline_text_format_24" />

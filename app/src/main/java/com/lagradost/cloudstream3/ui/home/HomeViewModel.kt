@@ -162,6 +162,8 @@ class HomeViewModel : ViewModel() {
         lock += name
 
         repo?.apply {
+            waitForHomeDelay()
+
             expandable[name]?.let { current ->
                 debugAssert({ !current.hasNext }) {
                     "Expand called when not needed"
@@ -276,9 +278,6 @@ class HomeViewModel : ViewModel() {
             if (preferredApiName == noneApi.name) {
                 setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
                 loadAndCancel(noneApi)
-            // If the plugin isn't loaded yet. (Does not set the key)
-            } else if (api == null) {
-                loadAndCancel(noneApi)
             } else if (preferredApiName == randomApi.name) {
                 val validAPIs = context?.filterProviderByPreferredMedia()
                 if (validAPIs.isNullOrEmpty()) {
@@ -289,6 +288,9 @@ class HomeViewModel : ViewModel() {
                     loadAndCancel(apiRandom)
                     setKey(USER_SELECTED_HOMEPAGE_API, apiRandom.name)
                 }
+                // If the plugin isn't loaded yet. (Does not set the key)
+            } else if (api == null) {
+                loadAndCancel(noneApi)
             } else {
                 setKey(USER_SELECTED_HOMEPAGE_API, api.name)
                 loadAndCancel(api)
