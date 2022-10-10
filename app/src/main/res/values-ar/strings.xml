@@ -13,16 +13,16 @@
 
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">سرعة (%.2fx)</string>
-    <string name="rated_format" formatted="true">Rated: %.1f</string>
+    <string name="rated_format" formatted="true">تقييم: %.1f</string>
 
-    <string name="new_update_format" formatted="true">!تم إيجاد تحديث جديد\n%s -> %s</string>
+    <string name="new_update_format" formatted="true">!تم العثور علي تحديث جديد\n%s -> %s</string>
     <string name="duration_format" formatted="true">%d دقيقة</string>
 
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">تشغيل بواسطة CloudStream</string>
     <string name="title_home">الصفحة الرئيسية</string>
     <string name="title_search">البحث</string>
-    <string name="title_downloads">التحميلات</string>
+    <string name="title_downloads">التنزيلات</string>
     <string name="title_settings">الإعدادات</string>
 
     <string name="search_hint">…بحث</string>
@@ -210,14 +210,14 @@
     <string name="no_season">لا موسم</string>
     <string name="episode">حلقة</string>
     <string name="episodes">حلقات</string>
-    <string name="season_short">ح</string>
-    <string name="episode_short">م</string>
+    <string name="season_short">م</string>
+    <string name="episode_short">ح</string>
     <string name="no_episodes_found">لم يتم العثور على أي حلقات</string>
 
     <string name="delete_file">حذف الملف</string>
     <string name="delete">حذف</string>
     <string name="pause">إيقاف مؤقت</string>
-    <string name="resume">أكمل</string>
+    <string name="resume">إستئناف</string>
     <string name="go_back_30">-٣٠</string>
     <string name="go_forward_30">+٣٠</string>
     <string name="delete_message">سوف يتم الحذف نهائيا %s\nهل أنت متأكد?</string>
@@ -292,7 +292,7 @@
     <string name="show_title_key" translatable="false">show_title_key</string>
     <string name="poster_ui_settings">التحكم في عناصر الواجهة علي الملصق </string>
 
-    <string name="no_update_found">لم يتم العثور على تحديث</string>
+    <string name="no_update_found">لم يتم العثور على تحديثات</string>
     <string name="check_for_update">تحقق من التحديثات</string>
 
     <string name="video_lock">قفل</string>
@@ -404,7 +404,7 @@
     <string name="add_sync">إضافة تتبع</string>
     <string name="added_sync_format" formatted="true">تم إضافة %s</string>
     <string name="upload_sync">مزامنة</string>
-    <string name="sync_score">مقيّم</string>
+    <string name="sync_score">تقييم</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
@@ -538,4 +538,5 @@
     <string name="extension_language">اللغة</string>
 
     <string name="hls_playlist">قائمة HLS</string>
+    <string name="player_pref">مُشغل الفيديو المفضل</string>
 </resources>
