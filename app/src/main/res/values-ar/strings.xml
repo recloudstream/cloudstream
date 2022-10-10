@@ -538,4 +538,5 @@
     <string name="extension_language">اللغة</string>
 
     <string name="hls_playlist">قائمة HLS</string>
+    <string name="player_pref">مُشغل الفيديو المفضل</string>
 </resources>
