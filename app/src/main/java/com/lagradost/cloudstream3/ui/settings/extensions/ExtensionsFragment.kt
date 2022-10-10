@@ -16,7 +16,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
@@ -25,7 +24,6 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppUtils.downloadAllPluginsDialog
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -34,7 +32,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.widget.LinearRecycleViewLayoutManager
 import kotlinx.android.synthetic.main.add_repo_input.*
 import kotlinx.android.synthetic.main.fragment_extensions.*
-import kotlinx.android.synthetic.main.fragment_extensions.list_repositories
 
 const val PUBLIC_REPOSITORIES_LIST = "https://recloudstream.github.io/repos/"
 
@@ -128,20 +125,20 @@ class ExtensionsFragment : Fragment() {
             }
         }
 
-        list_repositories?.setOnClickListener {
-            // Open webview on tv if browser fails
-            val isTv = isTvSettings()
-            openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
-
-            // Set clipboard on TV because the browser might not exist or work properly
-            if (isTv) {
-                val serviceClipboard =
-                    (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
-                        ?: return@setOnClickListener
-                val clip = ClipData.newPlainText("Repository url", PUBLIC_REPOSITORIES_LIST)
-                serviceClipboard.setPrimaryClip(clip)
-            }
-        }
+//        list_repositories?.setOnClickListener {
+//            // Open webview on tv if browser fails
+//            val isTv = isTvSettings()
+//            openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
+//
+//            // Set clipboard on TV because the browser might not exist or work properly
+//            if (isTv) {
+//                val serviceClipboard =
+//                    (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
+//                        ?: return@setOnClickListener
+//                val clip = ClipData.newPlainText("Repository url", PUBLIC_REPOSITORIES_LIST)
+//                serviceClipboard.setPrimaryClip(clip)
+//            }
+//        }
 
         observe(extensionViewModel.pluginStats) {
             when (it) {
@@ -200,11 +197,11 @@ class ExtensionsFragment : Fragment() {
                 }
             }
 
-            dialog.list_repositories?.setOnClickListener {
-                // Open webview on tv if browser fails
-                openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
-                dialog.dismissSafe()
-            }
+//            dialog.list_repositories?.setOnClickListener {
+//                // Open webview on tv if browser fails
+//                openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
+//                dialog.dismissSafe()
+//            }
 
 //            dialog.text2?.text = provider.name
             dialog.apply_btt?.setOnClickListener secondListener@{

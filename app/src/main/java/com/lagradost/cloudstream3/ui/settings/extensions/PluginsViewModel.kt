@@ -12,7 +12,6 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.launchSafe
-import com.lagradost.cloudstream3.plugins.PluginData
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginPath
 import com.lagradost.cloudstream3.plugins.RepositoryManager
@@ -21,8 +20,8 @@ import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
-import kotlinx.coroutines.launch
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import java.io.File
 
 typealias Plugin = Pair<String, SitePlugin>
 /**
@@ -47,7 +46,11 @@ class PluginsViewModel : ViewModel() {
         private val repositoryCache: MutableMap<String, List<Plugin>> = mutableMapOf()
         const val TAG = "PLG"
 
-        private fun isDownloaded(context: Context, pluginName: String, repositoryUrl: String): Boolean {
+        private fun isDownloaded(
+            context: Context,
+            pluginName: String,
+            repositoryUrl: String
+        ): Boolean {
             return getPluginPath(context, pluginName, repositoryUrl).exists()
         }
 
@@ -73,7 +76,13 @@ class PluginsViewModel : ViewModel() {
                 if (activity == null) return@ioSafe
                 val plugins = getPlugins(repositoryUrl)
 
-                plugins.filter { plugin -> !isDownloaded(activity, plugin.second.internalName, repositoryUrl) }.also { list ->
+                plugins.filter { plugin ->
+                    !isDownloaded(
+                        activity,
+                        plugin.second.internalName,
+                        repositoryUrl
+                    )
+                }.also { list ->
                     main {
                         showToast(
                             activity,
@@ -133,9 +142,13 @@ class PluginsViewModel : ViewModel() {
         if (activity == null) return@ioSafe
         val (repo, metadata) = plugin
 
-        val file = getPluginPath(activity, plugin.second.internalName, plugin.first)
+        val file = if (isLocal) File(plugin.second.url) else getPluginPath(
+            activity,
+            plugin.second.internalName,
+            plugin.first
+        )
 
-        val (success, message) = if (file.exists() || isLocal) {
+        val (success, message) = if (file.exists()) {
             PluginManager.deletePlugin(file) to R.string.plugin_deleted
         } else {
             PluginManager.downloadAndLoadPlugin(
@@ -167,7 +180,9 @@ class PluginsViewModel : ViewModel() {
         }
 
         this.plugins = list
-        _filteredPlugins.postValue(false to list.filterTvTypes().filterLang().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(
+            false to list.filterTvTypes().filterLang().sortByQuery(currentQuery)
+        )
     }
 
     // Perhaps can be optimized?
@@ -175,7 +190,8 @@ class PluginsViewModel : ViewModel() {
         if (tvTypes.isEmpty()) return this
         return this.filter {
             (it.plugin.second.tvTypes?.any { type -> tvTypes.contains(type) } == true) ||
-            (tvTypes.contains("Others") && (it.plugin.second.tvTypes ?: emptyList()).isEmpty())
+                    (tvTypes.contains("Others") && (it.plugin.second.tvTypes
+                        ?: emptyList()).isEmpty())
         }
     }
 
@@ -199,7 +215,9 @@ class PluginsViewModel : ViewModel() {
     }
 
     fun updateFilteredPlugins() {
-        _filteredPlugins.postValue(false to plugins.filterTvTypes().filterLang().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(
+            false to plugins.filterTvTypes().filterLang().sortByQuery(currentQuery)
+        )
     }
 
     fun updatePluginList(context: Context?, repositoryUrl: String) = viewModelScope.launchSafe {
@@ -210,7 +228,9 @@ class PluginsViewModel : ViewModel() {
 
     fun search(query: String?) {
         currentQuery = query
-        _filteredPlugins.postValue(true to (filteredPlugins.value?.second?.sortByQuery(query) ?: emptyList()))
+        _filteredPlugins.postValue(
+            true to (filteredPlugins.value?.second?.sortByQuery(query) ?: emptyList())
+        )
     }
 
     /**
@@ -226,6 +246,8 @@ class PluginsViewModel : ViewModel() {
             }
 
         plugins = downloadedPlugins
-        _filteredPlugins.postValue(false to downloadedPlugins.filterTvTypes().filterLang().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(
+            false to downloadedPlugins.filterTvTypes().filterLang().sortByQuery(currentQuery)
+        )
     }
 }
