@@ -34,7 +34,6 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_U
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import com.lagradost.cloudstream3.utils.BackupUtils.getBackup
 
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
@@ -300,40 +299,7 @@ object BackupUtils {
 
         val gistId = githubApi.getLatestLoginData()?.server ?: throw IllegalArgumentException ("Requires Username")
         val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
-        /* ioSafe {
-            val tmpDir = createTempDir()
-            val gitUrl = githubApi.getLatestLoginData()?.email ?: throw IllegalArgumentException ("Requires Username")
-            val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
-            val git = Git.cloneRepository()
-                .setURI(gitUrl)
-                .setDirectory(tmpDir)
-                .setTimeout(30)
-                .setCredentialsProvider(
-                    UsernamePasswordCredentialsProvider(token, "")
-                )
-                .call()
-            tmpDir.listFiles()?.first { it.name != ".git" }?.writeText(backup.toJson())
-            git.add()
-                .addFilepattern(".")
-                .call()
-            git.commit()
-                .setAll(true)
-                .setMessage("Update backup")
-                .call()
-            git.remoteAdd()
-                .setName("origin")
-                .setUri(URIish(gitUrl))
-                .call()
-            git.push()
-                .setRemote(gitUrl)
-                .setTimeout(30)
-                .setCredentialsProvider(
-                    UsernamePasswordCredentialsProvider(token, "")
-                )
-                .call();
-            tmpDir.deleteRecursively()
-        }
-         */
+
         ioSafe {
             app.patch("https://api.github.com/gists/$gistId",
                 headers= mapOf(
@@ -358,7 +324,7 @@ object BackupUtils {
         val gistId = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
         val jsondata = app.get(" https://api.github.com/gists/$gistId").text
         val dataraw =
-            parseJson<GithubApi.gistsElements>(jsondata ?: "").files.values.first().dataRaw
+            parseJson<GithubApi.GistsElements>(jsondata ?: "").files.values.first().dataRaw
                 ?: throw IllegalAccessException()
         val data = parseJson<BackupFile>(dataraw)
         restore(

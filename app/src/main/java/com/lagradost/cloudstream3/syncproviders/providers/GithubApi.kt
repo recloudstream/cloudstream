@@ -33,16 +33,17 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
         var userName: String,
         var userAvatar: String,
     )
+
     companion object {
         const val GITHUB_USER_KEY: String = "github_user" // user data like profile
         var currentSession: GithubOAuthEntity? = null
     }
+
     private fun getAuthKey(): GithubOAuthEntity? {
         return getKey(accountId, GITHUB_USER_KEY)
     }
 
-
-    data class gistsElements (
+    data class GistsElements (
         @JsonProperty("id") val gistId:String,
         @JsonProperty("files") val files: Map<String, File>,
         @JsonProperty("owner") val owner: OwnerData
@@ -54,6 +55,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
     data class File (
         @JsonProperty("content") val dataRaw: String?
     )
+
     data class GistRequestBody(
         @JsonProperty("description") val description: String,
         @JsonProperty("public") val public : Boolean,
@@ -76,7 +78,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
 
         if (!response.isSuccessful) { return false }
 
-        val repo = tryParseJson<List<gistsElements>>(response.text)?.filter {
+        val repo = tryParseJson<List<GistsElements>>(response.text)?.filter {
             it.files.keys.first() == "Cloudstream_Backup_data.txt"
         }
 
@@ -89,13 +91,9 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
                 ),
                 requestBody = GistRequestBody("Cloudstream private backup gist", false, FilesGist(ContentFilesGist(backupData?.toJson()))).toJson().toRequestBody(
                     RequestBodyTypes.JSON.toMediaTypeOrNull()))
-                /*
-                """{"description":"Cloudstream private backup gist","public":false,"files":{"Cloudstream_Backup_data.txt":{"content":"initialization"}}}""".toRequestBody(
-                    RequestBodyTypes.JSON.toMediaTypeOrNull()))
 
-                 */
             if (!gitresponse.isSuccessful) {return false}
-            tryParseJson<gistsElements>(gitresponse.text).let {
+            tryParseJson<GistsElements>(gitresponse.text).let {
                 setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(
                     token = githubToken,
                     gistId = it?.gistId?: run {
