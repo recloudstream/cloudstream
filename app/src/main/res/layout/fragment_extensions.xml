@@ -47,12 +47,12 @@
             android:text="@string/blank_repo_message"
             android:textSize="16sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/list_repositories"
-            style="@style/WhiteButton"
-            android:layout_width="wrap_content"
-            android:nextFocusDown="@id/add_repo_button"
-            android:text="@string/view_public_repositories_button" />
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:id="@+id/list_repositories"-->
+<!--            style="@style/WhiteButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:nextFocusDown="@id/add_repo_button"-->
+<!--            android:text="@string/view_public_repositories_button" />-->
     </LinearLayout>
 
     <LinearLayout

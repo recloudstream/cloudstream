@@ -608,7 +608,7 @@
     <string name="plugins_disabled" formatted="true">Disabled: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Not downloaded: %d</string>
     <string name="plugins_updated" formatted="true">Updated %d plugins</string>
-    <string name="blank_repo_message">Add a repository to install site extensions</string>
+    <string name="blank_repo_message">CloudStream has no sites installed by default. You need to install the sites from repositories.\n\nBecause of a brainless DMCA takedown by Sky Uk Limited 🤮 we cannot link the repository sites in app.\n\nJoin our discord for links or search online.</string>
     <string name="view_public_repositories_button">View community repositories</string>
     <string name="view_public_repositories_button_short">Public list</string>
     <string name="uppercase_all_subtitles">Uppercase all subtitles</string>
