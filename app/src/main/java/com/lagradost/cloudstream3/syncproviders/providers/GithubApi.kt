@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
-import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
@@ -11,21 +10,14 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.BackupUtils.getBackup
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePromptGithub
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.transport.URIish
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.attribute.FileAttribute
 
 
 class GithubApi(index: Int) : InAppAuthAPIManager(index){
@@ -36,11 +28,10 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
     override val createAccountUrl = "https://github.com/settings/tokens/new?description=Cloudstream+Backup&scopes=gist"
 
     data class GithubOAuthEntity(
-        var repoUrl: String,
+        var gistId: String,
         var token: String,
         var userName: String,
         var userAvatar: String,
-        var gistUrl: String
     )
     companion object {
         const val GITHUB_USER_KEY: String = "github_user" // user data like profile
@@ -52,8 +43,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
 
 
     data class gistsElements (
-        @JsonProperty("git_pull_url") val gitUrl: String,
-        @JsonProperty("url") val gistUrl:String,
+        @JsonProperty("id") val gistId:String,
         @JsonProperty("files") val files: Map<String, File>,
         @JsonProperty("owner") val owner: OwnerData
     )
@@ -63,6 +53,17 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
     )
     data class File (
         @JsonProperty("content") val dataRaw: String?
+    )
+    data class GistRequestBody(
+        @JsonProperty("description") val description: String,
+        @JsonProperty("public") val public : Boolean,
+        @JsonProperty("files") val files: FilesGist?
+    )
+    data class FilesGist(
+        @JsonProperty("Cloudstream_Backup_data.txt") val description: ContentFilesGist?,
+    )
+    data class ContentFilesGist(
+        @JsonProperty("content") val description: String?,
     )
 
     private suspend fun initLogin(githubToken: String): Boolean{
@@ -80,23 +81,28 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
         }
 
         if (repo?.isEmpty() == true){
+            val backupData = context?.getBackup()
             val gitresponse = app.post("https://api.github.com/gists",
                 headers= mapOf(
                     Pair("Accept" , "application/vnd.github+json"),
                     Pair("Authorization", "token $githubToken"),
                 ),
-                requestBody = """{"description":"Cloudstream private backup gist","public":false,"files":{"Cloudstream_Backup_data.txt":{"content":"initialization"}}}""".toRequestBody(
+                requestBody = GistRequestBody("Cloudstream private backup gist", false, FilesGist(ContentFilesGist(backupData?.toJson()))).toJson().toRequestBody(
                     RequestBodyTypes.JSON.toMediaTypeOrNull()))
+                /*
+                """{"description":"Cloudstream private backup gist","public":false,"files":{"Cloudstream_Backup_data.txt":{"content":"initialization"}}}""".toRequestBody(
+                    RequestBodyTypes.JSON.toMediaTypeOrNull()))
+
+                 */
             if (!gitresponse.isSuccessful) {return false}
             tryParseJson<gistsElements>(gitresponse.text).let {
                 setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(
                     token = githubToken,
-                    repoUrl = it?.gitUrl?: run {
+                    gistId = it?.gistId?: run {
                         return false
                     },
                     userName = it.owner.userName,
-                    userAvatar = it.owner.userAvatar,
-                    gistUrl = it.gistUrl
+                    userAvatar = it.owner.userAvatar
                     ))
             }
             return true
@@ -105,18 +111,15 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
             repo?.first().let {
                 setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(
                     token = githubToken,
-                    repoUrl = it?.gitUrl?: run {
+                    gistId = it?.gistId?: run {
                         return false
                     },
                     userName = it.owner.userName,
-                    userAvatar = it.owner.userAvatar,
-                    gistUrl = it.gistUrl
+                    userAvatar = it.owner.userAvatar
                     ))
                 ioSafe  {
                     context?.restorePromptGithub()
                 }
-
-
                 return true
             }
         }
@@ -139,13 +142,13 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
 
     override fun getLatestLoginData(): InAppAuthAPI.LoginData? {
         val current = getAuthKey() ?: return null
-        return InAppAuthAPI.LoginData(email = current.repoUrl, password = current.token, username = current.userName, server = current.gistUrl)
+        return InAppAuthAPI.LoginData(server = current.gistId, password = current.token, username = current.userName)
     }
     override suspend fun initialize() {
         currentSession = getAuthKey()
-        val repoUrl = currentSession?.repoUrl ?: return
+        val gistId = currentSession?.gistId ?: return
         val token = currentSession?.token ?: return
-        setKey(repoUrl, token)
+        setKey(gistId, token)
     }
     override fun logOut() {
         removeKey(accountId, GITHUB_USER_KEY)

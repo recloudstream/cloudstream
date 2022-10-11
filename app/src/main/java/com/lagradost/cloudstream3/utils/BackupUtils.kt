@@ -34,6 +34,7 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_U
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.BackupUtils.getBackup
 
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
@@ -44,9 +45,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.isDownloadDir
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.transport.URIish
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
+import com.lagradost.nicehttp.RequestBodyTypes
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
@@ -296,7 +297,10 @@ object BackupUtils {
 
     fun FragmentActivity.backupGithub(){
         val backup = this.getBackup()
-        ioSafe {
+
+        val gistId = githubApi.getLatestLoginData()?.server ?: throw IllegalArgumentException ("Requires Username")
+        val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
+        /* ioSafe {
             val tmpDir = createTempDir()
             val gitUrl = githubApi.getLatestLoginData()?.email ?: throw IllegalArgumentException ("Requires Username")
             val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
@@ -329,6 +333,21 @@ object BackupUtils {
                 .call();
             tmpDir.deleteRecursively()
         }
+         */
+        ioSafe {
+            app.patch("https://api.github.com/gists/$gistId",
+                headers= mapOf(
+                    Pair("Accept" , "application/vnd.github+json"),
+                    Pair("Authorization", "token $token"),
+                ),
+                requestBody = GithubApi.GistRequestBody(
+                    "Cloudstream private backup gist",
+                    false,
+                    GithubApi.FilesGist(GithubApi.ContentFilesGist(backup.toJson())))
+                    .toJson()
+                    .toRequestBody(RequestBodyTypes.JSON.toMediaTypeOrNull())
+            )
+        }
         showToast(
             this,
             R.string.backup_success,
@@ -336,8 +355,8 @@ object BackupUtils {
         )
     }
     suspend fun Context.restorePromptGithub() {
-        val gistUrl = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
-        val jsondata = app.get(gistUrl).text
+        val gistId = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
+        val jsondata = app.get(" https://api.github.com/gists/$gistId").text
         val dataraw =
             parseJson<GithubApi.gistsElements>(jsondata ?: "").files.values.first().dataRaw
                 ?: throw IllegalAccessException()

@@ -200,8 +200,6 @@ dependencies {
     // Library/extensions searching with Levenshtein distance
     implementation 'me.xdrop:fuzzywuzzy:1.4.0'
 
-    // Git
-    implementation 'org.openl.jgit:org.eclipse.jgit:6.2.0.202206071550-openl'
 }
 
 task androidSourcesJar(type: Jar) {
