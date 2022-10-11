@@ -384,6 +384,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } catch (e: Exception) {
             logError(e)
         }
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), false)) {
+            this@MainActivity.backupGithub()
+        }
     }
 
 
@@ -425,14 +429,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onDestroy() {
         val broadcastIntent = Intent()
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         broadcastIntent.action = "restart_service"
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
-
-        if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), false)) {
-            this@MainActivity.backupGithub()
-        }
-
         this.sendBroadcast(broadcastIntent)
         afterPluginsLoadedEvent -= ::onAllPluginsLoaded
         super.onDestroy()
