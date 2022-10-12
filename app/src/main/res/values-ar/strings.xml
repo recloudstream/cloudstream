@@ -20,7 +20,7 @@
 
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">تشغيل بواسطة CloudStream</string>
-    <string name="title_home">الصفحة الرئيسية</string>
+    <string name="title_home">الرئيسية</string>
     <string name="title_search">البحث</string>
     <string name="title_downloads">التنزيلات</string>
     <string name="title_settings">الإعدادات</string>
