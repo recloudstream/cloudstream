@@ -66,7 +66,7 @@ class APIRepository(val api: MainAPI) {
 
     suspend fun waitForHomeDelay() {
         val delta = api.sequentialMainPageScrollDelay + api.lastHomepageRequest - unixTimeMS
-        if(delta < 0) return
+        if (delta < 0) return
         delay(delta)
     }
 
@@ -75,7 +75,7 @@ class APIRepository(val api: MainAPI) {
             api.lastHomepageRequest = unixTimeMS
 
             nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
-                listOf(api.getMainPage(page, MainPageRequest(data.name, data.data)))
+                listOf(api.getMainPage(page, MainPageRequest(data.name, data.data, data.horizontalImages)))
             } ?: run {
                 if (api.sequentialMainPage) {
                     var first = true
@@ -84,11 +84,17 @@ class APIRepository(val api: MainAPI) {
                             delay(api.sequentialMainPageDelay)
                         first = false
 
-                        api.getMainPage(page, MainPageRequest(data.name, data.data))
+                        api.getMainPage(
+                            page,
+                            MainPageRequest(data.name, data.data, data.horizontalImages)
+                        )
                     }
                 } else {
                     api.mainPage.apmap { data ->
-                        api.getMainPage(page, MainPageRequest(data.name, data.data))
+                        api.getMainPage(
+                            page,
+                            MainPageRequest(data.name, data.data, data.horizontalImages)
+                        )
                     }
                 }
             }
