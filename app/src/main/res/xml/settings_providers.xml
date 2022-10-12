@@ -2,6 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
+            app:isPreferenceVisible="false"
             android:icon="@drawable/ic_baseline_language_24"
             android:key="@string/provider_lang_key"
             android:title="@string/provider_lang_settings" />

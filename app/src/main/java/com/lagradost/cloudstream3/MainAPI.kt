@@ -17,13 +17,11 @@ import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import okhttp3.Interceptor
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
-import kotlin.collections.MutableList
 
 const val USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -191,17 +189,26 @@ object APIHolder {
         return list.filter { names.contains(it) }.map { DubStatus.valueOf(it) }.toHashSet()
     }
 
+    /**
+     * Gets all the activated provider languages
+     * Used to obey the preference provider_lang_key
+     * but it turned out too complicated and unnecessary with extensions.
+     **/
     fun Context.getApiProviderLangSettings(): HashSet<String> {
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val hashSet = HashSet<String>()
-        hashSet.add("en") // def is only en
-        val list = settingsManager.getStringSet(
-            this.getString(R.string.provider_lang_key),
-            hashSet.toMutableSet()
-        )
+        val langs = apis.map { it.lang }.toSet()
+            .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) }
+        return langs.toHashSet()
 
-        if (list.isNullOrEmpty()) return hashSet
-        return list.toHashSet()
+//        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+//        val hashSet = HashSet<String>()
+//        hashSet.add("en") // def is only en
+//        val list = settingsManager.getStringSet(
+//            this.getString(R.string.provider_lang_key),
+//            hashSet.toMutableSet()
+//        )
+//
+//        if (list.isNullOrEmpty()) return hashSet
+//        return list.toHashSet()
     }
 
     fun Context.getApiTypeSettings(): HashSet<TvType> {
@@ -324,12 +331,23 @@ data class SettingsJson(
 data class MainPageData(
     val name: String,
     val data: String,
+    val horizontalImages: Boolean = false
 )
 
 data class MainPageRequest(
     val name: String,
     val data: String,
+    val horizontalImages: Boolean,
+    //TODO genre selection or smth
 )
+
+fun mainPage(url: String, name: String, horizontalImages: Boolean = false): MainPageData {
+    return MainPageData(name = name, data = url, horizontalImages = horizontalImages)
+}
+
+fun mainPageOf(vararg elements: MainPageData): List<MainPageData> {
+    return elements.toList()
+}
 
 /** return list of MainPageData with url to name, make for more readable code */
 fun mainPageOf(vararg elements: Pair<String, String>): List<MainPageData> {
@@ -339,10 +357,21 @@ fun mainPageOf(vararg elements: Pair<String, String>): List<MainPageData> {
 fun newHomePageResponse(
     name: String,
     list: List<SearchResponse>,
-    hasNext: Boolean? = null
+    hasNext: Boolean? = null,
 ): HomePageResponse {
     return HomePageResponse(
         listOf(HomePageList(name, list)),
+        hasNext = hasNext ?: list.isNotEmpty()
+    )
+}
+
+fun newHomePageResponse(
+    data: MainPageRequest,
+    list: List<SearchResponse>,
+    hasNext: Boolean? = null,
+): HomePageResponse {
+    return HomePageResponse(
+        listOf(HomePageList(data.name, list, data.horizontalImages)),
         hasNext = hasNext ?: list.isNotEmpty()
     )
 }
@@ -383,14 +412,17 @@ abstract class MainAPI {
 
     /** if this is turned on then it will request the homepage one after the other,
     used to delay if they block many request at the same time*/
-    open var sequentialMainPage : Boolean = false
+    open var sequentialMainPage: Boolean = false
+
     /** in milliseconds, this can be used to add more delay between homepage requests
      *  on first load if sequentialMainPage is turned on */
-    open var sequentialMainPageDelay : Long = 0L
+    open var sequentialMainPageDelay: Long = 0L
+
     /** in milliseconds, this can be used to add more delay between homepage requests when scrolling */
-    open var sequentialMainPageScrollDelay : Long = 0L
+    open var sequentialMainPageScrollDelay: Long = 0L
+
     /** used to keep track when last homepage request was in unixtime ms */
-    var lastHomepageRequest : Long = 0L
+    var lastHomepageRequest: Long = 0L
 
     open var lang = "en" // ISO_639_1 check SubtitleHelper
 
@@ -423,7 +455,8 @@ abstract class MainAPI {
     open val vpnStatus = VPNStatus.None
     open val providerType = ProviderType.DirectProvider
 
-    open val mainPage = listOf(MainPageData("", ""))
+    //emptyList<MainPageData>() //
+    open val mainPage = listOf(MainPageData("", "", false))
 
     @WorkerThread
     open suspend fun getMainPage(
