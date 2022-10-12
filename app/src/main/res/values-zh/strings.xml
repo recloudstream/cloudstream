@@ -231,12 +231,12 @@
     </string>
 
     <string name="season">季</string>
-    <string name="season_format">第 %d%s %s</string>
+    <string name="season_format">%s %d%s</string>
     <string name="no_season">无季</string>
     <string name="episode">集</string>
     <string name="episodes">集</string>
     <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">第 %s %d</string>
+    <string name="episode_format" formatted="true">%d %s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">未找到剧集</string>
