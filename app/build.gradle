@@ -32,8 +32,8 @@ android {
 
     defaultConfig {
         applicationId "com.lagradost.cloudstream3"
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdkVersion 26
+        targetSdkVersion 31
 
         versionCode 51
         versionName "3.1.5"
@@ -75,7 +75,7 @@ android {
             resValue "bool", "is_prerelease", "true"
         }
         debug {
-            debuggable true
+            debuggable false
             applicationIdSuffix ".debug"
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "bool", "is_prerelease", "true"

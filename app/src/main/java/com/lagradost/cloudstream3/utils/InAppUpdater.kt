@@ -250,7 +250,7 @@ class InAppUpdater {
 
             if (!checkAutoUpdate || settingsManager.getBoolean(
                     getString(R.string.auto_update_key),
-                    true
+                    false
                 )
             ) {
                 val update = getAppUpdate()
