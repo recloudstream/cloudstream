@@ -264,7 +264,7 @@
     <string name="episode_action_chromecast_episode">Episode Chromecast</string>
     <string name="episode_action_chromecast_mirror">Mirror Chromecast</string>
     <string name="episode_action_play_in_app">Putar di aplikasi</string>
-    <string name="episode_action_play_in_vlc">Putar di VLC</string>
+    <string name="episode_action_play_in_format">Putar di %s</string>
     <string name="episode_action_play_in_browser">Putar di browser</string>
     <string name="episode_action_copy_link">Salin tautan</string>
     <string name="episode_action_auto_download">Download otomatis</string>

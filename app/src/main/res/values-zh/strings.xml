@@ -303,7 +303,7 @@
     <string name="episode_action_chromecast_episode">投屏剧集</string>
     <string name="episode_action_chromecast_mirror">投屏镜像</string>
     <string name="episode_action_play_in_app">在应用中播放</string>
-    <string name="episode_action_play_in_vlc">在 VLC 中播放</string>
+    <string name="episode_action_play_in_format">在 %s 中播放</string>
     <string name="episode_action_play_in_browser">在浏览器中播放</string>
     <string name="episode_action_copy_link">复制链接</string>
     <string name="episode_action_auto_download">自动下载</string>

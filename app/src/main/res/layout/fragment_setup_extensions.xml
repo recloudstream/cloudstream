@@ -44,11 +44,11 @@
             android:text="@string/blank_repo_message"
             android:textSize="16sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/list_repositories"
-            style="@style/WhiteButton"
-            android:layout_width="wrap_content"
-            android:text="@string/view_public_repositories_button" />
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:id="@+id/list_repositories"-->
+<!--            style="@style/WhiteButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:text="@string/view_public_repositories_button" />-->
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -68,12 +68,12 @@
         android:gravity="bottom|end"
         android:orientation="horizontal">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/view_public_repositories_button"
-            style="@style/WhiteButton"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:text="@string/add_repository" />
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:id="@+id/view_public_repositories_button"-->
+<!--            style="@style/WhiteButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_gravity="center_vertical|end"-->
+<!--            android:text="@string/add_repository" />-->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/next_btt"

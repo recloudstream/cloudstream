@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -11,16 +12,16 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.launchSafe
-import com.lagradost.cloudstream3.plugins.PluginData
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.PluginManager.getPluginPath
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.SitePlugin
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
-import kotlinx.coroutines.launch
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import java.io.File
 
 typealias Plugin = Pair<String, SitePlugin>
 /**
@@ -45,8 +46,12 @@ class PluginsViewModel : ViewModel() {
         private val repositoryCache: MutableMap<String, List<Plugin>> = mutableMapOf()
         const val TAG = "PLG"
 
-        private fun isDownloaded(plugin: Plugin, data: Set<String>? = null): Boolean {
-            return (data ?: getDownloads()).contains(plugin.second.internalName)
+        private fun isDownloaded(
+            context: Context,
+            pluginName: String,
+            repositoryUrl: String
+        ): Boolean {
+            return getPluginPath(context, pluginName, repositoryUrl).exists()
         }
 
         private suspend fun getPlugins(
@@ -63,24 +68,21 @@ class PluginsViewModel : ViewModel() {
                 ?.also { repositoryCache[repositoryUrl] = it } ?: emptyList()
         }
 
-        private fun getStoredPlugins(): Array<PluginData> {
-            return PluginManager.getPluginsOnline()
-        }
-
-        private fun getDownloads(): Set<String> {
-            return getStoredPlugins().map { it.internalName }.toSet()
-        }
-
         /**
          * @param viewModel optional, updates the plugins livedata for that viewModel if included
          * */
         fun downloadAll(activity: Activity?, repositoryUrl: String, viewModel: PluginsViewModel?) =
             ioSafe {
                 if (activity == null) return@ioSafe
-                val stored = getDownloads()
                 val plugins = getPlugins(repositoryUrl)
 
-                plugins.filter { plugin -> !isDownloaded(plugin, stored) }.also { list ->
+                plugins.filter { plugin ->
+                    !isDownloaded(
+                        activity,
+                        plugin.second.internalName,
+                        repositoryUrl
+                    )
+                }.also { list ->
                     main {
                         showToast(
                             activity,
@@ -103,7 +105,7 @@ class PluginsViewModel : ViewModel() {
                     PluginManager.downloadAndLoadPlugin(
                         activity,
                         metadata.url,
-                        metadata.name,
+                        metadata.internalName,
                         repo
                     )
                 }.main { list ->
@@ -117,7 +119,7 @@ class PluginsViewModel : ViewModel() {
                             ),
                             Toast.LENGTH_SHORT
                         )
-                        viewModel?.updatePluginListPrivate(repositoryUrl)
+                        viewModel?.updatePluginListPrivate(activity, repositoryUrl)
                     } else if (list.isNotEmpty()) {
                         showToast(activity, R.string.download_failed, Toast.LENGTH_SHORT)
                     }
@@ -140,11 +142,14 @@ class PluginsViewModel : ViewModel() {
         if (activity == null) return@ioSafe
         val (repo, metadata) = plugin
 
-        val (success, message) = if (isDownloaded(plugin) || isLocal) {
-            PluginManager.deletePlugin(
-                metadata.url,
-                isLocal
-            ) to R.string.plugin_deleted
+        val file = if (isLocal) File(plugin.second.url) else getPluginPath(
+            activity,
+            plugin.second.internalName,
+            plugin.first
+        )
+
+        val (success, message) = if (file.exists()) {
+            PluginManager.deletePlugin(file) to R.string.plugin_deleted
         } else {
             PluginManager.downloadAndLoadPlugin(
                 activity,
@@ -165,18 +170,19 @@ class PluginsViewModel : ViewModel() {
             if (isLocal)
                 updatePluginListLocal()
             else
-                updatePluginListPrivate(repositoryUrl)
+                updatePluginListPrivate(activity, repositoryUrl)
     }
 
-    private suspend fun updatePluginListPrivate(repositoryUrl: String) {
-        val stored = getDownloads()
+    private suspend fun updatePluginListPrivate(context: Context, repositoryUrl: String) {
         val plugins = getPlugins(repositoryUrl)
         val list = plugins.map { plugin ->
-            PluginViewData(plugin, isDownloaded(plugin, stored))
+            PluginViewData(plugin, isDownloaded(context, plugin.second.internalName, plugin.first))
         }
 
         this.plugins = list
-        _filteredPlugins.postValue(false to list.filterTvTypes().filterLang().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(
+            false to list.filterTvTypes().filterLang().sortByQuery(currentQuery)
+        )
     }
 
     // Perhaps can be optimized?
@@ -184,7 +190,8 @@ class PluginsViewModel : ViewModel() {
         if (tvTypes.isEmpty()) return this
         return this.filter {
             (it.plugin.second.tvTypes?.any { type -> tvTypes.contains(type) } == true) ||
-            (tvTypes.contains("Others") && (it.plugin.second.tvTypes ?: emptyList()).isEmpty())
+                    (tvTypes.contains("Others") && (it.plugin.second.tvTypes
+                        ?: emptyList()).isEmpty())
         }
     }
 
@@ -208,17 +215,22 @@ class PluginsViewModel : ViewModel() {
     }
 
     fun updateFilteredPlugins() {
-        _filteredPlugins.postValue(false to plugins.filterTvTypes().filterLang().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(
+            false to plugins.filterTvTypes().filterLang().sortByQuery(currentQuery)
+        )
     }
 
-    fun updatePluginList(repositoryUrl: String) = viewModelScope.launchSafe {
+    fun updatePluginList(context: Context?, repositoryUrl: String) = viewModelScope.launchSafe {
+        if (context == null) return@launchSafe
         Log.i(TAG, "updatePluginList = $repositoryUrl")
-        updatePluginListPrivate(repositoryUrl)
+        updatePluginListPrivate(context, repositoryUrl)
     }
 
     fun search(query: String?) {
         currentQuery = query
-        _filteredPlugins.postValue(true to (filteredPlugins.value?.second?.sortByQuery(query) ?: emptyList()))
+        _filteredPlugins.postValue(
+            true to (filteredPlugins.value?.second?.sortByQuery(query) ?: emptyList())
+        )
     }
 
     /**
@@ -234,6 +246,8 @@ class PluginsViewModel : ViewModel() {
             }
 
         plugins = downloadedPlugins
-        _filteredPlugins.postValue(false to downloadedPlugins.filterTvTypes().filterLang().sortByQuery(currentQuery))
+        _filteredPlugins.postValue(
+            false to downloadedPlugins.filterTvTypes().filterLang().sortByQuery(currentQuery)
+        )
     }
 }

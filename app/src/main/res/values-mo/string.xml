@@ -145,7 +145,7 @@
     <string name="episode_action_chromecast_episode">aauugghhooo-ahah ohaaauugghh</string>
     <string name="episode_action_chromecast_mirror">aoohaaahhu ahouuhhh</string>
     <string name="episode_action_play_in_app">ooo-ahahaauuh aaahhu</string>
-    <string name="episode_action_play_in_vlc">ooo-ahah ohaauuh</string>
+    <string name="episode_action_play_in_format">ooo-ahah ohaauuh</string>
     <string name="episode_action_play_in_browser">ahoha ooo-ahahohoohah oooohh</string>
     <string name="episode_action_copy_link">aauugghhahhaauugghh</string>
     <string name="episode_action_auto_download">aaaghhoooohh aaahhu ahooo</string>

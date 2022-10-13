@@ -292,7 +292,7 @@
     <string name="episode_action_chromecast_episode">Tập Chromecast</string>
     <string name="episode_action_chromecast_mirror">Chiếu Chromecast</string>
     <string name="episode_action_play_in_app">Xem với trình phát mặc định</string>
-    <string name="episode_action_play_in_vlc">Xem với trình phát VLC</string>
+    <string name="episode_action_play_in_format">Xem với trình phát %s</string>
     <string name="episode_action_play_in_browser">Xem tại trình duyệt</string>
     <string name="episode_action_copy_link">Sao chép liên kết</string>
     <string name="episode_action_auto_download">Tự động tải xuống</string>

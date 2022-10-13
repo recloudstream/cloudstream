@@ -252,7 +252,7 @@
     <string name="episode_action_chromecast_episode">Chromecast odcinka</string>
     <string name="episode_action_chromecast_mirror">Chromecast mirroru</string>
     <string name="episode_action_play_in_app">Odtwórz w aplikacji</string>
-    <string name="episode_action_play_in_vlc">Odtwórz w VLC</string>
+    <string name="episode_action_play_in_format">Odtwórz w %s</string>
     <string name="episode_action_play_in_browser">Odtwórz w przeglądarce</string>
     <string name="episode_action_copy_link">Kopiuj link</string>
     <string name="episode_action_auto_download">Automatyczne pobieranie</string>

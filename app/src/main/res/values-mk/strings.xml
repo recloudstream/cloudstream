@@ -190,7 +190,7 @@
     <string name="episode_action_chromecast_episode">Епизода на Chromecast</string>
     <string name="episode_action_chromecast_mirror">Огледало на Chromecastr</string>
     <string name="episode_action_play_in_app">Пушти во апликацијата</string>
-    <string name="episode_action_play_in_vlc">Пушти на VLC</string>
+    <string name="episode_action_play_in_format">Пушти на %s</string>
     <string name="episode_action_play_in_browser">Пушти на прелистувач</string>
     <string name="episode_action_copy_link">Копирај линк</string>
     <string name="episode_action_auto_download">Авто превземање</string>
