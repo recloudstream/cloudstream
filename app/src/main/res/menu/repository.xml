@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--        app:searchHintIcon="@drawable/search_icon"-->
+<!--        android:icon="@drawable/search_icon"-->
     <item
         android:id="@+id/search_button"
-        android:icon="@drawable/search_icon"
         android:title="@string/title_search"
-        app:actionViewClass="android.widget.SearchView"
-        app:searchHintIcon="@drawable/search_icon"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/search_icon"
+        android:searchIcon="@drawable/search_icon"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|collapseActionView"
+        tools:ignore="AppCompatResource" />
     <item
         android:id="@+id/lang_filter"
         android:icon="@drawable/ic_baseline_language_24"
