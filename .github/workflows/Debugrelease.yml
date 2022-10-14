@@ -1,0 +1,2 @@
+- name: Build & Publish Debug APK
+  uses: ShaunLWM/action-release-debugapk@0.0.7
