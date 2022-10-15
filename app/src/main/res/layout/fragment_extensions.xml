@@ -56,6 +56,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:focusable="true"
         android:id="@+id/plugin_storage_appbar"
         android:nextFocusRight="@id/add_repo_button_imageview"
         android:layout_width="match_parent"
@@ -185,6 +186,7 @@
                 android:background="@drawable/outline_drawable"
                 android:nextFocusLeft="@id/plugin_storage_appbar"
                 android:layout_gravity="center"
+                android:focusable="true"
 
                 android:id="@+id/add_repo_button_imageview"
                 android:layout_width="40dp"

@@ -232,6 +232,11 @@ class ExtensionsFragment : Fragment() {
         val isTv = isTrueTvSettings()
         add_repo_button?.isGone = isTv
         add_repo_button_imageview_holder?.isVisible = isTv
+
+        // Band-aid for Fire TV
+        plugin_storage_appbar?.isFocusableInTouchMode = isTv
+        add_repo_button_imageview?.isFocusableInTouchMode = isTv
+
         add_repo_button?.setOnClickListener(addRepositoryClick)
         add_repo_button_imageview?.setOnClickListener(addRepositoryClick)
 
