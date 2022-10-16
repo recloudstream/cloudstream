@@ -24,6 +24,12 @@
             android:icon="@drawable/netflix_download" />
 
     <Preference
+        android:key="@string/key_clear_watching"
+        android:title="@string/clear_watching_pref"
+        android:icon="@drawable/ic_baseline_playlist_play_24"
+        app:summary="@string/clear_watching_summ" />
+
+    <Preference
             android:key="@string/legal_notice_key"
             android:title="@string/legal_notice"
             android:icon="@drawable/ic_baseline_warning_24" />

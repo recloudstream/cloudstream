@@ -57,6 +57,7 @@
     <string name="filter_sub_lang_key" translatable="false">filter_sub_lang_key</string>
     <string name="pref_filter_search_quality_key" translatable="false">pref_filter_search_quality_key</string>
     <string name="enable_nsfw_on_providers_key" translatable="false">enable_nsfw_on_providers_key</string>
+    <string name="key_clear_watching" translatable="false">key_clear_watching</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
@@ -413,6 +414,11 @@
     <string name="add_site_summary">Add a clone of an existing site, with a different url</string>
 
     <string name="download_path_pref">Download path</string>
+    <string name="clear_watching_pref">Clear Watch History</string>
+    <string name="clear_watching_summ">Clear \'Continue Watching\' history.</string>
+    <string name="clear_watching_prompt">Are you sure you want to clear watch history?</string>
+    <string name="clear_watching_done">Watch history successfully cleared!</string>
+    <string name="clear_watching_error">Failed to clear watch history!</string>
 
     <string name="nginx_url_pref">Nginx server url</string>
 
@@ -501,6 +507,8 @@
     <string name="authenticated_user_fail" formatted="true">Failed to authenticate to %s</string>
 
     <!-- ============ -->
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="none">None</string>
     <string name="normal">Normal</string>
     <string name="all">All</string>

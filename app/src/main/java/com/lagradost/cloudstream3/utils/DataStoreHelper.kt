@@ -69,7 +69,7 @@ object DataStoreHelper {
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse
 
-    private var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
+    var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
 
     fun getAllWatchStateIds(): List<Int>? {
         val folder = "$currentAccount/$RESULT_WATCH_STATE"
