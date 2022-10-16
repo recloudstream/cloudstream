@@ -237,7 +237,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Sbthe(),
 
     Fastream(),
-    
+
     FEmbed(),
     FeHD(),
     Fplayer(),
