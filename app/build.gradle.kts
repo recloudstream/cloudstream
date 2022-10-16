@@ -52,11 +52,7 @@ android {
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
 
-        resValue(
-            "string",
-            "commit_hash",
-            ("git rev-parse --short HEAD".execute() ?: "")
-        )
+        resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
 
         resValue("bool", "is_prerelease", "false")
 
