@@ -29,8 +29,6 @@ import com.lagradost.cloudstream3.ui.EasterEggMonke
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
-import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -330,36 +328,6 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                         .putString(getString(R.string.download_path_pref), dirs[it]).apply()
                 }
             }
-            return@setOnPreferenceClickListener true
-        }
-
-        getPref(R.string.key_clear_watching)?.setOnPreferenceClickListener {
-            val builder: AlertDialog.Builder =
-                AlertDialog.Builder(it.context, R.style.AlertDialogCustom)
-            builder.setTitle(R.string.clear_watching_pref)
-            builder.setMessage(R.string.clear_watching_prompt)
-            builder.setPositiveButton(getString(R.string.yes)
-            ) { dialog, which -> // Clear Watch History data
-                var doneClearMessage = R.string.clear_watching_done
-                try {
-                    it.context.removeKeys("${DataStoreHelper.currentAccount}/$RESULT_RESUME_WATCHING")
-                    it.context.removeKeys("${DataStoreHelper.currentAccount}/$RESULT_RESUME_WATCHING_OLD")
-                } catch (e: Exception) {
-                    logError(e)
-                    doneClearMessage = R.string.clear_watching_error
-                }
-                dialog.dismiss()
-
-                val newBuilder = AlertDialog.Builder(it.context, R.style.AlertDialogCustom)
-                newBuilder.setTitle(R.string.clear_watching_pref)
-                newBuilder.setMessage(doneClearMessage)
-                newBuilder.show()
-            }
-            builder.setNegativeButton(getString(R.string.no)
-            ) { dialog, which -> // Do nothing but close the dialog
-                dialog.dismiss()
-            }
-            builder.show()
             return@setOnPreferenceClickListener true
         }
 

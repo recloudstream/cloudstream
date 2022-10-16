@@ -49,18 +49,17 @@ import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setMaxViewPoolSize
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
-import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
-import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -70,7 +69,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
-import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.widget.CenterZoomLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.home_api_fab
@@ -521,6 +519,38 @@ class HomeFragment : Fragment() {
             if (listHomepageItems.isNotEmpty()) {
                 activity.loadSearchResult(listHomepageItems.random())
             }
+        }
+        home_clear_watching?.setOnClickListener {
+            val builder: AlertDialog.Builder =
+                AlertDialog.Builder(it.context, R.style.AlertDialogCustom)
+            builder.setTitle(R.string.clear_watching_pref)
+            builder.setMessage(R.string.clear_watching_prompt)
+            builder.setPositiveButton(getString(R.string.yes)
+            ) { dialog, which -> // Clear Watch History data
+                var doneClearMessage = R.string.clear_watching_done
+                try {
+                    deleteAllResumeStateIds()
+                    homeViewModel.loadResumeWatching()
+                } catch (e: Exception) {
+                    logError(e)
+                    doneClearMessage = R.string.clear_watching_error
+                }
+                dialog.dismiss()
+
+                val newBuilder = AlertDialog.Builder(it.context, R.style.AlertDialogCustom)
+                newBuilder.setTitle(R.string.clear_watching_pref)
+                newBuilder.setMessage(doneClearMessage)
+                newBuilder.setPositiveButton("OK"
+                ) { newdialog, newwhich -> // Do nothing but close the dialog
+                    newdialog.dismiss()
+                }
+                newBuilder.show()
+            }
+            builder.setNegativeButton(getString(R.string.no)
+            ) { dialog, which -> // Do nothing but close the dialog
+                dialog.dismiss()
+            }
+            builder.show()
         }
 
         //Load value for toggling Random button. Hide at startup
