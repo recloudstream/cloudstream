@@ -93,15 +93,15 @@ open class StreamSB : ExtractorApi() {
     }
 
     data class Subs (
-        @JsonProperty("file") val file: String,
-        @JsonProperty("label") val label: String,
+        @JsonProperty("file") val file: String? = null,
+        @JsonProperty("label") val label: String? = null,
     )
 
     data class StreamData (
         @JsonProperty("file") val file: String,
         @JsonProperty("cdn_img") val cdnImg: String,
         @JsonProperty("hash") val hash: String,
-        @JsonProperty("subs") val subs: List<Subs>?,
+        @JsonProperty("subs") val subs: ArrayList<Subs>? = arrayListOf(),
         @JsonProperty("length") val length: String,
         @JsonProperty("id") val id: String,
         @JsonProperty("title") val title: String,
@@ -141,5 +141,14 @@ open class StreamSB : ExtractorApi() {
             url,
             headers = headers
         ).forEach(callback)
+
+        mapped.streamData.subs?.map {sub ->
+            subtitleCallback.invoke(
+                SubtitleFile(
+                    sub.label.toString(),
+                    sub.file ?: return@map null,
+                )
+            )
+        }
     }
 }

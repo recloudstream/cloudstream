@@ -246,6 +246,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     LayarKaca(),
     Rasacintaku(),
     FEnet(),
+    Kotakajair(),
     //  WatchSB(), 'cause StreamSB.kt works
     Uqload(),
     Uqload1(),
@@ -317,6 +318,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Linkbox(),
     Acefile(),
     SpeedoStream(),
+    SpeedoStream1(),
     Zorofile(),
     Embedgram(),
     Mvidoo(),
