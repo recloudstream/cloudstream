@@ -7,6 +7,11 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
+class Sbspeed : StreamSB() {
+    override var name = "Sbspeed"
+    override var mainUrl = "https://sbspeed.com"
+}
+
 class Streamsss : StreamSB() {
     override var mainUrl = "https://streamsss.net"
 }
