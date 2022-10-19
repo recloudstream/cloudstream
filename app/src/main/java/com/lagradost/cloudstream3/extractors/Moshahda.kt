@@ -17,8 +17,7 @@ class Moshahda : ExtractorApi() {
         val sources = mutableListOf<ExtractorLink>()
         val regex = """\/embed-([0-9A-Za-z]*)""".toRegex()
         val scode = regex.find(url)?.groupValues?.getOrNull(1)
-        val slink = """https://moshahda.net/embed-$scode.html?"""
-        
+        val slink = """$mainUrl/embed-$scode.html?"""
         with(app.get(slink).document) {
             val data = this.select("body > script").mapNotNull { script ->
                 if (script.data().contains("sources: [")) {
@@ -40,7 +39,6 @@ class Moshahda : ExtractorApi() {
                     )
                 )
             }
-            
         }
         return sources
     }
