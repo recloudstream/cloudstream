@@ -283,6 +283,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Userload(),
     Supervideo(),
     GuardareStream(),
+    CineGrabber(),
 
     // StreamSB.kt works
     //  SBPlay(),

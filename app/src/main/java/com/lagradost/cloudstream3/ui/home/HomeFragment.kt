@@ -23,6 +23,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.*
@@ -280,6 +281,7 @@ class HomeFragment : Fragment() {
             val builder =
                 BottomSheetDialog(this)
 
+            builder.behavior.state = BottomSheetBehavior.STATE_EXPANDED
             builder.setContentView(R.layout.home_select_mainpage)
             builder.show()
             builder.let { dialog ->

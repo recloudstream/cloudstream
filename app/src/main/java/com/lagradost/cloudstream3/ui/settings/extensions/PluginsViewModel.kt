@@ -210,7 +210,7 @@ class PluginsViewModel : ViewModel() {
             // Return list to base state if no query
             this.sortedBy { it.plugin.second.name }
         } else {
-            this.sortedBy { -FuzzySearch.ratio(it.plugin.second.name, query) }
+            this.sortedBy { -FuzzySearch.partialRatio(it.plugin.second.name.lowercase(), query.lowercase()) }
         }
     }
 
