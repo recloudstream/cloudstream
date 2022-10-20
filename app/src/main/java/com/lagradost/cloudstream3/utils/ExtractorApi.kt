@@ -248,6 +248,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Rasacintaku(),
     FEnet(),
     Kotakajair(),
+    Cdnplayer(),
     //  WatchSB(), 'cause StreamSB.kt works
     Uqload(),
     Uqload1(),
