@@ -85,7 +85,7 @@ open class VidSrcExtractor : ExtractorApi() {
                         this.name,
                         this.name,
                         srcm3u8,
-                        this.mainUrl,
+                        "https://vidsrc.stream/",
                         Qualities.Unknown.value,
                         extractorData = pass,
                         isM3u8 = true
