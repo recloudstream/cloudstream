@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import okhttp3.Interceptor
@@ -39,7 +40,7 @@ object APIHolder {
     private const val defProvider = 0
 
     // ConcurrentModificationException is possible!!!
-    val allProviders: MutableList<MainAPI> = arrayListOf()
+    val allProviders = threadSafeListOf<MainAPI>()
 
     fun initAll() {
         for (api in allProviders) {
@@ -52,7 +53,7 @@ object APIHolder {
         return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     }
 
-    var apis: List<MainAPI> = arrayListOf()
+    var apis: List<MainAPI> = threadSafeListOf()
     var apiMap: Map<String, Int>? = null
 
     fun addPluginMapping(plugin: MainAPI) {
@@ -72,16 +73,19 @@ object APIHolder {
 
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
-        initMap()
-        return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
-            ?: allProviders.firstOrNull { it.name == apiName }
+        synchronized(allProviders) {
+            initMap()
+            return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
+                ?: allProviders.firstOrNull { it.name == apiName }
+        }
     }
 
     fun getApiFromUrlNull(url: String?): MainAPI? {
         if (url == null) return null
-        for (api in allProviders) {
-            if (url.startsWith(api.mainUrl))
-                return api
+        synchronized(allProviders) {
+            allProviders.forEach { api ->
+                if (url.startsWith(api.mainUrl)) return api
+            }
         }
         return null
     }
