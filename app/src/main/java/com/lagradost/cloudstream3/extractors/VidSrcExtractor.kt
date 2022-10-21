@@ -91,12 +91,6 @@ open class VidSrcExtractor : ExtractorApi() {
                         isM3u8 = true
                     )
                 )
-
-//                M3u8Helper.generateM3u8(
-//                    name,
-//                    srcm3u8,
-//                    absoluteUrl
-//                ).forEach(callback)
             } else {
                 loadExtractor(linkfixed, url, subtitleCallback, callback)
             }
