@@ -341,6 +341,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Gdriveplayerco(),
     Gdriveplayer(),
     DatabaseGdrive(),
+    DatabaseGdrive2(),
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),

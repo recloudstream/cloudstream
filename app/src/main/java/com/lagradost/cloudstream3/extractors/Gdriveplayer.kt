@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import org.jsoup.nodes.Element
 import java.security.DigestException
 import java.security.MessageDigest
@@ -10,43 +11,47 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+class DatabaseGdrive2 : Gdriveplayer() {
+    override var mainUrl = "https://databasegdriveplayer.co"
+}
+
 class DatabaseGdrive : Gdriveplayer() {
     override var mainUrl = "https://series.databasegdriveplayer.co"
 }
 
-class Gdriveplayerapi: Gdriveplayer() {
+class Gdriveplayerapi : Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayerapi.com"
 }
 
-class Gdriveplayerapp: Gdriveplayer() {
+class Gdriveplayerapp : Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayer.app"
 }
 
-class Gdriveplayerfun: Gdriveplayer() {
+class Gdriveplayerfun : Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayer.fun"
 }
 
-class Gdriveplayerio: Gdriveplayer() {
+class Gdriveplayerio : Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayer.io"
 }
 
-class Gdriveplayerme: Gdriveplayer() {
+class Gdriveplayerme : Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayer.me"
 }
 
-class Gdriveplayerbiz: Gdriveplayer() {
+class Gdriveplayerbiz : Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayer.biz"
 }
 
-class Gdriveplayerorg: Gdriveplayer() {
+class Gdriveplayerorg : Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayer.org"
 }
 
-class Gdriveplayerus: Gdriveplayer() {
+class Gdriveplayerus : Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayer.us"
 }
 
-class Gdriveplayerco: Gdriveplayer() {
+class Gdriveplayerco : Gdriveplayer() {
     override val mainUrl: String = "https://gdriveplayer.co"
 }
 
@@ -136,6 +141,10 @@ open class Gdriveplayer : ExtractorApi() {
         return find(str)?.groupValues?.getOrNull(1)
     }
 
+    private fun String.addMarks(str: String): String {
+        return this.replace(Regex("\"?$str\"?"), "\"$str\"")
+    }
+
     override suspend fun getUrl(
         url: String,
         referer: String?,
@@ -145,18 +154,19 @@ open class Gdriveplayer : ExtractorApi() {
         val document = app.get(url).document
 
         val eval = unpackJs(document)?.replace("\\", "") ?: return
-        val data = AppUtils.tryParseJson<AesData>(Regex("data='(\\S+?)'").first(eval)) ?: return
+        val data = tryParseJson<AesData>(Regex("data='(\\S+?)'").first(eval)) ?: return
         val password = Regex("null,['|\"](\\w+)['|\"]").first(eval)
             ?.split(Regex("\\D+"))
             ?.joinToString("") {
                 Char(it.toInt()).toString()
             }.let { Regex("var pass = \"(\\S+?)\"").first(it ?: return)?.toByteArray() }
             ?: throw ErrorLoadingException("can't find password")
-        val decryptedData =
-            cryptoAESHandler(data, password, false)?.let { getAndUnpack(it) }?.replace("\\", "")
-                ?.substringAfter("sources:[")?.substringBefore("],")
+        val decryptedData = cryptoAESHandler(data, password, false)?.let { getAndUnpack(it) }?.replace("\\", "")
 
-        Regex("\"file\":\"(\\S+?)\".*?res=(\\d+)").findAll(decryptedData ?: return).map {
+        val sourceData = decryptedData?.substringAfter("sources:[")?.substringBefore("],")
+        val subData = decryptedData?.substringAfter("tracks:[")?.substringBefore("],")
+
+        Regex("\"file\":\"(\\S+?)\".*?res=(\\d+)").findAll(sourceData ?: return).map {
             it.groupValues[1] to it.groupValues[2]
         }.toList().distinctBy { it.second }.map { (link, quality) ->
             callback.invoke(
@@ -171,12 +181,29 @@ open class Gdriveplayer : ExtractorApi() {
             )
         }
 
+        subData?.addMarks("file")?.addMarks("kind")?.addMarks("label").let { dataSub ->
+            tryParseJson<List<Tracks>>("[$dataSub]")?.map { sub ->
+                subtitleCallback.invoke(
+                    SubtitleFile(
+                        sub.label,
+                        httpsify(sub.file)
+                    )
+                )
+            }
+        }
+
     }
 
     data class AesData(
         @JsonProperty("ct") val ct: String,
         @JsonProperty("iv") val iv: String,
         @JsonProperty("s") val s: String
+    )
+
+    data class Tracks(
+        @JsonProperty("file") val file: String,
+        @JsonProperty("kind") val kind: String,
+        @JsonProperty("label") val label: String
     )
 
 }
