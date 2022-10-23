@@ -78,13 +78,14 @@ open class XStreamCdn : ExtractorApi() {
         @JsonProperty("success") val success: Boolean,
         @JsonProperty("player") val player: Player? = null,
         @JsonProperty("data") val data: List<ResponseData>?,
-        @JsonProperty("captions") val captions: List<Captions>?,
+        @JsonProperty("captions") val captions: List<Captions?>?,
     )
 
     private data class Captions(
         @JsonProperty("id") val id: String,
         @JsonProperty("hash") val hash: String,
         @JsonProperty("language") val language: String,
+        @JsonProperty("extension") val extension: String
     )
 
     override fun getExtractorUrl(id: String): String {
@@ -125,8 +126,8 @@ open class XStreamCdn : ExtractorApi() {
             sources?.captions?.map {
                 subtitleCallback.invoke(
                     SubtitleFile(
-                        it.language,
-                        "$mainUrl/asset/userdata/$userData/caption/${it.hash}/${it.id}.srt"
+                        it?.language.toString(),
+                        "$mainUrl/asset/userdata/$userData/caption/${it?.hash}/${it?.id}.${it?.extension}"
                     )
                 )
             }
