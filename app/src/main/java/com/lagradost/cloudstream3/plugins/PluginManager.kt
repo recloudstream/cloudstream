@@ -18,6 +18,12 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
+import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
+import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
+import com.lagradost.cloudstream3.APIHolder.removePluginMapping
+import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
@@ -28,6 +34,8 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -241,11 +249,45 @@ object PluginManager {
                 }
         }.flatten().distinctBy { it.onlineData.second.url }
 
+        // Iterate online repos and returns not downloaded plugins
+        val notDownloadedPlugins = onlinePlugins.mapNotNull outer@{ onlineData ->
+            val sitePlugin = onlineData.second
+            //Don't include empty urls
+            if (sitePlugin.url.isBlank()) { return@outer null }
+            //Omit already existing plugins
+            if (getPluginPath(activity, sitePlugin.internalName, onlineData.first).exists()) {
+                //Log.i("DevDebug", "Skip > ${sitePlugin.internalName}")
+                return@outer null
+            }
+            //TODO: Base this on language setting
+            //Omit lang not selected on language setting
+            val lang = sitePlugin.language ?: return@outer null
+            if (lang != "tl") { return@outer null }
+            //Omit NSFW, if disabled
+            sitePlugin.tvTypes?.let { tvtypes ->
+                if (!settingsForProvider.enableAdult) {
+                    if (tvtypes.contains("NSFW")) {
+                        return@outer null
+                    }
+                }
+            }
+            val savedData = PluginData(
+                url = sitePlugin.url,
+                internalName = sitePlugin.internalName,
+                isOnline = true,
+                filePath = "",
+                version = sitePlugin.version
+            )
+            OnlinePluginData(savedData, onlineData)
+        }
+        //Log.i("DevDebug", "notDownloadedPlugins => ${notDownloadedPlugins.toJson()}")
+
         debugPrint {
             "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}"
         }
 
         val updatedPlugins = mutableListOf<String>()
+        val newDownloadPlugins = mutableListOf<String>()
 
         outdatedPlugins.apmap { pluginData ->
             if (pluginData.isDisabled) {
@@ -264,8 +306,20 @@ object PluginManager {
             }
         }
 
+        notDownloadedPlugins.apmap { pluginData ->
+            downloadAndLoadPlugin(
+                activity,
+                pluginData.onlineData.second.url,
+                pluginData.savedData.internalName,
+                pluginData.onlineData.first
+            ).let { success ->
+                if (success)
+                    newDownloadPlugins.add(pluginData.onlineData.second.name)
+            }
+        }
+
         main {
-            createNotification(activity, updatedPlugins)
+            createNotification(activity, updatedPlugins + newDownloadPlugins)
         }
 
        // ioSafe {
