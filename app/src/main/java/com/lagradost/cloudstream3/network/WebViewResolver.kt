@@ -7,7 +7,9 @@ import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
@@ -65,9 +67,15 @@ class WebViewResolver(
         method: String = "GET",
         requestCallBack: (Request) -> Boolean = { false },
     ): Pair<Request?, List<Request>> {
-        return resolveUsingWebView(
-            requestCreator(method, url, referer = referer), requestCallBack
-        )
+        return try {
+            resolveUsingWebView(
+                requestCreator(method, url, referer = referer), requestCallBack
+            )
+        } catch (e: java.lang.IllegalArgumentException) {
+            logError(e)
+            debugException { "ILLEGAL URL IN resolveUsingWebView!" }
+            return null to emptyList()
+        }
     }
 
     /**
@@ -129,7 +137,7 @@ class WebViewResolver(
                         println("Loading WebView URL: $webViewUrl")
 
                         if (interceptUrl.containsMatchIn(webViewUrl)) {
-                            fixedRequest = request.toRequest().also {
+                            fixedRequest = request.toRequest()?.also {
                                 requestCallBack(it)
                             }
                             println("Web-view request finished: $webViewUrl")
@@ -138,9 +146,9 @@ class WebViewResolver(
                         }
 
                         if (additionalUrls.any { it.containsMatchIn(webViewUrl) }) {
-                            extraRequestList.add(request.toRequest().also {
+                            request.toRequest()?.also {
                                 if (requestCallBack(it)) destroyWebView()
-                            })
+                            }?.let(extraRequestList::add)
                         }
 
                         // Suppress image requests as we don't display them anywhere
@@ -251,14 +259,19 @@ class WebViewResolver(
 
 }
 
-fun WebResourceRequest.toRequest(): Request {
+fun WebResourceRequest.toRequest(): Request? {
     val webViewUrl = this.url.toString()
 
-    return requestCreator(
-        this.method,
-        webViewUrl,
-        this.requestHeaders,
-    )
+    // If invalid url then it can crash with
+    // java.lang.IllegalArgumentException: Expected URL scheme 'http' or 'https' but was 'data'
+    // At Request.Builder().url(addParamsToUrl(url, params))
+    return normalSafeApiCall {
+        requestCreator(
+            this.method,
+            webViewUrl,
+            this.requestHeaders,
+        )
+    }
 }
 
 fun Response.toWebResourceResponse(): WebResourceResponse {
