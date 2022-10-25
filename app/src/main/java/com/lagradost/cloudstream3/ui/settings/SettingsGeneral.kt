@@ -54,7 +54,8 @@ fun getCurrentLocale(context: Context): String {
 // https://www.iemoji.com/view/emoji/1794/flags/antarctica
 // Emoji Character Encoding Data --> C/C++/Java Src
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
-val appLanguages = arrayListOf(
+val appLanguages = arrayListOf(    
+    Triple("", "Bulgarian", "bg")
     Triple("", "Spanish", "es"),
     Triple("", "English", "en"),
     Triple("", "Viet Nam", "vi"),
