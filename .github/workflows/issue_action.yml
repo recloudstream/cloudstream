@@ -18,7 +18,7 @@ jobs:
         uses: actions-cool/issues-similarity-analysis@v1
         with:
           token: ${{ steps.generate_token.outputs.token }}
-          filter-threshold: 0.5
+          filter-threshold: 0.60
           title-excludes: ''
           comment-title: |
             ### Your issue looks similar to these issues:
