@@ -1,11 +1,22 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
+
+class Cdnplayer: XStreamCdn() {
+    override val name: String = "Cdnplayer"
+    override val mainUrl: String = "https://cdnplayer.online"
+}
+
+class Kotakajair: XStreamCdn() {
+    override val name: String = "Kotakajair"
+    override val mainUrl: String = "https://kotakajair.xyz"
+}
 
 class FEnet: XStreamCdn() {
     override val name: String = "FEnet"
@@ -59,44 +70,67 @@ open class XStreamCdn : ExtractorApi() {
         //val type: String // Mp4
     )
 
+    private data class Player(
+        @JsonProperty("poster_file") val poster_file: String? = null,
+    )
+
     private data class ResponseJson(
         @JsonProperty("success") val success: Boolean,
-        @JsonProperty("data") val data: List<ResponseData>?
+        @JsonProperty("player") val player: Player? = null,
+        @JsonProperty("data") val data: List<ResponseData>?,
+        @JsonProperty("captions") val captions: List<Captions?>?,
+    )
+
+    private data class Captions(
+        @JsonProperty("id") val id: String,
+        @JsonProperty("hash") val hash: String,
+        @JsonProperty("language") val language: String,
+        @JsonProperty("extension") val extension: String
     )
 
     override fun getExtractorUrl(id: String): String {
         return "$domainUrl/api/source/$id"
     }
 
-    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
+    override suspend fun getUrl(
+        url: String,
+        referer: String?,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
         val headers = mapOf(
             "Referer" to url,
             "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0",
         )
         val id = url.trimEnd('/').split("/").last()
         val newUrl = "https://${domainUrl}/api/source/${id}"
-        val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
-        with(app.post(newUrl, headers = headers)) {
-            if (this.code != 200) return listOf()
-            val text = this.text
-            if (text.isEmpty()) return listOf()
-            if (text == """{"success":false,"data":"Video not found or has been removed"}""") return listOf()
-            AppUtils.parseJson<ResponseJson?>(text)?.let {
+        app.post(newUrl, headers = headers).let { res ->
+            val sources = tryParseJson<ResponseJson?>(res.text)
+            sources?.let {
                 if (it.success && it.data != null) {
-                    it.data.forEach { data ->
-                        extractedLinksList.add(
+                    it.data.map { source ->
+                        callback.invoke(
                             ExtractorLink(
                                 name,
                                 name = name,
-                                data.file,
+                                source.file,
                                 url,
-                                getQualityFromName(data.label),
+                                getQualityFromName(source.label),
                             )
                         )
                     }
                 }
             }
+
+            val userData = sources?.player?.poster_file?.split("/")?.get(2)
+            sources?.captions?.map {
+                subtitleCallback.invoke(
+                    SubtitleFile(
+                        it?.language.toString(),
+                        "$mainUrl/asset/userdata/$userData/caption/${it?.hash}/${it?.id}.${it?.extension}"
+                    )
+                )
+            }
         }
-        return extractedLinksList
     }
 }
