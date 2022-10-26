@@ -43,7 +43,7 @@ jobs:
         echo "::set-output name=key_pwd::$KEY_PWD"
     - name: Run Gradle
       run: |
-        ./gradlew assemblePrerelease makeJar androidSourcesJar
+        ./gradlew assemblePrereleaseRelease makeJar androidSourcesJar
       env:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
@@ -56,6 +56,6 @@ jobs:
         prerelease: true
         title: "Pre-release Build"
         files: |
-          app/build/outputs/apk/prerelease/*.apk
+          app/build/outputs/apk/prerelease/stable/*.apk
           app/build/libs/app-sources.jar
           app/build/classes.jar
