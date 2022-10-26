@@ -226,7 +226,7 @@ tasks.register("androidSourcesJar", Jar::class) {
 
 // this is used by the gradlew plugin
 tasks.register("makeJar", Copy::class) {
-    from("build/intermediates/compile_app_classes_jar/debug")
+    from("build/intermediates/compile_app_classes_jar/prereleaseDebug")
     into("build")
     include("classes.jar")
     dependsOn("build")

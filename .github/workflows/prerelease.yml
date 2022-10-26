@@ -43,7 +43,7 @@ jobs:
         echo "key_pwd=$KEY_PWD" >> $GITHUB_OUTPUT
     - name: Run Gradle
       run: |
-        ./gradlew assemblePrereleaseRelease makeJar androidSourcesJar
+        ./gradlew assemblePrerelease makeJar androidSourcesJar
       env:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
