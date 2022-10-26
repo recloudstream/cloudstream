@@ -271,7 +271,7 @@
     <string name="movies_singular">Филм</string>
     <string name="tv_series_singular">Серия</string>
     <string name="cartoons_singular">Анимационен филм</string>
-    <string name="anime_singular">@string/аниме</string>
+    <string name="anime_singular">@string/anime</string>
     <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Торент</string>
     <string name="documentaries_singular">Документален филм</string>
