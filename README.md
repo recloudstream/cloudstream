@@ -19,6 +19,7 @@
 
 ***The list of supported languages:***
 * 🇱🇧 Arabic
+* 🇧🇬 Bulgarian
 * 🇭🇷 Croatian
 * 🇨🇿 Czech
 * 🇳🇱 Dutch
