@@ -155,10 +155,10 @@ dependencies {
     // implementation("androidx.leanback:leanback-paging:1.1.0-alpha09")
 
     // Exoplayer
-    implementation("com.google.android.exoplayer:exoplayer:2.16.1")
-    implementation("com.google.android.exoplayer:extension-cast:2.16.1")
-    implementation("com.google.android.exoplayer:extension-mediasession:2.16.1")
-    implementation("com.google.android.exoplayer:extension-okhttp:2.16.1")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.1")
+    implementation("com.google.android.exoplayer:extension-cast:2.18.1")
+    implementation("com.google.android.exoplayer:extension-mediasession:2.18.1")
+    implementation("com.google.android.exoplayer:extension-okhttp:2.18.1")
 
     //implementation("com.google.android.exoplayer:extension-leanback:2.14.0")
 

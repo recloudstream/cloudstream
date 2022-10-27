@@ -49,7 +49,7 @@ data class SaveCaptionStyle(
     @JsonProperty("foregroundColor") var foregroundColor: Int,
     @JsonProperty("backgroundColor") var backgroundColor: Int,
     @JsonProperty("windowColor") var windowColor: Int,
-    @CaptionStyleCompat.EdgeType
+//    @CaptionStyleCompat.EdgeType
     @JsonProperty("edgeType") var edgeType: Int,
     @JsonProperty("edgeColor") var edgeColor: Int,
     @FontRes
