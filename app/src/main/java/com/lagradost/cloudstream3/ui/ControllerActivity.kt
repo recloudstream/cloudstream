@@ -150,7 +150,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                             } else {
                                 ChromecastSubtitlesFragment.getCurrentSavedStyle().apply {
                                     val font = TextTrackStyle()
-                                    font.setFontFamily(fontFamily ?: "Google Sans")
+                                    font.fontFamily = fontFamily ?: "Google Sans"
                                     fontGenericFamily?.let {
                                         font.fontGenericFamily = it
                                     }
@@ -183,9 +183,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     val contentUrl = (remoteMediaClient?.currentItem?.media?.contentUrl
                         ?: remoteMediaClient?.currentItem?.media?.contentId)
 
-                    val sortingMethods =
-                        items.map { "${it.name} ${Qualities.getStringByInt(it.quality)}" }
-                            .toTypedArray()
+                    val sortingMethods = items.map { "${it.name} ${Qualities.getStringByInt(it.quality)}" }.toTypedArray()
                     val sotringIndex = items.indexOfFirst { it.url == contentUrl }
 
                     val arrayAdapter =
@@ -281,7 +279,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     val currentPosition = remoteMediaClient?.approximateStreamPosition
                     if (currentDuration != null && currentPosition != null)
                         DataStoreHelper.setViewPos(epData.id, currentPosition, currentDuration)
-                } catch (t: Throwable) {
+                } catch (t : Throwable) {
                     logError(t)
                 }
 
@@ -360,8 +358,10 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
         }
     }
 
-    override fun onSessionConnected(castSession: CastSession) {
-        super.onSessionConnected(castSession)
+    override fun onSessionConnected(castSession: CastSession?) {
+        castSession?.let {
+            super.onSessionConnected(it)
+        }
         remoteMediaClient?.queueSetRepeatMode(REPEAT_MODE_REPEAT_OFF, JSONObject())
     }
 }
