@@ -117,18 +117,36 @@ class SearchFragment : Fragment() {
     var selectedSearchTypes = mutableListOf<TvType>()
     var selectedApis = mutableSetOf<String>()
 
+    /**
+     * Will filter all providers by preferred media and selectedSearchTypes.
+     * If that results in no available providers then only filter
+     * providers by preferred media
+     **/
     fun search(query: String?) {
         if (query == null) return
-        context?.getApiSettings()?.let { settings ->
+
+        context?.let { ctx ->
+            val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }
+                .map { it.ordinal.toString() }.toSet()
+            val preferredTypes = PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getStringSet(this.getString(R.string.prefer_media_type_key), default)
+                ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null } ?: default
+
+            val settings = ctx.getApiSettings()
+
+            val notFilteredBySelectedTypes = selectedApis.filter { name ->
+                settings.contains(name)
+            }.map { name ->
+                name to getApiFromNameNull(name)?.supportedTypes
+            }.filter { (_, types) ->
+                types?.any { preferredTypes.contains(it.ordinal) } == true
+            }
+
             searchViewModel.searchAndCancel(
                 query = query,
-                providersActive = selectedApis.filter { name ->
-                    settings.contains(name) && getApiFromNameNull(name)?.supportedTypes?.any {
-                        selectedSearchTypes.contains(
-                            it
-                        )
-                    } == true
-                }.toSet()
+                providersActive = notFilteredBySelectedTypes.filter { (_, types) ->
+                    types?.any { selectedSearchTypes.contains(it) } == true
+                }.ifEmpty { notFilteredBySelectedTypes }.map { it.first }.toSet()
             )
         }
     }
@@ -227,7 +245,7 @@ class SearchFragment : Fragment() {
                     }
 
                     fun updateList(types: List<TvType>) {
-                        setKey(SEARCH_PREF_TAGS, types.map {it.name})
+                        setKey(SEARCH_PREF_TAGS, types.map { it.name })
 
                         arrayAdapter.clear()
                         currentValidApis = validAPIs.filter { api ->
