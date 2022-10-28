@@ -542,10 +542,11 @@ class HomeFragment : Fragment() {
         }
 
         observe(homeViewModel.preview) { preview ->
+            // Always reset the padding, otherwise the will move lower and lower
+            home_watch_holder?.setPadding(0, 0, 0, 0)
             when (preview) {
                 is Resource.Success -> {
                     home_preview?.isVisible = true
-                    home_watch_holder?.setPadding(0,0,0,0)
 
                     preview.value.apply {
                         home_preview_tags?.text = tags?.joinToString(" • ") ?: ""
