@@ -11,10 +11,4 @@
             android:strokeColor="?attr/white"
             android:strokeWidth="60"
             android:strokeMiterLimit="10"/>
-    <path
-            android:name="path_1"
-            android:pathData="M 599.86 562.28 L 719.87 682.29"
-            android:strokeColor="?attr/white"
-            android:strokeWidth="60"
-            android:strokeMiterLimit="10"/>
 </vector>
