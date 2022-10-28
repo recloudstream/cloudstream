@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.HomePageList
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.*
@@ -32,7 +33,6 @@ import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.set
@@ -58,7 +58,9 @@ class HomeViewModel : ViewModel() {
     val bookmarks: LiveData<Pair<Boolean, List<SearchResponse>>> = _bookmarks
 
     private val _resumeWatching = MutableLiveData<List<SearchResponse>>()
+    private val _preview = MutableLiveData<Resource<LoadResponse>>()
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
+    val preview: LiveData<Resource<LoadResponse>> = _preview
 
     fun loadResumeWatching() = viewModelScope.launchSafe {
         val resumeWatching = withContext(Dispatchers.IO) {
@@ -207,6 +209,7 @@ class HomeViewModel : ViewModel() {
         expandAndReturn(name)
     }
 
+
     private fun load(api: MainAPI?) = viewModelScope.launchSafe {
         repo = if (api != null) {
             APIRepository(api)
@@ -219,6 +222,7 @@ class HomeViewModel : ViewModel() {
 
         if (repo?.hasMainPage == true) {
             _page.postValue(Resource.Loading())
+            _preview.postValue(Resource.Loading())
 
             when (val data = repo?.getMainPage(1, null)) {
                 is Resource.Success -> {
@@ -232,8 +236,38 @@ class HomeViewModel : ViewModel() {
                                     ExpandableHomepageList(filteredList, 1, home.hasNext)
                             }
                         }
-                        _page.postValue(Resource.Success(expandable))
                         val items = data.value.mapNotNull { it?.items }.flatten()
+                        items.randomOrNull()?.list?.randomOrNull()?.url?.let { url ->
+                            // backup request in case first fails
+                            var first = repo?.load(url)
+                            if(first == null ||first is Resource.Failure) {
+                                first = repo?.load(items.random().list.random().url)
+                            }
+                            first?.let {
+                                _preview.postValue(it)
+                            } ?: run {
+                                _preview.postValue(
+                                    Resource.Failure(
+                                        false,
+                                        null,
+                                        null,
+                                        "No repo found, this should never happen"
+                                    )
+                                )
+                            }
+                        } ?: run {
+                            _preview.postValue(
+                                Resource.Failure(
+                                    false,
+                                    null,
+                                    null,
+                                    "No homepage items"
+                                )
+                            )
+                        }
+
+                        _page.postValue(Resource.Success(expandable))
+
 
                         //val home = data.value
                         if (items.isNotEmpty()) {
@@ -263,6 +297,7 @@ class HomeViewModel : ViewModel() {
             }
         } else {
             _page.postValue(Resource.Success(emptyMap()))
+            _preview.postValue(Resource.Failure(false, null, null, "No homepage"))
         }
     }
 

@@ -75,6 +75,10 @@
         <item name="primaryGrayBackground">@color/amoledModeLight</item>
     </style>
 
+    <style name="ChipFilled" parent="@style/Widget.Material3.Chip.Filter">
+         <item name="chipBackgroundColor">@color/chip_color</item>
+    </style>
+
     <style name="AmoledMode">
         <item name="primaryGrayBackground">@color/black</item>
         <item name="primaryBlackBackground">@color/black</item>

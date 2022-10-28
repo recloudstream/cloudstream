@@ -412,6 +412,29 @@ class ResultViewModel2 : ViewModel() {
             return this?.firstOrNull { it.season == season }
         }
 
+        fun updateWatchStatus(currentResponse : LoadResponse, status: WatchType) {
+            val currentId = currentResponse.getId()
+            val resultPage = currentResponse
+
+            DataStoreHelper.setResultWatchState(currentId, status.internalId)
+            val current = DataStoreHelper.getBookmarkedData(currentId)
+            val currentTime = System.currentTimeMillis()
+            DataStoreHelper.setBookmarkedData(
+                currentId,
+                DataStoreHelper.BookmarkedData(
+                    currentId,
+                    current?.bookmarkedTime ?: currentTime,
+                    currentTime,
+                    resultPage.name,
+                    resultPage.url,
+                    resultPage.apiName,
+                    resultPage.type,
+                    resultPage.posterUrl,
+                    resultPage.year
+                )
+            )
+        }
+
         private fun filterName(name: String?): String? {
             if (name == null) return null
             Regex("[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
@@ -764,28 +787,10 @@ class ResultViewModel2 : ViewModel() {
     private val _selectPopup: MutableLiveData<Some<SelectPopup>> = MutableLiveData(Some.None)
     val selectPopup: LiveData<Some<SelectPopup>> get() = _selectPopup
 
-    fun updateWatchStatus(status: WatchType) {
-        val currentId = currentId ?: return
-        val resultPage = currentResponse ?: return
-        _watchStatus.postValue(status)
 
-        DataStoreHelper.setResultWatchState(currentId, status.internalId)
-        val current = DataStoreHelper.getBookmarkedData(currentId)
-        val currentTime = System.currentTimeMillis()
-        DataStoreHelper.setBookmarkedData(
-            currentId,
-            DataStoreHelper.BookmarkedData(
-                currentId,
-                current?.bookmarkedTime ?: currentTime,
-                currentTime,
-                resultPage.name,
-                resultPage.url,
-                resultPage.apiName,
-                resultPage.type,
-                resultPage.posterUrl,
-                resultPage.year
-            )
-        )
+    fun updateWatchStatus(status: WatchType) {
+        updateWatchStatus(currentResponse ?: return,status)
+        _watchStatus.postValue(status)
     }
 
     private fun startChromecast(

@@ -14,6 +14,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -26,11 +28,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
+import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
@@ -43,6 +48,7 @@ import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2.Companion.updateWatchStatus
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.*
@@ -50,6 +56,7 @@ import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallba
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
+import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setMaxViewPoolSize
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -61,11 +68,11 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -82,14 +89,12 @@ import kotlinx.android.synthetic.main.fragment_home.home_loading
 import kotlinx.android.synthetic.main.fragment_home.home_loading_error
 import kotlinx.android.synthetic.main.fragment_home.home_loading_shimmer
 import kotlinx.android.synthetic.main.fragment_home.home_loading_statusbar
-import kotlinx.android.synthetic.main.fragment_home.home_main_poster_recyclerview
 import kotlinx.android.synthetic.main.fragment_home.home_master_recycler
 import kotlinx.android.synthetic.main.fragment_home.home_plan_to_watch_btt
 import kotlinx.android.synthetic.main.fragment_home.home_provider_meta_info
 import kotlinx.android.synthetic.main.fragment_home.home_provider_name
 import kotlinx.android.synthetic.main.fragment_home.home_reload_connection_open_in_browser
 import kotlinx.android.synthetic.main.fragment_home.home_reload_connectionerror
-import kotlinx.android.synthetic.main.fragment_home.home_statusbar
 import kotlinx.android.synthetic.main.fragment_home.home_type_completed_btt
 import kotlinx.android.synthetic.main.fragment_home.home_type_dropped_btt
 import kotlinx.android.synthetic.main.fragment_home.home_type_on_hold_btt
@@ -100,6 +105,8 @@ import kotlinx.android.synthetic.main.fragment_home.home_watch_parent_item_title
 import kotlinx.android.synthetic.main.fragment_home.result_error_text
 import kotlinx.android.synthetic.main.fragment_home_tv.*
 import kotlinx.android.synthetic.main.home_episodes_expanded.*
+import kotlinx.android.synthetic.main.tvtypes_chips.*
+import kotlinx.android.synthetic.main.tvtypes_chips.view.*
 import java.util.*
 
 const val HOME_BOOKMARK_VALUE_LIST = "home_bookmarked_last_list"
@@ -247,16 +254,16 @@ class HomeFragment : Fragment() {
         }
 
         fun getPairList(
-            anime: MaterialButton?,
-            cartoons: MaterialButton?,
-            tvs: MaterialButton?,
-            docs: MaterialButton?,
-            movies: MaterialButton?,
-            asian: MaterialButton?,
-            livestream: MaterialButton?,
-            nsfw: MaterialButton?,
-            others: MaterialButton?,
-        ): List<Pair<MaterialButton?, List<TvType>>> {
+            anime: Chip?,
+            cartoons: Chip?,
+            tvs: Chip?,
+            docs: Chip?,
+            movies: Chip?,
+            asian: Chip?,
+            livestream: Chip?,
+            nsfw: Chip?,
+            others: Chip?,
+        ): List<Pair<Chip?, List<TvType>>> {
             // This list should be same order as home screen to aid navigation
             return listOf(
                 Pair(movies, listOf(TvType.Movie, TvType.Torrent)),
@@ -269,6 +276,59 @@ class HomeFragment : Fragment() {
                 Pair(nsfw, listOf(TvType.NSFW)),
                 Pair(others, listOf(TvType.Others)),
             )
+        }
+
+        private fun getPairList(header: ChipGroup) = getPairList(
+            header.home_select_anime,
+            header.home_select_cartoons,
+            header.home_select_tv_series,
+            header.home_select_documentaries,
+            header.home_select_movies,
+            header.home_select_asian,
+            header.home_select_livestreams,
+            header.home_select_nsfw,
+            header.home_select_others
+        )
+
+        fun validateChips(header: ChipGroup?, validTypes: List<TvType>) {
+            if (header == null) return
+            val pairList = getPairList(header)
+            for ((button, types) in pairList) {
+                val isValid = validTypes.any { types.contains(it) }
+                button?.isVisible = isValid
+            }
+        }
+
+        fun updateChips(header: ChipGroup?, selectedTypes: List<TvType>) {
+            if (header == null) return
+            val pairList = getPairList(header)
+            for ((button, types) in pairList) {
+                button?.isChecked =
+                    button?.isVisible == true && selectedTypes.any { types.contains(it) }
+            }
+        }
+
+        fun bindChips(
+            header: ChipGroup?,
+            selectedTypes: List<TvType>,
+            validTypes: List<TvType>,
+            callback: (List<TvType>) -> Unit
+        ) {
+            if (header == null) return
+            val pairList = getPairList(header)
+            for ((button, types) in pairList) {
+                val isValid = validTypes.any { types.contains(it) }
+                button?.isVisible = isValid
+                button?.isChecked = isValid && selectedTypes.any { types.contains(it) }
+                button?.setOnCheckedChangeListener { _, _ ->
+                    val list = ArrayList<TvType>()
+                    for ((sbutton, vvalidTypes) in pairList) {
+                        if (sbutton?.isChecked == true)
+                            list.addAll(vvalidTypes)
+                    }
+                    callback(list)
+                }
+            }
         }
 
         fun Context.selectHomepage(selectedApiName: String?, callback: (String) -> Unit) {
@@ -296,20 +356,8 @@ class HomeFragment : Fragment() {
                     ?.toMutableList()
                     ?: mutableListOf(TvType.Movie, TvType.TvSeries)
 
-                val anime = dialog.findViewById<MaterialButton>(R.id.home_select_anime)
-                val cartoons = dialog.findViewById<MaterialButton>(R.id.home_select_cartoons)
-                val tvs = dialog.findViewById<MaterialButton>(R.id.home_select_tv_series)
-                val docs = dialog.findViewById<MaterialButton>(R.id.home_select_documentaries)
-                val movies = dialog.findViewById<MaterialButton>(R.id.home_select_movies)
-                val asian = dialog.findViewById<MaterialButton>(R.id.home_select_asian)
-                val livestream = dialog.findViewById<MaterialButton>(R.id.home_select_livestreams)
-                val nsfw = dialog.findViewById<MaterialButton>(R.id.home_select_nsfw)
-                val others = dialog.findViewById<MaterialButton>(R.id.home_select_others)
                 val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
                 val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)
-
-                val pairList =
-                    getPairList(anime, cartoons, tvs, docs, movies, asian, livestream, nsfw, others)
 
                 cancelBtt?.setOnClickListener {
                     dialog.dismissSafe()
@@ -355,52 +403,14 @@ class HomeFragment : Fragment() {
                     arrayAdapter.notifyDataSetChanged()
                 }
 
-                /**
-                 * Since fire tv is fucked we need to manually define the focus layout.
-                 * Since visible buttons are only known in runtime this is required.
-                 **/
-                var lastButton: MaterialButton? = null
-
-                for ((button, validTypes) in pairList) {
-                    val isValid =
-                        validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
-                    button?.isVisible = isValid
-                    if (isValid) {
-
-                        // Set focus navigation
-                        button?.let { currentButton ->
-                            lastButton?.nextFocusRightId = currentButton.id
-                            lastButton?.id?.let { currentButton.nextFocusLeftId = it }
-                            lastButton = currentButton
-                        }
-
-                        fun buttonContains(): Boolean {
-                            return preSelectedTypes.any { validTypes.contains(it) }
-                        }
-
-                        button?.isSelected = buttonContains()
-                        button?.setOnClickListener {
-                            preSelectedTypes.clear()
-                            preSelectedTypes.addAll(validTypes)
-                            for ((otherButton, _) in pairList) {
-                                otherButton?.isSelected = false
-                            }
-                            button.isSelected = true
-                            updateList()
-                        }
-
-                        button?.setOnLongClickListener {
-                            if (!buttonContains()) {
-                                button.isSelected = true
-                                preSelectedTypes.addAll(validTypes)
-                            } else {
-                                button.isSelected = false
-                                preSelectedTypes.removeAll(validTypes)
-                            }
-                            updateList()
-                            return@setOnLongClickListener true
-                        }
-                    }
+                bindChips(
+                    dialog.home_select_group,
+                    preSelectedTypes,
+                    validAPIs.flatMap { it.supportedTypes }.distinct()
+                ) { list ->
+                    preSelectedTypes.clear()
+                    preSelectedTypes.addAll(list)
+                    updateList()
                 }
                 updateList()
             }
@@ -422,7 +432,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun toggleMainVisibility(visible: Boolean) {
-        home_main_holder?.isVisible = visible
         home_main_poster_recyclerview?.isVisible = visible
     }
 
@@ -531,6 +540,51 @@ class HomeFragment : Fragment() {
             home_random?.visibility = View.GONE
         }
 
+        observe(homeViewModel.preview) { preview ->
+            when (preview) {
+                is Resource.Success -> {
+                    home_preview?.isVisible = true
+                    preview.value.apply {
+                        home_preview_tags?.text = tags?.joinToString(" • ") ?: ""
+                        home_preview_tags?.isGone = tags.isNullOrEmpty()
+                        home_preview_image?.setImage(posterUrl, posterHeaders)
+                        home_preview_title?.text = name
+                        home_preview_play?.setOnClickListener {
+                            activity?.loadResult(url, apiName, START_ACTION_RESUME_LATEST)
+                            //activity.loadSearchResult(url, START_ACTION_RESUME_LATEST)
+                        }
+                        home_preview_info?.setOnClickListener {
+                            activity?.loadResult(url, apiName)
+                            //activity.loadSearchResult(random)
+                        }
+                        // very ugly code, but I dont care
+                        val watchType = DataStoreHelper.getResultWatchState(preview.value.getId())
+                        home_preview_bookmark?.setText(watchType.stringRes)
+                        home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(null,getDrawable(home_preview_bookmark.context, watchType.iconRes),null,null)
+                        home_preview_bookmark?.setOnClickListener { fab ->
+                            activity?.showBottomDialog(
+                                WatchType.values().map { fab.context.getString(it.stringRes) }
+                                    .toList(),
+                                DataStoreHelper.getResultWatchState(preview.value.getId()).ordinal,
+                                fab.context.getString(R.string.action_add_to_bookmarks),
+                                showApply = false,
+                                {}) {
+                                val newValue = WatchType.values()[it]
+                                home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(null,getDrawable(home_preview_bookmark.context, newValue.iconRes),null,null)
+                                home_preview_bookmark?.setText(newValue.stringRes)
+
+                                updateWatchStatus(preview.value, newValue)
+                                reloadStored()
+                            }
+                        }
+                    }
+                }
+                else -> {
+                    home_preview?.isVisible = false
+                }
+            }
+        }
+
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
             // setKey(USER_SELECTED_HOMEPAGE_API, apiName)
@@ -563,17 +617,17 @@ class HomeFragment : Fragment() {
             HomeChildItemAdapter(
                 mutableListOf(),
                 R.layout.home_result_big_grid,
-                nextFocusUp = home_main_poster_recyclerview.nextFocusUpId,
-                nextFocusDown = home_main_poster_recyclerview.nextFocusDownId
+                nextFocusUp = home_main_poster_recyclerview?.nextFocusUpId,
+                nextFocusDown = home_main_poster_recyclerview?.nextFocusDownId
             ) { callback ->
                 homeHandleSearch(callback)
             }
-        home_main_poster_recyclerview.setLinearListLayout()
+        home_main_poster_recyclerview?.setLinearListLayout()
         observe(homeViewModel.randomItems) { items ->
             if (items.isNullOrEmpty()) {
                 toggleMainVisibility(false)
             } else {
-                val tempAdapter = home_main_poster_recyclerview.adapter as HomeChildItemAdapter?
+                val tempAdapter = home_main_poster_recyclerview?.adapter as? HomeChildItemAdapter?
                 // no need to reload if it has the same data
                 if (tempAdapter != null && tempAdapter.cardList == items) {
                     toggleMainVisibility(true)
@@ -938,7 +992,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        context?.fixPaddingStatusbarView(home_statusbar)
+        //context?.fixPaddingStatusbarView(home_statusbar)
         context?.fixPaddingStatusbar(home_loading_statusbar)
 
         home_master_recycler.adapter =
@@ -958,33 +1012,6 @@ class HomeFragment : Fragment() {
                 return false
             }
         } // GridLayoutManager(context, 1).also { it.supportsPredictiveItemAnimations() }
-
-        if (!isTvSettings()) {
-            LinearSnapHelper().attachToRecyclerView(home_main_poster_recyclerview) // snap
-            val centerLayoutManager =
-                CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            centerLayoutManager.setOnSizeListener { index ->
-                (home_main_poster_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList?.get(
-                    index
-                )?.let { random ->
-                    home_main_play?.setOnClickListener {
-                        activity.loadSearchResult(random, START_ACTION_RESUME_LATEST)
-                    }
-                    home_main_info?.setOnClickListener {
-                        activity.loadSearchResult(random)
-                    }
-
-                    home_main_text?.text =
-                        random.name + if (random is AnimeSearchResponse && !random.dubStatus.isNullOrEmpty()) {
-                            random.dubStatus?.joinToString(
-                                prefix = " • ",
-                                separator = " | "
-                            ) { it.name }
-                        } else ""
-                }
-            }
-            home_main_poster_recyclerview?.layoutManager = centerLayoutManager  // scale
-        }
 
         reloadStored()
         loadHomePage()
