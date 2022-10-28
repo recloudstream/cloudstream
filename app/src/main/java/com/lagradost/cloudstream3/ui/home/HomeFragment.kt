@@ -545,6 +545,8 @@ class HomeFragment : Fragment() {
             when (preview) {
                 is Resource.Success -> {
                     home_preview?.isVisible = true
+                    home_watch_holder?.setPadding(0,0,0,0)
+
                     preview.value.apply {
                         home_preview_tags?.text = tags?.joinToString(" • ") ?: ""
                         home_preview_tags?.isGone = tags.isNullOrEmpty()
@@ -592,6 +594,7 @@ class HomeFragment : Fragment() {
                 }
                 else -> {
                     home_preview?.isVisible = false
+                    context?.fixPaddingStatusbar(home_watch_holder)
                 }
             }
         }

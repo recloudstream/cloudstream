@@ -434,7 +434,11 @@
                 </LinearLayout>
             </FrameLayout>
 
-
+            <!--
+            All padding in home_watch_holder is determined in runtime
+            This is because the home poster can be invisible which forces
+            us to take the status bar space into account
+            -->
             <LinearLayout
                 android:id="@+id/home_watch_holder"
                 android:layout_width="match_parent"
