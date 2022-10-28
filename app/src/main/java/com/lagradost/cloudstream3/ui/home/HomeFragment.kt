@@ -770,9 +770,19 @@ class HomeFragment : Fragment() {
 
         for ((chip, watch) in toggleList) {
             chip.isChecked = currentSet.contains(watch)
-            chip?.setOnCheckedChangeListener { _, _ ->
-                homeViewModel.loadStoredData(toggleList.filter { it.first?.isChecked == true }
-                    .map { it.second }.toSet())
+            chip?.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    homeViewModel.loadStoredData(
+                        setOf(watch)
+                        // If we filter all buttons then two can be checked at the same time
+                        // Revert this if you want to go back to multi selection
+//                    toggleList.filter { it.first?.isChecked == true }.map { it.second }.toSet()
+                    )
+                }
+                // Else if all are unchecked -> Do not load data
+                else if (toggleList.all { it.first?.isChecked != true }) {
+                    homeViewModel.loadStoredData(emptySet())
+                }
             }
             /*chip?.setOnClickListener {
 
