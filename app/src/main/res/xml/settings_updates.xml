@@ -34,6 +34,11 @@
         android:key="@string/auto_update_plugins_key"
         android:title="@string/automatic_plugin_updates" />
     <SwitchPreference
+        android:defaultValue="false"
+        android:icon="@drawable/ic_baseline_extension_24"
+        android:key="@string/auto_download_plugins_key"
+        android:title="@string/automatic_plugin_download" />
+    <SwitchPreference
         android:icon="@drawable/ic_baseline_notifications_active_24"
         android:summary="@string/updates_settings_des"
         android:title="@string/updates_settings"

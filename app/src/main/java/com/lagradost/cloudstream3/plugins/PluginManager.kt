@@ -249,13 +249,69 @@ object PluginManager {
                 }
         }.flatten().distinctBy { it.onlineData.second.url }
 
+        debugPrint {
+            "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}"
+        }
+
+        val updatedPlugins = mutableListOf<String>()
+
+        outdatedPlugins.apmap { pluginData ->
+            if (pluginData.isDisabled) {
+                //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
+                unloadPlugin(pluginData.savedData.filePath)
+            } else if (pluginData.isOutdated) {
+                downloadAndLoadPlugin(
+                    activity,
+                    pluginData.onlineData.second.url,
+                    pluginData.savedData.internalName,
+                    File(pluginData.savedData.filePath)
+                ).let { success ->
+                    if (success)
+                        updatedPlugins.add(pluginData.onlineData.second.name)
+                }
+            }
+        }
+
+        main {
+            createNotification(activity, updatedPlugins, R.string.plugins_updated)
+        }
+
+        ioSafe {
+            afterPluginsLoadedEvent.invoke(true)
+        }
+
+        Log.i(TAG, "Plugin update done!")
+    }
+
+    /**
+     * Automatically download plugins not yet existing on local
+     * 1. Gets all online data from online plugins repo
+     * 2. Fetch all undownloaded plugins
+     * 3. Download them and reload plugins
+     **/
+    fun downloadNotExistingPluginsAndLoad(activity: Activity) {
+        // Load all plugins as fast as possible!
+        loadAllOnlinePlugins(activity)
+
+        ioSafe {
+            afterPluginsLoadedEvent.invoke(true)
+        }
+
+        val newDownloadPlugins = mutableListOf<String>()
+        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
+            ?: emptyArray()) + PREBUILT_REPOSITORIES
+        val onlinePlugins = urls.toList().apmap {
+            getRepoPlugins(it.url)?.toList() ?: emptyList()
+        }.flatten().distinctBy { it.second.url }
+
         // Iterate online repos and returns not downloaded plugins
         val notDownloadedPlugins = onlinePlugins.mapNotNull outer@{ onlineData ->
             val sitePlugin = onlineData.second
             //Don't include empty urls
             if (sitePlugin.url.isBlank()) { return@outer null }
+            if (sitePlugin.repositoryUrl.isNullOrBlank()) { return@outer null }
             //Omit already existing plugins
-            if (getPluginPath(activity, sitePlugin.internalName, onlineData.first).exists()) {
+            if (getPluginPath(activity, sitePlugin.internalName, sitePlugin.repositoryUrl).exists()) {
                 //Log.i("DevDebug", "Skip > ${sitePlugin.internalName}")
                 return@outer null
             }
@@ -282,30 +338,6 @@ object PluginManager {
         }
         //Log.i("DevDebug", "notDownloadedPlugins => ${notDownloadedPlugins.toJson()}")
 
-        debugPrint {
-            "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}"
-        }
-
-        val updatedPlugins = mutableListOf<String>()
-        val newDownloadPlugins = mutableListOf<String>()
-
-        outdatedPlugins.apmap { pluginData ->
-            if (pluginData.isDisabled) {
-                //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
-                unloadPlugin(pluginData.savedData.filePath)
-            } else if (pluginData.isOutdated) {
-                downloadAndLoadPlugin(
-                    activity,
-                    pluginData.onlineData.second.url,
-                    pluginData.savedData.internalName,
-                    File(pluginData.savedData.filePath)
-                ).let { success ->
-                    if (success)
-                        updatedPlugins.add(pluginData.onlineData.second.name)
-                }
-            }
-        }
-
         notDownloadedPlugins.apmap { pluginData ->
             downloadAndLoadPlugin(
                 activity,
@@ -319,14 +351,14 @@ object PluginManager {
         }
 
         main {
-            createNotification(activity, updatedPlugins + newDownloadPlugins)
+            createNotification(activity, newDownloadPlugins, R.string.plugins_downloaded)
         }
 
        // ioSafe {
             afterPluginsLoadedEvent.invoke(true)
        // }
 
-        Log.i(TAG, "Plugin update done!")
+        Log.i(TAG, "Plugin download done!")
     }
 
     /**
@@ -581,7 +613,8 @@ object PluginManager {
 
     private fun createNotification(
         context: Context,
-        extensionNames: List<String>
+        extensionNames: List<String>,
+        title: Int
     ): Notification? {
         try {
             if (extensionNames.isEmpty()) return null
@@ -595,7 +628,7 @@ object PluginManager {
                 .setSilent(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setColor(context.colorFromAttribute(R.attr.colorPrimary))
-                .setContentTitle(context.getString(R.string.plugins_updated, extensionNames.size))
+                .setContentTitle(context.getString(title, extensionNames.size))
                 .setSmallIcon(R.drawable.ic_baseline_extension_24)
                 .setStyle(
                     NotificationCompat.BigTextStyle()
