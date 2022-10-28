@@ -359,52 +359,60 @@
                         android:fadingEdge="horizontal"
                         android:requiresFadingEdge="horizontal">
 
-                        <LinearLayout
-                                android:layout_gravity="center_vertical"
-                                android:orientation="horizontal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
+                    <com.google.android.material.chip.ChipGroup
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                            <com.google.android.material.button.MaterialButton
-                                    android:nextFocusLeft="@id/nav_rail_view"
-                                    android:nextFocusRight="@id/home_plan_to_watch_btt"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/home_type_watching_btt"
+                            style="@style/ChipFilled"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
 
-                                    android:id="@+id/home_type_watching_btt"
-                                    android:text="@string/type_watching"
-                                    style="@style/RoundedSelectableButton" />
+                            android:nextFocusLeft="@id/nav_rail_view"
+                            android:nextFocusRight="@id/home_plan_to_watch_btt"
+                            android:text="@string/type_watching" />
 
-                            <com.google.android.material.button.MaterialButton
-                                    android:nextFocusLeft="@id/home_type_watching_btt"
-                                    android:nextFocusRight="@id/home_type_on_hold_btt"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/home_plan_to_watch_btt"
+                            style="@style/ChipFilled"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
 
-                                    android:id="@+id/home_plan_to_watch_btt"
-                                    android:text="@string/type_plan_to_watch"
-                                    style="@style/RoundedSelectableButton" />
+                            android:nextFocusLeft="@id/home_type_watching_btt"
+                            android:nextFocusRight="@id/home_type_on_hold_btt"
+                            android:text="@string/type_plan_to_watch" />
 
-                            <com.google.android.material.button.MaterialButton
-                                    android:nextFocusLeft="@id/home_plan_to_watch_btt"
-                                    android:nextFocusRight="@id/home_type_dropped_btt"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/home_type_on_hold_btt"
+                            style="@style/ChipFilled"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
 
-                                    android:id="@+id/home_type_on_hold_btt"
-                                    android:text="@string/type_on_hold"
-                                    style="@style/RoundedSelectableButton" />
+                            android:nextFocusLeft="@id/home_plan_to_watch_btt"
+                            android:nextFocusRight="@id/home_type_dropped_btt"
+                            android:text="@string/type_on_hold" />
 
-                            <com.google.android.material.button.MaterialButton
-                                    android:nextFocusLeft="@id/home_type_on_hold_btt"
-                                    android:nextFocusRight="@id/home_type_completed_btt"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/home_type_dropped_btt"
+                            style="@style/ChipFilled"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
 
-                                    android:id="@+id/home_type_dropped_btt"
-                                    android:text="@string/type_dropped"
-                                    style="@style/RoundedSelectableButton" />
+                            android:nextFocusLeft="@id/home_type_on_hold_btt"
+                            android:nextFocusRight="@id/home_type_completed_btt"
+                            android:text="@string/type_dropped" />
 
-                            <com.google.android.material.button.MaterialButton
-                                    android:nextFocusLeft="@id/home_type_dropped_btt"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/home_type_completed_btt"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
 
-                                    android:id="@+id/home_type_completed_btt"
-                                    android:text="@string/type_completed"
-                                    style="@style/RoundedSelectableButton" />
-                        </LinearLayout>
-                </HorizontalScrollView>
+                            style="@style/ChipFilled"
+                            android:nextFocusLeft="@id/home_type_dropped_btt"
+                            android:text="@string/type_completed" />
+                    </com.google.android.material.chip.ChipGroup>                </HorizontalScrollView>
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:paddingHorizontal="5dp"

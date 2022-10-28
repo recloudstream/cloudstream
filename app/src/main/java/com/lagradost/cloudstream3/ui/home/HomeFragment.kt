@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -23,7 +23,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -104,10 +103,12 @@ import kotlinx.android.synthetic.main.fragment_home.home_watch_holder
 import kotlinx.android.synthetic.main.fragment_home.home_watch_parent_item_title
 import kotlinx.android.synthetic.main.fragment_home.result_error_text
 import kotlinx.android.synthetic.main.fragment_home_tv.*
+import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.home_episodes_expanded.*
 import kotlinx.android.synthetic.main.tvtypes_chips.*
 import kotlinx.android.synthetic.main.tvtypes_chips.view.*
 import java.util.*
+
 
 const val HOME_BOOKMARK_VALUE_LIST = "home_bookmarked_last_list"
 const val HOME_PREF_HOMEPAGE = "home_pref_homepage"
@@ -560,7 +561,12 @@ class HomeFragment : Fragment() {
                         // very ugly code, but I dont care
                         val watchType = DataStoreHelper.getResultWatchState(preview.value.getId())
                         home_preview_bookmark?.setText(watchType.stringRes)
-                        home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(null,getDrawable(home_preview_bookmark.context, watchType.iconRes),null,null)
+                        home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(
+                            null,
+                            getDrawable(home_preview_bookmark.context, watchType.iconRes),
+                            null,
+                            null
+                        )
                         home_preview_bookmark?.setOnClickListener { fab ->
                             activity?.showBottomDialog(
                                 WatchType.values().map { fab.context.getString(it.stringRes) }
@@ -570,7 +576,12 @@ class HomeFragment : Fragment() {
                                 showApply = false,
                                 {}) {
                                 val newValue = WatchType.values()[it]
-                                home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(null,getDrawable(home_preview_bookmark.context, newValue.iconRes),null,null)
+                                home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(
+                                    null,
+                                    getDrawable(home_preview_bookmark.context, newValue.iconRes),
+                                    null,
+                                    null
+                                )
                                 home_preview_bookmark?.setText(newValue.stringRes)
 
                                 updateWatchStatus(preview.value, newValue)
@@ -584,6 +595,11 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+        val searchText =
+            home_search?.findViewById<SearchView.SearchAutoComplete>(androidx.appcompat.R.id.search_src_text)
+        searchText?.setTextColor(Color.WHITE)
+        searchText?.setHintTextColor(Color.WHITE)
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
@@ -749,14 +765,22 @@ class HomeFragment : Fragment() {
             Pair(home_type_on_hold_btt, WatchType.ONHOLD),
             Pair(home_plan_to_watch_btt, WatchType.PLANTOWATCH),
         )
+        val currentSet = getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)
+            ?.map { WatchType.fromInternalId(it) }?.toSet() ?: emptySet()
 
-        for (item in toggleList) {
-            val watch = item.second
-            item.first?.setOnClickListener {
+        for ((chip, watch) in toggleList) {
+            chip.isChecked = currentSet.contains(watch)
+            chip?.setOnCheckedChangeListener { _, _ ->
+                homeViewModel.loadStoredData(toggleList.filter { it.first?.isChecked == true }
+                    .map { it.second }.toSet())
+            }
+            /*chip?.setOnClickListener {
+
+
                 homeViewModel.loadStoredData(EnumSet.of(watch))
             }
 
-            item.first?.setOnLongClickListener { itemView ->
+            chip?.setOnLongClickListener { itemView ->
                 val list = EnumSet.noneOf(WatchType::class.java)
                 itemView.context.getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)
                     ?.map { WatchType.fromInternalId(it) }?.let {
@@ -770,7 +794,7 @@ class HomeFragment : Fragment() {
                 }
                 homeViewModel.loadStoredData(list)
                 return@setOnLongClickListener true
-            }
+            }*/
         }
 
         observe(homeViewModel.availableWatchStatusTypes) { availableWatchStatusTypes ->
@@ -993,6 +1017,7 @@ class HomeFragment : Fragment() {
         }
 
         //context?.fixPaddingStatusbarView(home_statusbar)
+        context?.fixPaddingStatusbar(home_padding)
         context?.fixPaddingStatusbar(home_loading_statusbar)
 
         home_master_recycler.adapter =

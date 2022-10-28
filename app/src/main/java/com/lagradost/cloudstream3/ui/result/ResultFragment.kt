@@ -22,7 +22,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.discord.panels.OverlappingPanelsLayout
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
@@ -99,6 +99,7 @@ import kotlinx.android.synthetic.main.result_sync.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
+import com.google.android.material.chip.ChipDrawable
 
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
@@ -926,18 +927,37 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                     val tags = d.tags
                     result_tag_holder?.isVisible = tags.isNotEmpty()
-                    if (tags.isNotEmpty()) {
-                        //result_tag_holder?.visibility = VISIBLE
-                        val isOnTv = isTrueTvSettings()
-                        for ((index, tag) in tags.withIndex()) {
+                    result_tag?.apply {
+                        tags.forEach { tag ->
+                            val chip = Chip(context)
+                            val chipDrawable = ChipDrawable.createFromAttributes(
+                                context,
+                                null,
+                                0,
+                                R.style.ChipFilled
+                            )
+                            chip.setChipDrawable(chipDrawable)
+                            chip.text = tag
+                            chip.isCheckable = false
+                            chip.isFocusable = false
+                            chip.isClickable = false
+                            addView(chip)
+                        }
+                    }
+                    // if (tags.isNotEmpty()) {
+                    //result_tag_holder?.visibility = VISIBLE
+                    //val isOnTv = isTrueTvSettings()
+
+
+                    /*for ((index, tag) in tags.withIndex()) {
                             val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
                             val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
                             btt.text = tag
                             btt.isFocusable = !isOnTv
                             btt.isClickable = !isOnTv
                             result_tag?.addView(viewBtt, index)
-                        }
-                    }
+                        }*/
+                    //}
                 }
                 is Resource.Failure -> {
                     result_error_text.text = storedData?.url?.plus("\n") + data.errorString

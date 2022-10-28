@@ -51,8 +51,8 @@ class HomeViewModel : ViewModel() {
     }
 
     private val _availableWatchStatusTypes =
-        MutableLiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>>()
-    val availableWatchStatusTypes: LiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>> =
+        MutableLiveData<Pair<Set<WatchType>, Set<WatchType>>>()
+    val availableWatchStatusTypes: LiveData<Pair<Set<WatchType>, Set<WatchType>>> =
         _availableWatchStatusTypes
     private val _bookmarks = MutableLiveData<Pair<Boolean, List<SearchResponse>>>()
     val bookmarks: LiveData<Pair<Boolean, List<SearchResponse>>> = _bookmarks
@@ -98,7 +98,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadStoredData(preferredWatchStatus: EnumSet<WatchType>?) = viewModelScope.launchSafe {
+    fun loadStoredData(preferredWatchStatus: Set<WatchType>?) = viewModelScope.launchSafe {
         val watchStatusIds = withContext(Dispatchers.IO) {
             getAllWatchStateIds()?.map { id ->
                 Pair(id, getResultWatchState(id))
@@ -106,7 +106,7 @@ class HomeViewModel : ViewModel() {
         }?.distinctBy { it.first } ?: return@launchSafe
 
         val length = WatchType.values().size
-        val currentWatchTypes = EnumSet.noneOf(WatchType::class.java)
+        val currentWatchTypes = mutableSetOf<WatchType>()
 
         for (watch in watchStatusIds) {
             currentWatchTypes.add(watch.second)

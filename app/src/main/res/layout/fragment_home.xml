@@ -294,7 +294,15 @@
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/example_poster" />
-
+                <View
+                    android:visibility="visible"
+                    android:id="@+id/title_shadow_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:alpha="1"
+                    android:rotation="180"
+                    android:layout_gravity="top"
+                    android:background="@drawable/background_shadow" />
                 <View
                     android:id="@+id/title_shadow"
                     android:layout_width="match_parent"
@@ -302,29 +310,47 @@
                     android:layout_gravity="bottom"
                     android:background="@drawable/background_shadow" />
 
-                <FrameLayout
-
+                <LinearLayout
+                    android:id="@+id/home_padding"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_gravity="top"
-                    android:visibility="gone">
+                    android:layout_height="wrap_content">
 
                     <androidx.appcompat.widget.SearchView
                         android:id="@+id/home_search"
                         android:layout_width="match_parent"
-
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:iconifiedByDefault="false"
-                        android:paddingStart="-10dp"
-                        app:iconifiedByDefault="false"
-
+                        android:gravity="start"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:iconifiedByDefault="true"
+                        app:iconifiedByDefault="true"
                         app:queryBackground="@color/transparent"
-                        app:queryHint="@string/search_hint"
+                        app:queryHint="@string/search"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:editTextColor="@color/white"
 
                         app:searchIcon="@drawable/search_icon"
                         tools:ignore="RtlSymmetry" />
-                </FrameLayout>
+                </LinearLayout>
+
+<!--
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/test_search"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:layout_gravity="start"
+                    android:gravity="center"
+
+                    android:textSize="20dp"
+                    android:layout_margin="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/search"
+                    android:textColor="@color/white"
+                    app:drawableLeftCompat="@drawable/search_icon"
+                    app:tint="@color/white" />
+-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -486,50 +512,60 @@
                         android:fadingEdge="horizontal"
                         android:requiresFadingEdge="horizontal">
 
-                        <LinearLayout
+                        <com.google.android.material.chip.ChipGroup
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <com.google.android.material.button.MaterialButton
+                            <com.google.android.material.chip.Chip
                                 android:id="@+id/home_type_watching_btt"
-                                style="@style/RoundedSelectableButton"
+                                style="@style/ChipFilled"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
 
                                 android:nextFocusLeft="@id/nav_rail_view"
                                 android:nextFocusRight="@id/home_plan_to_watch_btt"
                                 android:text="@string/type_watching" />
 
-                            <com.google.android.material.button.MaterialButton
+                            <com.google.android.material.chip.Chip
                                 android:id="@+id/home_plan_to_watch_btt"
-                                style="@style/RoundedSelectableButton"
+                                style="@style/ChipFilled"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
 
                                 android:nextFocusLeft="@id/home_type_watching_btt"
                                 android:nextFocusRight="@id/home_type_on_hold_btt"
                                 android:text="@string/type_plan_to_watch" />
 
-                            <com.google.android.material.button.MaterialButton
+                            <com.google.android.material.chip.Chip
                                 android:id="@+id/home_type_on_hold_btt"
-                                style="@style/RoundedSelectableButton"
+                                style="@style/ChipFilled"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
 
                                 android:nextFocusLeft="@id/home_plan_to_watch_btt"
                                 android:nextFocusRight="@id/home_type_dropped_btt"
                                 android:text="@string/type_on_hold" />
 
-                            <com.google.android.material.button.MaterialButton
+                            <com.google.android.material.chip.Chip
                                 android:id="@+id/home_type_dropped_btt"
-                                style="@style/RoundedSelectableButton"
+                                style="@style/ChipFilled"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
 
                                 android:nextFocusLeft="@id/home_type_on_hold_btt"
                                 android:nextFocusRight="@id/home_type_completed_btt"
                                 android:text="@string/type_dropped" />
 
-                            <com.google.android.material.button.MaterialButton
+                            <com.google.android.material.chip.Chip
                                 android:id="@+id/home_type_completed_btt"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
 
-                                style="@style/RoundedSelectableButton"
+                                style="@style/ChipFilled"
                                 android:nextFocusLeft="@id/home_type_dropped_btt"
                                 android:text="@string/type_completed" />
-                        </LinearLayout>
+                        </com.google.android.material.chip.ChipGroup>
                     </HorizontalScrollView>
 
                     <ImageView
