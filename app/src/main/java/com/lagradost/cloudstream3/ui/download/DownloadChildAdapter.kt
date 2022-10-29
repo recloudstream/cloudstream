@@ -3,19 +3,21 @@ package com.lagradost.cloudstream3.ui.download
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.result.DownloadHelper.play
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
+import com.lagradost.fetchbutton.ui.PieFetchButton
 import kotlinx.android.synthetic.main.download_child_episode.view.*
-import java.util.*
 
 const val DOWNLOAD_ACTION_PLAY_FILE = 0
 const val DOWNLOAD_ACTION_DELETE_FILE = 1
@@ -38,39 +40,11 @@ class DownloadChildAdapter(
     private val clickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val mBoundViewHolders: HashSet<DownloadButtonViewHolder> = HashSet()
-    private fun getAllBoundViewHolders(): Set<DownloadButtonViewHolder?>? {
-        return Collections.unmodifiableSet(mBoundViewHolders)
-    }
-
-    fun killAdapter() {
-        getAllBoundViewHolders()?.forEach { view ->
-            view?.downloadButton?.dispose()
-        }
-    }
-
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        if (holder is DownloadButtonViewHolder) {
-            holder.downloadButton.dispose()
-        }
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        if (holder is DownloadButtonViewHolder) {
-            holder.downloadButton.dispose()
-            mBoundViewHolders.remove(holder)
-        }
-    }
-
-    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
-        if (holder is DownloadButtonViewHolder) {
-            holder.reattachDownloadButton()
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return DownloadChildViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.download_child_episode, parent, false),
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.download_child_episode, parent, false),
             clickCallback
         )
     }
@@ -79,7 +53,6 @@ class DownloadChildAdapter(
         when (holder) {
             is DownloadChildViewHolder -> {
                 holder.bind(cardList[position])
-                mBoundViewHolders.add(holder)
             }
         }
     }
@@ -92,15 +65,13 @@ class DownloadChildAdapter(
     constructor(
         itemView: View,
         private val clickCallback: (DownloadClickEvent) -> Unit,
-    ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
-        override var downloadButton = EasyDownloadButton()
-
+    ) : RecyclerView.ViewHolder(itemView) {
         private val title: TextView = itemView.download_child_episode_text
         private val extraInfo: TextView = itemView.download_child_episode_text_extra
         private val holder: CardView = itemView.download_child_episode_holder
-        private val progressBar: ContentLoadingProgressBar = itemView.download_child_episode_progress
-        private val progressBarDownload: ContentLoadingProgressBar = itemView.download_child_episode_progress_downloaded
-        private val downloadImage: ImageView = itemView.download_child_episode_download
+        private val progressBar: ContentLoadingProgressBar =
+            itemView.download_child_episode_progress
+        private val downloadButton: PieFetchButton = itemView.download_child_episode_download
 
         private var localCard: VisualDownloadChildCached? = null
 
@@ -120,35 +91,90 @@ class DownloadChildAdapter(
 
             title.text = title.context.getNameFull(d.name, d.episode, d.season)
             title.isSelected = true // is needed for text repeating
+            //extraInfo.text = card.currentBytes
 
-            downloadButton.setUpButton(
-                card.currentBytes,
-                card.totalBytes,
-                progressBarDownload,
-                downloadImage,
-                extraInfo,
-                card.data,
-                clickCallback
-            )
+            downloadButton.apply {
+                val play =
+                    R.string.play_episode//if (card.episode <= 0) R.string.play_movie_button else R.string.play_episode
 
+                setPersistentId(card.data.id.toLong())
+
+                downloadButton.setOnClickListener {
+                    val view = downloadButton
+
+                    //if (view !is PieFetchButton) return@setOnClickListener
+                    when (view.currentStatus) {
+                        /*null, DownloadStatusTell.Removed -> {
+                            view.setStatus(DownloadStatusTell.Waiting)
+                            downloadClickCallback.invoke(
+                                DownloadEpisodeClickEvent(
+                                    DOWNLOAD_ACTION_DOWNLOAD,
+                                    card
+                                )
+                            )
+                        }*/
+                        DownloadStatusTell.Paused -> {
+                            view.popupMenuNoIcons(
+                                listOf(
+                                    1 to R.string.resume,
+                                    2 to play,
+                                    3 to R.string.delete
+                                )
+                            ) {
+                                when (itemId) {
+                                    1 -> if (!view.resumeDownload()) {
+                                        /*downloadClickCallback.invoke(
+                                            DownloadEpisodeClickEvent(
+                                                DOWNLOAD_ACTION_DOWNLOAD,
+                                                card
+                                            )
+                                        )*/
+                                    }
+                                    2 -> play(card.data)
+                                    3 -> view.deleteAllFiles()
+                                }
+                            }
+                        }
+                        DownloadStatusTell.Complete -> {
+                            view.popupMenuNoIcons(
+                                listOf(
+                                    2 to play,
+                                    3 to R.string.delete
+                                )
+                            ) {
+                                when (itemId) {
+                                    2 -> play(card.data)
+                                    3 -> view.deleteAllFiles()
+                                }
+                            }
+                        }
+                        DownloadStatusTell.Active -> {
+                            view.popupMenuNoIcons(
+                                listOf(
+                                    4 to R.string.pause,
+                                    2 to play,
+                                    3 to R.string.delete
+                                )
+                            ) {
+                                when (itemId) {
+                                    4 -> view.pauseDownload()
+                                    2 -> play(card.data)
+                                    3 -> view.deleteAllFiles()
+                                }
+                            }
+                        }
+                        DownloadStatusTell.Error -> {
+                            view.redownload()
+                        }
+                        DownloadStatusTell.Waiting -> {
+
+                        }
+                        else -> {}
+                    }
+                }
+            }
             holder.setOnClickListener {
                 clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
-            }
-        }
-
-        override fun reattachDownloadButton() {
-            downloadButton.dispose()
-            val card = localCard
-            if (card != null) {
-                downloadButton.setUpButton(
-                    card.currentBytes,
-                    card.totalBytes,
-                    progressBarDownload,
-                    downloadImage,
-                    extraInfo,
-                    card.data,
-                    clickCallback
-                )
             }
         }
     }

@@ -1,12 +1,15 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.content.Context
+import android.net.Uri
 import android.os.Environment
 import android.os.StatFs
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
@@ -53,12 +56,10 @@ class DownloadViewModel : ViewModel() {
         // parentId : downloadsCount
         val totalDownloads = HashMap<Int, Int>()
 
-
         // Gets all children downloads
         withContext(Dispatchers.IO) {
             for (c in children) {
                 val childFile = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, c.id) ?: continue
-
                 if (childFile.fileLength <= 1) continue
                 val len = childFile.totalBytes
                 val flen = childFile.fileLength
@@ -68,7 +69,7 @@ class DownloadViewModel : ViewModel() {
                 totalDownloads[c.parentId] = totalDownloads[c.parentId]?.plus(1) ?: 1
             }
         }
-
+        println("FIXED: $totalDownloads")
         val cached = withContext(Dispatchers.IO) { // wont fetch useless keys
             totalDownloads.entries.filter { it.value > 0 }.mapNotNull {
                 context.getKey<VideoDownloadHelper.DownloadHeaderCached>(

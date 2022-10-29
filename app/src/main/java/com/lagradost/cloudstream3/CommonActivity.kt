@@ -25,8 +25,10 @@ import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.fetchbutton.aria2c.Aria2Settings
 import com.lagradost.fetchbutton.aria2c.Aria2Starter
+import com.lagradost.fetchbutton.aria2c.DownloadListener
 import org.schabi.newpipe.extractor.NewPipe
 import java.util.*
 import kotlin.concurrent.thread
@@ -119,6 +121,7 @@ object CommonActivity {
         val localeCode = settingsManager.getString(getString(R.string.locale_key), null)
         setLocale(this, localeCode)
     }
+    const val KEY_DOWNLOAD_INFO_METADATA = "download_info_metadata"
 
     fun init(act: Activity?) {
         if (act == null) return
@@ -133,13 +136,31 @@ object CommonActivity {
         act.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
 
+        DownloadListener.mainListener = { metadata ->
+            //TODO FIX
+            DownloadListener.sessionGidToId[metadata.items.firstOrNull()?.gid]?.let { id ->
+                AcraApplication.setKey(KEY_DOWNLOAD_INFO_METADATA,id.toString(),metadata)
+                /*val mainpath = metadata.items[0].files[0].path
+                AcraApplication.setKey(
+                    VideoDownloadManager.KEY_DOWNLOAD_INFO,
+                    id.toString(),
+                    VideoDownloadManager.DownloadedFileInfo(
+                        metadata.totalLength,
+                        relativePath ?: "",
+                        ,
+                        basePath = basePath.second
+                    )
+                )*/
+            }
+        }
+
         thread {
             Aria2Starter.start(
                 act,
                 Aria2Settings(
                     "1337", //UUID.randomUUID().toString()
                     4337,
-                   "/storage/emulated/0/Download",// act.filesDir.path,
+                    act.filesDir.path, //"/storage/emulated/0/Download",//
                     "${act.filesDir.path}/session"
                 )
             )

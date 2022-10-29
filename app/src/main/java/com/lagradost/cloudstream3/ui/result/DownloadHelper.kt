@@ -8,14 +8,37 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadEpisodeClickEvent
+import com.lagradost.cloudstream3.ui.download.VisualDownloadChildCached
 import com.lagradost.cloudstream3.ui.player.DownloadFileGenerator
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.fetchbutton.aria2c.Aria2Starter
 import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
 import com.lagradost.fetchbutton.ui.PieFetchButton
 
 object DownloadHelper {
+    fun PieFetchButton.play(card: VideoDownloadHelper.DownloadEpisodeCached) {
+        val files = this.getVideos()
+        DownloadFileGenerator(
+            files.map { path ->
+                ExtractorUri(
+                    uri = Uri.parse(path),
+
+                    id = card.id,
+                    parentId = card.parentId,
+                    name = context.getString(R.string.downloaded_file), //click.data.name ?: keyInfo.displayName
+                    season = card.season,
+                    episode = card.episode
+
+                    //basePath = keyInfo.basePath,
+                    //displayName = keyInfo.displayName,
+                    //relativePath = keyInfo.relativePath,
+                )
+            }
+        )
+    }
+
     fun PieFetchButton.play(card: ResultEpisode) {
         val files = this.getVideos()
         DownloadFileGenerator(

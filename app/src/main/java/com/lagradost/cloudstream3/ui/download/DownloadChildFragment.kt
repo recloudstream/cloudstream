@@ -30,7 +30,6 @@ class DownloadChildFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        (download_child_list?.adapter as DownloadChildAdapter?)?.killAdapter()
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
         super.onDestroyView()
     }

@@ -22,12 +22,10 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.hippo.unifile.UniFile
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.services.VideoDownloadService
@@ -36,6 +34,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.fetchbutton.aria2c.Metadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -1487,7 +1486,20 @@ object VideoDownloadManager {
 
     fun getDownloadFileInfoAndUpdateSettings(context: Context, id: Int): DownloadedFileInfoResult? {
         val res = getDownloadFileInfo(context, id)
-        if (res == null) context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
+        if (res == null) {
+            AcraApplication.getKey<Metadata>(
+                CommonActivity.KEY_DOWNLOAD_INFO_METADATA,
+                id.toString()
+            )?.let { data ->
+                if (data.totalLength > 1000L)
+                    return DownloadedFileInfoResult(
+                        data.downloadedLength, data.totalLength,
+                        Uri.EMPTY
+                    )
+            }
+
+            context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
+        }
         return res
     }
 
