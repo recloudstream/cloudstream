@@ -41,7 +41,7 @@ open class Jeniusplay : ExtractorApi() {
                 tryParseJson<List<Tracks>>("[$subData]")?.map { subtitle ->
                     subtitleCallback.invoke(
                         SubtitleFile(
-                            getLanguage(subtitle.label.toString()),
+                            getLanguage(subtitle.label ?: ""),
                             subtitle.file
                         )
                     )
@@ -52,8 +52,8 @@ open class Jeniusplay : ExtractorApi() {
 
     private fun getLanguage(str: String): String {
         return when {
-            str.lowercase().contains("indonesia") || str.lowercase()
-                .contains("bahasa") -> "Indonesian"
+            str.contains("indonesia", true) || str
+                .contains("bahasa", true) -> "Indonesian"
             else -> str
         }
     }
