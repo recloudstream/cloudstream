@@ -16,6 +16,8 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
@@ -55,8 +57,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.gotoDir
 import com.lagradost.fetchbutton.NotificationMetaData
 import com.lagradost.fetchbutton.aria2c.Aria2Starter
 import com.lagradost.fetchbutton.aria2c.UriRequest
@@ -604,10 +604,12 @@ class ResultViewModel2 : ViewModel() {
                     currentType
                 )
 
-            val topFolder = VideoDownloadManager.getDownloadDir()?.filePath ?: throw RuntimeException("FUCK YOU")//AcraApplication.context?.getBasePath()?.first //?.second?.also { println("URIIIIII: $it") } ?: throw RuntimeException("FUCK YOU")
-                //?: VideoDownloadManager.getDownloadDir()?.filePath ?: return null
+            val topFolder = VideoDownloadManager.getDownloadDir()?.filePath
+                ?: throw RuntimeException("FUCK YOU")//AcraApplication.context?.getBasePath()?.first //?.second?.also { println("URIIIIII: $it") } ?: throw RuntimeException("FUCK YOU")
+            //?: VideoDownloadManager.getDownloadDir()?.filePath ?: return null
 
-            val folder = topFolder//topFolder?.gotoDir(getFolder(currentType, currentHeaderName).replace(".", ""), true)?.uri?.toString() ?: throw RuntimeException("FUCK YOU")
+            val folder =
+                topFolder//topFolder?.gotoDir(getFolder(currentType, currentHeaderName).replace(".", ""), true)?.uri?.toString() ?: throw RuntimeException("FUCK YOU")
             //val folder =
             //    topFolder + "/" + getFolder(currentType, currentHeaderName).replace(".", "")
             //val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
@@ -670,12 +672,13 @@ class ResultViewModel2 : ViewModel() {
             val linkRequests = links.filter { link -> !link.isM3u8 }.map { link ->
                 newUriRequest(
                     episode.id.toLong(), link.url,
-                    VideoDownloadManager.getDisplayName(
-                        VideoDownloadManager.getFileName(
-                            AcraApplication.context ?: return null,
-                            meta
-                        ), "mp4"
-                    ), null,
+                    getFolder(currentType, currentHeaderName) + File.pathSeparator +
+                            VideoDownloadManager.getDisplayName(
+                                VideoDownloadManager.getFileName(
+                                    AcraApplication.context ?: return null,
+                                    meta
+                                ), "mp4"
+                            ), null, // we use the dir set at start
                     link.headers, USER_AGENT,
                     notificationMetaData = notification?.copy(
                         linkName = "${link.name} ${
@@ -1107,6 +1110,7 @@ class ResultViewModel2 : ViewModel() {
             Aria2Starter.download(sub)
         }
         val linksFound = req.links.isNotEmpty()
+        setKey(DOWNLOAD_COUNT_KEY, (getKey(DOWNLOAD_COUNT_KEY) ?: 0) + 1)
         mainThread {
             showToast(
                 activity,

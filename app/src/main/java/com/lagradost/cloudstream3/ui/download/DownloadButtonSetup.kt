@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.fetchbutton.aria2c.Aria2Starter
 
 object DownloadButtonSetup {
     fun handleDownloadClick(activity: Activity?, click: DownloadClickEvent) {
@@ -29,6 +30,7 @@ object DownloadButtonSetup {
                         DialogInterface.OnClickListener { _, which ->
                             when (which) {
                                 DialogInterface.BUTTON_POSITIVE -> {
+                                    Aria2cHelper.deleteId(id.toLong())
                                     VideoDownloadManager.deleteFileAndUpdateSettings(ctx, id)
                                 }
                                 DialogInterface.BUTTON_NEGATIVE -> {
@@ -57,11 +59,14 @@ object DownloadButtonSetup {
                 }
             }
             DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
+                Aria2cHelper.pause(click.data.id.toLong())
                 VideoDownloadManager.downloadEvent.invoke(
                     Pair(click.data.id, VideoDownloadManager.DownloadActionType.Pause)
                 )
             }
             DOWNLOAD_ACTION_RESUME_DOWNLOAD -> {
+                Aria2cHelper.unpause(click.data.id.toLong())
+
                 activity?.let { ctx ->
                     if (VideoDownloadManager.downloadStatus.containsKey(id) && VideoDownloadManager.downloadStatus[id] == VideoDownloadManager.DownloadType.IsPaused) {
                         VideoDownloadManager.downloadEvent.invoke(
@@ -85,7 +90,7 @@ object DownloadButtonSetup {
                         VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
                             act,
                             click.data.id
-                        )?.fileLength
+                        )?.fileLength ?: Aria2cHelper.getMetadata(click.data.id.toLong())?.downloadedLength
                             ?: 0
                     if (length > 0) {
                         showToast(act, R.string.delete, Toast.LENGTH_LONG)

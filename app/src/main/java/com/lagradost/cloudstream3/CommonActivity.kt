@@ -17,6 +17,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.download.Aria2cHelper.removeMetadata
+import com.lagradost.cloudstream3.ui.download.Aria2cHelper.saveMetadata
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
 import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
@@ -25,10 +27,10 @@ import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.fetchbutton.aria2c.Aria2Settings
 import com.lagradost.fetchbutton.aria2c.Aria2Starter
 import com.lagradost.fetchbutton.aria2c.DownloadListener
+import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
 import org.schabi.newpipe.extractor.NewPipe
 import java.util.*
 import kotlin.concurrent.thread
@@ -121,7 +123,6 @@ object CommonActivity {
         val localeCode = settingsManager.getString(getString(R.string.locale_key), null)
         setLocale(this, localeCode)
     }
-    const val KEY_DOWNLOAD_INFO_METADATA = "download_info_metadata"
 
     fun init(act: Activity?) {
         if (act == null) return
@@ -136,10 +137,17 @@ object CommonActivity {
         act.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
 
-        DownloadListener.mainListener = { metadata ->
+        DownloadListener.mainListener = { (data, metadata) ->
             //TODO FIX
-            DownloadListener.sessionGidToId[metadata.items.firstOrNull()?.gid]?.let { id ->
-                AcraApplication.setKey(KEY_DOWNLOAD_INFO_METADATA,id.toString(),metadata)
+            DownloadListener.sessionGidToId[data.gid]?.let { id ->
+                if (metadata.status == DownloadStatusTell.Removed
+                    || metadata.status == DownloadStatusTell.Error
+                    || metadata.status == DownloadStatusTell.Waiting
+                    || metadata.status == null) {
+                    removeMetadata(id)
+                } else {
+                    saveMetadata(id, metadata)
+                }
                 /*val mainpath = metadata.items[0].files[0].path
                 AcraApplication.setKey(
                     VideoDownloadManager.KEY_DOWNLOAD_INFO,

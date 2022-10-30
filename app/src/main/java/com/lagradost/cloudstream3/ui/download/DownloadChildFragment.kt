@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 
 class DownloadChildFragment : Fragment() {
     companion object {
-        fun newInstance(headerName: String, folder: String) : Bundle {
+        fun newInstance(headerName: String, folder: String): Bundle {
             return Bundle().apply {
                 putString("folder", folder)
                 putString("name", headerName)
@@ -34,7 +34,11 @@ class DownloadChildFragment : Fragment() {
         super.onDestroyView()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_child_downloads, container, false)
     }
 
@@ -49,7 +53,7 @@ class DownloadChildFragment : Fragment() {
                         ?: return@mapNotNull null
                     VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
                 }
-            }.sortedBy { it.data.episode + (it.data.season?: 0)*100000 }
+            }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
             if (eps.isEmpty()) {
                 activity?.onBackPressed()
                 return@main
@@ -84,6 +88,13 @@ class DownloadChildFragment : Fragment() {
                 ArrayList(),
             ) { click ->
                 handleDownloadClick(activity, click)
+               /* println("HANDLE ACTION :${click.action}")
+                if (click.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    val list = (download_child_list?.adapter as DownloadChildAdapter?)?.cardList
+                    if (list != null) {
+                        updateList(folder)
+                    }
+                }*/
             }
 
         downloadDeleteEventListener = { id: Int ->

@@ -1,11 +1,15 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.view.doOnAttach
+import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.result.DownloadHelper.play
@@ -15,6 +19,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.fetchbutton.aria2c.DownloadListener
 import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
 import com.lagradost.fetchbutton.ui.PieFetchButton
 import kotlinx.android.synthetic.main.download_child_episode.view.*
@@ -93,14 +98,51 @@ class DownloadChildAdapter(
             title.isSelected = true // is needed for text repeating
             //extraInfo.text = card.currentBytes
 
+            fun updateText(downloadBytes: Long, totalBytes: Long) {
+                extraInfo?.apply {
+                    text =
+                        context.getString(R.string.download_size_format).format(
+                            Formatter.formatShortFileSize(context, downloadBytes),
+                            Formatter.formatShortFileSize(context, totalBytes)
+                        )
+                }
+            }
+            updateText(card.currentBytes, card.totalBytes)
+
             downloadButton.apply {
                 val play =
                     R.string.play_episode//if (card.episode <= 0) R.string.play_movie_button else R.string.play_episode
 
-                setPersistentId(card.data.id.toLong())
+                setPersistentId(d.id.toLong())
+                doOnAttach { view ->
+                    view.findViewTreeLifecycleOwner()?.let { life ->
+                        DownloadListener.observe(life) {
+                            gid?.let { realGId ->
+                                val meta = DownloadListener.getInfo(realGId)
+                                updateText(meta.downloadedLength, meta.totalLength)
+                            }
+                        }
+                    }
+                }
+
+                downloadButton.isVisible = when (downloadButton.currentStatus) {
+                    null, DownloadStatusTell.Removed -> false
+                    else -> true
+                }
+
 
                 downloadButton.setOnClickListener {
                     val view = downloadButton
+
+                    fun delete() {
+                        // view.deleteAllFiles()
+                        clickCallback.invoke(
+                            DownloadClickEvent(
+                                DOWNLOAD_ACTION_DELETE_FILE,
+                                d
+                            )
+                        )
+                    }
 
                     //if (view !is PieFetchButton) return@setOnClickListener
                     when (view.currentStatus) {
@@ -130,8 +172,8 @@ class DownloadChildAdapter(
                                             )
                                         )*/
                                     }
-                                    2 -> play(card.data)
-                                    3 -> view.deleteAllFiles()
+                                    2 -> play(d)
+                                    3 -> delete()
                                 }
                             }
                         }
@@ -143,8 +185,8 @@ class DownloadChildAdapter(
                                 )
                             ) {
                                 when (itemId) {
-                                    2 -> play(card.data)
-                                    3 -> view.deleteAllFiles()
+                                    2 -> play(d)
+                                    3 -> delete()
                                 }
                             }
                         }
@@ -158,8 +200,8 @@ class DownloadChildAdapter(
                             ) {
                                 when (itemId) {
                                     4 -> view.pauseDownload()
-                                    2 -> play(card.data)
-                                    3 -> view.deleteAllFiles()
+                                    2 -> play(d)
+                                    3 -> delete()
                                 }
                             }
                         }
@@ -174,7 +216,13 @@ class DownloadChildAdapter(
                 }
             }
             holder.setOnClickListener {
-                clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
+                if (downloadButton.isVisible) {
+                    downloadButton.play(d)
+                } else {
+                    holder.setOnClickListener {
+                        clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
+                    }
+                }
             }
         }
     }

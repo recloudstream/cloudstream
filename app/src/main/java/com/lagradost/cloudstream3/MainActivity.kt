@@ -10,10 +10,10 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
@@ -107,6 +107,8 @@ const val VLC_EXTRA_POSITION_OUT = "extra_position"
 const val VLC_EXTRA_DURATION_OUT = "extra_duration"
 const val VLC_LAST_ID_KEY = "vlc_last_open_id"
 
+const val DOWNLOAD_COUNT_KEY = "download_badge_count"
+
 // Short name for requests client to make it nicer to use
 
 var app = Requests(responseParser = object : ResponseParser {
@@ -150,7 +152,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
          * */
-        fun handleAppIntentUrl(activity: FragmentActivity?, str: String?, isWebview: Boolean): Boolean =
+        fun handleAppIntentUrl(
+            activity: FragmentActivity?,
+            str: String?,
+            isWebview: Boolean
+        ): Boolean =
             with(activity) {
                 if (str != null && this != null) {
                     if (str.startsWith("https://cs.repo")) {
@@ -191,7 +197,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         val url = str.replaceFirst(appStringRepo, "https")
                         loadRepository(url)
                         return true
-                    } else if (!isWebview){
+                    } else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
                             return true
@@ -264,6 +270,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
             else -> {
                 false
+            }
+        }
+
+        if (destination.id == R.id.navigation_download_child || destination.id == R.id.navigation_downloads) {
+            setKey(DOWNLOAD_COUNT_KEY, 0)
+        }
+
+        nav_view?.getOrCreateBadge(R.id.navigation_downloads)?.apply {
+            val count = getKey(DOWNLOAD_COUNT_KEY) ?: 0
+            if (count <= 0) {
+                clearNumber()
+                isVisible = false
+            } else {
+                this.backgroundColor =
+                    getResourceColor(R.attr.colorPrimary)
+                this.badgeTextColor =
+                    getResourceColor(R.attr.colorOnPrimary)
+                isVisible = true
+                number = count
             }
         }
 

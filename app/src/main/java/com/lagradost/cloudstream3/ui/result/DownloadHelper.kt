@@ -1,65 +1,74 @@
 package com.lagradost.cloudstream3.ui.result
 
-import android.app.Activity
-import android.net.Uri
-import android.widget.Toast
-import com.lagradost.cloudstream3.CommonActivity.showToast
+import androidx.core.net.toUri
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadEpisodeClickEvent
-import com.lagradost.cloudstream3.ui.download.VisualDownloadChildCached
 import com.lagradost.cloudstream3.ui.player.DownloadFileGenerator
+import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.utils.ExtractorUri
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.fetchbutton.aria2c.Aria2Starter
 import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
 import com.lagradost.fetchbutton.ui.PieFetchButton
+import java.io.File
 
 object DownloadHelper {
     fun PieFetchButton.play(card: VideoDownloadHelper.DownloadEpisodeCached) {
         val files = this.getVideos()
-        DownloadFileGenerator(
-            files.map { path ->
-                ExtractorUri(
-                    uri = Uri.parse(path),
+        // fucked af, but who cares
+        Aria2Starter.saveActivity.get()?.navigate(
+            R.id.global_to_navigation_player, GeneratorPlayer.newInstance(DownloadFileGenerator(
+                files.map { path ->
+                    val file = File(path)
 
-                    id = card.id,
-                    parentId = card.parentId,
-                    name = context.getString(R.string.downloaded_file), //click.data.name ?: keyInfo.displayName
-                    season = card.season,
-                    episode = card.episode
+                    ExtractorUri(
+                        uri = file.toUri(),
 
-                    //basePath = keyInfo.basePath,
-                    //displayName = keyInfo.displayName,
-                    //relativePath = keyInfo.relativePath,
-                )
-            }
-        )
+                        id = card.id,
+                        parentId = card.parentId,
+                        name = context.getString(R.string.downloaded_file), //click.data.name ?: keyInfo.displayName
+                        season = card.season,
+                        episode = card.episode,
+
+                        basePath = file.path,
+                        displayName = file.name
+                        //displayName = keyInfo.displayName,
+                        //relativePath = keyInfo.relativePath,
+                    )
+                }
+            )))
     }
 
     fun PieFetchButton.play(card: ResultEpisode) {
         val files = this.getVideos()
-        DownloadFileGenerator(
-            files.map { path ->
-                ExtractorUri(
-                    uri = Uri.parse(path),
+        // fucked af, but who cares
+        Aria2Starter.saveActivity.get()?.navigate(
 
-                    id = card.id,
-                    parentId = card.parentId,
-                    name = context.getString(R.string.downloaded_file), //click.data.name ?: keyInfo.displayName
-                    season = card.season,
-                    episode = card.episode,
-                    headerName = card.headerName,
-                    tvType = card.tvType,
+            R.id.global_to_navigation_player, GeneratorPlayer.newInstance(DownloadFileGenerator(
+                files.map { path ->
+                    val file = File(path)
 
-                    //basePath = keyInfo.basePath,
-                    //displayName = keyInfo.displayName,
-                    //relativePath = keyInfo.relativePath,
-                )
-            }
-        )
+                    ExtractorUri(
+                        uri = file.toUri(),
+
+                        id = card.id,
+                        parentId = card.parentId,
+                        name = context.getString(R.string.downloaded_file), //click.data.name ?: keyInfo.displayName
+                        season = card.season,
+                        episode = card.episode,
+                        headerName = card.headerName,
+                        tvType = card.tvType,
+
+                        basePath = file.path,
+                        displayName = file.name,
+                        //relativePath = keyInfo.relativePath,
+                    )
+                }
+            )))
     }
 
     fun PieFetchButton.setUp(
@@ -70,7 +79,12 @@ object DownloadHelper {
         val play = if (card.episode <= 0) R.string.play_movie_button else R.string.play_episode
 
         setOnLongClickListener { //Aria2Starter.saveActivity.get()
-            downloadClickCallback.invoke(DownloadEpisodeClickEvent(DOWNLOAD_ACTION_LONG_CLICK, card))
+            downloadClickCallback.invoke(
+                DownloadEpisodeClickEvent(
+                    DOWNLOAD_ACTION_LONG_CLICK,
+                    card
+                )
+            )
             //showToast(it.context as? Activity, R.string.download, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }

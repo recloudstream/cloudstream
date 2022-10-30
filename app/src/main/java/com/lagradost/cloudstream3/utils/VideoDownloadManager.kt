@@ -29,12 +29,12 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.services.VideoDownloadService
+import com.lagradost.cloudstream3.ui.download.Aria2cHelper
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
-import com.lagradost.fetchbutton.aria2c.Metadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -1487,17 +1487,17 @@ object VideoDownloadManager {
     fun getDownloadFileInfoAndUpdateSettings(context: Context, id: Int): DownloadedFileInfoResult? {
         val res = getDownloadFileInfo(context, id)
         if (res == null) {
-            AcraApplication.getKey<Metadata>(
-                CommonActivity.KEY_DOWNLOAD_INFO_METADATA,
-                id.toString()
-            )?.let { data ->
-                if (data.totalLength > 1000L)
+            Aria2cHelper.getMetadata(id.toLong())?.let { data ->
+                if (Aria2cHelper.downloadExist(data)) {
                     return DownloadedFileInfoResult(
-                        data.downloadedLength, data.totalLength,
+                        data.downloadedLength,
+                        data.totalLength,
                         Uri.EMPTY
                     )
+                }
             }
 
+            Aria2cHelper.deleteId(id.toLong())
             context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
         }
         return res
@@ -1629,15 +1629,15 @@ object VideoDownloadManager {
         }
     }
 
-    /*fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
-        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
-        for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
-                return true
-            }
+/*fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+    val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+    for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
+        if (serviceClass.name == service.service.className) {
+            return true
         }
-        return false
-    }*/
+    }
+    return false
+}*/
 
     fun downloadEpisode(
         context: Context?,
