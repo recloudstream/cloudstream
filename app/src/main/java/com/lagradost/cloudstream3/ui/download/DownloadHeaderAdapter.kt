@@ -8,23 +8,25 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.fetchbutton.ui.PieFetchButton
 import kotlinx.android.synthetic.main.download_header_episode.view.*
 import java.util.*
 
 data class VisualDownloadHeaderCached(
     val currentOngoingDownloads: Int,
     val totalDownloads: Int,
-    val totalBytes: Long,
-    val currentBytes: Long,
-    val data: VideoDownloadHelper.DownloadHeaderCached,
-    val child: VideoDownloadHelper.DownloadEpisodeCached?,
-)
+    override val totalBytes: Long,
+    override val currentBytes: Long,
+    val header: VideoDownloadHelper.DownloadHeaderCached,
+    override val data: VideoDownloadHelper.DownloadEpisodeCached?,
+) : IVisualDownloadChildCached
 
 data class DownloadHeaderClickEvent(val action: Int, val data: VideoDownloadHelper.DownloadHeaderCached)
 
@@ -34,35 +36,6 @@ class DownloadHeaderAdapter(
     private val movieClickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val mBoundViewHolders: HashSet<DownloadButtonViewHolder> = HashSet()
-    private fun getAllBoundViewHolders(): Set<DownloadButtonViewHolder?>? {
-        return Collections.unmodifiableSet(mBoundViewHolders)
-    }
-
-    fun killAdapter() {
-        getAllBoundViewHolders()?.forEach { view ->
-            view?.downloadButton?.dispose()
-        }
-    }
-
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        if (holder is DownloadButtonViewHolder) {
-            holder.downloadButton.dispose()
-        }
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        if (holder is DownloadButtonViewHolder) {
-            holder.downloadButton.dispose()
-            mBoundViewHolders.remove(holder)
-        }
-    }
-
-    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
-        if (holder is DownloadButtonViewHolder) {
-            holder.reattachDownloadButton()
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return DownloadHeaderViewHolder(
@@ -76,7 +49,6 @@ class DownloadHeaderAdapter(
         when (holder) {
             is DownloadHeaderViewHolder -> {
                 holder.bind(cardList[position])
-                mBoundViewHolders.add(holder)
             }
         }
     }
@@ -90,23 +62,17 @@ class DownloadHeaderAdapter(
         itemView: View,
         private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
         private val movieClickCallback: (DownloadClickEvent) -> Unit,
-    ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
-        override var downloadButton = EasyDownloadButton()
-
+    ) : RecyclerView.ViewHolder(itemView) {
         private val poster: ImageView? = itemView.download_header_poster
         private val title: TextView = itemView.download_header_title
         private val extraInfo: TextView = itemView.download_header_info
         private val holder: CardView = itemView.episode_holder
 
-        private val downloadBar: ContentLoadingProgressBar = itemView.download_header_progress_downloaded
-        private val downloadImage: ImageView = itemView.download_header_episode_download
-        private val normalImage: ImageView = itemView.download_header_goto_child
-        private var localCard: VisualDownloadHeaderCached? = null
+        private val downloadButton: PieFetchButton = itemView.download_header_download
 
         @SuppressLint("SetTextI18n")
         fun bind(card: VisualDownloadHeaderCached) {
-            localCard = card
-            val d = card.data
+            val d = card.header
 
             poster?.setImage(d.poster)
             poster?.setOnClickListener {
@@ -117,10 +83,8 @@ class DownloadHeaderAdapter(
             val mbString = formatShortFileSize(itemView.context, card.totalBytes)
 
             //val isMovie = d.type.isMovieType()
-            if (card.child != null) {
-                downloadBar.visibility = View.VISIBLE
-                downloadImage.visibility = View.VISIBLE
-                normalImage.visibility = View.GONE
+            if (card.data != null) {
+                downloadButton.isVisible = true
                 /*setUpButton(
                     card.currentBytes,
                     card.totalBytes,
@@ -130,14 +94,15 @@ class DownloadHeaderAdapter(
                     card.child,
                     movieClickCallback
                 )*/
+                DownloadButtonSetup.bind(card, downloadButton, extraInfo) { click ->
+                    movieClickCallback.invoke(DownloadClickEvent(click.action, card.data))
+                }
 
                 holder.setOnClickListener {
-                    movieClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
+                    movieClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.data))
                 }
             } else {
-                downloadBar.visibility = View.GONE
-                downloadImage.visibility = View.GONE
-                normalImage.visibility = View.VISIBLE
+                downloadButton.isVisible = false
 
                 try {
                     extraInfo.text =
@@ -158,22 +123,6 @@ class DownloadHeaderAdapter(
                 holder.setOnClickListener {
                     clickCallback.invoke(DownloadHeaderClickEvent(0, d))
                 }
-            }
-        }
-
-        override fun reattachDownloadButton() {
-            downloadButton.dispose()
-            val card = localCard
-            if (card?.child != null) {
-                downloadButton.setUpButton(
-                    card.currentBytes,
-                    card.totalBytes,
-                    downloadBar,
-                    downloadImage,
-                    extraInfo,
-                    card.child,
-                    movieClickCallback
-                )
             }
         }
     }

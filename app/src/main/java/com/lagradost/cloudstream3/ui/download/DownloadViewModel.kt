@@ -49,6 +49,8 @@ class DownloadViewModel : ViewModel() {
                 .distinctBy { it.id } // Remove duplicates
         }
 
+        println("CHILDRE:$children")
+
         // parentId : bytes
         val totalBytesUsedByChild = HashMap<Int, Long>()
         // parentId : bytes
@@ -69,7 +71,8 @@ class DownloadViewModel : ViewModel() {
                 totalDownloads[c.parentId] = totalDownloads[c.parentId]?.plus(1) ?: 1
             }
         }
-        println("FIXED: $totalDownloads")
+        println("TotalDownloads:$totalDownloads")
+        //println("FIXED: $totalDownloads")
         val cached = withContext(Dispatchers.IO) { // wont fetch useless keys
             totalDownloads.entries.filter { it.value > 0 }.mapNotNull {
                 context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
@@ -78,6 +81,7 @@ class DownloadViewModel : ViewModel() {
                 )
             }
         }
+        println("Cached:$cached")
 
         val visual = withContext(Dispatchers.IO) {
             cached.mapNotNull { // TODO FIX
@@ -100,7 +104,7 @@ class DownloadViewModel : ViewModel() {
                     movieEpisode
                 )
             }.sortedBy {
-                (it.child?.episode ?: 0) + (it.child?.season?.times(10000) ?: 0)
+                (it.data?.episode ?: 0) + (it.data?.season?.times(10000) ?: 0)
             } // episode sorting by episode, lowest to highest
         }
         try {

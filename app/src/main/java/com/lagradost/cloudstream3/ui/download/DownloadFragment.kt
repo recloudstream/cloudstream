@@ -69,7 +69,6 @@ class DownloadFragment : Fragment() {
             VideoDownloadManager.downloadDeleteEvent -= downloadDeleteEventListener!!
             downloadDeleteEventListener = null
         }
-        (download_list?.adapter as DownloadHeaderAdapter?)?.killAdapter()
         super.onDestroyView()
     }
 
@@ -165,7 +164,7 @@ class DownloadFragment : Fragment() {
         downloadDeleteEventListener = { id ->
             val list = (download_list?.adapter as DownloadHeaderAdapter?)?.cardList
             if (list != null) {
-                if (list.any { it.data.id == id }) {
+                if (list.any { it.data?.id == id }) {
                     context?.let { ctx ->
                         setList(ArrayList())
                         downloadsViewModel.updateList(ctx)

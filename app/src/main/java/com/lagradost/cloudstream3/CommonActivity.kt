@@ -168,8 +168,8 @@ object CommonActivity {
                 Aria2Settings(
                     "1337", //UUID.randomUUID().toString()
                     4337,
-                    act.filesDir.path, //"/storage/emulated/0/Download",//
-                    "${act.filesDir.path}/session"
+                    act.filesDir.path + "/download", //"/storage/emulated/0/Download",//
+                    null//"${act.filesDir.path}/session"
                 )
             )
         }

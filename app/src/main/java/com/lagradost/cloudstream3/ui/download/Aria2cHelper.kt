@@ -16,7 +16,10 @@ object Aria2cHelper {
         VideoDownloadManager.downloadDeleteEvent.invoke(id.toInt())
 
         getMetadata(id)?.let { data ->
-            Aria2Starter.deleteFiles(data.items.flatMap { it.files })
+            Aria2Starter.delete(
+                DownloadListener.sessionIdToGid[id],
+                id,
+                data.items.flatMap { it.files })
         }
         removeMetadata(id)
         AcraApplication.removeKey(KEY_DOWNLOAD_INFO, id.toString())

@@ -530,6 +530,7 @@ object VideoDownloadManager {
                 MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
                 projection, selection, null, null
             )
+            println("result:$result ${result?.count}")
 
             result.use { c ->
                 if (c != null && c.count >= 1) {
@@ -1505,21 +1506,31 @@ object VideoDownloadManager {
 
     private fun getDownloadFileInfo(context: Context, id: Int): DownloadedFileInfoResult? {
         try {
+            println("getDownloadFileInfo:$id")
+
             val info =
                 context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return null
             val base = basePathToFile(context, info.basePath)
-
+            println("BASE:$info")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && base.isDownloadDir()) {
                 val cr = context.contentResolver ?: return null
+                println("CR:$cr")
+
                 val fileUri =
                     cr.getExistingDownloadUriOrNullQ(info.relativePath, info.displayName)
                         ?: return null
+                println("FILEURI:$fileUri")
+
                 val fileLength = cr.getFileLength(fileUri) ?: return null
+                println("fileLength:$fileLength")
+
                 if (fileLength == 0L) return null
                 return DownloadedFileInfoResult(fileLength, info.totalBytes, fileUri)
             } else {
+                println("STUFF:$base")
 
                 val file = base?.gotoDir(info.relativePath, false)?.findFile(info.displayName)
+                println("file:$file")
 
 //            val normalPath = context.getNormalPath(getFile(info.relativePath), info.displayName)
 //            val dFile = File(normalPath)

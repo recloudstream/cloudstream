@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_child_downloads.*
@@ -41,7 +42,7 @@ class DownloadChildFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_child_downloads, container, false)
     }
-
+    private var hasPopped = false // fix stupid bug
     private fun updateList(folder: String) = main {
         context?.let { ctx ->
             val data = withContext(Dispatchers.IO) { ctx.getKeys(folder) }
@@ -54,8 +55,10 @@ class DownloadChildFragment : Fragment() {
                     VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
                 }
             }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
-            if (eps.isEmpty()) {
-                activity?.onBackPressed()
+
+            if (eps.isEmpty() && !hasPopped) {
+                hasPopped = true
+                activity?.popCurrentPage()
                 return@main
             }
 
