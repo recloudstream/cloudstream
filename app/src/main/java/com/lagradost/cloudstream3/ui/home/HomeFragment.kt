@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -72,6 +71,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectSt
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -602,9 +602,10 @@ class HomeFragment : Fragment() {
 
         val searchText =
             home_search?.findViewById<SearchView.SearchAutoComplete>(androidx.appcompat.R.id.search_src_text)
-        searchText?.setTextColor(Color.WHITE)
-        searchText?.setHintTextColor(Color.WHITE)
-
+        searchText?.context?.getResourceColor(R.attr.white)?.let { color ->
+            searchText.setTextColor(color)
+            searchText.setHintTextColor(color)
+        }
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
             // setKey(USER_SELECTED_HOMEPAGE_API, apiName)

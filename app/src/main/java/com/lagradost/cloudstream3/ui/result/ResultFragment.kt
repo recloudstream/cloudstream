@@ -938,6 +938,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                             )
                             chip.setChipDrawable(chipDrawable)
                             chip.text = tag
+                            chip.isChecked = false
                             chip.isCheckable = false
                             chip.isFocusable = false
                             chip.isClickable = false

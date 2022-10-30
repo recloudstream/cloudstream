@@ -358,13 +358,15 @@
                     android:layout_gravity="bottom"
                     android:orientation="vertical">
                     <TextView
+                        android:paddingStart="30dp"
+                        android:paddingEnd="30dp"
                         android:textStyle="bold"
                         android:paddingBottom="10dp"
                         android:id="@+id/home_preview_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/white"
                         android:textSize="17sp"
                         tools:text="The Perfect Run" />
                     <!--<TextView
@@ -384,7 +386,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/white"
                         android:textSize="14sp"
                         tools:text="Hello • World • Tags" />
 
@@ -406,9 +408,10 @@
                             android:layout_width="70dp"
                             android:layout_height="wrap_content"
                             android:text="@string/none"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/white"
                             app:drawableTopCompat="@drawable/ic_baseline_add_24"
-                            app:tint="@color/white" />
+                            app:tint="?attr/white"
+                            app:drawableTint="?attr/white" />
                         <com.google.android.material.button.MaterialButton
                             android:layout_gravity="center"
                             style="@style/WhiteButton"
@@ -427,9 +430,10 @@
                             android:layout_width="70dp"
                             android:layout_height="wrap_content"
                             android:text="@string/home_info"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/white"
                             app:drawableTopCompat="@drawable/ic_outline_info_24"
-                            app:tint="@color/white" />
+                            app:tint="?attr/white"
+                            app:drawableTint="?attr/white" />
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
