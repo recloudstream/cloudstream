@@ -84,6 +84,9 @@
                 android:textColor="?attr/textColor" />
 
             <androidx.cardview.widget.CardView
+                app:cardElevation="0dp"
+                android:elevation="0dp"
+                app:cardMaxElevation="0dp"
                 android:layout_width="fill_parent"
                 android:layout_height="12dp"
                 android:layout_marginBottom="5dp"

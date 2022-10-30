@@ -34,33 +34,42 @@
                 android:text="@string/download_storage_text"
                 android:textColor="?attr/textColor" />
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="fill_parent"
                 android:layout_height="12dp"
                 android:layout_marginBottom="5dp"
-                android:orientation="horizontal">
+                android:elevation="0dp"
+                app:cardCornerRadius="@dimen/storage_radius"
+                app:cardElevation="0dp"
+                app:cardMaxElevation="0dp">
 
-                <View
-                    android:id="@+id/download_used"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/storage_bar_left" />
+                    android:orientation="horizontal">
 
-                <View
-                    android:id="@+id/download_app"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.10"
-                    android:background="@drawable/storage_bar_mid" />
+                    <View
+                        android:id="@+id/download_used"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/storage_bar_left" />
 
-                <View
-                    android:id="@+id/download_free"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.10"
-                    android:background="@drawable/storage_bar_right" />
-            </LinearLayout>
+                    <View
+                        android:id="@+id/download_app"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.10"
+                        android:background="@drawable/storage_bar_mid" />
+
+                    <View
+                        android:id="@+id/download_free"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.10"
+                        android:background="@drawable/storage_bar_right" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <LinearLayout
                 android:layout_width="match_parent"
