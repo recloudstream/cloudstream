@@ -113,6 +113,11 @@ android {
         checkReleaseBuilds = false
     }
     namespace = "com.lagradost.cloudstream3"
+    packagingOptions {
+        resources {
+            excludes += "META-INF/DEPENDENCIES"
+        }
+    }
 }
 
 repositories {
@@ -217,6 +222,9 @@ dependencies {
 
     // Library/extensions searching with Levenshtein distance
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
+    implementation("com.github.holgerbrandl:themoviedbapi:1.12") {
+        exclude(group = "commons-logging", module = "commons-logging")
+    }
 }
 
 tasks.register("androidSourcesJar", Jar::class) {
