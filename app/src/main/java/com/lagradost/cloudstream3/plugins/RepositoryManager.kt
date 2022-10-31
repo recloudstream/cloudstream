@@ -4,7 +4,7 @@ import android.content.Context
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
@@ -95,7 +95,7 @@ object RepositoryManager {
      * */
     suspend fun getRepoPlugins(repositoryUrl: String): List<Pair<String, SitePlugin>>? {
         val repo = parseRepository(repositoryUrl) ?: return null
-        return repo.pluginLists.apmap { url ->
+        return repo.pluginLists.amap { url ->
             parsePlugins(url).map {
                 repositoryUrl to it
             }

@@ -1,8 +1,7 @@
 package com.lagradost.cloudstream3
 
 import com.lagradost.cloudstream3.mvvm.logError
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 //https://stackoverflow.com/questions/34697828/parallel-operations-on-kotlin-collections
 /*
@@ -26,9 +25,24 @@ fun <T, R> Iterable<T>.pmap(
     return ArrayList<R>(destination)
 }*/
 
+
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun <K, V, R> Map<out K, V>.amap(f: suspend (Map.Entry<K, V>) -> R): List<R> =
+    with(CoroutineScope(GlobalScope.coroutineContext)) {
+        map { async { f(it) } }.map { it.await() }
+    }
+
 fun <K, V, R> Map<out K, V>.apmap(f: suspend (Map.Entry<K, V>) -> R): List<R> = runBlocking {
     map { async { f(it) } }.map { it.await() }
 }
+
+
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun <A, B> List<A>.amap(f: suspend (A) -> B): List<B> =
+    with(CoroutineScope(GlobalScope.coroutineContext)) {
+        map { async { f(it) } }.map { it.await() }
+    }
+
 
 fun <A, B> List<A>.apmap(f: suspend (A) -> B): List<B> = runBlocking {
     map { async { f(it) } }.map { it.await() }
@@ -37,6 +51,12 @@ fun <A, B> List<A>.apmap(f: suspend (A) -> B): List<B> = runBlocking {
 fun <A, B> List<A>.apmapIndexed(f: suspend (index: Int, A) -> B): List<B> = runBlocking {
     mapIndexed { index, a -> async { f(index, a) } }.map { it.await() }
 }
+
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun <A, B> List<A>.amapIndexed(f: suspend (index: Int, A) -> B): List<B> =
+    with(CoroutineScope(GlobalScope.coroutineContext)) {
+        mapIndexed { index, a -> async { f(index, a) } }.map { it.await() }
+    }
 
 // run code in parallel
 /*fun <R> argpmap(

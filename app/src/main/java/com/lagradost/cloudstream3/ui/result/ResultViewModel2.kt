@@ -1972,7 +1972,7 @@ class ResultViewModel2 : ViewModel() {
     ): List<ExtractedTrailerData> =
         coroutineScope {
             var currentCount = 0
-            return@coroutineScope loadResponse.trailers.apmap { trailerData ->
+            return@coroutineScope loadResponse.trailers.amap { trailerData ->
                 try {
                     val links = arrayListOf<ExtractorLink>()
                     val subs = arrayListOf<SubtitleFile>()

@@ -1066,7 +1066,7 @@ interface LoadResponse {
         ) {
             if (!isTrailersEnabled || trailerUrls == null) return
             trailers.addAll(trailerUrls.map { TrailerData(it, referer, addRaw) })
-            /*val trailers = trailerUrls.filter { it.isNotBlank() }.apmap { trailerUrl ->
+            /*val trailers = trailerUrls.filter { it.isNotBlank() }.amap { trailerUrl ->
                 val links = arrayListOf<ExtractorLink>()
                 val subs = arrayListOf<SubtitleFile>()
                 if (!loadExtractor(
