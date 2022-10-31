@@ -165,6 +165,7 @@
     <string name="episode_sync_settings_des">Sincronizza automaticamente gli episodi guardati</string>
 
     <string name="restore_settings">Ripristinare i dati da backup</string>
+    <string name="automatic_restore_settings">Backup automatico su Github</string>
 
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">File di backup caricato</string>
@@ -176,7 +177,7 @@
     <string name="search">Cerca</string>
     <string name="category_account">Accounts</string>
     <string name="category_updates">Aggiornamenti e Backup</string>
-    
+
     <string name="settings_info">Info</string>
     <string name="advanced_search">Ricerca avanzata</string>
     <string name="advanced_search_des">Dividi i risultati della ricerca per provider</string>
