@@ -85,7 +85,7 @@ class SetupFragmentLanguage : Fragment() {
                         && PluginManager.getPluginsLocal().isEmpty()
                     //&& PREBUILT_REPOSITORIES.isNotEmpty()
                     ) R.id.action_navigation_global_to_navigation_setup_extensions
-                    else R.id.action_navigation_setup_language_to_navigation_setup_media
+                    else R.id.action_navigation_setup_language_to_navigation_setup_provider_languages
 
                     findNavController().navigate(
                         nextDestination,

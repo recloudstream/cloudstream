@@ -96,7 +96,7 @@ class SetupFragmentExtensions : Fragment() {
             next_btt?.setOnClickListener {
                 // Continue setup
                 if (isSetup)
-                    findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_media)
+                    findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_provider_languages)
                 else
                     findNavController().navigate(R.id.navigation_home)
             }
