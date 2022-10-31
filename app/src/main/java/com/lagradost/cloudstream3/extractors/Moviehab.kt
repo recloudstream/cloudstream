@@ -6,7 +6,11 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
-class Moviehab : ExtractorApi() {
+class MoviehabNet : Moviehab() {
+    override var mainUrl = "https://play.moviehab.net"
+}
+
+open class Moviehab : ExtractorApi() {
     override var name = "Moviehab"
     override var mainUrl = "https://play.moviehab.com"
     override val requiresReferer = false
