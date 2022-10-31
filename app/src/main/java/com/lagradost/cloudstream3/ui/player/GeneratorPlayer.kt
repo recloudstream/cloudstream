@@ -344,7 +344,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         seasonNumber = currentTempMeta.season,
                         lang = currentLanguageTwoLetters.ifBlank { null }
                     )
-                    val results = providers.apmap {
+                    val results = providers.amap {
                         try {
                             it.search(search)
                         } catch (e: Exception) {

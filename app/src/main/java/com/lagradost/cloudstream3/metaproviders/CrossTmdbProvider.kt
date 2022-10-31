@@ -39,7 +39,7 @@ class CrossTmdbProvider : TmdbProvider() {
     ): Boolean {
         tryParseJson<CrossMetaData>(data)?.let { metaData ->
             if (!metaData.isSuccess) return false
-            metaData.movies?.apmap { (apiName, data) ->
+            metaData.movies?.amap { (apiName, data) ->
                 getApiFromNameNull(apiName)?.let {
                     try {
                         it.loadLinks(data, isCasting, subtitleCallback, callback)
@@ -64,10 +64,10 @@ class CrossTmdbProvider : TmdbProvider() {
             val matchName = filterName(this.name)
             when (this) {
                 is MovieLoadResponse -> {
-                    val data = validApis.apmap { api ->
+                    val data = validApis.amap { api ->
                         try {
                             if (api.supportedTypes.contains(TvType.Movie)) { //|| api.supportedTypes.contains(TvType.AnimeMovie)
-                                return@apmap api.search(this.name)?.first {
+                                return@amap api.search(this.name)?.first {
                                     if (filterName(it.name).equals(
                                             matchName,
                                             ignoreCase = true

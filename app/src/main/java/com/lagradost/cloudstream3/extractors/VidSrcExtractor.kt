@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import kotlinx.coroutines.delay
@@ -69,12 +69,12 @@ open class VidSrcExtractor : ExtractorApi() {
                 } else ""
             }
 
-        serverslist.apmap { server ->
+        serverslist.amap { server ->
             val linkfixed = server.replace("https://vidsrc.xyz/", "https://embedsito.com/")
             if (linkfixed.contains("/pro")) {
                 val srcresponse = app.get(server, referer = absoluteUrl).text
                 val m3u8Regex = Regex("((https:|http:)//.*\\.m3u8)")
-                val srcm3u8 = m3u8Regex.find(srcresponse)?.value ?: return@apmap
+                val srcm3u8 = m3u8Regex.find(srcresponse)?.value ?: return@amap
                 val passRegex = Regex("""['"](.*set_pass[^"']*)""")
                 val pass = passRegex.find(srcresponse)?.groupValues?.get(1)?.replace(
                     Regex("""^//"""), "https://"

@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.ui.APIRepository
@@ -108,9 +108,9 @@ class SearchViewModel : ViewModel() {
 
                 repos.filter { a ->
                     (ignoreSettings || (providersActive.isEmpty() || providersActive.contains(a.name))) && (!isQuickSearch || a.hasQuickSearch)
-                }.apmap { a -> // Parallel
+                }.amap { a -> // Parallel
                     val search = if (isQuickSearch) a.quickSearch(query) else a.search(query)
-                    if (currentSearchIndex != currentIndex) return@apmap
+                    if (currentSearchIndex != currentIndex) return@amap
                     currentList.add(OnGoingSearch(a.name, search))
                     _currentSearch.postValue(currentList)
                 }

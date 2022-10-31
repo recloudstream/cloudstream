@@ -592,7 +592,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 api.init()
             }
 
-            inAppAuths.apmap { api ->
+            inAppAuths.amap { api ->
                 try {
                     api.initialize()
                 } catch (e: Exception) {

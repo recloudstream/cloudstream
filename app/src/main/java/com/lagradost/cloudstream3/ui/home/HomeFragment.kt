@@ -547,51 +547,14 @@ class HomeFragment : Fragment() {
             when (preview) {
                 is Resource.Success -> {
                     home_preview?.isVisible = true
-
-                    preview.value.apply {
-                        home_preview_tags?.text = tags?.joinToString(" • ") ?: ""
-                        home_preview_tags?.isGone = tags.isNullOrEmpty()
-                        home_preview_image?.setImage(posterUrl, posterHeaders)
-                        home_preview_title?.text = name
-                        home_preview_play?.setOnClickListener {
-                            activity?.loadResult(url, apiName, START_ACTION_RESUME_LATEST)
-                            //activity.loadSearchResult(url, START_ACTION_RESUME_LATEST)
-                        }
-                        home_preview_info?.setOnClickListener {
-                            activity?.loadResult(url, apiName)
-                            //activity.loadSearchResult(random)
-                        }
-                        // very ugly code, but I dont care
-                        val watchType = DataStoreHelper.getResultWatchState(preview.value.getId())
-                        home_preview_bookmark?.setText(watchType.stringRes)
-                        home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(
-                            null,
-                            getDrawable(home_preview_bookmark.context, watchType.iconRes),
-                            null,
-                            null
-                        )
-                        home_preview_bookmark?.setOnClickListener { fab ->
-                            activity?.showBottomDialog(
-                                WatchType.values().map { fab.context.getString(it.stringRes) }
-                                    .toList(),
-                                DataStoreHelper.getResultWatchState(preview.value.getId()).ordinal,
-                                fab.context.getString(R.string.action_add_to_bookmarks),
-                                showApply = false,
-                                {}) {
-                                val newValue = WatchType.values()[it]
-                                home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(
-                                    null,
-                                    getDrawable(home_preview_bookmark.context, newValue.iconRes),
-                                    null,
-                                    null
-                                )
-                                home_preview_bookmark?.setText(newValue.stringRes)
-
-                                updateWatchStatus(preview.value, newValue)
-                                reloadStored()
-                            }
-                        }
+                    (home_preview_viewpager?.adapter as? HomeScrollAdapter)?.apply {
+                        setItems(preview.value)
+                       // home_preview_viewpager?.setCurrentItem(1000, false)
                     }
+
+                    //.also {
+                    //home_preview_viewpager?.adapter =
+                    //}
                 }
                 else -> {
                     home_preview?.isVisible = false
@@ -606,6 +569,58 @@ class HomeFragment : Fragment() {
             searchText.setTextColor(color)
             searchText.setHintTextColor(color)
         }
+
+        home_preview_viewpager?.apply {
+            setPageTransformer(false, HomeScrollTransformer())
+            adapter = HomeScrollAdapter { load ->
+                load.apply {
+                    home_preview_tags?.text = tags?.joinToString(" • ") ?: ""
+                    home_preview_tags?.isGone = tags.isNullOrEmpty()
+                    home_preview_image?.setImage(posterUrl, posterHeaders)
+                    home_preview_title?.text = name
+                    home_preview_play?.setOnClickListener {
+                        activity?.loadResult(url, apiName, START_ACTION_RESUME_LATEST)
+                        //activity.loadSearchResult(url, START_ACTION_RESUME_LATEST)
+                    }
+                    home_preview_info?.setOnClickListener {
+                        activity?.loadResult(url, apiName)
+                        //activity.loadSearchResult(random)
+                    }
+                    // very ugly code, but I dont care
+                    val watchType = DataStoreHelper.getResultWatchState(load.getId())
+                    home_preview_bookmark?.setText(watchType.stringRes)
+                    home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(
+                        null,
+                        getDrawable(home_preview_bookmark.context, watchType.iconRes),
+                        null,
+                        null
+                    )
+                    home_preview_bookmark?.setOnClickListener { fab ->
+                        activity?.showBottomDialog(
+                            WatchType.values().map { fab.context.getString(it.stringRes) }
+                                .toList(),
+                            DataStoreHelper.getResultWatchState(load.getId()).ordinal,
+                            fab.context.getString(R.string.action_add_to_bookmarks),
+                            showApply = false,
+                            {}) {
+                            val newValue = WatchType.values()[it]
+                            home_preview_bookmark?.setCompoundDrawablesWithIntrinsicBounds(
+                                null,
+                                getDrawable(home_preview_bookmark.context, newValue.iconRes),
+                                null,
+                                null
+                            )
+                            home_preview_bookmark?.setText(newValue.stringRes)
+
+                            updateWatchStatus(load, newValue)
+                            reloadStored()
+                        }
+                    }
+                }
+
+            }
+        }
+
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
             // setKey(USER_SELECTED_HOMEPAGE_API, apiName)

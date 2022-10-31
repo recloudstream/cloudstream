@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -21,10 +21,10 @@ class Fastream: ExtractorApi() {
             Pair("file_code",id),
             Pair("auto","1")
         )).document
-        response.select("script").apmap { script ->
+        response.select("script").amap { script ->
             if (script.data().contains("sources")) {
                 val m3u8regex = Regex("((https:|http:)\\/\\/.*\\.m3u8)")
-                val m3u8 = m3u8regex.find(script.data())?.value ?: return@apmap
+                val m3u8 = m3u8regex.find(script.data())?.value ?: return@amap
                 generateM3u8(
                     name,
                     m3u8,
