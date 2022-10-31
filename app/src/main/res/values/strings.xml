@@ -637,4 +637,5 @@
     <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="player_settings_play_in_browser">Browser</string>
     <string name="app_not_found_error">App not found</string>
+    <string name="all_languages_preference">All Languages</string>
 </resources>

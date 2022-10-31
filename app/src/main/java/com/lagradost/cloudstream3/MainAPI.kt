@@ -18,8 +18,6 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSet
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.loadExtractor
 import okhttp3.Interceptor
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,6 +29,12 @@ const val USER_AGENT =
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
 val mapper = JsonMapper.builder().addModule(KotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
+
+/**
+ * Defines the constant for the all languages preference, if this is set then it is
+ * the equivalent of all languages being set
+ **/
+const val AllLanguagesName = "universal"
 
 object APIHolder {
     val unixTime: Long
@@ -160,7 +164,8 @@ object APIHolder {
 
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
-        hashSet.addAll(apis.filter { activeLangs.contains(it.lang) }.map { it.name })
+        val hasUniversal = activeLangs.contains(AllLanguagesName)
+        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }.map { it.name })
 
         /*val set = settingsManager.getStringSet(
             this.getString(R.string.search_providers_list_key),
@@ -196,11 +201,11 @@ object APIHolder {
 
     fun Context.getApiProviderLangSettings(): HashSet<String> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val hashSet = HashSet<String>()
-        hashSet.add("en") // def is only en
+        val hashSet = hashSetOf(AllLanguagesName) // def is all languages
+//        hashSet.add("en") // def is only en
         val list = settingsManager.getStringSet(
             this.getString(R.string.provider_lang_key),
-            hashSet.toMutableSet()
+            hashSet
         )
 
         if (list.isNullOrEmpty()) return hashSet
@@ -246,7 +251,8 @@ object APIHolder {
             null
         } ?: default
         val langs = this.getApiProviderLangSettings()
-        val allApis = apis.filter { langs.contains(it.lang) }
+        val hasUniversal = langs.contains(AllLanguagesName)
+        val allApis = apis.filter { hasUniversal || langs.contains(it.lang) }
             .filter { api -> api.hasMainPage || !hasHomePageIsRequired }
         return if (currentPrefMedia.isEmpty()) {
             allApis
