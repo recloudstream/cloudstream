@@ -22,6 +22,9 @@
     <color name="white">#FFF</color>
     <color name="black">#000</color>
 
+    <color name="whiteText">#FFF</color>
+    <color name="blackText">#000</color>
+
     <color name="dubColor">#3d50fa</color> <!--3b65f5 f18c82 8294F1-->
     <color name="amoledModeLight">#121213</color>
 

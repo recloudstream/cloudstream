@@ -3,7 +3,7 @@
 
     <item
             android:id="@+id/navigation_home"
-            android:icon="@drawable/ic_outline_home_24"
+            android:icon="@drawable/home_alt"
             android:title="@string/title_home"/>
     <item
             android:id="@+id/navigation_search"
@@ -15,6 +15,6 @@
             android:title="@string/title_downloads"/>
     <item
             android:id="@+id/navigation_settings"
-            android:icon="@drawable/ic_outline_settings_24"
+            android:icon="@drawable/settings_alt"
             android:title="@string/title_settings"/>
 </menu>

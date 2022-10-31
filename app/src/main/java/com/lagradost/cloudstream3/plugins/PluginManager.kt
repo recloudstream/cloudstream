@@ -217,18 +217,17 @@ object PluginManager {
      * 3. If outdated download and load the plugin
      * 4. Else load the plugin normally
      **/
-    fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
+    fun updateAllOnlinePluginsAndLoadThem(activity: Activity) = ioSafe {
         // Load all plugins as fast as possible!
         loadAllOnlinePlugins(activity)
 
-        ioSafe {
             afterPluginsLoadedEvent.invoke(true)
-        }
+
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
-        val onlinePlugins = urls.toList().apmap {
+        val onlinePlugins = urls.toList().amap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
@@ -249,7 +248,7 @@ object PluginManager {
 
         val updatedPlugins = mutableListOf<String>()
 
-        outdatedPlugins.apmap { pluginData ->
+        outdatedPlugins.amap { pluginData ->
             if (pluginData.isDisabled) {
                 //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
                 unloadPlugin(pluginData.savedData.filePath)
@@ -270,9 +269,9 @@ object PluginManager {
             createNotification(activity, updatedPlugins)
         }
 
-        ioSafe {
+       // ioSafe {
             afterPluginsLoadedEvent.invoke(true)
-        }
+       // }
 
         Log.i(TAG, "Plugin update done!")
     }
@@ -280,9 +279,9 @@ object PluginManager {
     /**
      * Use updateAllOnlinePluginsAndLoadThem
      * */
-    fun loadAllOnlinePlugins(activity: Activity) {
+    fun loadAllOnlinePlugins(activity: Activity) = ioSafe {
         // Load all plugins as fast as possible!
-        (getPluginsOnline()).toList().apmap { pluginData ->
+        (getPluginsOnline()).toList().amap { pluginData ->
             loadPlugin(
                 activity,
                 File(pluginData.filePath),
@@ -291,7 +290,7 @@ object PluginManager {
         }
     }
 
-    fun loadAllLocalPlugins(activity: Activity) {
+    fun loadAllLocalPlugins(activity: Activity) = ioSafe {
         val dir = File(LOCAL_PLUGINS_PATH)
         removeKey(PLUGINS_KEY_LOCAL)
 
@@ -299,7 +298,7 @@ object PluginManager {
             val res = dir.mkdirs()
             if (!res) {
                 Log.w(TAG, "Failed to create local directories")
-                return
+                return@ioSafe
             }
         }
 

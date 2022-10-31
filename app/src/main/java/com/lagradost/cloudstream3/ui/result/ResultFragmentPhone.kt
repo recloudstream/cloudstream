@@ -27,8 +27,10 @@ import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
@@ -126,6 +128,8 @@ class ResultFragmentPhone : ResultFragment() {
         upper.nextFocusDownId = down.id
         down.nextFocusUpId = upper.id
     }
+
+    var selectSeason : String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
@@ -297,6 +301,7 @@ class ResultFragmentPhone : ResultFragment() {
         observe(viewModel.selectedSeason) { text ->
             result_season_button.setText(text)
 
+            selectSeason = (if (text is Some.Success) text.value else null)?.asStringNull(result_season_button?.context)
             // If the season button is visible the result season button will be next focus down
             if (result_season_button?.isVisible == true)
                 if (result_resume_parent?.isVisible == true)
@@ -366,17 +371,24 @@ class ResultFragmentPhone : ResultFragment() {
 
         observe(viewModel.seasonSelections) { seasonList ->
             result_season_button?.setOnClickListener { view ->
+
                 view?.context?.let { ctx ->
                     val names = seasonList
                         .mapNotNull { (text, r) ->
                             r to (text?.asStringNull(ctx) ?: return@mapNotNull null)
                         }
 
-                    view.popupMenuNoIconsAndNoStringRes(names.mapIndexed { index, (_, name) ->
-                        index to name
-                    }) {
+                    activity?.showDialog(names.map { it.second },names.indexOfFirst { it.second == selectSeason },"",false,{}) { itemId->
                         viewModel.changeSeason(names[itemId].first)
                     }
+
+
+
+                    //view.popupMenuNoIconsAndNoStringRes(names.mapIndexed { index, (_, name) ->
+                    //    index to name
+                    //}) {
+                    //    viewModel.changeSeason(names[itemId].first)
+                    //}
                 }
             }
         }

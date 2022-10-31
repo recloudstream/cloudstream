@@ -354,7 +354,7 @@
                         android:visibility="gone" />
 
 
-                    <com.lagradost.cloudstream3.widget.FlowLayout
+                  <com.google.android.material.chip.ChipGroup
                         android:id="@+id/result_tag"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />

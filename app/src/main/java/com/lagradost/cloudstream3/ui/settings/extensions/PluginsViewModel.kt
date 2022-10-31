@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginPath
@@ -101,7 +101,7 @@ class PluginsViewModel : ViewModel() {
                             Toast.LENGTH_SHORT
                         )
                     }
-                }.apmap { (repo, metadata) ->
+                }.amap { (repo, metadata) ->
                     PluginManager.downloadAndLoadPlugin(
                         activity,
                         metadata.url,

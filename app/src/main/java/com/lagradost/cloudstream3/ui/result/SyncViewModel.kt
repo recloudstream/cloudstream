@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
@@ -197,7 +197,7 @@ class SyncViewModel : ViewModel() {
     /// modifies the current sync data, return null if you don't want to change it
     private fun modifyData(update: ((SyncAPI.SyncStatus) -> (SyncAPI.SyncStatus?))) =
         ioSafe {
-            syncs.apmap { (prefix, id) ->
+            syncs.amap { (prefix, id) ->
                 repos.firstOrNull { it.idPrefix == prefix }?.let { repo ->
                     if (repo.hasAccount()) {
                         val result = repo.getStatus(id)

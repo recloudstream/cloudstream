@@ -17,10 +17,7 @@ import com.google.android.exoplayer2.text.TextRenderer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.SubtitleView
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -880,7 +877,16 @@ class CS3IPlayer : IPlayer {
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
-                    playerError?.invoke(error)
+                    // If the Network fails then ignore the exception if the duration is set.
+                    // This is to switch mirrors automatically if the stream has not been fetched, but
+                    // allow playing the buffer without internet as then the duration is fetched.
+                    if (error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
+                        && exoPlayer?.duration != C.TIME_UNSET
+                    ) {
+                        exoPlayer?.prepare()
+                    } else {
+                        playerError?.invoke(error)
+                    }
 
                     super.onPlayerError(error)
                 }
