@@ -21,6 +21,8 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
@@ -33,6 +35,7 @@ import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.set
@@ -58,9 +61,9 @@ class HomeViewModel : ViewModel() {
     val bookmarks: LiveData<Pair<Boolean, List<SearchResponse>>> = _bookmarks
 
     private val _resumeWatching = MutableLiveData<List<SearchResponse>>()
-    private val _preview = MutableLiveData<Resource<LoadResponse>>()
+    private val _preview = MutableLiveData<Resource<List<LoadResponse>>>()
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
-    val preview: LiveData<Resource<LoadResponse>> = _preview
+    val preview: LiveData<Resource<List<LoadResponse>>> = _preview
 
     fun loadResumeWatching() = viewModelScope.launchSafe {
         val resumeWatching = withContext(Dispatchers.IO) {
@@ -210,7 +213,7 @@ class HomeViewModel : ViewModel() {
     }
 
 
-    private fun load(api: MainAPI?) = viewModelScope.launchSafe {
+    private fun load(api: MainAPI?) = ioSafe {
         repo = if (api != null) {
             APIRepository(api)
         } else {
@@ -236,7 +239,35 @@ class HomeViewModel : ViewModel() {
                                     ExpandableHomepageList(filteredList, 1, home.hasNext)
                             }
                         }
+
                         val items = data.value.mapNotNull { it?.items }.flatten()
+                        val responses = ioWork {
+                            items.flatMap { it.list }.shuffled().take(6).map { searchResponse ->
+                                async { repo?.load(searchResponse.url) }
+                            }.map { it.await() }.mapNotNull { if (it != null && it is Resource.Success) it.value else null } }
+                        //.amap  { searchResponse ->
+                        //   repo?.load(searchResponse.url)
+                        ///}
+
+                        //.map { searchResponse ->
+                        //   async { repo?.load(searchResponse.url) }
+                        // }.map { it.await() }
+
+
+                        if (responses.isEmpty()) {
+                            _preview.postValue(
+                                Resource.Failure(
+                                    false,
+                                    null,
+                                    null,
+                                    "No homepage responses"
+                                )
+                            )
+                        } else {
+                            _preview.postValue(Resource.Success(responses))
+                        }
+
+                        /*
                         items.randomOrNull()?.list?.randomOrNull()?.url?.let { url ->
                             // backup request in case first fails
                             var first = repo?.load(url)
@@ -264,7 +295,7 @@ class HomeViewModel : ViewModel() {
                                     "No homepage items"
                                 )
                             )
-                        }
+                        }*/
 
                         _page.postValue(Resource.Success(expandable))
 

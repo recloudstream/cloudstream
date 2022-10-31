@@ -162,7 +162,7 @@ class ProviderTests {
 //     @Test
 //     fun providerCorrectHomepage() {
 //         runBlocking {
-//             getAllProviders().apmap { api ->
+//             getAllProviders().amap { api ->
 //                 if (api.hasMainPage) {
 //                     try {
 //                         val homepage = api.getMainPage()
@@ -197,7 +197,7 @@ class ProviderTests {
 //     suspend fun providerCorrect() {
 //         val invalidProvider = ArrayList<Pair<MainAPI, Exception?>>()
 //         val providers = getAllProviders()
-//         providers.apmap { api ->
+//         providers.amap { api ->
 //             try {
 //                 println("Trying $api")
 //                 if (testSingleProviderApi(api)) {

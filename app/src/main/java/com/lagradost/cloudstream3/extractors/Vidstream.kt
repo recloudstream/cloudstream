@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.argamap
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -37,7 +37,7 @@ class Vidstream(val mainUrl: String) {
         val extractorUrl = getExtractorUrl(id)
         argamap(
             {
-                normalApis.apmap { api ->
+                normalApis.amap { api ->
                     val url = api.getExtractorUrl(id)
                     api.getSafeUrl(
                         url,
@@ -55,8 +55,8 @@ class Vidstream(val mainUrl: String) {
                 val qualityRegex = Regex("(\\d+)P")
 
                 //a[download]
-                pageDoc.select(".dowload > a")?.apmap { element ->
-                    val href = element.attr("href") ?: return@apmap
+                pageDoc.select(".dowload > a")?.amap { element ->
+                    val href = element.attr("href") ?: return@amap
                     val qual = if (element.text()
                             .contains("HDP")
                     ) "1080" else qualityRegex.find(element.text())?.destructured?.component1()
@@ -87,7 +87,7 @@ class Vidstream(val mainUrl: String) {
                         //val name = element.text()
 
                         // Matches vidstream links with extractors
-                        extractorApis.filter { !it.requiresReferer || !isCasting }.apmap { api ->
+                        extractorApis.filter { !it.requiresReferer || !isCasting }.amap { api ->
                             if (link.startsWith(api.mainUrl)) {
                                 api.getSafeUrl(link, extractorUrl, subtitleCallback, callback)
                             }

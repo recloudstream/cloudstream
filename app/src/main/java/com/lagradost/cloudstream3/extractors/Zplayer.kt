@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -36,7 +36,7 @@ open class ZplayerV2 : ExtractorApi() {
                 val m3u8regex = Regex("((https:|http:)\\/\\/.*\\.m3u8)")
                 m3u8regex.findAll(testdata).map {
                     it.value
-                }.toList().apmap { urlm3u8 ->
+                }.toList().amap { urlm3u8 ->
                     if (urlm3u8.contains("m3u8")) {
                         val testurl = app.get(urlm3u8, headers = mapOf("Referer" to url)).text
                         if (testurl.contains("EXTM3U")) {

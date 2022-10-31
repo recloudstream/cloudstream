@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.*
 import java.net.URI
@@ -46,7 +46,7 @@ class LinkGenerator(
         subtitleCallback: (SubtitleData) -> Unit,
         offset: Int
     ): Boolean {
-        links.apmap { link ->
+        links.amap { link ->
             if (!extract || !loadExtractor(link, referer, {
                     subtitleCallback(PlayerSubtitleHelper.getSubtitleData(it))
                 }) {
