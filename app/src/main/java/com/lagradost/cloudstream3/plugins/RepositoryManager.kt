@@ -74,8 +74,8 @@ object RepositoryManager {
         val fixedUrl = url.trim()
         return if (fixedUrl.contains("^https?://".toRegex())) {
             fixedUrl
-        } else if (fixedUrl.contains("^(cloudstreamrepo://)|(https://cs\\.repo/)".toRegex())) {
-            fixedUrl.replace("^(cloudstreamrepo://)|(https://cs\\.repo/)".toRegex(), "").let {
+        } else if (fixedUrl.contains("^(cloudstreamrepo://)|(https://cs\\.repo/\??)".toRegex())) {
+            fixedUrl.replace("^(cloudstreamrepo://)|(https://cs\\.repo/\??)".toRegex(), "").let {
                 return@let if (!it.contains("^https?://".toRegex()))
                      "https://${it}"
                 else fixedUrl
