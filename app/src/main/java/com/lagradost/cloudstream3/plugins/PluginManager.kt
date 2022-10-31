@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.extractorApis
+import com.lagradost.cloudstream3.utils.resources.ResourcePackManager
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -412,6 +413,7 @@ object PluginManager {
         }
         APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.__filename }
         extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.__filename }
+        ResourcePackManager.unregisterPlugin(plugin.__filename)
 
         classLoaders.values.removeIf { v -> v == plugin }
 

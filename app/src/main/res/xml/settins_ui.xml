@@ -10,6 +10,10 @@
             android:key="@string/app_theme_key"
             android:title="@string/app_theme_settings" />
     <Preference
+        android:icon="@drawable/ic_baseline_extension_24"
+        android:key="@string/active_resource_pack_key"
+        android:title="@string/resource_pack" />
+    <Preference
             android:icon="@drawable/ic_baseline_tv_24"
             android:key="@string/app_layout_key"
             android:title="@string/app_layout" />
