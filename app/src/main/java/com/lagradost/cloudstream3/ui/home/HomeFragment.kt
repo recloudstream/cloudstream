@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.animation.LayoutTransition
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -23,12 +24,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.ChangeBounds
+import androidx.transition.TransitionManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -346,7 +350,9 @@ class HomeFragment : Fragment() {
             builder.setContentView(R.layout.home_select_mainpage)
             builder.show()
             builder.let { dialog ->
-                val isMultiLang = getApiProviderLangSettings().size > 1
+                val isMultiLang = getApiProviderLangSettings().let { set ->
+                    set.size > 1 || set.contains(AllLanguagesName)
+                }
                 //dialog.window?.setGravity(Gravity.BOTTOM)
 
                 var currentApiName = selectedApiName
@@ -549,7 +555,7 @@ class HomeFragment : Fragment() {
                     home_preview?.isVisible = true
                     (home_preview_viewpager?.adapter as? HomeScrollAdapter)?.apply {
                         setItems(preview.value)
-                       // home_preview_viewpager?.setCurrentItem(1000, false)
+                        // home_preview_viewpager?.setCurrentItem(1000, false)
                     }
 
                     //.also {
@@ -574,10 +580,15 @@ class HomeFragment : Fragment() {
             setPageTransformer(false, HomeScrollTransformer())
             adapter = HomeScrollAdapter { load ->
                 load.apply {
+                    home_preview_title_holder?.let { parent ->
+                        TransitionManager.beginDelayedTransition(parent, ChangeBounds())
+                    }
+
                     home_preview_tags?.text = tags?.joinToString(" • ") ?: ""
                     home_preview_tags?.isGone = tags.isNullOrEmpty()
                     home_preview_image?.setImage(posterUrl, posterHeaders)
                     home_preview_title?.text = name
+
                     home_preview_play?.setOnClickListener {
                         activity?.loadResult(url, apiName, START_ACTION_RESUME_LATEST)
                         //activity.loadSearchResult(url, START_ACTION_RESUME_LATEST)

@@ -81,6 +81,7 @@
         <item name="chipStrokeColor">@color/transparent</item>
         <item name="textColor">@color/chip_color_text</item>
         <item name="android:textColor">@color/chip_color_text</item>
+        <item name="checkedIconTint">@color/chip_color_text</item>
     </style>
 
     <style name="AmoledMode">
@@ -137,13 +138,13 @@
     </style>
 
     <style name="OverlayPrimaryColorMonetTwo">
-        <item name="colorPrimary">@color/material_dynamic_tertiary80</item>
-        <item name="android:colorPrimary">@color/material_dynamic_tertiary80</item>
-        <item name="colorPrimaryDark">@color/material_dynamic_tertiary30</item>
-        <item name="colorAccent">@color/material_dynamic_tertiary80</item>
-        <item name="colorOnPrimary">@color/material_dynamic_tertiary20</item>
+        <item name="colorPrimary">@color/material_dynamic_secondary80</item>
+        <item name="android:colorPrimary">@color/material_dynamic_secondary80</item>
+        <item name="colorPrimaryDark">@color/material_dynamic_secondary30</item>
+        <item name="colorAccent">@color/material_dynamic_secondary80</item>
+        <item name="colorOnPrimary">@color/material_dynamic_secondary20</item>
         <!-- Needed for leanback fuckery -->
-        <item name="android:colorAccent">@color/material_dynamic_tertiary30</item>
+        <item name="android:colorAccent">@color/material_dynamic_secondary30</item>
     </style>
 
     <style name="OverlayPrimaryColorBlue">

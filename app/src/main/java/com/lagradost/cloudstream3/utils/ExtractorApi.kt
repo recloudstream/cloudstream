@@ -329,6 +329,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidmolyme(),
     Voe(),
     Moviehab(),
+    MoviehabNet(),
+    Jeniusplay(),
 
     Gdriveplayerapi(),
     Gdriveplayerapp(),
