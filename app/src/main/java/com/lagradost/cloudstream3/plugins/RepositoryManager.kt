@@ -70,6 +70,28 @@ object RepositoryManager {
         getKey("PREBUILT_REPOSITORIES") ?: emptyArray()
     }
 
+    suspend fun parseRepoUrl(url: String): String? {
+        val fixedUrl = url.trim()
+        return if (fixedUrl.contains("^https?://".toRegex())) {
+            fixedUrl
+        } else if (fixedUrl.contains("^(cloudstreamrepo://)|(https://cs\\.repo/)".toRegex())) {
+            fixedUrl.replace("^(cloudstreamrepo://)|(https://cs\\.repo/)".toRegex(), "").let {
+                return@let if (!it.contains("^https?://".toRegex()))
+                     "https://${it}"
+                else fixedUrl
+            }
+        } else if (fixedUrl.matches("^[a-zA-Z0-9!_-]+$".toRegex())) {
+            suspendSafeApiCall {
+                app.get("https://l.cloudstream.cf/${fixedUrl}").let {
+                    return@let if (it.isSuccessful && !it.url.startsWith("https://cutt.ly/branded-domains")) it.url
+                    else app.get("https://cutt.ly/${fixedUrl}").let let2@{ it2 ->
+                        return@let2 if (it2.isSuccessful) it2.url else null
+                    }
+                }
+            }
+        } else null
+    }
+
     suspend fun parseRepository(url: String): Repository? {
         return suspendSafeApiCall {
             // Take manifestVersion and such into account later
