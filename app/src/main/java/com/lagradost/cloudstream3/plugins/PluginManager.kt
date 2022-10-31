@@ -1,40 +1,39 @@
 package com.lagradost.cloudstream3.plugins
 
 import android.app.*
-import dalvik.system.PathClassLoader
-import com.google.gson.Gson
+import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.Resources
-import android.os.Environment
-import android.widget.Toast
-import android.content.Context
 import android.os.Build
+import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.Gson
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
-import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
-import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
-import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
-import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
+import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
+import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
+import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.utils.extractorApis
+import dalvik.system.PathClassLoader
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -217,7 +216,7 @@ object PluginManager {
      * 3. If outdated download and load the plugin
      * 4. Else load the plugin normally
      **/
-    fun updateAllOnlinePluginsAndLoadThem(activity: Activity) = ioSafe {
+    fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
         // Load all plugins as fast as possible!
         loadAllOnlinePlugins(activity)
 
@@ -227,7 +226,7 @@ object PluginManager {
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
-        val onlinePlugins = urls.toList().amap {
+        val onlinePlugins = urls.toList().apmap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
@@ -248,7 +247,7 @@ object PluginManager {
 
         val updatedPlugins = mutableListOf<String>()
 
-        outdatedPlugins.amap { pluginData ->
+        outdatedPlugins.apmap { pluginData ->
             if (pluginData.isDisabled) {
                 //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
                 unloadPlugin(pluginData.savedData.filePath)
@@ -279,9 +278,9 @@ object PluginManager {
     /**
      * Use updateAllOnlinePluginsAndLoadThem
      * */
-    fun loadAllOnlinePlugins(activity: Activity) = ioSafe {
+    fun loadAllOnlinePlugins(activity: Activity) {
         // Load all plugins as fast as possible!
-        (getPluginsOnline()).toList().amap { pluginData ->
+        (getPluginsOnline()).toList().apmap { pluginData ->
             loadPlugin(
                 activity,
                 File(pluginData.filePath),
@@ -290,7 +289,7 @@ object PluginManager {
         }
     }
 
-    fun loadAllLocalPlugins(activity: Activity) = ioSafe {
+    fun loadAllLocalPlugins(activity: Activity) {
         val dir = File(LOCAL_PLUGINS_PATH)
         removeKey(PLUGINS_KEY_LOCAL)
 
@@ -298,7 +297,7 @@ object PluginManager {
             val res = dir.mkdirs()
             if (!res) {
                 Log.w(TAG, "Failed to create local directories")
-                return@ioSafe
+                return
             }
         }
 

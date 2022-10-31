@@ -287,38 +287,22 @@
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <androidx.viewpager.widget.ViewPager
+                <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/home_preview_viewpager"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                </androidx.viewpager.widget.ViewPager>
+                </androidx.viewpager2.widget.ViewPager2>
 
                 <ImageView
-                    android:visibility="gone"
                     android:id="@+id/home_preview_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:alpha="0.8"
                     android:scaleType="centerCrop"
+                    android:visibility="gone"
                     tools:src="@drawable/example_poster" />
-
-                <View
-                    android:id="@+id/title_shadow_top"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_gravity="top"
-                    android:alpha="1"
-                    android:background="@drawable/background_shadow"
-                    android:rotation="180"
-                    android:visibility="visible" />
-
-                <View
-                    android:id="@+id/title_shadow"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_gravity="bottom"
-                    android:background="@drawable/background_shadow" />
 
                 <LinearLayout
                     android:id="@+id/home_padding"
@@ -363,44 +347,14 @@
                 -->
 
                 <LinearLayout
+
                     android:id="@+id/home_preview_title_holder"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="100dp"
                     android:layout_gravity="bottom"
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/home_preview_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingBottom="10dp"
-                        android:paddingHorizontal="30dp"
-                        android:textColor="?attr/white"
-                        android:textSize="17sp"
-                        android:textStyle="bold"
-                        tools:text="The Perfect Run" />
-                    <!--<TextView
-                        android:paddingStart="30dp"
-                        android:paddingEnd="30dp"
-                        android:id="@+id/home_season_tags"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        tools:text="5 seasons 50 episodes" />-->
-                    <TextView
-                        android:id="@+id/home_preview_tags"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingStart="30dp"
-                        android:paddingEnd="30dp"
-                        android:textColor="?attr/white"
-                        android:textSize="14sp"
-                        tools:text="Hello • World • Tags" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
