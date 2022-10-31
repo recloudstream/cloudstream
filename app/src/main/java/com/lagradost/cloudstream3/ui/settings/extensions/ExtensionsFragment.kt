@@ -33,7 +33,7 @@ import com.lagradost.cloudstream3.widget.LinearRecycleViewLayoutManager
 import kotlinx.android.synthetic.main.add_repo_input.*
 import kotlinx.android.synthetic.main.fragment_extensions.*
 
-const val PUBLIC_REPOSITORIES_LIST = "https://recloudstream.github.io/repos/"
+const val PUBLIC_REPOSITORIES_LIST = "https://cloudstream.cf/repos"
 
 class ExtensionsFragment : Fragment() {
     override fun onCreateView(
