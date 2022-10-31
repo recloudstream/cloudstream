@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.metaproviders.TmdbProvider
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
@@ -166,19 +167,18 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         val queryText = query.query.replace(" ", "+")
         val epNum = query.epNumber ?: 0
         val seasonNum = query.seasonNumber ?: 0
-        val ans = getImdb(queryText)
+        val yearNum = query.year ?: 0
+        val tmdbprov = TmdbProvider()
         var imdbId = ""
-        var yearNum = 0
-        if (ans[0] != "" && ans[1] != "" && seasonNum == 0 && epNum == 0) {
-            imdbId = ans[0]
-            yearNum = ans[1].toInt()
+        if (seasonNum == 0 && epNum == 0) { // applicable only for movies for now
+            imdbId = tmdbprov.getImdb(queryText, yearNum)
         }
         val epQuery = if (epNum > 0) "&episode_number=$epNum" else ""
         val seasonQuery = if (seasonNum > 0) "&season_number=$seasonNum" else ""
         val yearQuery = if (yearNum > 0) "&year=$yearNum" else ""
 
         val searchQueryUrl = when (imdbId != "") {
-            //Use imdb_id to search if its valid
+            //Use imdbId to search if its valid
             true -> "$host/subtitles?imdb_id=$imdbId&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
             false -> "$host/subtitles?query=$queryText&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
         }
@@ -234,20 +234,6 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
             }
         }
         return results
-    }
-
-    private fun getImdb(s: String): Array<String> {
-        val searches = TmdbApi("b2960a64f51310954666c97170072562").search
-        val search = searches.searchMovie(s,0,null,true,0)
-        val movie_id = search.results[0].id
-        val movies = TmdbApi("b2960a64f51310954666c97170072562").movies
-        val movie = movies.getMovie(movie_id, null)
-        if (movie == null) {
-            return arrayOf("", "")
-        }
-        else {
-            return arrayOf(movie.imdbID, movie.releaseDate.substring(0,4))
-        }
     }
 
     /*
