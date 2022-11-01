@@ -161,9 +161,9 @@ interface IPlayer {
 
     fun getVideoTracks(): CurrentTracks
 
-    /** If no parameters are set it'll default to no set size */
-    fun setMaxVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE)
+    /** If no parameters are set it'll default to no set size, Specifying the id allows for track overrides to force the player to pick the quality. */
+    fun setMaxVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE, id: String? = null)
 
-    /** If no trackLanguage is set it'll default to first track */
-    fun setPreferredAudioTrack(trackLanguage: String?)
+    /** If no trackLanguage is set it'll default to first track. Specifying the id allows for track overrides as the language can be identical. */
+    fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null)
 }

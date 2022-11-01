@@ -75,7 +75,7 @@ open class NonFinalTextRenderer @JvmOverloads constructor(
         return TAG
     }
 
-    @RendererCapabilities.Capabilities
+//    @RendererCapabilities.Capabilities
     override fun supportsFormat(format: Format): Int {
         return if (decoderFactory.supportsFormat(format)) {
             RendererCapabilities.create(
@@ -202,7 +202,8 @@ open class NonFinalTextRenderer @JvmOverloads constructor(
                     return
                 }
                 // Try and read the next subtitle from the source.
-                @ReadDataResult val result =
+//                @ReadDataResult
+                val result =
                     readSource(formatHold, nextInputBuffer,  /* readFlags= */0)
                 if (result == C.RESULT_BUFFER_READ) {
                     if (nextInputBuffer.isEndOfStream) {

@@ -15,6 +15,7 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.text.TextRenderer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
 import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.SubtitleView
 import com.google.android.exoplayer2.upstream.*
@@ -218,7 +219,43 @@ class CS3IPlayer : IPlayer {
 
     var currentSubtitles: SubtitleData? = null
 
-    override fun setMaxVideoSize(width: Int, height: Int) {
+    private fun List<Tracks.Group>.getTrack(id: String?): Pair<TrackGroup, Int>? {
+        if (id == null) return null
+        // This beast of an expression does:
+        // 1. Filter all audio tracks
+        // 2. Get all formats in said audio tacks
+        // 3. Gets all ids of the formats
+        // 4. Filters to find the first audio track with the same id as the audio track we are looking for
+        // 5. Returns the media group and the index of the audio track in the group
+        return this.firstNotNullOfOrNull { group ->
+            (0 until group.mediaTrackGroup.length).map {
+                group.getTrackFormat(it) to it
+            }.firstOrNull { it.first.id == id }
+                ?.let { group.mediaTrackGroup to it.second }
+        }
+    }
+
+    override fun setMaxVideoSize(width: Int, height: Int, id: String?) {
+        if (id != null) {
+            val videoTrack =
+                exoPlayer?.currentTracks?.groups?.filter { it.type == TRACK_TYPE_VIDEO }
+                    ?.getTrack(id)
+
+            if (videoTrack != null) {
+                exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
+                    ?.buildUpon()
+                    ?.setOverrideForType(
+                        TrackSelectionOverride(
+                            videoTrack.first,
+                            videoTrack.second
+                        )
+                    )
+                    ?.build()
+                    ?: return
+                return
+            }
+        }
+
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
             ?.setMaxVideoSize(width, height)
@@ -226,8 +263,29 @@ class CS3IPlayer : IPlayer {
             ?: return
     }
 
-    override fun setPreferredAudioTrack(trackLanguage: String?) {
+    override fun setPreferredAudioTrack(trackLanguage: String?, id: String?) {
         preferredAudioTrackLanguage = trackLanguage
+
+        if (id != null) {
+            val audioTrack =
+                exoPlayer?.currentTracks?.groups?.filter { it.type == TRACK_TYPE_AUDIO }
+                    ?.getTrack(id)
+
+            if (audioTrack != null) {
+                exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
+                    ?.buildUpon()
+                    ?.setOverrideForType(
+                        TrackSelectionOverride(
+                            audioTrack.first,
+                            audioTrack.second
+                        )
+                    )
+                    ?.build()
+                    ?: return
+                return
+            }
+        }
+
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
             ?.setPreferredAudioLanguage(trackLanguage)
@@ -239,11 +297,11 @@ class CS3IPlayer : IPlayer {
     /**
      * Gets all supported formats in a list
      * */
-    private fun List<TracksInfo.TrackGroupInfo>.getFormats(): List<Format> {
+    private fun List<Tracks.Group>.getFormats(): List<Pair<Format, Int>> {
         return this.map {
-            (0 until it.trackGroup.length).mapNotNull { i ->
+            (0 until it.mediaTrackGroup.length).mapNotNull { i ->
                 if (it.isSupported)
-                    it.trackGroup.getFormat(i) // to it.isSelected
+                    it.mediaTrackGroup.getFormat(i) to i
                 else null
             }
         }.flatten()
@@ -270,11 +328,12 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun getVideoTracks(): CurrentTracks {
-        val allTracks = exoPlayer?.currentTracksInfo?.trackGroupInfos ?: emptyList()
-        val videoTracks = allTracks.filter { it.trackType == TRACK_TYPE_VIDEO }.getFormats()
-            .map { it.toVideoTrack() }
-        val audioTracks = allTracks.filter { it.trackType == TRACK_TYPE_AUDIO }.getFormats()
-            .map { it.toAudioTrack() }
+        val allTracks = exoPlayer?.currentTracks?.groups ?: emptyList()
+        val videoTracks = allTracks.filter { it.type == TRACK_TYPE_VIDEO }
+            .getFormats()
+            .map { it.first.toVideoTrack() }
+        val audioTracks = allTracks.filter { it.type == TRACK_TYPE_AUDIO }.getFormats()
+            .map { it.first.toAudioTrack() }
 
         return CurrentTracks(
             exoPlayer?.videoFormat?.toVideoTrack(),
@@ -611,7 +670,12 @@ class CS3IPlayer : IPlayer {
                             } else it
                         }.toTypedArray()
                     }
-                    .setTrackSelector(trackSelector ?: getTrackSelector(context, maxVideoHeight))
+                    .setTrackSelector(
+                        trackSelector ?: getTrackSelector(
+                            context,
+                            maxVideoHeight
+                        )
+                    )
                     .setLoadControl(
                         DefaultLoadControl.Builder()
                             .setTargetBufferBytes(
@@ -781,10 +845,7 @@ class CS3IPlayer : IPlayer {
                 isPlaying = exo.isPlaying
             }
             exoPlayer?.addListener(object : Player.Listener {
-                /**
-                 * Records the current used subtitle/track. Needed as exoplayer seems to have loose track language selection.
-                 * */
-                override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
+                override fun onTracksChanged(tracks: Tracks) {
                     fun Format.isSubtitle(): Boolean {
                         return this.sampleMimeType?.contains("video/") == false &&
                                 this.sampleMimeType?.contains("audio/") == false
@@ -792,17 +853,17 @@ class CS3IPlayer : IPlayer {
 
                     normalSafeApiCall {
                         exoPlayerSelectedTracks =
-                            tracksInfo.trackGroupInfos.mapNotNull {
-                                val format = it.trackGroup.getFormat(0)
+                            tracks.groups.mapNotNull {
+                                val format = it.mediaTrackGroup.getFormat(0)
                                 if (format.isSubtitle())
                                     format.language?.let { lang -> lang to it.isSelected }
                                 else null
                             }
 
-                        val exoPlayerReportedTracks = tracksInfo.trackGroupInfos.mapNotNull {
+                        val exoPlayerReportedTracks = tracks.groups.mapNotNull {
                             // Filter out unsupported tracks
                             if (it.isSupported)
-                                it.trackGroup.getFormat(0)
+                                it.mediaTrackGroup.getFormat(0)
                             else
                                 null
                         }.mapNotNull {
@@ -827,7 +888,6 @@ class CS3IPlayer : IPlayer {
                         onTracksInfoChanged?.invoke()
                         subtitlesUpdates?.invoke()
                     }
-                    super.onTracksInfoChanged(tracksInfo)
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
