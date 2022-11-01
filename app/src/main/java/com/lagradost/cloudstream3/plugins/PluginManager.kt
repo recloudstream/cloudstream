@@ -13,16 +13,12 @@ import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.Gson
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
-import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
-import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
-import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.debugPrint
@@ -34,7 +30,6 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
-import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
@@ -286,7 +281,7 @@ object PluginManager {
     /**
      * Automatically download plugins not yet existing on local
      * 1. Gets all online data from online plugins repo
-     * 2. Fetch all undownloaded plugins
+     * 2. Fetch all not downloaded plugins
      * 3. Download them and reload plugins
      **/
     fun downloadNotExistingPluginsAndLoad(activity: Activity) {
@@ -304,21 +299,30 @@ object PluginManager {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
+        val providerLang = activity.getApiProviderLangSettings()
+        //Log.i(TAG, "providerLang => ${providerLang.toJson()}")
+
         // Iterate online repos and returns not downloaded plugins
         val notDownloadedPlugins = onlinePlugins.mapNotNull outer@{ onlineData ->
             val sitePlugin = onlineData.second
             //Don't include empty urls
             if (sitePlugin.url.isBlank()) { return@outer null }
             if (sitePlugin.repositoryUrl.isNullOrBlank()) { return@outer null }
+
             //Omit already existing plugins
-            if (getPluginPath(activity, sitePlugin.internalName, sitePlugin.repositoryUrl).exists()) {
-                //Log.i("DevDebug", "Skip > ${sitePlugin.internalName}")
+            if (getPluginPath(activity, sitePlugin.internalName, onlineData.first).exists()) {
+                Log.i(TAG, "Skip > ${sitePlugin.internalName}")
                 return@outer null
             }
-            //TODO: Base this on language setting
+
             //Omit lang not selected on language setting
             val lang = sitePlugin.language ?: return@outer null
-            if (lang != "tl") { return@outer null }
+            //If set to 'universal', don't skip any language
+            if (!providerLang.contains("universal") && !providerLang.contains(lang)) {
+                return@outer null
+            }
+            //Log.i(TAG, "sitePlugin lang => $lang")
+
             //Omit NSFW, if disabled
             sitePlugin.tvTypes?.let { tvtypes ->
                 if (!settingsForProvider.enableAdult) {
@@ -336,7 +340,7 @@ object PluginManager {
             )
             OnlinePluginData(savedData, onlineData)
         }
-        //Log.i("DevDebug", "notDownloadedPlugins => ${notDownloadedPlugins.toJson()}")
+        //Log.i(TAG, "notDownloadedPlugins => ${notDownloadedPlugins.toJson()}")
 
         notDownloadedPlugins.apmap { pluginData ->
             downloadAndLoadPlugin(
