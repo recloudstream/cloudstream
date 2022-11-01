@@ -271,9 +271,9 @@ object PluginManager {
             createNotification(activity, updatedPlugins, R.string.plugins_updated)
         }
 
-        ioSafe {
+        // ioSafe {
             afterPluginsLoadedEvent.invoke(true)
-        }
+        // }
 
         Log.i(TAG, "Plugin update done!")
     }
@@ -356,9 +356,9 @@ object PluginManager {
             createNotification(activity, newDownloadPlugins, R.string.plugins_downloaded)
         }
 
-       ioSafe {
+        // ioSafe {
             afterPluginsLoadedEvent.invoke(true)
-       }
+        // }
 
         Log.i(TAG, "Plugin download done!")
     }
