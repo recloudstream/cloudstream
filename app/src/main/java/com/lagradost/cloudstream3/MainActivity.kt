@@ -576,7 +576,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                             false
                         )
                     ) {
-                        PluginManager.downloadNotExistingPluginsAndLoad(this@MainActivity)
+                        PluginManager.downloadNotExistingPluginsAndLoad(this@MainActivity, isLoaded)
                         isLoaded = true
                     }
 

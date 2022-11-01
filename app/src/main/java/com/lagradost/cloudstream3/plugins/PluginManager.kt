@@ -284,11 +284,12 @@ object PluginManager {
      * 2. Fetch all not downloaded plugins
      * 3. Download them and reload plugins
      **/
-    fun downloadNotExistingPluginsAndLoad(activity: Activity) {
-        // Load all plugins as fast as possible!
-        loadAllOnlinePlugins(activity)
-
-        afterPluginsLoadedEvent.invoke(true)
+    fun downloadNotExistingPluginsAndLoad(activity: Activity, isLoaded: Boolean) {
+        // Load all plugins as fast as possible, if its not loaded yet.
+        if (!isLoaded) {
+            loadAllOnlinePlugins(activity)
+            afterPluginsLoadedEvent.invoke(true)
+        }
 
         val newDownloadPlugins = mutableListOf<String>()
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
