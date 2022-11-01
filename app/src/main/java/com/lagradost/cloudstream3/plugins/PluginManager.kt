@@ -317,7 +317,7 @@ object PluginManager {
             //Omit lang not selected on language setting
             val lang = sitePlugin.language ?: return@outer null
             //If set to 'universal', don't skip any language
-            if (!providerLang.contains("universal") && !providerLang.contains(lang)) {
+            if (!providerLang.contains(AllLanguagesName) && !providerLang.contains(lang)) {
                 return@outer null
             }
             //Log.i(TAG, "sitePlugin lang => $lang")
