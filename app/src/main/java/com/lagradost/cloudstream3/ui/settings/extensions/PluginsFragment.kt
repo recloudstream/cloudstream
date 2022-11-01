@@ -1,27 +1,22 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
 import android.os.Bundle
-import android.view.*
-import android.widget.SearchView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.map
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.getPairList
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.settings.appLanguages
-import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import kotlinx.android.synthetic.main.fragment_plugins.*
 
 const val PLUGINS_BUNDLE_NAME = "name"

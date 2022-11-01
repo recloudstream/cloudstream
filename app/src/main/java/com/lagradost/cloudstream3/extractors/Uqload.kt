@@ -25,7 +25,7 @@ open class Uqload : ExtractorApi() {
             } else {
                 ""
             }
-        
+
         val cleaned_url = if (lang == "ht") {  // if url doesn't contain a flag and the url starts with http://
             url
         } else {
