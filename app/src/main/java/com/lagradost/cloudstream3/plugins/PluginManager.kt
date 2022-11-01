@@ -223,7 +223,7 @@ object PluginManager {
         // Load all plugins as fast as possible!
         loadAllOnlinePlugins(activity)
 
-            afterPluginsLoadedEvent.invoke(true)
+        afterPluginsLoadedEvent.invoke(true)
 
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
@@ -288,9 +288,7 @@ object PluginManager {
         // Load all plugins as fast as possible!
         loadAllOnlinePlugins(activity)
 
-        ioSafe {
-            afterPluginsLoadedEvent.invoke(true)
-        }
+        afterPluginsLoadedEvent.invoke(true)
 
         val newDownloadPlugins = mutableListOf<String>()
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
@@ -358,9 +356,9 @@ object PluginManager {
             createNotification(activity, newDownloadPlugins, R.string.plugins_downloaded)
         }
 
-       // ioSafe {
+       ioSafe {
             afterPluginsLoadedEvent.invoke(true)
-       // }
+       }
 
         Log.i(TAG, "Plugin download done!")
     }
