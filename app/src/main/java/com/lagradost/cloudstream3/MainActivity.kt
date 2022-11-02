@@ -561,14 +561,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
 
                 ioSafe {
-                    var isLoaded = false
+                    // Load all plugins as fast as possible!
+                    PluginManager.loadAllOnlinePlugins(this@MainActivity)
+                    afterPluginsLoadedEvent.invoke(true)
+
                     if (settingsManager.getBoolean(
                             getString(R.string.auto_update_plugins_key),
                             true
                         )
                     ) {
                         PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
-                        isLoaded = true
                     }
                     //Automatically download not existing plugins
                     if (settingsManager.getBoolean(
@@ -576,12 +578,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                             false
                         )
                     ) {
-                        PluginManager.downloadNotExistingPluginsAndLoad(this@MainActivity, isLoaded)
-                        isLoaded = true
-                    }
-
-                    if (!isLoaded) {
-                        PluginManager.loadAllOnlinePlugins(this@MainActivity)
+                        PluginManager.downloadNotExistingPluginsAndLoad(this@MainActivity)
                     }
                 }
 

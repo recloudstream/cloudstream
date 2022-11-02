@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -219,11 +220,6 @@ object PluginManager {
      * 4. Else load the plugin normally
      **/
     fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
-        // Load all plugins as fast as possible!
-        loadAllOnlinePlugins(activity)
-
-        afterPluginsLoadedEvent.invoke(true)
-
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
@@ -283,13 +279,7 @@ object PluginManager {
      * 2. Fetch all not downloaded plugins
      * 3. Download them and reload plugins
      **/
-    fun downloadNotExistingPluginsAndLoad(activity: Activity, isLoaded: Boolean) {
-        // Load all plugins as fast as possible, if its not loaded yet.
-        if (!isLoaded) {
-            loadAllOnlinePlugins(activity)
-            afterPluginsLoadedEvent.invoke(true)
-        }
-
+    fun downloadNotExistingPluginsAndLoad(activity: Activity) {
         val newDownloadPlugins = mutableListOf<String>()
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
@@ -324,7 +314,7 @@ object PluginManager {
             //Omit NSFW, if disabled
             sitePlugin.tvTypes?.let { tvtypes ->
                 if (!settingsForProvider.enableAdult) {
-                    if (tvtypes.contains("NSFW")) {
+                    if (tvtypes.contains(TvType.NSFW.name)) {
                         return@outer null
                     }
                 }
@@ -616,7 +606,7 @@ object PluginManager {
     private fun createNotification(
         context: Context,
         extensionNames: List<String>,
-        title: Int
+        @StringRes title: Int
     ): Notification? {
         try {
             if (extensionNames.isEmpty()) return null
