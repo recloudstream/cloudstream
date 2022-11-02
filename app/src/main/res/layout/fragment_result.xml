@@ -267,9 +267,9 @@
                     </LinearLayout>
                 </FrameLayout>-->
                 <FrameLayout
+                    android:id="@+id/result_top_holder"
                     android:layout_width="match_parent"
                     android:layout_height="200dp">
-
 
                     <FrameLayout
                         android:id="@+id/result_smallscreen_holder"
@@ -279,21 +279,23 @@
 
                         <include layout="@layout/fragment_trailer" />
                     </FrameLayout>
+
                     <FrameLayout
                         android:id="@+id/result_poster_background_holder"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
-                    <ImageView
-                        android:id="@+id/result_poster_background"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_gravity="bottom"
-                        android:background="@drawable/background_shadow" />
+                        <ImageView
+                            android:id="@+id/result_poster_background"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_gravity="bottom"
+                            android:background="@drawable/background_shadow" />
                     </FrameLayout>
                 </FrameLayout>
 
@@ -330,6 +332,7 @@
                                 android:contentDescription="@string/result_poster_img_des"
                                 android:foreground="@drawable/outline_drawable"
                                 android:scaleType="centerCrop"
+                                android:layout_gravity="bottom"
                                 tools:src="@drawable/example_poster" />
                         </androidx.cardview.widget.CardView>
 

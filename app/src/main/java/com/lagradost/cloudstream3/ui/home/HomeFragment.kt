@@ -585,6 +585,11 @@ class HomeFragment : Fragment() {
             setPageTransformer(HomeScrollTransformer())
             val callback: OnPageChangeCallback = object : OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
+
+                   // home_search?.isIconified = true
+                    //home_search?.isVisible = true
+                    //home_search?.clearFocus()
+
                     (home_preview_viewpager?.adapter as? HomeScrollAdapter)?.apply {
                         if (position >= itemCount - 1 && hasMoreItems) {
                             hasMoreItems = false // dont make two requests
