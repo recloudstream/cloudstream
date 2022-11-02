@@ -6,7 +6,6 @@
         android:layout_height="0dp"
         android:visibility="visible"
         android:orientation="horizontal"
-        android:keepScreenOn="true"
         android:id="@+id/player_background"
         app:backgroundTint="@android:color/black"
         android:background="@android:color/black"

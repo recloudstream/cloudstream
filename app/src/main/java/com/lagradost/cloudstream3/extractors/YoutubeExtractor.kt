@@ -46,6 +46,7 @@ open class YoutubeExtractor : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
+        println("TRYING TO ExTRACT: $url")
         if (ytVideos[url].isNullOrEmpty()) {
             val link =
                 YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(

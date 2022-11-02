@@ -221,7 +221,9 @@ class SearchFragment : Fragment() {
                 builder.setContentView(R.layout.home_select_mainpage)
                 builder.show()
                 builder.let { dialog ->
-                    val isMultiLang = ctx.getApiProviderLangSettings().size > 1
+                    val isMultiLang = ctx.getApiProviderLangSettings().let { set ->
+                        set.size > 1 || set.contains(AllLanguagesName)
+                    }
 
                     val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
                     val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)

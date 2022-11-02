@@ -70,9 +70,9 @@ sealed class UiImage {
     data class Drawable(@DrawableRes val resId: Int) : UiImage()
 }
 
-fun ImageView?.setImage(value: UiImage?) {
+fun ImageView?.setImage(value: UiImage?, fadeIn: Boolean = true) {
     when (value) {
-        is UiImage.Image -> setImageImage(value)
+        is UiImage.Image -> setImageImage(value,fadeIn)
         is UiImage.Drawable -> setImageDrawable(value)
         null -> {
             this?.isVisible = false
@@ -80,9 +80,9 @@ fun ImageView?.setImage(value: UiImage?) {
     }
 }
 
-fun ImageView?.setImageImage(value: UiImage.Image) {
+fun ImageView?.setImageImage(value: UiImage.Image, fadeIn: Boolean = true) {
     if (this == null) return
-    this.isVisible = setImage(value.url, value.headers, value.errorDrawable)
+    this.isVisible = setImage(value.url, value.headers, value.errorDrawable, fadeIn)
 }
 
 fun ImageView?.setImageDrawable(value: UiImage.Drawable) {

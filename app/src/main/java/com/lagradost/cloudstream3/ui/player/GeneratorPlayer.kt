@@ -796,15 +796,16 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 tracksDialog.apply_btt?.setOnClickListener {
+                    val currentTrack = currentAudioTracks.getOrNull(audioIndexStart)
                     player.setPreferredAudioTrack(
-                        currentAudioTracks.getOrNull(audioIndexStart)?.language
+                        currentTrack?.language, currentTrack?.id
                     )
 
                     val currentVideo = currentVideoTracks.getOrNull(videoIndex)
                     val width = currentVideo?.width ?: NO_VALUE
                     val height = currentVideo?.height ?: NO_VALUE
                     if (width != NO_VALUE && height != NO_VALUE) {
-                        player.setMaxVideoSize(width, height)
+                        player.setMaxVideoSize(width, height, currentVideo?.id)
                     }
 
                     tracksDialog.dismissSafe(activity)

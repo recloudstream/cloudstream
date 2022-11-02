@@ -5,6 +5,9 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -20,26 +23,32 @@ import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import kotlinx.android.synthetic.main.fragment_result.*
+import kotlinx.android.synthetic.main.fragment_result.result_cast_items
+import kotlinx.android.synthetic.main.fragment_result.result_episodes_text
+import kotlinx.android.synthetic.main.fragment_result.result_resume_parent
+import kotlinx.android.synthetic.main.fragment_result.result_scroll
+import kotlinx.android.synthetic.main.fragment_result.result_smallscreen_holder
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
+import kotlinx.android.synthetic.main.fragment_result_swipe.result_back
+import kotlinx.android.synthetic.main.fragment_result_tv.*
 import kotlinx.android.synthetic.main.fragment_trailer.*
 import kotlinx.android.synthetic.main.result_recommendations.*
+import kotlinx.android.synthetic.main.result_recommendations.result_recommendations
 import kotlinx.android.synthetic.main.trailer_custom_layout.*
+
 
 class ResultFragmentPhone : ResultFragment() {
     var currentTrailers: List<ExtractorLink> = emptyList()
@@ -84,8 +93,36 @@ class ResultFragmentPhone : ResultFragment() {
             } ?: run {
                 false
             }
+        //result_trailer_thumbnail?.setImageBitmap(result_poster_background?.drawable?.toBitmap())
+
+
         result_trailer_loading?.isVisible = isSuccess
-        result_smallscreen_holder?.isVisible = !isSuccess && !isFullScreenPlayer
+        val turnVis = !isSuccess && !isFullScreenPlayer
+        result_smallscreen_holder?.isVisible = turnVis
+        result_poster_background_holder?.apply {
+            val fadeIn: Animation = AlphaAnimation(alpha, if (turnVis) 1.0f else 0.0f).apply {
+                interpolator = DecelerateInterpolator()
+                duration = 200
+                fillAfter = true
+            }
+            clearAnimation()
+            startAnimation(fadeIn)
+        }
+
+        //player_view?.apply {
+        //alpha = 0.0f
+        //ObjectAnimator.ofFloat(player_view, "alpha", 1f).apply {
+        //    duration = 200
+        //    start()
+        //}
+
+        //val fadeIn: Animation = AlphaAnimation(0.0f, 1f).apply {
+        //    interpolator = DecelerateInterpolator()
+        //    duration = 2000
+        //    fillAfter = true
+        //}
+        //startAnimation(fadeIn)
+        // }
 
         // We don't want the trailer to be focusable if it's not visible
         result_smallscreen_holder?.descendantFocusability = if (isSuccess) {
@@ -129,7 +166,7 @@ class ResultFragmentPhone : ResultFragment() {
         down.nextFocusUpId = upper.id
     }
 
-    var selectSeason : String? = null
+    var selectSeason: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
@@ -301,13 +338,14 @@ class ResultFragmentPhone : ResultFragment() {
         observe(viewModel.selectedSeason) { text ->
             result_season_button.setText(text)
 
-            selectSeason = (if (text is Some.Success) text.value else null)?.asStringNull(result_season_button?.context)
+            selectSeason =
+                (if (text is Some.Success) text.value else null)?.asStringNull(result_season_button?.context)
             // If the season button is visible the result season button will be next focus down
             if (result_season_button?.isVisible == true)
                 if (result_resume_parent?.isVisible == true)
                     setFocusUpAndDown(result_resume_series_button, result_season_button)
-                //else
-                //    setFocusUpAndDown(result_bookmark_button, result_season_button)
+            //else
+            //    setFocusUpAndDown(result_bookmark_button, result_season_button)
         }
 
         observe(viewModel.selectedDubStatus) { status ->
@@ -317,8 +355,8 @@ class ResultFragmentPhone : ResultFragment() {
                 if (result_season_button?.isVisible != true && result_episode_select?.isVisible != true) {
                     if (result_resume_parent?.isVisible == true)
                         setFocusUpAndDown(result_resume_series_button, result_dub_select)
-                   //else
-                   //    setFocusUpAndDown(result_bookmark_button, result_dub_select)
+                    //else
+                    //    setFocusUpAndDown(result_bookmark_button, result_dub_select)
                 }
         }
         observe(viewModel.selectedRange) { range ->
@@ -378,10 +416,14 @@ class ResultFragmentPhone : ResultFragment() {
                             r to (text?.asStringNull(ctx) ?: return@mapNotNull null)
                         }
 
-                    activity?.showDialog(names.map { it.second },names.indexOfFirst { it.second == selectSeason },"",false,{}) { itemId->
+                    activity?.showDialog(
+                        names.map { it.second },
+                        names.indexOfFirst { it.second == selectSeason },
+                        "",
+                        false,
+                        {}) { itemId ->
                         viewModel.changeSeason(names[itemId].first)
                     }
-
 
 
                     //view.popupMenuNoIconsAndNoStringRes(names.mapIndexed { index, (_, name) ->

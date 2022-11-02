@@ -522,13 +522,6 @@
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
             app:popExitAnim="@anim/exit_anim" />
-        <action
-            android:id="@+id/action_navigation_setup_language_to_navigation_setup_media"
-            app:destination="@id/navigation_setup_media"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
     </fragment>
 
     <action
