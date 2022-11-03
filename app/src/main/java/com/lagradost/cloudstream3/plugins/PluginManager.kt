@@ -220,6 +220,9 @@ object PluginManager {
      * 4. Else load the plugin normally
      **/
     fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
+        // Load all plugins as fast as possible!
+        loadAllOnlinePlugins(activity)
+        afterPluginsLoadedEvent.invoke(true)
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES

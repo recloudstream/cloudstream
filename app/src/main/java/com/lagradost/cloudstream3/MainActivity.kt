@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
@@ -561,17 +562,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
 
                 ioSafe {
-                    // Load all plugins as fast as possible!
-                    PluginManager.loadAllOnlinePlugins(this@MainActivity)
-                    afterPluginsLoadedEvent.invoke(true)
-
                     if (settingsManager.getBoolean(
                             getString(R.string.auto_update_plugins_key),
                             true
                         )
                     ) {
                         PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
+                    } else {
+                        loadAllOnlinePlugins(this@MainActivity)
                     }
+
                     //Automatically download not existing plugins
                     if (settingsManager.getBoolean(
                             getString(R.string.auto_download_plugins_key),
