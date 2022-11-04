@@ -1155,7 +1155,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         if(timestampShowState == show) return
         timestampShowState = show
         skip_chapter_button?.apply {
-            val showWidth = 190.toPx
+            val showWidth = 170.toPx
             val noShowWidth = 10.toPx
             //if((show && width == showWidth) || (!show && width == noShowWidth)) {
             //    return

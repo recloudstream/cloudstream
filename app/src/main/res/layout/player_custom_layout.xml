@@ -319,6 +319,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButton
+            tools:visibility="visible"
             android:id="@+id/skip_chapter_button"
             style="@style/NiceButton"
             android:layout_width="150dp"

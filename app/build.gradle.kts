@@ -190,7 +190,7 @@ dependencies {
     // Networking
 //    implementation("com.squareup.okhttp3:okhttp:4.9.2")
 //    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1")
-    implementation("com.github.Blatzar:NiceHttp:0.3.3")
+    implementation("com.github.Blatzar:NiceHttp:0.3.4")
 
     // Util to skip the URI file fuckery 🙏
     implementation("com.github.tachiyomiorg:unifile:17bec43")
