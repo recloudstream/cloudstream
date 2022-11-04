@@ -166,7 +166,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         isActive = true
         setPlayerDimen(null)
         setTitle()
-        hasRequestedStamps = false
+        if (!sameEpisode)
+            hasRequestedStamps = false
 
         loadExtractorJob(link.first)
         // load player
@@ -186,7 +187,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 ),
             )
         }
-        player.addTimeStamps(listOf()) // clear stamps
+        if (!sameEpisode)
+            player.addTimeStamps(listOf()) // clear stamps
     }
 
     private fun sortLinks(useQualitySettings: Boolean = true): List<Pair<ExtractorLink?, ExtractorUri?>> {
