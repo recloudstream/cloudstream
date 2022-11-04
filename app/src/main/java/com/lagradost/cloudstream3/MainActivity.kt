@@ -182,7 +182,6 @@ var app = Requests(responseParser = object : ResponseParser {
     }
 }).apply {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
-    //baseClient = baseClient.newBuilder().connectionSpecs(listOf(ConnectionSpec.COMPATIBLE_TLS)).build()
 }
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {

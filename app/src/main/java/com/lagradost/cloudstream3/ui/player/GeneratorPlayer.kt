@@ -1189,12 +1189,10 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun onTimestampSkipped(timestamp: EpisodeSkip.SkipStamp) {
-        println("onTimestampSkipped:::$timestamp")
         displayTimeStamp(false)
     }
 
     override fun onTimestamp(timestamp: EpisodeSkip.SkipStamp) {
-        println("onTimestamp:::$timestamp")
         skip_chapter_button.setText(timestamp.uiText)
         displayTimeStamp(true)
         skip_chapter_button?.handler?.postDelayed({
