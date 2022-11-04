@@ -638,4 +638,13 @@
     <string name="player_settings_play_in_browser">Browser</string>
     <string name="app_not_found_error">App not found</string>
     <string name="all_languages_preference">All Languages</string>
+
+    <string name="skip_type_format" formatted="true">Skip %s</string>
+    <string name="skip_type_op">Opening</string>
+    <string name="skip_type_ed">Ending</string>
+    <string name="skip_type_recap">Recap</string>
+    <string name="skip_type_mixed_ed">Mixed ending</string>
+    <string name="skip_type_mixed_op">Mixed opening</string>
+    <string name="skip_type_creddits">Credits</string>
+    <string name="skip_type_intro">Intro</string>
 </resources>

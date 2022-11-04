@@ -18,7 +18,10 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
 import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.SubtitleView
-import com.google.android.exoplayer2.upstream.*
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -32,6 +35,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
+import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorUri
@@ -113,6 +117,8 @@ class CS3IPlayer : IPlayer {
     private var playerUpdated: ((Any?) -> Unit)? = null
     private var embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null
     private var onTracksInfoChanged: (() -> Unit)? = null
+    private var onTimestampInvoked: ((EpisodeSkip.SkipStamp?) -> Unit)? = null
+    private var onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)? = null
 
     override fun releaseCallbacks() {
         playerUpdated = null
@@ -126,7 +132,9 @@ class CS3IPlayer : IPlayer {
         prevEpisode = null
         subtitlesUpdates = null
         onTracksInfoChanged = null
+        onTimestampInvoked = null
         requestSubtitleUpdate = null
+        onTimestampSkipped = null
     }
 
     override fun initCallbacks(
@@ -142,6 +150,8 @@ class CS3IPlayer : IPlayer {
         subtitlesUpdates: (() -> Unit)?,
         embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)?,
         onTracksInfoChanged: (() -> Unit)?,
+        onTimestampInvoked: ((EpisodeSkip.SkipStamp?) -> Unit)?,
+        onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)?,
     ) {
         this.playerUpdated = playerUpdated
         this.updateIsPlaying = updateIsPlaying
@@ -155,6 +165,8 @@ class CS3IPlayer : IPlayer {
         this.subtitlesUpdates = subtitlesUpdates
         this.embeddedSubtitlesFetched = embeddedSubtitlesFetched
         this.onTracksInfoChanged = onTracksInfoChanged
+        this.onTimestampInvoked = onTimestampInvoked
+        this.onTimestampSkipped = onTimestampSkipped
     }
 
     // I know, this is not a perfect solution, however it works for fixing subs
@@ -719,7 +731,7 @@ class CS3IPlayer : IPlayer {
                 source
             }
 
-            println("PLAYBACK POS $playbackPosition")
+            //println("PLAYBACK POS $playbackPosition")
             return exoPlayerBuilder.build().apply {
                 setPlayWhenReady(playWhenReady)
                 seekTo(currentWindow, playbackPosition)
@@ -735,8 +747,22 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    fun updatedTime() {
-        val position = exoPlayer?.currentPosition
+    private fun getCurrentTimestamp(writePosition : Long? = null): EpisodeSkip.SkipStamp? {
+        val position = writePosition ?: this@CS3IPlayer.getPosition() ?: return null
+        for (lastTimeStamp in lastTimeStamps) {
+            if (lastTimeStamp.startMs <= position && position < lastTimeStamp.endMs) {
+                return lastTimeStamp
+            }
+        }
+        return null
+    }
+
+    fun updatedTime(writePosition : Long? = null) {
+        getCurrentTimestamp(writePosition)?.let { timestamp ->
+            onTimestampInvoked?.invoke(timestamp)
+        }
+
+        val position = writePosition ?: exoPlayer?.currentPosition
         val duration = exoPlayer?.contentDuration
         if (duration != null && position != null) {
             playerPositionChanged?.invoke(Pair(position, duration))
@@ -748,12 +774,12 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun seekTo(time: Long) {
-        updatedTime()
+        updatedTime(time)
         exoPlayer?.seekTo(time)
     }
 
     private fun ExoPlayer.seekTime(time: Long) {
-        updatedTime()
+        updatedTime(currentPosition + time)
         seekTo(currentPosition + time)
     }
 
@@ -789,6 +815,17 @@ class CS3IPlayer : IPlayer {
                     CSPlayerEvent.SeekBack -> seekTime(-seekActionTime)
                     CSPlayerEvent.NextEpisode -> nextEpisode?.invoke()
                     CSPlayerEvent.PrevEpisode -> prevEpisode?.invoke()
+                    CSPlayerEvent.SkipCurrentChapter -> {
+                        //val dur = this@CS3IPlayer.getDuration() ?: return@apply
+                        getCurrentTimestamp()?.let { lastTimeStamp ->
+                            if (lastTimeStamp.skipToNextEpisode) {
+                                handleEvent(CSPlayerEvent.NextEpisode)
+                            } else {
+                                seekTo(lastTimeStamp.endMs + 1L)
+                            }
+                            onTimestampSkipped?.invoke(lastTimeStamp)
+                        }
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -1005,6 +1042,24 @@ class CS3IPlayer : IPlayer {
             Log.e(TAG, "loadExo error", e)
             playerError?.invoke(e)
         }
+    }
+
+    private var lastTimeStamps: List<EpisodeSkip.SkipStamp> = emptyList()
+    override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
+        lastTimeStamps = timeStamps
+        timeStamps.forEach { timestamp ->
+            exoPlayer?.createMessage { _, _ ->
+                updatedTime()
+                //if (payload is EpisodeSkip.SkipStamp) // this should always be true
+                //    onTimestampInvoked?.invoke(payload)
+            }
+                ?.setLooper(Looper.getMainLooper())
+                ?.setPosition(timestamp.startMs)
+                //?.setPayload(timestamp)
+                ?.setDeleteAfterDelivery(false)
+                ?.send()
+        }
+        updatedTime()
     }
 
     fun onRenderFirst() {

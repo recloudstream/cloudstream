@@ -416,7 +416,7 @@ class ResultViewModel2 : ViewModel() {
             return this?.firstOrNull { it.season == season }
         }
 
-        fun updateWatchStatus(currentResponse : LoadResponse, status: WatchType) {
+        fun updateWatchStatus(currentResponse: LoadResponse, status: WatchType) {
             val currentId = currentResponse.getId()
             val resultPage = currentResponse
 
@@ -793,7 +793,7 @@ class ResultViewModel2 : ViewModel() {
 
 
     fun updateWatchStatus(status: WatchType) {
-        updateWatchStatus(currentResponse ?: return,status)
+        updateWatchStatus(currentResponse ?: return, status)
         _watchStatus.postValue(status)
     }
 
@@ -1681,10 +1681,10 @@ class ResultViewModel2 : ViewModel() {
         preferDubStatus = indexer.dubStatus
 
         generator = if (isMovie) {
-            getMovie()?.let { RepoLinkGenerator(listOf(it)) }
+            getMovie()?.let { RepoLinkGenerator(listOf(it), page = currentResponse) }
         } else {
             episodes?.let { list ->
-                RepoLinkGenerator(list)
+                RepoLinkGenerator(list, page = currentResponse)
             }
         }
 

@@ -41,6 +41,7 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="darkBarTransparent">#C0121212</color>
+    <color name="skipOpTransparent">#4D121212</color>
     <color name="darkBar">#121212</color>
     <color name="videoProgress">#66B5B5B5</color> <!--66B5B5B5-->
     <!--<color name="videoCache">#663D50FA</color>--> <!--66B5B5B5-->

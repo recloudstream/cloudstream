@@ -1141,6 +1141,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 PlayerEventType.Play -> {
                     player.handleEvent(CSPlayerEvent.Play)
                 }
+                PlayerEventType.SkipCurrentChapter -> {
+                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+                }
                 PlayerEventType.Resize -> {
                     nextResize()
                 }
@@ -1252,6 +1255,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_pause_play?.setOnClickListener {
             autoHide()
             player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+        }
+
+        skip_chapter_button?.setOnClickListener {
+            player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
         }
 
         // init clicks

@@ -12,7 +12,6 @@ import okhttp3.Headers.Companion.toHeaders
 import okhttp3.OkHttpClient
 import java.io.File
 
-
 fun Requests.initClient(context: Context): OkHttpClient {
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
     val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)
