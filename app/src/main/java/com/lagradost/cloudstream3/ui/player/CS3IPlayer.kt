@@ -117,7 +117,7 @@ class CS3IPlayer : IPlayer {
     private var playerUpdated: ((Any?) -> Unit)? = null
     private var embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null
     private var onTracksInfoChanged: (() -> Unit)? = null
-    private var onTimestampInvoked: ((EpisodeSkip.SkipStamp) -> Unit)? = null
+    private var onTimestampInvoked: ((EpisodeSkip.SkipStamp?) -> Unit)? = null
     private var onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)? = null
 
     override fun releaseCallbacks() {
@@ -150,7 +150,7 @@ class CS3IPlayer : IPlayer {
         subtitlesUpdates: (() -> Unit)?,
         embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)?,
         onTracksInfoChanged: (() -> Unit)?,
-        onTimestampInvoked: ((EpisodeSkip.SkipStamp) -> Unit)?,
+        onTimestampInvoked: ((EpisodeSkip.SkipStamp?) -> Unit)?,
         onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)?,
     ) {
         this.playerUpdated = playerUpdated
@@ -731,7 +731,7 @@ class CS3IPlayer : IPlayer {
                 source
             }
 
-            println("PLAYBACK POS $playbackPosition")
+            //println("PLAYBACK POS $playbackPosition")
             return exoPlayerBuilder.build().apply {
                 setPlayWhenReady(playWhenReady)
                 seekTo(currentWindow, playbackPosition)
@@ -747,8 +747,22 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    fun updatedTime() {
-        val position = exoPlayer?.currentPosition
+    private fun getCurrentTimestamp(writePosition : Long? = null): EpisodeSkip.SkipStamp? {
+        val position = writePosition ?: this@CS3IPlayer.getPosition() ?: return null
+        for (lastTimeStamp in lastTimeStamps) {
+            if (lastTimeStamp.startMs <= position && position < lastTimeStamp.endMs) {
+                return lastTimeStamp
+            }
+        }
+        return null
+    }
+
+    fun updatedTime(writePosition : Long? = null) {
+        getCurrentTimestamp(writePosition)?.let { timestamp ->
+            onTimestampInvoked?.invoke(timestamp)
+        }
+
+        val position = writePosition ?: exoPlayer?.currentPosition
         val duration = exoPlayer?.contentDuration
         if (duration != null && position != null) {
             playerPositionChanged?.invoke(Pair(position, duration))
@@ -760,12 +774,12 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun seekTo(time: Long) {
-        updatedTime()
+        updatedTime(time)
         exoPlayer?.seekTo(time)
     }
 
     private fun ExoPlayer.seekTime(time: Long) {
-        updatedTime()
+        updatedTime(currentPosition + time)
         seekTo(currentPosition + time)
     }
 
@@ -803,18 +817,13 @@ class CS3IPlayer : IPlayer {
                     CSPlayerEvent.PrevEpisode -> prevEpisode?.invoke()
                     CSPlayerEvent.SkipCurrentChapter -> {
                         //val dur = this@CS3IPlayer.getDuration() ?: return@apply
-                        val pos = this@CS3IPlayer.getPosition() ?: return@apply
-                        for (lastTimeStamp in lastTimeStamps) {
-                            if (lastTimeStamp.startMs <= pos && pos < lastTimeStamp.endMs) {
-                                if (lastTimeStamp.skipToNextEpisode) {
-                                    handleEvent(CSPlayerEvent.NextEpisode)
-                                } else {
-                                    seekTo(lastTimeStamp.endMs)
-                                }
-
-                                onTimestampSkipped?.invoke(lastTimeStamp)
-                                break
+                        getCurrentTimestamp()?.let { lastTimeStamp ->
+                            if (lastTimeStamp.skipToNextEpisode) {
+                                handleEvent(CSPlayerEvent.NextEpisode)
+                            } else {
+                                seekTo(lastTimeStamp.endMs + 1L)
                             }
+                            onTimestampSkipped?.invoke(lastTimeStamp)
                         }
                     }
                 }
@@ -1039,16 +1048,18 @@ class CS3IPlayer : IPlayer {
     override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
         lastTimeStamps = timeStamps
         timeStamps.forEach { timestamp ->
-            exoPlayer?.createMessage { _, payload ->
-                if (payload is EpisodeSkip.SkipStamp) // this should always be true
-                    onTimestampInvoked?.invoke(payload)
+            exoPlayer?.createMessage { _, _ ->
+                updatedTime()
+                //if (payload is EpisodeSkip.SkipStamp) // this should always be true
+                //    onTimestampInvoked?.invoke(payload)
             }
                 ?.setLooper(Looper.getMainLooper())
                 ?.setPosition(timestamp.startMs)
-                ?.setPayload(timestamp)
+                //?.setPayload(timestamp)
                 ?.setDeleteAfterDelivery(false)
                 ?.send()
         }
+        updatedTime()
     }
 
     fun onRenderFirst() {

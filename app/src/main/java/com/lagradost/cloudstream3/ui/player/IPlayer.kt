@@ -126,7 +126,7 @@ interface IPlayer {
         subtitlesUpdates: (() -> Unit)? = null,                     // callback from player to inform that subtitles have updated in some way
         embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null, // callback from player to give all embedded subtitles
         onTracksInfoChanged: (() -> Unit)? = null,                  // Callback when tracks are changed, used for UI changes
-        onTimestampInvoked: ((EpisodeSkip.SkipStamp) -> Unit)? = null, // Callback when timestamps appear
+        onTimestampInvoked: ((EpisodeSkip.SkipStamp?) -> Unit)? = null, // Callback when timestamps appear, null when it should disappear
         onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)? = null, // callback for when a chapter is skipped, aka when event is handled (or for future use when skip automatically ads/sponsor)
     )
 

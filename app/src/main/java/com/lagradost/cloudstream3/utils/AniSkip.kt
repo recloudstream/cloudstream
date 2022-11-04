@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.txt
+import java.lang.Long.min
 
 object EpisodeSkip {
     private const val TAG = "EpisodeSkip"
@@ -37,14 +38,14 @@ object EpisodeSkip {
     private val cachedStamps = HashMap<Int, List<SkipStamp>>()
 
     private fun shouldSkipToNextEpisode(endMs: Long, episodeDurationMs: Long): Boolean {
-        return episodeDurationMs - endMs < 12_000L
+        return episodeDurationMs - endMs < 20_000L // some might have outro that we don't care about tbh
     }
 
     suspend fun getStamps(
         data: LoadResponse,
         episode: ResultEpisode,
         episodeDurationMs: Long,
-        hasNextEpisode : Boolean,
+        hasNextEpisode: Boolean,
     ): List<SkipStamp> {
         cachedStamps[episode.id]?.let { list ->
             return list
@@ -55,7 +56,14 @@ object EpisodeSkip {
 
         if (data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.OVA)) {
             data.getMalId()?.toIntOrNull()?.let { malId ->
-                AniSkip.getResult(malId, episode.episode, episodeDurationMs)?.mapNotNull { stamp ->
+                val (resultLength, stamps) = AniSkip.getResult(
+                    malId,
+                    episode.episode,
+                    episodeDurationMs
+                ) ?: return@let null
+                // because it also returns an expected episode length we use that just in case it is mismatched with like 2s next episode will still work
+                val dur = min(episodeDurationMs, resultLength)
+                stamps.mapNotNull { stamp ->
                     val skipType = when (stamp.skipType) {
                         "op" -> SkipType.Opening
                         "ed" -> SkipType.Ending
@@ -68,7 +76,10 @@ object EpisodeSkip {
                     val start = (stamp.interval.startTime * 1000.0).toLong()
                     SkipStamp(
                         type = skipType,
-                        skipToNextEpisode = hasNextEpisode && shouldSkipToNextEpisode(end, episodeDurationMs),
+                        skipToNextEpisode = hasNextEpisode && shouldSkipToNextEpisode(
+                            end,
+                            dur
+                        ),
                         startMs = start,
                         endMs = end
                     )
@@ -87,7 +98,11 @@ object EpisodeSkip {
 // the following is GPLv3 code https://github.com/saikou-app/saikou/blob/main/LICENSE.md
 object AniSkip {
     private const val TAG = "AniSkip"
-    suspend fun getResult(malId: Int, episodeNumber: Int, episodeLength: Long): List<Stamp>? {
+    suspend fun getResult(
+        malId: Int,
+        episodeNumber: Int,
+        episodeLength: Long
+    ): Pair<Long, List<Stamp>>? {
         return try {
             val url =
                 "https://api.aniskip.com/v2/skip-times/$malId/$episodeNumber?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=${episodeLength / 1000L}"
@@ -96,7 +111,7 @@ object AniSkip {
             val a = app.get(url)
             val res = a.parsed<AniSkipResponse>()
             Log.i(TAG, "Found ${res.found} with ${res.results?.size} results")
-            if (res.found) res.results else null
+            if (res.found && !res.results.isNullOrEmpty()) (res.results[0].episodeLength * 1000).toLong() to res.results else null
         } catch (t: Throwable) {
             Log.i(TAG, "error = ${t.message}")
             logError(t)

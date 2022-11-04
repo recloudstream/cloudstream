@@ -646,8 +646,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                         true,
                         {}) {
                         settingsManager.edit().putString(
-                                ctx.getString(R.string.subtitles_encoding_key), prefValues[it]
-                            ).apply()
+                            ctx.getString(R.string.subtitles_encoding_key), prefValues[it]
+                        ).apply()
 
                         updateForcedEncoding(ctx)
                         dismiss()
@@ -869,7 +869,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         if ((currentMeta as? ResultEpisode)?.tvType == TvType.NSFW) return
 
         val (position, duration) = posDur
-        if (duration == 0L) return // idk how you achieved this, but div by zero crash
+        if (duration <= 0L) return // idk how you achieved this, but div by zero crash
         if (!hasRequestedStamps) {
             hasRequestedStamps = true
             viewModel.loadStamps(duration)
@@ -1151,8 +1151,13 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     var timestampShowState = false
 
+    var skipAnimator: ValueAnimator? = null
+    var skipIndex = 0
+
     private fun displayTimeStamp(show: Boolean) {
-        if(timestampShowState == show) return
+        if (timestampShowState == show) return
+        skipIndex++
+        println("displayTimeStamp = $show")
         timestampShowState = show
         skip_chapter_button?.apply {
             val showWidth = 170.toPx
@@ -1163,14 +1168,14 @@ class GeneratorPlayer : FullScreenPlayer() {
             val to = if (show) showWidth else noShowWidth
             val from = if (!show) showWidth else noShowWidth
 
+            skipAnimator?.cancel()
             isVisible = true
 
             // just in case
             val lay = layoutParams
             lay.width = from
             layoutParams = lay
-
-            ValueAnimator.ofInt(
+            skipAnimator = ValueAnimator.ofInt(
                 from, to
             ).apply {
                 addListener(onEnd = {
@@ -1192,12 +1197,18 @@ class GeneratorPlayer : FullScreenPlayer() {
         displayTimeStamp(false)
     }
 
-    override fun onTimestamp(timestamp: EpisodeSkip.SkipStamp) {
-        skip_chapter_button.setText(timestamp.uiText)
-        displayTimeStamp(true)
-        skip_chapter_button?.handler?.postDelayed({
+    override fun onTimestamp(timestamp: EpisodeSkip.SkipStamp?) {
+        if (timestamp != null) {
+            skip_chapter_button.setText(timestamp.uiText)
+            displayTimeStamp(true)
+            val currentIndex = skipIndex
+            skip_chapter_button?.handler?.postDelayed({
+                if (skipIndex == currentIndex)
+                    displayTimeStamp(false)
+            }, 6000)
+        } else {
             displayTimeStamp(false)
-        }, 6000)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

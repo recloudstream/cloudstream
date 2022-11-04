@@ -104,7 +104,7 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    open fun onTimestamp(timestamp: EpisodeSkip.SkipStamp) {
+    open fun onTimestamp(timestamp: EpisodeSkip.SkipStamp?) {
 
     }
 
