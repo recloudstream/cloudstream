@@ -128,7 +128,14 @@ class PlayerGeneratorViewModel : ViewModel() {
             val page = (generator as? RepoLinkGenerator?)?.page
             if (page != null && meta is ResultEpisode) {
                 _currentStamps.postValue(listOf())
-                _currentStamps.postValue(EpisodeSkip.getStamps(page, meta, duration))
+                _currentStamps.postValue(
+                    EpisodeSkip.getStamps(
+                        page,
+                        meta,
+                        duration,
+                        hasNextEpisode() ?: false
+                    )
+                )
             }
         }
     }

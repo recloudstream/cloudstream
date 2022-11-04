@@ -10,43 +10,67 @@ import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.txt
 
 object EpisodeSkip {
+    private const val TAG = "EpisodeSkip"
+
+    enum class SkipType(@StringRes name: Int) {
+        Opening(R.string.skip_type_op),
+        Ending(R.string.skip_type_ed),
+        Recap(R.string.skip_type_recap),
+        MixedOpening(R.string.skip_type_mixed_op),
+        MixedEnding(R.string.skip_type_mixed_ed),
+        Credits(R.string.skip_type_creddits),
+        Intro(R.string.skip_type_creddits),
+    }
+
     data class SkipStamp(
-        @StringRes
-        private val name: Int,
+        val type: SkipType,
+        val skipToNextEpisode: Boolean,
         val startMs: Long,
         val endMs: Long,
     ) {
-        val uiText = txt(R.string.skip_type_format, txt(name))
+        val uiText = if (skipToNextEpisode) txt(R.string.next_episode) else txt(
+            R.string.skip_type_format,
+            txt(type.name)
+        )
     }
 
     private val cachedStamps = HashMap<Int, List<SkipStamp>>()
 
+    private fun shouldSkipToNextEpisode(endMs: Long, episodeDurationMs: Long): Boolean {
+        return (episodeDurationMs - endMs) < 12_000L
+    }
+
     suspend fun getStamps(
         data: LoadResponse,
         episode: ResultEpisode,
-        episodeDurationMs: Long
+        episodeDurationMs: Long,
+        hasNextEpisode : Boolean,
     ): List<SkipStamp> {
         cachedStamps[episode.id]?.let { list ->
             return list
         }
 
         val out = mutableListOf<SkipStamp>()
-        println("CALLING WITH : ${data.syncData} $episode $episodeDurationMs")
+        Log.i(TAG, "Requesting SkipStamp from ${data.syncData}")
+
         if (data is AnimeLoadResponse && (data.type == TvType.Anime || data.type == TvType.OVA)) {
             data.getMalId()?.toIntOrNull()?.let { malId ->
                 AniSkip.getResult(malId, episode.episode, episodeDurationMs)?.mapNotNull { stamp ->
-                    val name = when (stamp.skipType) {
-                        "op" -> R.string.skip_type_op
-                        "ed" -> R.string.skip_type_ed
-                        "recap" -> R.string.skip_type_recap
-                        "mixed-ed" -> R.string.skip_type_mixed_ed
-                        "mixed-op" -> R.string.skip_type_mixed_op
+                    val skipType = when (stamp.skipType) {
+                        "op" -> SkipType.Opening
+                        "ed" -> SkipType.Ending
+                        "recap" -> SkipType.Recap
+                        "mixed-ed" -> SkipType.MixedEnding
+                        "mixed-op" -> SkipType.MixedOpening
                         else -> null
                     } ?: return@mapNotNull null
+                    val end = (stamp.interval.endTime * 1000.0).toLong()
+                    val start = (stamp.interval.startTime * 1000.0).toLong()
                     SkipStamp(
-                        name,
-                        (stamp.interval.startTime * 1000.0).toLong(),
-                        (stamp.interval.endTime * 1000.0).toLong()
+                        type = skipType,
+                        skipToNextEpisode = hasNextEpisode && shouldSkipToNextEpisode(end, episodeDurationMs),
+                        startMs = start,
+                        endMs = end
                     )
                 }?.let { list ->
                     out.addAll(list)
@@ -62,24 +86,26 @@ object EpisodeSkip {
 // taken from https://github.com/saikou-app/saikou/blob/3803f8a7a59b826ca193664d46af3a22bbc989f7/app/src/main/java/ani/saikou/others/AniSkip.kt
 // the following is GPLv3 code https://github.com/saikou-app/saikou/blob/main/LICENSE.md
 object AniSkip {
+    private const val TAG = "AniSkip"
     suspend fun getResult(malId: Int, episodeNumber: Int, episodeLength: Long): List<Stamp>? {
         return try {
             val url =
                 "https://api.aniskip.com/v2/skip-times/$malId/$episodeNumber?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=${episodeLength / 1000L}"
-            println("URLLLL::::$url")
+            Log.i(TAG, "Requesting $url")
 
             val a = app.get(url)
-            println("GOT RESPONSE:::.")
+            //println("GOT RESPONSE:::.")
             val res = a.parsed<AniSkipResponse>()
-            Log.i("AniSkip", "Response = $res")
+            Log.i(TAG, "Found ${res.found} with ${res.results?.size} results")
+
+            // Log.i("AniSkip", "Response = $res")
             if (res.found) res.results else null
         } catch (t: Throwable) {
-            Log.i("AniSkip", "error = ${t.message}")
+            Log.i(TAG, "error = ${t.message}")
             logError(t)
             null
         }
     }
-
 
     data class AniSkipResponse(
         @JsonSerialize val found: Boolean,
@@ -94,18 +120,6 @@ object AniSkip {
         @JsonSerialize val skipId: String,
         @JsonSerialize val episodeLength: Double
     )
-
-
-    //fun String.getType(): String {
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //}
 
     data class AniSkipInterval(
         @JsonSerialize val startTime: Double,

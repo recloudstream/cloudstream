@@ -118,6 +118,7 @@ class CS3IPlayer : IPlayer {
     private var embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null
     private var onTracksInfoChanged: (() -> Unit)? = null
     private var onTimestampInvoked: ((EpisodeSkip.SkipStamp) -> Unit)? = null
+    private var onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)? = null
 
     override fun releaseCallbacks() {
         playerUpdated = null
@@ -133,6 +134,7 @@ class CS3IPlayer : IPlayer {
         onTracksInfoChanged = null
         onTimestampInvoked = null
         requestSubtitleUpdate = null
+        onTimestampSkipped = null
     }
 
     override fun initCallbacks(
@@ -149,6 +151,7 @@ class CS3IPlayer : IPlayer {
         embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)?,
         onTracksInfoChanged: (() -> Unit)?,
         onTimestampInvoked: ((EpisodeSkip.SkipStamp) -> Unit)?,
+        onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)?,
     ) {
         this.playerUpdated = playerUpdated
         this.updateIsPlaying = updateIsPlaying
@@ -163,6 +166,7 @@ class CS3IPlayer : IPlayer {
         this.embeddedSubtitlesFetched = embeddedSubtitlesFetched
         this.onTracksInfoChanged = onTracksInfoChanged
         this.onTimestampInvoked = onTimestampInvoked
+        this.onTimestampSkipped = onTimestampSkipped
     }
 
     // I know, this is not a perfect solution, however it works for fixing subs
@@ -801,8 +805,14 @@ class CS3IPlayer : IPlayer {
                         //val dur = this@CS3IPlayer.getDuration() ?: return@apply
                         val pos = this@CS3IPlayer.getPosition() ?: return@apply
                         for (lastTimeStamp in lastTimeStamps) {
-                            if(lastTimeStamp.startMs <= pos && pos < lastTimeStamp.endMs) {
-                                seekTo(lastTimeStamp.endMs)
+                            if (lastTimeStamp.startMs <= pos && pos < lastTimeStamp.endMs) {
+                                if (lastTimeStamp.skipToNextEpisode) {
+                                    handleEvent(CSPlayerEvent.NextEpisode)
+                                } else {
+                                    seekTo(lastTimeStamp.endMs)
+                                }
+
+                                onTimestampSkipped?.invoke(lastTimeStamp)
                                 break
                             }
                         }
@@ -1029,12 +1039,14 @@ class CS3IPlayer : IPlayer {
     override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
         lastTimeStamps = timeStamps
         timeStamps.forEach { timestamp ->
+            println("ADDING: $timestamp")
             exoPlayer?.createMessage { _, payload ->
-
+                if (payload is EpisodeSkip.SkipStamp) // this should always be true
+                    onTimestampInvoked?.invoke(payload)
             }
                 ?.setLooper(Looper.getMainLooper())
                 ?.setPosition(timestamp.startMs)
-                //   .setPayload(customPayloadData)
+                ?.setPayload(timestamp)
                 ?.setDeleteAfterDelivery(false)
                 ?.send()
         }

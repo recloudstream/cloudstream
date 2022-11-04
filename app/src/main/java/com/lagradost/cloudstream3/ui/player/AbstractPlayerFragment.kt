@@ -108,6 +108,10 @@ abstract class AbstractPlayerFragment(
 
     }
 
+    open fun onTimestampSkipped(timestamp: EpisodeSkip.SkipStamp) {
+
+    }
+
     open fun exitedPipMode() {
         throw NotImplementedError()
     }
@@ -379,7 +383,8 @@ abstract class AbstractPlayerFragment(
             subtitlesUpdates = ::subtitlesChanged,
             embeddedSubtitlesFetched = ::embeddedSubtitlesFetched,
             onTracksInfoChanged = ::onTracksInfoChanged,
-            onTimestampInvoked = ::onTimestamp
+            onTimestampInvoked = ::onTimestamp,
+            onTimestampSkipped = ::onTimestampSkipped
         )
 
         if (player is CS3IPlayer) {
