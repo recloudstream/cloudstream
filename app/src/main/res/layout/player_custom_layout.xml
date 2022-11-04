@@ -318,6 +318,22 @@
             </FrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/skip_chapter_button"
+            style="@style/NiceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="100dp"
+            android:backgroundTint="@color/skipOpTransparent"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/rounded_button_radius"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_player_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp"
+            android:text="Skip Opening" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

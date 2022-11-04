@@ -88,6 +88,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import okhttp3.ConnectionSpec
+import okhttp3.OkHttpClient
+import okhttp3.internal.applyConnectionSpec
 import java.io.File
 import java.net.URI
 import java.nio.charset.Charset
@@ -179,6 +182,7 @@ var app = Requests(responseParser = object : ResponseParser {
     }
 }).apply {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
+    //baseClient = baseClient.newBuilder().connectionSpecs(listOf(ConnectionSpec.COMPATIBLE_TLS)).build()
 }
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {

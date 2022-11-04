@@ -36,8 +36,8 @@ import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSub
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
+import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -58,7 +58,6 @@ import kotlinx.android.synthetic.main.player_select_source_and_subs.*
 import kotlinx.android.synthetic.main.player_select_source_and_subs.subtitles_click_settings
 import kotlinx.android.synthetic.main.player_select_tracks.*
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
@@ -165,6 +164,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         isActive = true
         setPlayerDimen(null)
         setTitle()
+        hasRequestedStamps = false
 
         loadExtractorJob(link.first)
         // load player
@@ -878,7 +878,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     var maxEpisodeSet: Int? = null
-
+    var hasRequestedStamps: Boolean = false
     override fun playerPositionChanged(posDur: Pair<Long, Long>) {
         // Don't save livestream data
         if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
@@ -888,10 +888,15 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val (position, duration) = posDur
         if (duration == 0L) return // idk how you achieved this, but div by zero crash
+        if (!hasRequestedStamps) {
+            hasRequestedStamps = true
+            viewModel.loadStamps(duration)
+        }
 
         viewModel.getId()?.let {
             DataStoreHelper.setViewPos(it, position, duration)
         }
+
         val percentage = position * 100L / duration
 
         val nextEp = percentage >= NEXT_WATCH_EPISODE_PERCENTAGE
@@ -1174,6 +1179,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
+    override fun onTimestamp(timestamp: EpisodeSkip.SkipStamp) {
+        skip_chapter_button.setText(timestamp.uiText)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var langFilterList = listOf<String>()
@@ -1203,7 +1212,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         sync.updateUserData()
 
-        preferredAutoSelectSubtitles = SubtitlesFragment.getAutoSelectLanguageISO639_1()
+        preferredAutoSelectSubtitles = getAutoSelectLanguageISO639_1()
 
         if (currentSelectedLink == null) {
             viewModel.loadLinks()
@@ -1216,6 +1225,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         player_loading_go_back?.setOnClickListener {
             player.release()
             activity?.popCurrentPage()
+        }
+
+        observe(viewModel.currentStamps) { stamps ->
+            player.addTimeStamps(stamps)
         }
 
         observe(viewModel.loadingLinks) {

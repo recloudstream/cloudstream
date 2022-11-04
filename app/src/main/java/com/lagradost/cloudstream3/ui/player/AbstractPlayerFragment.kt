@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.requestLocalAudioFocus
+import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -101,6 +102,10 @@ abstract class AbstractPlayerFragment(
 
     open fun onTracksInfoChanged() {
         throw NotImplementedError()
+    }
+
+    open fun onTimestamp(timestamp: EpisodeSkip.SkipStamp) {
+
     }
 
     open fun exitedPipMode() {
@@ -373,7 +378,8 @@ abstract class AbstractPlayerFragment(
             ),
             subtitlesUpdates = ::subtitlesChanged,
             embeddedSubtitlesFetched = ::embeddedSubtitlesFetched,
-            onTracksInfoChanged = ::onTracksInfoChanged
+            onTracksInfoChanged = ::onTracksInfoChanged,
+            onTimestampInvoked = ::onTimestamp
         )
 
         if (player is CS3IPlayer) {
