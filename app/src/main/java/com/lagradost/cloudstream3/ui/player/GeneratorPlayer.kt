@@ -186,6 +186,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 ),
             )
         }
+        player.addTimeStamps(listOf()) // clear stamps
     }
 
     private fun sortLinks(useQualitySettings: Boolean = true): List<Pair<ExtractorLink?, ExtractorUri?>> {

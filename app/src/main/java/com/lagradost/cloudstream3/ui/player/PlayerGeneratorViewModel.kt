@@ -121,7 +121,6 @@ class PlayerGeneratorViewModel : ViewModel() {
     private var currentStampJob: Job? = null
 
     fun loadStamps(duration: Long) {
-        println("Starting loadStamps with duration = $duration")
         //currentStampJob?.cancel()
         currentStampJob = ioSafe {
             val meta = generator?.getCurrent()

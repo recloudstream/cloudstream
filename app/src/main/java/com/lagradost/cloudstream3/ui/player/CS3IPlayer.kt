@@ -1039,7 +1039,6 @@ class CS3IPlayer : IPlayer {
     override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
         lastTimeStamps = timeStamps
         timeStamps.forEach { timestamp ->
-            println("ADDING: $timestamp")
             exoPlayer?.createMessage { _, payload ->
                 if (payload is EpisodeSkip.SkipStamp) // this should always be true
                     onTimestampInvoked?.invoke(payload)

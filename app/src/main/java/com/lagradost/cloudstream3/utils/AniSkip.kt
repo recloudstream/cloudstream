@@ -37,7 +37,7 @@ object EpisodeSkip {
     private val cachedStamps = HashMap<Int, List<SkipStamp>>()
 
     private fun shouldSkipToNextEpisode(endMs: Long, episodeDurationMs: Long): Boolean {
-        return (episodeDurationMs - endMs) < 12_000L
+        return episodeDurationMs - endMs < 12_000L
     }
 
     suspend fun getStamps(
@@ -94,11 +94,8 @@ object AniSkip {
             Log.i(TAG, "Requesting $url")
 
             val a = app.get(url)
-            //println("GOT RESPONSE:::.")
             val res = a.parsed<AniSkipResponse>()
             Log.i(TAG, "Found ${res.found} with ${res.results?.size} results")
-
-            // Log.i("AniSkip", "Response = $res")
             if (res.found) res.results else null
         } catch (t: Throwable) {
             Log.i(TAG, "error = ${t.message}")

@@ -334,7 +334,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:strokeColor="@color/white"
             app:strokeWidth="1dp"
-            android:text="Skip Opening" />
+            tools:text="Skip Opening" />
 
         <LinearLayout
             android:layout_width="match_parent"
