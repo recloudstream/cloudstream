@@ -131,9 +131,9 @@ class SearchFragment : Fragment() {
         context?.let { ctx ->
             val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }
                 .map { it.ordinal.toString() }.toSet()
-            val preferredTypes = PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getStringSet(this.getString(R.string.prefer_media_type_key), default)
-                ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null } ?: default
+            val preferredTypes = (PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getStringSet(this.getString(R.string.prefer_media_type_key), default)?.ifEmpty { default } ?: default)
+                .mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }
 
             val settings = ctx.getApiSettings()
 

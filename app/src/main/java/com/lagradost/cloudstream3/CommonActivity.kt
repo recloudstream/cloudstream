@@ -61,6 +61,7 @@ object CommonActivity {
         }
     }
 
+    @MainThread
     fun showToast(act: Activity?, @StringRes message: Int, duration: Int) {
         if (act == null) return
         showToast(act, act.getString(message), duration)
@@ -69,6 +70,7 @@ object CommonActivity {
     const val TAG = "COMPACT"
 
     /** duration is Toast.LENGTH_SHORT if null*/
+    @MainThread
     fun showToast(act: Activity?, message: String?, duration: Int? = null) {
         if (act == null || message == null) {
             Log.w(TAG, "invalid showToast act = $act message = $message")

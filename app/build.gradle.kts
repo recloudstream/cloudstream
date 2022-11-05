@@ -47,8 +47,8 @@ android {
         minSdk = 21
         targetSdk = 30
 
-        versionCode = 54
-        versionName = "3.2.2"
+        versionCode = 55
+        versionName = "3.2.3"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
 
@@ -190,7 +190,7 @@ dependencies {
     // Networking
 //    implementation("com.squareup.okhttp3:okhttp:4.9.2")
 //    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1")
-    implementation("com.github.Blatzar:NiceHttp:0.3.4")
+    implementation("com.github.Blatzar:NiceHttp:0.3.5")
 
     // Util to skip the URI file fuckery 🙏
     implementation("com.github.tachiyomiorg:unifile:17bec43")
