@@ -187,6 +187,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 ),
             )
         }
+
         if (!sameEpisode)
             player.addTimeStamps(listOf()) // clear stamps
     }
@@ -874,7 +875,15 @@ class GeneratorPlayer : FullScreenPlayer() {
         if (duration <= 0L) return // idk how you achieved this, but div by zero crash
         if (!hasRequestedStamps) {
             hasRequestedStamps = true
-            viewModel.loadStamps(duration)
+            val fetchStamps = context?.let { ctx ->
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                settingsManager.getBoolean(
+                    ctx.getString(R.string.enable_skip_op_from_database),
+                    true
+                )
+            } ?: true
+            if (fetchStamps)
+                viewModel.loadStamps(duration)
         }
 
         viewModel.getId()?.let {

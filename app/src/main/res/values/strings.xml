@@ -28,7 +28,7 @@
     <string name="pip_enabled_key" translatable="false">pip_enabled_key</string>
     <string name="double_tap_enabled_key" translatable="false">double_tap_enabled_key</string>
     <string name="double_tap_pause_enabled_key" translatable="false">double_tap_pause_enabled_key</string>
-    <string name="double_tap_seek_time_key" translatable="false">double_tap_seek_time_key</string>
+    <string name="double_tap_seek_time_key" translatable="false">double_tap_seek_time_key2</string>
     <string name="swipe_vertical_enabled_key" translatable="false">swipe_vertical_enabled_key</string>
     <string name="autoplay_next_key" translatable="false">autoplay_next_key</string>
     <string name="display_sub_key" translatable="false">display_sub_key</string>
@@ -57,6 +57,7 @@
     <string name="filter_sub_lang_key" translatable="false">filter_sub_lang_key</string>
     <string name="pref_filter_search_quality_key" translatable="false">pref_filter_search_quality_key</string>
     <string name="enable_nsfw_on_providers_key" translatable="false">enable_nsfw_on_providers_key</string>
+    <string name="enable_skip_op_from_database" translatable="false">enable_skip_op_from_database</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
@@ -650,4 +651,6 @@
 
     <string name="clear_history">Clear history</string>
     <string name="history">History</string>
+    <string name="enable_skip_op_from_database_des">Show skip popups for opening/ending</string>
+
 </resources>
