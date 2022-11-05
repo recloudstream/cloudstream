@@ -385,7 +385,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             logError(e)
         }
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), false)) {
+        if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), true)) {
             this@MainActivity.backupGithub()
         }
     }
@@ -607,6 +607,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     logError(e)
                 }
             }
+
+            if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), true)){
+                context?.restorePromptGithub()
+            }
         }
 
         SearchResultBuilder.updateCache(this)
@@ -615,10 +619,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             initAll()
             // No duplicates (which can happen by registerMainAPI)
             apis = allProviders.distinctBy { it }
-
-            if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), false)){
-                context?.restorePromptGithub()
-            }
         }
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
