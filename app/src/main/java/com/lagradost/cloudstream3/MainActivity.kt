@@ -503,6 +503,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    override fun onStart() {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        super.onStart()
+        ioSafe {
+            if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), true)){
+                context?.restorePromptGithub()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
@@ -606,10 +615,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 } catch (e: Exception) {
                     logError(e)
                 }
-            }
-
-            if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), true)){
-                context?.restorePromptGithub()
             }
         }
 
