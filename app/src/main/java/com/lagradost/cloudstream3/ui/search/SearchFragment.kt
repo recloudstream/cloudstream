@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.search
 
+import android.content.DialogInterface
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.ListView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -28,6 +30,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -343,7 +346,7 @@ class SearchFragment : Fragment() {
                     searchViewModel.updateHistory()
                 }
 
-                search_history_recycler?.isVisible = showHistory
+                search_history_holder?.isVisible = showHistory
 
                 search_master_recycler?.isVisible = !showHistory && isAdvancedSearch
                 search_autofit_results?.isVisible = !showHistory && !isAdvancedSearch
@@ -352,7 +355,41 @@ class SearchFragment : Fragment() {
             }
         })
 
+        search_clear_call_history?.setOnClickListener {
+            activity?.let { ctx ->
+                val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
+                val dialogClickListener =
+                    DialogInterface.OnClickListener { _, which ->
+                        when (which) {
+                            DialogInterface.BUTTON_POSITIVE -> {
+                                removeKeys(SEARCH_HISTORY_KEY)
+                                searchViewModel.updateHistory()
+                            }
+                            DialogInterface.BUTTON_NEGATIVE -> {
+                            }
+                        }
+                    }
+
+                try {
+                    builder.setTitle(R.string.clear_history).setMessage(
+                        ctx.getString(R.string.delete_message).format(
+                            ctx.getString(R.string.history)
+                        )
+                    )
+                        .setPositiveButton(R.string.sort_clear, dialogClickListener)
+                        .setNegativeButton(R.string.cancel, dialogClickListener)
+                        .show()
+                } catch (e: Exception) {
+                    logError(e)
+                    // ye you somehow fucked up formatting did you?
+                }
+            }
+
+
+        }
+
         observe(searchViewModel.currentHistory) { list ->
+            search_clear_call_history?.isVisible = list.isNotEmpty()
             (search_history_recycler.adapter as? SearchHistoryAdaptor?)?.updateList(list)
         }
 

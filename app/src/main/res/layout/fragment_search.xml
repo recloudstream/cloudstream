@@ -112,6 +112,11 @@
         android:nextFocusLeft="@id/nav_rail_view"
         android:visibility="gone"
         tools:listitem="@layout/homepage_parent" />
+    <FrameLayout
+        android:id="@+id/search_history_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_history_recycler"
@@ -122,5 +127,19 @@
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/nav_rail_view"
         android:visibility="visible"
+        android:paddingBottom="50dp"
         tools:listitem="@layout/search_history_item" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/search_clear_call_history"
+        style="@style/BlackButton"
+        android:layout_gravity="bottom"
+        android:padding="0dp"
+        app:cornerRadius="0dp"
+        android:layout_margin="0dp"
+        android:text="@string/clear_history"
+        app:icon="@drawable/delete_all"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+    </FrameLayout>
 </LinearLayout>
