@@ -14,7 +14,7 @@ import org.jsoup.Jsoup
  * overrideMainUrl is necessary for for other vidstream clones like vidembed.cc
  * If they diverge it'd be better to make them separate.
  * */
-class Pelisplus(val mainUrl: String) {
+open class Pelisplus(val mainUrl: String) {
     val name: String = "Vidstream"
 
     private fun getExtractorUrl(id: String): String {
