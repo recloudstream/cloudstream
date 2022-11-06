@@ -53,6 +53,12 @@ class VizcloudSite : WcoStream() {
     override var mainUrl = "https://vizcloud.site"
 }
 
+class Mcloud : WcoStream() {
+    override var name = "Mcloud"
+    override var mainUrl = "https://mcloud.to"
+    override val requiresReferer = true
+}
+
 open class WcoStream : ExtractorApi() {
     override var name = "VidStream" // Cause works for animekisa and wco
     override var mainUrl = "https://vidstream.pro"

@@ -165,7 +165,8 @@ object APIHolder {
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
         val hasUniversal = activeLangs.contains(AllLanguagesName)
-        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }.map { it.name })
+        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }
+            .map { it.name })
 
         /*val set = settingsManager.getStringSet(
             this.getString(R.string.search_providers_list_key),
@@ -241,7 +242,13 @@ object APIHolder {
     }
 
     fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
-        val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }.map { it.ordinal }
+        // We are getting the weirdest crash ever done:
+        // java.lang.ClassCastException: com.lagradost.cloudstream3.TvType cannot be cast to com.lagradost.cloudstream3.TvType
+        // enumValues<TvType>() might be the cause, hence I am trying TvType.values()
+        val default = TvType.values()
+            .sorted()
+            .filter { it != TvType.NSFW }
+            .map { it.ordinal }
         val defaultSet = default.map { it.toString() }.toSet()
         val currentPrefMedia = try {
             PreferenceManager.getDefaultSharedPreferences(this)

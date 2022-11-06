@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.util.Log
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -11,7 +12,8 @@ import kotlin.math.min
 
 class RepoLinkGenerator(
     private val episodes: List<ResultEpisode>,
-    private var currentIndex: Int = 0
+    private var currentIndex: Int = 0,
+    val page: LoadResponse? = null,
 ) : IGenerator {
     companion object {
         const val TAG = "RepoLink"

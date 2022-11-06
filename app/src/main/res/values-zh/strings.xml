@@ -577,4 +577,17 @@
     <string name="player_settings_play_in_web">投屏</string>
     <string name="player_settings_play_in_browser">浏览器</string>
     <string name="app_not_found_error">未找到应用</string>
+    <string name="all_languages_preference">所有语言</string>
+
+    <string name="skip_type_format" formatted="true">跳过 %s</string>
+    <string name="skip_type_op">片头</string>
+    <string name="skip_type_ed">片尾</string>
+    <string name="skip_type_recap">前情回顾</string>
+    <string name="skip_type_mixed_ed">混合片尾</string>
+    <string name="skip_type_mixed_op">混合片头</string>
+    <string name="skip_type_creddits">致谢名单</string>
+    <string name="skip_type_intro">介绍</string>
+
+    <string name="clear_history">清除历史记录</string>
+    <string name="history">历史记录</string>
 </resources>

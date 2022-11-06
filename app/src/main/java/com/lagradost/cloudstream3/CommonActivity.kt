@@ -61,6 +61,7 @@ object CommonActivity {
         }
     }
 
+    @MainThread
     fun showToast(act: Activity?, @StringRes message: Int, duration: Int) {
         if (act == null) return
         showToast(act, act.getString(message), duration)
@@ -69,6 +70,7 @@ object CommonActivity {
     const val TAG = "COMPACT"
 
     /** duration is Toast.LENGTH_SHORT if null*/
+    @MainThread
     fun showToast(act: Activity?, message: String?, duration: Int? = null) {
         if (act == null || message == null) {
             Log.w(TAG, "invalid showToast act = $act message = $message")
@@ -336,6 +338,9 @@ object CommonActivity {
             }
             KeyEvent.KEYCODE_C, KeyEvent.KEYCODE_NUMPAD_4, KeyEvent.KEYCODE_4 -> {
                 PlayerEventType.SkipOp
+            }
+            KeyEvent.KEYCODE_V, KeyEvent.KEYCODE_NUMPAD_5, KeyEvent.KEYCODE_5 -> {
+                PlayerEventType.SkipCurrentChapter
             }
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
                 PlayerEventType.PlayPauseToggle

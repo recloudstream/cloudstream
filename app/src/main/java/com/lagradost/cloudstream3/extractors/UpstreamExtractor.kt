@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
-class UpstreamExtractor : ExtractorApi() {
+open class UpstreamExtractor : ExtractorApi() {
     override val name: String = "Upstream"
     override val mainUrl: String = "https://upstream.to"
     override val requiresReferer = true

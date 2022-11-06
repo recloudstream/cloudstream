@@ -405,7 +405,11 @@
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
-
+            <View
+                android:id="@+id/home_fix_padding"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+            </View>
             <!--
             All padding in home_watch_holder is determined in runtime
             This is because the home poster can be invisible which forces
