@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 
-class Fastream: ExtractorApi() {
+open class Fastream: ExtractorApi() {
     override var mainUrl = "https://fastream.to"
     override var name = "Fastream"
     override val requiresReferer = false

@@ -2,10 +2,11 @@ package com.lagradost.cloudstream3.extractors
 
 import android.util.Log
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.base64Decode
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
 
-class AStreamHub : ExtractorApi() {
+open class AStreamHub : ExtractorApi() {
     override val name = "AStreamHub"
     override val mainUrl = "https://astreamhub.com"
     override val requiresReferer = true

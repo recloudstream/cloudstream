@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import java.net.URI
 
-class MultiQuality : ExtractorApi() {
+open class MultiQuality : ExtractorApi() {
     override var name = "MultiQuality"
     override var mainUrl = "https://gogo-play.net"
     private val sourceRegex = Regex("""file:\s*['"](.*?)['"],label:\s*['"](.*?)['"]""")
