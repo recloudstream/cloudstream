@@ -590,5 +590,5 @@
 
     <string name="clear_history">清除历史记录</string>
     <string name="history">历史记录</string>
-    <string name="enable_skip_op_from_database_des">显示跳过片头/片尾弹出窗口</string
+    <string name="enable_skip_op_from_database_des">显示跳过片头/片尾弹出窗口</string>
 </resources>
