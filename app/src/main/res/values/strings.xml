@@ -658,5 +658,5 @@
     <string name="clear_history">Clear history</string>
     <string name="history">History</string>
     <string name="enable_skip_op_from_database_des">Show skip popups for opening/ending</string>
-
+    <string name="clipboard_too_large">Too much text. Unable to save to clipboard.</string>
 </resources>

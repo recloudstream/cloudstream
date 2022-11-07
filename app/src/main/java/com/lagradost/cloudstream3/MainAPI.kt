@@ -81,7 +81,8 @@ object APIHolder {
         synchronized(allProviders) {
             initMap()
             return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
-                ?: allProviders.firstOrNull { it.name == apiName }
+                // Leave the ?. null check, it can crash regardless
+                ?: allProviders.firstOrNull { it?.name == apiName }
         }
     }
 
@@ -244,11 +245,17 @@ object APIHolder {
     fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
         // We are getting the weirdest crash ever done:
         // java.lang.ClassCastException: com.lagradost.cloudstream3.TvType cannot be cast to com.lagradost.cloudstream3.TvType
-        // enumValues<TvType>() might be the cause, hence I am trying TvType.values()
+        // Trying fixing using classloader fuckery
+        val oldLoader = Thread.currentThread().contextClassLoader
+        Thread.currentThread().contextClassLoader = TvType::class.java.classLoader
+
         val default = TvType.values()
             .sorted()
             .filter { it != TvType.NSFW }
             .map { it.ordinal }
+
+        Thread.currentThread().contextClassLoader = oldLoader
+
         val defaultSet = default.map { it.toString() }.toSet()
         val currentPrefMedia = try {
             PreferenceManager.getDefaultSharedPreferences(this)

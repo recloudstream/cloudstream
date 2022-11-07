@@ -61,8 +61,9 @@ object CommonActivity {
         }
     }
 
+    /** duration is Toast.LENGTH_SHORT if null*/
     @MainThread
-    fun showToast(act: Activity?, @StringRes message: Int, duration: Int) {
+    fun showToast(act: Activity?, @StringRes message: Int, duration: Int? = null) {
         if (act == null) return
         showToast(act, act.getString(message), duration)
     }
