@@ -74,8 +74,10 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectSt
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
+import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
@@ -555,7 +557,13 @@ class HomeFragment : Fragment() {
 
         observe(homeViewModel.preview) { preview ->
             // Always reset the padding, otherwise the will move lower and lower
-            home_watch_holder?.setPadding(0, 0, 0, 0)
+           // home_fix_padding?.setPadding(0, 0, 0, 0)
+            home_fix_padding?.let { v ->
+                val params = v.layoutParams
+                params.height = 0
+                v.layoutParams = params
+            }
+
             when (preview) {
                 is Resource.Success -> {
                     home_preview?.isVisible = true
@@ -576,7 +584,7 @@ class HomeFragment : Fragment() {
                         false
                     )
                     home_preview?.isVisible = false
-                    context?.fixPaddingStatusbar(home_watch_holder)
+                    context?.fixPaddingStatusbarView(home_fix_padding)
                 }
             }
         }
@@ -592,6 +600,11 @@ class HomeFragment : Fragment() {
             setPageTransformer(HomeScrollTransformer())
             val callback: OnPageChangeCallback = object : OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
+
+                   // home_search?.isIconified = true
+                    //home_search?.isVisible = true
+                    //home_search?.clearFocus()
+
                     (home_preview_viewpager?.adapter as? HomeScrollAdapter)?.apply {
                         if (position >= itemCount - 1 && hasMoreItems) {
                             hasMoreItems = false // dont make two requests

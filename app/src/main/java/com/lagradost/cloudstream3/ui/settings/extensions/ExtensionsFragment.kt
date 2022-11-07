@@ -200,7 +200,9 @@ class ExtensionsFragment : Fragment() {
                     val url = dialog.repo_url_input?.text?.toString()
                         ?.let { it1 -> RepositoryManager.parseRepoUrl(it1) }
                     if (url.isNullOrBlank()) {
-                        showToast(activity, R.string.error_invalid_data, Toast.LENGTH_SHORT)
+                        main {
+                            showToast(activity, R.string.error_invalid_data, Toast.LENGTH_SHORT)
+                        }
                     } else {
                         val fixedName = if (!name.isNullOrBlank()) name
                         else RepositoryManager.parseRepository(url)?.name ?: "No name"

@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -7,9 +8,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.discord.panels.PanelsChildGestureRegionObserver
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.IOnBackPressed
 import kotlinx.android.synthetic.main.fragment_result.*
@@ -18,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
 import kotlinx.android.synthetic.main.fragment_trailer.*
 import kotlinx.android.synthetic.main.trailer_custom_layout.*
+
 
 open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreenPlayer(),
     PanelsChildGestureRegionObserver.GestureRegionsListener, IOnBackPressed {
@@ -60,13 +64,42 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
             result_smallscreen_holder?.isVisible = !isFullScreenPlayer
             result_fullscreen_holder?.isVisible = isFullScreenPlayer
 
+            val to = sw * h / w
+
             player_background?.apply {
                 isVisible = true
                 layoutParams =
                     FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
-                        if (isFullScreenPlayer) FrameLayout.LayoutParams.MATCH_PARENT else sw * h / w
+                        if (isFullScreenPlayer) FrameLayout.LayoutParams.MATCH_PARENT else to
                     )
+            }
+
+            player_intro_play?.apply {
+                layoutParams =
+                    FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        result_top_holder?.measuredHeight ?: FrameLayout.LayoutParams.MATCH_PARENT
+                    )
+            }
+
+            if (player_intro_play?.isGone == true) {
+                result_top_holder?.apply {
+
+                    val anim = ValueAnimator.ofInt(
+                        measuredHeight,
+                        if (isFullScreenPlayer) ViewGroup.LayoutParams.MATCH_PARENT else to
+                    )
+                    anim.addUpdateListener { valueAnimator ->
+                        val `val` = valueAnimator.animatedValue as Int
+                        val layoutParams: ViewGroup.LayoutParams =
+                            layoutParams
+                        layoutParams.height = `val`
+                        setLayoutParams(layoutParams)
+                    }
+                    anim.duration = 200
+                    anim.start()
+                }
             }
         }
     }
@@ -79,7 +112,12 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
     override fun showMirrorsDialogue() {}
     override fun showTracksDialogue() {}
 
-    override fun openOnlineSubPicker(context: Context, imdbId: Long?, dismissCallback: () -> Unit) {}
+    override fun openOnlineSubPicker(
+        context: Context,
+        imdbId: Long?,
+        dismissCallback: () -> Unit
+    ) {
+    }
 
     override fun subtitlesChanged() {}
 
@@ -124,6 +162,13 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
         }
         updateFullscreen(isFullScreenPlayer)
         uiReset()
+
+        player_intro_play?.setOnClickListener {
+            player_intro_play?.isGone = true
+            player.handleEvent(CSPlayerEvent.Play)
+            updateUIVisibility()
+            fixPlayerSize()
+        }
     }
 
     override fun onBackPressed(): Boolean {

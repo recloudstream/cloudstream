@@ -81,7 +81,8 @@ object APIHolder {
         synchronized(allProviders) {
             initMap()
             return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
-                ?: allProviders.firstOrNull { it.name == apiName }
+                // Leave the ?. null check, it can crash regardless
+                ?: allProviders.firstOrNull { it?.name == apiName }
         }
     }
 
@@ -165,7 +166,8 @@ object APIHolder {
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
         val hasUniversal = activeLangs.contains(AllLanguagesName)
-        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }.map { it.name })
+        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }
+            .map { it.name })
 
         /*val set = settingsManager.getStringSet(
             this.getString(R.string.search_providers_list_key),
@@ -241,7 +243,19 @@ object APIHolder {
     }
 
     fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
-        val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }.map { it.ordinal }
+        // We are getting the weirdest crash ever done:
+        // java.lang.ClassCastException: com.lagradost.cloudstream3.TvType cannot be cast to com.lagradost.cloudstream3.TvType
+        // Trying fixing using classloader fuckery
+        val oldLoader = Thread.currentThread().contextClassLoader
+        Thread.currentThread().contextClassLoader = TvType::class.java.classLoader
+
+        val default = TvType.values()
+            .sorted()
+            .filter { it != TvType.NSFW }
+            .map { it.ordinal }
+
+        Thread.currentThread().contextClassLoader = oldLoader
+
         val defaultSet = default.map { it.toString() }.toSet()
         val currentPrefMedia = try {
             PreferenceManager.getDefaultSharedPreferences(this)

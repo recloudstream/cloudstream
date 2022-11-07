@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
+import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorUri
 
@@ -12,9 +13,9 @@ enum class PlayerEventType(val value: Int) {
     SeekForward(2),
     SeekBack(3),
 
-    //SkipCurrentChapter(4),
+    SkipCurrentChapter(4),
     NextEpisode(5),
-    PrevEpisode(5),
+    PrevEpisode(6),
     PlayPauseToggle(7),
     ToggleMute(8),
     Lock(9),
@@ -32,7 +33,7 @@ enum class CSPlayerEvent(val value: Int) {
     SeekForward(2),
     SeekBack(3),
 
-    //SkipCurrentChapter(4),
+    SkipCurrentChapter(4),
     NextEpisode(5),
     PrevEpisode(6),
     PlayPauseToggle(7),
@@ -54,7 +55,8 @@ interface Track {
      **/
     val id: String?
     val label: String?
-//    val isCurrentlyPlaying: Boolean
+
+    //    val isCurrentlyPlaying: Boolean
     val language: String?
 }
 
@@ -124,12 +126,16 @@ interface IPlayer {
         subtitlesUpdates: (() -> Unit)? = null,                     // callback from player to inform that subtitles have updated in some way
         embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null, // callback from player to give all embedded subtitles
         onTracksInfoChanged: (() -> Unit)? = null,                  // Callback when tracks are changed, used for UI changes
+        onTimestampInvoked: ((EpisodeSkip.SkipStamp?) -> Unit)? = null, // Callback when timestamps appear, null when it should disappear
+        onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)? = null, // callback for when a chapter is skipped, aka when event is handled (or for future use when skip automatically ads/sponsor)
     )
 
     fun releaseCallbacks()
 
     fun updateSubtitleStyle(style: SaveCaptionStyle)
     fun saveData()
+
+    fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>)
 
     fun loadPlayer(
         context: Context,

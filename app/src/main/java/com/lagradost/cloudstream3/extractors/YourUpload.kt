@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 
-class YourUpload: ExtractorApi() {
+open class YourUpload: ExtractorApi() {
     override val name = "Yourupload"
     override val mainUrl = "https://www.yourupload.com"
     override val requiresReferer = false

@@ -9,10 +9,12 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class PlayerGeneratorViewModel : ViewModel() {
     companion object {
@@ -29,6 +31,9 @@ class PlayerGeneratorViewModel : ViewModel() {
 
     private val _loadingLinks = MutableLiveData<Resource<Boolean?>>()
     val loadingLinks: LiveData<Resource<Boolean?>> = _loadingLinks
+
+    private val _currentStamps = MutableLiveData<List<EpisodeSkip.SkipStamp>>(emptyList())
+    val currentStamps: LiveData<List<EpisodeSkip.SkipStamp>> = _currentStamps
 
     fun getId(): Int? {
         return generator?.getCurrentId()
@@ -113,10 +118,31 @@ class PlayerGeneratorViewModel : ViewModel() {
     }
 
     private var currentJob: Job? = null
+    private var currentStampJob: Job? = null
+
+    fun loadStamps(duration: Long) {
+        //currentStampJob?.cancel()
+        currentStampJob = ioSafe {
+            val meta = generator?.getCurrent()
+            val page = (generator as? RepoLinkGenerator?)?.page
+            if (page != null && meta is ResultEpisode) {
+                _currentStamps.postValue(listOf())
+                _currentStamps.postValue(
+                    EpisodeSkip.getStamps(
+                        page,
+                        meta,
+                        duration,
+                        hasNextEpisode() ?: false
+                    )
+                )
+            }
+        }
+    }
 
     fun loadLinks(clearCache: Boolean = false, isCasting: Boolean = false) {
         Log.i(TAG, "loadLinks")
         currentJob?.cancel()
+
         currentJob = viewModelScope.launchSafe {
             val currentLinks = mutableSetOf<Pair<ExtractorLink?, ExtractorUri?>>()
             val currentSubs = mutableSetOf<SubtitleData>()
@@ -142,5 +168,6 @@ class PlayerGeneratorViewModel : ViewModel() {
             _currentLinks.postValue(currentLinks)
             _currentSubs.postValue(currentSubs)
         }
+
     }
 }

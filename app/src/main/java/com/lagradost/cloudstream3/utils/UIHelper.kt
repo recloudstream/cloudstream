@@ -328,7 +328,9 @@ object UIHelper {
         )
     }
 
-    fun Context.fixPaddingStatusbarView(v: View) {
+    fun Context.fixPaddingStatusbarView(v: View?) {
+        if (v == null) return
+
         val params = v.layoutParams
         params.height = getStatusBarHeight()
         v.layoutParams = params

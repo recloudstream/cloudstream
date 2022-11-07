@@ -587,7 +587,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         updateLockUI()
     }
 
-    private fun updateUIVisibility() {
+    fun updateUIVisibility() {
         val isGone = isLocked || !isShowing
         var togglePlayerTitleGone = isGone
         context?.let {
@@ -1141,6 +1141,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 PlayerEventType.Play -> {
                     player.handleEvent(CSPlayerEvent.Play)
                 }
+                PlayerEventType.SkipCurrentChapter -> {
+                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+                }
                 PlayerEventType.Resize -> {
                     nextResize()
                 }
@@ -1254,6 +1257,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             player.handleEvent(CSPlayerEvent.PlayPauseToggle)
         }
 
+        skip_chapter_button?.setOnClickListener {
+            player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+        }
+
         // init clicks
         player_resize_btt?.setOnClickListener {
             autoHide()
@@ -1304,12 +1311,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         player_tracks_btt?.setOnClickListener {
             showTracksDialogue()
-        }
-
-        player_intro_play?.setOnClickListener {
-            player_intro_play?.isGone = true
-            player.handleEvent(CSPlayerEvent.Play)
-            updateUIVisibility()
         }
 
         // it is !not! a bug that you cant touch the right side, it does not register inputs on navbar or status bar

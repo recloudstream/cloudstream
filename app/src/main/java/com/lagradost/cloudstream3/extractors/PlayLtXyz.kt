@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
-class PlayLtXyz: ExtractorApi() {
+open class PlayLtXyz: ExtractorApi() {
     override val name: String = "PlayLt"
     override val mainUrl: String = "https://play.playlt.xyz"
     override val requiresReferer = true
