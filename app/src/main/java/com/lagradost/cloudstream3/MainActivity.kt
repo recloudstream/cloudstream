@@ -329,6 +329,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     //private var mCastSession: CastSession? = null
     lateinit var mSessionManager: SessionManager
     private val mSessionManagerListener: SessionManagerListener<Session> by lazy { SessionManagerListenerImpl() }
+    private val accountsLoginLock = Mutex()
 
     private inner class SessionManagerListenerImpl : SessionManagerListener<Session> {
         override fun onSessionStarting(session: Session) {
@@ -507,8 +508,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         super.onStart()
         ioSafe {
-            if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), true)){
-                context?.restorePromptGithub()
+            accountsLoginLock.withLock {
+                if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(
+                        getString(R.string.automatic_cloud_backups),
+                        true
+                    )
+                ) {
+                    context?.restorePromptGithub()
+                }
             }
         }
     }
@@ -605,15 +612,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         // init accounts
         ioSafe {
-            for (api in accountManagers) {
-                api.init()
-            }
+            accountsLoginLock.withLock{
+                for (api in accountManagers) {
+                    api.init()
+                }
 
-            inAppAuths.amap { api ->
-                try {
-                    api.initialize()
-                } catch (e: Exception) {
-                    logError(e)
+                inAppAuths.amap { api ->
+                    try {
+                        api.initialize()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
                 }
             }
         }
