@@ -31,8 +31,8 @@
     <string name="no_data">لايوجد بيانات</string>
     <string name="episode_more_options_des">المزيد من الخيارات</string>
     <string name="next_episode">الحلقة التالية</string>
-    <string name="result_tags">أنواع</string>
-    <string name="result_share">شارك</string>
+    <string name="result_tags">تصنيف</string>
+    <string name="result_share">مشاركة</string>
     <string name="result_open_in_browser">فتح في الويب</string>
     <string name="skip_loading">تخطي التحميل</string>
     <string name="loading">…تحميل</string>
@@ -230,7 +230,7 @@
     <string name="rating">تقييم</string>
     <string name="duration">المدة الزمنية</string>
     <string name="site">موقع</string>
-    <string name="synopsis">ملخص</string>
+    <string name="synopsis">القصة</string>
 
     <string name="queued">في قائمة الانتظار</string>
     <string name="no_subtitles">الترجمة ليست موجودة</string>
