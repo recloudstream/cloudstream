@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 
-class Mvidoo : ExtractorApi() {
+open class Mvidoo : ExtractorApi() {
     override val name = "Mvidoo"
     override val mainUrl = "https://mvidoo.com"
     override val requiresReferer = true

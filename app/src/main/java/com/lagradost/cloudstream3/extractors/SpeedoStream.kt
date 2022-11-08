@@ -7,7 +7,11 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
-class SpeedoStream : ExtractorApi() {
+class SpeedoStream1 : SpeedoStream() {
+    override val mainUrl = "https://speedostream.nl"
+}
+
+open class SpeedoStream : ExtractorApi() {
     override val name = "SpeedoStream"
     override val mainUrl = "https://speedostream.com"
     override val requiresReferer = true

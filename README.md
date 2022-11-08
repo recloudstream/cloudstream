@@ -1,8 +1,6 @@
 # CloudStream
 
 **⚠️ Warning: By default this app doesn't provide any video sources, you have to install extensions in order to add functionality to the app.**
-You can find the list of community-maintained extension repositories [here
-](https://recloudstream.github.io/repos/)
 
 
 [![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)
@@ -21,6 +19,7 @@ You can find the list of community-maintained extension repositories [here
 
 ***The list of supported languages:***
 * 🇱🇧 Arabic
+* 🇧🇬 Bulgarian
 * 🇭🇷 Croatian
 * 🇨🇿 Czech
 * 🇳🇱 Dutch

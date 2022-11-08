@@ -4,12 +4,14 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.os.TransactionTooLargeException
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
@@ -81,12 +83,17 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             dialog.text1?.text = text
 
             dialog.copy_btt?.setOnClickListener {
-                val serviceClipboard =
-                    (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
-                        ?: return@setOnClickListener
-                val clip = ClipData.newPlainText("logcat", text)
-                serviceClipboard.setPrimaryClip(clip)
-                dialog.dismissSafe(activity)
+                // Can crash on too much text
+                try {
+                    val serviceClipboard =
+                        (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
+                            ?: return@setOnClickListener
+                    val clip = ClipData.newPlainText("logcat", text)
+                    serviceClipboard.setPrimaryClip(clip)
+                    dialog.dismissSafe(activity)
+                } catch (e: TransactionTooLargeException) {
+                    showToast(activity, R.string.clipboard_too_large)
+                }
             }
             dialog.clear_btt?.setOnClickListener {
                 Runtime.getRuntime().exec("logcat -c")

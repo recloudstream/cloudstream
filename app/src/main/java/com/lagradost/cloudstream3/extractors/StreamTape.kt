@@ -5,7 +5,15 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 
-class StreamTape : ExtractorApi() {
+class StreamTapeNet : StreamTape() {
+    override var mainUrl = "https://streamtape.net"
+}
+
+class ShaveTape : StreamTape(){
+    override var mainUrl = "https://shavetape.cash"
+}
+
+open class StreamTape : ExtractorApi() {
     override var name = "StreamTape"
     override var mainUrl = "https://streamtape.com"
     override val requiresReferer = false
@@ -16,7 +24,8 @@ class StreamTape : ExtractorApi() {
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         with(app.get(url)) {
             linkRegex.find(this.text)?.let {
-                val extractedUrl = "https:${it.groups[1]!!.value + it.groups[2]!!.value.substring(3,)}"
+                val extractedUrl =
+                    "https:${it.groups[1]!!.value + it.groups[2]!!.value.substring(3)}"
                 return listOf(
                     ExtractorLink(
                         name,

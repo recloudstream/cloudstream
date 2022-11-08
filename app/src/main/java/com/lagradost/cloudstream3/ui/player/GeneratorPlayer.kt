@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.animation.addListener
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -36,8 +38,8 @@ import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSub
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
+import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -49,6 +51,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.dialog_online_subtitles.*
 import kotlinx.android.synthetic.main.dialog_online_subtitles.apply_btt
 import kotlinx.android.synthetic.main.dialog_online_subtitles.cancel_btt
@@ -58,7 +61,6 @@ import kotlinx.android.synthetic.main.player_select_source_and_subs.*
 import kotlinx.android.synthetic.main.player_select_source_and_subs.subtitles_click_settings
 import kotlinx.android.synthetic.main.player_select_tracks.*
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
@@ -67,8 +69,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             Log.i(TAG, "newInstance = $syncData")
             lastUsedGenerator = generator
             return Bundle().apply {
-                if (syncData != null)
-                    putSerializable("syncData", syncData)
+                if (syncData != null) putSerializable("syncData", syncData)
             }
         }
 
@@ -165,6 +166,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         isActive = true
         setPlayerDimen(null)
         setTitle()
+        if (!sameEpisode)
+            hasRequestedStamps = false
 
         loadExtractorJob(link.first)
         // load player
@@ -180,12 +183,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                 },
                 currentSubs,
                 (if (sameEpisode) currentSelectedSubtitles else null) ?: getAutoSelectSubtitle(
-                    currentSubs,
-                    settings = true,
-                    downloads = true
+                    currentSubs, settings = true, downloads = true
                 ),
             )
         }
+
+        if (!sameEpisode)
+            player.addTimeStamps(listOf()) // clear stamps
     }
 
     private fun sortLinks(useQualitySettings: Boolean = true): List<Pair<ExtractorLink?, ExtractorUri?>> {
@@ -231,9 +235,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun openOnlineSubPicker(
-        context: Context,
-        imdbId: Long?,
-        dismissCallback: (() -> Unit)
+        context: Context, imdbId: Long?, dismissCallback: (() -> Unit)
     ) {
         val providers = subsProviders
         val isSingleProvider = subsProviders.size == 1
@@ -256,8 +258,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         val arrayAdapter =
             object : ArrayAdapter<AbstractSubtitleEntities.SubtitleEntity>(dialog.context, layout) {
                 fun setHearingImpairedIcon(
-                    imageViewEnd: ImageView?,
-                    position: Int
+                    imageViewEnd: ImageView?, position: Int
                 ) {
                     if (imageViewEnd == null) return
                     val isHearingImpaired =
@@ -265,13 +266,11 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     val drawableEnd = if (isHearingImpaired) {
                         ContextCompat.getDrawable(
-                            context,
-                            R.drawable.ic_baseline_hearing_24
+                            context, R.drawable.ic_baseline_hearing_24
                         )?.apply {
                             setTint(
                                 ContextCompat.getColor(
-                                    context,
-                                    R.color.textColor
+                                    context, R.color.textColor
                                 )
                             )
                         }
@@ -281,8 +280,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                    val view = convertView ?: LayoutInflater.from(context)
-                        .inflate(layout, null)
+                    val view = convertView ?: LayoutInflater.from(context).inflate(layout, null)
 
                     val item = getItem(position)
 
@@ -337,14 +335,13 @@ class GeneratorPlayer : FullScreenPlayer() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 dialog.search_loading_bar?.show()
                 ioSafe {
-                    val search = AbstractSubtitleEntities.SubtitleSearch(
-                        query = query ?: return@ioSafe,
-                        imdb = imdbId,
-                        epNumber = currentTempMeta.episode,
-                        seasonNumber = currentTempMeta.season,
-                        lang = currentLanguageTwoLetters.ifBlank { null }
-                    )
-                    val results = providers.apmap {
+                    val search =
+                        AbstractSubtitleEntities.SubtitleSearch(query = query ?: return@ioSafe,
+                            imdb = imdbId,
+                            epNumber = currentTempMeta.episode,
+                            seasonNumber = currentTempMeta.season,
+                            lang = currentLanguageTwoLetters.ifBlank { null })
+                    val results = providers.amap {
                         try {
                             it.search(search)
                         } catch (e: Exception) {
@@ -379,14 +376,12 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         dialog.search_filter.setOnClickListener { view ->
             val lang639_1 = languages.map { it.ISO_639_1 }
-            activity?.showDialog(
-                languages.map { it.languageName },
+            activity?.showDialog(languages.map { it.languageName },
                 lang639_1.indexOf(currentLanguageTwoLetters),
                 view?.context?.getString(R.string.subs_subtitle_languages)
                     ?: return@setOnClickListener,
                 true,
-                { }
-            ) { index ->
+                { }) { index ->
                 currentLanguageTwoLetters = lang639_1[index]
                 dialog.subtitles_search.setQuery(dialog.subtitles_search.query, true)
             }
@@ -472,8 +467,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 if (uri == null) return@normalSafeApiCall
                 val ctx = context ?: AcraApplication.context ?: return@normalSafeApiCall
                 // RW perms for the path
-                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                val flags =
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 
                 ctx.contentResolver.takePersistableUriPermission(uri, flags)
 
@@ -536,11 +531,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 if (subsProvidersIsActive) {
-                    val loadFromOpenSubsFooter: TextView =
-                        layoutInflater.inflate(
-                            R.layout.sort_bottom_footer_add_choice,
-                            null
-                        ) as TextView
+                    val loadFromOpenSubsFooter: TextView = layoutInflater.inflate(
+                        R.layout.sort_bottom_footer_add_choice, null
+                    ) as TextView
 
                     loadFromOpenSubsFooter.text =
                         ctx.getString(R.string.player_load_subtitles_online)
@@ -592,8 +585,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val subtitleIndexStart = currentSubtitles.indexOf(currentSelectedSubtitles) + 1
                 var subtitleIndex = subtitleIndexStart
 
-                val subsArrayAdapter =
-                    ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+                val subsArrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
                 subsArrayAdapter.add(ctx.getString(R.string.no_subtitles))
                 subsArrayAdapter.addAll(currentSubtitles.map { it.name })
 
@@ -631,8 +623,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val prefValues = ctx.resources.getStringArray(R.array.subtitles_encoding_values)
 
                     val value = settingsManager.getString(
-                        ctx.getString(R.string.subtitles_encoding_key),
-                        null
+                        ctx.getString(R.string.subtitles_encoding_key), null
                     )
                     val index = prefValues.indexOf(value)
                     text = prefNames[if (index == -1) 0 else index]
@@ -644,28 +635,22 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val prefNames = ctx.resources.getStringArray(R.array.subtitles_encoding_list)
                     val prefValues = ctx.resources.getStringArray(R.array.subtitles_encoding_values)
 
-                    val currentPrefMedia =
-                        settingsManager.getString(
-                            ctx.getString(R.string.subtitles_encoding_key),
-                            null
-                        )
+                    val currentPrefMedia = settingsManager.getString(
+                        ctx.getString(R.string.subtitles_encoding_key), null
+                    )
 
                     shouldDismiss = false
                     sourceDialog.dismissSafe(activity)
 
                     val index = prefValues.indexOf(currentPrefMedia)
-                    activity?.showDialog(
-                        prefNames.toList(),
+                    activity?.showDialog(prefNames.toList(),
                         if (index == -1) 0 else index,
                         ctx.getString(R.string.subtitles_encoding),
                         true,
                         {}) {
-                        settingsManager.edit()
-                            .putString(
-                                ctx.getString(R.string.subtitles_encoding_key),
-                                prefValues[it]
-                            )
-                            .apply()
+                        settingsManager.edit().putString(
+                            ctx.getString(R.string.subtitles_encoding_key), prefValues[it]
+                        ).apply()
 
                         updateForcedEncoding(ctx)
                         dismiss()
@@ -796,15 +781,16 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 tracksDialog.apply_btt?.setOnClickListener {
+                    val currentTrack = currentAudioTracks.getOrNull(audioIndexStart)
                     player.setPreferredAudioTrack(
-                        currentAudioTracks.getOrNull(audioIndexStart)?.language
+                        currentTrack?.language, currentTrack?.id
                     )
 
                     val currentVideo = currentVideoTracks.getOrNull(videoIndex)
                     val width = currentVideo?.width ?: NO_VALUE
                     val height = currentVideo?.height ?: NO_VALUE
                     if (width != NO_VALUE && height != NO_VALUE) {
-                        player.setMaxVideoSize(width, height)
+                        player.setMaxVideoSize(width, height, currentVideo?.id)
                     }
 
                     tracksDialog.dismissSafe(activity)
@@ -877,7 +863,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     var maxEpisodeSet: Int? = null
-
+    var hasRequestedStamps: Boolean = false
     override fun playerPositionChanged(posDur: Pair<Long, Long>) {
         // Don't save livestream data
         if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
@@ -886,11 +872,24 @@ class GeneratorPlayer : FullScreenPlayer() {
         if ((currentMeta as? ResultEpisode)?.tvType == TvType.NSFW) return
 
         val (position, duration) = posDur
-        if (duration == 0L) return // idk how you achieved this, but div by zero crash
+        if (duration <= 0L) return // idk how you achieved this, but div by zero crash
+        if (!hasRequestedStamps) {
+            hasRequestedStamps = true
+            val fetchStamps = context?.let { ctx ->
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                settingsManager.getBoolean(
+                    ctx.getString(R.string.enable_skip_op_from_database),
+                    true
+                )
+            } ?: true
+            if (fetchStamps)
+                viewModel.loadStamps(duration)
+        }
 
         viewModel.getId()?.let {
             DataStoreHelper.setViewPos(it, position, duration)
         }
+
         val percentage = position * 100L / duration
 
         val nextEp = percentage >= NEXT_WATCH_EPISODE_PERCENTAGE
@@ -938,17 +937,14 @@ class GeneratorPlayer : FullScreenPlayer() {
                     context?.let { ctx ->
                         val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
                         if (settingsManager.getBoolean(
-                                ctx.getString(R.string.episode_sync_enabled_key),
-                                true
+                                ctx.getString(R.string.episode_sync_enabled_key), true
                             )
-                        )
-                            maxEpisodeSet = meta.episode
+                        ) maxEpisodeSet = meta.episode
                         sync.modifyMaxEpisode(meta.episode)
                     }
                 }
 
-                if (meta.tvType.isAnimeOp())
-                    isOpVisible = percentage < SKIP_OP_VIDEO_PERCENTAGE
+                if (meta.tvType.isAnimeOp()) isOpVisible = percentage < SKIP_OP_VIDEO_PERCENTAGE
             }
         }
         player_skip_op?.isVisible = isOpVisible
@@ -960,9 +956,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun getAutoSelectSubtitle(
-        subtitles: Set<SubtitleData>,
-        settings: Boolean,
-        downloads: Boolean
+        subtitles: Set<SubtitleData>, settings: Boolean, downloads: Boolean
     ): SubtitleData? {
         val langCode = preferredAutoSelectSubtitles ?: return null
         val lang = SubtitleHelper.fromTwoLettersToLanguage(langCode) ?: return null
@@ -1008,23 +1002,20 @@ class GeneratorPlayer : FullScreenPlayer() {
                     player.handleEvent(CSPlayerEvent.Play)
                     return true
                 }
-            } else
-                if (!langCode.isNullOrEmpty()) {
-                    getAutoSelectSubtitle(
-                        currentSubs,
-                        settings = true,
-                        downloads = false
-                    )?.let { sub ->
+            } else if (!langCode.isNullOrEmpty()) {
+                getAutoSelectSubtitle(
+                    currentSubs, settings = true, downloads = false
+                )?.let { sub ->
 
-                        if (setSubtitles(sub)) {
-                            player.saveData()
-                            player.reloadPlayer(ctx)
-                            player.handleEvent(CSPlayerEvent.Play)
-                            return true
-                        }
-
+                    if (setSubtitles(sub)) {
+                        player.saveData()
+                        player.reloadPlayer(ctx)
+                        player.handleEvent(CSPlayerEvent.Play)
+                        return true
                     }
+
                 }
+            }
         }
         return false
     }
@@ -1080,17 +1071,17 @@ class GeneratorPlayer : FullScreenPlayer() {
         context?.let { ctx ->
             //Generate video title
             val playerVideoTitle = if (headerName != null) {
-                (headerName +
-                        if (tvType.isEpisodeBased() && episode != null)
-                            if (season == null)
-                                " - ${ctx.getString(R.string.episode)} $episode"
-                            else
-                                " \"${ctx.getString(R.string.season_short)}${season}:${
-                                    ctx.getString(
-                                        R.string.episode_short
-                                    )
-                                }${episode}\""
-                        else "") + if (subName.isNullOrBlank() || subName == headerName) "" else " - $subName"
+                (headerName + if (tvType.isEpisodeBased() && episode != null) if (season == null) " - ${
+                    ctx.getString(
+                        R.string.episode
+                    )
+                } $episode"
+                else " \"${ctx.getString(R.string.season_short)}${season}:${
+                    ctx.getString(
+                        R.string.episode_short
+                    )
+                }${episode}\""
+                else "") + if (subName.isNullOrBlank() || subName == headerName) "" else " - $subName"
             } else {
                 ""
             }
@@ -1130,8 +1121,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             ""
         }
 
-        val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name
-        ?: "NULL"
+        val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name ?: "NULL"
 
         player_video_title_rez?.text = when (titleRez) {
             0 -> ""
@@ -1154,14 +1144,11 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // this is used instead of layout-television to follow the settings and some TV devices are not classified as TV for some reason
         isTv = isTvSettings()
-        layout =
-            if (isTv) R.layout.fragment_player_tv else R.layout.fragment_player
+        layout = if (isTv) R.layout.fragment_player_tv else R.layout.fragment_player
 
         viewModel = ViewModelProvider(this)[PlayerGeneratorViewModel::class.java]
         sync = ViewModelProvider(this)[SyncViewModel::class.java]
@@ -1171,6 +1158,68 @@ class GeneratorPlayer : FullScreenPlayer() {
         unwrapBundle(arguments)
 
         return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    var timestampShowState = false
+
+    var skipAnimator: ValueAnimator? = null
+    var skipIndex = 0
+
+    private fun displayTimeStamp(show: Boolean) {
+        if (timestampShowState == show) return
+        skipIndex++
+        println("displayTimeStamp = $show")
+        timestampShowState = show
+        skip_chapter_button?.apply {
+            val showWidth = 170.toPx
+            val noShowWidth = 10.toPx
+            //if((show && width == showWidth) || (!show && width == noShowWidth)) {
+            //    return
+            //}
+            val to = if (show) showWidth else noShowWidth
+            val from = if (!show) showWidth else noShowWidth
+
+            skipAnimator?.cancel()
+            isVisible = true
+
+            // just in case
+            val lay = layoutParams
+            lay.width = from
+            layoutParams = lay
+            skipAnimator = ValueAnimator.ofInt(
+                from, to
+            ).apply {
+                addListener(onEnd = {
+                    if (!show) skip_chapter_button?.isVisible = false
+                })
+                addUpdateListener { valueAnimator ->
+                    val value = valueAnimator.animatedValue as Int
+                    val layoutParams: ViewGroup.LayoutParams = layoutParams
+                    layoutParams.width = value
+                    setLayoutParams(layoutParams)
+                }
+                duration = 500
+                start()
+            }
+        }
+    }
+
+    override fun onTimestampSkipped(timestamp: EpisodeSkip.SkipStamp) {
+        displayTimeStamp(false)
+    }
+
+    override fun onTimestamp(timestamp: EpisodeSkip.SkipStamp?) {
+        if (timestamp != null) {
+            skip_chapter_button.setText(timestamp.uiText)
+            displayTimeStamp(true)
+            val currentIndex = skipIndex
+            skip_chapter_button?.handler?.postDelayed({
+                if (skipIndex == currentIndex)
+                    displayTimeStamp(false)
+            }, 6000)
+        } else {
+            displayTimeStamp(false)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -1188,8 +1237,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
             if (filterSubByLang) {
                 val langFromPrefMedia = settingsManager.getStringSet(
-                    this.getString(R.string.provider_lang_key),
-                    mutableSetOf("en")
+                    this.getString(R.string.provider_lang_key), mutableSetOf("en")
                 )
                 langFilterList = langFromPrefMedia?.mapNotNull {
                     fromTwoLettersToLanguage(it)?.lowercase() ?: return@mapNotNull null
@@ -1202,7 +1250,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         sync.updateUserData()
 
-        preferredAutoSelectSubtitles = SubtitlesFragment.getAutoSelectLanguageISO639_1()
+        preferredAutoSelectSubtitles = getAutoSelectLanguageISO639_1()
 
         if (currentSelectedLink == null) {
             viewModel.loadLinks()
@@ -1215,6 +1263,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         player_loading_go_back?.setOnClickListener {
             player.release()
             activity?.popCurrentPage()
+        }
+
+        observe(viewModel.currentStamps) { stamps ->
+            player.addTimeStamps(stamps)
         }
 
         observe(viewModel.loadingLinks) {

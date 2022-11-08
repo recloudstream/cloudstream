@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterHomePageListByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
@@ -12,14 +13,12 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.HomePageList
-import com.lagradost.cloudstream3.MainAPI
-import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
@@ -32,7 +31,6 @@ import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.set
@@ -46,19 +44,26 @@ class HomeViewModel : ViewModel() {
     private val _randomItems = MutableLiveData<List<SearchResponse>?>(null)
     val randomItems: LiveData<List<SearchResponse>?> = _randomItems
 
+    private var currentShuffledList: List<SearchResponse> = listOf()
+
     private fun autoloadRepo(): APIRepository {
         return APIRepository(apis.first { it.hasMainPage })
     }
 
     private val _availableWatchStatusTypes =
-        MutableLiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>>()
-    val availableWatchStatusTypes: LiveData<Pair<EnumSet<WatchType>, EnumSet<WatchType>>> =
+        MutableLiveData<Pair<Set<WatchType>, Set<WatchType>>>()
+    val availableWatchStatusTypes: LiveData<Pair<Set<WatchType>, Set<WatchType>>> =
         _availableWatchStatusTypes
     private val _bookmarks = MutableLiveData<Pair<Boolean, List<SearchResponse>>>()
     val bookmarks: LiveData<Pair<Boolean, List<SearchResponse>>> = _bookmarks
 
     private val _resumeWatching = MutableLiveData<List<SearchResponse>>()
+    private val _preview = MutableLiveData<Resource<Pair<Boolean, List<LoadResponse>>>>()
+    private val previewResponses = mutableListOf<LoadResponse>()
+    private val previewResponsesAdded = mutableSetOf<String>()
+
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
+    val preview: LiveData<Resource<Pair<Boolean, List<LoadResponse>>>> = _preview
 
     fun loadResumeWatching() = viewModelScope.launchSafe {
         val resumeWatching = withContext(Dispatchers.IO) {
@@ -96,7 +101,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadStoredData(preferredWatchStatus: EnumSet<WatchType>?) = viewModelScope.launchSafe {
+    fun loadStoredData(preferredWatchStatus: Set<WatchType>?) = viewModelScope.launchSafe {
         val watchStatusIds = withContext(Dispatchers.IO) {
             getAllWatchStateIds()?.map { id ->
                 Pair(id, getResultWatchState(id))
@@ -104,7 +109,7 @@ class HomeViewModel : ViewModel() {
         }?.distinctBy { it.first } ?: return@launchSafe
 
         val length = WatchType.values().size
-        val currentWatchTypes = EnumSet.noneOf(WatchType::class.java)
+        val currentWatchTypes = mutableSetOf<WatchType>()
 
         for (watch in watchStatusIds) {
             currentWatchTypes.add(watch.second)
@@ -207,7 +212,42 @@ class HomeViewModel : ViewModel() {
         expandAndReturn(name)
     }
 
-    private fun load(api: MainAPI?) = viewModelScope.launchSafe {
+    // returns the amount of items added and modifies current
+    private suspend fun updatePreviewResponses(
+        current: MutableList<LoadResponse>,
+        alreadyAdded: MutableSet<String>,
+        shuffledList: List<SearchResponse>,
+        size: Int
+    ): Int {
+        var count = 0
+
+        val addItems = arrayListOf<SearchResponse>()
+        for (searchResponse in shuffledList) {
+            if (!alreadyAdded.contains(searchResponse.url)) {
+                addItems.add(searchResponse)
+                previewResponsesAdded.add(searchResponse.url)
+                if (++count >= size) {
+                    break
+                }
+            }
+        }
+
+        val add = addItems.amap { searchResponse ->
+            repo?.load(searchResponse.url)
+        }.mapNotNull { if (it != null && it is Resource.Success) it.value else null }
+        current.addAll(add)
+        return add.size
+    }
+
+    private var addJob: Job? = null
+    fun loadMoreHomeScrollResponses() {
+        addJob = ioSafe {
+            updatePreviewResponses(previewResponses, previewResponsesAdded, currentShuffledList, 1)
+            _preview.postValue(Resource.Success((previewResponsesAdded.size < currentShuffledList.size) to previewResponses))
+        }
+    }
+
+    private fun load(api: MainAPI?) = ioSafe {
         repo = if (api != null) {
             APIRepository(api)
         } else {
@@ -219,6 +259,8 @@ class HomeViewModel : ViewModel() {
 
         if (repo?.hasMainPage == true) {
             _page.postValue(Resource.Loading())
+            _preview.postValue(Resource.Loading())
+            addJob?.cancel()
 
             when (val data = repo?.getMainPage(1, null)) {
                 is Resource.Success -> {
@@ -232,8 +274,12 @@ class HomeViewModel : ViewModel() {
                                     ExpandableHomepageList(filteredList, 1, home.hasNext)
                             }
                         }
-                        _page.postValue(Resource.Success(expandable))
+
                         val items = data.value.mapNotNull { it?.items }.flatten()
+
+
+                        previewResponses.clear()
+                        previewResponsesAdded.clear()
 
                         //val home = data.value
                         if (items.isNotEmpty()) {
@@ -248,9 +294,30 @@ class HomeViewModel : ViewModel() {
                                     context?.filterSearchResultByFilmQuality(currentList.shuffled())
                                         ?: currentList.shuffled()
 
+                                updatePreviewResponses(
+                                    previewResponses,
+                                    previewResponsesAdded,
+                                    randomItems,
+                                    3
+                                )
+
                                 _randomItems.postValue(randomItems)
+                                currentShuffledList = randomItems
                             }
                         }
+                        if (previewResponses.isEmpty()) {
+                            _preview.postValue(
+                                Resource.Failure(
+                                    false,
+                                    null,
+                                    null,
+                                    "No homepage responses"
+                                )
+                            )
+                        } else {
+                            _preview.postValue(Resource.Success((previewResponsesAdded.size < currentShuffledList.size) to previewResponses))
+                        }
+                        _page.postValue(Resource.Success(expandable))
                     } catch (e: Exception) {
                         _randomItems.postValue(emptyList())
                         logError(e)
@@ -263,6 +330,7 @@ class HomeViewModel : ViewModel() {
             }
         } else {
             _page.postValue(Resource.Success(emptyMap()))
+            _preview.postValue(Resource.Failure(false, null, null, "No homepage"))
         }
     }
 

@@ -16,8 +16,8 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.SubtitleHelper
 import okhttp3.Interceptor
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,6 +30,12 @@ const val USER_AGENT =
 val mapper = JsonMapper.builder().addModule(KotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
+/**
+ * Defines the constant for the all languages preference, if this is set then it is
+ * the equivalent of all languages being set
+ **/
+const val AllLanguagesName = "universal"
+
 object APIHolder {
     val unixTime: Long
         get() = System.currentTimeMillis() / 1000L
@@ -39,7 +45,7 @@ object APIHolder {
     private const val defProvider = 0
 
     // ConcurrentModificationException is possible!!!
-    val allProviders: MutableList<MainAPI> = arrayListOf()
+    val allProviders = threadSafeListOf<MainAPI>()
 
     fun initAll() {
         for (api in allProviders) {
@@ -52,7 +58,7 @@ object APIHolder {
         return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     }
 
-    var apis: List<MainAPI> = arrayListOf()
+    var apis: List<MainAPI> = threadSafeListOf()
     var apiMap: Map<String, Int>? = null
 
     fun addPluginMapping(plugin: MainAPI) {
@@ -72,16 +78,20 @@ object APIHolder {
 
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
-        initMap()
-        return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
-            ?: allProviders.firstOrNull { it.name == apiName }
+        synchronized(allProviders) {
+            initMap()
+            return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
+                // Leave the ?. null check, it can crash regardless
+                ?: allProviders.firstOrNull { it?.name == apiName }
+        }
     }
 
     fun getApiFromUrlNull(url: String?): MainAPI? {
         if (url == null) return null
-        for (api in allProviders) {
-            if (url.startsWith(api.mainUrl))
-                return api
+        synchronized(allProviders) {
+            allProviders.forEach { api ->
+                if (url.startsWith(api.mainUrl)) return api
+            }
         }
         return null
     }
@@ -155,7 +165,9 @@ object APIHolder {
 
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
-        hashSet.addAll(apis.filter { activeLangs.contains(it.lang) }.map { it.name })
+        val hasUniversal = activeLangs.contains(AllLanguagesName)
+        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }
+            .map { it.name })
 
         /*val set = settingsManager.getStringSet(
             this.getString(R.string.search_providers_list_key),
@@ -189,26 +201,17 @@ object APIHolder {
         return list.filter { names.contains(it) }.map { DubStatus.valueOf(it) }.toHashSet()
     }
 
-    /**
-     * Gets all the activated provider languages
-     * Used to obey the preference provider_lang_key
-     * but it turned out too complicated and unnecessary with extensions.
-     **/
     fun Context.getApiProviderLangSettings(): HashSet<String> {
-        val langs = apis.map { it.lang }.toSet()
-            .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) }
-        return langs.toHashSet()
-
-//        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-//        val hashSet = HashSet<String>()
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val hashSet = hashSetOf(AllLanguagesName) // def is all languages
 //        hashSet.add("en") // def is only en
-//        val list = settingsManager.getStringSet(
-//            this.getString(R.string.provider_lang_key),
-//            hashSet.toMutableSet()
-//        )
-//
-//        if (list.isNullOrEmpty()) return hashSet
-//        return list.toHashSet()
+        val list = settingsManager.getStringSet(
+            this.getString(R.string.provider_lang_key),
+            hashSet
+        )
+
+        if (list.isNullOrEmpty()) return hashSet
+        return list.toHashSet()
     }
 
     fun Context.getApiTypeSettings(): HashSet<TvType> {
@@ -240,7 +243,19 @@ object APIHolder {
     }
 
     fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
-        val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }.map { it.ordinal }
+        // We are getting the weirdest crash ever done:
+        // java.lang.ClassCastException: com.lagradost.cloudstream3.TvType cannot be cast to com.lagradost.cloudstream3.TvType
+        // Trying fixing using classloader fuckery
+        val oldLoader = Thread.currentThread().contextClassLoader
+        Thread.currentThread().contextClassLoader = TvType::class.java.classLoader
+
+        val default = TvType.values()
+            .sorted()
+            .filter { it != TvType.NSFW }
+            .map { it.ordinal }
+
+        Thread.currentThread().contextClassLoader = oldLoader
+
         val defaultSet = default.map { it.toString() }.toSet()
         val currentPrefMedia = try {
             PreferenceManager.getDefaultSharedPreferences(this)
@@ -250,7 +265,8 @@ object APIHolder {
             null
         } ?: default
         val langs = this.getApiProviderLangSettings()
-        val allApis = apis.filter { langs.contains(it.lang) }
+        val hasUniversal = langs.contains(AllLanguagesName)
+        val allApis = apis.filter { hasUniversal || langs.contains(it.lang) }
             .filter { api -> api.hasMainPage || !hasHomePageIsRequired }
         return if (currentPrefMedia.isEmpty()) {
             allApis
@@ -1062,7 +1078,7 @@ interface LoadResponse {
         ) {
             if (!isTrailersEnabled || trailerUrls == null) return
             trailers.addAll(trailerUrls.map { TrailerData(it, referer, addRaw) })
-            /*val trailers = trailerUrls.filter { it.isNotBlank() }.apmap { trailerUrl ->
+            /*val trailers = trailerUrls.filter { it.isNotBlank() }.amap { trailerUrl ->
                 val links = arrayListOf<ExtractorLink>()
                 val subs = arrayListOf<SubtitleFile>()
                 if (!loadExtractor(

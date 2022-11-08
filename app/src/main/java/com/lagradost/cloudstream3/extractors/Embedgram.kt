@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.httpsify
 
-class Embedgram : ExtractorApi() {
+open class Embedgram : ExtractorApi() {
     override val name = "Embedgram"
     override val mainUrl = "https://embedgram.com"
     override val requiresReferer = true

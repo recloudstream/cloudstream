@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 
 
-class Solidfiles : ExtractorApi() {
+open class Solidfiles : ExtractorApi() {
     override val name = "Solidfiles"
     override val mainUrl = "https://www.solidfiles.com"
     override val requiresReferer = false

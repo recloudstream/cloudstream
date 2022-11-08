@@ -1,40 +1,39 @@
 package com.lagradost.cloudstream3.plugins
 
 import android.app.*
-import dalvik.system.PathClassLoader
-import com.google.gson.Gson
+import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.Resources
-import android.os.Environment
-import android.widget.Toast
-import android.content.Context
 import android.os.Build
+import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.Gson
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
-import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
-import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
-import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
-import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
+import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
+import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
+import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.utils.extractorApis
+import dalvik.system.PathClassLoader
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -221,9 +220,8 @@ object PluginManager {
         // Load all plugins as fast as possible!
         loadAllOnlinePlugins(activity)
 
-        ioSafe {
             afterPluginsLoadedEvent.invoke(true)
-        }
+
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
@@ -270,9 +268,9 @@ object PluginManager {
             createNotification(activity, updatedPlugins)
         }
 
-        ioSafe {
+       // ioSafe {
             afterPluginsLoadedEvent.invoke(true)
-        }
+       // }
 
         Log.i(TAG, "Plugin update done!")
     }

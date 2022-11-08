@@ -136,7 +136,7 @@ object UIHelper {
                     navigation, arguments
                 )
             }
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             logError(t)
         }
     }
@@ -159,17 +159,20 @@ object UIHelper {
         url: String?,
         headers: Map<String, String>? = null,
         @DrawableRes
-        errorImageDrawable: Int? = null
+        errorImageDrawable: Int? = null,
+        fadeIn: Boolean = true
     ): Boolean {
         if (this == null || url.isNullOrBlank()) return false
 
         return try {
             val builder = GlideApp.with(this)
-                .load(GlideUrl(url) { headers ?: emptyMap() }).transition(
-                    DrawableTransitionOptions.withCrossFade()
-                )
+                .load(GlideUrl(url) { headers ?: emptyMap() })
                 .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.ALL).let { req ->
+                    if (fadeIn)
+                        req.transition(DrawableTransitionOptions.withCrossFade())
+                    else req
+                }
 
             val res = if (errorImageDrawable != null)
                 builder.error(errorImageDrawable).into(this)
@@ -325,7 +328,9 @@ object UIHelper {
         )
     }
 
-    fun Context.fixPaddingStatusbarView(v: View) {
+    fun Context.fixPaddingStatusbarView(v: View?) {
+        if (v == null) return
+
         val params = v.layoutParams
         params.height = getStatusBarHeight()
         v.layoutParams = params

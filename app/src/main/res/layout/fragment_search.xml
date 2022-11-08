@@ -82,86 +82,7 @@
             app:tint="?attr/textColor" />
     </FrameLayout>
 
-    <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fadingEdge="horizontal"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:requiresFadingEdge="horizontal">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_select_movies"
-
-                style="@style/RoundedSelectableButton"
-                android:nextFocusRight="@id/search_select_tv_series"
-                android:text="@string/movies" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_select_tv_series"
-                style="@style/RoundedSelectableButton"
-
-                android:nextFocusLeft="@id/search_select_movies"
-                android:nextFocusRight="@id/search_select_anime"
-                android:text="@string/tv_series" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_select_anime"
-                style="@style/RoundedSelectableButton"
-
-                android:nextFocusLeft="@id/search_select_tv_series"
-                android:nextFocusRight="@id/search_select_asian"
-                android:text="@string/anime" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_select_asian"
-                style="@style/RoundedSelectableButton"
-
-                android:nextFocusLeft="@id/search_select_anime"
-                android:nextFocusRight="@id/search_select_cartoons"
-                android:text="@string/asian_drama" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_select_cartoons"
-                style="@style/RoundedSelectableButton"
-
-                android:nextFocusLeft="@id/search_select_asian"
-                android:nextFocusRight="@id/search_select_documentaries"
-                android:text="@string/cartoons" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_select_documentaries"
-                style="@style/RoundedSelectableButton"
-                android:nextFocusLeft="@id/search_select_cartoons"
-                android:nextFocusRight="@id/search_select_livestreams"
-                android:text="@string/documentaries" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_select_livestreams"
-                style="@style/RoundedSelectableButton"
-                android:nextFocusLeft="@id/search_select_documentaries"
-                android:nextFocusRight="@id/search_select_nsfw"
-                android:text="@string/livestreams" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_select_nsfw"
-                style="@style/RoundedSelectableButton"
-                android:nextFocusLeft="@id/search_select_livestreams"
-                android:nextFocusRight="@id/search_select_others"
-                android:text="@string/nsfw" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_select_others"
-                style="@style/RoundedSelectableButton"
-                android:nextFocusLeft="@id/search_select_nsfw"
-                android:text="@string/others" />
-        </LinearLayout>
-    </HorizontalScrollView>
+    <include layout="@layout/tvtypes_chips_scroll" />
 
 
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -191,6 +112,11 @@
         android:nextFocusLeft="@id/nav_rail_view"
         android:visibility="gone"
         tools:listitem="@layout/homepage_parent" />
+    <FrameLayout
+        android:id="@+id/search_history_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_history_recycler"
@@ -201,5 +127,19 @@
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/nav_rail_view"
         android:visibility="visible"
+        android:paddingBottom="50dp"
         tools:listitem="@layout/search_history_item" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/search_clear_call_history"
+        style="@style/BlackButton"
+        android:layout_gravity="bottom"
+        android:padding="0dp"
+        app:cornerRadius="0dp"
+        android:layout_margin="0dp"
+        android:text="@string/clear_history"
+        app:icon="@drawable/delete_all"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+    </FrameLayout>
 </LinearLayout>

@@ -22,7 +22,8 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.discord.panels.OverlappingPanelsLayout
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
@@ -96,9 +97,9 @@ import kotlinx.android.synthetic.main.fragment_result.result_vpn
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
 import kotlinx.android.synthetic.main.result_sync.*
+import kotlinx.android.synthetic.main.trailer_custom_layout.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-
 
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
@@ -838,6 +839,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                     result_next_airing.setText(d.nextAiringEpisode)
                     result_next_airing_time.setText(d.nextAiringDate)
                     result_poster.setImage(d.posterImage)
+                    result_poster_background.setImage(d.posterBackgroundImage)
+                    //result_trailer_thumbnail.setImage(d.posterBackgroundImage, fadeIn = false)
 
                     if (d.posterImage != null && !isTrueTvSettings())
                         result_poster_holder?.setOnClickListener {
@@ -926,18 +929,38 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                     val tags = d.tags
                     result_tag_holder?.isVisible = tags.isNotEmpty()
-                    if (tags.isNotEmpty()) {
-                        //result_tag_holder?.visibility = VISIBLE
-                        val isOnTv = isTrueTvSettings()
-                        for ((index, tag) in tags.withIndex()) {
+                    result_tag?.apply {
+                        tags.forEach { tag ->
+                            val chip = Chip(context)
+                            val chipDrawable = ChipDrawable.createFromAttributes(
+                                context,
+                                null,
+                                0,
+                                R.style.ChipFilled
+                            )
+                            chip.setChipDrawable(chipDrawable)
+                            chip.text = tag
+                            chip.isChecked = false
+                            chip.isCheckable = false
+                            chip.isFocusable = false
+                            chip.isClickable = false
+                            addView(chip)
+                        }
+                    }
+                    // if (tags.isNotEmpty()) {
+                    //result_tag_holder?.visibility = VISIBLE
+                    //val isOnTv = isTrueTvSettings()
+
+
+                    /*for ((index, tag) in tags.withIndex()) {
                             val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
                             val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
                             btt.text = tag
                             btt.isFocusable = !isOnTv
                             btt.isClickable = !isOnTv
                             result_tag?.addView(viewBtt, index)
-                        }
-                    }
+                        }*/
+                    //}
                 }
                 is Resource.Failure -> {
                     result_error_text.text = storedData?.url?.plus("\n") + data.errorString
