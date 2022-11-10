@@ -452,7 +452,7 @@
     <string name="error">Errore</string>
     <!--<string name="subtitles_remove_captions">Remove closed captions from subtitles</string>-->
     <!--<string name="subtitles_remove_bloat">Remove bloat from subtitles</string>-->
-    <string name="subtitles_filter_lang">Filtrato in base alla lingua preferita</string>
+    <string name="subtitles_filter_lang">Filtra in base alla lingua preferita</string>
     <string name="extras">Extra</string>
     <string name="trailer">Trailer</string>
     <string name="network_adress_example">Link allo stream</string>
@@ -511,7 +511,7 @@
     <string name="extension_authors">Autori</string>
     <string name="extension_types">Supportati</string>
     <string name="extension_language">Lingua</string>
-    <string name="extension_install_first">Installare prima l\'estensione</string>
+    <string name="extension_install_first">Prima installa l\'estensione</string>
 
     <string name="hls_playlist">HLS Playlist</string>
 
