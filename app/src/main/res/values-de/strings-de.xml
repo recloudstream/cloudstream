@@ -19,11 +19,11 @@
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">Mit CloudStream abspielen</string>
     <string name="title_home">Startseite</string>
-    <string name="title_search">Suche</string>
+    <string name="title_search">Suchen</string>
     <string name="title_downloads">Downloads</string>
     <string name="title_settings">Einstellungen</string>
 
-    <string name="search_hint">Suche…</string>
+    <string name="search_hint">Suchen…</string>
     <string name="search_hint_site" formatted="true">Suche %s…</string>
 
     <string name="no_data">Keine Daten vorhanden</string>
@@ -32,15 +32,15 @@
     <string name="result_tags">Genres</string>
     <string name="result_share">Teilen</string>
     <string name="result_open_in_browser">In Browser öffnen</string>
-    <string name="skip_loading">Buffern überspringen</string>
+    <string name="skip_loading">Puffern überspringen</string>
     <string name="loading">Lädt…</string>
 
     <string name="type_watching">Am schauen</string>
     <string name="type_on_hold">Pausiert</string>
     <string name="type_completed">Abgeschlossen</string>
     <string name="type_dropped">Abgebrochen</string>
-    <string name="type_plan_to_watch">Möchte schauen</string>
-    <string name="type_none">None</string>
+    <string name="type_plan_to_watch">Geplant</string>
+    <string name="type_none">Nichts</string>
     <string name="type_re_watching">Erneut anschauen</string>
 
     <string name="play_movie_button">Film abspielen</string>
@@ -90,7 +90,7 @@
     <string name="sort_clear">Löschen</string>
     <string name="sort_save">Speichern</string>
 
-    <string name="player_speed">Players Geschwindigkeit</string>
+    <string name="player_speed">Player Geschwindigkeit</string>
 
     <string name="subtitles_settings">Untertiteleinstellungen</string>
     <string name="subs_text_color">Textfarbe</string>
@@ -275,8 +275,8 @@
     <string name="source_error">Quellenfehler</string>
     <string name="remote_error">Remotefehler</string>
     <string name="render_error">Renderfehler</string>
-    <string name="unexpected_error">Unerwarteter Player-Fehler</string>
-    <string name="storage_error">Download-Fehler, Speicherberechtigungen prüfen</string>
+    <string name="unexpected_error">Unerwarteter Playerfehler</string>
+    <string name="storage_error">Downloadfehler, Speicherberechtigungen prüfen</string>
 
     <string name="episode_action_chromecast_episode">Chromecast-Episode</string>
     <string name="episode_action_chromecast_mirror">Chromecastmirror</string>
@@ -453,7 +453,7 @@
     <string name="trailer">Trailer</string>
     <string name="network_adress_example">Link zum Stream</string>
     <string name="referer">Referent</string>
-    <string name="next">Nächste</string>
+    <string name="next">Weiter</string>
     <string name="provider_languages_tip">Videos in diesen Sprachen ansehen</string>
     <string name="previous">Vorherige</string>
     <string name="skip_setup">Einrichtung überspringen</string>
@@ -497,4 +497,39 @@
     <string name="tracks">Spuren</string>
     <string name="enable_nsfw_on_providers">Aktivieren der NSFW auf unterstützten Anbietern</string>
     <string name="category_providers">Anbieter</string>
+	
+    <string name="extension_rating" formatted="true">Bewertung: %s</string>
+    <string name="extension_description">Beschreibung</string>
+    <string name="extension_version">Version</string>
+    <string name="extension_status">Status</string>
+    <string name="extension_size">Größe</string>
+    <string name="extension_authors">Autoren</string>
+    <string name="extension_types">Unterstützt</string>
+    <string name="extension_language">Sprache</string>
+    <string name="extension_install_first">Zuerst muss die Erweiterung installiert werden</string>
+
+    <string name="hls_playlist">HLS Playlist</string>
+
+    <string name="player_pref">Bevorzugter Videoplayer</string>
+    <string name="player_settings_play_in_app">Interner Player</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="player_settings_play_in_web">Web Video Cast</string>
+    <string name="player_settings_play_in_browser">Browser</string>
+    <string name="app_not_found_error">App nicht gefunden</string>
+    <string name="all_languages_preference">Alle Sprachen</string>
+
+    <string name="skip_type_format" formatted="true">Überspringen %s</string>
+    <string name="skip_type_op">Opening</string>
+    <string name="skip_type_ed">Ending</string>
+    <string name="skip_type_recap">Zusammenfassung</string>
+    <string name="skip_type_mixed_ed">Vermischte Endings</string>
+    <string name="skip_type_mixed_op">Vermischte Openings</string>
+    <string name="skip_type_creddits">Abspann</string>
+    <string name="skip_type_intro">Intro</string>
+
+    <string name="clear_history">Verlauf löschen</string>
+    <string name="history">Verlauf</string>
+    <string name="enable_skip_op_from_database_des">Überspringen Button für Openings/Endings anzeigen</string>
+    <string name="clipboard_too_large">Zu viel Text. Kann nicht in der Zwischenablage gespeichert werden.</string>
 </resources>
