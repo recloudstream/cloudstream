@@ -521,10 +521,10 @@
 
     <string name="skip_type_format" formatted="true">Überspringen %s</string>
     <string name="skip_type_op">Opening</string>
-    <string name="skip_type_ed">Ende</string>
+    <string name="skip_type_ed">Ending</string>
     <string name="skip_type_recap">Zusammenfassung</string>
-    <string name="skip_type_mixed_ed">Mixed ending</string>
-    <string name="skip_type_mixed_op">Mixed opening</string>
+    <string name="skip_type_mixed_ed">Vermischte Endings</string>
+    <string name="skip_type_mixed_op">Vermischte Openings</string>
     <string name="skip_type_creddits">Abspann</string>
     <string name="skip_type_intro">Intro</string>
 
