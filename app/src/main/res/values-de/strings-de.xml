@@ -530,6 +530,6 @@
 
     <string name="clear_history">Verlauf löschen</string>
     <string name="history">Verlauf</string>
-    <string name="enable_skip_op_from_database_des">Überspringen Button für opening/endings anzeigen</string>
+    <string name="enable_skip_op_from_database_des">Überspringen Button für Openings/Endings anzeigen</string>
     <string name="clipboard_too_large">Zu viel Text. Kann nicht in der Zwischenablage gespeichert werden.</string>
 </resources>
