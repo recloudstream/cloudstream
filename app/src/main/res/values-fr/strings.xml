@@ -21,7 +21,7 @@
     <string name="type_on_hold">En pause</string>
     <string name="type_completed">Terminé</string>
     <string name="type_dropped">Abandonné</string>
-    <string name="type_plan_to_watch"À regarder</string>
+    <string name="type_plan_to_watch">À regarder</string>
     <string name="type_none">Aucun</string>
     <string name="play_movie_button">Lire</string>
     <string name="play_torrent_button">Streamer le Torrent</string>
