@@ -68,7 +68,7 @@
     <string name="subs_background_color">Couleur de fond</string>
     <string name="subs_window_color">Couleur de la fenètre</string>
     <string name="subs_edge_type">Type de bordure</string>
-    <string name="subs_subtitle_elevation"Élévation des sous-titres</string>
+    <string name="subs_subtitle_elevation">Élévation des sous-titres</string>
     <string name="preview_background_img_des">Aperçu de l\'arrière-plan</string>
     <string name="subs_font">Police</string>
     <string name="search_provider_text_providers">Rechercher en utilisant les fournisseurs</string>
