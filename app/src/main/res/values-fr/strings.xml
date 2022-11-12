@@ -293,7 +293,6 @@
     <string name="poster_image">Image de l\'affiche</string>
     <string name="authenticated_user">Connecté %s</string>
     <string name="action_add_to_bookmarks">Définir le statut de visionage</string>
-     <string name="sort_apply">Appliquer</string>
     <string name="sort_cancel">Annuler</string>
     <string name="sort_copy">Copier</string>
     <string name="sort_close">Fermer</string>
