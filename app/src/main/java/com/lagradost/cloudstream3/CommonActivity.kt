@@ -107,7 +107,7 @@ object CommonActivity {
             logError(e)
         }
     }
-    
+
     /**
      * Not all languages can be fetched from locale with a code.
      * This map allows sidestepping the default Locale(languageCode)
