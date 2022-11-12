@@ -452,8 +452,8 @@
     <string name="subtitle_offset">同步字幕</string>
     <string name="subtitle_offset_hint">1000ms</string>
     <string name="subtitle_offset_title">字幕延遲</string>
-    <string name="subtitle_offset_extra_hint_later_format">如果字幕過早顯示 %dms，請使用此選項</string>
-    <string name="subtitle_offset_extra_hint_before_format">如果字幕過晚顯示 %dms，請使用此選項</string>
+    <string name="subtitle_offset_extra_hint_later_format">如果字幕過早顯示 %dms ，請使用此選項</string>
+    <string name="subtitle_offset_extra_hint_before_format">如果字幕過晚顯示 %dms ，請使用此選項</string>
     <string name="subtitle_offset_extra_hint_none_format">無字幕延遲</string>
 
     <!--
@@ -546,7 +546,7 @@
     <string name="uppercase_all_subtitles">字幕全大寫</string>
 
     <string name="download_all_plugins_from_repo">從此資源庫下載所有外掛程式？</string>
-    <string name="single_plugin_disabled" formatted="true">%s（禁用）</string>
+    <string name="single_plugin_disabled" formatted="true">%s （禁用）</string>
     <string name="tracks">軌道</string>
     <string name="audio_tracks">音頻軌道</string>
     <string name="video_tracks">影片軌道</string>
