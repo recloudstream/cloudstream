@@ -20,6 +20,8 @@
 ***The list of supported languages:***
 * 🇱🇧 Arabic
 * 🇧🇬 Bulgarian
+* 🇨🇳 Chinese Simplified
+* 🇹🇼 Chinese Traditional
 * 🇭🇷 Croatian
 * 🇨🇿 Czech
 * 🇳🇱 Dutch
