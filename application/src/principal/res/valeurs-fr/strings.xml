@@ -213,10 +213,6 @@
     <string name="duration_format">%d min</string>
     <string name="search_hint_site">Rechercher sur %s...</string>
     <string name="type_re_watching">À re-regarder</string>
-    <string name="sort_copy">Copier</string>
-    <string name="sort_close">Coller</string>
-    <string name="sort_clear">Effacer</string>
-    <string name="sort_save">Enregister</string>
     <string name="subs_import_text">Importer des polices en les plaçants dans %s</string>
     <string name="provider_info_meta">Les metadonnées ne sont pas fournies par le site, le chargement de la vidéo va échouer si elle n\'existe pas sur le site.</string>
     <string name="show_log_cat">Afficher les logs 🐈</string>
