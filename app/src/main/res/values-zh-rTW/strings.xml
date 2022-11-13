@@ -106,7 +106,7 @@
     <string name="error_bookmarks_text">書籤</string>
     <string name="action_remove_from_bookmarks">移除</string>
     <string name="action_add_to_bookmarks">設定觀看狀態</string>
-    <string name="sort_apply">應用</string>
+    <string name="sort_apply">套用</string>
     <string name="sort_cancel">取消</string>
     <string name="sort_copy">複製</string>
     <string name="sort_close">關閉</string>
@@ -155,21 +155,21 @@
 
     <string name="picture_in_picture">字母畫面</string>
     <string name="picture_in_picture_des">在其他應用程式上的子母畫面中繼續播放</string>
-    <string name="player_size_settings">撥放器調整大小按鈕</string>
+    <string name="player_size_settings">播放器調整大小按鈕</string>
     <string name="player_size_settings_des">移除黑色邊框</string>
     <string name="player_subtitles_settings">字幕</string>
-    <string name="player_subtitles_settings_des">撥放器字幕設定</string>
+    <string name="player_subtitles_settings_des">播放器字幕設定</string>
     <string name="chromecast_subtitles_settings">Chromecast 字幕</string>
     <string name="chromecast_subtitles_settings_des">Chromecast 字幕設定</string>
 
     <string name="eigengraumode_settings">播放速度</string>
-    <string name="eigengraumode_settings_des">在撥放器中添加播放速度選項</string>
+    <string name="eigengraumode_settings_des">在播放器中添加播放速度選項</string>
     <string name="swipe_to_seek_settings">活動控制進度</string>
     <string name="swipe_to_seek_settings_des">左右滑動控制播放進度</string>
     <string name="swipe_to_change_settings">滑動更改設定</string>
     <string name="swipe_to_change_settings_des">上下滑動更改亮度或音量</string>
 
-    <string name="autoplay_next_settings">自動撥放下一集</string>
+    <string name="autoplay_next_settings">自動播放下一集</string>
     <string name="autoplay_next_settings_des">播放完畢後播放下一集</string>
 
     <string name="double_tap_to_seek_settings">輕按兩下以控制進度</string>
@@ -296,7 +296,7 @@
     <string name="source_error">來源錯誤</string>
     <string name="remote_error">遠端錯誤</string>
     <string name="render_error">渲染器錯誤</string>
-    <string name="unexpected_error">意料之外的撥放器錯誤</string>
+    <string name="unexpected_error">意料之外的播放器錯誤</string>
     <string name="storage_error">下載錯誤，請檢查儲存權限</string>
 
     <string name="episode_action_chromecast_episode">Chromecast 劇集</string>
@@ -333,15 +333,15 @@
     <string name="update">更新</string>
     <string name="watch_quality_pref">偏好播放畫質</string>
     <string name="limit_title">影片播放器標題最大字數</string>
-    <string name="limit_title_rez">影片撥放器標題</string>
+    <string name="limit_title_rez">影片播放器標題</string>
 
     <string name="video_buffer_size_settings">影片緩衝大小</string>
     <string name="video_buffer_length_settings">影片緩衝長度</string>
     <string name="video_buffer_disk_settings">影片快取存儲</string>
     <string name="video_buffer_clear_settings">清除影片和圖片快取</string>
 
-    <string name="video_ram_description">如果設置得太高會導致隨機崩潰。 如果您的記憶體不足（例如 Android TV 或舊手機），請不要更改</string>
-    <string name="video_disk_description">如果您將其設置得太高，可能會導致存儲空間不足的系統（例如 Android TV 設備）出現問題</string>
+    <string name="video_ram_description">如果設定得太高會導致隨機崩潰。 如果您的記憶體不足（例如 Android TV 或舊手機），請不要更改</string>
+    <string name="video_disk_description">如果您將其設定得太高，可能會導致儲存空間不足的系統（例如 Android TV 設備）出現問題</string>
 
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">用於繞過網路服務供應商的封鎖</string>
@@ -496,7 +496,7 @@
     <string name="quality_webrip">Web</string>
 
     <string name="poster_image">封面圖片</string>
-    <string name="category_player">撥放器</string>
+    <string name="category_player">播放器</string>
     <string name="resolution_and_title">解析度與標題</string>
     <string name="title">標題</string>
     <string name="resolution">解析度</string>
@@ -519,7 +519,7 @@
     <string name="crash_reporting_title">崩潰報告</string>
     <string name="preferred_media_subtext">你想要看什麼</string>
     <string name="setup_done">完成</string>
-    <string name="extensions">擴展</string>
+    <string name="extensions">擴充功能</string>
     <string name="add_repository">添加資源庫</string>
     <string name="repository_name_hint">資源庫名稱</string>
     <string name="repository_url_hint">資源庫連結</string>
@@ -540,7 +540,7 @@
     <string name="plugins_disabled" formatted="true">已禁用：%d</string>
     <string name="plugins_not_downloaded" formatted="true">未下載：%d</string>
     <string name="plugins_updated" formatted="true">已更新 %d 外掛程式</string>
-    <string name="blank_repo_message">CloudStream 預設沒有安裝任何片源。您需要從資源庫安裝站點。\n\n由於 Sky Uk Limited 的無腦 DMCA 刪除🤮，我們無法在應用程式中鏈接資源庫站點。\n\n加入我們的 Discord 獲得鏈接或自己在網路上搜尋</string>
+    <string name="blank_repo_message">CloudStream 預設沒有安裝任何片源。您需要從資源庫安裝站點。\n\n由於 Sky Uk Limited 的無腦 DMCA 刪除🤮，我們無法在應用程式中連結資源庫站點。\n\n加入我們的 Discord 獲得連結或自己在網路上搜尋</string>
     <string name="view_public_repositories_button">查看</string>
     <string name="view_public_repositories_button_short">公開列表</string>
     <string name="uppercase_all_subtitles">字幕全大寫</string>
@@ -569,7 +569,7 @@
     <string name="hls_playlist">HLS 播放清單</string>
 
     <string name="player_pref">偏好影片播放器</string>
-    <string name="player_settings_play_in_app">內部撥放器</string>
+    <string name="player_settings_play_in_app">內部播放器</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">網路影片播放</string>
