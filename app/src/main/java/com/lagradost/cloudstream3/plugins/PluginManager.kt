@@ -294,23 +294,23 @@ object PluginManager {
         //Log.i(TAG, "providerLang => ${providerLang.toJson()}")
 
         // Iterate online repos and returns not downloaded plugins
-        val notDownloadedPlugins = onlinePlugins.mapNotNull outer@{ onlineData ->
+        val notDownloadedPlugins = onlinePlugins.mapNotNull { onlineData ->
             val sitePlugin = onlineData.second
             //Don't include empty urls
-            if (sitePlugin.url.isBlank()) { return@outer null }
-            if (sitePlugin.repositoryUrl.isNullOrBlank()) { return@outer null }
+            if (sitePlugin.url.isBlank()) { return@mapNotNull null }
+            if (sitePlugin.repositoryUrl.isNullOrBlank()) { return@mapNotNull null }
 
             //Omit already existing plugins
             if (getPluginPath(activity, sitePlugin.internalName, onlineData.first).exists()) {
                 Log.i(TAG, "Skip > ${sitePlugin.internalName}")
-                return@outer null
+                return@mapNotNull null
             }
 
             //Omit lang not selected on language setting
-            val lang = sitePlugin.language ?: return@outer null
+            val lang = sitePlugin.language ?: return@mapNotNull null
             //If set to 'universal', don't skip any language
             if (!providerLang.contains(AllLanguagesName) && !providerLang.contains(lang)) {
-                return@outer null
+                return@mapNotNull null
             }
             //Log.i(TAG, "sitePlugin lang => $lang")
 
@@ -318,7 +318,7 @@ object PluginManager {
             sitePlugin.tvTypes?.let { tvtypes ->
                 if (!settingsForProvider.enableAdult) {
                     if (tvtypes.contains(TvType.NSFW.name)) {
-                        return@outer null
+                        return@mapNotNull null
                     }
                 }
             }
