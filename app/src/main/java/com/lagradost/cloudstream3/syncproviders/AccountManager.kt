@@ -43,6 +43,9 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         const val appString = "cloudstreamapp"
         const val appStringRepo = "cloudstreamrepo"
 
+        // Instantly start the search given a query
+        const val appStringSearch = "cloudstreamsearch"
+
         val unixTime: Long
             get() = System.currentTimeMillis() / 1000L
         val unixTimeMs: Long

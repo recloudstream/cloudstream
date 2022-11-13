@@ -110,6 +110,17 @@
 
                 <data android:scheme="cloudstreamrepo" />
             </intent-filter>
+
+            <!-- Allow searching with intents: cloudstreamsearch://Your%20Name -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="cloudstreamsearch" />
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
