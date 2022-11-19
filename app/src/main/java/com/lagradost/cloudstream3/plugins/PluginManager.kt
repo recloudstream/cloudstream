@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -29,6 +28,8 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDE
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
+import com.lagradost.cloudstream3.ui.result.UiText
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -266,7 +267,8 @@ object PluginManager {
         }
 
         main {
-            createNotification(activity, updatedPlugins, R.string.plugins_updated)
+            val uitext = UiText.StringResource(R.string.plugins_updated, updatedPlugins)
+            createNotification(activity, uitext)
         }
 
         // ioSafe {
@@ -346,7 +348,8 @@ object PluginManager {
         }
 
         main {
-            createNotification(activity, newDownloadPlugins, R.string.plugins_downloaded)
+            val uitext = UiText.StringResource(R.string.plugins_downloaded, newDownloadPlugins)
+            createNotification(activity, uitext)
         }
 
         // ioSafe {
@@ -608,10 +611,12 @@ object PluginManager {
 
     private fun createNotification(
         context: Context,
-        extensionNames: List<String>,
-        @StringRes title: Int
+        uitext: UiText.StringResource
     ): Notification? {
         try {
+            val extensionNames = uitext.args.filterIsInstance<String>()
+            val resIdFormat = uitext.resId
+
             if (extensionNames.isEmpty()) return null
 
             val content = extensionNames.joinToString(", ")
@@ -623,7 +628,8 @@ object PluginManager {
                 .setSilent(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setColor(context.colorFromAttribute(R.attr.colorPrimary))
-                .setContentTitle(context.getString(title, extensionNames.size))
+                .setContentTitle(txt(resIdFormat, extensionNames.size).asString(context))
+                //.setContentTitle(context.getString(title, extensionNames.size))
                 .setSmallIcon(R.drawable.ic_baseline_extension_24)
                 .setStyle(
                     NotificationCompat.BigTextStyle()
