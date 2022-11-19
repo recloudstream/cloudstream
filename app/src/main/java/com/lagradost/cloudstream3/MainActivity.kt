@@ -177,6 +177,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val isNavVisible = listOf(
             R.id.navigation_home,
             R.id.navigation_search,
+            R.id.navigation_library,
             R.id.navigation_downloads,
             R.id.navigation_settings,
             R.id.navigation_download_child,

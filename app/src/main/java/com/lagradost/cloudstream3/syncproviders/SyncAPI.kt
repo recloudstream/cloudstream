@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.syncproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.ui.library.LibraryItem
 
 interface SyncAPI : OAuth2API {
     val mainUrl: String
@@ -21,6 +22,8 @@ interface SyncAPI : OAuth2API {
     suspend fun getResult(id: String): SyncResult?
 
     suspend fun search(name: String): List<SyncSearchResult>?
+
+    suspend fun getPersonalLibrary(): List<LibraryItem>?
 
     fun getIdFromUrl(url : String) : String
 

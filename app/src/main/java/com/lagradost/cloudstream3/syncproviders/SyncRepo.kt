@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.ui.library.LibraryItem
 
 class SyncRepo(private val repo: SyncAPI) {
     val idPrefix = repo.idPrefix
@@ -16,21 +17,25 @@ class SyncRepo(private val repo: SyncAPI) {
         return safeApiCall { repo.score(id, status) }
     }
 
-    suspend fun getStatus(id : String) : Resource<SyncAPI.SyncStatus>  {
+    suspend fun getStatus(id: String): Resource<SyncAPI.SyncStatus> {
         return safeApiCall { repo.getStatus(id) ?: throw ErrorLoadingException("No data") }
     }
 
-    suspend fun getResult(id : String) : Resource<SyncAPI.SyncResult>  {
+    suspend fun getResult(id: String): Resource<SyncAPI.SyncResult> {
         return safeApiCall { repo.getResult(id) ?: throw ErrorLoadingException("No data") }
     }
 
-    suspend fun search(query : String) : Resource<List<SyncAPI.SyncSearchResult>> {
+    suspend fun search(query: String): Resource<List<SyncAPI.SyncSearchResult>> {
         return safeApiCall { repo.search(query) ?: throw ErrorLoadingException() }
     }
 
-    fun hasAccount() : Boolean {
+    suspend fun getPersonalLibrary(): Resource<List<LibraryItem>> {
+        return safeApiCall { repo.getPersonalLibrary() ?: throw ErrorLoadingException() }
+    }
+
+    fun hasAccount(): Boolean {
         return normalSafeApiCall { repo.loginInfo() != null } ?: false
     }
 
-    fun getIdFromUrl(url : String) : String = repo.getIdFromUrl(url)
+    fun getIdFromUrl(url: String): String = repo.getIdFromUrl(url)
 }

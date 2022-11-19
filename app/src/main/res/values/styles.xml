@@ -299,6 +299,10 @@
         <item name="textAllCaps">false</item>
     </style>
 
+    <style name="TabNoCaps" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+    </style>
+
     <style name="AppTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">@font/google_sans</item>
     </style>

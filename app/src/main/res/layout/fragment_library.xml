@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/library_root"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/library_tab_layout"
+        style="@style/Theme.Widget.Tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="?attr/primaryGrayBackground"
+
+        app:tabIndicatorHeight="30dp"
+        app:tabIndicatorGravity="center"
+        app:tabIndicatorColor="@color/textColor"
+        app:tabIndicator="@drawable/indicator_background"
+        android:descendantFocusability="blocksDescendants"
+        android:focusable="false"
+        app:tabBackground="?attr/primaryGrayBackground"
+        app:tabGravity="center"
+        app:tabMode="scrollable"
+        app:tabTextColor="@color/textColor"
+        app:tabSelectedTextColor="@color/lightTextColor"
+        app:tabTextAppearance="@style/TabNoCaps" />
+
+    <androidx.viewpager2.widget.ViewPager2 xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@+id/menu_toolbar"
+        android:layout_below="@+id/library_tab_layout"
+        android:visibility="visible"
+        tools:listitem="@layout/library_viewpager_page">
+
+    </androidx.viewpager2.widget.ViewPager2>
+
+    <!--        <com.google.android.material.appbar.AppBarLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:background="?attr/primaryGrayBackground"-->
+    <!--            android:backgroundTint="?attr/primaryGrayBackground"-->
+    <!--            app:elevation="0dp">-->
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/menu_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="?attr/primaryGrayBackground"
+        android:backgroundTint="?attr/primaryGrayBackground"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:menu="@menu/library_menu">
+
+    </com.google.android.material.appbar.MaterialToolbar>
+    <!--    </com.google.android.material.appbar.AppBarLayout>-->
+
+
+</RelativeLayout>

@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.ui.library.LibraryItem
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -595,7 +596,26 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("score") val score: Int,
         @JsonProperty("private") val private: Boolean,
         @JsonProperty("media") val media: Media
-    )
+    ) {
+        fun toLibraryItem(listName: String?): LibraryItem? {
+            return LibraryItem(
+                // English title first
+                this.media.title.english ?: this.media.title.romaji ?: this.media.synonyms.firstOrNull()
+                ?: "",
+                this.media.id.toString(),
+                listName ?: return null,
+                this.progress,
+                this.media.episodes,
+                this.score,
+                "AniList",
+                TvType.Anime,
+                this.media.coverImage.large ?: this.media.coverImage.medium,
+                null,
+                null,
+                null
+            )
+        }
+    }
 
     data class Lists(
         @JsonProperty("status") val status: String?,
@@ -628,6 +648,10 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         } else {
             getAnilistListCached()
         }
+    }
+
+    override suspend fun getPersonalLibrary(): List<LibraryItem>? {
+        return getAnilistAnimeListSmart()?.map { it.entries.mapNotNull { entry -> entry.toLibraryItem(entry.status ?: it.status) } }?.flatten()
     }
 
     private suspend fun getFullAnilistList(): FullAnilistList? {

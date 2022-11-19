@@ -7,11 +7,13 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ShowStatus
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.ui.library.LibraryItem
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
@@ -381,7 +383,22 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     data class Data(
         @JsonProperty("node") val node: Node,
         @JsonProperty("list_status") val list_status: ListStatus?,
-    )
+    ) {
+        fun toLibraryItem(): LibraryItem {
+            return LibraryItem(
+                this.node.title,
+                this.node.id.toString(),
+                this.list_status?.status?.lowercase()?.capitalize()?.replace("_", " ") ?: "NONE",
+                this.list_status?.num_episodes_watched,
+                this.node.num_episodes,
+                this.list_status?.score,
+                "MAL",
+                TvType.Anime,
+                this.node.main_picture?.large ?: this.node.main_picture?.medium,
+                null, null, null
+            )
+        }
+    }
 
     data class Paging(
         @JsonProperty("next") val next: String?
@@ -422,6 +439,10 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         } else {
             getMalAnimeListCached()
         }
+    }
+
+    override suspend fun getPersonalLibrary(): List<LibraryItem>? {
+        return getMalAnimeListSmart()?.map { it.toLibraryItem() }
     }
 
     private suspend fun getMalAnimeList(): Array<Data> {

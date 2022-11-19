@@ -32,6 +32,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.tvprovider.media.tv.PreviewChannelHelper
@@ -64,6 +65,7 @@ import okhttp3.Cache
 import java.io.*
 import java.net.URL
 import java.net.URLDecoder
+import kotlin.system.measureTimeMillis
 
 object AppUtils {
     fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
@@ -262,6 +264,50 @@ object AppUtils {
             downloadAllPluginsDialog(url, repo.name)
         }
     }
+
+    abstract class DiffAdapter<T>(
+        open val items: MutableList<T>,
+        val comparison: (first: T, second: T) -> Boolean = { first, second ->
+            first.hashCode() == second.hashCode()
+        }
+    ) :
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun getItemCount(): Int {
+            return items.size
+        }
+
+        fun updateList(newList: List<T>) {
+            val time = measureTimeMillis {
+
+                val diffResult = DiffUtil.calculateDiff(
+                    GenericDiffCallback(this.items, newList)
+                )
+
+                items.clear()
+                items.addAll(newList)
+
+                diffResult.dispatchUpdatesTo(this)
+            }
+            println("TIME TAKEn  $time")
+        }
+
+        inner class GenericDiffCallback(
+            private val oldList: List<T>,
+            private val newList: List<T>
+        ) :
+            DiffUtil.Callback() {
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+                comparison(oldList[oldItemPosition], newList[newItemPosition])
+
+            override fun getOldListSize() = oldList.size
+
+            override fun getNewListSize() = newList.size
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+                oldList[oldItemPosition] == newList[newItemPosition]
+        }
+    }
+
 
     fun Activity.downloadAllPluginsDialog(repositoryUrl: String, repositoryName: String) {
         runOnUiThread {
