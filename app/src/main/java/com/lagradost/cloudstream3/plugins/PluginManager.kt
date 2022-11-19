@@ -267,8 +267,8 @@ object PluginManager {
         }
 
         main {
-            val uitext = UiText.StringResource(R.string.plugins_updated, updatedPlugins)
-            createNotification(activity, uitext)
+            val uitext = txt(R.string.plugins_updated, updatedPlugins.size)
+            createNotification(activity, uitext, updatedPlugins)
         }
 
         // ioSafe {
@@ -348,8 +348,8 @@ object PluginManager {
         }
 
         main {
-            val uitext = UiText.StringResource(R.string.plugins_downloaded, newDownloadPlugins)
-            createNotification(activity, uitext)
+            val uitext = txt(R.string.plugins_downloaded, newDownloadPlugins.size)
+            createNotification(activity, uitext, newDownloadPlugins)
         }
 
         // ioSafe {
@@ -611,15 +611,14 @@ object PluginManager {
 
     private fun createNotification(
         context: Context,
-        uitext: UiText.StringResource
+        uitext: UiText,
+        extensions: List<String>
     ): Notification? {
         try {
-            val extensionNames = uitext.args.filterIsInstance<String>()
-            val resIdFormat = uitext.resId
 
-            if (extensionNames.isEmpty()) return null
+            if (extensions.isEmpty()) return null
 
-            val content = extensionNames.joinToString(", ")
+            val content = extensions.joinToString(", ")
 //        main { // DON'T WANT TO SLOW IT DOWN
             val builder = NotificationCompat.Builder(context, EXTENSIONS_CHANNEL_ID)
                 .setAutoCancel(false)
@@ -628,7 +627,7 @@ object PluginManager {
                 .setSilent(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setColor(context.colorFromAttribute(R.attr.colorPrimary))
-                .setContentTitle(txt(resIdFormat, extensionNames.size).asString(context))
+                .setContentTitle(uitext.asString(context))
                 //.setContentTitle(context.getString(title, extensionNames.size))
                 .setSmallIcon(R.drawable.ic_baseline_extension_24)
                 .setStyle(
