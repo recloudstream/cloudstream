@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.lagradost.cloudstream3.ui.AutofitRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/page_recyclerview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:orientation="vertical">
-
-    <com.lagradost.cloudstream3.ui.AutofitRecyclerView
-        android:id="@+id/page_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        tools:listitem="@layout/home_result_grid_expanded" />
-</LinearLayout>
+    android:clipToPadding="false"
+    tools:listitem="@layout/home_result_grid_expanded" />
 

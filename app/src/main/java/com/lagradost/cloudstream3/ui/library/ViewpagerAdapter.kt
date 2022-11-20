@@ -1,13 +1,18 @@
 package com.lagradost.cloudstream3.ui.library
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnFlingListener
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import kotlinx.android.synthetic.main.library_viewpager_page.view.*
 import me.xdrop.fuzzywuzzy.FuzzySearch
 
@@ -50,7 +55,7 @@ data class LibraryItem(
 ) : SearchResponse
 
 
-class ViewpagerAdapter(var pages: List<Page>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ViewpagerAdapter(var pages: List<Page>, val scrollCallback: (isScrollingDown: Boolean) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return PageViewHolder(
             LayoutInflater.from(parent.context)
@@ -71,11 +76,29 @@ class ViewpagerAdapter(var pages: List<Page>) : RecyclerView.Adapter<RecyclerVie
         fun bind(page: Page) {
             if (itemViewTest.page_recyclerview?.adapter == null) {
                 itemViewTest.page_recyclerview?.adapter = PageAdapter(page.items.toMutableList())
-                itemView.page_recyclerview?.spanCount = 4
+                itemView.page_recyclerview?.spanCount = this@PageViewHolder.itemView.context.getSpanCount() ?: 3
             } else {
                 (itemViewTest.page_recyclerview?.adapter as? PageAdapter)?.updateList(page.items)
                 itemViewTest.page_recyclerview?.scrollToPosition(0)
             }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                itemViewTest.page_recyclerview.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+                    println("DOWN ${(scrollY - oldScrollY)}")
+                    val diff = scrollY - oldScrollY
+                    if (diff == 0) return@setOnScrollChangeListener
+
+                    scrollCallback.invoke(diff > 0)
+                }
+            } else {
+                itemViewTest.page_recyclerview.onFlingListener = object : OnFlingListener() {
+                    override fun onFling(velocityX: Int, velocityY: Int): Boolean {
+                        scrollCallback.invoke(velocityY > 0)
+                        return false
+                    }
+                }
+            }
+
         }
     }
 

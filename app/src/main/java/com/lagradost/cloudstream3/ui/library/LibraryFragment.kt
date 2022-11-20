@@ -1,31 +1,20 @@
 package com.lagradost.cloudstream3.ui.library
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.syncproviders.providers.MALApi
 import com.lagradost.cloudstream3.ui.result.txt
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import kotlinx.android.synthetic.main.fragment_library.*
-import kotlinx.android.synthetic.main.library_viewpager_page.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 class LibraryFragment : Fragment() {
 
@@ -46,9 +35,7 @@ class LibraryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         context?.fixPaddingStatusbar(library_root)
 
-        val sortView =
-            menu_toolbar?.menu?.findItem(R.id.sort_button)
-        sortView?.setOnMenuItemClickListener {
+        sort_fab?.setOnClickListener {
             val methods = libraryViewModel.sortingMethods
                 .map { txt(it.stringRes).asString(context ?: view.context) }
 
@@ -63,13 +50,11 @@ class LibraryFragment : Fragment() {
                     libraryViewModel.sort(method)
                 }
             )
-            true
         }
 
-        val searchView =
-            menu_toolbar?.menu?.findItem(R.id.search_button)?.actionView as? MenuSearchView
-        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        main_search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                libraryViewModel.sort(ListSorting.Query, query)
                 return true
             }
 
@@ -81,9 +66,16 @@ class LibraryFragment : Fragment() {
 
         libraryViewModel.loadPages()
 
-        viewpager?.setPageTransformer(HomeScrollTransformer())
-        viewpager?.adapter = viewpager.adapter ?: ViewpagerAdapter(emptyList())
-        viewpager?.offscreenPageLimit = 10
+        viewpager?.setPageTransformer(LibraryScrollTransformer())
+        viewpager?.adapter =
+            viewpager.adapter ?: ViewpagerAdapter(emptyList()) { isScrollingDown: Boolean ->
+                if (isScrollingDown) {
+                    sort_fab?.shrink()
+                } else {
+                    sort_fab?.extend()
+                }
+            }
+        viewpager?.offscreenPageLimit = 2
 
         observe(libraryViewModel.pages) { pages ->
             (viewpager.adapter as? ViewpagerAdapter)?.pages = pages

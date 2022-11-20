@@ -102,7 +102,7 @@ object UIHelper {
         listView.requestLayout()
     }
 
-    fun Activity?.getSpanCount(): Int? {
+    fun Context?.getSpanCount(): Int? {
         val compactView = false
         val spanCountLandscape = if (compactView) 2 else 6
         val spanCountPortrait = if (compactView) 1 else 3
