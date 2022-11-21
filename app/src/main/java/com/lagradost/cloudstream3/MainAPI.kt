@@ -1143,9 +1143,9 @@ fun getDurationFromString(input: String?): Int? {
         if (values.size == 3) {
             val hours = values[1].toIntOrNull()
             val minutes = values[2].toIntOrNull()
-            return if (minutes != null && hours != null) {
-                hours * 60 + minutes
-            } else null
+            if (minutes != null && hours != null) {
+                return hours * 60 + minutes
+            }
         }
     }
     Regex("([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
