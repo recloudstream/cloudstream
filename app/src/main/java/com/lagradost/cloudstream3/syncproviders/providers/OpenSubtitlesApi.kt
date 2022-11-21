@@ -2,12 +2,11 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.common.collect.BiMap
-import com.google.common.collect.HashBiMap
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.metaproviders.TmdbProvider
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
@@ -15,6 +14,8 @@ import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
 import com.lagradost.cloudstream3.utils.AppUtils
+import info.movito.themoviedbapi.TmdbApi
+
 
 class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override val idPrefix = "opensubtitles"
@@ -163,17 +164,21 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         throwIfCantDoRequest()
         val fixedLang = fixLanguage(query.lang)
 
-        val imdbId = query.imdb ?: 0
         val queryText = query.query.replace(" ", "+")
         val epNum = query.epNumber ?: 0
         val seasonNum = query.seasonNumber ?: 0
         val yearNum = query.year ?: 0
+        val tmdbprov = TmdbProvider()
+        var imdbId = ""
+        if (seasonNum == 0 && epNum == 0) { // applicable only for movies for now
+            imdbId = tmdbprov.getImdb(queryText, yearNum)
+        }
         val epQuery = if (epNum > 0) "&episode_number=$epNum" else ""
         val seasonQuery = if (seasonNum > 0) "&season_number=$seasonNum" else ""
         val yearQuery = if (yearNum > 0) "&year=$yearNum" else ""
 
-        val searchQueryUrl = when (imdbId > 0) {
-            //Use imdb_id to search if its valid
+        val searchQueryUrl = when (imdbId != "") {
+            //Use imdbId to search if its valid
             true -> "$host/subtitles?imdb_id=$imdbId&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
             false -> "$host/subtitles?query=$queryText&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
         }

@@ -10,7 +10,10 @@ import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.*
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
 import com.uwetrottmann.tmdb2.enumerations.VideoType
+import info.movito.themoviedbapi.TmdbApi
+import org.apache.commons.lang3.ObjectUtils.Null
 import retrofit2.awaitResponse
+import java.time.Year
 import java.util.*
 
 /**
@@ -42,6 +45,7 @@ open class TmdbProvider : MainAPI() {
     // Fuck it, public private api key because github actions won't co-operate.
     // Please no stealy.
     private val tmdb = Tmdb("e6333b32409e02a4a6eba6fb7ff866bb")
+    private val tmdbApi = TmdbApi("e6333b32409e02a4a6eba6fb7ff866bb")
 
     private fun getImageUrl(link: String?): String? {
         if (link == null) return null
@@ -361,4 +365,21 @@ open class TmdbProvider : MainAPI() {
                 it.movie?.toSearchResponse() ?: it.tvShow?.toSearchResponse()
             }
     }
+
+    open fun getImdb(query: String, year: Int=0): String {
+        val searches = tmdbApi.search
+        val search = searches.searchMovie(query,year,null,true,0)
+        val movieId: Int
+        if (search.totalResults > 0)
+            movieId = search.results[0].id
+        else
+            return ""
+        val movies = tmdbApi.movies
+        val movie = movies.getMovie(movieId, null)
+        if (movie == null)
+            return ""
+        else
+            return movie.imdbID
+    }
+
 }
