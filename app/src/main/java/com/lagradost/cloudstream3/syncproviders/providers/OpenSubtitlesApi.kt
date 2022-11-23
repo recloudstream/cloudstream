@@ -15,6 +15,8 @@ import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
 import com.lagradost.cloudstream3.utils.AppUtils
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override val idPrefix = "opensubtitles"
@@ -175,7 +177,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         val searchQueryUrl = when (imdbId > 0) {
             //Use imdb_id to search if its valid
             true -> "$host/subtitles?imdb_id=$imdbId&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
-            false -> "$host/subtitles?query=$queryText&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
+            false -> "$host/subtitles?query=${URLEncoder.encode(queryText.lowercase(), StandardCharsets.UTF_8.toString())}&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
         }
 
         val req = app.get(
