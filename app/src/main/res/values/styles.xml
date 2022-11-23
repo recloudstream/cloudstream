@@ -727,4 +727,9 @@
             @drawable/cast_ic_mini_controller_closed_caption
         </item>
     </style>
+
+    <style name="BottomSheetDialog">
+        <item name="android:windowEnterAnimation">@anim/slide_in_down</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
 </resources>
