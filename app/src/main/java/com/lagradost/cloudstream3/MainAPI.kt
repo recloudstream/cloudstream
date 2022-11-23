@@ -1143,14 +1143,35 @@ fun getDurationFromString(input: String?): Int? {
         if (values.size == 3) {
             val hours = values[1].toIntOrNull()
             val minutes = values[2].toIntOrNull()
-            return if (minutes != null && hours != null) {
-                hours * 60 + minutes
-            } else null
+            if (minutes != null && hours != null) {
+                return hours * 60 + minutes
+            }
         }
     }
     Regex("([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
         if (values.size == 2) {
             return values[1].toIntOrNull()
+        }
+    }
+    Regex("(\\s\\d+\\shr)|(\\s\\d+\\shour)|(\\s\\d+\\smin)|(\\s\\d+\\ssec)").findAll(input).let { values ->
+        var seconds = 0
+        values.forEach {
+            val time_text = it.value
+            if (time_text.isNotBlank()) {
+                val time = time_text.filter { s -> s.isDigit() }.trim().toInt()
+                val scale = time_text.filter { s -> !s.isDigit() }.trim()
+                //println("Scale: $scale")
+                val timeval = when (scale) {
+                    "hr", "hour" -> time * 60 * 60
+                    "min" -> time * 60
+                    "sec" -> time
+                    else -> 0
+                }
+                seconds += timeval
+            }
+        }
+        if (seconds > 0) {
+            return seconds / 60
         }
     }
     return null
