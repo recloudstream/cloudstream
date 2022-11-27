@@ -58,7 +58,6 @@
     <string name="pref_filter_search_quality_key" translatable="false">pref_filter_search_quality_key</string>
     <string name="enable_nsfw_on_providers_key" translatable="false">enable_nsfw_on_providers_key</string>
     <string name="enable_skip_op_from_database" translatable="false">enable_skip_op_from_database</string>
-    <string name="pref_filter_ext_by_lang_key" translatable="false">pref_filter_ext_by_lang_key</string>
 
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
@@ -449,7 +448,6 @@
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>
     <string name="enable_nsfw_on_providers">Enable NSFW on supported providers</string>
-    <string name="filter_ext_by_preferred_lang">Filter Extension list by Preferred Language</string>
     <string name="subtitles_encoding">Subtitle encoding</string>
     <string name="category_providers">Providers</string>
     <string name="category_ui">Layout</string>

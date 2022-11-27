@@ -8,7 +8,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.R
@@ -50,14 +49,10 @@ class PluginsFragment : Fragment() {
 
         // Filter by language set on preferred media
         activity?.let {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
-            val filter = settingsManager.getBoolean(getString(R.string.pref_filter_ext_by_lang_key), false)
-            if (filter) {
-                val providerLangs = it.getApiProviderLangSettings().toList()
-                if (!providerLangs.contains(AllLanguagesName)) {
-                    pluginViewModel.languages = providerLangs
-                    //Log.i("DevDebug", "providerLang => ${pluginViewModel.languages.toJson()}")
-                }
+            val providerLangs = it.getApiProviderLangSettings().toList()
+            if (!providerLangs.contains(AllLanguagesName)) {
+                pluginViewModel.languages = mutableListOf("none") + providerLangs
+                //Log.i("DevDebug", "providerLang => ${pluginViewModel.languages.toJson()}")
             }
         }
 
