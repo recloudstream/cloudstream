@@ -21,4 +21,9 @@
             android:icon="@drawable/ic_baseline_extension_24"
             android:summary="@string/apply_on_restart"
             app:defaultValue="false"/>
+    <SwitchPreference
+        android:key="@string/pref_filter_ext_by_lang_key"
+        android:title="@string/filter_ext_by_preferred_lang"
+        android:icon="@drawable/ic_baseline_extension_24"
+        app:defaultValue="false"/>
 </PreferenceScreen>
