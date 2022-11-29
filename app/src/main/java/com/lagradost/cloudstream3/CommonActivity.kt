@@ -108,9 +108,18 @@ object CommonActivity {
         }
     }
 
+    /**
+     * Not all languages can be fetched from locale with a code.
+     * This map allows sidestepping the default Locale(languageCode)
+     * when setting the app language.
+     **/
+    val appLanguageExceptions = hashMapOf(
+        "zh_TW" to Locale.TRADITIONAL_CHINESE
+    )
+
     fun setLocale(context: Context?, languageCode: String?) {
         if (context == null || languageCode == null) return
-        val locale = Locale(languageCode)
+        val locale = appLanguageExceptions[languageCode] ?: Locale(languageCode)
         val resources: Resources = context.resources
         val config = resources.configuration
         Locale.setDefault(locale)
