@@ -47,7 +47,7 @@ fun getCurrentLocale(context: Context): String {
     // Change locale settings in the app.
     // val dm = res.displayMetrics
     val conf = res.configuration
-    return conf?.locale?.language ?: "en"
+    return conf?.locale?.toString() ?: "en"
 }
 
 // idk, if you find a way of automating this it would be great
@@ -76,7 +76,7 @@ val appLanguages = arrayListOf(
     Triple("", "Romanian", "ro"),
     Triple("", "Italian", "it"),
     Triple("", "Chinese Simplified", "zh"),
-    Triple("\uD83C\uDDF9\uD83C\uDDFC", "Chinese Traditional", "zh-TW"),
+    Triple("\uD83C\uDDF9\uD83C\uDDFC", "Chinese Traditional", "zh_TW"),
     Triple("\uD83C\uDDEE\uD83C\uDDE9", "Indonesian", "in"),
     Triple("", "Czech", "cs"),
     Triple("", "Croatian", "hr"),
