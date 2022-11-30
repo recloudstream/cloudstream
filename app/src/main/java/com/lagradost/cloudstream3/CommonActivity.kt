@@ -155,8 +155,8 @@ object CommonActivity {
                     val resultCode = result.resultCode
                     val data = result.data
                     if (resultCode == AppCompatActivity.RESULT_OK && data != null && resumeApp.position != null && resumeApp.duration != null) {
-                        val pos = data.getLongExtra(resumeApp.position, -1L)
-                        val dur = data.getLongExtra(resumeApp.duration, -1L)
+                        val pos = resumeApp.getPosition(data)
+                        val dur = resumeApp.getDuration(data)
                         if (dur > 0L && pos > 0L)
                             DataStoreHelper.setViewPos(getKey(resumeApp.lastId), pos, dur)
                         removeKey(resumeApp.lastId)

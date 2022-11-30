@@ -115,13 +115,15 @@ val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlay
 val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
 
 //TODO REFACTOR AF
-data class ResultResume(
+open class ResultResume(
     val packageString: String,
     val action: String = Intent.ACTION_VIEW,
     val position: String? = null,
     val duration: String? = null,
     var launcher: ActivityResultLauncher<Intent>? = null,
 ) {
+    val defaultTime = -1L
+
     val lastId get() = "${packageString}_last_open_id"
     suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
         val intent = Intent(action)
@@ -135,21 +137,45 @@ data class ResultResume(
         callback.invoke(intent)
         launcher?.launch(intent)
     }
+
+    open fun getPosition(intent: Intent?): Long {
+        return defaultTime
+    }
+
+    open fun getDuration(intent: Intent?): Long {
+        return defaultTime
+    }
 }
 
-val VLC = ResultResume(
+val VLC = object : ResultResume(
     VLC_PACKAGE,
     "org.videolan.vlc.player.result",
     "extra_position",
     "extra_duration",
-)
+) {
+    override fun getPosition(intent: Intent?): Long {
+        return intent?.getLongExtra(this.position, defaultTime) ?: defaultTime
+    }
 
-val MPV = ResultResume(
+    override fun getDuration(intent: Intent?): Long {
+        return intent?.getLongExtra(this.duration, defaultTime) ?: defaultTime
+    }
+}
+
+val MPV = object : ResultResume(
     MPV_PACKAGE,
     //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
     position = "position",
     duration = "duration",
-)
+) {
+    override fun getPosition(intent: Intent?): Long {
+        return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong() ?: defaultTime
+    }
+
+    override fun getDuration(intent: Intent?): Long {
+        return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong() ?: defaultTime
+    }
+}
 
 val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
 
