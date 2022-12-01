@@ -274,7 +274,12 @@
         app:exitAnim="@anim/exit_anim"
         app:popEnterAnim="@anim/enter_anim"
         app:popExitAnim="@anim/exit_anim"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search">
+        <argument
+            android:name="search_query"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_downloads"

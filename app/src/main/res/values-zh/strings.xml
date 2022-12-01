@@ -209,6 +209,7 @@
     <string name="pref_filter_search_quality">在搜索结果中隐藏选中视频画质</string>
 
     <string name="automatic_plugin_updates">自动更新插件</string>
+    <string name="automatic_plugin_download">自动下载插件</string>
     <string name="updates_settings">显示应用更新</string>
     <string name="updates_settings_des">启动时自动搜索更新</string>
     <string name="uprereleases_settings">更新至预览版</string>

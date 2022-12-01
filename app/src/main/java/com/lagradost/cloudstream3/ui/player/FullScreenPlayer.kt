@@ -612,6 +612,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         //player_media_route_button?.isClickable = !isGone
         player_go_back_holder?.isGone = isGone
         player_sources_btt?.isGone = isGone
+        player_skip_episode?.isClickable = !isGone
     }
 
     private fun updateLockUI() {
@@ -1101,7 +1102,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     protected fun uiReset() {
-        isLocked = false
         isShowing = false
 
         // if nothing has loaded these buttons should not be visible

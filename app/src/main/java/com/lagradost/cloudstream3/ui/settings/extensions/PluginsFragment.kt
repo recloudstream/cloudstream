@@ -8,6 +8,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
+import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.observe
@@ -44,6 +46,15 @@ class PluginsFragment : Fragment() {
         pluginViewModel.tvTypes.clear()
         pluginViewModel.languages = listOf()
         pluginViewModel.search(null)
+
+        // Filter by language set on preferred media
+        activity?.let {
+            val providerLangs = it.getApiProviderLangSettings().toList()
+            if (!providerLangs.contains(AllLanguagesName)) {
+                pluginViewModel.languages = mutableListOf("none") + providerLangs
+                //Log.i("DevDebug", "providerLang => ${pluginViewModel.languages.toJson()}")
+            }
+        }
 
         val name = arguments?.getString(PLUGINS_BUNDLE_NAME)
         val url = arguments?.getString(PLUGINS_BUNDLE_URL)

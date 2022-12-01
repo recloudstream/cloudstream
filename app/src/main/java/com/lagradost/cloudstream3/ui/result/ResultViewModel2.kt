@@ -1582,7 +1582,6 @@ class ResultViewModel2 : ViewModel() {
             return
         }
 
-        val episodes = currentEpisodes[indexer]
         val ranges = currentRanges[indexer]
 
         if (ranges?.contains(range) != true) {
@@ -1594,7 +1593,6 @@ class ResultViewModel2 : ViewModel() {
             }
         }
 
-        val size = episodes?.size
         val isMovie = currentResponse?.isMovie() == true
         currentIndex = indexer
         currentRange = range
@@ -1604,6 +1602,7 @@ class ResultViewModel2 : ViewModel() {
             text to r
         } ?: emptyList())
 
+        val size = currentEpisodes[indexer]?.size
         _episodesCountText.postValue(
             some(
                 if (isMovie) null else
@@ -1683,9 +1682,12 @@ class ResultViewModel2 : ViewModel() {
         generator = if (isMovie) {
             getMovie()?.let { RepoLinkGenerator(listOf(it), page = currentResponse) }
         } else {
-            episodes?.let { list ->
-                RepoLinkGenerator(list, page = currentResponse)
-            }
+            val episodes = currentEpisodes.filter { it.key.dubStatus == indexer.dubStatus }
+                .toList()
+                .sortedBy { it.first.season }
+                .flatMap { it.second }
+
+            RepoLinkGenerator(episodes, page = currentResponse)
         }
 
         if (isMovie) {

@@ -16,11 +16,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
+import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
@@ -44,17 +42,21 @@ import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appString
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -88,11 +90,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import okhttp3.ConnectionSpec
-import okhttp3.OkHttpClient
-import okhttp3.internal.applyConnectionSpec
 import java.io.File
 import java.net.URI
+import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.reflect.KClass
 
@@ -115,13 +115,15 @@ val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlay
 val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
 
 //TODO REFACTOR AF
-data class ResultResume(
+open class ResultResume(
     val packageString: String,
     val action: String = Intent.ACTION_VIEW,
     val position: String? = null,
     val duration: String? = null,
     var launcher: ActivityResultLauncher<Intent>? = null,
 ) {
+    val defaultTime = -1L
+
     val lastId get() = "${packageString}_last_open_id"
     suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
         val intent = Intent(action)
@@ -135,21 +137,45 @@ data class ResultResume(
         callback.invoke(intent)
         launcher?.launch(intent)
     }
+
+    open fun getPosition(intent: Intent?): Long {
+        return defaultTime
+    }
+
+    open fun getDuration(intent: Intent?): Long {
+        return defaultTime
+    }
 }
 
-val VLC = ResultResume(
+val VLC = object : ResultResume(
     VLC_PACKAGE,
     "org.videolan.vlc.player.result",
     "extra_position",
     "extra_duration",
-)
+) {
+    override fun getPosition(intent: Intent?): Long {
+        return intent?.getLongExtra(this.position, defaultTime) ?: defaultTime
+    }
 
-val MPV = ResultResume(
+    override fun getDuration(intent: Intent?): Long {
+        return intent?.getLongExtra(this.duration, defaultTime) ?: defaultTime
+    }
+}
+
+val MPV = object : ResultResume(
     MPV_PACKAGE,
     //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
-     position = "position",
+    position = "position",
     duration = "duration",
-)
+) {
+    override fun getPosition(intent: Intent?): Long {
+        return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong() ?: defaultTime
+    }
+
+    override fun getDuration(intent: Intent?): Long {
+        return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong() ?: defaultTime
+    }
+}
 
 val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
 
@@ -189,6 +215,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         const val TAG = "MAINACT"
 
         /**
+         * Setting this will automatically enter the query in the search
+         * next time the search fragment is opened.
+         * This variable will clear itself after one use. Null does nothing.
+         *
+         * This is a very bad solution but I was unable to find a better one.
+         **/
+        private var nextSearchQuery: String? = null
+
+        /**
          * Fires every time a new batch of plugins have been loaded, no guarantee about how often this is run and on which thread
          * */
         val afterPluginsLoadedEvent = Event<Boolean>()
@@ -206,6 +241,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             isWebview: Boolean
         ): Boolean =
             with(activity) {
+                // Invalid URIs can crash
+                fun safeURI(uri: String) = normalSafeApiCall { URI(uri) }
+
                 if (str != null && this != null) {
                     if (str.startsWith("https://cs.repo")) {
                         val realUrl = "https://" + str.substringAfter("?")
@@ -241,10 +279,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 return true
                             }
                         }
-                    } else if (URI(str).scheme == appStringRepo) {
+                    } else if (safeURI(str)?.scheme == appStringRepo) {
                         val url = str.replaceFirst(appStringRepo, "https")
                         loadRepository(url)
                         return true
+                    } else if (safeURI(str)?.scheme == appStringSearch) {
+                        nextSearchQuery =
+                            URLDecoder.decode(str.substringAfter("$appStringSearch://"), "UTF-8")
+                        nav_view.selectedItemId = R.id.navigation_search
                     } else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
@@ -553,7 +595,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     ) {
                         PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
                     } else {
-                        PluginManager.loadAllOnlinePlugins(this@MainActivity)
+                        loadAllOnlinePlugins(this@MainActivity)
+                    }
+
+                    //Automatically download not existing plugins
+                    if (settingsManager.getBoolean(
+                            getString(R.string.auto_download_plugins_key),
+                            false
+                        )
+                    ) {
+                        PluginManager.downloadNotExistingPluginsAndLoad(this@MainActivity)
                     }
                 }
 
@@ -619,6 +670,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
+
+        navController.addOnDestinationChangedListener { _: NavController, navDestination: NavDestination, bundle: Bundle? ->
+            // Intercept search and add a query
+            if (navDestination.matchDestination(R.id.navigation_search) && !nextSearchQuery.isNullOrBlank()) {
+                bundle?.apply {
+                    this.putString(SearchFragment.SEARCH_QUERY, nextSearchQuery)
+                    nextSearchQuery = null
+                }
+            }
+        }
+
         //val navController = findNavController(R.id.nav_host_fragment)
 
         /*navOptions = NavOptions.Builder()

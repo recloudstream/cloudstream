@@ -73,6 +73,14 @@ class SearchFragment : Fragment() {
                 }
             }
         }
+
+        const val SEARCH_QUERY = "search_query"
+
+        fun newInstance(query: String): Bundle {
+            return Bundle().apply {
+                putString(SEARCH_QUERY, query)
+            }
+        }
     }
 
     private val searchViewModel: SearchViewModel by activityViewModels()
@@ -132,7 +140,8 @@ class SearchFragment : Fragment() {
             val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }
                 .map { it.ordinal.toString() }.toSet()
             val preferredTypes = (PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getStringSet(this.getString(R.string.prefer_media_type_key), default)?.ifEmpty { default } ?: default)
+                .getStringSet(this.getString(R.string.prefer_media_type_key), default)
+                ?.ifEmpty { default } ?: default)
                 .mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }
 
             val settings = ctx.getApiSettings()
@@ -486,6 +495,14 @@ class SearchFragment : Fragment() {
 
         search_master_recycler?.adapter = masterAdapter
         search_master_recycler?.layoutManager = GridLayoutManager(context, 1)
+
+        // Automatically search the specified query, this allows the app search to launch from intent
+        arguments?.getString(SEARCH_QUERY)?.let { query ->
+            if (query.isBlank()) return@let
+            main_search?.setQuery(query, true)
+            // Clear the query as to not make it request the same query every time the page is opened
+            arguments?.putString(SEARCH_QUERY, null)
+        }
 
         // SubtitlesFragment.push(activity)
         //searchViewModel.search("iron man")

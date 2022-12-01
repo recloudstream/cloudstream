@@ -108,9 +108,18 @@ object CommonActivity {
         }
     }
 
+    /**
+     * Not all languages can be fetched from locale with a code.
+     * This map allows sidestepping the default Locale(languageCode)
+     * when setting the app language.
+     **/
+    val appLanguageExceptions = hashMapOf(
+        "zh_TW" to Locale.TRADITIONAL_CHINESE
+    )
+
     fun setLocale(context: Context?, languageCode: String?) {
         if (context == null || languageCode == null) return
-        val locale = Locale(languageCode)
+        val locale = appLanguageExceptions[languageCode] ?: Locale(languageCode)
         val resources: Resources = context.resources
         val config = resources.configuration
         Locale.setDefault(locale)
@@ -146,8 +155,8 @@ object CommonActivity {
                     val resultCode = result.resultCode
                     val data = result.data
                     if (resultCode == AppCompatActivity.RESULT_OK && data != null && resumeApp.position != null && resumeApp.duration != null) {
-                        val pos = data.getLongExtra(resumeApp.position, -1L)
-                        val dur = data.getLongExtra(resumeApp.duration, -1L)
+                        val pos = resumeApp.getPosition(data)
+                        val dur = resumeApp.getDuration(data)
                         if (dur > 0L && pos > 0L)
                             DataStoreHelper.setViewPos(getKey(resumeApp.lastId), pos, dur)
                         removeKey(resumeApp.lastId)
