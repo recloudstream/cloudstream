@@ -185,9 +185,10 @@
     <string name="pref_filter_search_quality">إخفاء جودة الفيديو المختارة من نتائج البحث</string>
 
     <string name="automatic_plugin_updates">تحديث الإضافات تلقائيًا</string>
+    <string name="automatic_plugin_download">تنزيل الإضافات تلقائيًا</string>
     <string name="updates_settings">التحديث التلقائي</string>
     <string name="updates_settings_des">البحث تلقائيًا عن التحديثات الجديدة عند البداية</string>
-    <string name="uprereleases_settings">التحديث إلى الاصدارات التجريبيه (بيتا)</string>
+    <string name="uprereleases_settings">التحديث إلى الاصدارات التجريبية (بيتا)</string>
     <string name="uprereleases_settings_des">البحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
     <string name="github">Github</string>
     <string name="lightnovel">تطبيق روايات خفيف من نفس المطورين</string>
@@ -353,7 +354,7 @@
     <string name="category_general">عام</string>
     <string name="random_button_settings">زر العشوائي</string>
     <string name="random_button_settings_desc">إظهار زر العشوائي علي الشاشة الرئيسية</string>
-    <string name="provider_lang_settings">لغات الموفر</string>
+    <string name="provider_lang_settings">لغات المزود</string>
     <string name="app_layout">واجهة التطبيق</string>
     <string name="preferred_media_settings">المحتوي المفضل</string>
     <string name="enable_nsfw_on_providers">تفعيل محتوي البالغين داخل المزودين المدعومين</string>
@@ -522,7 +523,7 @@
     <string name="tracks">المسارات</string>
     <string name="audio_tracks">مسار الصوت</string>
     <string name="video_tracks">مسار الفيديو</string>
-    <string name="apply_on_restart">تطبيق بعد إعادة الفتح</string>
+    <string name="apply_on_restart">تطبيق بعد إعادة التشغيل</string>
 
     <string name="safe_mode_title">وضع الامان مفعل</string>
     <string name="safe_mode_description">An unrecoverable crash occurred and we\'ve automatically disabled all extensions, so you can find and remove the extension which is causing trouble.</string>
@@ -539,4 +540,6 @@
 
     <string name="hls_playlist">قائمة HLS</string>
     <string name="player_pref">مُشغل الفيديو المفضل</string>
+    <string name="clear_history">مسح السجل</string>
+    <string name="enable_skip_op_from_database_des">عرض زر تخطي المقدمة/النهاية</string>
 </resources>
