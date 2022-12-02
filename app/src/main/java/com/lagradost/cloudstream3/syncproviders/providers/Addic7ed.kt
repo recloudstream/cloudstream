@@ -41,7 +41,8 @@ class Addic7ed : AbstractSubApi {
             results: MutableList<AbstractSubtitleEntities.SubtitleEntity>,
             name: String,
             link: String,
-            headers: Map<String, String>
+            headers: Map<String, String>,
+            isHearingImpaired: Boolean
         ) {
             results.add(
                 AbstractSubtitleEntities.SubtitleEntity(
@@ -54,7 +55,8 @@ class Addic7ed : AbstractSubApi {
                     epNumber = epNum,
                     seasonNumber = seasonNum,
                     year = yearNum,
-                    headers = headers
+                    headers = headers,
+                    isHearingImpaired = isHearingImpaired
                 )
             )
         }
@@ -89,11 +91,13 @@ class Addic7ed : AbstractSubApi {
         ).document
 
         document.select(".tabel95 .tabel95 tr:contains($queryLang)").mapNotNull { node ->
-            val name = if (seasonNum > 0) "S${seasonNum}E$epNum${
+            val name = if (seasonNum > 0) "${document.select(".titulo").text().replace("Subtitle","").trim()}${
                 node.parent()!!.select(".NewsTitle").text().substringAfter("Version").substringBefore(", Duration")
-            }" else node.parent()!!.select(".NewsTitle").text()
+            }" else "${document.select(".titulo").text().replace("Subtitle","").trim()}${node.parent()!!.select(".NewsTitle").text().substringAfter("Version").substringBefore(", Duration")}"
             val link = fixUrl(node.select("a.buttonDownload").attr("href"))
-            cleanResources(results, name, link, mapOf("referer" to "$host/"))
+            val isHearingImpaired =
+                !node.parent()!!.select("tr:last-child [title=\"Hearing Impaired\"]").isNullOrEmpty()
+            cleanResources(results, name, link, mapOf("referer" to "$host/"), isHearingImpaired)
         }
         return results
     }
