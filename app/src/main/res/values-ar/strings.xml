@@ -6,7 +6,7 @@
     <string name="home_main_poster_img_des">الملصق الرئيسي</string>
     <string name="home_next_random_img_des">التالي عشوائي</string>
 
-    <string name="go_back_img_des">ارجع للخلف</string>
+    <string name="go_back_img_des">رجوع</string>
 
     <string name="home_change_provider_img_des">تغيير المصدر</string>
     <string name="preview_background_img_des">معاينة الخلفية</string>
@@ -38,7 +38,7 @@
     <string name="loading">…تحميل</string>
 
     <string name="type_watching">أشاهده</string>
-    <string name="type_on_hold">في الانتظار</string>
+    <string name="type_on_hold">في الإنتظار</string>
     <string name="type_completed">مكتمل</string>
     <string name="type_dropped">مهمل</string>
     <string name="type_plan_to_watch">أخطط لمشاهدته</string>
@@ -100,7 +100,7 @@
     <string name="subs_background_color">لون الخلفية</string>
     <string name="subs_window_color">لون النافذة</string>
     <string name="subs_edge_type">نوع الحافة</string>
-    <string name="subs_subtitle_elevation">ارتفاع الترجمة</string>
+    <string name="subs_subtitle_elevation">إرتفاع الترجمة</string>
     <string name="subs_font">الخط</string>
     <string name="subs_font_size">حجم الخط</string>
 
@@ -256,7 +256,7 @@
     <!--singular-->
     <string name="movies_singular">فيلم</string>
     <string name="tv_series_singular">مسلسل</string>
-    <string name="cartoons_singular">كارتون</string>
+    <string name="cartoons_singular">كرتون</string>
     <string name="anime_singular">@string/anime</string>
     <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">تورنت</string>
@@ -379,13 +379,13 @@
     <string name="mal_key" translatable="false">mal_key</string>
     <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
     <string name="nginx_key" translatable="false">nginx_key</string>
-    <string name="example_password">password123</string>
-    <string name="example_username">MyCoolUsername</string>
-    <string name="example_email">hello@world.com</string>
+    <string name="example_password">كلمة المرور</string>
+    <string name="example_username">إسم المستخدم</string>
+    <string name="example_email">البريد الإلكتروني</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">MyCoolSite</string>
-    <string name="example_site_url">example.com</string>
-    <string name="example_lang_name">Language code (en)</string>
+    <string name="example_site_name">إسم الموقع</string>
+    <string name="example_site_url">رابط الموقع</string>
+    <string name="example_lang_name">اللغة (الإنجليزية)</string>
 
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
@@ -490,7 +490,7 @@
     <string name="previous">السابق</string>
     <string name="skip_setup">تخطي الإعداد</string>
     <string name="app_layout_subtext">تغيير شكل البرنامح حتي يلائم جهازك</string>
-    <string name="crash_reporting_title">ابلاغ الاعطال</string>
+    <string name="crash_reporting_title">إبلاغ الأعطال</string>
     <string name="preferred_media_subtext">ماذا تريد ان تري</string>
     <string name="setup_done">تم</string>
     <string name="extensions">الإضافات</string>
@@ -541,5 +541,6 @@
     <string name="hls_playlist">قائمة HLS</string>
     <string name="player_pref">مُشغل الفيديو المفضل</string>
     <string name="clear_history">مسح السجل</string>
-    <string name="enable_skip_op_from_database_des">عرض زر تخطي المقدمة/النهاية</string>
+    <string name="history">السجل</string>
+    <string name="enable_skip_op_from_database_des">عرض زر تخطي المقدمة/الخاتمة</string>
 </resources>
