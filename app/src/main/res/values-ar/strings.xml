@@ -111,7 +111,7 @@
     <string name="benene_count_text_none">لم يتم إعطاء موز</string>
 
     <string name="subs_auto_select_language">تحديد اللغة تلقائيًا</string>
-    <string name="subs_download_languages">تحميل اللغات</string>
+    <string name="subs_download_languages">لغات التحميل</string>
     <string name="subs_subtitle_languages">لغة الترجمة</string>
     <string name="subs_hold_to_reset_to_default">إضغط بإستمرار لإعادة التعيين للإعدادات الافتراضية</string>
     <string name="subs_import_text" formatted="true">إستيراد خطوط بوضعها هنا %s</string>
