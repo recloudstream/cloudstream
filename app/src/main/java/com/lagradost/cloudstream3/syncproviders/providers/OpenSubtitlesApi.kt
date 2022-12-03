@@ -200,8 +200,12 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
             it.data?.forEach { item ->
                 val attr = item.attributes ?: return@forEach
                 val featureDetails = attr.featDetails
+                //Use filename as name, if its valid
+                val filename = attr.files?.firstNotNullOfOrNull { subfile ->
+                    subfile.fileName
+                }
                 //Use any valid name/title in hierarchy
-                val name = featureDetails?.movieName ?: featureDetails?.title
+                val name = filename ?: featureDetails?.movieName ?: featureDetails?.title
                 ?: featureDetails?.parentTitle ?: attr.release ?: ""
                 val lang = fixLanguageReverse(attr.language)?: ""
                 val resEpNum = featureDetails?.episodeNumber ?: query.epNumber
