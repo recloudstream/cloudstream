@@ -443,6 +443,7 @@ class HomeFragment : Fragment() {
         home_main_poster_recyclerview?.isVisible = visible
     }
 
+    @SuppressLint("NotifyDataSetChanged") // we need to notify to change poster
     private fun fixGrid() {
         activity?.getSpanCount()?.let {
             currentSpan = it
@@ -465,6 +466,7 @@ class HomeFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        (home_preview_viewpager?.adapter as? HomeScrollAdapter)?.notifyDataSetChanged()
         fixGrid()
     }
 

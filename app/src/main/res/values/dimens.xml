@@ -16,5 +16,4 @@
     <integer name="loading_time">2000</integer>
 
     <dimen name="storage_radius">3dp</dimen>
-
 </resources>

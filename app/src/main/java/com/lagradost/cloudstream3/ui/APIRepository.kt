@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -31,26 +32,47 @@ class APIRepository(val api: MainAPI) {
             return data.isEmpty() || data == "[]" || data == "about:blank"
         }
 
-        private val cacheHash: HashMap<Pair<String, String>, LoadResponse> = hashMapOf()
+        data class SavedLoadResponse(
+            val unixTime: Long,
+            val response: LoadResponse,
+            val hash: Pair<String, String>
+        )
+
+
+        private val cache: ArrayList<SavedLoadResponse> = arrayListOf()
+        private var cacheIndex: Int = 0
+        const val cacheSize = 20
     }
 
     val hasMainPage = api.hasMainPage
+    val providerType = api.providerType
     val name = api.name
     val mainUrl = api.mainUrl
     val mainPage = api.mainPage
     val hasQuickSearch = api.hasQuickSearch
     val vpnStatus = api.vpnStatus
-    val providerType = api.providerType
 
     suspend fun load(url: String): Resource<LoadResponse> {
         return safeApiCall {
             if (isInvalidData(url)) throw ErrorLoadingException()
             val fixedUrl = api.fixUrl(url)
-            val key = Pair(api.name, url)
-            cacheHash[key] ?: api.load(fixedUrl)?.also {
-                // we cache 20 responses because ppl often go back to the same shit + 20 because I dont want to cause too much memory leak
-                if (cacheHash.size > 20) cacheHash.remove(cacheHash.keys.random())
-                cacheHash[key] = it
+            val lookingForHash = Pair(api.name, fixedUrl)
+
+            for (item in cache) {
+                // 10 min save
+                if (item.hash == lookingForHash && (unixTime - item.unixTime) < 60 * 10) {
+                    return@safeApiCall item.response
+                }
+            }
+
+            api.load(fixedUrl)?.also { response ->
+                val add = SavedLoadResponse(unixTime, response, lookingForHash)
+                if (cache.size > cacheSize) {
+                    cache[cacheIndex] = add // rolling cache
+                    cacheIndex = (cacheIndex + 1) % cacheSize
+                } else {
+                    cache.add(add)
+                }
             } ?: throw ErrorLoadingException()
         }
     }

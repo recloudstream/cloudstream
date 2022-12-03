@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var items: MutableList<LoadResponse> = mutableListOf()
     var hasMoreItems: Boolean = false
 
-    fun getItem(position: Int) : LoadResponse? {
+    fun getItem(position: Int): LoadResponse? {
         return items.getOrNull(position)
     }
 
@@ -59,6 +60,10 @@ class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun bind(card: LoadResponse) {
             card.apply {
+                val isHorizontal =
+                    itemView.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                val posterUrl = if (isHorizontal) backgroundPosterUrl ?: posterUrl else posterUrl
+                    ?: backgroundPosterUrl
                 itemView.home_scroll_preview_tags?.text = tags?.joinToString(" • ") ?: ""
                 itemView.home_scroll_preview_tags?.isGone = tags.isNullOrEmpty()
                 itemView.home_scroll_preview?.setImage(posterUrl, posterHeaders)
