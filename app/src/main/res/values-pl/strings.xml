@@ -59,7 +59,7 @@
     <string name="download_failed">Błąd przy pobieraniu</string>
     <string name="download_canceled">Anulowano pobieranie</string>
     <string name="download_done">Zakończono pobieranie</string>
-    <string name="download_format" translatable="false">%s - %s</string>
+
     <string name="stream">Stream</string>
 
     <string name="error_loading_links_toast">Błąd przy ładowaniu linków</string>
