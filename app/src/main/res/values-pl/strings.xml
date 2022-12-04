@@ -6,6 +6,15 @@
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
 
+    <string name="app_dub_sub_episode_text_format">%s Odc. %d</string>
+    <string name="result_poster_img_des">Plakat</string>
+    <string name="episode_poster_img_des">Plakat odcinka</string>
+    <string name="home_main_poster_img_des">Główny plakat</string>
+    <string name="home_next_random_img_des">Następny losowy</string>
+    <string name="go_back_img_des">Wstecz</string>
+    <string name="home_change_provider_img_des">Zmień dostawcę</string>
+    <string name="preview_background_img_des">Pogląd tła</string>
+
     <string name="app_name">CloudStream</string>
     <string name="title_home">Główna</string>
     <string name="title_search">Szukaj</string>
@@ -18,6 +27,7 @@
     <string name="no_data">Brak danych</string>
     <string name="episode_more_options_des">Więcej opcji</string>
     <string name="next_episode">Następny odcinek</string>
+    <string name="next_episode_format">Odcinek %d będzie udostępniony</string>
     <string name="result_tags">Gatunki</string>
     <string name="result_share">Udostępnij</string>
     <string name="result_open_in_browser">Otwórz w przeglądarce</string>
@@ -203,7 +213,7 @@
     <string name="episodes_range">%d-%d</string>
     <string name="episode_format" formatted="true">%d %s</string>
     <string name="season_short">S</string>
-    <string name="episode_short">E</string>
+    <string name="episode_short">O</string>
     <string name="no_episodes_found">Nie znaleziono odcinków</string>
 
     <string name="delete_file">Usuń plik</string>
@@ -249,8 +259,6 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serial telewizyjny</string>
     <string name="cartoons_singular">Kreskówka</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Film dokumentalny</string>
     <string name="asian_drama_singular">Film azjatycki</string>
@@ -343,7 +351,7 @@
     <string name="app_theme_settings">Motyw aplikacji</string>
     <string name="bottom_title_settings">Pozycja tytułu względem plakatu</string>
     <string name="bottom_title_settings_des">Ustaw tytuł pod plakatem</string>
-    
+
     <string name="example_lang_name">Kod języka (pl)</string>
 
     <string name="login_format" formatted="true">%s %s</string>
