@@ -11,7 +11,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.*
+import android.widget.TextView.OnEditorActionListener
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.animation.addListener
@@ -330,17 +332,28 @@ class GeneratorPlayer : FullScreenPlayer() {
         dialog.search_loading_bar.progressTintList = color
         dialog.search_loading_bar.indeterminateTintList = color
 
+        //Automatically search after entering Year
+        dialog.subtitles_search_year.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                dialog.subtitles_search.setQuery(dialog.subtitles_search.query, true)
+                return@OnEditorActionListener true
+            }
+            false
+        })
+
         dialog.subtitles_search.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 dialog.search_loading_bar?.show()
                 ioSafe {
+                    val year = dialog.subtitles_search_year?.text?.toString()?.toIntOrNull()
                     val search =
                         AbstractSubtitleEntities.SubtitleSearch(query = query ?: return@ioSafe,
                             imdb = imdbId,
                             epNumber = currentTempMeta.episode,
                             seasonNumber = currentTempMeta.season,
-                            lang = currentLanguageTwoLetters.ifBlank { null })
+                            lang = currentLanguageTwoLetters.ifBlank { null },
+                            year = year)
                     val results = providers.amap {
                         try {
                             it.search(search)
@@ -414,6 +427,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         dialog.show()
         dialog.subtitles_search.setQuery(currentTempMeta.name, true)
+        //TODO: Set year text from currently loaded movie on Player
+        //dialog.subtitles_search_year?.setText(currentTempMeta.year)
     }
 
     private fun openSubPicker() {
