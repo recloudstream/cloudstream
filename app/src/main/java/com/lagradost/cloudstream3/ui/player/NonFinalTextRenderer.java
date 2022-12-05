@@ -439,7 +439,7 @@ public class NonFinalTextRenderer extends BaseRenderer implements Callback {
         ).collect(Collectors.toList());
 
         output.onCues(fixedCues);
-        output.onCues(new CueGroup(fixedCues));
+        output.onCues(new CueGroup(fixedCues, 0L));
     }
 
     /**

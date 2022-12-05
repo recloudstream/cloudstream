@@ -69,7 +69,7 @@ class EasterEggMonke : AppCompatActivity() {
         set.duration = (Math.random() * 1500 + 2500).toLong()
 
         set.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 frame.removeView(newStar)
             }
         })

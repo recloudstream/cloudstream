@@ -39,13 +39,13 @@ android {
         }
     }
 
-    compileSdk = 31
+    compileSdk = 33
     buildToolsVersion = "30.0.3"
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 33
 
         versionCode = 55
         versionName = "3.2.3"
@@ -155,10 +155,10 @@ dependencies {
     // implementation("androidx.leanback:leanback-paging:1.1.0-alpha09")
 
     // Exoplayer
-    implementation("com.google.android.exoplayer:exoplayer:2.18.1")
-    implementation("com.google.android.exoplayer:extension-cast:2.18.1")
-    implementation("com.google.android.exoplayer:extension-mediasession:2.18.1")
-    implementation("com.google.android.exoplayer:extension-okhttp:2.18.1")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.2")
+    implementation("com.google.android.exoplayer:extension-cast:2.18.2")
+    implementation("com.google.android.exoplayer:extension-mediasession:2.18.2")
+    implementation("com.google.android.exoplayer:extension-okhttp:2.18.2")
 
     //implementation("com.google.android.exoplayer:extension-leanback:2.14.0")
 
@@ -190,7 +190,7 @@ dependencies {
     // Networking
 //    implementation("com.squareup.okhttp3:okhttp:4.9.2")
 //    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1")
-    implementation("com.github.Blatzar:NiceHttp:0.3.5")
+    implementation("com.github.Blatzar:NiceHttp:0.4.0")
     // To fix SSL fuckery on android 9
     implementation("org.conscrypt:conscrypt-android:2.2.1")
     // Util to skip the URI file fuckery 🙏
