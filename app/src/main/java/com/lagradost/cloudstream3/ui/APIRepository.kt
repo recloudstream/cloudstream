@@ -38,8 +38,9 @@ class APIRepository(val api: MainAPI) {
             val hash: Pair<String, String>
         )
 
-
-        private val cache: ArrayList<SavedLoadResponse> = arrayListOf()
+        // This really does not need to be Nullable but it can crash otherwise, probably caused by replacing items while looping over them.
+        // "Attempt to invoke .... getHash() on a null object reference"
+        private val cache: ArrayList<SavedLoadResponse?> = arrayListOf()
         private var cacheIndex: Int = 0
         const val cacheSize = 20
     }
@@ -60,7 +61,7 @@ class APIRepository(val api: MainAPI) {
 
             for (item in cache) {
                 // 10 min save
-                if (item.hash == lookingForHash && (unixTime - item.unixTime) < 60 * 10) {
+                if (item?.hash == lookingForHash && (unixTime - item.unixTime) < 60 * 10) {
                     return@safeApiCall item.response
                 }
             }
