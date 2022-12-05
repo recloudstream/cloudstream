@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import kotlinx.android.synthetic.main.library_viewpager_page.view.*
 import me.xdrop.fuzzywuzzy.FuzzySearch
@@ -55,7 +56,11 @@ data class LibraryItem(
 ) : SearchResponse
 
 
-class ViewpagerAdapter(var pages: List<Page>, val scrollCallback: (isScrollingDown: Boolean) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ViewpagerAdapter(
+    var pages: List<Page>,
+    val scrollCallback: (isScrollingDown: Boolean) -> Unit,
+    val clickCallback: (SearchClickCallback) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return PageViewHolder(
             LayoutInflater.from(parent.context)
@@ -75,8 +80,9 @@ class ViewpagerAdapter(var pages: List<Page>, val scrollCallback: (isScrollingDo
         RecyclerView.ViewHolder(itemViewTest) {
         fun bind(page: Page) {
             if (itemViewTest.page_recyclerview?.adapter == null) {
-                itemViewTest.page_recyclerview?.adapter = PageAdapter(page.items.toMutableList())
-                itemView.page_recyclerview?.spanCount = this@PageViewHolder.itemView.context.getSpanCount() ?: 3
+                itemViewTest.page_recyclerview?.adapter = PageAdapter(page.items.toMutableList(), clickCallback)
+                itemView.page_recyclerview?.spanCount =
+                    this@PageViewHolder.itemView.context.getSpanCount() ?: 3
             } else {
                 (itemViewTest.page_recyclerview?.adapter as? PageAdapter)?.updateList(page.items)
                 itemViewTest.page_recyclerview?.scrollToPosition(0)

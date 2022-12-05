@@ -6,12 +6,14 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.utils.AppUtils
 import kotlinx.android.synthetic.main.search_result_grid_expanded.view.*
 
 class PageAdapter(
     override val items: MutableList<LibraryItem>,
+    val clickCallback: (SearchClickCallback) -> Unit
 ) :
     AppUtils.DiffAdapter<LibraryItem>(items) {
 
@@ -33,7 +35,7 @@ class PageAdapter(
     inner class LibraryItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: LibraryItem, position: Int) {
             SearchResultBuilder.bind(
-                { println("CLICKED ${it.action}") },
+                this@PageAdapter.clickCallback,
                 item,
                 position,
                 itemView,

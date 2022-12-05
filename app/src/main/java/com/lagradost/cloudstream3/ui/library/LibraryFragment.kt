@@ -12,6 +12,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
+import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import kotlinx.android.synthetic.main.fragment_library.*
@@ -68,11 +70,16 @@ class LibraryFragment : Fragment() {
 
         viewpager?.setPageTransformer(LibraryScrollTransformer())
         viewpager?.adapter =
-            viewpager.adapter ?: ViewpagerAdapter(emptyList()) { isScrollingDown: Boolean ->
+            viewpager.adapter ?: ViewpagerAdapter(emptyList(), { isScrollingDown: Boolean ->
                 if (isScrollingDown) {
                     sort_fab?.shrink()
                 } else {
                     sort_fab?.extend()
+                }
+            }) { searchClickCallback ->
+                println("SEARCH CLICK $searchClickCallback")
+                if (searchClickCallback.action == SEARCH_ACTION_LOAD) {
+                    activity?.loadSearchResult(searchClickCallback.card)
                 }
             }
         viewpager?.offscreenPageLimit = 2

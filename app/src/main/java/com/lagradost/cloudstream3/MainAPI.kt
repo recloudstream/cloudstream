@@ -10,15 +10,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.lagradost.cloudstream3.metaproviders.SyncIdName
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.loadExtractor
 import okhttp3.Interceptor
 import java.text.SimpleDateFormat
 import java.util.*
@@ -402,6 +401,20 @@ abstract class MainAPI {
     open val hasMainPage = false
     open val hasQuickSearch = false
 
+    /**
+     * A set of which ids the provider can open with getLoadUrl()
+     * If the set contains SyncIdName.Imdb then getLoadUrl() can be started with
+     * an Imdb class which inherits from SyncId.
+     *
+     * getLoadUrl() is then used to get page url based on that ID.
+     *
+     * Example:
+     * "tt6723592" -> getLoadUrl(ImdbSyncId("tt6723592")) -> "mainUrl/imdb/tt6723592" -> load("mainUrl/imdb/tt6723592")
+     *
+     * This is used to launch pages from personal lists or recommendations using IDs.
+     **/
+    open val supportedSyncNames = setOf<SyncIdName>()
+
     open val supportedTypes = setOf(
         TvType.Movie,
         TvType.TvSeries,
@@ -412,7 +425,6 @@ abstract class MainAPI {
 
     open val vpnStatus = VPNStatus.None
     open val providerType = ProviderType.DirectProvider
-
     open val mainPage = listOf(MainPageData("", ""))
 
     @WorkerThread
@@ -469,6 +481,14 @@ abstract class MainAPI {
 
     /** An okhttp interceptor for used in OkHttpDataSource */
     open fun getVideoInterceptor(extractorLink: ExtractorLink): Interceptor? {
+        return null
+    }
+
+    /**
+     * Get the load() url based on a sync ID like IMDb or MAL.
+     * Only contains SyncIds based on supportedSyncUrls.
+     **/
+    open suspend fun getLoadUrl(name: SyncIdName, id: String): String? {
         return null
     }
 }

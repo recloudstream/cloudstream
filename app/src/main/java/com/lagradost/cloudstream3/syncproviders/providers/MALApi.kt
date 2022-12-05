@@ -387,7 +387,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         fun toLibraryItem(): LibraryItem {
             return LibraryItem(
                 this.node.title,
-                this.node.id.toString(),
+                "https://myanimelist.net/anime/${this.node.id}/",
                 this.list_status?.status?.lowercase()?.capitalize()?.replace("_", " ") ?: "NONE",
                 this.list_status?.num_episodes_watched,
                 this.node.num_episodes,

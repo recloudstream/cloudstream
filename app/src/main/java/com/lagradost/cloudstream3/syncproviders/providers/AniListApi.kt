@@ -602,7 +602,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 // English title first
                 this.media.title.english ?: this.media.title.romaji ?: this.media.synonyms.firstOrNull()
                 ?: "",
-                this.media.id.toString(),
+                "https://anilist.co/anime/${this.media.id}/",
                 listName ?: return null,
                 this.progress,
                 this.media.episodes,
