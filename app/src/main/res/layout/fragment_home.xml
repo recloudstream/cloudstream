@@ -323,6 +323,7 @@
                         app:iconifiedByDefault="true"
                         app:queryBackground="@color/transparent"
                         app:queryHint="@string/search"
+                        app:closeIcon="@drawable/ic_baseline_close_24"
 
                         app:searchIcon="@drawable/search_icon"
                         tools:ignore="RtlSymmetry" />
@@ -405,11 +406,11 @@
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
+
             <View
                 android:id="@+id/home_fix_padding"
                 android:layout_width="match_parent"
-                android:layout_height="0dp">
-            </View>
+                android:layout_height="0dp"></View>
             <!--
             All padding in home_watch_holder is determined in runtime
             This is because the home poster can be invisible which forces

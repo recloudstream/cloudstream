@@ -25,13 +25,13 @@
     <color name="whiteText">#FFF</color>
     <color name="blackText">#000</color>
 
-    <color name="dubColor">#3d50fa</color> <!--3b65f5 f18c82 8294F1-->
+    <color name="dubColorText">#121950</color> <!--3b65f5 f18c82 8294F1-->
     <color name="amoledModeLight">#121213</color>
 
     <color name="dubColorBg">#3B65F5</color>
-    <color name="subColor">#F54A3B</color> <!--F53B66 FA3D79-->
+    <color name="subColorText">#571711</color> <!--F53B66 FA3D79-->
     <color name="subColorBg">#F53B66</color>
-    <color name="typeColor">#3BF585</color>
+    <color name="typeColorText">#BEC8FF</color>
     <color name="typeColorBg">?attr/colorPrimaryDark</color>
 
     <color name="adultColor">#FF6F63</color> <!-- same as sub color -->

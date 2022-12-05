@@ -97,6 +97,24 @@
         <item name="white">@color/white</item>
         <item name="colorOnPrimary">@color/whiteText</item>
     </style>
+    
+    <style name="DubButton" parent="@style/SearchBox">
+        <item name="android:background">@drawable/dub_bg_color</item>
+        <item name="android:text">@string/app_dubbed_text</item>
+        <item name="android:textColor">@color/dubColorText</item>
+    </style>
+
+    <style name="SubButton" parent="@style/SearchBox">
+        <item name="android:background">@drawable/sub_bg_color</item>
+        <item name="android:text">@string/app_subbed_text</item>
+        <item name="android:textColor">@color/subColorText</item>
+    </style>
+
+    <style name="TypeButton" parent="@style/SearchBox">
+        <item name="android:background">@drawable/type_bg_color</item>
+        <item name="android:text">@string/quality_hd</item>
+        <item name="android:textColor">@color/typeColorText</item>
+    </style>
 
     <style name="LightMode">
         <item name="primaryGrayBackground">@color/lightPrimaryGrayBackground</item>
@@ -461,10 +479,10 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">5dp</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">7dp</item>
+        <item name="android:paddingRight">7dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
         <item name="android:textSize">12sp</item>
         <item name="textColor">@color/textColor</item>
         <item name="android:textColor">@color/textColor</item>

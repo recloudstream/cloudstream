@@ -3,71 +3,71 @@
 <!--  android:layout_width="114dp"
         android:layout_height="180dp"-->
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:foreground="@drawable/outline_drawable"
-        android:layout_margin="2dp"
-        android:layout_width="114dp"
-        android:layout_height="180dp"
-        android:layout_marginBottom="2dp"
-        android:elevation="10dp"
-        app:cardCornerRadius="@dimen/rounded_image_radius"
-        android:id="@+id/background_card"
-        app:cardBackgroundColor="?attr/primaryGrayBackground">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background_card"
+    android:layout_width="114dp"
+    android:layout_height="180dp"
+    android:layout_margin="2dp"
+    android:layout_marginBottom="2dp"
+    android:elevation="10dp"
+    android:foreground="@drawable/outline_drawable"
+    app:cardBackgroundColor="?attr/primaryGrayBackground"
+    app:cardCornerRadius="@dimen/rounded_image_radius">
 
     <ImageView
-            android:duplicateParentState="true"
-            android:id="@+id/imageView"
-            tools:src="@drawable/example_poster"
-            android:scaleType="centerCrop"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/search_poster_img_des" />
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/search_poster_img_des"
+        android:duplicateParentState="true"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/example_poster" />
 
     <ImageView
-            android:focusable="false"
-            android:clickable="false"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/title_shadow"
-            android:src="@drawable/title_shadow"
-            android:layout_gravity="bottom"
-            tools:ignore="ContentDescription" />
+        android:id="@+id/title_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:clickable="false"
+        android:focusable="false"
+        android:src="@drawable/title_shadow"
+        tools:ignore="ContentDescription" />
 
     <TextView
-            tools:text="The Perfect Run"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_gravity="bottom"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/textColor"
-            android:id="@+id/imageText"
-            android:textStyle="bold"
-            android:maxLines="2"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:ellipsize="end" />
+        android:id="@+id/imageText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:paddingStart="5dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
+        android:textColor="@color/textColor"
+        android:textStyle="bold"
+        tools:text="The Perfect Run" />
 
     <ImageView
-            android:id="@+id/search_item_download_play"
-            android:layout_gravity="center"
-            android:src="@drawable/play_button"
-            android:layout_width="60dp"
-            android:layout_height="60dp" />
+        android:id="@+id/search_item_download_play"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:src="@drawable/play_button" />
 
     <androidx.core.widget.ContentLoadingProgressBar
-            android:layout_marginBottom="-1.5dp"
-            android:id="@+id/watchProgress"
-            android:progressTint="?attr/colorPrimary"
-            android:progressBackgroundTint="?attr/colorPrimary"
-            style="@android:style/Widget.Material.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            tools:progress="50"
-            android:layout_gravity="bottom"
-            android:layout_height="5dp" />
+        android:id="@+id/watchProgress"
+        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="-1.5dp"
+        android:progressBackgroundTint="?attr/colorPrimary"
+        android:progressTint="?attr/colorPrimary"
+        tools:progress="50" />
 
     <!--<View
             android:id="@+id/search_result_lang"
@@ -86,17 +86,13 @@
             android:layout_width="30dp"
             android:layout_height="30dp">
     </ImageView>-->
-    <TextView
-            tools:text="@string/quality_hd"
-            android:id="@+id/text_quality"
-            style="@style/SearchBox"
-            android:background="@drawable/type_bg_color" />
+    <TextView android:id="@+id/text_quality" style="@style/TypeButton" />
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_gravity="end"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:orientation="vertical">
 
         <!--
                     <ImageView android:id="@+id/text_is_dub" android:tint="?attr/colorPrimary"
@@ -105,27 +101,23 @@
 
                     </ImageView>-->
         <TextView
-                android:text="@string/app_dubbed_text"
-                android:id="@+id/text_is_dub"
-                style="@style/SearchBox"
-                android:layout_gravity="end"
-                android:background="@drawable/dub_bg_color" />
+            android:id="@+id/text_is_dub"
+            style="@style/DubButton"
+            android:layout_gravity="end" />
 
         <TextView
-                android:id="@+id/text_is_sub"
-                android:text="@string/app_subbed_text"
-                style="@style/SearchBox"
-                android:layout_gravity="end"
-                android:background="@drawable/sub_bg_color" />
+            android:id="@+id/text_is_sub"
+            style="@style/SubButton"
+            android:layout_gravity="end" />
 
         <TextView
-                tools:visibility="visible"
-                android:visibility="gone"
-                android:textSize="20sp"
-                android:id="@+id/text_flag"
-                tools:text="🇸🇪"
-                style="@style/SearchBox"
-                android:layout_gravity="end"
-                android:background="@color/transparent" />
+            android:id="@+id/text_flag"
+            style="@style/SearchBox"
+            android:layout_gravity="end"
+            android:background="@color/transparent"
+            android:textSize="20sp"
+            android:visibility="gone"
+            tools:text="🇸🇪"
+            tools:visibility="visible" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
