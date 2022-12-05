@@ -13,9 +13,9 @@
 + Chromecast
 
 ***Screenshots:***
-
-<img src="./.github/home.jpg" height="400"/><img src="./.github/search.jpg" height="400"/><img src="./.github/downloads.jpg" height="400"/><img src="./.github/results.jpg" height="400"/>
-<img src="./.github/player.jpg" height="200"/>
+ <p  align="center">
+<img src="./.github/home.jpg" height="400"/><img src="./.github/search.jpg" height="400"/><img  src="./.github/downloads.jpg" height="400"/><img src="./.github/results.jpg" height="400"/> 
+<img src="./.github/player.jpg" height="200"/></p>
 
 ***The list of supported languages:***
 * 🇱🇧 Arabic
