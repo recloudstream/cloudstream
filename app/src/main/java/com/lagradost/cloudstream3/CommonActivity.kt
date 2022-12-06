@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import android.Manifest
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
@@ -16,6 +17,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -163,6 +165,23 @@ object CommonActivity {
                         ResultFragment.updateUI()
                     }
                 }
+        }
+
+        // Ask for notification permissions on Android 13
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                act,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            val requestPermissionLauncher = act.registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                Log.d(TAG, "Notification permission: $isGranted")
+            }
+            requestPermissionLauncher.launch(
+                Manifest.permission.POST_NOTIFICATIONS
+            )
         }
     }
 
