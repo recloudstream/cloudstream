@@ -1139,21 +1139,8 @@ interface LoadResponse {
 
 fun getDurationFromString(input: String?): Int? {
     val cleanInput = input?.trim()?.replace(" ", "") ?: return null
-    Regex("([0-9]*)h.*?([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
-        if (values.size == 3) {
-            val hours = values[1].toIntOrNull()
-            val minutes = values[2].toIntOrNull()
-            if (minutes != null && hours != null) {
-                return hours * 60 + minutes
-            }
-        }
-    }
-    Regex("([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
-        if (values.size == 2) {
-            return values[1].toIntOrNull()
-        }
-    }
-    Regex("(\\s\\d+\\shr)|(\\s\\d+\\shour)|(\\s\\d+\\smin)|(\\s\\d+\\ssec)").findAll(input).let { values ->
+    //Use first as sometimes the text passes on the 2 other Regex, but failed to provide accurate return value
+    Regex("(\\d+\\shr)|(\\d+\\shour)|(\\d+\\smin)|(\\d+\\ssec)").findAll(input).let { values ->
         var seconds = 0
         values.forEach {
             val time_text = it.value
@@ -1172,6 +1159,23 @@ fun getDurationFromString(input: String?): Int? {
         }
         if (seconds > 0) {
             return seconds / 60
+        }
+    }
+    Regex("([0-9]*)h.*?([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
+        if (values.size == 3) {
+            val hours = values[1].toIntOrNull()
+            val minutes = values[2].toIntOrNull()
+            if (minutes != null && hours != null) {
+                return hours * 60 + minutes
+            }
+        }
+    }
+    Regex("([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
+        if (values.size == 2) {
+            val return_value = values[1].toIntOrNull()
+            if (return_value != null) {
+                return return_value
+            }
         }
     }
     return null
