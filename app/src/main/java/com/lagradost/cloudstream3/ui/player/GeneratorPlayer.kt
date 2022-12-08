@@ -438,16 +438,17 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun addAndSelectSubtitles(subtitleData: SubtitleData) {
         val ctx = context ?: return
-        setSubtitles(subtitleData)
 
-        // this is used instead of observe, because observe is too slow
         val subs = currentSubs + subtitleData
+
+        // this is used instead of observe(viewModel._currentSubs), because observe is too slow
+        player.setActiveSubtitles(subs)
 
         // Save current time as to not reset player to 00:00
         player.saveData()
-        player.setActiveSubtitles(subs)
         player.reloadPlayer(ctx)
 
+        setSubtitles(subtitleData)
         viewModel.addSubtitles(setOf(subtitleData))
 
         selectSourceDialog?.dismissSafe()
@@ -959,7 +960,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         subtitles: Set<SubtitleData>, settings: Boolean, downloads: Boolean
     ): SubtitleData? {
         val langCode = preferredAutoSelectSubtitles ?: return null
-        val lang = SubtitleHelper.fromTwoLettersToLanguage(langCode) ?: return null
+        val lang = fromTwoLettersToLanguage(langCode) ?: return null
         if (downloads) {
             return subtitles.firstOrNull { sub ->
                 (sub.origin == SubtitleOrigin.DOWNLOADED_FILE && sub.name == context?.getString(
@@ -970,20 +971,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         sortSubs(subtitles).firstOrNull { sub ->
             val t = sub.name.replace(Regex("[^A-Za-z]"), " ").trim()
-            (settings || (downloads && sub.origin == SubtitleOrigin.DOWNLOADED_FILE)) && t == lang || t.startsWith(
-                "$lang "
-            ) || t == langCode
+            (settings) && t == lang || t.startsWith(lang) || t == langCode
         }?.let { sub ->
             return sub
-        }
-
-        // post check in case both did not catch anything
-        if (downloads) {
-            return subtitles.firstOrNull { sub ->
-                (sub.origin == SubtitleOrigin.DOWNLOADED_FILE || sub.name == context?.getString(
-                    R.string.default_subtitles
-                ))
-            }
         }
 
         return null
@@ -1006,14 +996,12 @@ class GeneratorPlayer : FullScreenPlayer() {
                 getAutoSelectSubtitle(
                     currentSubs, settings = true, downloads = false
                 )?.let { sub ->
-
                     if (setSubtitles(sub)) {
                         player.saveData()
                         player.reloadPlayer(ctx)
                         player.handleEvent(CSPlayerEvent.Play)
                         return true
                     }
-
                 }
             }
         }
@@ -1304,8 +1292,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                 Log.i("subfilter", "Filtering subtitle")
                 langFilterList.forEach { lang ->
                     Log.i("subfilter", "Lang: $lang")
-                    setOfSub += set.filter { it.name.contains(lang, ignoreCase = true) }
-                        .toMutableSet()
+                    setOfSub += set.filter {
+                        it.name.contains(lang, ignoreCase = true) ||
+                                it.origin != SubtitleOrigin.URL
+                    }
                 }
                 currentSubs = setOfSub
             } else {
@@ -1313,7 +1303,13 @@ class GeneratorPlayer : FullScreenPlayer() {
             }
             player.setActiveSubtitles(set)
 
-            autoSelectSubtitles()
+            // If the file is downloaded then do not select auto select the subtitles
+            // Downloaded subtitles cannot be selected immediately after loading since
+            // player.getCurrentPreferredSubtitle() cannot fetch data from non-loaded subtitles
+            // Resulting in unselecting the downloaded subtitle
+            if (set.lastOrNull()?.origin != SubtitleOrigin.DOWNLOADED_FILE) {
+                autoSelectSubtitles()
+            }
         }
     }
 }

@@ -113,8 +113,9 @@ class PlayerGeneratorViewModel : ViewModel() {
         // Do not post if there's nothing new
         // Posting will refresh subtitles which will in turn
         // make the subs to english if previously unselected
-        if (allSubs != currentSubs)
+        if (allSubs != currentSubs) {
             _currentSubs.postValue(allSubs)
+        }
     }
 
     private var currentJob: Job? = null
@@ -164,9 +165,10 @@ class PlayerGeneratorViewModel : ViewModel() {
             }
 
             _loadingLinks.postValue(loadingState)
-
             _currentLinks.postValue(currentLinks)
-            _currentSubs.postValue(currentSubs)
+            _currentSubs.postValue(
+                currentSubs.union(_currentSubs.value ?: emptySet())
+            )
         }
 
     }

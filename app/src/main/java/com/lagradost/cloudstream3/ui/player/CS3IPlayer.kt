@@ -8,8 +8,7 @@ import android.util.Log
 import android.widget.FrameLayout
 import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO
-import com.google.android.exoplayer2.C.TRACK_TYPE_VIDEO
+import com.google.android.exoplayer2.C.*
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.*
@@ -89,10 +88,10 @@ class CS3IPlayer : IPlayer {
 
     /**
      * Tracks reported to be used by exoplayer, since sometimes it has a mind of it's own when selecting subs.
-     * String = lowercase language as set by .setLanguage("_$langId")
+     * String = id
      * Boolean = if it's active
      * */
-    private var exoPlayerSelectedTracks = listOf<Pair<String, Boolean>>()
+    private var playerSelectedSubtitleTracks = listOf<Pair<String, Boolean>>()
 
     /** isPlaying */
     private var updateIsPlaying: ((Pair<CSPlayerLoading, CSPlayerLoading>) -> Unit)? = null
@@ -311,12 +310,16 @@ class CS3IPlayer : IPlayer {
      * */
     private fun List<Tracks.Group>.getFormats(): List<Pair<Format, Int>> {
         return this.map {
-            (0 until it.mediaTrackGroup.length).mapNotNull { i ->
-                if (it.isSupported)
-                    it.mediaTrackGroup.getFormat(i) to i
-                else null
-            }
+            it.getFormats()
         }.flatten()
+    }
+
+    private fun Tracks.Group.getFormats(): List<Pair<Format, Int>> {
+        return (0 until this.mediaTrackGroup.length).mapNotNull { i ->
+            if (this.isSupported)
+                this.mediaTrackGroup.getFormat(i) to i
+            else null
+        }
     }
 
     private fun Format.toAudioTrack(): AudioTrack {
@@ -361,12 +364,17 @@ class CS3IPlayer : IPlayer {
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
         Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
+
+        fun getTextTrack(id: String) =
+            exoPlayer?.currentTracks?.groups?.filter { it.type == TRACK_TYPE_TEXT }
+                ?.getTrack(id)
+
         return (exoPlayer?.trackSelector as? DefaultTrackSelector?)?.let { trackSelector ->
-            val name = subtitle?.name
-            if (name.isNullOrBlank()) {
+            if (subtitle == null) {
                 trackSelector.setParameters(
                     trackSelector.buildUponParameters()
                         .setPreferredTextLanguage(null)
+                        .clearOverridesOfType(TRACK_TYPE_TEXT)
                 )
             } else {
                 when (subtitleHelper.subtitleStatus(subtitle)) {
@@ -380,12 +388,15 @@ class CS3IPlayer : IPlayer {
                         trackSelector.setParameters(
                             trackSelector.buildUponParameters()
                                 .apply {
-                                    if (subtitle.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO)
-                                    // The real Language (two letter) is in the url
-                                    // No underscore as the .url is the actual exoplayer designated language
-                                        setPreferredTextLanguage(subtitle.url)
-                                    else
-                                        setPreferredTextLanguage("_$name")
+                                    val track = getTextTrack(subtitle.getId())
+                                    if (track != null) {
+                                        setOverrideForType(
+                                            TrackSelectionOverride(
+                                                track.first,
+                                                track.second
+                                            )
+                                        )
+                                    }
                                 }
                         )
 
@@ -419,17 +430,8 @@ class CS3IPlayer : IPlayer {
 
     override fun getCurrentPreferredSubtitle(): SubtitleData? {
         return subtitleHelper.getAllSubtitles().firstOrNull { sub ->
-            exoPlayerSelectedTracks.any {
-                // When embedded the real language is in .url as the real name is a two letter code
-                val realName =
-                    if (sub.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) sub.url else sub.name
-
-                // The replace is needed as exoplayer translates _ to -
-                // Also we prefix the languages with _
-                it.second && it.first.replace("-", "").equals(
-                    realName.replace("-", ""),
-                    ignoreCase = true
-                )
+            playerSelectedSubtitleTracks.any { (id, isSelected) ->
+                isSelected && sub.getId() == id
             }
         }
     }
@@ -747,7 +749,7 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    private fun getCurrentTimestamp(writePosition : Long? = null): EpisodeSkip.SkipStamp? {
+    private fun getCurrentTimestamp(writePosition: Long? = null): EpisodeSkip.SkipStamp? {
         val position = writePosition ?: this@CS3IPlayer.getPosition() ?: return null
         for (lastTimeStamp in lastTimeStamps) {
             if (lastTimeStamp.startMs <= position && position < lastTimeStamp.endMs) {
@@ -757,7 +759,7 @@ class CS3IPlayer : IPlayer {
         return null
     }
 
-    fun updatedTime(writePosition : Long? = null) {
+    fun updatedTime(writePosition: Long? = null) {
         getCurrentTimestamp(writePosition)?.let { timestamp ->
             onTimestampInvoked?.invoke(timestamp)
         }
@@ -883,43 +885,36 @@ class CS3IPlayer : IPlayer {
             }
             exoPlayer?.addListener(object : Player.Listener {
                 override fun onTracksChanged(tracks: Tracks) {
-                    fun Format.isSubtitle(): Boolean {
-                        return this.sampleMimeType?.contains("video/") == false &&
-                                this.sampleMimeType?.contains("audio/") == false
-                    }
-
                     normalSafeApiCall {
-                        exoPlayerSelectedTracks =
-                            tracks.groups.mapNotNull {
-                                val format = it.mediaTrackGroup.getFormat(0)
-                                if (format.isSubtitle())
-                                    format.language?.let { lang -> lang to it.isSelected }
-                                else null
-                            }
+                        val textTracks = tracks.groups.filter { it.type == TRACK_TYPE_TEXT }
 
-                        val exoPlayerReportedTracks = tracks.groups.mapNotNull {
-                            // Filter out unsupported tracks
-                            if (it.isSupported)
-                                it.mediaTrackGroup.getFormat(0)
-                            else
-                                null
-                        }.mapNotNull {
-                            // Filter out non subs, already used subs and subs without languages
-                            if (!it.isSubtitle() ||
-                                // Anything starting with - is not embedded
-                                it.language?.startsWith("-") == true ||
-                                it.language == null
-                            ) return@mapNotNull null
-                            return@mapNotNull SubtitleData(
-                                // Nicer looking displayed names
-                                fromTwoLettersToLanguage(it.language!!) ?: it.language!!,
-                                // See setPreferredTextLanguage
-                                it.language!!,
-                                SubtitleOrigin.EMBEDDED_IN_VIDEO,
-                                it.sampleMimeType ?: MimeTypes.APPLICATION_SUBRIP,
-                                emptyMap()
-                            )
-                        }
+                        playerSelectedSubtitleTracks =
+                            textTracks.map { group ->
+                                group.getFormats().mapNotNull { (format, _) ->
+                                    (format.id ?: return@mapNotNull null) to group.isSelected
+                                }
+                            }.flatten()
+
+                        val exoPlayerReportedTracks =
+                            tracks.groups.filter { it.type == TRACK_TYPE_TEXT }.getFormats()
+                                .mapNotNull { (format, _) ->
+                                    // Filter out non subs, already used subs and subs without languages
+                                    if (format.id == null ||
+                                        format.language == null ||
+                                        format.language?.startsWith("-") == true
+                                    ) return@mapNotNull null
+
+                                    return@mapNotNull SubtitleData(
+                                        // Nicer looking displayed names
+                                        fromTwoLettersToLanguage(format.language!!)
+                                            ?: format.language!!,
+                                        // See setPreferredTextLanguage
+                                        format.id!!,
+                                        SubtitleOrigin.EMBEDDED_IN_VIDEO,
+                                        format.sampleMimeType ?: MimeTypes.APPLICATION_SUBRIP,
+                                        emptyMap()
+                                    )
+                                }
 
                         embeddedSubtitlesFetched?.invoke(exoPlayerReportedTracks)
                         onTracksInfoChanged?.invoke()
@@ -978,7 +973,7 @@ class CS3IPlayer : IPlayer {
                     // This is to switch mirrors automatically if the stream has not been fetched, but
                     // allow playing the buffer without internet as then the duration is fetched.
                     if (error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
-                        && exoPlayer?.duration != C.TIME_UNSET
+                        && exoPlayer?.duration != TIME_UNSET
                     ) {
                         exoPlayer?.prepare()
                     } else {
@@ -1137,14 +1132,15 @@ class CS3IPlayer : IPlayer {
             val subConfig = MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.url))
                 .setMimeType(sub.mimeType)
                 .setLanguage("_${sub.name}")
-                .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+                .setId(sub.getId())
+                .setSelectionFlags(SELECTION_FLAG_DEFAULT)
                 .build()
             when (sub.origin) {
                 SubtitleOrigin.DOWNLOADED_FILE -> {
                     if (offlineSourceFactory != null) {
                         activeSubtitles.add(sub)
                         SingleSampleMediaSource.Factory(offlineSourceFactory)
-                            .createMediaSource(subConfig, C.TIME_UNSET)
+                            .createMediaSource(subConfig, TIME_UNSET)
                     } else {
                         null
                     }
@@ -1156,7 +1152,7 @@ class CS3IPlayer : IPlayer {
                             if (sub.headers.isNotEmpty())
                                 this.setDefaultRequestProperties(sub.headers)
                         })
-                            .createMediaSource(subConfig, C.TIME_UNSET)
+                            .createMediaSource(subConfig, TIME_UNSET)
                     } else {
                         null
                     }
@@ -1165,7 +1161,7 @@ class CS3IPlayer : IPlayer {
                     if (offlineSourceFactory != null) {
                         activeSubtitles.add(sub)
                         SingleSampleMediaSource.Factory(offlineSourceFactory)
-                            .createMediaSource(subConfig, C.TIME_UNSET)
+                            .createMediaSource(subConfig, TIME_UNSET)
                     } else {
                         null
                     }

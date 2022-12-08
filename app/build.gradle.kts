@@ -48,7 +48,7 @@ android {
         targetSdk = 33
 
         versionCode = 55
-        versionName = "3.2.3"
+        versionName = "3.2.5"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
 
@@ -190,7 +190,7 @@ dependencies {
     // Networking
 //    implementation("com.squareup.okhttp3:okhttp:4.9.2")
 //    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1")
-    implementation("com.github.Blatzar:NiceHttp:0.4.0")
+    implementation("com.github.Blatzar:NiceHttp:0.4.1")
     // To fix SSL fuckery on android 9
     implementation("org.conscrypt:conscrypt-android:2.2.1")
     // Util to skip the URI file fuckery 🙏

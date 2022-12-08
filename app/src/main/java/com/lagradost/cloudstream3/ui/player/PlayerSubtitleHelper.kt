@@ -28,7 +28,7 @@ enum class SubtitleOrigin {
 
 /**
  * @param name To be displayed in the player
- * @param url Url for the subtitle, when EMBEDDED_IN_VIDEO this variable is used as the real backend language
+ * @param url Url for the subtitle, when EMBEDDED_IN_VIDEO this variable is used as the real backend id
  * @param headers if empty it will use the base onlineDataSource headers else only the specified headers
  * */
 data class SubtitleData(
@@ -37,7 +37,13 @@ data class SubtitleData(
     val origin: SubtitleOrigin,
     val mimeType: String,
     val headers: Map<String, String>
-)
+) {
+    /** Internal ID for exoplayer, unique for each link*/
+    fun getId(): String {
+        return if (origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) url
+        else "$url|$name"
+    }
+}
 
 class PlayerSubtitleHelper {
     private var activeSubtitles: Set<SubtitleData> = emptySet()
@@ -79,11 +85,11 @@ class PlayerSubtitleHelper {
         }
     }
 
-    fun subtitleStatus(sub : SubtitleData?): SubtitleStatus {
-        if(activeSubtitles.contains(sub)) {
+    fun subtitleStatus(sub: SubtitleData?): SubtitleStatus {
+        if (activeSubtitles.contains(sub)) {
             return SubtitleStatus.IS_ACTIVE
         }
-        if(allSubtitles.contains(sub)) {
+        if (allSubtitles.contains(sub)) {
             return SubtitleStatus.REQUIRES_RELOAD
         }
         return SubtitleStatus.NOT_FOUND
@@ -95,7 +101,7 @@ class PlayerSubtitleHelper {
         regexSubtitlesToRemoveCaptions = style.removeCaptions
         subtitleView?.context?.let { ctx ->
             subStyle = style
-            Log.i(TAG,"SET STYLE = $style")
+            Log.i(TAG, "SET STYLE = $style")
             subtitleView?.setStyle(ctx.fromSaveToStyle(style))
             subtitleView?.translationY = -style.elevation.toPx.toFloat()
             val size = style.fixedTextSize
