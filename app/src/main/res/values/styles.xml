@@ -70,6 +70,8 @@
 
     <style name="ListViewStyle" parent="Widget.AppCompat.ListView">
         <item name="android:divider">@null</item>
+        <item name="android:listSelector">@drawable/outline_drawable_less</item>
+        <item name="android:drawSelectorOnTop">false</item>
     </style>
 
     <style name="AmoledModeLight" parent="AmoledMode">
@@ -78,7 +80,8 @@
 
     <style name="ChipFilled" parent="@style/Widget.Material3.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_color</item>
-        <item name="chipStrokeColor">@color/transparent</item>
+        <item name="chipStrokeColor">@color/white_transparent_toggle</item>
+        <item name="chipStrokeWidth">2dp</item>
         <item name="textColor">@color/chip_color_text</item>
         <item name="android:textColor">@color/chip_color_text</item>
         <item name="checkedIconTint">@color/chip_color_text</item>
@@ -97,7 +100,7 @@
         <item name="white">@color/white</item>
         <item name="colorOnPrimary">@color/whiteText</item>
     </style>
-    
+
     <style name="DubButton" parent="@style/SearchBox">
         <item name="android:background">@drawable/dub_bg_color</item>
         <item name="android:text">@string/app_dubbed_text</item>
@@ -455,7 +458,7 @@
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
         <item name="android:selectAllOnFocus">true</item>
-        <item name="android:background">@color/transparent</item>
+        <item name="android:background">@drawable/outline_drawable_less</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
