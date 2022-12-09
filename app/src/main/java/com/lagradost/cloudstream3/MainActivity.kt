@@ -54,13 +54,17 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2A
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appString
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.home.HomeViewModel
+import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
@@ -69,6 +73,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
+import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -83,6 +88,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -289,6 +295,19 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         nextSearchQuery =
                             URLDecoder.decode(str.substringAfter("$appStringSearch://"), "UTF-8")
                         nav_view.selectedItemId = R.id.navigation_search
+                    } else if (safeURI(str)?.scheme == appStringResumeWatching) {
+                        val id =
+                            str.substringAfter("$appStringResumeWatching://").toIntOrNull()
+                                ?: return false
+                        ioSafe {
+                            val resumeWatchingCard =
+                                HomeViewModel.getResumeWatching()?.firstOrNull { it.id == id }
+                                    ?: return@ioSafe
+                            activity.loadSearchResult(
+                                resumeWatchingCard,
+                                START_ACTION_RESUME_LATEST
+                            )
+                        }
                     } else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
@@ -449,12 +468,33 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         onUserLeaveHint(this)
     }
 
+    private fun showConfirmExitDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this, R.style.AlertDialogCustom)
+        builder.setTitle(R.string.confirm_exit_dialog)
+        builder.apply {
+            setPositiveButton(R.string.yes) { _, _ -> super.onBackPressed() }
+            setNegativeButton(R.string.no) { _, _ -> }
+        }
+        builder.show()
+    }
+
     private fun backPressed() {
         this.window?.navigationBarColor =
             this.colorFromAttribute(R.attr.primaryGrayBackground)
         this.updateLocale()
-        super.onBackPressed()
         this.updateLocale()
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+        val navController = navHostFragment?.navController
+        val isAtHome =
+            navController?.currentDestination?.matchDestination(R.id.navigation_home) == true
+
+        if (isAtHome && isTrueTvSettings()) {
+            showConfirmExitDialog()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onBackPressed() {

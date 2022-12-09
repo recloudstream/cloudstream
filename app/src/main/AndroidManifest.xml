@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Used for player vertical slide -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- Used for app update -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Used for app notifications on Android 13+ -->
-    <!-- <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" /> not used atm, but code exist that requires it that are not run -->
+    <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" /> <!-- not used atm, but code exist that requires it that are not run -->
     <!-- <permission android:name="android.permission.QUERY_ALL_PACKAGES" /> &lt;!&ndash; Used for getting if vlc is installed &ndash;&gt; -->
     <!-- Fixes android tv fuckery -->
     <uses-feature
@@ -120,6 +120,19 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="cloudstreamsearch" />
+            </intent-filter>
+
+            <!--
+            Allow opening from continue watching with intents: cloudstreamsearch://1234
+            Used on Android TV Watch Next
+             -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="cloudstreamcontinuewatching" />
             </intent-filter>
 
             <intent-filter>

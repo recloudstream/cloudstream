@@ -36,6 +36,42 @@ import java.util.*
 import kotlin.collections.set
 
 class HomeViewModel : ViewModel() {
+    companion object {
+        suspend fun getResumeWatching(): List<DataStoreHelper.ResumeWatchingResult>? {
+            val resumeWatching = withContext(Dispatchers.IO) {
+                getAllResumeStateIds()?.mapNotNull { id ->
+                    getLastWatched(id)
+                }?.sortedBy { -it.updateTime }
+            }
+            val resumeWatchingResult = withContext(Dispatchers.IO) {
+                resumeWatching?.mapNotNull { resume ->
+
+                    val data = getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                        DOWNLOAD_HEADER_CACHE,
+                        resume.parentId.toString()
+                    ) ?: return@mapNotNull null
+
+                    val watchPos = getViewPos(resume.episodeId)
+
+                    DataStoreHelper.ResumeWatchingResult(
+                        data.name,
+                        data.url,
+                        data.apiName,
+                        data.type,
+                        data.poster,
+                        watchPos,
+                        resume.episodeId,
+                        resume.parentId,
+                        resume.episode,
+                        resume.season,
+                        resume.isFromDownload
+                    )
+                }
+            }
+            return resumeWatchingResult
+        }
+    }
+
     private var repo: APIRepository? = null
 
     private val _apiName = MutableLiveData<String>()
@@ -66,36 +102,7 @@ class HomeViewModel : ViewModel() {
     val preview: LiveData<Resource<Pair<Boolean, List<LoadResponse>>>> = _preview
 
     fun loadResumeWatching() = viewModelScope.launchSafe {
-        val resumeWatching = withContext(Dispatchers.IO) {
-            getAllResumeStateIds()?.mapNotNull { id ->
-                getLastWatched(id)
-            }?.sortedBy { -it.updateTime }
-        }
-
-        // val resumeWatchingResult = ArrayList<DataStoreHelper.ResumeWatchingResult>()
-
-        val resumeWatchingResult = withContext(Dispatchers.IO) {
-            resumeWatching?.map { resume ->
-                val data = getKey<VideoDownloadHelper.DownloadHeaderCached>(
-                    DOWNLOAD_HEADER_CACHE,
-                    resume.parentId.toString()
-                ) ?: return@map null
-                val watchPos = getViewPos(resume.episodeId)
-                DataStoreHelper.ResumeWatchingResult(
-                    data.name,
-                    data.url,
-                    data.apiName,
-                    data.type,
-                    data.poster,
-                    watchPos,
-                    resume.episodeId,
-                    resume.parentId,
-                    resume.episode,
-                    resume.season,
-                    resume.isFromDownload
-                )
-            }?.filterNotNull()
-        }
+        val resumeWatchingResult = getResumeWatching()
         resumeWatchingResult?.let {
             _resumeWatching.postValue(it)
         }

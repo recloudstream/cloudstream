@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -56,6 +57,7 @@ import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.AppUtils.addProgramsToContinueWatching
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
@@ -552,7 +554,7 @@ class HomeFragment : Fragment() {
 
         observe(homeViewModel.preview) { preview ->
             // Always reset the padding, otherwise the will move lower and lower
-           // home_fix_padding?.setPadding(0, 0, 0, 0)
+            // home_fix_padding?.setPadding(0, 0, 0, 0)
             home_fix_padding?.let { v ->
                 val params = v.layoutParams
                 params.height = 0
@@ -596,7 +598,7 @@ class HomeFragment : Fragment() {
             val callback: OnPageChangeCallback = object : OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
 
-                   // home_search?.isIconified = true
+                    // home_search?.isIconified = true
                     //home_search?.isVisible = true
                     //home_search?.clearFocus()
 
@@ -927,11 +929,13 @@ class HomeFragment : Fragment() {
                 resumeWatching
             )
 
-            //if (context?.isTvSettings() == true) {
-            //    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //        context?.addProgramsToContinueWatching(resumeWatching.mapNotNull { it as? DataStoreHelper.ResumeWatchingResult })
-            //    }
-            //}
+            if (isTrueTvSettings()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    ioSafe {
+                        activity?.addProgramsToContinueWatching(resumeWatching.mapNotNull { it as? DataStoreHelper.ResumeWatchingResult })
+                    }
+                }
+            }
 
             home_watch_child_more_info?.setOnClickListener {
                 activity?.loadHomepageList(
