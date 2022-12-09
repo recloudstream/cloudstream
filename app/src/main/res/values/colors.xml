@@ -25,6 +25,8 @@
     <color name="whiteText">#FFF</color>
     <color name="blackText">#000</color>
 
+    <color name="progressBackgroundColor">#1AFFFFFF</color>
+
     <color name="dubColorText">#121950</color> <!--3b65f5 f18c82 8294F1-->
     <color name="amoledModeLight">#121213</color>
 
