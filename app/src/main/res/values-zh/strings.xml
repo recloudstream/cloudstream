@@ -143,7 +143,7 @@
     <string name="action_open_play">@string/home_play </string>
 
     <string name="vpn_might_be_needed">此片源可能需要 VPN 才能正常使用</string>
-    <string name="vpn_torrent">此片源是种子，建议使用 VPN</string>
+    <string name="vpn_torrent">此片源为种子文件，建议使用 VPN</string>
 
     <string name="provider_info_meta">站点不提供元数据，如果站点上不存在元数据，视频加载将失败。</string>
 
@@ -154,13 +154,13 @@
     <string name="show_log_cat">显示日志 🐈</string>
 
     <string name="picture_in_picture">画中画</string>
-    <string name="picture_in_picture_des">在其他应用之上的迷你播放器中继续播放</string>
+    <string name="picture_in_picture_des">在其他应用上层的迷你播放器中继续播放</string>
     <string name="player_size_settings">播放器画面调整按钮</string>
     <string name="player_size_settings_des">移除黑色边框</string>
     <string name="player_subtitles_settings">字幕</string>
     <string name="player_subtitles_settings_des">播放器字幕设置</string>
-    <string name="chromecast_subtitles_settings">投屏字幕</string>
-    <string name="chromecast_subtitles_settings_des">投屏字幕设置</string>
+    <string name="chromecast_subtitles_settings">Chromecast 字幕</string>
+    <string name="chromecast_subtitles_settings_des">Chromecast 字幕设置</string>
 
     <string name="eigengraumode_settings">倍速模式</string>
     <string name="eigengraumode_settings_des">在播放器中添加播放速度选项</string>
@@ -223,9 +223,9 @@
 
     <string name="app_language">应用语言</string>
 
-    <string name="no_chromecast_support_toast">此片源不支持投屏</string>
+    <string name="no_chromecast_support_toast">此片源不支持 Chromecast</string>
     <string name="no_links_found_toast">未找到链接</string>
-    <string name="copy_link_toast">连接已复制到剪贴板</string>
+    <string name="copy_link_toast">链接已复制到剪贴板</string>
     <string name="play_episode_toast">播放剧集</string>
     <string name="subs_default_reset_toast">重置为默认值</string>
     <string name="acra_report_toast">抱歉，应用崩溃了，将发送一份匿名错误报告给开发者
@@ -302,8 +302,8 @@
     <string name="unexpected_error">意外的播放器错误</string>
     <string name="storage_error">下载错误，请检查存储权限</string>
 
-    <string name="episode_action_chromecast_episode">投屏剧集</string>
-    <string name="episode_action_chromecast_mirror">投屏镜像</string>
+    <string name="episode_action_chromecast_episode">Chromecast 剧集</string>
+    <string name="episode_action_chromecast_mirror">Chromecast 镜像</string>
     <string name="episode_action_play_in_app">在应用中播放</string>
     <string name="episode_action_play_in_format">在 %s 中播放</string>
     <string name="episode_action_play_in_browser">在浏览器中播放</string>
@@ -347,7 +347,7 @@
     <string name="video_disk_description">设置过高可能导致如 Android TV 此类低存储空间设备出现系统问题</string>
 
     <string name="dns_pref">DNS over HTTPS</string>
-    <string name="dns_pref_summary">防止 DNS 劫持</string>
+    <string name="dns_pref_summary">用于绕过 ISP 的封锁</string>
 
     <string name="add_site_pref">复制片源</string>
     <string name="remove_site_pref">移除片源</string>
@@ -357,7 +357,7 @@
 
     <string name="nginx_url_pref">Nginx 服务器链接</string>
 
-    <string name="display_subbed_dubbed_settings">显示有配音/字幕的动漫</string>
+    <string name="display_subbed_dubbed_settings">显示带配音/字幕的动漫</string>
 
     <string name="resize_fit">适应</string>
     <string name="resize_fill">拉伸</string>
@@ -543,7 +543,7 @@
     <string name="plugins_disabled" formatted="true">已禁用：%d</string>
     <string name="plugins_not_downloaded" formatted="true">未下载：%d</string>
     <string name="plugins_updated" formatted="true">已更新 %d 插件</string>
-    <string name="blank_repo_message">CloudStream 默认不安装片源。您需要从仓库中安装片源。\n\nBecause of a brainless DMCA takedown by Sky Uk Limited 🤮 we cannot link the repository sites in app.\n\n加入我们的 Discord 获得链接或在网上搜索。</string>
+    <string name="blank_repo_message">CloudStream 默认不安装片源。您需要从仓库中安装片源。\n\n由于 Sky Uk Limited 的无脑 DMCA 下架 🤮 我们不能在应用内提供仓库链接。\n\n加入我们的 Discord 获得链接或在网上搜索。</string>
     <string name="view_public_repositories_button">查看社区仓库</string>
     <string name="view_public_repositories_button_short">公开列表</string>
     <string name="uppercase_all_subtitles">字幕全大写</string>
