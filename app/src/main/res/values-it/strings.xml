@@ -169,6 +169,7 @@
     <string name="episode_sync_settings_des">Sincronizza automaticamente gli episodi guardati</string>
 
     <string name="restore_settings">Ripristinare i dati da backup</string>
+    <string name="automatic_restore_settings">Backup automatico su Github</string>
 
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">File di backup caricato</string>

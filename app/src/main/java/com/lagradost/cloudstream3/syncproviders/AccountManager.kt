@@ -11,6 +11,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         val malApi = MALApi(0)
         val aniListApi = AniListApi(0)
         val openSubtitlesApi = OpenSubtitlesApi(0)
+        val githubApi = GithubApi(0)
         val indexSubtitlesApi = IndexSubtitleApi()
         val addic7ed = Addic7ed()
 
@@ -23,7 +24,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         // this needs init with context and can be accessed in settings
         val accountManagers
             get() = listOf(
-                malApi, aniListApi, openSubtitlesApi, //nginxApi
+                malApi, aniListApi, openSubtitlesApi, githubApi //nginxApi
             )
 
         // used for active syncing

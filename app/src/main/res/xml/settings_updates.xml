@@ -17,6 +17,14 @@
         android:key="@string/restore_key"
         android:title="@string/restore_settings" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:icon="@drawable/baseline_restore_page_24"
+        android:key="@string/automatic_cloud_backups"
+        android:summaryOff="@string/cloud_backups_off"
+        android:summaryOn="@string/cloud_backups_on"
+        android:title="@string/automatic_restore_settings" />
+
     <Preference
         android:icon="@drawable/baseline_description_24"
         android:key="@string/show_logcat_key"
