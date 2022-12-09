@@ -1977,42 +1977,42 @@ class ResultViewModel2 : ViewModel() {
         limit: Int = 0
     ): List<ExtractedTrailerData> =
         coroutineScope {
-            var currentCount = 0
-            return@coroutineScope loadResponse.trailers.amap { trailerData ->
-                try {
-                    val links = arrayListOf<ExtractorLink>()
-                    val subs = arrayListOf<SubtitleFile>()
-                    if (!loadExtractor(
-                            trailerData.extractorUrl,
-                            trailerData.referer,
-                            { subs.add(it) },
-                            { links.add(it) }) && trailerData.raw
-                    ) {
-                        arrayListOf(
-                            ExtractorLink(
-                                "",
-                                "Trailer",
+            val returnlist = ArrayList<ExtractedTrailerData>()
+            loadResponse.trailers.windowed(limit, limit, true).takeWhile { list ->
+                list.amap { trailerData ->
+                    try {
+                        val links = arrayListOf<ExtractorLink>()
+                        val subs = arrayListOf<SubtitleFile>()
+                        if (!loadExtractor(
                                 trailerData.extractorUrl,
-                                trailerData.referer ?: "",
-                                Qualities.Unknown.value,
-                                trailerData.extractorUrl.contains(".m3u8")
-                            )
-                        ) to arrayListOf()
-                    } else {
-                        links to subs
-                    }.also { (extractor, _) ->
-                        if (extractor.isNotEmpty() && limit != 0) {
-                            currentCount++
-                            if (currentCount >= limit) {
-                                cancel()
-                            }
+                                trailerData.referer,
+                                { subs.add(it) },
+                                { links.add(it) }) && trailerData.raw
+                        ) {
+                            arrayListOf(
+                                ExtractorLink(
+                                    "",
+                                    "Trailer",
+                                    trailerData.extractorUrl,
+                                    trailerData.referer ?: "",
+                                    Qualities.Unknown.value,
+                                    trailerData.extractorUrl.contains(".m3u8")
+                                )
+                            ) to arrayListOf()
+                        } else {
+                            links to subs
                         }
+                    } catch (e: Throwable) {
+                        logError(e)
+                        null
                     }
-                } catch (e: Throwable) {
-                    logError(e)
-                    null
+                }.filterNotNull().map { (links, subs) -> ExtractedTrailerData(links, subs) }.let {
+                    returnlist.addAll(it)
                 }
-            }.filterNotNull().map { (links, subs) -> ExtractedTrailerData(links, subs) }
+
+                returnlist.size < limit
+            }
+            return@coroutineScope returnlist
         }
 
 
