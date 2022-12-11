@@ -659,4 +659,8 @@
     <string name="confirm_exit_dialog">Are you sure you want to exit?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    <string name="update_notification_downloading">Downloading app update</string>
+    <string name="update_notification_installing">Installing app update</string>
+    <string name="update_notification_failed">App update failed</string>
 </resources>

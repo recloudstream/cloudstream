@@ -7,16 +7,14 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okio.BufferedSink
@@ -116,6 +114,7 @@ class InAppUpdater {
                             )?.groupValues?.get(2)
                         }
                 }).toList().lastOrNull()
+
             val foundAsset = found?.assets?.getOrNull(0)
             val currentVersion = packageName?.let {
                 packageManager.getPackageInfo(
@@ -245,6 +244,9 @@ class InAppUpdater {
             }
         }
 
+        /**
+         * @param checkAutoUpdate if the update check was launched automatically
+         **/
         suspend fun Activity.runAutoUpdate(checkAutoUpdate: Boolean = true): Boolean {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -254,13 +256,20 @@ class InAppUpdater {
                 )
             ) {
                 val update = getAppUpdate()
-                if (update.shouldUpdate && update.updateURL != null) {
-                    //Check if update should be skipped
+                if (
+                    update.shouldUpdate &&
+                        update.updateURL != null) {
+
+                    // Check if update should be skipped
                     val updateNodeId =
                         settingsManager.getString(getString(R.string.skip_update_key), "")
-                    if (update.updateNodeId.equals(updateNodeId)) {
+
+                    // Skips the update if its an automatic update and the update is skipped
+                    // This allows updating manually
+                    if (update.updateNodeId.equals(updateNodeId) && checkAutoUpdate) {
                         return false
                     }
+
                     runOnUiThread {
                         try {
                             val currentVersion = packageName?.let {
@@ -283,16 +292,23 @@ class InAppUpdater {
                             builder.apply {
                                 setPositiveButton(R.string.update) { _, _ ->
                                     showToast(context, R.string.download_started, Toast.LENGTH_LONG)
-                                    ioSafe {
-                                        if (!downloadUpdate(update.updateURL))
-                                            runOnUiThread {
-                                                showToast(
-                                                    context,
-                                                    R.string.download_failed,
-                                                    Toast.LENGTH_LONG
-                                                )
-                                            }
-                                    }
+                                    val intent = PackageInstallerService.getIntent(
+                                        context,
+                                        update.updateURL
+                                    )
+                                    ContextCompat.startForegroundService(context, intent)
+//                                    ioSafe {
+//                                        if (
+//                                        !downloadUpdate(update.updateURL)
+//                                        )
+//                                            runOnUiThread {
+//                                                showToast(
+//                                                    context,
+//                                                    R.string.download_failed,
+//                                                    Toast.LENGTH_LONG
+//                                                )
+//                                            }
+//                                    }
                                 }
 
                                 setNegativeButton(R.string.cancel) { _, _ -> }
@@ -302,8 +318,7 @@ class InAppUpdater {
                                         settingsManager.edit().putString(
                                             getString(R.string.skip_update_key),
                                             update.updateNodeId ?: ""
-                                        )
-                                            .apply()
+                                        ).apply()
                                     }
                                 }
                             }

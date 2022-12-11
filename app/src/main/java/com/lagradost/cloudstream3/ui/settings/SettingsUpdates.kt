@@ -128,7 +128,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             ioSafe {
                 if (activity?.runAutoUpdate(false) == false) {
                     activity?.runOnUiThread {
-                        CommonActivity.showToast(
+                        showToast(
                             activity,
                             R.string.no_update_found,
                             Toast.LENGTH_SHORT
