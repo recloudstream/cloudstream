@@ -434,10 +434,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 "1.4x",
                 "1.5x",
                 "1.75x",
-                "2x"
+                "2x",
+                "2.5x"
             )
         val speedsNumbers =
-            listOf(0.5f, 0.75f, 0.85f, 1f, 1.15f, 1.25f, 1.4f, 1.5f, 1.75f, 2f)
+            listOf(0.5f, 0.75f, 0.85f, 1f, 1.15f, 1.25f, 1.4f, 1.5f, 1.75f, 2f, 2.5f)
         val speedIndex = speedsNumbers.indexOf(player.getPlaybackSpeed())
 
         activity?.let { act ->
