@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.Gson
 import com.lagradost.cloudstream3.*
@@ -223,7 +224,7 @@ object PluginManager {
     fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
         // Load all plugins as fast as possible!
         loadAllOnlinePlugins(activity)
-        afterPluginsLoadedEvent.invoke(true)
+        afterPluginsLoadedEvent.invoke(false)
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
@@ -272,7 +273,7 @@ object PluginManager {
         }
 
         // ioSafe {
-            afterPluginsLoadedEvent.invoke(true)
+        afterPluginsLoadedEvent.invoke(false)
         // }
 
         Log.i(TAG, "Plugin update done!")
@@ -299,8 +300,12 @@ object PluginManager {
         val notDownloadedPlugins = onlinePlugins.mapNotNull { onlineData ->
             val sitePlugin = onlineData.second
             //Don't include empty urls
-            if (sitePlugin.url.isBlank()) { return@mapNotNull null }
-            if (sitePlugin.repositoryUrl.isNullOrBlank()) { return@mapNotNull null }
+            if (sitePlugin.url.isBlank()) {
+                return@mapNotNull null
+            }
+            if (sitePlugin.repositoryUrl.isNullOrBlank()) {
+                return@mapNotNull null
+            }
 
             //Omit already existing plugins
             if (getPluginPath(activity, sitePlugin.internalName, onlineData.first).exists()) {
@@ -353,7 +358,7 @@ object PluginManager {
         }
 
         // ioSafe {
-            afterPluginsLoadedEvent.invoke(true)
+        afterPluginsLoadedEvent.invoke(false)
         // }
 
         Log.i(TAG, "Plugin download done!")
@@ -373,7 +378,23 @@ object PluginManager {
         }
     }
 
-    fun loadAllLocalPlugins(activity: Activity) {
+    /**
+     * Reloads all local plugins and forces a page update, used for hot reloading with deployWithAdb
+     **/
+    fun hotReloadAllLocalPlugins(activity: FragmentActivity?) {
+        Log.d(TAG, "Reloading all local plugins!")
+        if (activity == null) return
+        getPluginsLocal().forEach {
+            unloadPlugin(it.filePath)
+        }
+        loadAllLocalPlugins(activity, true)
+    }
+
+    /**
+     * @param forceReload see afterPluginsLoadedEvent, basically a way to load all local plugins
+     * and reload all pages even if they are previously valid
+     **/
+    fun loadAllLocalPlugins(activity: Activity, forceReload: Boolean) {
         val dir = File(LOCAL_PLUGINS_PATH)
         removeKey(PLUGINS_KEY_LOCAL)
 
@@ -395,7 +416,7 @@ object PluginManager {
         }
 
         loadedLocalPlugins = true
-        afterPluginsLoadedEvent.invoke(true)
+        afterPluginsLoadedEvent.invoke(forceReload)
     }
 
     /**
@@ -576,7 +597,8 @@ object PluginManager {
     }
 
     suspend fun deletePlugin(file: File): Boolean {
-        val list = (getPluginsLocal() + getPluginsOnline()).filter { it.filePath == file.absolutePath }
+        val list =
+            (getPluginsLocal() + getPluginsOnline()).filter { it.filePath == file.absolutePath }
 
         return try {
             if (File(file.absolutePath).delete()) {

@@ -491,11 +491,10 @@ open class ResultFragment : ResultTrailerPlayer() {
         return StoredData(url, apiName, showFillers, dubStatus, start, playerAction)
     }
 
-    private fun reloadViewModel(success: Boolean = false) {
-        if (!viewModel.hasLoaded()) {
+    private fun reloadViewModel(forceReload: Boolean) {
+        if (!viewModel.hasLoaded() || forceReload) {
             val storedData = getStoredData(activity ?: context ?: return) ?: return
 
-            //viewModel.clear()
             viewModel.load(
                 activity,
                 storedData.url ?: return,

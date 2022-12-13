@@ -232,6 +232,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         /**
          * Fires every time a new batch of plugins have been loaded, no guarantee about how often this is run and on which thread
+         * Boolean signifies if stuff should be force reloaded (true if force reload, false if reload when necessary).
+         *
+         * The force reloading are used for plugin development to instantly reload the page on deployWithAdb
          * */
         val afterPluginsLoadedEvent = Event<Boolean>()
         val mainPluginsLoadedEvent =
@@ -285,6 +288,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 }
                                 return true
                             }
+                        }
+                        // This specific intent is used for the gradle deployWithAdb
+                        // https://github.com/recloudstream/gradle/blob/master/src/main/kotlin/com/lagradost/cloudstream3/gradle/tasks/DeployWithAdbTask.kt#L46
+                        if (str == "$appString:") {
+                            PluginManager.hotReloadAllLocalPlugins(activity)
                         }
                     } else if (safeURI(str)?.scheme == appStringRepo) {
                         val url = str.replaceFirst(appStringRepo, "https")
@@ -650,7 +658,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
 
                 ioSafe {
-                    PluginManager.loadAllLocalPlugins(this@MainActivity)
+                    PluginManager.loadAllLocalPlugins(this@MainActivity, false)
                 }
             }
         } else {

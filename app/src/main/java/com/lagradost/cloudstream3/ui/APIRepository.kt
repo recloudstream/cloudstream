@@ -3,9 +3,11 @@ package com.lagradost.cloudstream3.ui
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -38,11 +40,21 @@ class APIRepository(val api: MainAPI) {
             val hash: Pair<String, String>
         )
 
-        // This really does not need to be Nullable but it can crash otherwise, probably caused by replacing items while looping over them.
-        // "Attempt to invoke .... getHash() on a null object reference"
-        private val cache: ArrayList<SavedLoadResponse?> = arrayListOf()
+        private val cache = threadSafeListOf<SavedLoadResponse>()
         private var cacheIndex: Int = 0
         const val cacheSize = 20
+    }
+
+    private fun afterPluginsLoaded(forceReload: Boolean) {
+        if (forceReload) {
+            synchronized(cache) {
+                cache.clear()
+            }
+        }
+    }
+
+    init {
+        afterPluginsLoadedEvent += ::afterPluginsLoaded
     }
 
     val hasMainPage = api.hasMainPage
@@ -59,20 +71,25 @@ class APIRepository(val api: MainAPI) {
             val fixedUrl = api.fixUrl(url)
             val lookingForHash = Pair(api.name, fixedUrl)
 
-            for (item in cache) {
-                // 10 min save
-                if (item?.hash == lookingForHash && (unixTime - item.unixTime) < 60 * 10) {
-                    return@safeApiCall item.response
+            synchronized(cache) {
+                for (item in cache) {
+                    // 10 min save
+                    if (item.hash == lookingForHash && (unixTime - item.unixTime) < 60 * 10) {
+                        return@safeApiCall item.response
+                    }
                 }
             }
 
             api.load(fixedUrl)?.also { response ->
                 val add = SavedLoadResponse(unixTime, response, lookingForHash)
-                if (cache.size > cacheSize) {
-                    cache[cacheIndex] = add // rolling cache
-                    cacheIndex = (cacheIndex + 1) % cacheSize
-                } else {
-                    cache.add(add)
+
+                synchronized(cache) {
+                    if (cache.size > cacheSize) {
+                        cache[cacheIndex] = add // rolling cache
+                        cacheIndex = (cacheIndex + 1) % cacheSize
+                    } else {
+                        cache.add(add)
+                    }
                 }
             } ?: throw ErrorLoadingException()
         }

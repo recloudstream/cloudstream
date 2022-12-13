@@ -79,7 +79,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
-import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
@@ -475,13 +474,13 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         reloadStored()
-        afterPluginsLoadedEvent += ::firstLoadHomePage
-        mainPluginsLoadedEvent += ::firstLoadHomePage
+        afterPluginsLoadedEvent += ::afterPluginsLoaded
+        mainPluginsLoadedEvent += ::afterMainPluginsLoaded
     }
 
     override fun onStop() {
-        afterPluginsLoadedEvent -= ::firstLoadHomePage
-        mainPluginsLoadedEvent -= ::firstLoadHomePage
+        afterPluginsLoadedEvent -= ::afterPluginsLoaded
+        mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
         super.onStop()
     }
 
@@ -494,15 +493,18 @@ class HomeFragment : Fragment() {
         homeViewModel.loadStoredData(list)
     }
 
-    private fun firstLoadHomePage(successful: Boolean = false) {
-        // dirty hack to make it only load once
+    private fun afterMainPluginsLoaded(unused: Boolean = false) {
         loadHomePage(false)
     }
 
-    private fun loadHomePage(forceReload: Boolean = true) {
+    private fun afterPluginsLoaded(forceReload: Boolean) {
+        loadHomePage(forceReload)
+    }
+
+    private fun loadHomePage(forceReload: Boolean) {
         val apiName = context?.getKey<String>(USER_SELECTED_HOMEPAGE_API)
 
-        if (homeViewModel.apiName.value != apiName || apiName == null) {
+        if (homeViewModel.apiName.value != apiName || apiName == null || forceReload) {
             //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
             homeViewModel.loadAndCancel(apiName, forceReload)
         }
@@ -1120,7 +1122,7 @@ class HomeFragment : Fragment() {
         } // GridLayoutManager(context, 1).also { it.supportsPredictiveItemAnimations() }
 
         reloadStored()
-        loadHomePage()
+        loadHomePage(false)
 
         home_loaded.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, oldScrollY ->
             val dy = scrollY - oldScrollY

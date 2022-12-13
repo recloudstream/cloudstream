@@ -58,6 +58,7 @@ const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
 const val ACTION_PLAY_EPISODE_IN_WEB_VIDEO = 16
 const val ACTION_PLAY_EPISODE_IN_MPV = 17
 
+const val ACTION_MARK_AS_WATCHED = 18
 
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 

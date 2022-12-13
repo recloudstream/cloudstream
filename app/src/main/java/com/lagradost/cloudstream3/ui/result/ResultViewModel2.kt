@@ -1146,6 +1146,7 @@ class ResultViewModel2 : ViewModel() {
                         txt(R.string.episode_action_download_mirror) to ACTION_DOWNLOAD_MIRROR,
                         txt(R.string.episode_action_download_subtitle) to ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR,
                         txt(R.string.episode_action_reload_links) to ACTION_RELOAD_EPISODE,
+//                        txt(R.string.action_mark_as_watched) to ACTION_MARK_AS_WATCHED,
                     )
                 )
 
@@ -1365,7 +1366,7 @@ class ResultViewModel2 : ViewModel() {
                     R.id.global_to_navigation_player,
                     GeneratorPlayer.newInstance(
                         generator?.also {
-                            it.getAll() // I know kinda shit to itterate all, but it is 100% sure to work
+                            it.getAll() // I know kinda shit to iterate all, but it is 100% sure to work
                                 ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
                                 ?.let { index ->
                                     if (index >= 0)
@@ -1375,6 +1376,10 @@ class ResultViewModel2 : ViewModel() {
                         } ?: return, list
                     )
                 )
+            }
+            ACTION_MARK_AS_WATCHED -> {
+                // TODO FIX
+//                DataStoreHelper.setViewPos(click.data.id, 1, 1)
             }
         }
     }
