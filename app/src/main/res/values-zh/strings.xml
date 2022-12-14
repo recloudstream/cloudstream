@@ -593,4 +593,12 @@
     <string name="history">历史记录</string>
     <string name="enable_skip_op_from_database_des">显示跳过片头/片尾弹窗</string>
     <string name="clipboard_too_large">文本过多，无法保存到剪贴板。</string>
+    <string name="action_mark_as_watched">标记为已观看</string>
+    <string name="confirm_exit_dialog">您确定要离开吗？</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+
+    <string name="update_notification_downloading">正在下载应用更新</string>
+    <string name="update_notification_installing">正在安装应用更新</string>
+    <string name="update_notification_failed">应用更新失败</string>
 </resources>
