@@ -476,7 +476,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     private fun showConfirmExitDialog() {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this, R.style.AlertDialogCustom)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.confirm_exit_dialog)
         builder.apply {
             setPositiveButton(R.string.yes) { _, _ -> super.onBackPressed() }

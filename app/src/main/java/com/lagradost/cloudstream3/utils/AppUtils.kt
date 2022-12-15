@@ -319,7 +319,7 @@ object AppUtils {
     fun Activity.downloadAllPluginsDialog(repositoryUrl: String, repositoryName: String) {
         runOnUiThread {
             val context = this
-            val builder: AlertDialog.Builder = AlertDialog.Builder(this, R.style.AlertDialogCustom)
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
             builder.setTitle(
                 repositoryName
             )
