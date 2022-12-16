@@ -63,7 +63,7 @@ class JsHunter(private val hunterJS: String) {
         var k = ""
         while (j > 0) {
             k = i[(j % f).toInt()] + k
-            j = (j - (j % f)) / f
+            j = (j - j % f) / f
         }
         return k.toIntOrNull() ?: 0
     }
