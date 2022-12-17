@@ -14,9 +14,8 @@ class JsHunter(private val hunterJS: String) {
      * @return true if it's H.U.N.T.E.R coded.
      */
     fun detect(): Boolean {
-        val js = hunterJS
         val p = Pattern.compile("eval\\(function\\(h,u,n,t,e,r\\)")
-        val searchResults = p.matcher(js)
+        val searchResults = p.matcher(hunterJS)
         return searchResults.find()
     }
 
@@ -26,15 +25,14 @@ class JsHunter(private val hunterJS: String) {
      * @return the javascript unhunt or null.
      */
 
-    fun dehunt(): String {
-        val js = hunterJS
+    fun dehunt(): String? {
         try {
             val p: Pattern =
                 Pattern.compile(
                     """}\("([^"]+)",[^,]+,\s*"([^"]+)",\s*(\d+),\s*(\d+)""",
                     Pattern.DOTALL
                 )
-            val searchResults: Matcher = p.matcher(js)
+            val searchResults: Matcher = p.matcher(hunterJS)
             if (searchResults.find() && searchResults.groupCount() == 4) {
                 val h = searchResults.group(1)!!.toString()
                 val n = searchResults.group(2)!!.toString()
@@ -45,7 +43,7 @@ class JsHunter(private val hunterJS: String) {
         } catch (e: Exception) {
             logError(e)
         }
-        return ""
+        return null
     }
 
     private fun duf(d: String, e: Int, f: Int = 10): Int {
