@@ -112,7 +112,7 @@
     <string name="torrent_plot">Описание</string>
     <string name="normal_no_plot">Няма намерен съдържание</string>
     <string name="torrent_no_plot">Няма намерено описание</string>
-    <string name="show_log_cat">Покажи logcat 🐈</string>
+    <string name="show_log_cat">Покажи Logcat 🐈</string>
     <string name="picture_in_picture">Картина в картина</string>
     <string name="picture_in_picture_des">Продължава възпроизвеждането в миниатюрен плейър върху други приложения</string>
     <string name="player_size_settings">Бутон за преоразмеряване на плейъра</string>

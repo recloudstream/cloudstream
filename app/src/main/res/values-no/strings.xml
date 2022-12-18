@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Plakat</string>
@@ -8,18 +9,15 @@
     <string name="go_back_img_des">Gå tilbake</string>
     <string name="home_change_provider_img_des">Bytt leverandør</string>
     <string name="preview_background_img_des">Forhåndsvisning Bakgrunn</string>
-
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Avspillingshastighet (%.2fx)</string>
     <string name="rated_format" formatted="true">Vurdert: %.1f</string>
-    <string name="new_update_format" formatted="true">Ny oppdatering funnet!\n%s -> %s</string>
-
+    <string name="new_update_format" formatted="true">Ny oppdatering funnet!\n%s -&gt; %s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hjem</string>
     <string name="title_search">Søk</string>
     <string name="title_downloads">Nedlastinger</string>
     <string name="title_settings">Innstillinger</string>
-
     <string name="search_hint">Søk…</string>
     <string name="no_data">Nei informasjon</string>
     <string name="episode_more_options_des">Flere valg</string>
@@ -29,14 +27,12 @@
     <string name="result_open_in_browser">Åpne i nettleseren</string>
     <string name="skip_loading">Hopp over</string>
     <string name="loading">Laster inn…</string>
-
     <string name="type_watching">Ser på</string>
     <string name="type_on_hold">På vent</string>
     <string name="type_completed">Fullført</string>
     <string name="type_dropped">Falt</string>
     <string name="type_plan_to_watch">Planlegg å se</string>
     <string name="type_none">Ingen</string>
-
     <string name="play_movie_button">Spill filmer</string>
     <string name="play_torrent_button">Strøm Torrent</string>
     <string name="pick_source">Kilder</string>
@@ -45,7 +41,6 @@
     <string name="go_back">Gå tilbake</string>
     <string name="play_episode">Spille Episode</string>
     <!--<string name="need_storage">Tillat å laste ned episoder</string>-->
-
     <string name="download">nedlasting</string>
     <string name="downloaded">Lastet ned</string>
     <string name="downloading">Nedlasting pågår</string>
@@ -54,18 +49,14 @@
     <string name="download_failed">Nedlasting mislyktes</string>
     <string name="download_canceled">Nedlasting avbrutt</string>
     <string name="download_done">Last ned Ferdig</string>
-
     <string name="error_loading_links_toast">feil ved lasting av lenker</string>
     <string name="download_storage_text">Intern lagring</string>
-
     <string name="app_dubbed_text">Dubbet</string>
     <string name="app_subbed_text">Subbed</string>
-
     <string name="popup_delete_file">Slett fil</string>
     <string name="popup_play_file">Spill av fil</string>
     <string name="popup_resume_download">Fortsett nedlasting</string>
     <string name="popup_pause_download">Stopp nedlastingen</string>
-
     <string name="pref_disable_acra">Deaktiver automatisk feilrapportering</string>
     <string name="home_more_info">Mer informasjon</string>
     <string name="home_expanded_hide">Gjemme seg</string>
@@ -77,7 +68,6 @@
     <string name="sort_apply">Søke om</string>
     <string name="sort_cancel">Avbryt</string>
     <string name="player_speed">Spillerhastighet</string>
-
     <string name="subtitles_settings">Innstillinger for teksting</string>
     <string name="subs_text_color">Tekstfarge</string>
     <string name="subs_outline_color">Konturfarge</string>
@@ -87,27 +77,21 @@
     <string name="subs_subtitle_elevation">Undertekst høyde</string>
     <string name="subs_font">Skrift</string>
     <string name="subs_font_size">Skriftstørrelse</string>
-
     <string name="search_provider_text_providers">Søk med leverandører</string>
     <string name="search_provider_text_types">Søk med typer</string>
-
     <string name="benene_count_text">%d Benenes gitt til utvikler</string>
     <string name="benene_count_text_none">Nei Benenes gitt</string>
-
     <string name="subs_auto_select_language">Velg språk automatisk</string>
     <string name="subs_download_languages">Last ned språk</string>
     <string name="subs_hold_to_reset_to_default">Hold inne for å tilbakestille</string>
     <string name="continue_watching">Fortsett å se</string>
-
     <string name="action_remove_watching">ta bort</string>
     <string name="action_open_watching">Mer informasjon</string>
-
     <string name="vpn_might_be_needed">En VPN kan være nødvendig for at denne leverandøren skal fungere</string>
     <string name="vpn_torrent">Denne leverandøren er en torrent, en VPN anbefales</string>
     <string name="torrent_plot">Beskrivelse</string>
     <string name="normal_no_plot">Fant ikke tomt</string>
     <string name="torrent_no_plot">Ingen beskrivelse funnet</string>
-
     <string name="picture_in_picture">Bilde-i-bilde</string>
     <string name="picture_in_picture_des">Fortsetter avspilling i en miniatyr spiller på toppen av andre apper</string>
     <string name="player_size_settings">Knapp for størrelse på spiller</string>
@@ -124,7 +108,6 @@
     <string name="double_tap_to_seek_settings_des">Trykk to ganger på høyre eller venstre for å søke fremover eller bakover</string>
     <string name="use_system_brightness_settings">Bruk systemets lysstyrke</string>
     <string name="use_system_brightness_settings_des">Bruk systemlysstyrke i appspilleren i stedet for et mørkt overlegg</string>
-
     <string name="search">Søk</string>
     <string name="settings_info">Informasjon</string>
     <string name="advanced_search">Avansert søk</string>
@@ -142,9 +125,7 @@
     <string name="discord">Bli med Discord</string>
     <string name="benene">Gi en benene til devs</string>
     <string name="benene_des">Gitt benene</string>
-
     <string name="app_language">appspråk</string>
-
     <string name="no_chromecast_support_toast">Denne leverandøren har ingen Chromecast-støtte</string>
     <string name="no_links_found_toast">Ingen lenker funnet</string>
     <string name="copy_link_toast">Linken er kopiert til utklippstavlen</string>
@@ -157,13 +138,11 @@
     <string name="episodes">Episoder</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
-
     <string name="delete_file">Slett fil</string>
     <string name="delete">Slett</string>
     <string name="pause">Stopp</string>
     <string name="resume">Gjenoppta</string>
     <string name="delete_message">Dette vil slette %s\nEr du sikker?</string>
-
     <string name="status_ongoing">Pågående</string>
     <string name="status_completed">Fullført</string>
     <string name="status">Posisjon</string>
@@ -172,27 +151,22 @@
     <string name="duration">Varighet</string>
     <string name="site">Nettstedet</string>
     <string name="synopsis">Om</string>
-
     <string name="queued">I kø</string>
     <string name="no_subtitles">Ingen undertekster</string>
     <string name="default_subtitles">Misligholde</string>
-
     <string name="free_storage">Tilgjengelig</string>
     <string name="used_storage">Brukt</string>
     <string name="app_storage">applikasjon</string>
-
     <string name="movies">Filmer</string>
     <string name="tv_series">TV-serier</string>
     <string name="cartoons">Tegneserier</string>
     <string name="anime">Anime</string>
     <string name="torrent">Torrent</string>
-
     <string name="source_error">Kildefeil</string>
     <string name="remote_error">Fjernfeil</string>
     <string name="render_error">Gjengivelsesfeil</string>
     <string name="unexpected_error">Uventet spillerfeil</string>
     <string name="storage_error">Nedlastingsfeil, sjekk lagringstillatelser</string>
-
     <string name="episode_action_chromecast_episode">Støpt Episode</string>
     <string name="episode_action_chromecast_mirror">Støpt Speil</string>
     <string name="episode_action_play_in_app">Spill i appen</string>
@@ -202,22 +176,18 @@
     <string name="episode_action_auto_download">Automatisk nedlasting</string>
     <string name="episode_action_download_mirror">Last ned speil</string>
     <string name="episode_action_reload_links">Last inn lenker på nytt</string>
-
     <string name="no_update_found">Ingen oppdatering funnet</string>
     <string name="check_for_update">Se etter oppdatering</string>
-
     <string name="video_lock">Låse</string>
     <string name="video_aspect_ratio_resize">Endre størrelse</string>
     <string name="video_source">Kilde</string>
     <string name="video_skip_op">Hoppe OP</string>
-
     <string name="dont_show_again">Ikke vis igjen</string>
     <string name="update">Oppdater</string>
     <string name="watch_quality_pref">Foretrukket klokkekvalitet</string>
     <string name="dns_pref">DNS rundt HTTPS</string>
     <string name="dns_pref_summary">Nyttig til omgå Internettleverandør hinder</string>
     <string name="display_subbed_dubbed_settings">Vis dubbet/subbed Anime</string>
-
     <string name="resize_fit">Tilpass til skjermen</string>
     <string name="resize_fill">Tøye ut</string>
     <string name="resize_zoom">Zoome</string>
@@ -230,7 +200,6 @@
     <string name="primary_color_settings">Primær Farge</string>
     <string name="app_theme_settings">App Tema</string>
     <string name="preferred_media_settings">Foretrukket Videoinnhold</string>
-    
     <string name="legal_notice" translatable="false">Disclaimer</string>
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
         should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
@@ -248,4 +217,98 @@
         responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
         CloudStream 3 at your own risk.
     </string>
+    <string name="cast_format" formatted="true">Besetning: %s</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="sort_clear">Tøm</string>
+    <string name="category_account">Kontoer</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %s</string>
+    <string name="play_with_app_name">Spill med CloudStream</string>
+    <string name="sort_copy">Kopier</string>
+    <string name="next_episode_format" formatted="true">Episode %d vil bli sluppet om</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dt %dm</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="sort_close">Lukk</string>
+    <string name="subs_subtitle_languages">Undertekstspråk</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd %dt %dm</string>
+    <string name="sort_save">Lagre</string>
+    <string name="show_log_cat">Vis Logcat 🐈</string>
+    <string name="chromecast_subtitles_settings_des">Innstillinger for Chromecast-innstillinger</string>
+    <string name="double_tap_to_seek_amount_settings">Blafringsmengde</string>
+    <string name="restore_settings">Gjenopprett data fra sikkerhetskopi</string>
+    <string name="go_back_30">-30</string>
+    <string name="documentaries_singular">Dokumentar</string>
+    <string name="documentaries">Dokumentarer</string>
+    <string name="asian_drama">Asiatiske drama</string>
+    <string name="livestreams">Direktestrømmer</string>
+    <string name="others">Andre</string>
+    <string name="asian_drama_singular">Asiatisk drama</string>
+    <string name="live_singular">Direktestrøm</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="switch_account">Bytt konto</string>
+    <string name="sync_score">Vurdert</string>
+    <string name="sync_score_format" formatted="true">%d/10</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="recommended">Anbefalt</string>
+    <string name="player_load_subtitles">Last inn fra fil</string>
+    <string name="player_load_subtitles_online">Last inn fra Internett</string>
+    <string name="downloaded_file">Nedlastet fil</string>
+    <string name="actor_background">Bakgrunn</string>
+    <string name="home_source">Kilde</string>
+    <string name="home_random">Tilfeldig</string>
+    <string name="extension_rating" formatted="true">Vurdering: %s</string>
+    <string name="safe_mode_crash_info">Vis krasjinfo</string>
+    <string name="extension_status">Status</string>
+    <string name="extension_size">Størrelse</string>
+    <string name="extension_types">Støttet</string>
+    <string name="extension_install_first">Installer utvidelsen først</string>
+    <string name="hls_playlist">HLS-spilleliste</string>
+    <string name="player_pref">Foretrukket videospiller</string>
+    <string name="player_settings_play_in_app">Intern spiller</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="all_languages_preference">Alle språk</string>
+    <string name="skip_type_format" formatted="true">Hopp over %s</string>
+    <string name="clear_history">Tøm historikk</string>
+    <string name="action_mark_as_watched">Marker som sett</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nei</string>
+    <string name="remove_site_pref">Fjern siden</string>
+    <string name="max">Maks</string>
+    <string name="movies_singular">Film</string>
+    <string name="episode_action_download_subtitle">Last ned undertekster</string>
+    <string name="season_format">%s %d%s</string>
+    <string name="add_site_pref">Klon siden</string>
+    <string name="random_button_settings_desc">Vis tilfeldig-knapp på hjemmesiden</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="min">Min</string>
+    <string name="tv_series_singular">Serie</string>
+    <string name="other_singular">Video</string>
+    <string name="category_providers">Tilbydere</string>
+    <string name="category_ui">Tilpasning</string>
+    <string name="random_button_settings">Tilfeldig-knapp</string>
+    <string name="emulator_layout">Emulator-tilpasning</string>
+    <string name="subtitles_raised">Opphøyd</string>
+    <string name="account">konto</string>
+    <string name="logout">Logg ut</string>
+    <string name="create_account">Opprett konto</string>
+    <string name="none">Ingen</string>
+    <string name="video_tracks">Videospor</string>
+    <string name="add_sync">Legg til sporing</string>
+    <string name="all">Alle</string>
+    <string name="extension_description">Beskrivelse</string>
+    <string name="add_account">Legg til konto</string>
+    <string name="normal">Normal</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="double_tap_to_pause_settings">Dobbelttrykk for å sette på pause</string>
+    <string name="go_forward_30">+30</string>
+    <string name="subtitles_shadow">Skygge</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
+    <string name="coming_soon">Kommer snart …</string>
+    <string name="extension_version">Versjon</string>
+    <string name="extension_language">Språk</string>
+    <string name="chromecast_subtitles_settings">Chromecast-undertekster</string>
+    <string name="autoplay_next_settings">Autospill neste episode</string>
+    <string name="history">Historikk</string>
+    <string name="double_tap_to_pause_settings_des">Trykk i midten for å sette på pause</string>
+    <string name="no_episodes_found">Fant ingen episoder</string>
 </resources>

@@ -1,5 +1,5 @@
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Accueil</string>
     <string name="title_search">Rechercher</string>
@@ -125,9 +125,7 @@
     <string name="dont_show_again">Ne pas afficher à nouveau</string>
     <string name="update">Mettre à jour</string>
     <string name="dns_pref_summary">Utile pour contourner les bloquages des FAI</string>
-
     <string name="download_path_pref">Emplacement de téléchargement</string>
-
     <string name="new_update_format" formatted="true">Nouvelle mise à jour trouvée !
 \n%s -&gt; %s</string>
     <string name="filler" formatted="true">Épisode spécial</string>
@@ -220,8 +218,6 @@
     <string name="sort_close">Fermer</string>
     <string name="sort_clear">Vider</string>
     <string name="sort_save">Enregistrer</string>
-
-
     <string name="subtitles_settings">Paramètres des sous-titres</string>
     <string name="subs_text_color">Couleur du texte</string>
     <string name="subs_outline_color">Couleur des contours</string>
@@ -231,35 +227,26 @@
     <string name="subs_subtitle_elevation">Elevation des sous-titres</string>
     <string name="subs_font">Police</string>
     <string name="subs_font_size">Taille de la police</string>
-
     <string name="search_provider_text_providers">Recherche par fournisseur</string>
     <string name="search_provider_text_types">Recherche par types</string>
-
     <string name="benene_count_text">%d Donner une banane aux devs</string>
     <string name="benene_count_text_none">Aucun Bananes donné</string>
-
     <string name="subs_auto_select_language">Sélection automatique de la langue</string>
     <string name="subs_download_languages">Télécharger les langues</string>
     <string name="subs_subtitle_languages">Langue des sous-titres</string>
     <string name="subs_hold_to_reset_to_default">Maintenir pour rétablir les valeurs par défaut</string>
     <string name="subs_import_text" formatted="true">Importez des polices en les plaçant dans %s</string>
     <string name="continue_watching">Continuer à regarder</string>
-
     <string name="action_remove_watching">Retirer</string>
     <string name="action_open_watching">Plus d\'informations</string>
     <string name="action_open_play">@string/home_play </string>
-
     <string name="vpn_might_be_needed">Un VPN peut être nécessaire pour que ce fournisseur fonctionne correctement</string>
     <string name="vpn_torrent">Ce fournisseur est un torrent, un VPN est recommandé</string>
-
     <string name="provider_info_meta">Les métadonnées ne sont pas fournies par le site, le chargement de la vidéo échouera si elles n\'existent pas sur le site.</string>
-
     <string name="torrent_plot">Description</string>
     <string name="normal_no_plot">Aucune trace trouvée</string>
     <string name="torrent_no_plot">Aucune description trouvée</string>
-
-    <string name="show_log_cat">Afficher le logcat 🐈</string>
-    
+    <string name="show_log_cat">Afficher le Logcat 🐈</string>
     <string name="picture_in_picture">Picture-in-picture</string>
     <string name="picture_in_picture_des">Poursuite de la lecture dans un lecteur miniature au-dessus d\'autres applications</string>
     <string name="player_size_settings">Bouton de redimensionnement du lecteur</string>
@@ -268,17 +255,14 @@
     <string name="player_subtitles_settings_des">Paramètres des sous-titres du lecteur</string>
     <string name="chromecast_subtitles_settings">Sous-titres Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Paramètres des sous-titres Chromecast</string>
-
     <string name="eigengraumode_settings">Mode Eigengravy</string>
     <string name="eigengraumode_settings_des">Ajout d\'une option de vitesse dans le lecteur</string>
     <string name="swipe_to_seek_settings">Balayez pour chercher</string>
     <string name="swipe_to_seek_settings_des">Balayez vers la gauche ou la droite pour contrôler le temps dans le lecteur vidéo.</string>
     <string name="swipe_to_change_settings">Balayez pour modifier les paramètres</string>
     <string name="swipe_to_change_settings_des">Glissez sur le côté gauche ou droit pour modifier la luminosité ou le volume.</string>
-
     <string name="autoplay_next_settings">Lecture automatique du prochain épisode</string>
     <string name="autoplay_next_settings_des">Démarrer l\'épisode suivant lorsque l\'épisode en cours se termine</string>
-
     <string name="double_tap_to_seek_settings">Double tape pour chercher</string>
     <string name="double_tap_to_pause_settings">Double tape pour mettre en pause</string>
     <string name="double_tap_to_seek_amount_settings">Player seek amount</string>
@@ -289,23 +273,18 @@
     <string name="use_system_brightness_settings_des">Utiliser la luminosité du système dans le lecteur d\'applications au lieu du
         sombre
     </string>
-
     <string name="episode_sync_settings">Mise à jour de la progression de la veille</string>
     <string name="episode_sync_settings_des">Synchronisation automatique de la progression de votre épisode en cours</string>
-
     <string name="restore_settings">Restaurer des données à partir d\'une sauvegarde</string>
-
     <string name="backup_settings">Sauvegarde des données</string>
     <string name="restore_success">Fichier de sauvegarde chargé</string>
     <string name="restore_failed_format" formatted="true">Échec de la restauration des données du fichier %s</string>
     <string name="backup_success">Données stockées avec succès</string>
     <string name="backup_failed">Permissions de stockage manquantes, veuillez réessayer</string>
     <string name="backup_failed_error_format">Erreur de sauvegarde %s</string>
-
     <string name="search">Recherche</string>
     <string name="category_account">Comptes</string>
     <string name="category_updates">Mises à jour et sauvegarde</string>
-
     <string name="settings_info">Info</string>
     <string name="advanced_search">Recherche avancée</string>
     <string name="advanced_search_des">Vous donne les résultats de la recherche séparés par fournisseur</string>
@@ -315,7 +294,6 @@
     <string name="show_trailers_settings">Montrer les bandes-annonces</string>
     <string name="kitsu_settings">Montrer les affiches de kitsu</string>
     <string name="pref_filter_search_quality">Masquer la qualité vidéo sélectionnée dans les résultats de recherche</string>
-
     <string name="automatic_plugin_updates">Mises à jour automatiques des plugins</string>
     <string name="updates_settings">Afficher les mises à jour de l\'application</string>
     <string name="updates_settings_des">Recherche automatique de nouvelles mises à jour au démarrage</string>

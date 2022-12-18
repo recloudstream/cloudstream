@@ -104,7 +104,7 @@
     <string name="torrent_plot">Opis</string>
     <string name="normal_no_plot">Nie znaleziono opisu</string>
     <string name="torrent_no_plot">Nie znaleziono opisu</string>
-    <string name="show_log_cat">Pokaż logcat 🐈</string>
+    <string name="show_log_cat">Pokaż Logcat 🐈</string>
     <string name="picture_in_picture">Obraz-w-obrazie</string>
     <string name="picture_in_picture_des">Oglądaj w małym, pływającym okienku</string>
     <string name="player_size_settings">Przycisk zmiany rozmiaru</string>
