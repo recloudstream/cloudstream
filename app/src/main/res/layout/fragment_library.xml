@@ -34,8 +34,6 @@
                 android:nextFocusLeft="@id/nav_rail_view"
 
                 android:nextFocusRight="@id/search_filter"
-                android:nextFocusUp="@id/nav_rail_view"
-                android:nextFocusDown="@id/search_autofit_results"
                 android:paddingStart="-10dp"
                 app:iconifiedByDefault="false"
                 app:queryBackground="@color/transparent"
@@ -44,6 +42,22 @@
                 tools:ignore="RtlSymmetry">
 
             </androidx.appcompat.widget.SearchView>
+
+
+            <ImageView
+                android:id="@+id/list_selector"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="end|center_vertical"
+
+                android:layout_margin="10dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/change_providers_img_des"
+                android:nextFocusLeft="@id/main_search"
+                android:nextFocusRight="@id/main_search"
+                android:src="@drawable/ic_baseline_filter_list_24"
+                app:tint="?attr/textColor" />
+
         </FrameLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -76,7 +90,7 @@
             style="@style/ExtendedFloatingActionButton"
             android:text="Sort"
             android:textColor="?attr/textColor"
-            app:icon="@drawable/ic_baseline_filter_list_24"
+            app:icon="@drawable/ic_baseline_sort_24"
             tools:ignore="ContentDescription" />
     </FrameLayout>
 

@@ -68,6 +68,22 @@ class LibraryFragment : Fragment() {
 
         libraryViewModel.loadPages()
 
+        list_selector?.setOnClickListener {
+            val items = libraryViewModel.availableApiNames
+            val currentItem = libraryViewModel.currentApiName.value
+
+            activity?.showBottomDialog(
+                items,
+                items.indexOf(currentItem),
+                "Select library",
+                false,
+                {}
+            ) {
+                val selectedItem = items.getOrNull(it) ?: return@showBottomDialog
+                libraryViewModel.switchList(selectedItem)
+            }
+        }
+
         viewpager?.setPageTransformer(LibraryScrollTransformer())
         viewpager?.adapter =
             viewpager.adapter ?: ViewpagerAdapter(emptyList(), { isScrollingDown: Boolean ->

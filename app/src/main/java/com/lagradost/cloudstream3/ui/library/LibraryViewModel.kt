@@ -8,7 +8,6 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import me.xdrop.fuzzywuzzy.FuzzySearch
 
 enum class ListSorting(@StringRes val stringRes: Int) {
     Query(R.string.none),
@@ -27,8 +26,10 @@ class LibraryViewModel : ViewModel() {
     private val _currentApiName: MutableLiveData<String> = MutableLiveData("")
     val currentApiName: LiveData<String> = _currentApiName
 
-    private val listApis = SyncApis.filter { it.hasAccount() }
-    private var currentApi = listApis.firstOrNull()
+    private val availableSyncApis = SyncApis.filter { it.hasAccount() }
+    private var currentSyncApi = availableSyncApis.firstOrNull()
+
+    val availableApiNames: List<String> = availableSyncApis.map { it.name }
 
     val sortingMethods = listOf(
         ListSorting.RatingHigh,
@@ -42,8 +43,10 @@ class LibraryViewModel : ViewModel() {
     var currentSortingMethod: ListSorting = sortingMethods.first()
         private set
 
-    fun switchList() {
-        currentApi = listApis[(listApis.indexOf(currentApi) + 1) % listApis.size]
+    fun switchList(name: String) {
+        currentSyncApi = availableSyncApis[availableApiNames.indexOf(name)]
+        _currentApiName.postValue(currentSyncApi?.name)
+
         loadPages()
     }
 
@@ -58,7 +61,7 @@ class LibraryViewModel : ViewModel() {
 
     fun loadPages() {
         ioSafe {
-            currentApi?.let { repo ->
+            currentSyncApi?.let { repo ->
                 val list = (repo.getPersonalLibrary() as? Resource.Success)?.value
                 val pages = (list ?: emptyList()).groupBy { it.listName }.map {
                     Page(

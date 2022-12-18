@@ -1,12 +1,9 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.capitalize
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.logError
@@ -141,7 +138,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     this.name,
                     recMedia.id?.toString() ?: return@mapNotNull null,
                     getUrlFromId(recMedia.id),
-                    recMedia.coverImage?.large ?: recMedia.coverImage?.medium
+                    recMedia.coverImage?.extraLarge ?: recMedia.coverImage?.large
+                    ?: recMedia.coverImage?.medium
                 )
             },
             trailers = when (season.trailer?.site?.lowercase()?.trim()) {
@@ -220,7 +218,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                                             romaji
                                         }
                                         idMal
-                                        coverImage { medium large }
+                                        coverImage { medium large extraLarge }
                                         averageScore
                                     }
                                 }
@@ -233,7 +231,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                                         format
                                         id
                                         idMal
-                                        coverImage { medium large }
+                                        coverImage { medium large extraLarge }
                                         averageScore
                                         title {
                                             english
@@ -569,7 +567,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     data class CoverImage(
         @JsonProperty("medium") val medium: String?,
-        @JsonProperty("large") val large: String?
+        @JsonProperty("large") val large: String?,
+        @JsonProperty("extraLarge") val extraLarge: String?
     )
 
     data class Media(
@@ -600,16 +599,17 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         fun toLibraryItem(listName: String?): LibraryItem? {
             return LibraryItem(
                 // English title first
-                this.media.title.english ?: this.media.title.romaji ?: this.media.synonyms.firstOrNull()
+                this.media.title.english ?: this.media.title.romaji
+                ?: this.media.synonyms.firstOrNull()
                 ?: "",
                 "https://anilist.co/anime/${this.media.id}/",
-                listName ?: return null,
+                listName?.lowercase()?.capitalize() ?: return null,
                 this.progress,
                 this.media.episodes,
                 this.score,
                 "AniList",
                 TvType.Anime,
-                this.media.coverImage.large ?: this.media.coverImage.medium,
+                this.media.coverImage.extraLarge ?: this.media.coverImage.large ?: this.media.coverImage.medium,
                 null,
                 null,
                 null
@@ -630,44 +630,44 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("MediaListCollection") val MediaListCollection: MediaListCollection
     )
 
-    fun getAnilistListCached(): Array<Lists>? {
+    private fun getAniListListCached(): Array<Lists>? {
         return getKey(ANILIST_CACHED_LIST) as? Array<Lists>
     }
 
-    suspend fun getAnilistAnimeListSmart(): Array<Lists>? {
+    private suspend fun getAniListAnimeListSmart(): Array<Lists>? {
         if (getAuth() == null) return null
 
         if (checkToken()) return null
         return if (getKey(ANILIST_SHOULD_UPDATE_LIST, true) == true) {
-            val list = getFullAnilistList()?.data?.MediaListCollection?.lists?.toTypedArray()
+            val list = getFullAniListList()?.data?.MediaListCollection?.lists?.toTypedArray()
             if (list != null) {
                 setKey(ANILIST_CACHED_LIST, list)
                 setKey(ANILIST_SHOULD_UPDATE_LIST, false)
             }
             list
         } else {
-            getAnilistListCached()
+            getAniListListCached()
         }
     }
 
     override suspend fun getPersonalLibrary(): List<LibraryItem>? {
-        return getAnilistAnimeListSmart()?.map { it.entries.mapNotNull { entry -> entry.toLibraryItem(entry.status ?: it.status) } }?.flatten()
+        return getAniListAnimeListSmart()?.map {
+            it.entries.mapNotNull { entry ->
+                entry.toLibraryItem(
+                    entry.status ?: it.status
+                )
+            }
+        }?.flatten()
     }
 
-    private suspend fun getFullAnilistList(): FullAnilistList? {
-        var userID: Int? = null
+    private suspend fun getFullAniListList(): FullAnilistList? {
         /** WARNING ASSUMES ONE USER! **/
-        getKeys(ANILIST_USER_KEY)?.forEach { key ->
-            getKey<AniListUser>(key, null)?.let {
-                userID = it.id
-            }
-        }
 
-        val fixedUserID = userID ?: return null
+        val userID = getKey<AniListUser>(accountId, ANILIST_USER_KEY)?.id ?: return null
         val mediaType = "ANIME"
 
         val query = """
-                query (${'$'}userID: Int = $fixedUserID, ${'$'}MEDIA: MediaType = $mediaType) {
+                query (${'$'}userID: Int = $userID, ${'$'}MEDIA: MediaType = $mediaType) {
                     MediaListCollection (userId: ${'$'}userID, type: ${'$'}MEDIA) { 
                         lists {
                             status
@@ -694,7 +694,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                                         english
                                         romaji
                                     }
-                                    coverImage { medium }
+                                    coverImage { extraLarge large medium }
                                     synonyms
                                     nextAiringEpisode {
                                         timeUntilAiring
@@ -706,7 +706,9 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     }
                     }
             """
-        val text = postApi(query)
+        val text = postApi(query).also {
+            println("REPONSE $it")
+        }
         return text?.toKotlinObject()
     }
 
