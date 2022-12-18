@@ -362,4 +362,12 @@
     <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="player_settings_play_in_browser">Περιηγητής</string>
     <string name="app_not_found_error">Η εφαρμογή δεν βρέθηκε</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Επ %d</string>
+    <string name="next_episode_format" formatted="true">Το επεισόδιο %d θα κυκλοφορήσει σε</string>
+    <string name="filler" formatted="true">Φίλτρο</string>
+    <string name="duration_format" formatted="true">%d λεπτά</string>
+    <string name="cast_format" formatted="true">Ηθοποιοί: %s</string>
+    <string name="next_episode_time_day_format" formatted="true">%dμ %dω %dλ</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dω %dλ</string>
+    <string name="next_episode_time_min_format" formatted="true">%dλ</string>
 </resources>
