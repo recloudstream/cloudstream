@@ -1,5 +1,5 @@
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Αρχική</string>
     <string name="title_search">Αναζήτηση</string>
@@ -18,14 +18,12 @@
     <string name="result_open_in_browser">Άνοιγμα στον περιηγητή</string>
     <string name="skip_loading">Παράλειψη φόρτωσης</string>
     <string name="loading">Φόρτωση…</string>
-
     <string name="type_watching">Παρακολούθηση</string>
     <string name="type_on_hold">Σε αναμονή</string>
     <string name="type_completed">Ολοκληρώθηκε</string>
     <string name="type_dropped">Διακόπηκε</string>
     <string name="type_plan_to_watch">Για παρακολούθηση</string>
     <string name="type_none">Τίποτα</string>
-
     <string name="play_movie_button">Αναπαραγωγή Ταινίας</string>
     <string name="play_torrent_button">Μετάδοση Torrent</string>
     <string name="pick_source">Πηγές</string>
@@ -39,18 +37,15 @@
     <string name="error_loading_links_toast">Σφάλμα φόρτωσης συνδέσμων</string>
     <string name="download_storage_text">Εσωτερικός χώρος αποθήκευσης</string>
     <!--<string name="options">Επιλογές</string>-->
-
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
-
     <string name="popup_delete_file">Διαγραφή Αρχείου</string>
     <string name="popup_play_file">Αναπαραγωγή Αρχείου</string>
     <string name="popup_resume_download">Συνέχιση Λήψης</string>
     <string name="popup_pause_download">Παύση Λήψης</string>
-
     <string name="acra_report_toast">Λυπούμαστε, η εφαρμογή κατέρρευσε. Μια ανώνυμη αναφορά σφαλμάτων θα σταλεί στους προγραμματιστές</string>
     <string name="pref_disable_acra">Απενεργοποιήστε την αυτόματη αναφορά σφαλμάτων</string>
-    <string name="show_log_cat">Εμφάνιση logcat 🐈</string>
+    <string name="show_log_cat">Εμφάνιση Logcat 🐈</string>
     <string name="home_more_info">Παραπάνω πληροφορίες</string>
     <string name="home_expanded_hide">Απόκρυψη</string>
     <string name="home_main_poster_img_des">Κύριο Πόστερ</string>
@@ -79,21 +74,17 @@
     <string name="search_provider_text_types">Αναζήτηση βάσει τύπων</string>
     <string name="benene_count_text">%d μπανάνες δόθηκαν στους προγραμματιστές</string>
     <string name="benene_count_text_none">Καμία μπανάνα δεν δόθηκε</string>
-
     <string name="subs_auto_select_language">Αυτόματη επιλογή γλώσσας</string>
     <string name="subs_download_languages">Λήψη γλωσσών</string>
     <string name="subs_hold_to_reset_to_default">Κρατήστε πατημένο για επαναφορά στις προεπιλεγμένες τιμές</string>
     <string name="continue_watching">Συνέχεια Παρακολούθησης</string>
-
     <string name="action_remove_watching">Αφαίρεση</string>
     <string name="action_open_watching">Επιπλέον Πληροφορίες</string>
-
     <string name="vpn_might_be_needed">Η χρήση ενός VPN ίσως χρειαστεί για την ομαλή λειτουργία του τρέχοντος παρόχου</string>
     <string name="vpn_torrent">Πρόκειται για torrent, η χρήση ενός VPN συνιστάται</string>
     <string name="torrent_plot">Περιγραφή</string>
     <string name="normal_no_plot">Δεν βρέθηκε περιγραφή</string>
     <string name="torrent_no_plot">Δεν βρέθηκε περιγραφή</string>
-    
     <string name="picture_in_picture">Εικόνα-σε-Εικόνα</string>
     <string name="picture_in_picture_des">Συνεχίζει την αναπαραγωγή σε ένα μίνι παράθυρο πάνω από άλλες εφαρμογές</string>
     <string name="player_size_settings">Αλλαγή μεγέθους παραθύρου</string>
@@ -126,42 +117,32 @@
     <string name="discord">Εγγραφείτε στο Discord</string>
     <string name="benene">Δώστε μπανάνα στους προγραμματιστές</string>
     <string name="benene_des">Μπανάνα δόθηκε δώθηκε</string>
-    
     <string name="player_speed_text_format" formatted="true">Ταχύτητα (%.2fx)</string>
     <string name="rated_format" formatted="true">Βαθμολογία: %.1f</string>
-    <string name="new_update_format" formatted="true">Νέα ενημέρωση διαθέσιμη!\n%s -> %s</string>
-    
+    <string name="new_update_format" formatted="true">Νέα ενημέρωση διαθέσιμη!\n%s -&gt; %s</string>
     <string name="double_tap_to_pause_settings_des">Πάτημα στη μέση για παύση</string>
     <string name="use_system_brightness_settings">Χρήση φωτεινότητας συστήματος</string>
     <string name="use_system_brightness_settings_des">Χρήση φωτεινότητας συστήματος στο ενσωματωμένο πρόγραμμα αναπαραγωγής αντί να εφαρμοστεί το προεπιλεγμένο σκούρο επικάλυμμα
     </string>
-
     <string name="episode_sync_settings">Ενημέρωση προόδου παρακολούθησης</string>
     <string name="episode_sync_settings_des">Αυτόματος συγχρονισμός της προόδου του τρέχοντος επεισοδίου</string>
-
     <string name="restore_settings">Επαναφορά δεδομένων από αντίγραφο ασφαλείας</string>
-
     <string name="backup_settings">Αντίγραφα ασφαλείας</string>
     <string name="restore_success">Τα αντίγραφα ασφαλείας φορτώθηκαν</string>
     <string name="restore_failed_format" formatted="true">Η επαναφορά αντιγράφων ασφαλαείας απέτυχε από το αρχείο %s</string>
     <string name="backup_success">Επιτυχής αποθήκευση δεδομένων</string>
     <string name="backup_failed">Δεν έχει δοθεί άδεια για πρόσβαση στον αποθηκευτικό χώρο, προσπαθήστε ξανά</string>
     <string name="backup_failed_error_format">Σφάλμα δημιουργίας αντιγράφων ασφαλείας %s</string>
-
     <string name="category_account">Λογαριασμοί</string>
     <string name="category_updates">Ενημερώσεις και αντίγραφα ασφαλείας</string>
-
     <string name="show_fillers_settings">Εμφάνιση filler επεισοδίου για anime</string>
     <string name="show_trailers_settings">Εμφάνιση trailers</string>
     <string name="kitsu_settings">Εμφάνιση posters από kitsu</string>
     <string name="pref_filter_search_quality">Απόκρυψη επιλεγμένης ποιότητας βίντεο στα αποτελέσματα αναζήτησης</string>
-    
     <string name="app_language">App Language</string>
-
     <string name="no_chromecast_support_toast">Αυτός ο πάροχος δεν έχει υποστήριξη Chromecast</string>
     <string name="no_links_found_toast">Δεν βρέθηκαν διαθέσιμοι σύνδεσμοι</string>
     <string name="copy_link_toast">Ο σύνδεσμος αντιγράφηκε στο πρόχειρο</string>
-    
     <string name="season">Season</string>
     <string name="season_format">%s %d%s</string>
     <string name="no_season">No Season</string>
@@ -172,29 +153,24 @@
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">No Episodes found</string>
-
     <string name="delete_file">Διαγραφή αρχείου</string>
     <string name="delete">Διαγραφή</string>
     <string name="pause">Πάυση</string>
     <string name="resume">Συνέχιση</string>
     <string name="delete_message" formatted="true">Αυτό θα διαγράψει μόνιμα το %s\nΕπιβεβαίωση;</string>
     <string name="resume_time_left" formatted="true">%dm\nαπομένουν</string>
-    
     <string name="status_ongoing">Σε εξέλιξη</string>
     <string name="status">Κατάσταση</string>
     <string name="year">Έτος</string>
     <string name="duration">Διάρκεια</string>
     <string name="site">Ιστότοπος</string>
     <string name="synopsis">Περίληψη</string>
-
     <string name="queued">προστέθηκε στην ουρά</string>
     <string name="no_subtitles">Δεν υπάρχουν διαθέσιμοι υπότιτλοι</string>
     <string name="default_subtitles">Προεπιλεγμένοι υπότιτλοι</string>
-    
     <string name="free_storage">Ελέυθερος</string>
     <string name="used_storage">Σε χρήση</string>
     <string name="app_storage">Εφαρμογή</string>
-
     <string name="movies">Ταινίες</string>
     <string name="tv_series">Τηλεοπτικές Σειρές</string>
     <string name="cartoons">Κινούμενα σχέδια</string>
@@ -203,7 +179,6 @@
     <string name="asian_drama">Ασιατικά Δράμα</string>
     <string name="livestreams">Ζωντανές ροές</string>
     <string name="others">Άλλα</string>
-    
     <string name="movies_singular">Ταινία</string>
     <string name="tv_series_singular">Σειρά</string>
     <string name="cartoons_singular">Cartoon</string>
@@ -211,13 +186,11 @@
     <string name="asian_drama_singular">Ασιατικό Δράμα</string>
     <string name="live_singular">Ζωντανή ροή</string>
     <string name="other_singular">Άλλο</string>
-    
     <string name="source_error">Σφάλμα πηγής</string>
     <string name="remote_error">Απομακρυσμένο σφάλμα</string>
     <string name="render_error">Σφάλμα απόδοσης</string>
     <string name="unexpected_error">Μη αναμενόμενο σφάλμα αναπαραγωγής</string>
     <string name="storage_error">Σφάλμα λήψης, επιβεβαιώστε ότι η άδεια αποθήκευσης είναι ενεργοποιημένη</string>
-
     <string name="episode_action_chromecast_episode">Chromecast επεισόδο</string>
     <string name="episode_action_play_in_app">Αναπαραγωγή εντός της εφαρμογής</string>
     <string name="episode_action_play_in_format">Αναπαραγωγή σε %s</string>
@@ -227,49 +200,37 @@
     <string name="episode_action_download_mirror">Λήψη mirror</string>
     <string name="episode_action_reload_links">Επαναφόρτωση συνδέσμων</string>
     <string name="episode_action_download_subtitle">Λήψη υποτίτλων</string>
-    
     <string name="show_hd">Ποιότητα</string>
     <string name="show_dub">Dub</string>
     <string name="show_sub">Sub</string>
     <string name="show_title">Τίτλος</string>
     <string name="poster_ui_settings">Εναλλαγή των στοιχείων UI στο poster</string>
-
     <string name="video_lock">Κλείδωμα</string>
     <string name="video_aspect_ratio_resize">Αλλαγή μεγέθους</string>
     <string name="video_source">Πηγή</string>
     <string name="video_skip_op">Παράλειψη OP</string>
-    
     <string name="dont_show_again">Να μην εμφανιστεί ξανά</string>
     <string name="skip_update">Παράλειψη της τρέχουσας ενημέρωσης</string>
     <string name="update">Ενημέρωση</string>
     <string name="watch_quality_pref">Προτίμηση ποιότητας παρακολούθησης</string>
     <string name="limit_title">Μέγιστοι χαρακτήρες για τίτλο</string>
     <string name="limit_title_rez">Ανάλυση αναπαραγωγής βίντεο</string>
-
     <string name="video_buffer_size_settings">Μέγεθος buffer βίντεο</string>
     <string name="video_buffer_length_settings">Μήκος buffer βίντεο</string>
     <string name="video_buffer_disk_settings">Προσωρινή μνήμη βίντεο στο δίσκο</string>
     <string name="video_buffer_clear_settings">Εκκαθάριση προσωρινής μνήμης βίντεο και εικόνων</string>
-
     <string name="video_ram_description">Θα προκαλέσει τυχαία σφάλματα εάν οριστεί πολύ ψηλά. Μην το αλλάξετε εάν έχετε χαμηλή ποσότητα μνήμης ram, όπως σε Android TV ή παλιό τηλέφωνο</string>
     <string name="video_disk_description">Μπορεί να προκαλέσει προβλήματα σε συστήματα με χαμηλό αποθηκευτικό χώρο, όπως σε συσκευές Android TV, εάν τον ρυθμίσετε πολύ ψηλά</string>
-
     <string name="dns_pref_summary">Χρήσιμο για παράκαμψη μπλοκ ISP</string>
-
     <string name="add_site_pref">Αντίγραφο ιστοτόπου</string>
     <string name="remove_site_pref">Αφαίρεση ιστοτόπου</string>
     <string name="add_site_summary">Προσθήκη αντιγράφου ενός υπάρχοντος ιστοτόπου, με έναν διαφορετικό σύνδεσμο</string>
-
     <string name="download_path_pref">Διαδρομή λήψης</string>
-
     <string name="display_subbed_dubbed_settings">Εμφάνιση Dubbed/Subbed Anime</string>
-
     <string name="resize_fit">Προσαρμογή στην οθόνη</string>
     <string name="resize_fill">Τέντωμα</string>
     <string name="resize_zoom">Μεγέθυνση</string>
-    
     <string name="legal_notice">Αποποίηση ευθυνών</string>
-    
     <string name="category_general">Γενικά</string>
     <string name="random_button_settings">Τυχαίο κουμπί</string>
     <string name="random_button_settings_desc">Εμφάνιση τυχαίου κουμπιού στην Αρχική οθόνη</string>
@@ -280,19 +241,15 @@
     <string name="subtitles_encoding">Κωδικοποίηση υποτίτλων</string>
     <string name="category_providers">Πάροχοι</string>
     <string name="category_ui">Διάταξη</string>
-    
     <string name="automatic">Αυτόματο</string>
     <string name="tv_layout">Διάταξη TV</string>
     <string name="phone_layout">Διάταξη τηλεφώνου</string>
     <string name="emulator_layout">Διάταξη emulator</string>
-
     <string name="primary_color_settings">Πρωτεύον χρώμα</string>
     <string name="app_theme_settings">Θέμα εφαρμογής</string>
     <string name="bottom_title_settings">Τοποθεσία τίτλου Poster</string>
     <string name="bottom_title_settings_des">Τοποθετήστε τον τίτλο κάτω από το poster</string>
-    
     <string name="example_lang_name">Κωδικός γλώσσας (el)</string>
-
     <string name="account">Λογαριασμός</string>
     <string name="logout">Αποσύνδεση</string>
     <string name="login">Σύνδεση</string>
@@ -305,7 +262,6 @@
     <string name="sync_score">Βαθμολογήθηκε</string>
     <string name="authenticated_user" formatted="true">Πιστοποιήθηκε %s</string>
     <string name="authenticated_user_fail" formatted="true">Αποτυχία πιστοποίησης σε %s</string>
-    
     <string name="none">Τίποτα</string>
     <string name="normal">Κανονικά</string>
     <string name="all">Όλα</string>
@@ -321,7 +277,6 @@
     <string name="subtitle_offset_extra_hint_later_format">Χρησιμοποιήστε αυτό αν οι υπότιτλοι εμφανίζονται %dms πολύ νωρίς</string>
     <string name="subtitle_offset_extra_hint_before_format">Χρησιμοποιήστε αυτό αν οι υπότιτλοι εμφανίζονται %dms πολύ αργά</string>
     <string name="subtitle_offset_extra_hint_none_format">Καμία καθυστέρηση υποτίτλων</string>
-
     <string name="recommended">Συνιστώμενο</string>
     <string name="player_loaded_subtitles" formatted="true">Φόρτωση %s</string>
     <string name="player_load_subtitles">Φόρτωση από αρχείο</string>
@@ -330,13 +285,9 @@
     <string name="actor_main">Κύριο</string>
     <string name="actor_supporting">Υποστηρίζεται</string>
     <string name="actor_background">Φόντο</string>
-
     <string name="home_source">Πηγή</string>
     <string name="home_random">Τυχαίο</string>
-
     <string name="coming_soon">Έρχεται σύντομα…</string>
-    
-    
     <string name="poster_image">Εικόνα Poster</string>
     <string name="category_player">Πρόγραμμα αναπαραγωγής</string>
     <string name="resolution_and_title">Ανάλυση και τίτλος</string>
@@ -369,7 +320,7 @@
     <string name="plugin_deleted">Το πρόσθετο διαγράφηκε</string>
     <string name="plugin_load_fail" formatted="true">Απέτυχε να φορτωθεί το %s</string>
     <string name="batch_download_start_format" formatted="true">Ξεκίνησε η λήψη %d %s</string>
-        <string name="batch_download_finish_format" formatted="true">Κατέβηκε το %d %s επιτυχώς</string>
+    <string name="batch_download_finish_format" formatted="true">Κατέβηκε το %d %s επιτυχώς</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Όλα τα %s έχουν ήδη κατέβει</string>
     <string name="batch_download">Μαζική λήψη</string>
     <string name="plugin_singular">Πρόσθετο</string>
@@ -385,18 +336,15 @@
     <string name="view_public_repositories_button">Προβολή αποθετηρίων κοινότητας</string>
     <string name="view_public_repositories_button_short">Δημόσια λίστα</string>
     <string name="uppercase_all_subtitles">Κεφαλοποίηση υποτίτλων</string>
-    
     <string name="download_all_plugins_from_repo">Λήψη όλων των προσθέτων από αυτό το αποθετήριο;</string>
     <string name="single_plugin_disabled" formatted="true">%s (Απενεργοποιήθηκε)</string>
     <string name="tracks">Κομμάτια</string>
     <string name="audio_tracks">Ηχητικά κομμάτια</string>
     <string name="video_tracks">Κομμάτια βίντεο</string>
     <string name="apply_on_restart">Εφαρμογή στην επανεκκίνηση</string>
-
     <string name="safe_mode_title">Η ασφαλής λειτουργία ενεργοποιήθηκε</string>
     <string name="safe_mode_description">Ένα μη αντιστρέψιμο σφάλμα συνέβη και απενεργοποιήσαμε όλα τα πρόσθετα, ώστε να μπορέσετε να διαπιστώσετε ποιο πρόσθετο προκάλεσε αυτή τη κατάρρευση.</string>
     <string name="safe_mode_crash_info">Προβολή πληροφορίας κατάρρευσης</string>
-
     <string name="extension_rating" formatted="true">Βαθμολογία: %s</string>
     <string name="extension_description">Περιγραφή</string>
     <string name="extension_version">Έκδοση</string>
@@ -406,9 +354,7 @@
     <string name="extension_types">Υποστηρίζονται</string>
     <string name="extension_language">Γλώσσα</string>
     <string name="extension_install_first">Εγκατάσταση προσθέτου πρώτα</string>
-
     <string name="hls_playlist">HLS Playlist</string>
-
     <string name="player_pref">Προτεινόμενο πρόγραμμα αναπαραγωγής</string>
     <string name="player_settings_play_in_app">Ενσωματωμένο πρόγραμμα αναπαραγωγής</string>
     <string name="player_settings_play_in_vlc">VLC</string>
@@ -416,6 +362,4 @@
     <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="player_settings_play_in_browser">Περιηγητής</string>
     <string name="app_not_found_error">Η εφαρμογή δεν βρέθηκε</string>
-    
-    
 </resources>
