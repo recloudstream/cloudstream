@@ -81,6 +81,7 @@ val appLanguages = arrayListOf(
     Triple("", "Czech", "cs"),
     Triple("", "Croatian", "hr"),
     Triple("", "Bulgarian", "bg"),
+    Triple("", "Bengali", "bn"),
 ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
 class SettingsGeneral : PreferenceFragmentCompat() {
