@@ -430,4 +430,14 @@
     <string name="network_adress_example">Link do transmisji</string>
     <string name="play_with_app_name">Odtwórz w CloudStream</string>
     <string name="skip_type_format" formatted="true">Pomiń %s</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="update_notification_failed">Aktualizacja aplikacji nie powiodła się</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="update_notification_installing">Instalowanie aktualizacji aplikacji</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="action_mark_as_watched">Oznacz jako obejrzane</string>
+    <string name="confirm_exit_dialog">Czy na pewno chcesz wyjść\?</string>
+    <string name="update_notification_downloading">Pobieranie aktualizacji aplikacji</string>
 </resources>
