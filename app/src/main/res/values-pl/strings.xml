@@ -1,11 +1,10 @@
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <string name="player_speed_text_format" formatted="true">Prędkość (%.2fx)</string>
     <string name="rated_format" formatted="true">Ocena: %.1f</string>
-    <string name="new_update_format" formatted="true">Znaleziono nową aktualizację!\n%s -> %s</string>
+    <string name="new_update_format" formatted="true">Znaleziono nową aktualizację!\n%s -&gt; %s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
-
     <string name="app_dub_sub_episode_text_format">%s Odc. %d</string>
     <string name="result_poster_img_des">Plakat</string>
     <string name="episode_poster_img_des">Plakat odcinka</string>
@@ -14,16 +13,13 @@
     <string name="go_back_img_des">Wstecz</string>
     <string name="home_change_provider_img_des">Zmień dostawcę</string>
     <string name="preview_background_img_des">Pogląd tła</string>
-
     <string name="app_name">CloudStream</string>
     <string name="title_home">Główna</string>
     <string name="title_search">Szukaj</string>
     <string name="title_downloads">Pobrane</string>
     <string name="title_settings">Ustawienia</string>
-
     <string name="search_hint">Szukaj…</string>
     <string name="search_hint_site" formatted="true">Szukaj %s…</string>
-
     <string name="no_data">Brak danych</string>
     <string name="episode_more_options_des">Więcej opcji</string>
     <string name="next_episode">Następny odcinek</string>
@@ -33,7 +29,6 @@
     <string name="result_open_in_browser">Otwórz w przeglądarce</string>
     <string name="skip_loading">Pomiń ładowanie</string>
     <string name="loading">Ładowanie…</string>
-
     <string name="type_watching">W trakcie</string>
     <string name="type_on_hold">Zawieszone</string>
     <string name="type_completed">Zakończone</string>
@@ -41,7 +36,6 @@
     <string name="type_plan_to_watch">Planowane</string>
     <string name="type_none">Brak</string>
     <string name="type_re_watching">Ponowne oglądanie</string>
-
     <string name="play_movie_button">Odtwórz film</string>
     <string name="play_livestream_button">Odtwórz transmisję na żywo</string>
     <string name="play_torrent_button">Otwórz torrent</string>
@@ -50,7 +44,6 @@
     <string name="reload_error">Połącz ponownie…</string>
     <string name="go_back">Wstecz</string>
     <string name="play_episode">Odtwórz odcinek</string>
-
     <string name="download">Pobierz</string>
     <string name="downloaded">Pobrane</string>
     <string name="downloading">Pobieranie</string>
@@ -59,20 +52,15 @@
     <string name="download_failed">Błąd przy pobieraniu</string>
     <string name="download_canceled">Anulowano pobieranie</string>
     <string name="download_done">Zakończono pobieranie</string>
-
     <string name="stream">Stream</string>
-
     <string name="error_loading_links_toast">Błąd przy ładowaniu linków</string>
     <string name="download_storage_text">Pamięć wewnętrzna</string>
-
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
-
     <string name="popup_delete_file">Usuń plik</string>
     <string name="popup_play_file">Odtwórz plik</string>
     <string name="popup_resume_download">Wznów pobieranie</string>
     <string name="popup_pause_download">Wstrzymaj pobieranie</string>
-
     <string name="pref_disable_acra">Wyłącz przekazywanie błędów</string>
     <string name="home_more_info">Więcej informacji</string>
     <string name="home_expanded_hide">Ukryj</string>
@@ -88,9 +76,7 @@
     <string name="sort_close">Zamknij</string>
     <string name="sort_clear">Wyczyść</string>
     <string name="sort_save">Zapisz</string>
-
     <string name="player_speed">Prędkość odtwarzania</string>
-
     <string name="subtitles_settings">Ustawienia napisów</string>
     <string name="subs_text_color">Kolor tekstu</string>
     <string name="subs_outline_color">Kolor konturu</string>
@@ -100,34 +86,25 @@
     <string name="subs_subtitle_elevation">Wzniesienie napisów</string>
     <string name="subs_font">Czcionka</string>
     <string name="subs_font_size">Rozmiar czcionki</string>
-
     <string name="search_provider_text_providers">Szukaj według dostawców</string>
     <string name="search_provider_text_types">Szukaj według typów</string>
-
     <string name="benene_count_text">Dano %d bananów</string>
     <string name="benene_count_text_none">Brak bananów</string>
-
     <string name="subs_auto_select_language">Wybierz język automatycznie</string>
     <string name="subs_download_languages">Pobieranie języków</string>
     <string name="subs_subtitle_languages">Język napisów</string>
     <string name="subs_hold_to_reset_to_default">Przytrzymaj, aby zresetować</string>
     <string name="subs_import_text" formatted="true">Importuj czcionki umieszczając je w %s</string>
     <string name="continue_watching">Kontyntynuj oglądanie</string>
-
     <string name="action_remove_watching">Usuń</string>
     <string name="action_open_watching">Więcej informacji</string>
-
     <string name="vpn_might_be_needed">Połączenie przez VPN może być wymagane</string>
     <string name="vpn_torrent">Ten dostawca jest torrentem, wskazane jest użycie połączenia VPN</string>
-
     <string name="provider_info_meta">Metadane nie są dostarczane przez witrynę, ładowanie filmu nie powiedzie się, jeśli nie ma ich w witrynie.</string>
-
     <string name="torrent_plot">Opis</string>
     <string name="normal_no_plot">Nie znaleziono opisu</string>
     <string name="torrent_no_plot">Nie znaleziono opisu</string>
-
     <string name="show_log_cat">Pokaż logcat 🐈</string>
-
     <string name="picture_in_picture">Obraz-w-obrazie</string>
     <string name="picture_in_picture_des">Oglądaj w małym, pływającym okienku</string>
     <string name="player_size_settings">Przycisk zmiany rozmiaru</string>
@@ -136,43 +113,33 @@
     <string name="player_subtitles_settings_des">Ustawienia napisów</string>
     <string name="chromecast_subtitles_settings">Napisy Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Ustawienia napisów Chromecast</string>
-
     <string name="eigengraumode_settings">Tryb Eigengrau</string>
     <string name="eigengraumode_settings_des">Ustawienia prędkości</string>
     <string name="swipe_to_seek_settings">Przesuwaj aby przeglądać</string>
     <string name="swipe_to_seek_settings_des">Przesuwaj w lewo lub prawo aby kontrolować czas</string>
     <string name="swipe_to_change_settings">Przesuwaj aby zmienić ustawienia</string>
     <string name="swipe_to_change_settings_des">Przesuwaj po lewej lub prawej stronie aby zmienić jasność i głośność</string>
-
     <string name="autoplay_next_settings">Autoodtwarzanie następnego odcinka</string>
     <string name="autoplay_next_settings_des">Rozpocznij następny odcinek po zakończeniu bieżącego</string>
-
     <string name="double_tap_to_seek_amount_settings">Wielkość skoku przy podwójnym stuknięciu</string>
     <string name="double_tap_to_seek_settings">Podwójne stuknięcie aby przeglądać</string>
     <string name="double_tap_to_seek_settings_des">Stuknij 2 razy z prawej lub lewej strony aby przeglądać</string>
-
     <string name="double_tap_to_pause_settings">Stuknij dwukrotnie, aby wstrzymać</string>
     <string name="double_tap_to_pause_settings_des">Stuknij na środku, aby wstrzymać</string>
-
     <string name="use_system_brightness_settings">Użyj jasności systemowej</string>
     <string name="use_system_brightness_settings_des">Użyj jasności systemowej w odtwarzaczu aplikacji zamiast ciemnej nakładki</string>
-
     <string name="episode_sync_settings">Aktualizuj postęp oglądania</string>
     <string name="episode_sync_settings_des">Automatycznie synchronizuj postęp aktualnego odcinka</string>
-
     <string name="restore_settings">Przywracanie danych z kopii zapasowej</string>
-
     <string name="backup_settings">Kopia zapasowa danych</string>
     <string name="restore_success">Wczytano plik kopii zapasowej</string>
     <string name="restore_failed_format" formatted="true">Nie udało się przywrócić danych z pliku %s</string>
     <string name="backup_success">Dane zapisane z powodzeniem</string>
     <string name="backup_failed">Brak uprawnień do przechowywania, spróbuj ponownien</string>
     <string name="backup_failed_error_format">Błąd tworzenia kopii zapasowej %s</string>
-
     <string name="search">Szukaj</string>
     <string name="category_account">Konta</string>
     <string name="category_updates">Aktualizacje i kopia zapasowa</string>
-
     <string name="settings_info">Informacje</string>
     <string name="advanced_search">Zaawansowane wyszukiwanie</string>
     <string name="advanced_search_des">Szukaj z podziałem na dostawców</string>
@@ -182,7 +149,6 @@
     <string name="show_trailers_settings">Pokaż zwiastuny</string>
     <string name="kitsu_settings">Pokaż plakaty z Kitsu</string>
     <string name="pref_filter_search_quality">Ukryj wybraną jakość wideo w wynikach wyszukiwania</string>
-
     <string name="automatic_plugin_updates">Automatyczne aktualizacje rozszerzeń</string>
     <string name="automatic_plugin_download">Automatyczne pobieranie rozszerzeń</string>
     <string name="updates_settings">Pokazuj aktualizacje</string>
@@ -195,16 +161,13 @@
     <string name="discord">Discord</string>
     <string name="benene">Daj banana programistom</string>
     <string name="benene_des">Dano banana</string>
-
     <string name="app_language">Język aplikacji</string>
-
     <string name="no_chromecast_support_toast">Ten dostawca nie wspiera Chromecast</string>
     <string name="no_links_found_toast">Nie znaleziono linków</string>
     <string name="copy_link_toast">Skopiowano do schowka</string>
     <string name="play_episode_toast">Odtwórz odcinek</string>
     <string name="subs_default_reset_toast">Zresetowano</string>
     <string name="acra_report_toast">Awaria aplikacji. Anonimowe zgłoszenie błedu zostanie wysłane programistom</string>
-
     <string name="season">Sezon</string>
     <string name="season_format">%s %d%s</string>
     <string name="no_season">Brak sezonu</string>
@@ -215,7 +178,6 @@
     <string name="season_short">S</string>
     <string name="episode_short">O</string>
     <string name="no_episodes_found">Nie znaleziono odcinków</string>
-
     <string name="delete_file">Usuń plik</string>
     <string name="delete">Usuń</string>
     <string name="pause">Wstrzymaj</string>
@@ -224,7 +186,6 @@
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Spowoduje to trwałe usunięcie %s\nCzy jesteś pewien?</string>
     <string name="resume_time_left" formatted="true">%dm\npozostało</string>
-
     <string name="status_ongoing">Bierzący</string>
     <string name="status_completed">Zakończone</string>
     <string name="status">Status</string>
@@ -233,15 +194,12 @@
     <string name="duration">Czas trwania</string>
     <string name="site">Strona</string>
     <string name="synopsis">Streszczenie</string>
-
     <string name="queued">W kolejce</string>
     <string name="no_subtitles">Brak napisów</string>
     <string name="default_subtitles">Domyślne</string>
-
     <string name="free_storage">Wolne</string>
     <string name="used_storage">W użyciu</string>
     <string name="app_storage">Aplikacja</string>
-
     <!--plural-->
     <string name="movies">Filmy</string>
     <string name="tv_series">Serial telewizyjny</string>
@@ -254,7 +212,6 @@
     <string name="livestreams">Transmisje na żywo</string>
     <string name="nsfw">NSFW</string>
     <string name="others">Inne</string>
-
     <!--singular-->
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serial telewizyjny</string>
@@ -265,13 +222,11 @@
     <string name="live_singular">Transmisja na żywo</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="other_singular">Inne</string>
-
     <string name="source_error">Błąd żródła</string>
     <string name="remote_error">Zdalny błąd</string>
     <string name="render_error">Błąd renderowania</string>
     <string name="unexpected_error">Nieoczekiwany błąd odtwarzacza</string>
     <string name="storage_error">Błąd pobierania, sprawdź uprawnienia</string>
-
     <string name="episode_action_chromecast_episode">Chromecast odcinka</string>
     <string name="episode_action_chromecast_mirror">Chromecast mirroru</string>
     <string name="episode_action_play_in_app">Odtwórz w aplikacji</string>
@@ -282,55 +237,41 @@
     <string name="episode_action_download_mirror">Pobierz mirror</string>
     <string name="episode_action_reload_links">Odświerz linki</string>
     <string name="episode_action_download_subtitle">Pobierz napisy</string>
-
     <string name="show_hd">Etykieta jakości</string>
     <string name="show_dub">Etykieta dubbingu</string>
     <string name="show_sub">Etykieta napisów</string>
     <string name="show_title">Tytuł</string>
     <string name="poster_ui_settings">Włącz elementy interfejsu na plakatach</string>
-
     <string name="no_update_found">Nie znaleziono aktualizacji</string>
     <string name="check_for_update">Sprawdź czy jest aktualizacja</string>
-
     <string name="video_lock">Zablokuj</string>
     <string name="video_aspect_ratio_resize">Rozmiar</string>
     <string name="video_source">Źródlo</string>
     <string name="video_skip_op">Pomiń OP</string>
-
     <string name="dont_show_again">Nie pokazuj ponownie</string>
     <string name="skip_update">Pomiń tę aktualizację</string>
     <string name="update">Aktualizacja</string>
     <string name="watch_quality_pref">Domyślna jakość</string>
     <string name="limit_title">Maksymalna ilość znaków tytułu w odtwarzaczu</string>
     <string name="limit_title_rez">Zawartość tytułu w odtwarzaczu</string>
-
     <string name="video_buffer_size_settings">Rozmiar bufora wideo</string>
     <string name="video_buffer_length_settings">Długość bufora wideo</string>
     <string name="video_buffer_disk_settings">Pamięć podręczna wideo na dysku</string>
     <string name="video_buffer_clear_settings">Wyczyść pamięć podręczną wideo i obrazów</string>
-
     <string name="video_ram_description">Ustawienie zbyt wysokiej wartości może powodować problemy w systemach z małą ilością pamięci RAM, takich jak urządzenia Android TV lub stare telefony.</string>
     <string name="video_disk_description">Zbyt wysokie ustawienie może powodować problemy w systemach z małą ilością miejsca w pamięci, takich jak urządzenia Android TV</string>
-
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Przydatne w pomijaniu blokad dostawców internetu</string>
-
     <string name="add_site_pref">Sklonuj stronę</string>
     <string name="remove_site_pref">Usuń stronę</string>
     <string name="add_site_summary">Dodaj klona istniejącej strony z innym adresem url</string>
-
     <string name="download_path_pref">Ścieżka pobierania</string>
-
     <string name="nginx_url_pref">Url serwera Nginx</string>
-
     <string name="display_subbed_dubbed_settings">Wyświetlanie Anime z dubbingiem/subbingiem</string>
-
     <string name="resize_fit">Dopasuj do ekranu</string>
     <string name="resize_fill">Rozciągnij</string>
     <string name="resize_zoom">Powiększ</string>
-
     <string name="legal_notice">Zastrzeżenie</string>
-
     <string name="category_general">Ogólne</string>
     <string name="random_button_settings">Przycisk do losowania</string>
     <string name="random_button_settings_desc">Pokaż przycisk do losowania na stronie głównej</string>
@@ -341,19 +282,15 @@
     <string name="subtitles_encoding">Kodowanie napisów</string>
     <string name="category_providers">Dostawcy</string>
     <string name="category_ui">Układ interfejsu</string>
-
     <string name="automatic">Automatyczny</string>
     <string name="tv_layout">Układ dla telewizorów</string>
     <string name="phone_layout">Układ dla telefonów</string>
     <string name="emulator_layout">Układ dla emulatorów</string>
-
     <string name="primary_color_settings">Kolor podstawowy</string>
     <string name="app_theme_settings">Motyw aplikacji</string>
     <string name="bottom_title_settings">Pozycja tytułu względem plakatu</string>
     <string name="bottom_title_settings_des">Ustaw tytuł pod plakatem</string>
-
     <string name="example_lang_name">Kod języka (pl)</string>
-
     <string name="login_format" formatted="true">%s %s</string>
     <string name="account">konto</string>
     <string name="logout">Wyloguj się</string>
@@ -368,7 +305,6 @@
     <string name="sync_score_format" formatted="true">%d na 10</string>
     <string name="authenticated_user" formatted="true">Uwierzytelniono %s</string>
     <string name="authenticated_user_fail" formatted="true">Nie udało się uwierzytelnić w %s</string>
-
     <!-- ============ -->
     <string name="none">Brak</string>
     <string name="normal">Normalne</string>
@@ -385,9 +321,7 @@
     <string name="subtitle_offset_extra_hint_later_format">Użyj tego, jeśli napisy są wyświetlane %dms za wcześnie</string>
     <string name="subtitle_offset_extra_hint_before_format">Użyj tego, jeśli napisy są wyświetlane %dms za późno</string>
     <string name="subtitle_offset_extra_hint_none_format">Brak opóźnienia napisów</string>
-
     <string name="subtitles_example_text">Pchnąć w tę łódź jeża lub ośm skrzyń fig.</string>
-
     <string name="recommended">Polecane</string>
     <string name="player_loaded_subtitles" formatted="true">Załadowano %s</string>
     <string name="player_load_subtitles">Wczytaj z pliku</string>
@@ -396,12 +330,9 @@
     <string name="actor_main">Główna</string>
     <string name="actor_supporting">Drugoplanowy</string>
     <string name="actor_background">Pomocniczy</string>
-
     <string name="home_source">Źródło</string>
     <string name="home_random">Losowy</string>
-
     <string name="coming_soon">Już wkrótce…</string>
-
     <string name="quality_cam">Cam</string>
     <string name="quality_cam_rip">Cam</string>
     <string name="quality_cam_hd">Cam</string>
@@ -418,7 +349,6 @@
     <string name="quality_hdr">HDR</string>
     <string name="quality_sdr">SDR</string>
     <string name="quality_webrip">Web</string>
-
     <string name="poster_image">Obraz plakatu</string>
     <string name="category_player">Odtwarzacz</string>
     <string name="resolution_and_title">Rozdzielczość i tytuł</string>
@@ -467,18 +397,15 @@
     <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
     <string name="view_public_repositories_button_short">Publiczna lista</string>
     <string name="uppercase_all_subtitles">Wszystkie napisy wielką literą</string>
-
     <string name="download_all_plugins_from_repo">Pobrać wszystkie rozszerzenia z tego repozytorium?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Wyłączone)</string>
     <string name="tracks">Ścieżki</string>
     <string name="audio_tracks">Ścieżki audio</string>
     <string name="video_tracks">Ścieżki wideo</string>
     <string name="apply_on_restart">Zastosuj po ponownym uruchomieniu</string>
-
     <string name="safe_mode_title">Tryb bezpieczny włączony</string>
     <string name="safe_mode_description">Wystąpiła nieoczekiwana awaria i automatycznie wyłączyliśmy wszystkie rozszerzenia, abyś mógł znaleźć i usunąć rozszerzenie, które powoduje problemy.</string>
     <string name="safe_mode_crash_info">Wyświetl informacje o awarii</string>
-
     <string name="extension_rating" formatted="true">Ocena: %s</string>
     <string name="extension_description">Opis</string>
     <string name="extension_version">Versja</string>
@@ -488,9 +415,7 @@
     <string name="extension_types">Wspierane</string>
     <string name="extension_language">Język</string>
     <string name="extension_install_first">Najpierw zainstaluj rozszerzenie</string>
-
     <string name="hls_playlist">Playlista HLS</string>
-
     <string name="player_pref">Preferowany odtwarzacz wideo</string>
     <string name="player_settings_play_in_app">Odtwarzacz wewnętrzny</string>
     <string name="player_settings_play_in_vlc">VLC</string>
@@ -499,8 +424,10 @@
     <string name="player_settings_play_in_browser">Przeglądarka</string>
     <string name="app_not_found_error">Aplikacja nie została znaleziona</string>
     <string name="all_languages_preference">Wszystkie języki</string>
-
     <string name="clear_history">Wyczyść historię</string>
     <string name="history">Historia</string>
     <string name="clipboard_too_large">Za dużo tekstu. Nie można skopiować do schowka.</string>
+    <string name="network_adress_example">Link do transmisji</string>
+    <string name="play_with_app_name">Odtwórz w CloudStream</string>
+    <string name="skip_type_format" formatted="true">Pomiń %s</string>
 </resources>
