@@ -395,9 +395,9 @@
     <string name="plugins_updated">Zaaktualizowano %d rozszerzeń</string>
     <string name="blank_repo_message">CloudStream nie ma domyślnie zainstalowanych żadnych witryn. Musisz zainstalować witryny z repozytoriów.
 \n
-\nZ powodu bezmyślnego usunięcia DMCA przez Sky Uk Limited 🤮 nie możemy połączyć witryn repozytorium w aplikacji.
+\nZ powodu bezmyślnego usunięcia DMCA przez Sky Uk Limited 🤮 nie możemy zamieścić linku dowitryny z repozytoriami.
 \n
-\nDołącz do naszego discord dla linków lub szukaj online.</string>
+\nDołącz do naszego Discorda lub szukaj online.</string>
     <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
     <string name="view_public_repositories_button_short">Publiczna lista</string>
     <string name="uppercase_all_subtitles">Wszystkie napisy wielką literą</string>
