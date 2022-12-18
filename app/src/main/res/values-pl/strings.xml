@@ -260,7 +260,7 @@
     <string name="video_buffer_clear_settings">Wyczyść pamięć podręczną wideo i obrazów</string>
     <string name="video_ram_description">Ustawienie zbyt wysokiej wartości może powodować problemy w systemach z małą ilością pamięci RAM, takich jak urządzenia Android TV lub stare telefony.</string>
     <string name="video_disk_description">Zbyt wysokie ustawienie może powodować problemy w systemach z małą ilością miejsca w pamięci, takich jak urządzenia Android TV</string>
-    <string name="dns_pref">DNS over HTTPS</string>
+    <string name="dns_pref">DNS przez HTTPS</string>
     <string name="dns_pref_summary">Przydatne w pomijaniu blokad dostawców internetu</string>
     <string name="add_site_pref">Sklonuj stronę</string>
     <string name="remove_site_pref">Usuń stronę</string>
@@ -393,7 +393,11 @@
     <string name="plugins_disabled" formatted="true">Wyłączono: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nie pobrano: %d</string>
     <string name="plugins_updated">Zaaktualizowano %d rozszerzeń</string>
-    <string name="blank_repo_message">Dodaj repozytorium aby zainstalować rozszerzenia</string>
+    <string name="blank_repo_message">CloudStream nie ma domyślnie zainstalowanych żadnych witryn. Musisz zainstalować witryny z repozytoriów.
+\n
+\nZ powodu bezmyślnego usunięcia DMCA przez Sky Uk Limited 🤮 nie możemy połączyć witryn repozytorium w aplikacji.
+\n
+\nDołącz do naszego discord dla linków lub szukaj online.</string>
     <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
     <string name="view_public_repositories_button_short">Publiczna lista</string>
     <string name="uppercase_all_subtitles">Wszystkie napisy wielką literą</string>
@@ -440,4 +444,6 @@
     <string name="action_mark_as_watched">Oznacz jako obejrzane</string>
     <string name="confirm_exit_dialog">Czy na pewno chcesz wyjść\?</string>
     <string name="update_notification_downloading">Pobieranie aktualizacji aplikacji</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="cast_format" formatted="true">Obsada: %s</string>
 </resources>
