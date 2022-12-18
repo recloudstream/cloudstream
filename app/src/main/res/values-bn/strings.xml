@@ -1,2 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="result_poster_img_des">পোস্টার</string>
+    <string name="play_with_app_name">ক্লাউডস্ট্রিম দিয়ে চালান</string>
+    <string name="title_home">হোম</string>
+    <string name="cast_format" formatted="true">অভিনয়েঃ %s</string>
+    <string name="next_episode_time_day_format" formatted="true">%dদিন %dঘন্টা %dমিনিট</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dঘন্টা %dমিনিট</string>
+    <string name="next_episode_time_min_format" formatted="true">%d মিনিট</string>
+    <string name="episode_poster_img_des">এপিসোড পোস্টার</string>
+    <string name="home_main_poster_img_des">মূল পোস্টার</string>
+    <string name="home_next_random_img_des">পরবর্তী র‍্যান্ডম</string>
+    <string name="go_back_img_des">ফিরে যান</string>
+    <string name="home_change_provider_img_des">প্রোভাইডার পরিবর্তন করুন</string>
+    <string name="preview_background_img_des">ব্যাকগ্রাউন্ড দেখান</string>
+    <string name="player_speed_text_format" formatted="true">গতি (%.2f গুণ)</string>
+    <string name="rated_format" formatted="true">মূল্যায়নঃ %.1f</string>
+    <string name="new_update_format" formatted="true">নতুন আপডেট এসেছে!
+\n%s -&gt; %s</string>
+    <string name="filler" formatted="true">ফিলার</string>
+    <string name="duration_format" formatted="true">%d মিনিট</string>
+    <string name="app_name">ক্লাউডস্ট্রিম</string>
+    <string name="title_search">খুঁজুন</string>
+    <string name="title_downloads">ডাউনলোডসমূহ</string>
+    <string name="title_settings">সেটিংস</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s এপি %d</string>
+    <string name="next_episode_format" formatted="true">এপিসোড %d রিলিজ হবে</string>
+    <string name="result_share">শেয়ার</string>
+    <string name="result_open_in_browser">ব্রাঊজারে খুলুন</string>
+    <string name="result_tags">জনরা</string>
+    <string name="search_hint">খুঁজুন…</string>
+    <string name="search_hint_site" formatted="true">খুঁজুন %s…</string>
+    <string name="play_movie_button">মুভি চালান</string>
+    <string name="play_livestream_button">স্ট্রিম চালান</string>
+    <string name="go_back">পিছনে যান</string>
+    <string name="no_data">কোন তথ্য নেই</string>
+    <string name="episode_more_options_des">আরো অপশন</string>
+    <string name="next_episode">পরবর্তি এপিসোড</string>
+    <string name="skip_loading">লোডিং বাদ দিন</string>
+    <string name="loading">লোডিং…</string>
+    <string name="type_watching">দেখা হচ্ছে</string>
+    <string name="type_on_hold">স্থগিত</string>
+    <string name="type_completed">শেষ</string>
+    <string name="type_dropped">বাদ</string>
+    <string name="type_plan_to_watch">দেখার ইচ্ছায়</string>
+    <string name="type_none">কোন কিছুই না</string>
+    <string name="type_re_watching">পুনরায় দেখা হচ্ছে</string>
+    <string name="play_torrent_button">টরেন্ট স্ট্রিম করুন</string>
+    <string name="pick_source">সোর্সসমূহ</string>
+    <string name="pick_subtitle">সাবটাইটেলসমূহ</string>
+    <string name="reload_error">আবার সংযোগ দেওয়ার চেষ্টা করুন…</string>
+    <string name="play_episode">এপিসোড চালান</string>
+    <string name="download">ডাউনলোড</string>
+    <string name="downloaded">ডাউনলোড করা</string>
+    <string name="downloading">ডাউনলোড চলছে</string>
+    <string name="download_paused">ডাউনলোড স্থগিত</string>
+</resources>
