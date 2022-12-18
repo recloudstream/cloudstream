@@ -455,4 +455,13 @@
     <string name="skip_type_ed">Затваряне</string>
     <string name="skip_type_recap">Резюме</string>
     <string name="history">История</string>
+    <string name="clipboard_too_large">Твърде много текст. Не може да се запази в клипборда.</string>
+    <string name="action_mark_as_watched">Маркирай като гледано</string>
+    <string name="confirm_exit_dialog">Сигурни ли сте, че искате да излезете\?</string>
+    <string name="yes">Да</string>
+    <string name="no">Не</string>
+    <string name="update_notification_installing">Инсталиране на актуализация на приложението</string>
+    <string name="update_notification_failed">Неуспешна актуализация на приложението</string>
+    <string name="enable_skip_op_from_database_des">Покажи изскачащи прозорци при отваряне/затваряне</string>
+    <string name="update_notification_downloading">Изтегля се актуализация на приложението</string>
 </resources>
