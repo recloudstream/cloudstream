@@ -238,6 +238,7 @@
     <string name="pref_filter_search_quality">Hide selected video quality on Search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>
+    <string name="automatic_plugin_download_summary">Automatically install all not yet installed plugins from added repositories.</string>
     <string name="updates_settings">Show app updates</string>
     <string name="updates_settings_des">Automatically search for new updates on start</string>
     <string name="uprereleases_settings">Update to prereleases</string>
