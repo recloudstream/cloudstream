@@ -210,6 +210,7 @@
 
     <string name="automatic_plugin_updates">自动更新插件</string>
     <string name="automatic_plugin_download">自动下载插件</string>
+    <string name="automatic_plugin_download_summary">自动安装仓库中全部未安装的插件。</string>
     <string name="updates_settings">显示应用更新</string>
     <string name="updates_settings_des">启动时自动搜索更新</string>
     <string name="uprereleases_settings">更新至预览版</string>
@@ -488,7 +489,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">Blu-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
