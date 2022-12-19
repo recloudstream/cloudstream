@@ -1,33 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">ملصق</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">الصورة الدعائية</string>
     <string name="episode_poster_img_des">ملصق الحلقة</string>
     <string name="home_main_poster_img_des">الملصق الرئيسي</string>
     <string name="home_next_random_img_des">التالي عشوائي</string>
-
     <string name="go_back_img_des">رجوع</string>
-
     <string name="home_change_provider_img_des">تغيير المصدر</string>
     <string name="preview_background_img_des">معاينة الخلفية</string>
-
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">سرعة (%.2fx)</string>
     <string name="rated_format" formatted="true">تقييم: %.1f</string>
-
-    <string name="new_update_format" formatted="true">!تم العثور علي تحديث جديد\n%s -> %s</string>
+    <string name="new_update_format" formatted="true">!تم العثور علي تحديث جديد\n%s -&gt; %s</string>
     <string name="duration_format" formatted="true">%d دقيقة</string>
-
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">تشغيل بواسطة CloudStream</string>
     <string name="title_home">الرئيسية</string>
     <string name="title_search">البحث</string>
     <string name="title_downloads">التنزيلات</string>
     <string name="title_settings">الإعدادات</string>
-
-    <string name="search_hint">…بحث</string>
+    <string name="search_hint">بحث…</string>
     <string name="search_hint_site" formatted="true">بحث %s…</string>
-
     <string name="no_data">لايوجد بيانات</string>
     <string name="episode_more_options_des">المزيد من الخيارات</string>
     <string name="next_episode">الحلقة التالية</string>
@@ -35,8 +29,7 @@
     <string name="result_share">مشاركة</string>
     <string name="result_open_in_browser">فتح في الويب</string>
     <string name="skip_loading">تخطي التحميل</string>
-    <string name="loading">…تحميل</string>
-
+    <string name="loading">تحميل…</string>
     <string name="type_watching">أشاهده</string>
     <string name="type_on_hold">في الإنتظار</string>
     <string name="type_completed">مكتمل</string>
@@ -44,17 +37,15 @@
     <string name="type_plan_to_watch">أخطط لمشاهدته</string>
     <string name="type_none">لا شيء</string>
     <string name="type_re_watching">إعادة المشاهدة</string>
-
     <string name="play_movie_button">مشاهدة الفيلم</string>
     <string name="play_livestream_button">تشغيل بث حي</string>
     <string name="play_torrent_button">تشغيل تورنت</string>
     <string name="pick_source">المصادر</string>
     <string name="pick_subtitle">الترجمة</string>
-    <string name="reload_error">…إعادة محاولة الاتصال</string>
+    <string name="reload_error">إعادة محاولة الاتصال …</string>
     <string name="go_back">ارجع للخلف</string>
     <string name="play_episode">تشغيل الحلقة</string>
     <!--<string name="need_storage">السماح بتنزيل الحلقات</string>-->
-
     <string name="download">تحميل</string>
     <string name="downloaded">تم التنزيل</string>
     <string name="downloading">جاري التنزيل</string>
@@ -64,18 +55,14 @@
     <string name="download_canceled">تم إلغاء التنزيل</string>
     <string name="download_done">تم التنزيل</string>
     <string name="stream">تشغيل</string>
-
     <string name="error_loading_links_toast">خطأ في تحميل الرابط</string>
     <string name="download_storage_text">التخزين الداخلي</string>
-
     <string name="app_dubbed_text">مدبلج</string>
     <string name="app_subbed_text">مترجم</string>
-
     <string name="popup_delete_file">حذف ملف</string>
     <string name="popup_play_file">تشغيل الملف</string>
     <string name="popup_resume_download">متابعة التنزيل</string>
     <string name="popup_pause_download">إيقاف التنزيل مؤقتًا</string>
-
     <string name="pref_disable_acra">قم بتعطيل الإبلاغ عن الأخطاء تلقائيًا</string>
     <string name="home_more_info">مزيد من المعلومات</string>
     <string name="home_expanded_hide">إخفاء</string>
@@ -91,9 +78,7 @@
     <string name="sort_close">إغلاق</string>
     <string name="sort_clear">مسح</string>
     <string name="sort_save">حفظ</string>
-
     <string name="player_speed">سرعة المُشغل</string>
-
     <string name="subtitles_settings">إعدادات الترجمة</string>
     <string name="subs_text_color">لون الخط</string>
     <string name="subs_outline_color">لون المخطط التفصيلي</string>
@@ -103,34 +88,25 @@
     <string name="subs_subtitle_elevation">إرتفاع الترجمة</string>
     <string name="subs_font">الخط</string>
     <string name="subs_font_size">حجم الخط</string>
-
     <string name="search_provider_text_providers">البحث باستخدام المصادر</string>
     <string name="search_provider_text_types">البحث باستخدام الأنواع</string>
-
     <string name="benene_count_text">%d الموزات المعطاة الى المطورين</string>
     <string name="benene_count_text_none">لم يتم إعطاء موز</string>
-
     <string name="subs_auto_select_language">تحديد اللغة تلقائيًا</string>
     <string name="subs_download_languages">لغات التحميل</string>
     <string name="subs_subtitle_languages">لغة الترجمة</string>
     <string name="subs_hold_to_reset_to_default">إضغط بإستمرار لإعادة التعيين للإعدادات الافتراضية</string>
     <string name="subs_import_text" formatted="true">إستيراد خطوط بوضعها هنا %s</string>
     <string name="continue_watching">متابعة المشاهدة</string>
-
     <string name="action_remove_watching">حذف</string>
     <string name="action_open_watching">مزيد من المعلومات</string>
-
     <string name="vpn_might_be_needed">قد تكون هناك حاجة إلى VPN لكي يعمل هذا المزود بشكل صحيح</string>
     <string name="vpn_torrent">هذا المزود هو تورنت ، يوصى باستخدام  شبكة ظاهرية خاصة</string>
-
-    <string name="provider_info_meta">.سيظهر إعلان مدته خمسة عشر ثانية إذا لم يتم توفير الفيديو في الموقع</string>
-
+    <string name="provider_info_meta">لا يتم توفير البيانات الوصفية بواسطة الموقع ، وسيفشل تحميل الفيديو إذا لم يكن موجودًا في الموقع.</string>
     <string name="torrent_plot">الوصف</string>
     <string name="normal_no_plot">لم يتم العثور على وصف</string>
     <string name="torrent_no_plot">لم يتم العثور على وصف</string>
-
-    <string name="show_log_cat">🐈 logcat عرض</string>
-
+    <string name="show_log_cat">عرض سجل الاخطاء 🐈</string>
     <string name="picture_in_picture">نافذة منبثقة</string>
     <string name="picture_in_picture_des">يستمر في التشغيل في مُشغل مصغر فوق التطبيقات الأخرى</string>
     <string name="player_size_settings">زر تغيير حجم المُشغل</string>
@@ -139,41 +115,33 @@
     <string name="player_subtitles_settings_des">إعدادات ترجمة المُشغل</string>
     <string name="chromecast_subtitles_settings">ترجمة كروم كاست</string>
     <string name="chromecast_subtitles_settings_des">إعدادات ترجمة كروم كاست</string>
-
     <string name="eigengraumode_settings">وضع إيغنغرافي</string>
     <string name="eigengraumode_settings_des">يضيف خيار السرعة في المُشغل</string>
-    <string name="swipe_to_seek_settings">السحب للسعي</string>
+    <string name="swipe_to_seek_settings">السحب لتقديم</string>
     <string name="swipe_to_seek_settings_des">إسحب إلى اليسار أو اليمين للتحكم في الوقت في مُشغل الفيديو</string>
     <string name="swipe_to_change_settings">السحب لتغيير الإعدادات</string>
     <string name="swipe_to_change_settings_des">إسحب على الجانب الأيسر أو الأيمن لتغيير السطوع أو مستوى الصوت</string>
-
     <string name="autoplay_next_settings">تشغيل الحلقة التالية تلقائيًا</string>
     <string name="autoplay_next_settings_des">تبدأ الحلقة التالية عندما تنتهي الحالية</string>
-
-    <string name="double_tap_to_seek_settings">النقر مرتان  للسعي للأمام أو للخلف</string>
+    <string name="double_tap_to_seek_settings">النقر مرتان للتقديم للأمام أو للخلف</string>
     <string name="double_tap_to_pause_settings">الضغط مرتان لإيقاف مؤقت</string>
-    <string name="double_tap_to_seek_amount_settings">التحكم في سعي المُشغل</string>
-    <string name="double_tap_to_seek_settings_des">إضغط مرتين على الجانب الأيمن أو الأيسر للسعي للأمام أو للخلف	</string>
+    <string name="double_tap_to_seek_amount_settings">التحكم في مدى تقديم المُشغل</string>
+    <string name="double_tap_to_seek_settings_des">إضغط مرتين على الجانب الأيمن أو الأيسر للتقديم للأمام أو للخلف</string>
     <string name="double_tap_to_pause_settings_des">إضغط في الوسط لإيقاف مؤقت</string>
     <string name="use_system_brightness_settings">استخدم سطوع النظام</string>
     <string name="use_system_brightness_settings_des">استخدم سطوع النظام في مُشغل التطبيق بدلاً من التراكب الداكن</string>
-
     <string name="episode_sync_settings">تحديث تقدم المشاهدة</string>
     <string name="episode_sync_settings_des">مزامنة التقدم في الحلقة الحالية تلقائيًا</string>
-
     <string name="restore_settings">إسترجاع البيانات من نسخة إحتياطية</string>
-
     <string name="backup_settings">نسخ إحتياطي</string>
     <string name="restore_success">تم تحميل ملف النسخة الاحتياطية</string>
     <string name="restore_failed_format" formatted="true">فشل استيراد البيانات من الملف %s</string>
     <string name="backup_success">تم تخزين البيانات بنجاح</string>
     <string name="backup_failed">إذن الوصول الي ذاكرة التخزين مفقود, من فضلك حاول مجددا</string>
     <string name="backup_failed_error_format">فشل إنشاء نسخة احتياطية %s</string>
-
     <string name="search">بحث</string>
     <string name="category_account">الحسابات</string>
     <string name="category_updates">التحديثات والنسخ الاحتياطية</string>
-
     <string name="settings_info">معلومات</string>
     <string name="advanced_search">البحث المتقدم</string>
     <string name="advanced_search_des">يعطيك نتائج البحث مفصولة عن طريق المزود</string>
@@ -181,32 +149,27 @@
     <string name="bug_report_settings_on">لا ترسل أي بيانات</string>
     <string name="show_fillers_settings">عرض حلقات الفلر للأنمي</string>
     <string name="show_trailers_settings">عرض المقاطع الدعائية</string>
-    <string name="kitsu_settings">عرض ملصقات من kitsu</string>
+    <string name="kitsu_settings">عرض ملصقات من كيتسو</string>
     <string name="pref_filter_search_quality">إخفاء جودة الفيديو المختارة من نتائج البحث</string>
-
     <string name="automatic_plugin_updates">تحديث الإضافات تلقائيًا</string>
     <string name="automatic_plugin_download">تنزيل الإضافات تلقائيًا</string>
     <string name="updates_settings">التحديث التلقائي</string>
     <string name="updates_settings_des">البحث تلقائيًا عن التحديثات الجديدة عند البداية</string>
     <string name="uprereleases_settings">التحديث إلى الاصدارات التجريبية (بيتا)</string>
     <string name="uprereleases_settings_des">البحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
-    <string name="github">Github</string>
+    <string name="github">غيت هاب</string>
     <string name="lightnovel">تطبيق روايات خفيف من نفس المطورين</string>
     <string name="anim">تطبيق أنمي من نفس المطورين</string>
     <string name="discord">انضم إلى الديسكورد</string>
     <string name="benene">إعط موزة للمطورين</string>
     <string name="benene_des">الموز المُعطي</string>
-
     <string name="app_language">لغة التطبيق</string>
-
     <string name="no_chromecast_support_toast">هذا المزود ليس لديه دعم كروم كاست</string>
     <string name="no_links_found_toast">لم يتم العثور على روابط</string>
     <string name="copy_link_toast">تم نسخ الرابط إلى الحافظة</string>
     <string name="play_episode_toast">تشغيل الحلقة</string>
     <string name="subs_default_reset_toast">إعادة التعيين إلى القيمة الافتراضية</string>
     <string name="acra_report_toast">عذرا ، تعطل التطبيق. سيتم إرسال تقرير خطأ مجهول إلى المطورين</string>
-
-
     <string name="season">موسم</string>
     <string name="no_season">لا موسم</string>
     <string name="episode">حلقة</string>
@@ -214,7 +177,6 @@
     <string name="season_short">م</string>
     <string name="episode_short">ح</string>
     <string name="no_episodes_found">لم يتم العثور على أي حلقات</string>
-
     <string name="delete_file">حذف الملف</string>
     <string name="delete">حذف</string>
     <string name="pause">إيقاف مؤقت</string>
@@ -223,7 +185,6 @@
     <string name="go_forward_30">+٣٠</string>
     <string name="delete_message">سوف يتم الحذف نهائيا %s\nهل أنت متأكد?</string>
     <string name="resume_time_left" formatted="true">%dm\nمتبقية</string>
-
     <string name="status_ongoing">جاري التنفيذ</string>
     <string name="status_completed">اكتمل</string>
     <string name="status">الحالة</string>
@@ -232,15 +193,12 @@
     <string name="duration">المدة الزمنية</string>
     <string name="site">موقع</string>
     <string name="synopsis">القصة</string>
-
     <string name="queued">في قائمة الانتظار</string>
     <string name="no_subtitles">الترجمة ليست موجودة</string>
     <string name="default_subtitles">الإفتراضي</string>
-
     <string name="free_storage">فارغ</string>
     <string name="used_storage">مستخدم</string>
     <string name="app_storage">التطبيق</string>
-
     <!--plural-->
     <string name="movies">أفلام</string>
     <string name="tv_series">مسلسلات</string>
@@ -257,21 +215,19 @@
     <string name="movies_singular">فيلم</string>
     <string name="tv_series_singular">مسلسل</string>
     <string name="cartoons_singular">كرتون</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">أنمي</string>
+    <string name="ova_singular">اوفا</string>
     <string name="torrent_singular">تورنت</string>
     <string name="documentaries_singular">وثائقي</string>
     <string name="asian_drama_singular">دراما آسيوية</string>
     <string name="live_singular">بث حي</string>
     <string name="nsfw_singular">+18</string>
     <string name="other_singular">فيديو</string>
-
     <string name="source_error">خطأ في المصدر</string>
     <string name="remote_error">خطأ بعيد</string>
     <string name="render_error">خطأ في جهاز العرض</string>
     <string name="unexpected_error">خطأ غير متوقع في المُشغل</string>
     <string name="storage_error">خطأ في التنزيل ، تحقق من أذونات التخزين</string>
-
     <string name="episode_action_chromecast_episode">حلقة كروم كاست</string>
     <string name="episode_action_chromecast_mirror">مرآة كروم كاست</string>
     <string name="episode_action_play_in_app">تشغيل في التطبيق</string>
@@ -282,7 +238,6 @@
     <string name="episode_action_download_mirror">تحميل بجودات مختلفة</string>
     <string name="episode_action_reload_links">إعادة تحميل الروابط</string>
     <string name="episode_action_download_subtitle">تحميل الترجمة</string>
-
     <string name="show_hd">ملصق الجودة</string>
     <string name="show_dub">ملصق مدبلج</string>
     <string name="show_sub">ملصق مترجم</string>
@@ -292,47 +247,35 @@
     <string name="show_sub_key" translatable="false">show_sub_key</string>
     <string name="show_title_key" translatable="false">show_title_key</string>
     <string name="poster_ui_settings">التحكم في عناصر الواجهة علي الملصق </string>
-
     <string name="no_update_found">لم يتم العثور على تحديثات</string>
     <string name="check_for_update">تحقق من التحديثات</string>
-
     <string name="video_lock">قفل</string>
     <string name="video_aspect_ratio_resize">تغيير الحجم</string>
     <string name="video_source">مصدر</string>
     <string name="video_skip_op">تخطي المقدمة</string>
-
     <string name="dont_show_again">لا تظهر مرة أخرى</string>
     <string name="skip_update">تخطي هذا التحديث</string>
     <string name="update">تحديث</string>
     <string name="watch_quality_pref">جودة المشاهدة المفضلة</string>
-    <string name="limit_title">أقصي عدد حروف لعنوان مُشغل الفيديو</string>
+    <string name="limit_title">أقصى عدد لحروف عنوان مُشغل الفيديو</string>
     <string name="limit_title_rez">أبعاد مُشغل الفيديو</string>
-
     <string name="video_buffer_size_settings">حجم ذاكرة التخزين المؤقت للفيديو</string>
     <string name="video_buffer_length_settings">طول التخزين المؤقت</string>
     <string name="video_buffer_disk_settings">التخزين المؤقت للفيديو علي القرص</string>
     <string name="video_buffer_clear_settings">مسح التخزين المؤقت للصورة والفيديو</string>
-
     <string name="video_ram_description">سوف يسبب بعض الأعطال إذا تم إعداد قيمة عالية جدًا. لا\تغير القيمة إذا كان لديك ذاكرة تخزين عشوائية منخفضة كتلفاز أندرويد أو هاتف قديم</string>
     <string name="video_disk_description">قد يسبب مشاكل مع حجم ذاكرة التخزين المنخفضة كأجهزة تلفاز الأندرويد إذا أعددت قيمة عالية جدًا</string>
-
-    <string name="dns_pref">DNS فوق HTTPS</string>
+    <string name="dns_pref">إستخدام DNS بدلا من HTTPS</string>
     <string name="dns_pref_summary">مفيد لتجاوز حجب مزود خدمة الإنترنت</string>
-
     <string name="add_site_pref">نسخ موقع</string>
     <string name="remove_site_pref">حذف موقع</string>
-    <string name="add_site_summary">إضافة نسخة من موقع موجود, بعنوان رابط مختلف</string>
-
+    <string name="add_site_summary">إضافة نسخة من موقع موجود، بعنوان URL مختلف</string>
     <string name="download_path_pref">مسار التنزيل</string>
-
-    <string name="nginx_url_pref">عنوان رابط سيرفر Nginx</string>
-
+    <string name="nginx_url_pref">عنوان URL لخادم NGINX</string>
     <string name="display_subbed_dubbed_settings">عرض أنمي مدبلج / مترجم</string>
-
     <string name="resize_fit">ملائمة الشاشة</string>
     <string name="resize_fill">امتداد</string>
     <string name="resize_zoom">تكبير</string>
-
     <string name="legal_notice">إخلاء مسؤولية</string>
     <string name="legal_notice_key" translatable="false">legal_notice_key</string>
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
@@ -361,19 +304,14 @@
     <string name="subtitles_encoding">فك تشفير الترجمة</string>
     <string name="category_providers">المصادر</string>
     <string name="category_ui">الواجهة</string>
-
-
     <string name="automatic">أوتوماتيك</string>
     <string name="tv_layout">واجهة تلفاز</string>
     <string name="phone_layout">واجهة هاتف</string>
     <string name="emulator_layout">واجهة محاكي</string>
-
     <string name="primary_color_settings">اللون الأساسي</string>
     <string name="app_theme_settings">مظهر التطبيق</string>
     <string name="bottom_title_settings">موضع عنوان الملصق</string>
     <string name="bottom_title_settings_des">وضع العنوان تحت الملصق</string>
-
-
     <!-- account stuff -->
     <string name="anilist_key" translatable="false">anilist_key</string>
     <string name="mal_key" translatable="false">mal_key</string>
@@ -386,7 +324,6 @@
     <string name="example_site_name">إسم الموقع</string>
     <string name="example_site_url">رابط الموقع</string>
     <string name="example_lang_name">اللغة (الإنجليزية)</string>
-
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
     <string name="anilist_account_settings" translatable="false">AniList</string>
@@ -397,7 +334,7 @@
     -->
     <string name="login_format" formatted="true">%s %s</string>
     <string name="account">حساب</string>
-    <string name="logout">تسجيل خروج</string>
+    <string name="logout">تسجيل الخروج</string>
     <string name="login">تسجيل الدخول</string>
     <string name="switch_account">تبديل الحساب</string>
     <string name="add_account">إضافة حساب</string>
@@ -411,7 +348,6 @@
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">تم توثيق %s</string>
     <string name="authenticated_user_fail" formatted="true">فشل توثيق %s</string>
-
     <!-- ============ -->
     <string name="none">لا شيء</string>
     <string name="normal">عادي</string>
@@ -424,12 +360,11 @@
     <string name="subtitles_shadow">ظل</string>
     <string name="subtitles_raised">رفع</string>
     <string name="subtitle_offset">مزامنة الترجمة</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000 مللي ثانية</string>
     <string name="subtitle_offset_title">تأخير الترجمة</string>
     <string name="subtitle_offset_extra_hint_later_format">استخدم هذا إذا كانت الترجمة تُعرض %dms مبكرًا جدًا</string>
     <string name="subtitle_offset_extra_hint_before_format">استخدم هذا إذا كانت الترجمة تُعرض %dms متأخرًا جدًا</string>
     <string name="subtitle_offset_extra_hint_none_format">لا تأخير في الترجمة</string>
-
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
     see:
@@ -437,7 +372,6 @@
 	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
     -->
     <string name="subtitles_example_text">نصٌّ حكيمٌ لهُ سِرٌّ قاطِعٌ وَذُو شَأنٍ عَظيمٍ مكتوبٌ على ثوبٍ أخضرَ ومُغلفٌ بجلدٍ أزرق</string>
-
     <string name="recommended">مُوصي به</string>
     <string name="player_loaded_subtitles" formatted="true">تم تحميل %s</string>
     <string name="player_load_subtitles">إختيار ملف</string>
@@ -446,20 +380,17 @@
     <string name="actor_main">رئيسي</string>
     <string name="actor_supporting">مساعد</string>
     <string name="actor_background">الخلفية</string>
-
     <string name="home_source">مصدر</string>
     <string name="home_random">عشوائي</string>
-
     <string name="coming_soon">قريبا…</string>
-
-    <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam">تصوير كام</string>
+    <string name="quality_cam_rip">تصوير كام قطع</string>
+    <string name="quality_cam_hd">تصوير كام جودة عالية</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">بلو راي</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
@@ -468,7 +399,6 @@
     <string name="quality_hdr">HDR</string>
     <string name="quality_sdr">SDR</string>
     <string name="quality_webrip">Web</string>
-
     <string name="poster_image">صورة الملصق</string>
     <string name="category_player">المُشغل</string>
     <string name="resolution_and_title">الأبعاد والعنوان</string>
@@ -484,7 +414,7 @@
     <string name="extras">اكسترا</string>
     <string name="trailer">مقطع دعائي</string>
     <string name="network_adress_example">رابط الفيديو</string>
-    <string name="referer">Referer</string>
+    <string name="referer">المرجع</string>
     <string name="next">التالي</string>
     <string name="provider_languages_tip">شاهد الفيديوهات بهذه اللغات</string>
     <string name="previous">السابق</string>
@@ -496,7 +426,7 @@
     <string name="extensions">الإضافات</string>
     <string name="add_repository">إضافة مستودع</string>
     <string name="repository_name_hint">إسم المستودع</string>
-    <string name="repository_url_hint">عنوان رابط المستودع</string>
+    <string name="repository_url_hint">عنوان URL للمستودع</string>
     <string name="plugin_loaded">تم تحميل الإضافة</string>
     <string name="plugin_deleted">تم إزالة الإضافة</string>
     <string name="plugin_load_fail" formatted="true">فشل التحميل %s</string>
@@ -513,22 +443,23 @@
     <string name="plugins_downloaded" formatted="true">تم تحميل: %d</string>
     <string name="plugins_disabled" formatted="true">مُعطل %d</string>
     <string name="plugins_not_downloaded" formatted="true">غير مُحمل: %d</string>
-    <string name="blank_repo_message">قم بإضافة مستودع لكي يتم تثبيت إضافات المواقع</string>
+    <string name="blank_repo_message">لا يحتوي CloudStream على مواقع مثبتة بشكل افتراضي. تحتاج إلى تثبيت المواقع من المستودعات.
+\n
+\nبسبب إزالة قانون الألفية الجديدة لحقوق طبع ونشر المواد الرقمية بدون عقل بواسطة Sky Uk Limited 🤮 ، لا يمكننا ربط موقع المستودع في التطبيق.
+\n
+\nانضم إلى Discord أو ابحث عبر الإنترنت.</string>
     <string name="view_public_repositories_button">عرض مستودعات المجتمع</string>
     <string name="view_public_repositories_button_short">قائمة عامة</string>
     <string name="uppercase_all_subtitles">جميع الترجمات حروف كبيرة</string>
-
     <string name="download_all_plugins_from_repo">تحميل جميع الإضافات من هذا المستودع?</string>
-    <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
+    <string name="single_plugin_disabled" formatted="true">%s (معطل)</string>
     <string name="tracks">المسارات</string>
     <string name="audio_tracks">مسار الصوت</string>
     <string name="video_tracks">مسار الفيديو</string>
     <string name="apply_on_restart">تطبيق بعد إعادة التشغيل</string>
-
     <string name="safe_mode_title">وضع الامان مفعل</string>
-    <string name="safe_mode_description">An unrecoverable crash occurred and we\'ve automatically disabled all extensions, so you can find and remove the extension which is causing trouble.</string>
+    <string name="safe_mode_description">حدث عطل غير قابل للاسترداد وقمنا تلقائيا بتعطيل جميع الإضافات ، حتى تتمكن من العثور على الإضافة التي تسبب مشكلة وإزالتها.</string>
     <string name="safe_mode_crash_info">عرض بيانات الاعطال</string>
-
     <string name="extension_rating" formatted="true">تقييم: %s</string>
     <string name="extension_description">الوصف</string>
     <string name="extension_version">إصدار</string>
@@ -537,10 +468,45 @@
     <string name="extension_authors">المؤلفون</string>
     <string name="extension_types">مدعوم</string>
     <string name="extension_language">اللغة</string>
-
     <string name="hls_playlist">قائمة HLS</string>
     <string name="player_pref">مُشغل الفيديو المفضل</string>
     <string name="clear_history">مسح السجل</string>
     <string name="history">السجل</string>
     <string name="enable_skip_op_from_database_des">عرض زر تخطي المقدمة/الخاتمة</string>
+    <string name="cast_format" formatted="true">طاقم العمل: %s</string>
+    <string name="next_episode_time_day_format" formatted="true">%d يوم %d ساعة %d دقيقة</string>
+    <string name="next_episode_time_hour_format" formatted="true">%d ساعة %d دقيقة</string>
+    <string name="filler" formatted="true">الفيلير</string>
+    <string name="action_open_play">فتح(تشغيل)</string>
+    <string name="season_format">%s %d%s</string>
+    <string name="plugins_updated" formatted="true">المكونات الإضافية المحدثة %d</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="player_settings_play_in_web">اسقاط فيديو الويب</string>
+    <string name="player_settings_play_in_browser">المتصفح</string>
+    <string name="skip_type_format" formatted="true">تخطي %s</string>
+    <string name="skip_type_op">الافتتاح</string>
+    <string name="skip_type_ed">النهاية</string>
+    <string name="skip_type_recap">الخلاصة</string>
+    <string name="skip_type_mixed_ed">نهاية مختلطة</string>
+    <string name="skip_type_mixed_op">افتتاح مختلط</string>
+    <string name="skip_type_intro">المقدمة</string>
+    <string name="clipboard_too_large">النص كثير جدا. تعذر الحفظ في الحافظة.</string>
+    <string name="action_mark_as_watched">علّمه كفيديو تمت مشاهدته</string>
+    <string name="yes">نعم</string>
+    <string name="no">ﻻ</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s الحلقة %d</string>
+    <string name="next_episode_format" formatted="true">سيتم إصدار الحلقة %d في</string>
+    <string name="update_notification_failed">فشل تحديث التطبيق</string>
+    <string name="extension_install_first">تثبيت الإضافة أولا</string>
+    <string name="player_settings_play_in_app">مشغل داخلي</string>
+    <string name="app_not_found_error">لم يتم العثور على التطبيق</string>
+    <string name="all_languages_preference">جميع اللغات</string>
+    <string name="skip_type_creddits">الإعتمادات</string>
+    <string name="update_notification_downloading">تنزيل تحديث التطبيق</string>
+    <string name="update_notification_installing">تثبيت تحديث التطبيق</string>
+    <string name="next_episode_time_min_format" formatted="true">%d دقيقة</string>
+    <string name="episodes_range">%d-%d</string>
+    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="confirm_exit_dialog">هل أنت متأكد أنك تريد الخروج؟</string>
 </resources>

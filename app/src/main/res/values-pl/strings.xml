@@ -264,7 +264,7 @@
     <string name="dns_pref_summary">Przydatne w pomijaniu blokad dostawców internetu</string>
     <string name="add_site_pref">Sklonuj stronę</string>
     <string name="remove_site_pref">Usuń stronę</string>
-    <string name="add_site_summary">Dodaj klona istniejącej strony z innym adresem url</string>
+    <string name="add_site_summary">Dodaj klona istniejącej strony z innym adresem URL</string>
     <string name="download_path_pref">Ścieżka pobierania</string>
     <string name="nginx_url_pref">Url serwera Nginx</string>
     <string name="display_subbed_dubbed_settings">Wyświetlanie Anime z dubbingiem/subbingiem</string>
@@ -340,7 +340,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">Blu-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
@@ -356,7 +356,7 @@
     <string name="resolution">Rozdzielczość</string>
     <string name="error_invalid_id">Niepoprawne id</string>
     <string name="error_invalid_data">Niepoprawne dane</string>
-    <string name="error_invalid_url">Niepoprawny url</string>
+    <string name="error_invalid_url">Niepoprawny URL</string>
     <string name="error">Błąd</string>
     <string name="subtitles_remove_captions">Usuń informacje dla niesłyszących z napisów</string>
     <string name="subtitles_remove_bloat">Usuń nadmiarowe informacje z napisów</string>
@@ -375,7 +375,7 @@
     <string name="extensions">Dodatki</string>
     <string name="add_repository">Dodaj repozytorium</string>
     <string name="repository_name_hint">Nazwa repozytorium</string>
-    <string name="repository_url_hint">Adres url repozytorium</string>
+    <string name="repository_url_hint">Adres URL repozytorium</string>
     <string name="plugin_loaded">Rozszerzenie załadowane</string>
     <string name="plugin_deleted">Rozszerzenie usunięte</string>
     <string name="plugin_load_fail" formatted="true">Błąd ładowania %s</string>
@@ -395,7 +395,7 @@
     <string name="plugins_updated">Zaaktualizowano %d rozszerzeń</string>
     <string name="blank_repo_message">CloudStream nie ma domyślnie zainstalowanych żadnych witryn. Musisz zainstalować witryny z repozytoriów.
 \n
-\nZ powodu bezmyślnego usunięcia DMCA przez Sky Uk Limited 🤮 nie możemy zamieścić linku dowitryny z repozytoriami.
+\nZ powodu bezmyślnego usunięcia DMCA przez Sky UK Limited 🤮 nie możemy zamieścić linku dowitryny z repozytoriami.
 \n
 \nDołącz do naszego Discorda lub szukaj online.</string>
     <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
@@ -446,4 +446,5 @@
     <string name="update_notification_downloading">Pobieranie aktualizacji aplikacji</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="cast_format" formatted="true">Obsada: %s</string>
+    <string name="automatic_plugin_download_summary">Automatycznie instaluj wszystkie jeszcze nie zainstalowane wtyczki z dodanych repozytoriów.</string>
 </resources>

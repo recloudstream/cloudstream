@@ -234,7 +234,7 @@
     <string name="bug_report_settings_on">Sends no data</string>
     <string name="show_fillers_settings">Show filler episode for anime</string>
     <string name="show_trailers_settings">Show trailers</string>
-    <string name="kitsu_settings">Show posters from kitsu</string>
+    <string name="kitsu_settings">Show posters from Kitsu</string>
     <string name="pref_filter_search_quality">Hide selected video quality on Search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>
@@ -361,7 +361,7 @@
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
     <string name="add_site_pref">Clone site</string>
     <string name="remove_site_pref">Remove site</string>
-    <string name="add_site_summary">Add a clone of an existing site, with a different url</string>
+    <string name="add_site_summary">Add a clone of an existing site, with a different URL</string>
     <string name="download_path_pref">Download path</string>
     <string name="nginx_url_pref">NGINX server URL</string>
     <string name="display_subbed_dubbed_settings">Display Dubbed/Subbed Anime</string>
@@ -482,7 +482,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">Blu-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
@@ -496,9 +496,9 @@
     <string name="resolution_and_title">Resolution and title</string>
     <string name="title">Title</string>
     <string name="resolution">Resolution</string>
-    <string name="error_invalid_id">Invalid id</string>
+    <string name="error_invalid_id">Invalid ID</string>
     <string name="error_invalid_data">Invalid data</string>
-    <string name="error_invalid_url">Invalid url</string>
+    <string name="error_invalid_url">Invalid URL</string>
     <string name="error">Error</string>
     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
     <string name="subtitles_remove_bloat">Remove bloat from subtitles</string>
@@ -518,10 +518,10 @@
     <string name="extensions">Extensions</string>
     <string name="add_repository">Add repository</string>
     <string name="repository_name_hint">Repository name</string>
-    <string name="repository_url_hint">Repository url</string>
+    <string name="repository_url_hint">Repository URL</string>
     <string name="plugin_loaded">Plugin Loaded</string>
     <string name="plugin_deleted">Plugin Deleted</string>
-    <string name="plugin_load_fail" formatted="true">Failed to load %s</string>
+    <string name="plugin_load_fail" formatted="true">Could not load %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Started downloading %d %s</string>
     <string name="batch_download_finish_format" formatted="true">Downloaded %d %s successfully</string>
@@ -538,7 +538,7 @@
     <string name="plugins_updated" formatted="true">Updated %d plugins</string>
     <string name="blank_repo_message">CloudStream has no sites installed by default. You need to install the sites from repositories.
 \n
-\nBecause of a brainless DMCA takedown by Sky Uk Limited 🤮 we cannot link the repository site in app.
+\nBecause of a brainless DMCA takedown by Sky UK Limited 🤮 we cannot link the repository site in app.
 \n
 \nJoin our Discord or search online.</string>
     <string name="view_public_repositories_button">View community repositories</string>
@@ -584,7 +584,7 @@
     <string name="enable_skip_op_from_database_des">Show skip popups for opening/ending</string>
     <string name="clipboard_too_large">Too much text. Unable to save to clipboard.</string>
     <string name="action_mark_as_watched">Mark as watched</string>
-    <string name="confirm_exit_dialog">Are you sure you want to exit?</string>
+    <string name="confirm_exit_dialog">Are you sure you want to exit\?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="update_notification_downloading">Downloading app update</string>

@@ -275,7 +275,7 @@
     <string name="dns_pref_summary">Utile per bypassare i blocchi ISP</string>
     <string name="add_site_pref">Clona un sito</string>
     <string name="remove_site_pref">Rimuovi sito</string>
-    <string name="add_site_summary">Aggiungi un clone di un sito esistente, con un url differente</string>
+    <string name="add_site_summary">Aggiungi un clone di un sito esistente, con un URL differente</string>
     <string name="download_path_pref">Posizione Download</string>
     <string name="nginx_url_pref">URL server NGINX</string>
     <string name="display_subbed_dubbed_settings">Mostra anime doppiati/sottotitolati</string>
@@ -366,7 +366,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">Blu-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
@@ -382,7 +382,7 @@
     <string name="resolution">Risoluzione</string>
     <string name="error_invalid_id">ID non valido</string>
     <string name="error_invalid_data">Dati non validi</string>
-    <string name="error_invalid_url">Url non valido</string>
+    <string name="error_invalid_url">URL non valido</string>
     <string name="error">Errore</string>
     <!--<string name="subtitles_remove_captions">Remove closed captions from subtitles</string>-->
     <!--<string name="subtitles_remove_bloat">Remove bloat from subtitles</string>-->
@@ -402,7 +402,7 @@
     <string name="extensions">Estensioni</string>
     <string name="add_repository">Aggiungi repository</string>
     <string name="repository_name_hint">Nome repository</string>
-    <string name="repository_url_hint">Url repository</string>
+    <string name="repository_url_hint">URL repository</string>
     <string name="plugin_loaded">Plugin caricato</string>
     <string name="plugin_deleted">Plugin eliminato</string>
     <string name="plugin_load_fail" formatted="true">Caricamento non riuscito %s</string>
