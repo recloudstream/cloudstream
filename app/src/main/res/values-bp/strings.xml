@@ -269,7 +269,7 @@
     <string name="dns_pref_summary">Útil para burlar bloqueios de provedores de internet</string>
     <string name="add_site_pref">Clonar site</string>
     <string name="remove_site_pref">Remover site</string>
-    <string name="add_site_summary">Adiciona um clone de um site existente, com uma url diferente</string>
+    <string name="add_site_summary">Adiciona um clone de um site existente, com uma URL diferente</string>
     <string name="download_path_pref">Caminho para Download</string>
     <string name="nginx_url_pref">Url do servidor Nginx</string>
     <string name="display_subbed_dubbed_settings">Mostrar Anime Dublado/Legendado</string>
@@ -382,7 +382,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">Blu-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>

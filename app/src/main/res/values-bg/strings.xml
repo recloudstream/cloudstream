@@ -273,9 +273,9 @@
     <string name="dns_pref_summary">Полезно за заобикаляне на блокирания от ISP доставчик</string>
     <string name="add_site_pref">Сайт за клониране</string>
     <string name="remove_site_pref">Премахване на сайта</string>
-    <string name="add_site_summary">Добавяне на клонинг на съществуващ сайт с различен URL адрес</string>
+    <string name="add_site_summary">Добавяне на клонинг на съществуващ сайт с различен URL</string>
     <string name="download_path_pref">Път за изтегляне</string>
-    <string name="nginx_url_pref">URL адрес на сървъра на Nginx</string>
+    <string name="nginx_url_pref">URL адрес на сървър NGINX</string>
     <string name="display_subbed_dubbed_settings">Показване на дублирани/субирани аниме</string>
     <string name="resize_fit">Побиране в екрана</string>
     <string name="resize_fill">Разтягане</string>
@@ -300,10 +300,10 @@
     <string name="bottom_title_settings">Местоположение на заглавието на плаката</string>
     <string name="bottom_title_settings_des">Поставете заглавието под плаката</string>
     <string name="example_password">парола123</string>
-    <string name="example_username">MyCoolUsername</string>
+    <string name="example_username">Моето готино потребителско име</string>
     <string name="example_email">hello@world.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">MyCoolSite</string>
+    <string name="example_site_name">Моят готин сайт</string>
     <string name="example_site_url">example.com</string>
     <string name="example_lang_name">Езиков код (en)</string>
     <!--
@@ -334,7 +334,7 @@
     <string name="subtitles_shadow">Сянка</string>
     <string name="subtitles_raised">Повдигнати</string>
     <string name="subtitle_offset">Синхронизиране на суб</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000.ms</string>
     <string name="subtitle_offset_title">Забавяне на субтитрите</string>
     <string name="subtitle_offset_extra_hint_later_format">Използвайте това, ако субтитрите се показват %dms твърде рано</string>
     <string name="subtitle_offset_extra_hint_before_format">Използвайте това, ако субтитрите се показват %dms твърде късно</string>
@@ -364,7 +364,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">Blu-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
@@ -400,7 +400,7 @@
     <string name="extensions">Разширения</string>
     <string name="add_repository">Добавяне на хранилище</string>
     <string name="repository_name_hint">Име на хранилище</string>
-    <string name="repository_url_hint">URL адрес на хранилището</string>
+    <string name="repository_url_hint">URL на хранилището</string>
     <string name="plugin_loaded">Приставката е заредена</string>
     <string name="plugin_deleted">Приставката е изтрита</string>
     <string name="plugin_load_fail" formatted="true">Неуспешно зареждане %s</string>
@@ -418,7 +418,11 @@
     <string formatted="true" name="plugins_disabled">Деактивирано: %d</string>
     <string formatted="true" name="plugins_not_downloaded">Не е изтеглено: %d</string>
     <string formatted="true" name="plugins_updated">Актуализирани %d плъгини</string>
-    <string name="blank_repo_message">CloudStream няма инсталирани сайтове по подразбиране. Трябва да инсталирате сайтовете от хранилища.\n\nПоради безмозъчно премахване на DMCA от Sky Uk Limited 🤮 не можем да свържем сайтовете на хранилищата в приложението.\n\nПрисъединете се към нашия дискорд за връзки или търсете онлайн.</string>
+    <string name="blank_repo_message">CloudStream няма инсталирани сайтове по подразбиране. Трябва да инсталирате сайтовете от хранилища.
+\n
+\nПоради безмозъчно премахване на DMCA от Sky Uk Limited 🤮 не можем да свържем сайта на хранилището в приложението.
+\n
+\nПрисъединете се към нашия Дискорд или търсете онлайн.</string>
     <string name="view_public_repositories_button">Вижте хранилищата на общността</string>
     <string name="view_public_repositories_button_short">Публичен списък</string>
     <string name="uppercase_all_subtitles">Всички субтитри с главни букви</string>

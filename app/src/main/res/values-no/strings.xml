@@ -221,7 +221,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="sort_clear">Tøm</string>
     <string name="category_account">Kontoer</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %s</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="play_with_app_name">Spill med CloudStream</string>
     <string name="sort_copy">Kopier</string>
     <string name="next_episode_format" formatted="true">Episode %d vil bli sluppet om</string>
@@ -311,4 +311,104 @@
     <string name="history">Historikk</string>
     <string name="double_tap_to_pause_settings_des">Trykk i midten for å sette på pause</string>
     <string name="no_episodes_found">Fant ingen episoder</string>
+    <string name="filler" formatted="true">Fyllstoff</string>
+    <string name="play_livestream_button">Spill direktestrøm</string>
+    <string name="subs_import_text" formatted="true">Importer skrifter ved å plassere den i %s</string>
+    <string name="autoplay_next_settings_des">Start neste episode når den som spiller slutter</string>
+    <string name="episode_sync_settings">Oppdater visningsframdrift</string>
+    <string name="kitsu_settings">Vis plakater fra Kitsu</string>
+    <string name="automatic_plugin_download">Last ned programtillegg automatisk</string>
+    <string name="cartoons_singular">Tegnefilm</string>
+    <string name="show_title">Navn</string>
+    <string name="nginx_url_pref">NGINX-tjenernettadresse</string>
+    <string name="download_path_pref">Nedlastingssti</string>
+    <string name="subtitles_encoding">Undertekst-koding</string>
+    <string name="example_email">Hei@verden.no</string>
+    <string name="example_site_name">MinKuleSide</string>
+    <string name="example_site_url">eksempel.no</string>
+    <string name="login">Logg inn</string>
+    <string name="added_sync_format" formatted="true">La til %s</string>
+    <string name="subtitles_outline">Omriss</string>
+    <string name="subtitles_depressed">Nedsenket</string>
+    <string name="player_loaded_subtitles" formatted="true">Lastet inn %s</string>
+    <string name="subtitle_offset_extra_hint_none_format">Ingen undertekstforsinkelse</string>
+    <string name="subtitle_offset_extra_hint_later_format">Bruk dette hvis undertekster vises %dms for tidlig</string>
+    <string name="actor_main">Hovedrolle</string>
+    <string name="actor_supporting">Støtterolle</string>
+    <string name="next">Neste</string>
+    <string name="referer">Referent</string>
+    <string name="plugin_deleted">Programtillegg slettet</string>
+    <string name="repository_name_hint">Pakkebrønnsnavn</string>
+    <string name="repository_url_hint">Pakkebrønnsnettadresse</string>
+    <string name="add_repository">Legg til pakkebrønn</string>
+    <string name="is_adult">18+</string>
+    <string name="plugin_load_fail" formatted="true">Kunne ikke laste inn %s</string>
+    <string name="plugins_downloaded" formatted="true">Nedlastet: %d</string>
+    <string name="plugins_disabled" formatted="true">Avskrudd: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Ikke nedlastet: %d</string>
+    <string name="plugins_updated" formatted="true">Oppdaterte %d programtillegg</string>
+    <string name="setup_extensions_subtext">Last ned listen over sider du vil bruke</string>
+    <string name="delete_repository_plugins">Dette vil også slette alle pakkebrønnsprogramtillegg</string>
+    <string name="view_public_repositories_button">Vis gemenskapspakkebrønner</string>
+    <string name="download_all_plugins_from_repo">Last ned alle programtilleggene fra denne pakkebrønnen\?</string>
+    <string name="single_plugin_disabled" formatted="true">%s (avskrudd)</string>
+    <string name="tracks">Spor</string>
+    <string name="app_not_found_error">Fant ikke programmet</string>
+    <string name="clipboard_too_large">For mye tekst. Kunne ikke lagre i utklippstavlen.</string>
+    <string name="search_hint_site" formatted="true">Søk i %s …</string>
+    <string name="stream">Strøm</string>
+    <string name="provider_info_meta">Metadata tilbys ikke av siden, videoinnlasting vil mislykkes hvis den ikke finnes på siden.</string>
+    <string name="type_re_watching">Ser om igjen</string>
+    <string name="automatic_plugin_updates">Automatiske programtilleggsoppdateringer</string>
+    <string name="restore_failed_format" formatted="true">Klarte ikke å gjenopprette data fra fil %s</string>
+    <string name="backup_failed_error_format">Kunne ikke sikkerhetskopiere %s</string>
+    <string name="example_password">passord123</string>
+    <string name="example_lang_name">Språkkode (nb_NO)</string>
+    <string name="previous">Forrige</string>
+    <string name="crash_reporting_title">Krasjrapportering</string>
+    <string name="extensions">Utvidelser</string>
+    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="example_username">MittKuleBrukernavn</string>
+    <string name="skip_setup">Hopp over oppsett</string>
+    <string name="preferred_media_subtext">Hva du ønsker å se</string>
+    <string name="login_format" formatted="true">%s %s</string>
+    <string name="provider_languages_tip">Se videoer på disse språkene</string>
+    <string name="setup_done">Ferdig</string>
+    <string name="plugin_singular">programtillegg</string>
+    <string name="safe_mode_title">Trygt modus på</string>
+    <string name="action_add_to_bookmarks">Sett visningsstatus</string>
+    <string name="episode_sync_settings_des">Auto-synkroniser din nåværende episode-framdrift</string>
+    <string name="episodes_range">%d-%d</string>
+    <string name="view_public_repositories_button_short">Offentlig liste</string>
+    <string name="plugin">programtillegg</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nigjen</string>
+    <string name="limit_title_rez">Videooppløsning</string>
+    <string name="subtitle_offset">Synkroniser undertekster</string>
+    <string name="subtitle_offset_title">Undertekstforsinkelse</string>
+    <string name="subtitles_example_text">Sær golfer med kølle vant sexquiz på WC i hjemby</string>
+    <string name="quality_blueray">Blu-ray</string>
+    <string name="error_invalid_data">Ugyldig data</string>
+    <string name="category_player">Avspiller</string>
+    <string name="resolution">Oppløsning</string>
+    <string name="poster_image">Plakatbilde</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="resolution_and_title">Oppløsning og navn</string>
+    <string name="title">Navn</string>
+    <string name="error_invalid_id">Ugyldig ID</string>
+    <string name="error">Feil</string>
+    <string name="app_layout_subtext">Endre programutseende for å passe din enhet</string>
+    <string name="error_invalid_url">Ugyldig nettadresse</string>
+    <string name="batch_download">Knippe-nedlasting</string>
+    <string name="delete_repository">Slett pakkebrønn</string>
+    <string name="blank_repo_message">CloudStream har ingen sider installert som forvalg. Du må installere sidene fra pakkebrønner.
+\n
+\nSom følge av en hjernedød DMCA-forespørsel fra Sky UK Limited 🤮 kan vi ikke lenke til pakkebrønnssiden i programmet.
+\n
+\nTa del i vår discord, eller søk på nett.</string>
+    <string name="subtitle_offset_extra_hint_before_format">Bruk dette hvis undertekster vises %dms for sent</string>
+    <string name="plugin_loaded">Programtillegg innlastet</string>
+    <string name="audio_tracks">Lydspor</string>
+    <string name="skip_type_creddits">Rulletekst</string>
+    <string name="skip_type_intro">Introduksjon</string>
 </resources>
