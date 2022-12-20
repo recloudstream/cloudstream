@@ -136,8 +136,8 @@
     <string name="backup_settings">نسخ إحتياطي</string>
     <string name="restore_success">تم تحميل ملف النسخة الاحتياطية</string>
     <string name="restore_failed_format" formatted="true">فشل استيراد البيانات من الملف %s</string>
-    <string name="backup_success">تم تخزين البيانات بنجاح</string>
-    <string name="backup_failed">إذن الوصول الي ذاكرة التخزين مفقود, من فضلك حاول مجددا</string>
+    <string name="backup_success">البيانات المخزنة</string>
+    <string name="backup_failed">إذن الوصول الى ذاكرة التخزين مفقود, من فضلك حاول مجددا.</string>
     <string name="backup_failed_error_format">فشل إنشاء نسخة احتياطية %s</string>
     <string name="search">بحث</string>
     <string name="category_account">الحسابات</string>
@@ -263,7 +263,7 @@
     <string name="video_buffer_length_settings">طول التخزين المؤقت</string>
     <string name="video_buffer_disk_settings">التخزين المؤقت للفيديو علي القرص</string>
     <string name="video_buffer_clear_settings">مسح التخزين المؤقت للصورة والفيديو</string>
-    <string name="video_ram_description">سوف يسبب بعض الأعطال إذا تم إعداد قيمة عالية جدًا. لا\تغير القيمة إذا كان لديك ذاكرة تخزين عشوائية منخفضة كتلفاز أندرويد أو هاتف قديم</string>
+    <string name="video_ram_description">يتسبب في حدوث أعطال عشوائية إذا تم ضبطه على قيمة عالية جدًا. اتركه كما هو على الأجهزة ذات الذاكرة المنخفضة.</string>
     <string name="video_disk_description">قد يسبب مشاكل مع حجم ذاكرة التخزين المنخفضة كأجهزة تلفاز الأندرويد إذا أعددت قيمة عالية جدًا</string>
     <string name="dns_pref">إستخدام DNS بدلا من HTTPS</string>
     <string name="dns_pref_summary">مفيد لتجاوز حجب مزود خدمة الإنترنت</string>
@@ -347,7 +347,7 @@
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">تم توثيق %s</string>
-    <string name="authenticated_user_fail" formatted="true">فشل توثيق %s</string>
+    <string name="authenticated_user_fail" formatted="true">تعذر المصادقة على %s</string>
     <!-- ============ -->
     <string name="none">لا شيء</string>
     <string name="normal">عادي</string>
@@ -404,7 +404,7 @@
     <string name="resolution_and_title">الأبعاد والعنوان</string>
     <string name="title">العنوان</string>
     <string name="resolution">الأبعاد</string>
-    <string name="error_invalid_id">هوية غير صالحة</string>
+    <string name="error_invalid_id">معرف غير صالح</string>
     <string name="error_invalid_data">بيانات غير صالحة</string>
     <string name="error_invalid_url">عنون رابط غير صالح</string>
     <string name="error">خطأ</string>
@@ -429,10 +429,10 @@
     <string name="repository_url_hint">عنوان URL للمستودع</string>
     <string name="plugin_loaded">تم تحميل الإضافة</string>
     <string name="plugin_deleted">تم إزالة الإضافة</string>
-    <string name="plugin_load_fail" formatted="true">فشل التحميل %s</string>
+    <string name="plugin_load_fail" formatted="true">تعذر التحميل %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">بدأ تنزيل %d %s</string>
-    <string name="batch_download_finish_format" formatted="true">تم تنزيل %d %s بنجاح</string>
+    <string name="batch_download_finish_format" formatted="true">تم التنزيل %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">جميع %s محملة بالفعل</string>
     <string name="batch_download">تحميل مكثف</string>
     <string name="plugin_singular">إضافة</string>
@@ -445,7 +445,7 @@
     <string name="plugins_not_downloaded" formatted="true">غير مُحمل: %d</string>
     <string name="blank_repo_message">لا يحتوي CloudStream على مواقع مثبتة بشكل افتراضي. تحتاج إلى تثبيت المواقع من المستودعات.
 \n
-\nبسبب إزالة قانون الألفية الجديدة لحقوق طبع ونشر المواد الرقمية بدون عقل بواسطة Sky Uk Limited 🤮 ، لا يمكننا ربط موقع المستودع في التطبيق.
+\nبسبب إزالة قانون الألفية الجديدة لحقوق طبع ونشر المواد الرقمية بدون تفكير مسبق بواسطة Sky UK Limited 🤮 ، لا يمكننا ربط موقع المستودع في التطبيق.
 \n
 \nانضم إلى Discord أو ابحث عبر الإنترنت.</string>
     <string name="view_public_repositories_button">عرض مستودعات المجتمع</string>
@@ -483,7 +483,7 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">اسقاط فيديو الويب</string>
-    <string name="player_settings_play_in_browser">المتصفح</string>
+    <string name="player_settings_play_in_browser">متصفح الإنترنت</string>
     <string name="skip_type_format" formatted="true">تخطي %s</string>
     <string name="skip_type_op">الافتتاح</string>
     <string name="skip_type_ed">النهاية</string>
@@ -497,16 +497,17 @@
     <string name="no">ﻻ</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s الحلقة %d</string>
     <string name="next_episode_format" formatted="true">سيتم إصدار الحلقة %d في</string>
-    <string name="update_notification_failed">فشل تحديث التطبيق</string>
+    <string name="update_notification_failed">تعذر تثبيت الإصدار الجديد من التطبيق</string>
     <string name="extension_install_first">تثبيت الإضافة أولا</string>
     <string name="player_settings_play_in_app">مشغل داخلي</string>
     <string name="app_not_found_error">لم يتم العثور على التطبيق</string>
     <string name="all_languages_preference">جميع اللغات</string>
     <string name="skip_type_creddits">الإعتمادات</string>
-    <string name="update_notification_downloading">تنزيل تحديث التطبيق</string>
-    <string name="update_notification_installing">تثبيت تحديث التطبيق</string>
+    <string name="update_notification_downloading">‌تنزيل تحديث التطبيق…</string>
+    <string name="update_notification_installing">‏تثبيت تحديث التطبيق…</string>
     <string name="next_episode_time_min_format" formatted="true">%d دقيقة</string>
     <string name="episodes_range">%d-%d</string>
     <string name="episode_format" formatted="true">%d %s</string>
     <string name="confirm_exit_dialog">هل أنت متأكد أنك تريد الخروج؟</string>
+    <string name="automatic_plugin_download_summary">قم بتثبيت جميع المكونات الإضافية التي لم يتم تثبيتها بعد تلقائيا من المستودعات المضافة.</string>
 </resources>

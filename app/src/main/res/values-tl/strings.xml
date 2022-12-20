@@ -208,4 +208,55 @@
     <string name="show_log_cat">Ipakita ang Logcat 🐈</string>
     <string name="autoplay_next_settings">Kusang i-play ang next episode</string>
     <string name="enable_nsfw_on_providers">Payagan ang NSFW sa mga suportadong providers</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="cast_format" formatted="true">I-Cast: %s</string>
+    <string name="next_episode_format" formatted="true">Episode %d ay ipapalabas sa loob ng</string>
+    <string name="search_hint_site" formatted="true">Hanapin ang %s…</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd, %dh:%dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dh : %dm</string>
+    <string name="play_with_app_name">I-play gamit ang CloudStream</string>
+    <string name="type_re_watching">Pinapanuod Uli</string>
+    <string name="play_livestream_button">Panuorin ang Livestream</string>
+    <string name="action_add_to_bookmarks">I-set ang Status</string>
+    <string name="sort_copy">Kopyahin</string>
+    <string name="sort_close">Isara</string>
+    <string name="sort_clear">Tanggalin Lahat</string>
+    <string name="sort_save">I-save</string>
+    <string name="provider_info_meta">Ang Metadata ay di galing sa site, mag-fail ang pag load ng video pag wala ito sa site.</string>
+    <string name="autoplay_next_settings_des">Simulan ang susunod na episode kapag natapos ang kasalukuyan</string>
+    <string name="restore_settings">Ibalik ang data gamit ang backup</string>
+    <string name="backup_settings">I-backup ang data</string>
+    <string name="restore_success">Nabuksan ang backup file</string>
+    <string name="backup_success">Naitabi ang Data</string>
+    <string name="backup_failed_error_format">Nagka error sa pag backup ng %s</string>
+    <string name="show_trailers_settings">Ipakita ang trailers</string>
+    <string name="kitsu_settings">Ipakita ang posters mula sa Kitsu</string>
+    <string name="pref_filter_search_quality">Wag ipakita ang mga video quality sa search results</string>
+    <string name="automatic_plugin_updates">Kusang i-update ang plugins</string>
+    <string name="automatic_plugin_download">Kusang i-download ang plugins</string>
+    <string name="bottom_title_settings">Lokasyon ng Poster title</string>
+    <string name="bottom_title_settings_des">Ilagay ang title sa ibaba ng poster</string>
+    <string name="logout">Mag log out</string>
+    <string name="automatic_plugin_download_summary">Kusang install ang mga di naka install na plugins mula sa repositories.</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="others">Iba pa</string>
+    <string name="documentaries_singular">Dokumentaryo</string>
+    <string name="episode_action_download_subtitle">I-download ang subtitles</string>
+    <string name="add_site_summary">Maglagay ng ibang url para sa site na meron na.</string>
+    <string name="random_button_settings_desc">Ipakita ang Random Button sa Homepage</string>
+    <string name="example_lang_name">Language code (tl)</string>
+    <string name="add_sync">Magdagdag ng tracking</string>
+    <string name="added_sync_format" formatted="true">Dinagdag ang %s</string>
+    <string name="backup_failed">Walang Storage permissions. Paki subukan muli.</string>
+    <string name="documentaries">Dokumentaryo</string>
+    <string name="no_episodes_found">Walang nakita na Episode</string>
+    <string name="restore_failed_format" formatted="true">Nagkamali sa pagbalik ng data galing sa file na %s</string>
+    <string name="video_buffer_clear_settings">Linisin ang video at image cache</string>
+    <string name="switch_account">Magpalit ng account</string>
+    <string name="video_ram_description">Magkakaron ng crashes kapag sobrang taas. Iwan lang kapag mababa ang memory ng iyong device.</string>
+    <string name="video_disk_description">Posibleng magka problema kapag sobrang taas kapag mababa ang storage ng device (tulad ng Android TV)</string>
+    <string name="create_account">Gumawa ng account</string>
+    <string name="add_account">Magdagdag ng Account</string>
 </resources>

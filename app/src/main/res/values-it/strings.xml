@@ -4,9 +4,9 @@
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">L\'episodio %d uscirà in</string>
-    <string name="next_episode_time_day_format" formatted="true">%dg %do %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%do %dm</string>
-    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%d g %d o %d min</string>
+    <string name="next_episode_time_hour_format" formatted="true">%d o %d min</string>
+    <string name="next_episode_time_min_format" formatted="true">%d min</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
     <string name="search_poster_img_des">@string/result_poster_img_des</string>
@@ -145,7 +145,7 @@
     <string name="restore_success">File di backup caricato</string>
     <string name="restore_failed_format" formatted="true">Impossibile ripristinare i dati dal file %s</string>
     <string name="backup_success">Dati salvati con successo</string>
-    <string name="backup_failed">Permessi di archiviazione mancanti, riprova</string>
+    <string name="backup_failed">Permessi di archiviazione mancanti. Per favore riprova.</string>
     <string name="backup_failed_error_format">Errore nel backup %s</string>
     <string name="search">Cerca</string>
     <string name="category_account">Accounts</string>
@@ -269,7 +269,7 @@
     <string name="video_buffer_length_settings">Lunghezza buffer video</string>
     <string name="video_buffer_disk_settings">Dimensione cache video su disco</string>
     <string name="video_buffer_clear_settings">Cancella cache immagini e video</string>
-    <string name="video_ram_description">Se impostato troppo alto può causare problemi su sistemi con poca RAM. Come i dispositivi Android TV o vecchi telefoni</string>
+    <string name="video_ram_description">Causa arresti casuali se impostato troppo alto. Lasciare così com\'è sui dispositivi con poca memoria.</string>
     <string name="video_disk_description">Se impostato troppo alto può causare problemi su sistemi con poca Archiviazione interna. Come i dispositivi Android TV</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Utile per bypassare i blocchi ISP</string>
@@ -405,7 +405,7 @@
     <string name="repository_url_hint">URL repository</string>
     <string name="plugin_loaded">Plugin caricato</string>
     <string name="plugin_deleted">Plugin eliminato</string>
-    <string name="plugin_load_fail" formatted="true">Caricamento non riuscito %s</string>
+    <string name="plugin_load_fail" formatted="true">Impossibile caricare %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Download iniziato %d %s</string>
     <string name="batch_download_finish_format" formatted="true">Download %d %s completato</string>
@@ -422,7 +422,7 @@
     <string name="plugins_updated" formatted="true">Aggiornati %d plugin</string>
     <string name="blank_repo_message">CloudStream non ha siti installati per impostazione predefinita. È necessario installare i siti dai repository.
 \n
-\nA causa di una rimozione DMCA senza cervello da Sky Uk Limited 🤮 non possiamo collegare il sito repository nell\'app.
+\nA causa di una rimozione DMCA senza cervello da Sky UK Limited 🤮 non possiamo collegare il sito repository nell\'app.
 \n
 \nUnisciti al nostro Discord o cerca online.</string>
     <string name="view_public_repositories_button">Vedi le repository della community</string>
@@ -452,7 +452,7 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">Cast Web Video</string>
-    <string name="player_settings_play_in_browser">Browser</string>
+    <string name="player_settings_play_in_browser">Web browser</string>
     <string name="app_not_found_error">App non trovata</string>
     <string name="all_languages_preference">Tutte le lingue</string>
     <string name="skip_type_format" formatted="true">Salta %s</string>
@@ -484,4 +484,5 @@
     <string name="yes">Sì</string>
     <string name="no">No</string>
     <string name="update_notification_downloading">Scaricando l\'aggiornamento dell\'app</string>
+    <string name="automatic_plugin_download_summary">Installa automaticamente tutti i plugin non ancora installati dai repository aggiunti.</string>
 </resources>
