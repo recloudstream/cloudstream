@@ -221,8 +221,8 @@
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">Loaded backup file</string>
     <string name="restore_failed_format" formatted="true">Failed to restore data from file %s</string>
-    <string name="backup_success">Successfully stored data</string>
-    <string name="backup_failed">Storage permissions missing, please try again</string>
+    <string name="backup_success">Data stored</string>
+    <string name="backup_failed">Storage permissions missing. Please try again.</string>
     <string name="backup_failed_error_format">Error backing up %s</string>
     <string name="search">Search</string>
     <string name="category_account">Accounts</string>
@@ -235,7 +235,7 @@
     <string name="show_fillers_settings">Show filler episode for anime</string>
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from Kitsu</string>
-    <string name="pref_filter_search_quality">Hide selected video quality on Search results</string>
+    <string name="pref_filter_search_quality">Hide selected video quality in search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>
     <string name="automatic_plugin_download_summary">Automatically install all not yet installed plugins from added repositories.</string>
@@ -355,7 +355,7 @@
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
     <string name="video_buffer_clear_settings">Clear video and image cache</string>
-    <string name="video_ram_description">Will cause random crashes if set too high. Don\'t change if you have a low amount of ram such as an Android TV or old phone</string>
+    <string name="video_ram_description">Causes random crashes if set too high. Leave as is on devices with low memory.</string>
     <string name="video_disk_description">May cause problems on systems with low storage space such as Android TV devices if you set it too high</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
@@ -439,7 +439,7 @@
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">Authenticated %s</string>
-    <string name="authenticated_user_fail" formatted="true">Failed to authenticate to %s</string>
+    <string name="authenticated_user_fail" formatted="true">Could not authenticate to %s</string>
     <!-- ============ -->
     <string name="none">None</string>
     <string name="normal">Normal</string>
@@ -524,7 +524,7 @@
     <string name="plugin_load_fail" formatted="true">Could not load %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Started downloading %d %s</string>
-    <string name="batch_download_finish_format" formatted="true">Downloaded %d %s successfully</string>
+    <string name="batch_download_finish_format" formatted="true">Downloaded %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">All %s already downloaded</string>
     <string name="batch_download">Batch download</string>
     <string name="plugin_singular">plugin</string>
@@ -568,7 +568,7 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Browser</string>
+    <string name="player_settings_play_in_browser">Web browser</string>
     <string name="app_not_found_error">App not found</string>
     <string name="all_languages_preference">All Languages</string>
     <string name="skip_type_format" formatted="true">Skip %s</string>
@@ -587,7 +587,7 @@
     <string name="confirm_exit_dialog">Are you sure you want to exit\?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="update_notification_downloading">Downloading app update</string>
-    <string name="update_notification_installing">Installing app update</string>
-    <string name="update_notification_failed">App update failed</string>
+    <string name="update_notification_downloading">Downloading app update…</string>
+    <string name="update_notification_installing">Installing app update…</string>
+    <string name="update_notification_failed">Could not install the new version of the app</string>
 </resources>

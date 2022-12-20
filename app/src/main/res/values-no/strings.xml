@@ -411,4 +411,39 @@
     <string name="audio_tracks">Lydspor</string>
     <string name="skip_type_creddits">Rulletekst</string>
     <string name="skip_type_intro">Introduksjon</string>
+    <string name="backup_failed">Lagringstilgang mangler. Prøv igjen.</string>
+    <string name="show_trailers_settings">Vis forfilmer</string>
+    <string name="show_dub">Dubbingsetikett</string>
+    <string name="show_sub">Undertekstetikett</string>
+    <string name="video_buffer_size_settings">Videomellomlagringsstørrelse</string>
+    <string name="video_buffer_length_settings">Videomellomlagringslengde</string>
+    <string name="video_buffer_disk_settings">Videohurtiglager på disk</string>
+    <string name="video_buffer_clear_settings">Tøm video- og bildehurtiglager</string>
+    <string name="add_site_summary">Legg til en klone av en eksisterende side, med en annen nettadresse</string>
+    <string name="automatic_plugin_download_summary">Installer alle programtillegg som ikke er installert enda fra de pakkebrønnene som er lagt til.</string>
+    <string name="show_hd">Kvalitetsetikett</string>
+    <string name="poster_ui_settings">Slå av/på grensesnittselementer på plakat</string>
+    <string name="skip_update">Hopp over denne oppdateringen</string>
+    <string name="video_ram_description">Forårsaker tilfeldige krasj hvis satt for høyt. Ikke endre dette hvis du ikke har lite minne, som f.eks. på Android TV, eller en gammel enhet.</string>
+    <string name="action_open_play">\@string/home_play</string>
+    <string name="backup_settings">Sikkerhetskopier data</string>
+    <string name="backup_success">Data lagret</string>
+    <string name="authenticated_user_fail" formatted="true">Kunne ikke logge inn på %s</string>
+    <string name="uppercase_all_subtitles">Store bokstaver i undertekster</string>
+    <string name="extension_authors">Utviklere</string>
+    <string name="player_settings_play_in_browser">Nettleser</string>
+    <string name="nsfw">Sensurerbart</string>
+    <string name="quality_webrip">Vev</string>
+    <string name="network_adress_example">Lenke til strøm</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="pref_filter_search_quality">Skjul valgt videokvalitet i søkeresultater</string>
+    <string name="restore_success">Lastet inn sikkerhetkopifil</string>
+    <string name="category_updates">Oppdateringer og sikkerhetskopi</string>
+    <string name="ova_singular">\@string/ova</string>
+    <string name="confirm_exit_dialog">Avslutt\?</string>
+    <string name="nsfw_singular">Sensurerbart</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">Alle %s er allerede nedlastet</string>
+    <string name="update_notification_failed">Kunne ikke installere den nye versjonen av programmet</string>
+    <string name="update_notification_installing">Installerer ny versjon av programmet …</string>
+    <string name="update_notification_downloading">Laster ned ny versjon av programmet …</string>
 </resources>
