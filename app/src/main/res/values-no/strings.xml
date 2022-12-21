@@ -332,7 +332,7 @@
     <string name="subtitles_depressed">Nedsenket</string>
     <string name="player_loaded_subtitles" formatted="true">Lastet inn %s</string>
     <string name="subtitle_offset_extra_hint_none_format">Ingen undertekstforsinkelse</string>
-    <string name="subtitle_offset_extra_hint_later_format">Bruk dette hvis undertekster vises %dms for tidlig</string>
+    <string name="subtitle_offset_extra_hint_later_format">Bruk dette hvis undertekster vises %d ms for tidlig</string>
     <string name="actor_main">Hovedrolle</string>
     <string name="actor_supporting">Støtterolle</string>
     <string name="next">Neste</string>
@@ -375,7 +375,7 @@
     <string name="provider_languages_tip">Se videoer på disse språkene</string>
     <string name="setup_done">Ferdig</string>
     <string name="plugin_singular">programtillegg</string>
-    <string name="safe_mode_title">Trygt modus på</string>
+    <string name="safe_mode_title">Trygt modus påslått</string>
     <string name="action_add_to_bookmarks">Sett visningsstatus</string>
     <string name="episode_sync_settings_des">Auto-synkroniser din nåværende episode-framdrift</string>
     <string name="episodes_range">%d-%d</string>
@@ -405,8 +405,8 @@
 \n
 \nSom følge av en hjernedød DMCA-forespørsel fra Sky UK Limited 🤮 kan vi ikke lenke til pakkebrønnssiden i programmet.
 \n
-\nTa del i vår discord, eller søk på nett.</string>
-    <string name="subtitle_offset_extra_hint_before_format">Bruk dette hvis undertekster vises %dms for sent</string>
+\nTa del i vår Discord, eller søk på nett.</string>
+    <string name="subtitle_offset_extra_hint_before_format">Bruk dette hvis undertekster vises %d ms for sent</string>
     <string name="plugin_loaded">Programtillegg innlastet</string>
     <string name="audio_tracks">Lydspor</string>
     <string name="skip_type_creddits">Rulletekst</string>
@@ -424,7 +424,7 @@
     <string name="show_hd">Kvalitetsetikett</string>
     <string name="poster_ui_settings">Slå av/på grensesnittselementer på plakat</string>
     <string name="skip_update">Hopp over denne oppdateringen</string>
-    <string name="video_ram_description">Forårsaker tilfeldige krasj hvis satt for høyt. Ikke endre dette hvis du ikke har lite minne, som f.eks. på Android TV, eller en gammel enhet.</string>
+    <string name="video_ram_description">Forårsaker tilfeldige krasj hvis satt for høyt. Ikke endre dette hvis du ikke har lite minne.</string>
     <string name="action_open_play">\@string/home_play</string>
     <string name="backup_settings">Sikkerhetskopier data</string>
     <string name="backup_success">Data lagret</string>
@@ -446,4 +446,41 @@
     <string name="update_notification_failed">Kunne ikke installere den nye versjonen av programmet</string>
     <string name="update_notification_installing">Installerer ny versjon av programmet …</string>
     <string name="update_notification_downloading">Laster ned ny versjon av programmet …</string>
+    <string name="upload_sync">Synkroniser</string>
+    <string name="authenticated_user" formatted="true">%s innlogget</string>
+    <string name="video_disk_description">Forårsaker problemer hvis satt for høyt på enheter med lite lagringsplass, som f.eks. Android TV.</string>
+    <string name="bottom_title_settings">Posisjon for plakatnavn</string>
+    <string name="skip_type_mixed_op">Blandet begynnelse</string>
+    <string name="skip_type_op">Begynnelse</string>
+    <string name="skip_type_mixed_ed">Blandet slutt</string>
+    <string name="skip_type_ed">Slutt</string>
+    <string name="ova">OVA</string>
+    <string name="limit_title">Maks. antall tegn for navn i videospiller</string>
+    <string name="enable_skip_op_from_database_des">Vis oppsprett for å hoppe over begynnelse/slutt</string>
+    <string name="enable_nsfw_on_providers">Skru på sensurerbart innhold for støttede tilbydere</string>
+    <string name="quality_cam">Cam</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="subtitles_remove_captions">Fjern døveteksting fra undertekster</string>
+    <string name="subtitles_remove_bloat">Minimale undertekster</string>
+    <string name="extras">Ekstra</string>
+    <string name="subtitles_filter_lang">Filtrer etter foretrukket mediaspråk</string>
+    <string name="player_settings_play_in_web">Vev-videosending</string>
+    <string name="skip_type_recap">Tilbakeblikk</string>
+    <string name="quality_sd">SD</string>
+    <string name="trailer">Forfilm</string>
+    <string name="batch_download_finish_format" formatted="true">Lastet ned %d %s</string>
+    <string name="bottom_title_settings_des">Navn under plakat</string>
+    <string name="batch_download_start_format" formatted="true">Begynte nedlasting av %d %s …</string>
+    <string name="apply_on_restart">Bruk etter omstart av programmet</string>
+    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_4k">4K</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="safe_mode_description">Alle utvidelser ble skrudd av som følge av et krasj for å hjelpe deg å finne det som lager trøbbel.</string>
 </resources>

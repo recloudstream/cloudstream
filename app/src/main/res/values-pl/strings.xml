@@ -135,7 +135,7 @@
     <string name="restore_success">Wczytano plik kopii zapasowej</string>
     <string name="restore_failed_format" formatted="true">Nie udało się przywrócić danych z pliku %s</string>
     <string name="backup_success">Dane zapisane z powodzeniem</string>
-    <string name="backup_failed">Brak uprawnień do przechowywania, spróbuj ponownien</string>
+    <string name="backup_failed">Brak uprawnień do pamięci, spróbuj ponownie</string>
     <string name="backup_failed_error_format">Błąd tworzenia kopii zapasowej %s</string>
     <string name="search">Szukaj</string>
     <string name="category_account">Konta</string>
@@ -266,7 +266,7 @@
     <string name="remove_site_pref">Usuń stronę</string>
     <string name="add_site_summary">Dodaj klona istniejącej strony z innym adresem URL</string>
     <string name="download_path_pref">Ścieżka pobierania</string>
-    <string name="nginx_url_pref">Url serwera Nginx</string>
+    <string name="nginx_url_pref">URL serwera Nginx</string>
     <string name="display_subbed_dubbed_settings">Wyświetlanie Anime z dubbingiem/subbingiem</string>
     <string name="resize_fit">Dopasuj do ekranu</string>
     <string name="resize_fill">Rozciągnij</string>
@@ -304,7 +304,7 @@
     <string name="sync_score">Ocenione</string>
     <string name="sync_score_format" formatted="true">%d na 10</string>
     <string name="authenticated_user" formatted="true">Uwierzytelniono %s</string>
-    <string name="authenticated_user_fail" formatted="true">Nie udało się uwierzytelnić w %s</string>
+    <string name="authenticated_user_fail" formatted="true">Nie udało się uwierzytelnić %s</string>
     <!-- ============ -->
     <string name="none">Brak</string>
     <string name="normal">Normalne</string>
@@ -316,10 +316,10 @@
     <string name="subtitles_shadow">Cień</string>
     <string name="subtitles_raised">Zniesione</string>
     <string name="subtitle_offset">Synchronizacja napisów</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Opóźnienie napisów</string>
-    <string name="subtitle_offset_extra_hint_later_format">Użyj tego, jeśli napisy są wyświetlane %dms za wcześnie</string>
-    <string name="subtitle_offset_extra_hint_before_format">Użyj tego, jeśli napisy są wyświetlane %dms za późno</string>
+    <string name="subtitle_offset_extra_hint_later_format">Użyj tego, jeśli napisy są wyświetlane %d ms za wcześnie</string>
+    <string name="subtitle_offset_extra_hint_before_format">Użyj tego, jeśli napisy są wyświetlane %d ms za późno</string>
     <string name="subtitle_offset_extra_hint_none_format">Brak opóźnienia napisów</string>
     <string name="subtitles_example_text">Pchnąć w tę łódź jeża lub ośm skrzyń fig.</string>
     <string name="recommended">Polecane</string>
@@ -354,7 +354,7 @@
     <string name="resolution_and_title">Rozdzielczość i tytuł</string>
     <string name="title">Tytuł</string>
     <string name="resolution">Rozdzielczość</string>
-    <string name="error_invalid_id">Niepoprawne id</string>
+    <string name="error_invalid_id">Niepoprawne ID</string>
     <string name="error_invalid_data">Niepoprawne dane</string>
     <string name="error_invalid_url">Niepoprawny URL</string>
     <string name="error">Błąd</string>
@@ -380,7 +380,7 @@
     <string name="plugin_deleted">Rozszerzenie usunięte</string>
     <string name="plugin_load_fail" formatted="true">Błąd ładowania %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Rozpoczęto pobieranie %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Rozpoczęto pobieranie %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">Pobrano %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Wszystkie %s już pobrane</string>
     <string name="batch_download">Pobierz wszystko</string>
@@ -408,7 +408,7 @@
     <string name="video_tracks">Ścieżki wideo</string>
     <string name="apply_on_restart">Zastosuj po ponownym uruchomieniu</string>
     <string name="safe_mode_title">Tryb bezpieczny włączony</string>
-    <string name="safe_mode_description">Wystąpiła nieoczekiwana awaria i automatycznie wyłączyliśmy wszystkie rozszerzenia, abyś mógł znaleźć i usunąć rozszerzenie, które powoduje problemy.</string>
+    <string name="safe_mode_description">Wszystkie rozszerzenia zostały wyłączone z powodu awarii, aby pomóc Ci znaleźć ten, który powoduje problemy.</string>
     <string name="safe_mode_crash_info">Wyświetl informacje o awarii</string>
     <string name="extension_rating" formatted="true">Ocena: %s</string>
     <string name="extension_description">Opis</string>
@@ -439,12 +439,28 @@
     <string name="no">Nie</string>
     <string name="update_notification_failed">Aktualizacja aplikacji nie powiodła się</string>
     <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="update_notification_installing">Instalowanie aktualizacji aplikacji</string>
+    <string name="update_notification_installing">Instalowanie aktualizacji aplikacji…</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="action_mark_as_watched">Oznacz jako obejrzane</string>
     <string name="confirm_exit_dialog">Czy na pewno chcesz wyjść\?</string>
-    <string name="update_notification_downloading">Pobieranie aktualizacji aplikacji</string>
+    <string name="update_notification_downloading">Pobieranie aktualizacji aplikacji…</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="cast_format" formatted="true">Obsada: %s</string>
     <string name="automatic_plugin_download_summary">Automatycznie instaluj wszystkie jeszcze nie zainstalowane wtyczki z dodanych repozytoriów.</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="skip_type_recap">Podsumowanie</string>
+    <string name="apk_installer_settings">Instalator APK</string>
+    <string name="apk_installer_settings_des">Niektóre telefony nie obsługują nowego instalatora pakietów. Wypróbuj tryb kompatybilności, jeśli aktualizacje nie zostaną zainstalowane.</string>
+    <string name="example_password">password123</string>
+    <string name="ova_singular">\@string/ova</string>
+    <string name="example_site_name">MojaFajnaWitryna</string>
+    <string name="example_username">MyCoolUsername</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="apk_installer_legacy">Tryb kompatybilności</string>
+    <string name="example_site_url">przyklad.pl</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="apk_installer_package_installer">Instalator pakietów</string>
+    <string name="action_open_play">\@string/home_play</string>
+    <string name="example_email">hello@world.com</string>
+    <string name="anime_singular">\@string/anime</string>
 </resources>

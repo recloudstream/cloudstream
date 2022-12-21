@@ -133,7 +133,7 @@
     <string name="episode_sync_settings">تحديث تقدم المشاهدة</string>
     <string name="episode_sync_settings_des">مزامنة التقدم في الحلقة الحالية تلقائيًا</string>
     <string name="restore_settings">إسترجاع البيانات من نسخة إحتياطية</string>
-    <string name="backup_settings">نسخ إحتياطي</string>
+    <string name="backup_settings">نسخ إحتياطي للبيانات</string>
     <string name="restore_success">تم تحميل ملف النسخة الاحتياطية</string>
     <string name="restore_failed_format" formatted="true">فشل استيراد البيانات من الملف %s</string>
     <string name="backup_success">البيانات المخزنة</string>
@@ -263,8 +263,8 @@
     <string name="video_buffer_length_settings">طول التخزين المؤقت</string>
     <string name="video_buffer_disk_settings">التخزين المؤقت للفيديو علي القرص</string>
     <string name="video_buffer_clear_settings">مسح التخزين المؤقت للصورة والفيديو</string>
-    <string name="video_ram_description">يتسبب في حدوث أعطال عشوائية إذا تم ضبطه على قيمة عالية جدًا. اتركه كما هو على الأجهزة ذات الذاكرة المنخفضة.</string>
-    <string name="video_disk_description">قد يسبب مشاكل مع حجم ذاكرة التخزين المنخفضة كأجهزة تلفاز الأندرويد إذا أعددت قيمة عالية جدًا</string>
+    <string name="video_ram_description">يتسبب في حدوث أعطال إذا تم ضبطه على مستوى مرتفع جدا على الأجهزة ذات الذاكرة المنخفضة ، مثل Android TV.</string>
+    <string name="video_disk_description">يسبب مشاكل إذا تم ضبطه على مستوى مرتفع جدا على الأجهزة ذات مساحة التخزين المنخفضة ، مثل Android TV.</string>
     <string name="dns_pref">إستخدام DNS بدلا من HTTPS</string>
     <string name="dns_pref_summary">مفيد لتجاوز حجب مزود خدمة الإنترنت</string>
     <string name="add_site_pref">نسخ موقع</string>
@@ -346,8 +346,8 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="authenticated_user" formatted="true">تم توثيق %s</string>
-    <string name="authenticated_user_fail" formatted="true">تعذر المصادقة على %s</string>
+    <string name="authenticated_user" formatted="true">%s تم التوثيق</string>
+    <string name="authenticated_user_fail" formatted="true">تعذر تسجيل الدخول في %s</string>
     <!-- ============ -->
     <string name="none">لا شيء</string>
     <string name="normal">عادي</string>
@@ -362,8 +362,8 @@
     <string name="subtitle_offset">مزامنة الترجمة</string>
     <string name="subtitle_offset_hint">1000 مللي ثانية</string>
     <string name="subtitle_offset_title">تأخير الترجمة</string>
-    <string name="subtitle_offset_extra_hint_later_format">استخدم هذا إذا كانت الترجمة تُعرض %dms مبكرًا جدًا</string>
-    <string name="subtitle_offset_extra_hint_before_format">استخدم هذا إذا كانت الترجمة تُعرض %dms متأخرًا جدًا</string>
+    <string name="subtitle_offset_extra_hint_later_format">إستعملْ هذا إذا تَظْهرُ الترجماتَ %d m في وقت مبكر جداً</string>
+    <string name="subtitle_offset_extra_hint_before_format">استخدم هذا إذا تم عرض الترجمة %d مللي ثانية متأخرًا جدًا</string>
     <string name="subtitle_offset_extra_hint_none_format">لا تأخير في الترجمة</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -431,7 +431,7 @@
     <string name="plugin_deleted">تم إزالة الإضافة</string>
     <string name="plugin_load_fail" formatted="true">تعذر التحميل %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">بدأ تنزيل %d %s</string>
+    <string name="batch_download_start_format" formatted="true">بدأ تنزيل %d %s …</string>
     <string name="batch_download_finish_format" formatted="true">تم التنزيل %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">جميع %s محملة بالفعل</string>
     <string name="batch_download">تحميل مكثف</string>
@@ -457,8 +457,8 @@
     <string name="audio_tracks">مسار الصوت</string>
     <string name="video_tracks">مسار الفيديو</string>
     <string name="apply_on_restart">تطبيق بعد إعادة التشغيل</string>
-    <string name="safe_mode_title">وضع الامان مفعل</string>
-    <string name="safe_mode_description">حدث عطل غير قابل للاسترداد وقمنا تلقائيا بتعطيل جميع الإضافات ، حتى تتمكن من العثور على الإضافة التي تسبب مشكلة وإزالتها.</string>
+    <string name="safe_mode_title">الوضع الآمن قيد التشغيل</string>
+    <string name="safe_mode_description">تم إيقاف تشغيل جميع الملحقات بسبب عطل لمساعدتك في العثور على الإضافة التي تسبب مشكلة.</string>
     <string name="safe_mode_crash_info">عرض بيانات الاعطال</string>
     <string name="extension_rating" formatted="true">تقييم: %s</string>
     <string name="extension_description">الوصف</string>
