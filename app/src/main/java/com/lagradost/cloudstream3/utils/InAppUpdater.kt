@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okio.BufferedSink
@@ -292,23 +293,36 @@ class InAppUpdater {
                             builder.apply {
                                 setPositiveButton(R.string.update) { _, _ ->
                                     showToast(context, R.string.download_started, Toast.LENGTH_LONG)
-                                    val intent = PackageInstallerService.getIntent(
-                                        context,
-                                        update.updateURL
-                                    )
-                                    ContextCompat.startForegroundService(context, intent)
-//                                    ioSafe {
-//                                        if (
-//                                        !downloadUpdate(update.updateURL)
-//                                        )
-//                                            runOnUiThread {
-//                                                showToast(
-//                                                    context,
-//                                                    R.string.download_failed,
-//                                                    Toast.LENGTH_LONG
-//                                                )
-//                                            }
-//                                    }
+
+                                    val currentInstaller =
+                                        settingsManager.getInt(
+                                            getString(R.string.apk_installer_key),
+                                            0
+                                        )
+
+                                    when (currentInstaller) {
+                                        // New method
+                                        0 -> {
+                                            val intent = PackageInstallerService.getIntent(
+                                                context,
+                                                update.updateURL
+                                            )
+                                            ContextCompat.startForegroundService(context, intent)
+                                        }
+                                        // Legacy
+                                        1 -> {
+                                            ioSafe {
+                                                if (!downloadUpdate(update.updateURL))
+                                                    runOnUiThread {
+                                                        showToast(
+                                                            context,
+                                                            R.string.download_failed,
+                                                            Toast.LENGTH_LONG
+                                                        )
+                                                    }
+                                            }
+                                        }
+                                    }
                                 }
 
                                 setNegativeButton(R.string.cancel) { _, _ -> }

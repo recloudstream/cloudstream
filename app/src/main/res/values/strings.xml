@@ -18,6 +18,7 @@
     <string name="player_pref_key" translatable="false">player_pref_key</string>
     <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
     <string name="prefer_limit_title_rez_key" translatable="false">prefer_limit_title_rez_key</string>
+    <string name="apk_installer_key" translatable="false">apk_installer_key</string>
     <string name="video_buffer_size_key" translatable="false">video_buffer_size_key</string>
     <string name="video_buffer_length_key" translatable="false">video_buffer_length_key</string>
     <string name="video_buffer_clear_key" translatable="false">video_buffer_clear_key</string>
@@ -243,6 +244,8 @@
     <string name="updates_settings_des">Automatically search for new updates on start</string>
     <string name="uprereleases_settings">Update to prereleases</string>
     <string name="uprereleases_settings_des">Search for prerelease updates instead of full releases only</string>
+    <string name="apk_installer_settings">APK Installer</string>
+    <string name="apk_installer_settings_des">Some phones do not support the new package installer. Try the legacy option if updates do not install. </string>
     <string name="github">Github</string>
     <string name="lightnovel">Light novel app by the same devs</string>
     <string name="anim">Anime app by the same devs</string>
@@ -590,4 +593,8 @@
     <string name="update_notification_downloading">Downloading app update…</string>
     <string name="update_notification_installing">Installing app update…</string>
     <string name="update_notification_failed">Could not install the new version of the app</string>
+
+    <string name="apk_installer_legacy">Legacy</string>
+    <string name="apk_installer_package_installer">PackageInstaller</string>
+
 </resources>

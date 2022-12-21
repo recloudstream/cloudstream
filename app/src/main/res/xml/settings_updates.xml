@@ -6,6 +6,19 @@
         app:icon="@drawable/ic_baseline_system_update_24"
         app:key="@string/manual_check_update_key"
         app:summary="@string/app_version" />
+    <SwitchPreference
+        android:icon="@drawable/ic_baseline_developer_mode_24"
+        android:summary="@string/uprereleases_settings_des"
+        android:title="@string/uprereleases_settings"
+        app:defaultValue="@bool/is_prerelease"
+        app:key="@string/prerelease_update_key" />
+
+    <Preference
+        android:icon="@drawable/netflix_download"
+        android:key="@string/apk_installer_key"
+        android:title="@string/apk_installer_settings"
+        android:summary="@string/apk_installer_settings_des"
+        />
 
     <Preference
         android:icon="@drawable/baseline_save_as_24"
@@ -45,12 +58,6 @@
         android:title="@string/updates_settings"
         app:defaultValue="true"
         app:key="@string/auto_update_key" />
-    <SwitchPreference
-        android:icon="@drawable/ic_baseline_developer_mode_24"
-        android:summary="@string/uprereleases_settings_des"
-        android:title="@string/uprereleases_settings"
-        app:defaultValue="@bool/is_prerelease"
-        app:key="@string/prerelease_update_key" />
     <Preference
         android:icon="@drawable/ic_baseline_construction_24"
         android:title="Redo setup process"

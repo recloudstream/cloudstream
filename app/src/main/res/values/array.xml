@@ -33,6 +33,16 @@
         <item>6</item>
     </array>
 
+    <array name="apk_installer_pref">
+        <item>@string/apk_installer_package_installer</item>
+        <item>@string/apk_installer_legacy</item>
+    </array>
+    <array name="apk_installer_values">
+        <item>0</item>
+        <item>1</item>
+    </array>
+
+
     <array name="player_pref_names">
         <item>@string/player_settings_play_in_app</item>
         <item>@string/player_settings_play_in_vlc</item>

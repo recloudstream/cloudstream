@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
-import com.lagradost.cloudstream3.CommonActivity
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
@@ -120,6 +121,32 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             }
             dialog.close_btt?.setOnClickListener {
                 dialog.dismissSafe(activity)
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.apk_installer_key)?.setOnPreferenceClickListener {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it.context)
+
+            val prefNames = resources.getStringArray(R.array.apk_installer_pref)
+            val prefValues = resources.getIntArray(R.array.apk_installer_values)
+
+            val currentInstaller =
+                settingsManager.getInt(getString(R.string.apk_installer_key), 0)
+
+            activity?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentInstaller),
+                getString(R.string.app_layout),
+                true,
+                {}) {
+                try {
+                    settingsManager.edit()
+                        .putInt(getString(R.string.apk_installer_key), prefValues[it])
+                        .apply()
+                } catch (e: Exception) {
+                    logError(e)
+                }
             }
             return@setOnPreferenceClickListener true
         }
