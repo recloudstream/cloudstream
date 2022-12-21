@@ -168,8 +168,8 @@
     <string name="video_buffer_length_settings">Longueur de la vidéo tampon</string>
     <string name="video_buffer_disk_settings">Longueur de la vidéo cache</string>
     <string name="video_buffer_clear_settings">Effacer les vidéos et les images cache</string>
-    <string name="video_ram_description">Causera des crashs aléatoire si mit trop haut. Ne le changez pas si vous avez un appareil avec peu de ram comme une télévision android ou un vieux téléphone.</string>
-    <string name="video_disk_description">Causera des problèmes si mit trop haut et si vous avez un appareil avec peu de stockage comme une télévision android ou un vieux téléphone.</string>
+    <string name="video_ram_description">Causera des crashs si la valeur choisie est trop élevée sur un appareil avec peu de ram comme une télévision android</string>
+    <string name="video_disk_description">Cause des problèmes si la valeur choisie est trop élevée sur un appareil avec peu de stockage comme une télévision android.</string>
     <string name="random_button_settings">Bouton aléatoire</string>
     <string name="random_button_settings_desc">Afficher le bouton aléatoire</string>
     <string name="emulator_layout">Disposition émulateur</string>
@@ -184,7 +184,7 @@
     <string name="added_sync_format">%s ajouté</string>
     <string name="upload_sync">Synchroniser</string>
     <string name="sync_score">Noté</string>
-    <string name="authenticated_user_fail">Impossible de s\'authentifier avec %s</string>
+    <string name="authenticated_user_fail">Impossible de s\'authentifier à %s</string>
     <string name="none">Aucun</string>
     <string name="normal">Normal</string>
     <string name="all">Tous</string>
@@ -195,10 +195,10 @@
     <string name="subtitles_shadow">Ombre</string>
     <string name="subtitles_raised">Élévation</string>
     <string name="subtitle_offset">Synchroniser les sous-titres</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Délai des sous-titres</string>
-    <string name="subtitle_offset_extra_hint_later_format">Utilisez si les sous-titres sont affichés %dms trop tôt</string>
-    <string name="subtitle_offset_extra_hint_before_format">Utilisez si les sous-titres sont affichés %dms trop tard</string>
+    <string name="subtitle_offset_extra_hint_later_format">Utilisez cela si les sous-titres sont affichés %d ms trop tôt</string>
+    <string name="subtitle_offset_extra_hint_before_format">Utilisez cela si les sous-titres sont affichés %d ms trop tard</string>
     <string name="subtitle_offset_extra_hint_none_format">Aucun délai de sous-titre</string>
     <string name="subtitles_example_text">Portez ce vieux whisky au juge blond qui fume</string>
     <string name="recommended">Recommandé</string>
@@ -280,7 +280,7 @@
     <string name="restore_success">Fichier de sauvegarde chargé</string>
     <string name="restore_failed_format" formatted="true">Échec de la restauration des données du fichier %s</string>
     <string name="backup_success">Données stockées avec succès</string>
-    <string name="backup_failed">Permissions de stockage manquantes, veuillez réessayer</string>
+    <string name="backup_failed">Permissions de stockage manquantes. Veuillez réessayer</string>
     <string name="backup_failed_error_format">Erreur de sauvegarde %s</string>
     <string name="search">Recherche</string>
     <string name="category_account">Comptes</string>
@@ -292,8 +292,8 @@
     <string name="bug_report_settings_on">N\'envoie aucune donnée</string>
     <string name="show_fillers_settings">Afficher les épisodes spéciaux pour les animés</string>
     <string name="show_trailers_settings">Montrer les bandes-annonces</string>
-    <string name="kitsu_settings">Montrer les affiches de kitsu</string>
-    <string name="pref_filter_search_quality">Masquer la qualité vidéo sélectionnée dans les résultats de recherche</string>
+    <string name="kitsu_settings">Montrer les affiches provenant de Kitsu</string>
+    <string name="pref_filter_search_quality">Masque la qualité vidéo sélectionnée dans les résultats de recherche</string>
     <string name="automatic_plugin_updates">Mises à jour automatiques des plugins</string>
     <string name="updates_settings">Afficher les mises à jour de l\'application</string>
     <string name="updates_settings_des">Recherche automatique de nouvelles mises à jour au démarrage</string>
@@ -323,4 +323,44 @@
     <string name="confirm_exit_dialog">Êtes-vous sûr·e de vouloir quitter \?</string>
     <string name="no">Non</string>
     <string name="update_notification_downloading">Téléchargement de la mise à jour de l\'application</string>
+    <string name="next_episode_format" formatted="true">L\'épisode %d sera publié dans</string>
+    <string name="show_hd">Étiquette de qualité</string>
+    <string name="limit_title_rez">Résolution du lecteur vidéo</string>
+    <string name="add_site_pref">Cloner le site</string>
+    <string name="remove_site_pref">Supprimer le site</string>
+    <string name="add_site_summary">Ajoute un clone à un site déjà existant, avec une URL différente</string>
+    <string name="nginx_url_pref">URL du serveur NGINX</string>
+    <string name="example_site_name">MonSiteTresCool</string>
+    <string name="error_invalid_id">ID invalide</string>
+    <string name="automatic_plugin_download_summary">Installer automatiquement les plugins qui sont dans les repository mais qui n\'ont pas encore été installés</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nrestant</string>
+    <string name="livestreams">En Direct</string>
+    <string name="others">Autres</string>
+    <string name="live_singular">En Direct</string>
+    <string name="other_singular">Vidéo</string>
+    <string name="show_dub">Étiquette Dub (doublage anglais)</string>
+    <string name="show_sub">Étiquette sous titre</string>
+    <string name="show_title">Titre</string>
+    <string name="enable_nsfw_on_providers">Active le nsfw sur les fournisseurs ayant cette option</string>
+    <string name="example_password">motdepasse123</string>
+    <string name="example_username">MonNomDutilisateur</string>
+    <string name="example_lang_name">Code du langage (fr)</string>
+    <string name="create_account">Créer un compte</string>
+    <string name="player_load_subtitles_online">Charger depuis internet</string>
+    <string name="resolution_and_title">Résolution et titre</string>
+    <string name="category_player">Lecteur</string>
+    <string name="error_invalid_url">URL invalide</string>
+    <string name="error">Erreur</string>
+    <string name="subtitles_remove_captions">Fermer les</string>
+    <string name="automatic_plugin_download">Télécharger automatiquement les plugins</string>
+    <string name="poster_ui_settings">Activer ou désactiver les éléments du poster</string>
+    <string name="skip_update">Ignorer cette mise-à-jour</string>
+    <string name="error_invalid_data">Données invalides</string>
+    <string name="subtitles_encoding">Encodage des sous titres</string>
+    <string name="category_providers">Fournisseurs</string>
+    <string name="category_ui">Disposition</string>
+    <string name="example_site_url">exemple.com</string>
+    <string name="title">Titre</string>
+    <string name="resolution">Résolution</string>
 </resources>

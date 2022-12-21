@@ -144,7 +144,7 @@
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">File di backup caricato</string>
     <string name="restore_failed_format" formatted="true">Impossibile ripristinare i dati dal file %s</string>
-    <string name="backup_success">Dati salvati con successo</string>
+    <string name="backup_success">Dati salvati</string>
     <string name="backup_failed">Permessi di archiviazione mancanti. Per favore riprova.</string>
     <string name="backup_failed_error_format">Errore nel backup %s</string>
     <string name="search">Cerca</string>
@@ -269,8 +269,8 @@
     <string name="video_buffer_length_settings">Lunghezza buffer video</string>
     <string name="video_buffer_disk_settings">Dimensione cache video su disco</string>
     <string name="video_buffer_clear_settings">Cancella cache immagini e video</string>
-    <string name="video_ram_description">Causa arresti casuali se impostato troppo alto. Lasciare così com\'è sui dispositivi con poca memoria.</string>
-    <string name="video_disk_description">Se impostato troppo alto può causare problemi su sistemi con poca Archiviazione interna. Come i dispositivi Android TV</string>
+    <string name="video_ram_description">Causa arresti anomali se impostato troppo alto sui dispositivi con poca memoria, come Android TV.</string>
+    <string name="video_disk_description">Se impostato troppo alto può causare problemi su sistemi con poca archiviazione interna, come i dispositivi Android TV.</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Utile per bypassare i blocchi ISP</string>
     <string name="add_site_pref">Clona un sito</string>
@@ -338,8 +338,8 @@
     <string name="subtitle_offset">Sincronizza sottotitoli</string>
     <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Ritardo sottotitoli</string>
-    <string name="subtitle_offset_extra_hint_later_format">Usa se i sottotitoli sono mostrati %dms troppo presto</string>
-    <string name="subtitle_offset_extra_hint_before_format">Usa se i sottotitoli vengono mostrati %dms troppo tardi</string>
+    <string name="subtitle_offset_extra_hint_later_format">Usa se i sottotitoli sono mostrati %d ms troppo presto</string>
+    <string name="subtitle_offset_extra_hint_before_format">Usa se i sottotitoli vengono mostrati %d ms troppo tardi</string>
     <string name="subtitle_offset_extra_hint_none_format">Nessun ritardo dei sottotitoli</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -407,8 +407,8 @@
     <string name="plugin_deleted">Plugin eliminato</string>
     <string name="plugin_load_fail" formatted="true">Impossibile caricare %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Download iniziato %d %s</string>
-    <string name="batch_download_finish_format" formatted="true">Download %d %s completato</string>
+    <string name="batch_download_start_format" formatted="true">Download iniziato %d %s…</string>
+    <string name="batch_download_finish_format" formatted="true">Scaricato %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tutti %s già scaricati</string>
     <string name="batch_download">Download in blocco</string>
     <string name="plugin_singular">plugin</string>
@@ -434,8 +434,8 @@
     <string name="audio_tracks">Traccia audio</string>
     <string name="video_tracks">Traccia video</string>
     <string name="apply_on_restart">Applica al riavvio</string>
-    <string name="safe_mode_title">Safe Mode abilitata</string>
-    <string name="safe_mode_description">Si è verificato un crash irrecuperabile. Tutte le estensioni sono state disabilitate, in modo da trovare e rimuovere l\'estensione che causa il problema.</string>
+    <string name="safe_mode_title">Safe mode attiva</string>
+    <string name="safe_mode_description">Tutte le estensioni sono state disabilitate a causa di un arresto anomalo per aiutarti a trovare l\'estensione che causa il problema.</string>
     <string name="safe_mode_crash_info">Vedi informazioni del crash</string>
     <string name="extension_rating" formatted="true">Voto: %s</string>
     <string name="extension_description">Descrizione</string>
@@ -469,10 +469,10 @@
     <string name="clipboard_too_large">Testo troppo lungo. Impossibile salvare negli appunti.</string>
     <string name="app_name">CloudStream</string>
     <string name="automatic_plugin_download">Scarica automaticamente i plugins</string>
-    <string name="update_notification_failed">Aggiornamento dell\'app fallito</string>
+    <string name="update_notification_failed">Impossibile installare la nuova versione dell\'app</string>
     <string name="episode_sync_settings">Aggiorna il progresso di avanzamento</string>
     <string name="skip_type_mixed_op">Opening misto</string>
-    <string name="update_notification_installing">Installando l\'aggiornamento dell\'app</string>
+    <string name="update_notification_installing">Installando l\'aggiornamento dell\'app…</string>
     <string name="subtitles_remove_captions">Rimuovi le didascalie chiuse dai sottotitoli</string>
     <string name="subtitles_remove_bloat">Rimuovi il bloat dai sottotitoli</string>
     <string name="skip_type_op">Opening</string>
@@ -483,6 +483,10 @@
     <string name="confirm_exit_dialog">Sei sicuro di voler uscire\?</string>
     <string name="yes">Sì</string>
     <string name="no">No</string>
-    <string name="update_notification_downloading">Scaricando l\'aggiornamento dell\'app</string>
+    <string name="update_notification_downloading">Scaricando l\'aggiornamento dell\'app…</string>
     <string name="automatic_plugin_download_summary">Installa automaticamente tutti i plugin non ancora installati dai repository aggiunti.</string>
+    <string name="apk_installer_package_installer">ProgrammaInstallazionePacchetti</string>
+    <string name="apk_installer_settings_des">Alcuni telefoni non supportano il nuovo programma di installazione dei pacchetti. Prova l\'opzione legacy se gli aggiornamenti non vengono installati.</string>
+    <string name="apk_installer_settings">Installer APK</string>
+    <string name="apk_installer_legacy">Legacy</string>
 </resources>

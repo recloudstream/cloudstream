@@ -219,7 +219,7 @@
     <string name="episode_sync_settings">Update watch progress</string>
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
     <string name="restore_settings">Restore data from backup</string>
-    <string name="backup_settings">Backup data</string>
+    <string name="backup_settings">Back up data</string>
     <string name="restore_success">Loaded backup file</string>
     <string name="restore_failed_format" formatted="true">Failed to restore data from file %s</string>
     <string name="backup_success">Data stored</string>
@@ -358,8 +358,8 @@
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
     <string name="video_buffer_clear_settings">Clear video and image cache</string>
-    <string name="video_ram_description">Causes random crashes if set too high. Leave as is on devices with low memory.</string>
-    <string name="video_disk_description">May cause problems on systems with low storage space such as Android TV devices if you set it too high</string>
+    <string name="video_ram_description">Causes crashes if set too high on devices with low memory, such as Android TV.</string>
+    <string name="video_disk_description">Causes problems if set too high on devices with low storage space, such as Android TV.</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
     <string name="add_site_pref">Clone site</string>
@@ -441,8 +441,8 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="authenticated_user" formatted="true">Authenticated %s</string>
-    <string name="authenticated_user_fail" formatted="true">Could not authenticate to %s</string>
+    <string name="authenticated_user" formatted="true">%s authenticated</string>
+    <string name="authenticated_user_fail" formatted="true">Could not log in at %s</string>
     <!-- ============ -->
     <string name="none">None</string>
     <string name="normal">Normal</string>
@@ -457,8 +457,8 @@
     <string name="subtitle_offset">Sync subs</string>
     <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Subtitle delay</string>
-    <string name="subtitle_offset_extra_hint_later_format">Use this if the subtitles are shown %dms too early</string>
-    <string name="subtitle_offset_extra_hint_before_format">Use this if subtitles are shown %dms too late</string>
+    <string name="subtitle_offset_extra_hint_later_format">Use this if the subtitles are shown %d ms too early</string>
+    <string name="subtitle_offset_extra_hint_before_format">Use this if subtitles are shown %d ms too late</string>
     <string name="subtitle_offset_extra_hint_none_format">No subtitle delay</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -526,7 +526,7 @@
     <string name="plugin_deleted">Plugin Deleted</string>
     <string name="plugin_load_fail" formatted="true">Could not load %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Started downloading %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Started downloading %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">Downloaded %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">All %s already downloaded</string>
     <string name="batch_download">Batch download</string>
@@ -553,8 +553,8 @@
     <string name="audio_tracks">Audio tracks</string>
     <string name="video_tracks">Video tracks</string>
     <string name="apply_on_restart">Apply on Restart</string>
-    <string name="safe_mode_title">Safe Mode enabled</string>
-    <string name="safe_mode_description">An unrecoverable crash occurred and we\'ve automatically disabled all extensions, so you can find and remove the extension which is causing trouble.</string>
+    <string name="safe_mode_title">Safe mode on</string>
+    <string name="safe_mode_description">All extensions were turned off due to a crash to help you find the one causing trouble.</string>
     <string name="safe_mode_crash_info">View crash info</string>
     <string name="extension_rating" formatted="true">Rating: %s</string>
     <string name="extension_description">Description</string>

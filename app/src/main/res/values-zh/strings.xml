@@ -390,7 +390,7 @@
     <string name="subtitles_shadow">阴影</string>
     <string name="subtitles_raised">凸出</string>
     <string name="subtitle_offset">同步字幕</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">字幕延迟</string>
     <string name="subtitle_offset_extra_hint_later_format">如果字幕过早显示 %dms，请使用此选项</string>
     <string name="subtitle_offset_extra_hint_before_format">如果字幕过晚显示 %dms，请使用此选项</string>
