@@ -1926,7 +1926,7 @@ class ResultViewModel2 : ViewModel() {
         // this takes the indexer most preferable by the user given the current sorting
         val min = ranges.keys.minByOrNull { index ->
             kotlin.math.abs(
-                index.season - (preferStartSeason ?: 0)
+                index.season - (preferStartSeason ?: 1)
             ) + if (index.dubStatus == preferDubStatus) 0 else 100000
         }
 
@@ -2139,7 +2139,7 @@ class ResultViewModel2 : ViewModel() {
 
                     preferDubStatus = getDub(mainId) ?: preferDubStatus
                     preferStartEpisode = getResultEpisode(mainId)
-                    preferStartSeason = getResultSeason(mainId)
+                    preferStartSeason = getResultSeason(mainId) ?: 1
 
                     setKey(
                         DOWNLOAD_HEADER_CACHE,
