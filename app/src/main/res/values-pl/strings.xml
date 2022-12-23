@@ -135,7 +135,7 @@
     <string name="restore_success">Wczytano plik kopii zapasowej</string>
     <string name="restore_failed_format" formatted="true">Nie udało się przywrócić danych z pliku %s</string>
     <string name="backup_success">Dane zapisane z powodzeniem</string>
-    <string name="backup_failed">Brak uprawnień do pamięci, spróbuj ponownie</string>
+    <string name="backup_failed">Brak uprawnień do pamięci, spróbuj ponownie.</string>
     <string name="backup_failed_error_format">Błąd tworzenia kopii zapasowej %s</string>
     <string name="search">Szukaj</string>
     <string name="category_account">Konta</string>
@@ -259,7 +259,7 @@
     <string name="video_buffer_disk_settings">Pamięć podręczna wideo na dysku</string>
     <string name="video_buffer_clear_settings">Wyczyść pamięć podręczną wideo i obrazów</string>
     <string name="video_ram_description">Ustawienie zbyt wysokiej wartości może powodować problemy w systemach z małą ilością pamięci RAM, takich jak urządzenia Android TV lub stare telefony.</string>
-    <string name="video_disk_description">Zbyt wysokie ustawienie może powodować problemy w systemach z małą ilością miejsca w pamięci, takich jak urządzenia Android TV</string>
+    <string name="video_disk_description">Zbyt wysokie ustawienie może powodować problemy w systemach z małą ilością miejsca w pamięci, takich jak urządzenia Android TV.</string>
     <string name="dns_pref">DNS przez HTTPS</string>
     <string name="dns_pref_summary">Przydatne w pomijaniu blokad dostawców internetu</string>
     <string name="add_site_pref">Sklonuj stronę</string>
@@ -470,4 +470,18 @@
     <string name="skip_type_intro">Intro</string>
     <string name="skip_type_mixed_ed">Mixed ending</string>
     <string name="enable_skip_op_from_database_des">Pokaż wyskakujące okienka pomijania dla niektórych segmentów</string>
+    <string name="pref_category_extensions">Dodatki</string>
+    <string name="pref_category_actions">Działania</string>
+    <string name="pref_category_cache">Pamięć podręczna</string>
+    <string name="redo_setup_process">Powtórz proces konfiguracji</string>
+    <string name="pref_category_links">Linki</string>
+    <string name="pref_category_app_updates">Aktualizacje aplikacji</string>
+    <string name="pref_category_backup">Kopia zapasowa</string>
+    <string name="pref_category_subtitles">Napisy</string>
+    <string name="pref_category_gestures">Gesty</string>
+    <string name="pref_category_player_features">Funkcje odtwarzacza</string>
+    <string name="pref_category_ui_features">Funkcje</string>
+    <string name="pref_category_defaults">Ustawienia domyślne</string>
+    <string name="pref_category_player_layout">Układ</string>
+    <string name="pref_category_looks">Wygląd</string>
 </resources>
