@@ -395,6 +395,14 @@
     <string name="pref_category_backup">Backup</string>
     <string name="pref_category_extensions">Extensions</string>
     <string name="pref_category_actions">Actions</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_gestures">Gestures</string>
+    <string name="pref_category_player_features">Player features</string>
+    <string name="pref_category_subtitles">Subtitles</string>
+    <string name="pref_category_player_layout">Layout</string>
+    <string name="pref_category_defaults">Defaults</string>
+    <string name="pref_category_looks">Looks</string>
+    <string name="pref_category_ui_features">Features</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Random Button</string>
     <string name="random_button_settings_desc">Show random button on Homepage</string>
