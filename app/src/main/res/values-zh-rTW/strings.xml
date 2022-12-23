@@ -160,8 +160,8 @@
     <string name="backup_settings">備份資料</string>
     <string name="restore_success">已載入備份資料</string>
     <string name="restore_failed_format" formatted="true">無法從 %s 檔案中還原資料</string>
-    <string name="backup_success">成功儲存資料</string>
-    <string name="backup_failed">缺少儲存權限，請重試</string>
+    <string name="backup_success">已儲存資料</string>
+    <string name="backup_failed">缺少儲存權限，請再試一次。</string>
     <string name="backup_failed_error_format">備份 %s 錯誤</string>
     <string name="search">搜尋</string>
     <string name="category_account">帳號</string>
@@ -211,7 +211,8 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">這將永遠刪除 %s\n你確定嗎?</string>
-    <string name="resume_time_left" formatted="true">剩餘 %d 分鐘</string>
+    <string name="resume_time_left" formatted="true">%d 分鐘
+\n剩餘的</string>
     <string name="status_ongoing">連載中</string>
     <string name="status_completed">已完結</string>
     <string name="status">狀態</string>
@@ -290,15 +291,15 @@
     <string name="video_buffer_length_settings">影片緩衝長度</string>
     <string name="video_buffer_disk_settings">影片快取存儲</string>
     <string name="video_buffer_clear_settings">清除影片和圖片快取</string>
-    <string name="video_ram_description">如果設定得太高會導致隨機崩潰。 如果您的記憶體不足（例如 Android TV 或舊手機），請不要更改</string>
-    <string name="video_disk_description">如果您將其設定得太高，可能會導致儲存空間不足的系統（例如 Android TV 設備）出現問題</string>
+    <string name="video_ram_description">如果在記憶體不足的裝置（例如 Android TV）上設定得太高會導致崩潰。</string>
+    <string name="video_disk_description">如果在儲存空間較小的裝置（例如 Android TV）上設定過高會導致問題。</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">用於繞過網路服務供應商的封鎖</string>
     <string name="add_site_pref">複製片源</string>
     <string name="remove_site_pref">移除片源</string>
-    <string name="add_site_summary">添加具有不同URL的現有站點複製</string>
+    <string name="add_site_summary">使用不同的 URL 添加現有站點的複製</string>
     <string name="download_path_pref">下載路徑</string>
-    <string name="nginx_url_pref">Nginx 伺服器連結</string>
+    <string name="nginx_url_pref">NGINX 伺服器 URL</string>
     <string name="display_subbed_dubbed_settings">顯示有配音/字幕的動漫</string>
     <string name="resize_fit">適應螢幕</string>
     <string name="resize_fill">拉伸</string>
@@ -373,8 +374,8 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="authenticated_user" formatted="true">已驗證 %s</string>
-    <string name="authenticated_user_fail" formatted="true">驗證 %s 失敗</string>
+    <string name="authenticated_user" formatted="true">%s 已驗證</string>
+    <string name="authenticated_user_fail" formatted="true">無法在 %s 登入</string>
     <!-- ============ -->
     <string name="none">無</string>
     <string name="normal">普通</string>
@@ -387,10 +388,10 @@
     <string name="subtitles_shadow">陰影</string>
     <string name="subtitles_raised">凸出</string>
     <string name="subtitle_offset">同步字幕</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000 毫秒</string>
     <string name="subtitle_offset_title">字幕延遲</string>
-    <string name="subtitle_offset_extra_hint_later_format">如果字幕過早顯示 %dms ，請使用此選項</string>
-    <string name="subtitle_offset_extra_hint_before_format">如果字幕過晚顯示 %dms ，請使用此選項</string>
+    <string name="subtitle_offset_extra_hint_later_format">如果字幕過早顯示 %d 毫秒，請使用此選項</string>
+    <string name="subtitle_offset_extra_hint_before_format">如果字幕過晚顯示 %d 毫秒，請使用此選項</string>
     <string name="subtitle_offset_extra_hint_none_format">無字幕延遲</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -417,7 +418,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">Blu-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
@@ -433,7 +434,7 @@
     <string name="resolution">解析度</string>
     <string name="error_invalid_id">無效 ID</string>
     <string name="error_invalid_data">無效資料</string>
-    <string name="error_invalid_url">無效連結</string>
+    <string name="error_invalid_url">無效 URL</string>
     <string name="error">錯誤</string>
     <string name="subtitles_remove_captions">移除隱藏式字幕</string>
     <string name="subtitles_remove_bloat">移除字幕廣告</string>
@@ -453,13 +454,13 @@
     <string name="extensions">擴充功能</string>
     <string name="add_repository">添加資源庫</string>
     <string name="repository_name_hint">資源庫名稱</string>
-    <string name="repository_url_hint">資源庫連結</string>
+    <string name="repository_url_hint">資源庫 URL</string>
     <string name="plugin_loaded">外掛程式已載入</string>
     <string name="plugin_deleted">外掛程式已刪除</string>
-    <string name="plugin_load_fail" formatted="true">載入 %s 失敗</string>
+    <string name="plugin_load_fail" formatted="true">無法載入 %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">開始下載 %d %s</string>
-    <string name="batch_download_finish_format" formatted="true">下載 %d %s 成功</string>
+    <string name="batch_download_start_format" formatted="true">開始下載 %d %s …</string>
+    <string name="batch_download_finish_format" formatted="true">已下載 %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">全部 %s 已經下載</string>
     <string name="batch_download">批次下載</string>
     <string name="plugin_singular">外掛程式</string>
@@ -471,7 +472,11 @@
     <string name="plugins_disabled" formatted="true">已禁用：%d</string>
     <string name="plugins_not_downloaded" formatted="true">未下載：%d</string>
     <string name="plugins_updated" formatted="true">已更新 %d 外掛程式</string>
-    <string name="blank_repo_message">CloudStream 預設沒有安裝任何片源。您需要從資源庫安裝站點。\n\n由於 Sky Uk Limited 的無腦 DMCA 刪除🤮，我們無法在應用程式中連結資源庫站點。\n\n加入我們的 Discord 獲得連結或自己在網路上搜尋</string>
+    <string name="blank_repo_message">CloudStream 預設沒有安裝任何片源。您需要從資源庫安裝站點。
+\n
+\n由於 Sky UK Limited 的無腦 DMCA 刪除🤮，我們無法在應用程式中連結資源庫站點。
+\n
+\n加入我們的 Discord 或自己在網路上搜尋。</string>
     <string name="view_public_repositories_button">查看</string>
     <string name="view_public_repositories_button_short">公開列表</string>
     <string name="uppercase_all_subtitles">字幕全大寫</string>
@@ -482,7 +487,7 @@
     <string name="video_tracks">影片軌道</string>
     <string name="apply_on_restart">重新啟動時生效</string>
     <string name="safe_mode_title">安全模式已啟用</string>
-    <string name="safe_mode_description">發生了不可恢復的崩潰，我們已自動禁用所有外掛程式，因此您可以找到並刪除導致問題的應用程式。</string>
+    <string name="safe_mode_description">由於崩潰，所有外掛程式皆已關閉，以幫助您找到導致問題的程式。</string>
     <string name="safe_mode_crash_info">查看崩潰資訊</string>
     <string name="extension_rating" formatted="true">評分：%s</string>
     <string name="extension_description">簡介</string>
@@ -499,7 +504,7 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">網路影片播放</string>
-    <string name="player_settings_play_in_browser">瀏覽器</string>
+    <string name="player_settings_play_in_browser">網頁瀏覽器</string>
     <string name="app_not_found_error">未找到應用</string>
     <string name="all_languages_preference">所有語言</string>
     <string name="skip_type_format" formatted="true">跳過 %s</string>
@@ -512,4 +517,19 @@
     <string name="skip_type_intro">介紹</string>
     <string name="clear_history">清除歷史紀錄</string>
     <string name="history">歷史紀錄</string>
+    <string name="automatic_plugin_download">自動下載外掛程式</string>
+    <string name="confirm_exit_dialog">你確定要離開？</string>
+    <string name="automatic_plugin_download_summary">從添加的資源庫自動安裝所有尚未安裝的外掛程式。</string>
+    <string name="enable_skip_op_from_database_des">在開始/結束顯示跳過彈出窗口</string>
+    <string name="update_notification_failed">無法安裝新版本的應用程式</string>
+    <string name="apk_installer_settings">APK 安裝器</string>
+    <string name="apk_installer_settings_des">有些手機不支援新的軟體包安裝程式。 如果未安裝更新，請嘗試使用舊版選項。</string>
+    <string name="clipboard_too_large">文字太多。 無法儲存到剪貼簿。</string>
+    <string name="yes">是</string>
+    <string name="update_notification_downloading">正在下載應用程式更新…</string>
+    <string name="update_notification_installing">正在安裝應用程式更新…</string>
+    <string name="apk_installer_package_installer">套件安裝程式</string>
+    <string name="action_mark_as_watched">標記為已觀看</string>
+    <string name="no">否』</string>
+    <string name="apk_installer_legacy">傳統』</string>
 </resources>

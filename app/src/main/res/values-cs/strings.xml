@@ -5,7 +5,7 @@
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Hrají: %s</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
-    <string name="result_poster_img_des">Poster</string>
+    <string name="result_poster_img_des">Plakát</string>
     <string name="search_poster_img_des">@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>

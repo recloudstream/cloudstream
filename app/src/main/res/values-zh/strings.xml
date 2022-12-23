@@ -293,8 +293,8 @@
     <string name="video_buffer_length_settings">视频缓冲长度</string>
     <string name="video_buffer_disk_settings">视频缓存存储</string>
     <string name="video_buffer_clear_settings">清除视频与图像缓存</string>
-    <string name="video_ram_description">设置过高可能导致崩溃。使用低内存设备请勿修改。</string>
-    <string name="video_disk_description">设置过高可能导致如 Android TV 此类低存储空间设备出现系统问题</string>
+    <string name="video_ram_description">如果在内存较少的设备（例如 Android TV）上设置得太高会导致崩溃。</string>
+    <string name="video_disk_description">如果在存储空间较小的设备（例如 Android TV）上设置过高会导致问题。</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">用于绕过 ISP 的封锁</string>
     <string name="add_site_pref">复制片源</string>
@@ -377,7 +377,7 @@
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">已验证 %s</string>
-    <string name="authenticated_user_fail" formatted="true">无法验证 %s</string>
+    <string name="authenticated_user_fail" formatted="true">无法登录到 %s</string>
     <!-- ============ -->
     <string name="none">无</string>
     <string name="normal">普通</string>
@@ -392,8 +392,8 @@
     <string name="subtitle_offset">同步字幕</string>
     <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">字幕延迟</string>
-    <string name="subtitle_offset_extra_hint_later_format">如果字幕过早显示 %dms，请使用此选项</string>
-    <string name="subtitle_offset_extra_hint_before_format">如果字幕过晚显示 %dms，请使用此选项</string>
+    <string name="subtitle_offset_extra_hint_later_format">如果字幕过早显示 %d ms，请使用此选项</string>
+    <string name="subtitle_offset_extra_hint_before_format">如果字幕过晚显示 %d ms，请使用此选项</string>
     <string name="subtitle_offset_extra_hint_none_format">无字幕延迟</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -461,7 +461,7 @@
     <string name="plugin_deleted">插件已删除</string>
     <string name="plugin_load_fail" formatted="true">无法加载 %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">开始下载 %d %s</string>
+    <string name="batch_download_start_format" formatted="true">开始下载 %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">已下载 %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">全部 %s 已经下载</string>
     <string name="batch_download">批量下载</string>
@@ -489,7 +489,7 @@
     <string name="video_tracks">视频轨道</string>
     <string name="apply_on_restart">重启生效</string>
     <string name="safe_mode_title">安全模式已启用</string>
-    <string name="safe_mode_description">发生了不可恢复的崩溃，已自动禁用所有扩展，因此可以找到并删除导致问题的扩展。</string>
+    <string name="safe_mode_description">由于崩溃，所有扩展都已关闭，以帮助您找到导致问题的扩展。</string>
     <string name="safe_mode_crash_info">查看崩溃信息</string>
     <string name="extension_rating" formatted="true">评分：%s</string>
     <string name="extension_description">简介</string>
@@ -529,4 +529,8 @@
     <string name="update_notification_installing">正在安装应用更新…</string>
     <string name="update_notification_failed">无法安装新版的应用</string>
     <string name="automatic_plugin_download_summary">自动安装已添加的仓库内所有未安装的插件。</string>
+    <string name="apk_installer_settings">APK 安装器</string>
+    <string name="apk_installer_settings_des">部分手机不支持新的软件包安装程序。如果未安装更新，请尝试使用传统选项。</string>
+    <string name="apk_installer_legacy">传统</string>
+    <string name="apk_installer_package_installer">软件包安装程序</string>
 </resources>

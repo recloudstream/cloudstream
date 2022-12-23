@@ -463,4 +463,11 @@
     <string name="action_open_play">\@string/home_play</string>
     <string name="example_email">hello@world.com</string>
     <string name="anime_singular">\@string/anime</string>
+    <string name="skip_type_op">Opening</string>
+    <string name="skip_type_ed">Ending</string>
+    <string name="skip_type_mixed_op">Mixed opening</string>
+    <string name="skip_type_creddits">Napisy końcowe</string>
+    <string name="skip_type_intro">Intro</string>
+    <string name="skip_type_mixed_ed">Mixed ending</string>
+    <string name="enable_skip_op_from_database_des">Pokaż wyskakujące okienka pomijania dla niektórych segmentów</string>
 </resources>

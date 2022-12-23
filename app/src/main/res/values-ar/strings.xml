@@ -510,4 +510,8 @@
     <string name="episode_format" formatted="true">%d %s</string>
     <string name="confirm_exit_dialog">هل أنت متأكد أنك تريد الخروج؟</string>
     <string name="automatic_plugin_download_summary">قم بتثبيت جميع المكونات الإضافية التي لم يتم تثبيتها بعد تلقائيا من المستودعات المضافة.</string>
+    <string name="apk_installer_settings">مثبت الحزم</string>
+    <string name="apk_installer_settings_des">بعض الهواتف لا تدعم مثبت الحزمة الجديد. جرب الخيار القديم إذا لم يتم تثبيت التحديثات.</string>
+    <string name="apk_installer_legacy">قياسي</string>
+    <string name="apk_installer_package_installer">مثبت الحزمة</string>
 </resources>
