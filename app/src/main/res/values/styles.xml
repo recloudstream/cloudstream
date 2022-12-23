@@ -158,7 +158,7 @@
         <item name="colorAccent">@color/material_dynamic_primary80</item>
         <item name="colorOnPrimary">@color/material_dynamic_primary20</item>
         <!-- Needed for leanback fuckery -->
-        <item name="android:colorAccent">@color/material_dynamic_primary30</item>
+        <item name="android:colorAccent">@color/material_dynamic_primary80</item>
     </style>
 
     <style name="OverlayPrimaryColorMonetTwo">
@@ -168,7 +168,7 @@
         <item name="colorAccent">@color/material_dynamic_secondary80</item>
         <item name="colorOnPrimary">@color/material_dynamic_secondary20</item>
         <!-- Needed for leanback fuckery -->
-        <item name="android:colorAccent">@color/material_dynamic_secondary30</item>
+        <item name="android:colorAccent">@color/material_dynamic_secondary80</item>
     </style>
 
     <style name="OverlayPrimaryColorBlue">

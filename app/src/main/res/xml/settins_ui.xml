@@ -1,57 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
-    <Preference
-            android:icon="@drawable/ic_baseline_color_lens_24"
-            android:key="@string/primary_color_key"
-            android:title="@string/primary_color_settings" />
-    <Preference
-            android:icon="@drawable/ic_baseline_color_lens_24"
-            android:key="@string/app_theme_key"
-            android:title="@string/app_theme_settings" />
-    <Preference
-            android:icon="@drawable/ic_baseline_tv_24"
-            android:key="@string/app_layout_key"
-            android:title="@string/app_layout" />
-    <Preference
-            android:icon="@drawable/ic_baseline_tv_24"
-            android:key="@string/poster_ui_key"
-            android:title="@string/poster_ui_settings" />
-    <SwitchPreference
-            android:icon="@drawable/search_icon"
-            app:key="advanced_search"
-            android:title="@string/advanced_search"
-            android:summary="@string/advanced_search_des"
-            app:defaultValue="true" />
-    <SwitchPreference
+
+    <PreferenceCategory
+        android:title="@string/pref_category_looks">
+        <Preference
+                android:icon="@drawable/ic_baseline_color_lens_24"
+                android:key="@string/primary_color_key"
+                android:title="@string/primary_color_settings" />
+        <Preference
+                android:icon="@drawable/ic_baseline_color_lens_24"
+                android:key="@string/app_theme_key"
+                android:title="@string/app_theme_settings" />
+        <Preference
+                android:icon="@drawable/ic_baseline_tv_24"
+                android:key="@string/app_layout_key"
+                android:title="@string/app_layout" />
+        <SwitchPreference
             android:defaultValue="true"
             android:icon="@drawable/baseline_grid_view_24"
             android:key="@string/bottom_title_key"
             android:summary="@string/bottom_title_settings_des"
             android:title="@string/bottom_title_settings" />
-    <SwitchPreference
-            android:key="@string/show_trailers_key"
-            android:icon="@drawable/baseline_theaters_24"
-            android:title="@string/show_trailers_settings"
-            android:defaultValue="true" />
-    <SwitchPreference
-            android:key="@string/show_kitsu_posters_key"
-            android:icon="@drawable/kitsu_icon"
-            android:title="@string/kitsu_settings"
-            android:defaultValue="true" />
-    <SwitchPreference
-            android:key="@string/show_fillers_key"
-            android:icon="@drawable/ic_baseline_skip_next_24"
-            android:title="@string/show_fillers_settings"
-            android:defaultValue="false" />
-    <SwitchPreference
-            android:icon="@drawable/ic_baseline_play_arrow_24"
-            app:key="@string/random_button_key"
-            android:title="@string/random_button_settings"
-            android:summary="@string/random_button_settings_desc"
-            app:defaultValue="false" />
-    <Preference
-        android:icon="@drawable/ic_baseline_filter_list_24"
-        android:key="@string/pref_filter_search_quality_key"
-        android:title="@string/pref_filter_search_quality" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_ui_features">
+        <Preference
+                android:icon="@drawable/ic_baseline_tv_24"
+                android:key="@string/poster_ui_key"
+                android:title="@string/poster_ui_settings" />
+        <SwitchPreference
+                android:icon="@drawable/search_icon"
+                app:key="advanced_search"
+                android:title="@string/advanced_search"
+                android:summary="@string/advanced_search_des"
+                app:defaultValue="true" />
+        <SwitchPreference
+                android:key="@string/show_trailers_key"
+                android:icon="@drawable/baseline_theaters_24"
+                android:title="@string/show_trailers_settings"
+                android:defaultValue="true" />
+        <SwitchPreference
+                android:key="@string/show_kitsu_posters_key"
+                android:icon="@drawable/kitsu_icon"
+                android:title="@string/kitsu_settings"
+                android:defaultValue="true" />
+        <SwitchPreference
+                android:key="@string/show_fillers_key"
+                android:icon="@drawable/ic_baseline_skip_next_24"
+                android:title="@string/show_fillers_settings"
+                android:defaultValue="false" />
+        <SwitchPreference
+                android:icon="@drawable/ic_baseline_play_arrow_24"
+                app:key="@string/random_button_key"
+                android:title="@string/random_button_settings"
+                android:summary="@string/random_button_settings_desc"
+                app:defaultValue="false" />
+        <Preference
+            android:icon="@drawable/ic_baseline_filter_list_24"
+            android:key="@string/pref_filter_search_quality_key"
+            android:title="@string/pref_filter_search_quality" />
+    </PreferenceCategory>
 </PreferenceScreen>
