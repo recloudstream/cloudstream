@@ -43,7 +43,7 @@ android {
     buildToolsVersion = "30.0.3"
 
     defaultConfig {
-        applicationId = "com.lagradost.cloudstream3"
+        applicationId = "com.mustardchef.lunastream"
         minSdk = 21
         targetSdk = 33
 
