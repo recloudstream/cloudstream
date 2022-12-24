@@ -29,33 +29,39 @@
             android:icon="@drawable/ic_baseline_warning_24" />
 
     <Preference
-            android:title="@string/github"
-            android:icon="@drawable/ic_github_logo"
-            app:summary="https://github.com/recloudstream/cloudstream">
-        <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://github.com/recloudstream/cloudstream" />
-    </Preference>
+        android:key="@string/benene_count"
+        android:title="@string/benene"
+        android:icon="@drawable/benene"
+        app:summary="@string/benene_des" />
 
-    <Preference
-            android:title="@string/lightnovel"
-            android:icon="@drawable/quick_novel_icon"
-            app:summary="https://github.com/LagradOst/QuickNovel">
-        <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://github.com/LagradOst/QuickNovel" />
-    </Preference>
-    <Preference
-            android:title="@string/discord"
-            android:icon="@drawable/ic_baseline_discord_24"
-            app:summary="https://discord.gg/5Hus6fM">
-        <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://discord.gg/5Hus6fM" />
-    </Preference>
-    <Preference
-            android:key="@string/benene_count"
-            android:title="@string/benene"
-            android:icon="@drawable/benene"
-            app:summary="@string/benene_des" />
+    <PreferenceCategory
+            android:title="@string/pref_category_links">
+
+        <Preference
+                android:title="@string/github"
+                android:icon="@drawable/ic_github_logo"
+                app:summary="https://github.com/recloudstream/cloudstream">
+            <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="https://github.com/recloudstream/cloudstream" />
+        </Preference>
+
+        <Preference
+                android:title="@string/lightnovel"
+                android:icon="@drawable/quick_novel_icon"
+                app:summary="https://github.com/LagradOst/QuickNovel">
+            <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="https://github.com/LagradOst/QuickNovel" />
+        </Preference>
+        <Preference
+                android:title="@string/discord"
+                android:icon="@drawable/ic_baseline_discord_24"
+                app:summary="https://discord.gg/5Hus6fM">
+            <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="https://discord.gg/5Hus6fM" />
+        </Preference>
+    
+    </PreferenceCategory>
 </PreferenceScreen>

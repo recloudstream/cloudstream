@@ -83,6 +83,8 @@ import kotlinx.android.synthetic.main.fragment_result.result_next_airing
 import kotlinx.android.synthetic.main.fragment_result.result_next_airing_time
 import kotlinx.android.synthetic.main.fragment_result.result_no_episodes
 import kotlinx.android.synthetic.main.fragment_result.result_play_movie
+import kotlinx.android.synthetic.main.fragment_result.result_poster
+import kotlinx.android.synthetic.main.fragment_result.result_poster_holder
 import kotlinx.android.synthetic.main.fragment_result.result_reload_connection_open_in_browser
 import kotlinx.android.synthetic.main.fragment_result.result_reload_connectionerror
 import kotlinx.android.synthetic.main.fragment_result.result_resume_parent

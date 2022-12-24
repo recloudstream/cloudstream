@@ -137,7 +137,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             activity?.showBottomDialog(
                 prefNames.toList(),
                 prefValues.indexOf(currentInstaller),
-                getString(R.string.app_layout),
+                getString(R.string.apk_installer_settings),
                 true,
                 {}) {
                 try {

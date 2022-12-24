@@ -690,6 +690,8 @@ class CS3IPlayer : IPlayer {
                             maxVideoHeight
                         )
                     )
+                    // Allows any seeking to be +- 0.3s to allow for faster seeking
+                    .setSeekParameters(SeekParameters(300_000, 300_000))
                     .setLoadControl(
                         DefaultLoadControl.Builder()
                             .setTargetBufferBytes(

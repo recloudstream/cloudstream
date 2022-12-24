@@ -119,6 +119,7 @@
     <string name="type_none">None</string>
     <string name="type_re_watching">Rewatching</string>
     <string name="play_movie_button">Play Movie</string>
+    <string name="play_trailer_button">Play Trailer</string>
     <string name="play_livestream_button">Play Livestream</string>
     <string name="play_torrent_button">Stream Torrent</string>
     <string name="pick_source">Sources</string>
@@ -242,6 +243,7 @@
     <string name="automatic_plugin_download_summary">Automatically install all not yet installed plugins from added repositories.</string>
     <string name="updates_settings">Show app updates</string>
     <string name="updates_settings_des">Automatically search for new updates on start</string>
+    <string name="redo_setup_process">Redo setup process</string>
     <string name="uprereleases_settings">Update to prereleases</string>
     <string name="uprereleases_settings_des">Search for prerelease updates instead of full releases only</string>
     <string name="apk_installer_settings">APK Installer</string>
@@ -389,6 +391,19 @@
         responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
         CloudStream 3 at your own risk.
     </string>
+    <string name="pref_category_links">Links</string>
+    <string name="pref_category_app_updates">App updates</string>
+    <string name="pref_category_backup">Backup</string>
+    <string name="pref_category_extensions">Extensions</string>
+    <string name="pref_category_actions">Actions</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_gestures">Gestures</string>
+    <string name="pref_category_player_features">Player features</string>
+    <string name="pref_category_subtitles">Subtitles</string>
+    <string name="pref_category_player_layout">Layout</string>
+    <string name="pref_category_defaults">Defaults</string>
+    <string name="pref_category_looks">Looks</string>
+    <string name="pref_category_ui_features">Features</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Random Button</string>
     <string name="random_button_settings_desc">Show random button on Homepage</string>

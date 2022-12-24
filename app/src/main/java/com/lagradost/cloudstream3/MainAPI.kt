@@ -237,7 +237,6 @@ object APIHolder {
     }
 
     private fun Context.getHasTrailers(): Boolean {
-        if (isTvSettings()) return false
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         return settingsManager.getBoolean(this.getString(R.string.show_trailers_key), true)
     }
