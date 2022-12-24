@@ -246,7 +246,7 @@
     <string name="show_dub_key" translatable="false">show_dub_key</string>
     <string name="show_sub_key" translatable="false">show_sub_key</string>
     <string name="show_title_key" translatable="false">show_title_key</string>
-    <string name="poster_ui_settings">التحكم في عناصر الواجهة علي الملصق </string>
+    <string name="poster_ui_settings">التحكم في عناصر الواجهة على الملصق</string>
     <string name="no_update_found">لم يتم العثور على تحديثات</string>
     <string name="check_for_update">تحقق من التحديثات</string>
     <string name="video_lock">قفل</string>
@@ -305,9 +305,9 @@
     <string name="category_providers">المصادر</string>
     <string name="category_ui">الواجهة</string>
     <string name="automatic">أوتوماتيك</string>
-    <string name="tv_layout">واجهة تلفاز</string>
-    <string name="phone_layout">واجهة هاتف</string>
-    <string name="emulator_layout">واجهة محاكي</string>
+    <string name="tv_layout">واجهة التلفاز</string>
+    <string name="phone_layout">واجهة الهاتف</string>
+    <string name="emulator_layout">واجهة المحاكي</string>
     <string name="primary_color_settings">اللون الأساسي</string>
     <string name="app_theme_settings">مظهر التطبيق</string>
     <string name="bottom_title_settings">موضع عنوان الملصق</string>
@@ -419,7 +419,7 @@
     <string name="provider_languages_tip">شاهد الفيديوهات بهذه اللغات</string>
     <string name="previous">السابق</string>
     <string name="skip_setup">تخطي الإعداد</string>
-    <string name="app_layout_subtext">تغيير شكل البرنامح حتي يلائم جهازك</string>
+    <string name="app_layout_subtext">قم بتغيير مظهر التطبيق ليناسب جهازك</string>
     <string name="crash_reporting_title">إبلاغ الأعطال</string>
     <string name="preferred_media_subtext">ماذا تريد ان تري</string>
     <string name="setup_done">تم</string>
@@ -514,4 +514,19 @@
     <string name="apk_installer_settings_des">بعض الهواتف لا تدعم مثبت الحزمة الجديد. جرب الخيار القديم إذا لم يتم تثبيت التحديثات.</string>
     <string name="apk_installer_legacy">قياسي</string>
     <string name="apk_installer_package_installer">مثبت الحزمة</string>
+    <string name="pref_category_player_layout">التخطيط</string>
+    <string name="redo_setup_process">إعادة عملية الإعداد</string>
+    <string name="pref_category_links">الروابط</string>
+    <string name="pref_category_app_updates">تحديثات التطبيق</string>
+    <string name="pref_category_backup">نسخ احتياطي</string>
+    <string name="pref_category_extensions">الإضافات</string>
+    <string name="pref_category_actions">الإجراءات</string>
+    <string name="pref_category_cache">الذاكرة المؤقتة</string>
+    <string name="pref_category_gestures">الإيماءات</string>
+    <string name="pref_category_player_features">ميزات المشغل</string>
+    <string name="pref_category_subtitles">الترجمات</string>
+    <string name="pref_category_defaults">الإفتراضي</string>
+    <string name="pref_category_ui_features">المميزات</string>
+    <string name="pref_category_looks">المظهر</string>
+    <string name="play_trailer_button">تشغيل المقطع الدعائي</string>
 </resources>
