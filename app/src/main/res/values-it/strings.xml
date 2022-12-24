@@ -489,4 +489,19 @@
     <string name="apk_installer_settings_des">Alcuni telefoni non supportano il nuovo programma di installazione dei pacchetti. Prova l\'opzione legacy se gli aggiornamenti non vengono installati.</string>
     <string name="apk_installer_settings">Installer APK</string>
     <string name="apk_installer_legacy">Legacy</string>
+    <string name="play_trailer_button">Riproduci trailer</string>
+    <string name="redo_setup_process">Ripeti il processo di configurazione</string>
+    <string name="pref_category_links">Link</string>
+    <string name="pref_category_app_updates">Aggiornamenti app</string>
+    <string name="pref_category_backup">Backup</string>
+    <string name="pref_category_extensions">Estensioni</string>
+    <string name="pref_category_actions">Azioni</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_gestures">Gesti</string>
+    <string name="pref_category_player_features">Funzionalità lettore</string>
+    <string name="pref_category_subtitles">Sottotitoli</string>
+    <string name="pref_category_player_layout">Layout</string>
+    <string name="pref_category_defaults">Predefiniti</string>
+    <string name="pref_category_looks">Aspetto</string>
+    <string name="pref_category_ui_features">Funzionalità</string>
 </resources>
