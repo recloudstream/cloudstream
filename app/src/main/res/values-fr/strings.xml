@@ -149,7 +149,7 @@
     <string name="provider_lang_settings">Language des fournisseurs</string>
     <string name="preferred_media_settings">Médias préférées</string>
     <string name="automatic">Auto</string>
-    <string name="cast_format">Acteurs: %s</string>
+    <string name="cast_format">Distribution : %s</string>
     <string name="duration_format">%d min</string>
     <string name="search_hint_site">Rechercher sur %s…</string>
     <string name="type_re_watching">À re-regarder</string>
@@ -175,7 +175,7 @@
     <string name="emulator_layout">Disposition émulateur</string>
     <string name="bottom_title_settings">Position du titre du poster</string>
     <string name="bottom_title_settings_des">Mettre le titre sous le poster</string>
-    <string name="account">Compte</string>
+    <string name="account">compte</string>
     <string name="logout">Se déconnecter</string>
     <string name="login">Se connecter</string>
     <string name="switch_account">Changer de compte</string>
@@ -344,7 +344,7 @@
     <string name="enable_nsfw_on_providers">Active le nsfw sur les fournisseurs ayant cette option</string>
     <string name="example_password">motdepasse123</string>
     <string name="example_username">MonNomDutilisateur</string>
-    <string name="example_lang_name">Code du langage (fr)</string>
+    <string name="example_lang_name">Code de la langue (fr)</string>
     <string name="create_account">Créer un compte</string>
     <string name="player_load_subtitles_online">Charger depuis internet</string>
     <string name="resolution_and_title">Résolution et titre</string>
@@ -420,14 +420,14 @@
     <string name="batch_download_finish_format" formatted="true">Téléchargé %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tous les %s déjà téléchargés</string>
     <string name="setup_extensions_subtext">Télécharger la liste de sites que vous voulez utiliser</string>
-    <string name="plugins_downloaded" formatted="true">Téléchargé: %d</string>
+    <string name="plugins_downloaded" formatted="true">Téléchargé : %d</string>
     <string name="video_tracks">Pistes vidéo</string>
     <string name="apply_on_restart">Appliqué au redémarrage</string>
     <string name="safe_mode_description">Toutes les extensions ont été désactivé à cause d\'un crash pour vous aider à trouver l\'extension causant le problème.</string>
     <string name="safe_mode_title">Mode sans échec activé</string>
     <string name="extension_size">Taille</string>
     <string name="extension_version">Version</string>
-    <string name="extension_rating" formatted="true">Note: %s</string>
+    <string name="extension_rating" formatted="true">Note : %s</string>
     <string name="extension_description">Description</string>
     <string name="extension_status">Status</string>
     <string name="extension_install_first">Installer l\'extension d\'abord</string>
@@ -446,8 +446,8 @@
     <string name="repository_name_hint">Nom du repository</string>
     <string name="plugin_singular">plugin</string>
     <string name="delete_repository">Supprimer le repository</string>
-    <string name="plugins_disabled" formatted="true">Désactivé: %d</string>
-    <string name="plugins_not_downloaded" formatted="true">Non téléchargé: %d</string>
+    <string name="plugins_disabled" formatted="true">Désactivé : %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Non téléchargé : %d</string>
     <string name="plugins_updated" formatted="true">%d plugins mis-à-jour</string>
     <string name="download_all_plugins_from_repo">Télécharger tous les plugins de ce repository \?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Désactivé)</string>
@@ -463,14 +463,28 @@
     <string name="apk_installer_package_installer">Installateur de paquet</string>
     <string name="plugin">plugins</string>
     <string name="delete_repository_plugins">Cela supprimera également tous les plugins du repository</string>
-    <string name="blank_repo_message">CloudStream n\'a pas de site installés par défaut.
-\nIl faut installer les sites depuis des repository.
+    <string name="blank_repo_message">CloudStream n\'a pas de sites installés par défaut. Vous devez installer les sites à partir de dépôts.
 \n
-\nA cause de Sky UK Limited 🤮 on ne peut pas afficher les repository dans l\'application.
+\nEn raison d\'un retrait DMCA irréfléchi de Sky UK Limited 🤮, nous ne pouvons pas lier le site du dépôt dans l\'application.
 \n
-\nRejoignez notre Discord ou chercher des repository sur internet.</string>
+\nRejoignez notre Discord ou cherchez en ligne.</string>
     <string name="extension_language">Langage</string>
     <string name="enable_skip_op_from_database_des">Afficher les popups skip pour les intro / fins</string>
     <string name="apk_installer_legacy">Ancienne méthode d\'installation</string>
     <string name="player_settings_play_in_web">Web Video Cast</string>
+    <string name="pref_category_links">Liens</string>
+    <string name="pref_category_gestures">Gestes</string>
+    <string name="pref_category_player_features">Fonctionnalités du lecteur</string>
+    <string name="pref_category_subtitles">Sous-titres</string>
+    <string name="pref_category_player_layout">Disposition</string>
+    <string name="pref_category_defaults">Valeurs par défaut</string>
+    <string name="pref_category_looks">Apparence</string>
+    <string name="pref_category_ui_features">Fonctionnalités</string>
+    <string name="play_trailer_button">Lire la bande-annonce</string>
+    <string name="pref_category_app_updates">Mises à jour de l\'application</string>
+    <string name="pref_category_backup">Sauvegarde</string>
+    <string name="pref_category_extensions">Extensions</string>
+    <string name="pref_category_actions">Actions</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="redo_setup_process">Refaire le processus d\'installation</string>
 </resources>
