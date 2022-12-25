@@ -312,11 +312,11 @@
     <string name="login_format" formatted="true">%s %s</string>
     <string name="account">account</string>
     <string name="logout">Disconnetti</string>
-    <string name="login">Login</string>
+    <string name="login">Accedi</string>
     <string name="switch_account">Cambia account</string>
     <string name="add_account">Aggiungi account</string>
-    <string name="create_account">Crea account</string>
-    <string name="add_sync">Aggiungi tracking</string>
+    <string name="create_account">Crea un account</string>
+    <string name="add_sync">Aggiungi tracciamento</string>
     <string name="added_sync_format" formatted="true">Aggiunto %s</string>
     <string name="upload_sync">Sincronizza</string>
     <string name="sync_score">Valutato</string>
@@ -500,7 +500,7 @@
     <string name="pref_category_gestures">Gesti</string>
     <string name="pref_category_player_features">Funzionalità lettore</string>
     <string name="pref_category_subtitles">Sottotitoli</string>
-    <string name="pref_category_player_layout">Layout</string>
+    <string name="pref_category_player_layout">Disposizione</string>
     <string name="pref_category_defaults">Predefiniti</string>
     <string name="pref_category_looks">Aspetto</string>
     <string name="pref_category_ui_features">Funzionalità</string>

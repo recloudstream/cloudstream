@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_background_img_des">הרקע של ההצגה לפני</string>
+    <string name="cast_format" formatted="true">צוות שחקנים: %s</string>
+    <string name="go_back_img_des">לחזור</string>
+    <string name="home_change_provider_img_des">לשנות ספק</string>
+    <string name="player_speed_text_format" formatted="true">מהירות (%.2fx)</string>
+    <string name="rated_format" formatted="true">דירוג: %.1f</string>
+    <string name="new_update_format" formatted="true">נמצא עדכון חדש!
+\n%s -&gt; %s</string>
+    <string name="filler" formatted="true">סינון</string>
+    <string name="duration_format" formatted="true">%d דקות</string>
+    <string name="app_name">קלאודסטרים</string>
+    <string name="title_home">בית</string>
+    <string name="title_search">חיפוש</string>
+    <string name="title_downloads">הורדות</string>
+    <string name="title_settings">הגדרות</string>
+    <string name="search_hint">חיפוש…</string>
+    <string name="search_hint_site" formatted="true">חיפוש %s…</string>
+    <string name="no_data">ללא נתונים</string>
+    <string name="episode_more_options_des">יותר אפשרויות</string>
+    <string name="result_tags">ז\'אנרים</string>
+    <string name="result_share">שיתוף</string>
+    <string name="result_open_in_browser">לפתוח בדפדפן</string>
+    <string name="skip_loading">דלג על טעינה</string>
+    <string name="next_episode_format" formatted="true">פרק %d יצא בעוד</string>
+    <string name="next_episode_time_day_format" formatted="true">%dימים %dשעות %dחודשים</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dשעות %dחודשים</string>
+    <string name="next_episode_time_min_format" formatted="true">%dחודשים</string>
+    <string name="result_poster_img_des">פוסטר</string>
+    <string name="episode_poster_img_des">הפוסטר של הפרק</string>
+    <string name="home_main_poster_img_des">פוסטר ראשי</string>
+    <string name="home_next_random_img_des">ארקאי הבא</string>
+    <string name="type_completed">הושלם</string>
+    <string name="type_plan_to_watch">בתכנון לצפייה</string>
+    <string name="type_re_watching">צופה מחדש</string>
+    <string name="play_movie_button">נגן סרט</string>
+    <string name="play_trailer_button">נגן קדימון</string>
+    <string name="play_livestream_button">נגן שידור חי</string>
+    <string name="pick_source">מקורות</string>
+    <string name="reload_error">נסיון חדש לחיבור…</string>
+    <string name="type_dropped">נעצר</string>
+    <string name="play_torrent_button">שידור טורנט</string>
+    <string name="go_back">חזרה</string>
+    <string name="play_episode">נגן פרק</string>
+    <string name="downloaded">הורד</string>
+    <string name="downloading">מוריד</string>
+    <string name="download_paused">ההורדה מושהית</string>
+    <string name="download_started">ההורדה התחילה</string>
+    <string name="download_failed">ההורדה נכשלה</string>
+    <string name="download_canceled">ההורדה בוטלה</string>
+    <string name="download_done">נגן טריילר</string>
+    <string name="stream">להזרים טורנט</string>
+    <string name="error_loading_links_toast">שגיאה בטעינת קישורים</string>
+    <string name="download_storage_text">אחסון פנימי</string>
+    <string name="app_subbed_text">עם כתוביות</string>
+    <string name="popup_delete_file">מחיקת קובץ</string>
+    <string name="popup_play_file">נגן קובץ</string>
+    <string name="popup_resume_download">המשך הורדה</string>
+    <string name="popup_pause_download">השהה את ההורדה</string>
+    <string name="pref_disable_acra">השבת את דיווח הבאגים האוטומטי</string>
+    <string name="home_play">נגן</string>
+    <string name="home_info">מידע</string>
+    <string name="filter_bookmarks">סנן סימניות</string>
+    <string name="error_bookmarks_text">סימניות</string>
+    <string name="action_remove_from_bookmarks">הסר</string>
+    <string name="action_add_to_bookmarks">הגדר מצב צפייה</string>
+    <string name="sort_apply">ליישם</string>
+    <string name="sort_cancel">בטל</string>
+    <string name="sort_copy">העתק</string>
+    <string name="sort_close">לסגור</string>
+    <string name="sort_clear">נקה</string>
+    <string name="sort_save">לשמור</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s פרק %d</string>
+    <string name="play_with_app_name">נגן עם קלאודסטרים</string>
+    <string name="next_episode">פרק הבא</string>
+    <string name="loading">טוען…</string>
+    <string name="type_watching">צופה ב</string>
+    <string name="pick_subtitle">כתוביות</string>
+    <string name="type_on_hold">בהמתנה</string>
+    <string name="type_none">ללא</string>
+    <string name="download">להוריד</string>
+    <string name="app_dubbed_text">מדובב</string>
+    <string name="home_more_info">יותר מידע</string>
+    <string name="home_expanded_hide">להתחבא</string>
+    <string name="player_speed">מהירות הנגן</string>
+    <string name="subtitles_settings">הגדרות הכתוביות</string>
+    <string name="subs_text_color">צבע טקסט</string>
+    <string name="subs_outline_color">צבע חיצון</string>
+    <string name="subs_edge_type">סוג קצה</string>
+    <string name="subs_subtitle_elevation">גובה הכתוביות</string>
+    <string name="subs_font_size">גודל גופן</string>
+    <string name="search_provider_text_providers">חפש באמצעות הספקים</string>
+    <string name="search_provider_text_types">חפש באמצעות סוגים</string>
+    <string name="subs_auto_select_language">בחירת שפה אוטומטית</string>
+    <string name="subs_download_languages">הורדת שפות</string>
+    <string name="subs_subtitle_languages">שפת הכתוביות</string>
+    <string name="subs_import_text" formatted="true">ייבא גופנים בהצבתם ב %s</string>
+    <string name="continue_watching">להמשיך לצפות</string>
+    <string name="action_remove_watching">להסיר</string>
+    <string name="action_open_watching">עוד מידע</string>
+    <string name="vpn_torrent">הספק הזה הוא טורנט, שימוש ב-VPN הוא מומלץ</string>
+    <string name="torrent_plot">תיאור</string>
+    <string name="normal_no_plot">עלילה לא נמצאה</string>
+    <string name="torrent_no_plot">העלילה לא נמצאה</string>
+    <string name="picture_in_picture">מצב תמונה בתמונה</string>
+    <string name="player_size_settings">כפתור שינוי גודל הנגן</string>
+    <string name="player_size_settings_des">הסר את הגבולות השחורים</string>
+    <string name="benene_count_text">%d ניתן למפתחים</string>
+    <string name="player_subtitles_settings_des">הגדרות כתוביות הנגן</string>
+    <string name="chromecast_subtitles_settings_des">הגדרות כתוביות כרומקאסט</string>
+    <string name="subs_font">גופן</string>
+    <string name="subs_hold_to_reset_to_default">החזק כדי לאפס לברירת מחדל</string>
+    <string name="subs_background_color">צבע הרקע</string>
+    <string name="vpn_might_be_needed">ייתכן שיהיה צורך לשימוש ב-VPN כדי שספק זה יפעל באופן נכון</string>
+    <string name="chromecast_subtitles_settings">כתוביות כרומקאסט</string>
+    <string name="picture_in_picture_des">ממשיך ניגון בנגן מינימלי מעל ישומים אחרים</string>
+    <string name="player_subtitles_settings">כתוביות</string>
+</resources>
