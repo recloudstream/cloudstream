@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - '**.xml'
+    branches:
+      - master
 
 concurrency: 
   group: "locale-list"
