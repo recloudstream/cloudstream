@@ -55,6 +55,7 @@ fun getCurrentLocale(context: Context): String {
 // Emoji Character Encoding Data --> C/C++/Java Src
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
 val appLanguages = arrayListOf(
+    /* begin language list */
     Triple("", "Spanish", "es"),
     Triple("", "English", "en"),
     Triple("", "Viet Nam", "vi"),
@@ -76,12 +77,13 @@ val appLanguages = arrayListOf(
     Triple("", "Romanian", "ro"),
     Triple("", "Italian", "it"),
     Triple("", "Chinese Simplified", "zh"),
-    Triple("\uD83C\uDDF9\uD83C\uDDFC", "Chinese Traditional", "zh_TW"),
+    Triple("\uD83C\uDDF9\uD83C\uDDFC", "Chinese Traditional", "zh-TW"),
     Triple("\uD83C\uDDEE\uD83C\uDDE9", "Indonesian", "in"),
     Triple("", "Czech", "cs"),
     Triple("", "Croatian", "hr"),
     Triple("", "Bulgarian", "bg"),
     Triple("", "Bengali", "bn"),
+    /* end language list */
 ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
 class SettingsGeneral : PreferenceFragmentCompat() {

@@ -1,0 +1,27 @@
+name: Update locale lists
+
+on:
+  push:
+    paths:
+      - '**.xml'
+
+concurrency: 
+  group: "locale-list"
+  cancel-in-progress: true
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Edit files
+      run: |
+        python3 .github/locales.py
+    - name: Commit to the repo
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add .
+        # "echo" returns true so the build succeeds, even if no changed files
+        git commit -m 'chore: update list of locales' || echo
+        git push
