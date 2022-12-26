@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
@@ -74,7 +75,7 @@ object BackupUtils {
         return !nonTransferableKeys.contains(this)
     }
 
-    var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
+    private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
 
     // Kinda hack, but I couldn't think of a better way
     data class BackupVars(
@@ -91,6 +92,7 @@ object BackupUtils {
         @JsonProperty("settings") val settings: BackupVars
     )
 
+    @Suppress("UNCHECKED_CAST")
     fun Context.getBackup(): BackupFile {
         val allData = getSharedPrefs().all.filter { it.key.isTransferable() }
         val allSettings = getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
@@ -143,64 +145,66 @@ object BackupUtils {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     fun FragmentActivity.backup() {
         try {
-            if (checkWrite()) {
-                val subDir = getBasePath().first
-                val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
-                val ext = "json"
-                val displayName = "CS3_Backup_${date}"
-                val backupFile = getBackup()
-
-                val steam =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && subDir?.isDownloadDir() == true) {
-                        val cr = this.contentResolver
-                        val contentUri =
-                            MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) // USE INSTEAD OF MediaStore.Downloads.EXTERNAL_CONTENT_URI
-                        //val currentMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-
-                        val newFile = ContentValues().apply {
-                            put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
-                            put(MediaStore.MediaColumns.TITLE, displayName)
-                            // While it a json file we store as txt because not
-                            // all file managers support mimetype json
-                            put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
-                            //put(MediaStore.MediaColumns.RELATIVE_PATH, folder)
-                        }
-
-                        val newFileUri = cr.insert(
-                            contentUri,
-                            newFile
-                        ) ?: throw IOException("Error creating file uri")
-                        cr.openOutputStream(newFileUri, "w")
-                            ?: throw IOException("Error opening stream")
-                    } else {
-                        val fileName = "$displayName.$ext"
-                        val rFile = subDir?.findFile(fileName)
-                        if (rFile?.exists() == true) {
-                            rFile.delete()
-                        }
-                        val file =
-                            subDir?.createFile(fileName)
-                                ?: throw IOException("Error creating file")
-                        if (!file.exists()) throw IOException("File does not exist")
-                        file.openOutputStream()
-                    }
-
-                val printStream = PrintWriter(steam)
-                printStream.print(mapper.writeValueAsString(backupFile))
-                printStream.close()
-
-                showToast(
-                    this,
-                    R.string.backup_success,
-                    Toast.LENGTH_LONG
-                )
-            } else {
+            if (!checkWrite()) {
                 showToast(this, getString(R.string.backup_failed), Toast.LENGTH_LONG)
                 requestRW()
                 return
             }
+
+            val subDir = getBasePath().first
+            val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
+            val ext = "json"
+            val displayName = "CS3_Backup_${date}"
+            val backupFile = getBackup()
+
+            val steam = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                && subDir?.isDownloadDir() == true
+            ) {
+                val cr = this.contentResolver
+                val contentUri =
+                    MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) // USE INSTEAD OF MediaStore.Downloads.EXTERNAL_CONTENT_URI
+                //val currentMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+
+                val newFile = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+                    put(MediaStore.MediaColumns.TITLE, displayName)
+                    // While it a json file we store as txt because not
+                    // all file managers support mimetype json
+                    put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+                    //put(MediaStore.MediaColumns.RELATIVE_PATH, folder)
+                }
+
+                val newFileUri = cr.insert(
+                    contentUri,
+                    newFile
+                ) ?: throw IOException("Error creating file uri")
+                cr.openOutputStream(newFileUri, "w")
+                    ?: throw IOException("Error opening stream")
+            } else {
+                val fileName = "$displayName.$ext"
+                val rFile = subDir?.findFile(fileName)
+                if (rFile?.exists() == true) {
+                    rFile.delete()
+                }
+                val file =
+                    subDir?.createFile(fileName)
+                        ?: throw IOException("Error creating file")
+                if (!file.exists()) throw IOException("File does not exist")
+                file.openOutputStream()
+            }
+
+            val printStream = PrintWriter(steam)
+            printStream.print(mapper.writeValueAsString(backupFile))
+            printStream.close()
+
+            showToast(
+                this,
+                R.string.backup_success,
+                Toast.LENGTH_LONG
+            )
         } catch (e: Exception) {
             logError(e)
             try {

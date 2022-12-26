@@ -57,7 +57,10 @@ object UIHelper {
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-                == PackageManager.PERMISSION_GRANTED)
+                == PackageManager.PERMISSION_GRANTED
+                // Since Android 13, we can't request external storage permission,
+                // so don't check it.
+                || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     }
 
     fun Activity.requestRW() {
