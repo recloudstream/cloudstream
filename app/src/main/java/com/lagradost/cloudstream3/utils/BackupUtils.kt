@@ -148,7 +148,7 @@ object BackupUtils {
     @SuppressLint("SimpleDateFormat")
     fun FragmentActivity.backup() {
         try {
-            if (!checkWrite() && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            if (!checkWrite()) {
                 showToast(this, getString(R.string.backup_failed), Toast.LENGTH_LONG)
                 requestRW()
                 return

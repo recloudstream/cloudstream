@@ -787,7 +787,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         nav_rail?.itemActiveIndicatorColor = rippleColor
         nav_view?.itemActiveIndicatorColor = rippleColor
 
-        if (!checkWrite() && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        if (!checkWrite()) {
             requestRW()
             if (checkWrite()) return
         }
