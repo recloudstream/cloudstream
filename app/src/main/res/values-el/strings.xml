@@ -419,7 +419,7 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="clear_history">Εκκαθάριση ιστορικού</string>
     <string name="history">Ιστορικό</string>
-    <string name="enable_skip_op_from_database_des">Εμφάνισε pop-up για παράλειψη τίτλων αρχής και τέλους</string>
+    <string name="enable_skip_op_from_database_des">Εμφάνιση pop-up για παράλειψη τίτλων αρχής και τέλους</string>
     <string name="clipboard_too_large">Υπερβολικά μεγάλο μέγεθος κειμένου. Αδύνατη η αποθήκευση στο πρόχειρο.</string>
     <string name="yes">Ναι</string>
     <string name="no">Όχι</string>

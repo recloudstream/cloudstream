@@ -12,7 +12,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">سرعة (%.2fx)</string>
     <string name="rated_format" formatted="true">تقييم: %.1f</string>
-    <string name="new_update_format" formatted="true">!تم العثور علي تحديث جديد\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">!تم العثور على تحديث جديد
+\n%s -&gt; %s</string>
     <string name="duration_format" formatted="true">%d دقيقة</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">تشغيل بواسطة CloudStream</string>
@@ -132,7 +133,7 @@
     <string name="use_system_brightness_settings_des">استخدم سطوع النظام في مُشغل التطبيق بدلاً من التراكب الداكن</string>
     <string name="episode_sync_settings">تحديث تقدم المشاهدة</string>
     <string name="episode_sync_settings_des">مزامنة التقدم في الحلقة الحالية تلقائيًا</string>
-    <string name="restore_settings">إسترجاع البيانات من نسخة إحتياطية</string>
+    <string name="restore_settings">إسترجاع البيانات من النسخة الإحتياطية</string>
     <string name="backup_settings">نسخ إحتياطي للبيانات</string>
     <string name="restore_success">تم تحميل ملف النسخة الاحتياطية</string>
     <string name="restore_failed_format" formatted="true">فشل استيراد البيانات من الملف %s</string>
@@ -261,13 +262,13 @@
     <string name="limit_title_rez">أبعاد مُشغل الفيديو</string>
     <string name="video_buffer_size_settings">حجم ذاكرة التخزين المؤقت للفيديو</string>
     <string name="video_buffer_length_settings">طول التخزين المؤقت</string>
-    <string name="video_buffer_disk_settings">التخزين المؤقت للفيديو علي القرص</string>
+    <string name="video_buffer_disk_settings">التخزين المؤقت للفيديو على القرص</string>
     <string name="video_buffer_clear_settings">مسح التخزين المؤقت للصورة والفيديو</string>
     <string name="video_ram_description">يتسبب في حدوث أعطال إذا تم ضبطه على مستوى مرتفع جدا على الأجهزة ذات الذاكرة المنخفضة ، مثل Android TV.</string>
     <string name="video_disk_description">يسبب مشاكل إذا تم ضبطه على مستوى مرتفع جدا على الأجهزة ذات مساحة التخزين المنخفضة ، مثل Android TV.</string>
     <string name="dns_pref">إستخدام DNS بدلا من HTTPS</string>
     <string name="dns_pref_summary">مفيد لتجاوز حجب مزود خدمة الإنترنت</string>
-    <string name="add_site_pref">نسخ موقع</string>
+    <string name="add_site_pref">موقع بديل (نسخة)</string>
     <string name="remove_site_pref">حذف موقع</string>
     <string name="add_site_summary">إضافة نسخة من موقع موجود، بعنوان URL مختلف</string>
     <string name="download_path_pref">مسار التنزيل</string>
@@ -296,11 +297,11 @@
     </string>
     <string name="category_general">عام</string>
     <string name="random_button_settings">زر العشوائي</string>
-    <string name="random_button_settings_desc">إظهار زر العشوائي علي الشاشة الرئيسية</string>
+    <string name="random_button_settings_desc">إظهار زر العشوائي على الصفحة الرئيسية</string>
     <string name="provider_lang_settings">لغات المزود</string>
     <string name="app_layout">واجهة التطبيق</string>
-    <string name="preferred_media_settings">المحتوي المفضل</string>
-    <string name="enable_nsfw_on_providers">تفعيل محتوي البالغين داخل المزودين المدعومين</string>
+    <string name="preferred_media_settings">المحتوى المفضل</string>
+    <string name="enable_nsfw_on_providers">تفعيل محتوى خاص للبالغين داخل المزودين المدعومين</string>
     <string name="subtitles_encoding">فك تشفير الترجمة</string>
     <string name="category_providers">المصادر</string>
     <string name="category_ui">الواجهة</string>
@@ -310,7 +311,7 @@
     <string name="emulator_layout">واجهة المحاكي</string>
     <string name="primary_color_settings">اللون الأساسي</string>
     <string name="app_theme_settings">مظهر التطبيق</string>
-    <string name="bottom_title_settings">موضع عنوان الملصق</string>
+    <string name="bottom_title_settings">مكان عنوان الملصق</string>
     <string name="bottom_title_settings_des">وضع العنوان تحت الملصق</string>
     <!-- account stuff -->
     <string name="anilist_key" translatable="false">anilist_key</string>
@@ -410,7 +411,7 @@
     <string name="error">خطأ</string>
     <string name="subtitles_remove_captions">ازالة التسميات التوضيحية من الترجمة</string>
     <string name="subtitles_remove_bloat">ازالة البرمجيات الخبيثة من الترجمة</string>
-    <string name="subtitles_filter_lang">فلترة تبعا للغة المحتوي المفضلة</string>
+    <string name="subtitles_filter_lang">تصفية حسب لغة الوسائط المفضلة</string>
     <string name="extras">اكسترا</string>
     <string name="trailer">مقطع دعائي</string>
     <string name="network_adress_example">رابط الفيديو</string>
@@ -518,7 +519,7 @@
     <string name="redo_setup_process">إعادة عملية الإعداد</string>
     <string name="pref_category_links">الروابط</string>
     <string name="pref_category_app_updates">تحديثات التطبيق</string>
-    <string name="pref_category_backup">نسخ احتياطي</string>
+    <string name="pref_category_backup">النسخ الإحتياطي</string>
     <string name="pref_category_extensions">الإضافات</string>
     <string name="pref_category_actions">الإجراءات</string>
     <string name="pref_category_cache">الذاكرة المؤقتة</string>
