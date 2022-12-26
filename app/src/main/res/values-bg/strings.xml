@@ -143,8 +143,8 @@
     <string name="backup_settings">Архивиране на данни</string>
     <string name="restore_success">Зареден архивен файл</string>
     <string formatted="true" name="restore_failed_format">Неуспешно възстановяване на данни от файл %s</string>
-    <string name="backup_success">Успешно съхранени данни</string>
-    <string name="backup_failed">Липсват разрешения за съхранение, моля, опитайте отново</string>
+    <string name="backup_success">Съхранени данни</string>
+    <string name="backup_failed">Липсват разрешения за съхранение. Моля, опитайте отново.</string>
     <string name="backup_failed_error_format">Грешка при архивирането на %s</string>
     <string name="search">Търсене</string>
     <string name="category_account">Акаунти</string>
@@ -156,8 +156,8 @@
     <string name="bug_report_settings_on">Не изпраща данни</string>
     <string name="show_fillers_settings">Показване заместващ епизод за аниме</string>
     <string name="show_trailers_settings">Показване на трейлъри</string>
-    <string name="kitsu_settings">Покажете плакати от kitsu</string>
-    <string name="pref_filter_search_quality">Скриване на избраното видео качество в резултатите от търсенето</string>
+    <string name="kitsu_settings">Покажете плакати от Kitsu</string>
+    <string name="pref_filter_search_quality">Скрий избраното видео качество в резултатите от търсенето</string>
     <string name="automatic_plugin_updates">Автоматични актуализации на плъгини</string>
     <string name="updates_settings">Показвай актуализации на приложението</string>
     <string name="updates_settings_des">Автоматично търси нови актуализации при стартиране</string>
@@ -267,8 +267,8 @@
     <string name="video_buffer_length_settings">Дължина на видео буфера</string>
     <string name="video_buffer_disk_settings">Видео кеш на диск</string>
     <string name="video_buffer_clear_settings">Изчистете кеша за видео и изображения</string>
-    <string name="video_ram_description">Ще предизвика случайни сривове, ако е зададено твърде високо. Не променяйте, ако имате малко количество RAM, като Android TV или стар телефон</string>
-    <string name="video_disk_description">Може да причини проблеми на системи с малко място за съхранение, като устройства с Android TV, ако го зададете твърде високо</string>
+    <string name="video_ram_description">Причинява сривове, ако е зададено твърде високо на устройства с малко памет, като Android TV.</string>
+    <string name="video_disk_description">Причинява проблеми, ако е зададено твърде високо на устройства с малко място за съхранение, като Android TV.</string>
     <string name="dns_pref">DNS през HTTPS</string>
     <string name="dns_pref_summary">Полезно за заобикаляне на блокирания от ISP доставчик</string>
     <string name="add_site_pref">Сайт за клониране</string>
@@ -322,8 +322,8 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string formatted="true" name="authenticated_user">Удостоверен %s</string>
-    <string formatted="true" name="authenticated_user_fail">Неуспешно удостоверяване на %s</string>
+    <string formatted="true" name="authenticated_user">%s удостоверен</string>
+    <string formatted="true" name="authenticated_user_fail">Не можах да вляза в %s</string>
     <string name="none">Нито един</string>
     <string name="normal">Нормално</string>
     <string name="all">Всичко</string>
@@ -336,8 +336,8 @@
     <string name="subtitle_offset">Синхронизиране на суб</string>
     <string name="subtitle_offset_hint">1000.ms</string>
     <string name="subtitle_offset_title">Забавяне на субтитрите</string>
-    <string name="subtitle_offset_extra_hint_later_format">Използвайте това, ако субтитрите се показват %dms твърде рано</string>
-    <string name="subtitle_offset_extra_hint_before_format">Използвайте това, ако субтитрите се показват %dms твърде късно</string>
+    <string name="subtitle_offset_extra_hint_later_format">Използвайте това, ако субтитрите се показват %d ms твърде рано</string>
+    <string name="subtitle_offset_extra_hint_before_format">Използвайте това, ако субтитрите се показват %d ms твърде късно</string>
     <string name="subtitle_offset_extra_hint_none_format">Без забавяне на субтитрите</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -378,9 +378,9 @@
     <string name="resolution_and_title">Резолюция и заглавие</string>
     <string name="title">Заглавие</string>
     <string name="resolution">Резолюция</string>
-    <string name="error_invalid_id">Невалиден идентификатор</string>
+    <string name="error_invalid_id">Невалиден ID</string>
     <string name="error_invalid_data">Невалидни данни</string>
-    <string name="error_invalid_url">Невалиден адрес</string>
+    <string name="error_invalid_url">Невалиден URL</string>
     <string name="error">Грешка</string>
     <string name="subtitles_remove_captions">Премахнете затворените надписи от субтитрите</string>
     <string name="subtitles_remove_bloat">Премахнете рекламирането в субтитрите</string>
@@ -403,10 +403,10 @@
     <string name="repository_url_hint">URL на хранилището</string>
     <string name="plugin_loaded">Приставката е заредена</string>
     <string name="plugin_deleted">Приставката е изтрита</string>
-    <string name="plugin_load_fail" formatted="true">Неуспешно зареждане %s</string>
+    <string name="plugin_load_fail" formatted="true">Не може да зареди %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Започна да изтегля %d %s</string>
-    <string name="batch_download_finish_format" formatted="true">Изтеглено %d %s успешно</string>
+    <string name="batch_download_start_format" formatted="true">Започна да изтегля %d %s…</string>
+    <string name="batch_download_finish_format" formatted="true">Изтеглено %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Всички %s вече са изтеглени</string>
     <string name="batch_download">Пакетно изтегляне</string>
     <string name="plugin_singular">Плъгин</string>
@@ -420,7 +420,7 @@
     <string formatted="true" name="plugins_updated">Актуализирани %d плъгини</string>
     <string name="blank_repo_message">CloudStream няма инсталирани сайтове по подразбиране. Трябва да инсталирате сайтовете от хранилища.
 \n
-\nПоради безмозъчно премахване на DMCA от Sky Uk Limited 🤮 не можем да свържем сайта на хранилището в приложението.
+\nПоради безмозъчно премахване на DMCA от Sky UK Limited 🤮 не можем да свържем сайта на хранилището в приложението.
 \n
 \nПрисъединете се към нашия Дискорд или търсете онлайн.</string>
     <string name="view_public_repositories_button">Вижте хранилищата на общността</string>
@@ -432,8 +432,8 @@
     <string name="audio_tracks">Аудио потоци</string>
     <string name="video_tracks">Видео потоци</string>
     <string name="apply_on_restart">Приложете при рестартиране</string>
-    <string name="safe_mode_title">Безопасният режим е активиран</string>
-    <string name="safe_mode_description">Възникна непоправим срив и ние автоматично деактивирахме всички разширения, така че можете да намерите и премахнете разширението, което причинява проблеми.</string>
+    <string name="safe_mode_title">Безопасен режим включен</string>
+    <string name="safe_mode_description">Всички разширения бяха изключени поради срив, за да ви помогне да намерите това, което създава проблеми.</string>
     <string name="safe_mode_crash_info">Вижте информация за срива</string>
     <string formatted="true" name="extension_rating">Оценка: %s</string>
     <string name="extension_description">Описание</string>
@@ -450,7 +450,7 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">Уеб видео предаване</string>
-    <string name="player_settings_play_in_browser">Браузър</string>
+    <string name="player_settings_play_in_browser">Уеб браузър</string>
     <string name="app_not_found_error">Приложението не е намерено</string>
     <string name="automatic_plugin_download">Автоматично изтегли добавки</string>
     <string name="all_languages_preference">Всички езици</string>
@@ -464,13 +464,33 @@
     <string name="confirm_exit_dialog">Сигурни ли сте, че искате да излезете\?</string>
     <string name="yes">Да</string>
     <string name="no">Не</string>
-    <string name="update_notification_installing">Инсталиране на актуализация на приложението</string>
-    <string name="update_notification_failed">Неуспешна актуализация на приложението</string>
+    <string name="update_notification_installing">Инсталиране на актуализация на приложението…</string>
+    <string name="update_notification_failed">Не можа да се инсталира новата версия на приложението</string>
     <string name="enable_skip_op_from_database_des">Покажи изскачащи прозорци при отваряне/затваряне</string>
-    <string name="update_notification_downloading">Изтегля се актуализация на приложението</string>
+    <string name="update_notification_downloading">Изтегля се актуализация на приложението…</string>
     <string name="skip_type_mixed_op">Смесено отваряне</string>
     <string name="skip_type_mixed_ed">Смесено затваряне</string>
     <string name="skip_type_creddits">Кредити</string>
     <string name="skip_type_intro">въведение</string>
     <string name="clear_history">Изчистване на историята</string>
+    <string name="automatic_plugin_download_summary">Автоматично инсталиране на всички все още неинсталирани добавки от добавени хранилища.</string>
+    <string name="apk_installer_settings">APK Инсталатор</string>
+    <string name="apk_installer_settings_des">Някои телефони не поддържат новия пакет за инсталиране. Опитайте предпоследената опция, ако актуализациите не се инсталират.</string>
+    <string name="play_trailer_button">Пусни трейлър</string>
+    <string name="pref_category_links">Връзки</string>
+    <string name="pref_category_app_updates">Актуализации на приложението</string>
+    <string name="pref_category_extensions">Разширения</string>
+    <string name="pref_category_actions">Действия</string>
+    <string name="apk_installer_legacy">Предишна версия</string>
+    <string name="apk_installer_package_installer">Пакетен инсталатор</string>
+    <string name="pref_category_player_features">Възможности на плеъра</string>
+    <string name="pref_category_defaults">По подразбиране</string>
+    <string name="pref_category_looks">Изгледи</string>
+    <string name="pref_category_subtitles">Субтитри</string>
+    <string name="pref_category_ui_features">Възможности</string>
+    <string name="redo_setup_process">Повторете процеса на настройка</string>
+    <string name="pref_category_backup">Архивиране</string>
+    <string name="pref_category_cache">Кеш</string>
+    <string name="pref_category_gestures">Жестове</string>
+    <string name="pref_category_player_layout">Шаблон</string>
 </resources>
