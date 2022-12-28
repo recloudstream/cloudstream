@@ -250,12 +250,12 @@
     <string name="video_buffer_length_settings">Panjang buffer video</string>
     <string name="video_buffer_disk_settings">Cache video di disk</string>
     <string name="video_buffer_clear_settings">Membersihkan cache video dan gambar</string>
-    <string name="video_ram_description">Dapat menyebabkan crash jika resolusi terlalu tinggi di RAM yang rendah, seperti TV Android atau ponsel lama.</string>
+    <string name="video_ram_description">Dapat menyebabkan crash jika disetel terlalu tinggi. Jangan diubah jika perangkat anda memiliki jumlah RAM yang rendah, seperti TV Android atau ponsel lama.</string>
     <string name="video_disk_description">Dapat bermasalah pada sistem dengan ruang penyimpanan rendah, seperti Android TV, jika diatur terlalu tinggi.</string>
     <string name="dns_pref">DNS melalui HTTPS</string>
     <string name="dns_pref_summary">Berguna untuk melewati blok ISP</string>
     <string name="download_path_pref">Jalur download</string>
-    <string name="nginx_url_pref">Url server Nginx</string>
+    <string name="nginx_url_pref">NGINX server URL</string>
     <string name="display_subbed_dubbed_settings">Tampilkan Anime Dub/Sub</string>
     <string name="resize_fit">Paskan dengan layar</string>
     <string name="resize_fill">Regang</string>
@@ -450,8 +450,8 @@
     <string name="download_all_plugins_from_repo">Unduh semua plugin dari repositori ini\?</string>
     <string name="safe_mode_title">Semua Umur</string>
     <string name="single_plugin_disabled" formatted="true">%s (Tidak aktif)</string>
-    <string name="tracks">Tracks</string>
-    <string name="apply_on_restart">Terapkan saat Restart</string>
+    <string name="tracks">Trek</string>
+    <string name="apply_on_restart">Terapkan saat dimuat ulang</string>
     <string name="extension_description">Keterangan</string>
     <string name="extension_version">Versi</string>
     <string name="extension_status">Status</string>
@@ -467,12 +467,12 @@
     <string name="batch_download_start_format" formatted="true">"Memulai mengunduh  %d %s…"</string>
     <string name="safe_mode_description">Semua fitur tambahkan dimatikan karena crash, untuk memudahkanmu mencari penyebab crash.</string>
     <string name="example_lang_name">Kode bahasa (en)</string>
-    <string name="player_load_subtitles_online">ambil dari internet</string>
+    <string name="player_load_subtitles_online">Ambil dari internet</string>
     <string name="provider_languages_tip">Putar vidio di bahasa ini</string>
     <string name="add_repository">Tambah Repositori</string>
     <string name="delete_repository_plugins">Pilih ini untuk menghapus semua repositori plugin</string>
     <string name="skip_setup">Lewati pengaturan</string>
-    <string name="error_invalid_url">alamat salah</string>
+    <string name="error_invalid_url">Alamat salah</string>
     <string name="network_adress_example">"Alamat  streaming"</string>
     <string name="next">Selanjutnya</string>
     <string name="previous">Sebelumnya</string>
@@ -486,4 +486,17 @@
     <string name="error_invalid_id">ID salah</string>
     <string name="history">Riwayat</string>
     <string name="action_mark_as_watched">Tandai ditonton</string>
+    <string name="error_invalid_data">Data salah</string>
+    <string name="subtitles_remove_captions">Hapus teks tertutup dari subtitel</string>
+    <string name="subtitles_remove_bloat">Hapus karakter sampah dari subtitel</string>
+    <string name="audio_tracks">Audio Trek</string>
+    <string name="video_tracks">Vidio Trek</string>
+    <string name="extension_types">Dukungan</string>
+    <string name="hls_playlist">Daftar putar HLS</string>
+    <string name="apk_installer_settings">Penginstal APK</string>
+    <string name="subtitles_encoding">Teknik menampilkan subtitel</string>
+    <string name="pref_category_gestures">Gerakan</string>
+    <string name="apk_installer_settings_des">Beberapa perangkat tidak mendukung penginstal paket mode baru. Coba mode lama jika pembaruan tidak dapat diinstal.</string>
+    <string name="pref_category_actions">Aksi</string>
+    <string name="referer">Sumber</string>
 </resources>
