@@ -21,32 +21,3 @@
 <a href="https://hosted.weblate.org/engage/cloudstream/">
   <img src="https://hosted.weblate.org/widgets/cloudstream/-/app/multi-auto.svg" alt="Translation status" />
 </a>
-
-<!--
-***The list of supported languages:***
-* 🇱🇧 Arabic
-* 🇧🇬 Bulgarian
-* 🇨🇳 Chinese Simplified
-* 🇹🇼 Chinese Traditional
-* 🇭🇷 Croatian
-* 🇨🇿 Czech
-* 🇳🇱 Dutch
-* 🇬🇧 English
-* 🇫🇷 French
-* 🇩🇪 German
-* 🇬🇷 Greek
-* 🇮🇳 Hindi
-* 🇮🇩 Indonesian
-* 🇮🇹 Italian
-* 🇲🇰 Macedonian
-* 🇮🇳 Malayalam
-* 🇳🇴 Norsk
-* 🇵🇱 Polish
-* 🇧🇷 Portuguese (Brazil)
-* 🇷🇴 Romanian
-* 🇪🇸 Spanish
-* 🇸🇪 Swedish
-* 🇵🇭 Tagalog
-* 🇹🇷 Turkish
-* 🇻🇳 Vietnamese
--->

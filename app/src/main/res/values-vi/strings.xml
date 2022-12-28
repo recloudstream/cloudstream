@@ -433,4 +433,6 @@
     <string name="safe_mode_title">Bật chế độ an toàn</string>
     <string name="safe_mode_description">Đã xảy ra sự cố và chúng tôi đã tự động tắt tất cả các tiện ích mở rộng, hãy tìm và xóa tiện ích mở rộng đang gây ra sự cố.</string>
     <string name="safe_mode_crash_info">Xem thông tin sự cố</string>
+    <string name="history">Lịch sử</string>
+    <string name="action_mark_as_watched">Đánh dấu là đã xem</string>
 </resources>

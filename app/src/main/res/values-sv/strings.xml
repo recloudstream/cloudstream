@@ -1,9 +1,8 @@
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <string name="rated_format">Betygsatt: %.1f</string>
     <string name="player_speed_text_format">Hastighet (%.2fx)</string>
-    <string name="new_update_format">Ny uppdatering hittad!\n%s -> %s</string>
-
+    <string name="new_update_format">Ny uppdatering hittad!\n%s -&gt; %s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hem</string>
     <string name="title_search">Sök</string>
@@ -21,14 +20,12 @@
     <string name="result_open_in_browser">Öppna i webbläsaren</string>
     <string name="skip_loading">Hoppa över</string>
     <string name="loading">Laddar…</string>
-
     <string name="type_watching">Tittar på</string>
     <string name="type_on_hold">Pausad</string>
     <string name="type_completed">Avslutad</string>
     <string name="type_dropped">Dropped</string>
     <string name="type_plan_to_watch">Plannerad</string>
     <string name="type_none">Ingen</string>
-
     <string name="play_movie_button">Spela Upp</string>
     <string name="play_torrent_button">Strömma Torrent</string>
     <string name="pick_source">Källor</string>
@@ -39,13 +36,10 @@
     <string name="play_episode">Spela Avsnitt</string>
     <string name="download">Ladda ner</string>
     <string name="download_storage_text">Intern lagring</string>
-
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
-
     <string name="popup_delete_file">Ta bort</string>
     <string name="popup_play_file">Spela upp</string>
-
     <string name="pref_disable_acra">Inaktivera automatisk felrapportering</string>
     <string name="home_more_info">Mer information</string>
     <string name="home_expanded_hide">Hide</string>
@@ -71,24 +65,19 @@
     <string name="subs_font">Font</string>
     <string name="search_provider_text_providers">Sök med följande leverantörer</string>
     <string name="search_provider_text_types">Sök med följande filmtyper</string>
-
     <string name="benene_count_text">%d Bananer donerade till utvecklarna</string>
     <string name="benene_count_text_none">Inga bananer givna</string>
-
     <string name="subs_auto_select_language">Automatisk val av undertextspråk</string>
     <string name="subs_download_languages">Automatisk nerladdaning av språk</string>
     <string name="subs_hold_to_reset_to_default">Håll inne för att återställa till standard</string>
     <string name="continue_watching">Fortsätt titta</string>
-
     <string name="action_remove_watching">Ta bort</string>
     <string name="action_open_watching">Mer information</string>
-
     <string name="vpn_might_be_needed">En VPN kan behövas för att den här leverantören ska fungera korrekt</string>
     <string name="vpn_torrent">Denna leverantör är en torrent, en VPN rekommenderas</string>
     <string name="torrent_plot">Beskrivning</string>
     <string name="normal_no_plot">Ingen sammanfattning hittades</string>
     <string name="torrent_no_plot">Ingen beskrivning hittades</string>
-
     <string name="picture_in_picture">Bild-i-bild</string>
     <string name="picture_in_picture_des">Fortsätter uppspelning i en miniatyrspelare ovanpå andra appar</string>
     <string name="player_size_settings">Lägger till en knapp för att justera bildförhållandet</string>
@@ -119,9 +108,7 @@
     <string name="discord">Gå med i Discord-gruppen</string>
     <string name="benene">Ge en banan till utvecklarna</string>
     <string name="benene_des">Ge banan</string>
-
     <string name="app_language">Språk</string>
-
     <string name="no_chromecast_support_toast">Denna leverantör har inget Chromecast-stöd</string>
     <string name="no_links_found_toast">Inga länkar hittades</string>
     <string name="copy_link_toast">Länken kopierades till urklipp</string>
@@ -129,18 +116,15 @@
     <string name="subs_default_reset_toast">Återställd till standardvärdet</string>
     <string name="acra_report_toast">Programmet kraschade tyvärr. En anonym felrapport kommer att skickas till utvecklarna</string>
     <string name="error_loading_links_toast">Fel uppstod vid laddning av länkarna</string>
-
     <string name="season">Säsong</string>
     <string name="no_season">Ingen Säsong</string>
     <string name="episode">Avsnitt</string>
     <string name="episodes">Avsnitt</string>
     <string name="season_short">S</string>
     <string name="episode_short">A</string>
-
     <string name="delete_file">Ta bort nerladdad fil</string>
     <string name="delete">Ta bort</string>
     <string name="delete_message">%s kommer att raderas permanent\nÄr du helt säker?</string>
-
     <string name="status_ongoing">Pågående</string>
     <string name="status_completed">Färdig</string>
     <string name="status">Status</string>
@@ -149,21 +133,17 @@
     <string name="duration">Längd</string>
     <string name="site">Sida</string>
     <string name="synopsis">Sammanfattning</string>
-
     <string name="queued">på kö</string>
     <string name="no_subtitles">Inga undertexter</string>
     <string name="default_subtitles">Standard</string>
-
     <string name="free_storage">Tillgängligt</string>
     <string name="used_storage">Använtt</string>
     <string name="app_storage">App</string>
-
     <string name="movies">Filmer</string>
     <string name="tv_series">Tv Serier</string>
     <string name="cartoons">Cartoons</string>
     <string name="anime">Anime</string>
     <string name="torrent">Torrent</string>
-
     <string name="episode_action_chromecast_episode">Chromecasta ett Avsnitt</string>
     <string name="episode_action_chromecast_mirror">Chromecasta en Länk</string>
     <string name="episode_action_play_in_app">Spela upp i appen</string>
@@ -173,18 +153,14 @@
     <string name="episode_action_auto_download">Automatisk nerladdning</string>
     <string name="episode_action_download_mirror">Ladda ner en specifik länk</string>
     <string name="episode_action_reload_links">Ladda om alla länkar</string>
-
     <string name="no_update_found">Ingen uppdatering hittad</string>
     <string name="check_for_update">Sök efter uppdatering</string>
-
     <string name="video_lock">Skärmlås</string>
     <string name="video_aspect_ratio_resize">Bildförhållande</string>
     <string name="video_source">Källa</string>
     <string name="video_skip_op">Hoppa över OP</string>
-
     <string name="dont_show_again">Visa inte igen</string>
     <string name="update">Uppdatera</string>
-
     <string name="download_started">Nerladdningar startad</string>
     <string name="download_failed">Nerladdning Misslyckades</string>
     <string name="downloaded">Nerladdad</string>
@@ -194,7 +170,6 @@
     <string name="download_done">Nerladdning Färdig</string>
     <string name="popup_resume_download">Återupta nerladdning</string>
     <string name="popup_pause_download">Pausa nerladdning</string>
-
     <string name="pause">Pausa</string>
     <string name="resume">Återuppta</string>
     <string name="storage_error">Ett nerladdningsfel uppstod, kolla om appen har lagringsbehörigheter</string>
@@ -235,4 +210,75 @@
     <string name="dns_pref_summary">" "</string>
     <string name="app_theme_settings">Appens tema</string>
     <string name="app_dub_sub_episode_text_format">%s A%d</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="play_with_app_name">Spela med CloudStream</string>
+    <string name="chromecast_subtitles_settings">Chromecast-undertexter</string>
+    <string name="double_tap_to_pause_settings_des">Tryck i mitten för att pausa</string>
+    <string name="restore_settings">Återställ data från backup</string>
+    <string name="category_account">Konton</string>
+    <string name="category_updates">Uppdateringar och backup</string>
+    <string name="automatic_plugin_updates">Automatiska pluginuppdateringar</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="search_hint_site" formatted="true">Sök %s…</string>
+    <string name="sort_copy">Kopiera</string>
+    <string name="sort_close">Stäng</string>
+    <string name="double_tap_to_pause_settings">Dubbeltryck för att pausa</string>
+    <string name="sort_save">Spara</string>
+    <string name="subs_subtitle_languages">Undertextspråk</string>
+    <string name="show_log_cat">Visa Logcat 🐈</string>
+    <string name="autoplay_next_settings">Autospela nästa episod</string>
+    <string name="play_trailer_button">Spela Trailer</string>
+    <string name="autoplay_next_settings_des">Starta nästa episod när nuvarande slutar</string>
+    <string name="next_episode_format" formatted="true">Episod %d kommer släppas om</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="show_trailers_settings">Visa trailers</string>
+    <string name="action_open_play">\@string/home_play</string>
+    <string name="ova">OVA</string>
+    <string name="episodes_range">%d-%d</string>
+    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="season_format">%s %d%s</string>
+    <string name="go_back_30">-30</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nåterstår</string>
+    <string name="nsfw">NSFW</string>
+    <string name="ova_singular">\@string/ova</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="go_forward_30">+30</string>
+    <string name="provider_info_meta">Metadata är inte givet av sidan, videon kommer inte ladda om den inte existerar på sidan.</string>
+    <string name="automatic_plugin_download">Automatiskt ladda ner plugin</string>
+    <string name="pref_filter_search_quality">Dölj vald videokvalitet i sökresultat</string>
+    <string name="episode_action_download_subtitle">Ladda ner undertexter</string>
+    <string name="movies_singular">Film</string>
+    <string name="tv_series_singular">Serier</string>
+    <string name="skip_update">Skippa denna uppdatering</string>
+    <string name="backup_failed">Lagringsbehörigheter saknas. Var vänlig försök igen.</string>
+    <string name="no_episodes_found">Inga episoder hittade</string>
+    <string name="kitsu_settings">Visa bilder från Kitsu</string>
+    <string name="apk_installer_settings_des">Vissa telefoner stöder inte den nya paketinstallatören. Prova alternativet för äldre versioner om uppdateringarna inte installeras.</string>
+    <string name="apk_installer_settings">APK-installatör</string>
+    <string name="subs_import_text" formatted="true">Importera typsnitt genom att placera filerna i %s</string>
+    <string name="episode_sync_settings_des">Automatiskt uppdatera antalet episoder sedda</string>
+    <string name="backup_settings">Säkerhetskopiera data</string>
+    <string name="restore_success">Läste in säkerhetskopia</string>
+    <string name="restore_failed_format" formatted="true">Misslyckades att återställa data från %s</string>
+    <string name="backup_success">Data lagrad</string>
+    <string name="backup_failed_error_format">Problem att säkerhetskopiera %s</string>
+    <string name="automatic_plugin_download_summary">Installera automatiskt alla ännu inte installerade plugins från tillagda repositories.</string>
+    <string name="redo_setup_process">Gör om installationsprocessen</string>
+    <string name="documentaries">Dokumentärer</string>
+    <string name="asian_drama">Asiatiska draman</string>
+    <string name="others">Andra</string>
+    <string name="cartoons_singular">Tecknade serier</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="documentaries_singular">Dokumentär</string>
+    <string name="asian_drama_singular">Asiatisk drama</string>
+    <string name="other_singular">Video</string>
+    <string name="show_hd">Kvalitetsetikett</string>
+    <string name="show_title">Titel</string>
+    <string name="poster_ui_settings">Växla UI-element på affisch</string>
+    <string name="limit_title_rez">Videospelarens upplösning</string>
+    <string name="history">Historik</string>
+    <string name="action_mark_as_watched">Markera som sedd</string>
 </resources>

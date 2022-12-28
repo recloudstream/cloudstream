@@ -259,4 +259,6 @@
     <string name="video_disk_description">Posibleng magka problema kapag sobrang taas kapag mababa ang storage ng device (tulad ng Android TV)</string>
     <string name="create_account">Gumawa ng account</string>
     <string name="add_account">Magdagdag ng Account</string>
+    <string name="history">Kasaysayan</string>
+    <string name="action_mark_as_watched">I-tanda bilang napanood na</string>
 </resources>

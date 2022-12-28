@@ -483,4 +483,23 @@
     <string name="quality_hdr">HDR</string>
     <string name="quality_sdr">SDR</string>
     <string name="safe_mode_description">Alle utvidelser ble skrudd av som følge av et krasj for å hjelpe deg å finne det som lager trøbbel.</string>
+    <string name="play_trailer_button">Spill forfilm</string>
+    <string name="pref_category_links">Lenker</string>
+    <string name="pref_category_app_updates">Programoppgraderinger</string>
+    <string name="pref_category_extensions">Utvidelser</string>
+    <string name="pref_category_actions">Handlinger</string>
+    <string name="pref_category_cache">Hurtiglager</string>
+    <string name="pref_category_gestures">Håndvendinger</string>
+    <string name="pref_category_player_features">Avspillerfunksjoner</string>
+    <string name="pref_category_player_layout">Tilpasning</string>
+    <string name="pref_category_defaults">Forvalg</string>
+    <string name="pref_category_looks">Utseende</string>
+    <string name="pref_category_ui_features">Funksjoner</string>
+    <string name="apk_installer_legacy">Gammeldags</string>
+    <string name="apk_installer_package_installer">PakkeInstallatør</string>
+    <string name="redo_setup_process">Gjenta oppsettsprosess</string>
+    <string name="pref_category_subtitles">Undertekster</string>
+    <string name="pref_category_backup">Sikkerhetskopi</string>
+    <string name="apk_installer_settings">APK-installatør</string>
+    <string name="apk_installer_settings_des">Noen enheter støtter ikke den nye pakkeinstallatøren. Prøv gammeldags alternativ hvis ting ikke installeres.</string>
 </resources>

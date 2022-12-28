@@ -116,7 +116,7 @@ object CommonActivity {
      * when setting the app language.
      **/
     val appLanguageExceptions = hashMapOf(
-        "zh_TW" to Locale.TRADITIONAL_CHINESE
+        "zh-rTW" to Locale.TRADITIONAL_CHINESE
     )
 
     fun setLocale(context: Context?, languageCode: String?) {

@@ -500,4 +500,6 @@
     <string name="player_settings_play_in_web">Web Video Yayını</string>
     <string name="player_settings_play_in_browser">Tarayıcı</string>
     <string name="app_not_found_error">Uygulama bulunamadı</string>
+    <string name="history">Geçmiş</string>
+    <string name="action_mark_as_watched">İzlendi olarak imle</string>
 </resources>

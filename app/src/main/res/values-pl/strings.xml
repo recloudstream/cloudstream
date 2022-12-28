@@ -321,7 +321,7 @@
     <string name="subtitle_offset_extra_hint_later_format">Użyj tego, jeśli napisy są wyświetlane %d ms za wcześnie</string>
     <string name="subtitle_offset_extra_hint_before_format">Użyj tego, jeśli napisy są wyświetlane %d ms za późno</string>
     <string name="subtitle_offset_extra_hint_none_format">Brak opóźnienia napisów</string>
-    <string name="subtitles_example_text">Pchnąć w tę łódź jeża lub ośm skrzyń fig.</string>
+    <string name="subtitles_example_text">Pchnąć w tę łódź jeża lub ośm skrzyń fig</string>
     <string name="recommended">Polecane</string>
     <string name="player_loaded_subtitles" formatted="true">Załadowano %s</string>
     <string name="player_load_subtitles">Wczytaj z pliku</string>
@@ -484,4 +484,5 @@
     <string name="pref_category_defaults">Ustawienia domyślne</string>
     <string name="pref_category_player_layout">Układ</string>
     <string name="pref_category_looks">Wygląd</string>
+    <string name="play_trailer_button">Odtwórz zwiastun</string>
 </resources>

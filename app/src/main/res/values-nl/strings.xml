@@ -396,4 +396,6 @@
     <string name="crash_reporting_title">Crashrapportage</string>
     <string name="preferred_media_subtext">Wat wil je zien?</string>
     <string name="setup_done">Klaar</string>
+    <string name="action_mark_as_watched">Markeer als bekeken</string>
+    <string name="history">Geschiedenis</string>
 </resources>
