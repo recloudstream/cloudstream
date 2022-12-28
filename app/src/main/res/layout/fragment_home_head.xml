@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:orientation="vertical"
-    android:id="@+id/home_preview"
+    android:id="@+id/home_header"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/primaryBlackBackground"
@@ -9,6 +10,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
+        android:id="@+id/home_preview"
         android:layout_width="match_parent"
         android:layout_height="500dp">
 

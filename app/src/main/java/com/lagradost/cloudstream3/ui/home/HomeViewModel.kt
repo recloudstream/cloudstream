@@ -265,80 +265,83 @@ class HomeViewModel : ViewModel() {
         _apiName.postValue(repo?.name)
         _randomItems.postValue(listOf())
 
-        if (repo?.hasMainPage == true) {
-            _page.postValue(Resource.Loading())
-            _preview.postValue(Resource.Loading())
-            addJob?.cancel()
-
-            when (val data = repo?.getMainPage(1, null)) {
-                is Resource.Success -> {
-                    try {
-                        expandable.clear()
-                        data.value.forEach { home ->
-                            home?.items?.forEach { list ->
-                                val filteredList =
-                                    context?.filterHomePageListByFilmQuality(list) ?: list
-                                expandable[list.name] =
-                                    ExpandableHomepageList(filteredList, 1, home.hasNext)
-                            }
-                        }
-
-                        val items = data.value.mapNotNull { it?.items }.flatten()
-
-
-                        previewResponses.clear()
-                        previewResponsesAdded.clear()
-
-                        //val home = data.value
-                        if (items.isNotEmpty()) {
-                            val currentList =
-                                items.shuffled().filter { it.list.isNotEmpty() }
-                                    .flatMap { it.list }
-                                    .distinctBy { it.url }
-                                    .toList()
-
-                            if (currentList.isNotEmpty()) {
-                                val randomItems =
-                                    context?.filterSearchResultByFilmQuality(currentList.shuffled())
-                                        ?: currentList.shuffled()
-
-                                updatePreviewResponses(
-                                    previewResponses,
-                                    previewResponsesAdded,
-                                    randomItems,
-                                    3
-                                )
-
-                                _randomItems.postValue(randomItems)
-                                currentShuffledList = randomItems
-                            }
-                        }
-                        if (previewResponses.isEmpty()) {
-                            _preview.postValue(
-                                Resource.Failure(
-                                    false,
-                                    null,
-                                    null,
-                                    "No homepage responses"
-                                )
-                            )
-                        } else {
-                            _preview.postValue(Resource.Success((previewResponsesAdded.size < currentShuffledList.size) to previewResponses))
-                        }
-                        _page.postValue(Resource.Success(expandable))
-                    } catch (e: Exception) {
-                        _randomItems.postValue(emptyList())
-                        logError(e)
-                    }
-                }
-                is Resource.Failure -> {
-                    _page.postValue(data!!)
-                }
-                else -> Unit
-            }
-        } else {
+        if (repo?.hasMainPage != true) {
             _page.postValue(Resource.Success(emptyMap()))
             _preview.postValue(Resource.Failure(false, null, null, "No homepage"))
+            return@ioSafe
+        }
+
+
+        _page.postValue(Resource.Loading())
+        _preview.postValue(Resource.Loading())
+        addJob?.cancel()
+
+        when (val data = repo?.getMainPage(1, null)) {
+            is Resource.Success -> {
+                try {
+                    expandable.clear()
+                    data.value.forEach { home ->
+                        home?.items?.forEach { list ->
+                            val filteredList =
+                                context?.filterHomePageListByFilmQuality(list) ?: list
+                            expandable[list.name] =
+                                ExpandableHomepageList(filteredList, 1, home.hasNext)
+                        }
+                    }
+
+                    val items = data.value.mapNotNull { it?.items }.flatten()
+
+
+                    previewResponses.clear()
+                    previewResponsesAdded.clear()
+
+                    //val home = data.value
+                    if (items.isNotEmpty()) {
+                        val currentList =
+                            items.shuffled().filter { it.list.isNotEmpty() }
+                                .flatMap { it.list }
+                                .distinctBy { it.url }
+                                .toList()
+
+                        if (currentList.isNotEmpty()) {
+                            val randomItems =
+                                context?.filterSearchResultByFilmQuality(currentList.shuffled())
+                                    ?: currentList.shuffled()
+
+                            updatePreviewResponses(
+                                previewResponses,
+                                previewResponsesAdded,
+                                randomItems,
+                                3
+                            )
+
+                            _randomItems.postValue(randomItems)
+                            currentShuffledList = randomItems
+                        }
+                    }
+                    if (previewResponses.isEmpty()) {
+                        _preview.postValue(
+                            Resource.Failure(
+                                false,
+                                null,
+                                null,
+                                "No homepage responses"
+                            )
+                        )
+                    } else {
+                        _preview.postValue(Resource.Success((previewResponsesAdded.size < currentShuffledList.size) to previewResponses))
+                    }
+                    _page.postValue(Resource.Success(expandable))
+                } catch (e: Exception) {
+                    _randomItems.postValue(emptyList())
+                    logError(e)
+                }
+            }
+            is Resource.Failure -> {
+                _page.postValue(data!!)
+                _preview.postValue(data!!)
+            }
+            else -> Unit
         }
     }
 

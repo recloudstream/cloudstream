@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -38,6 +39,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.activity_main_tv.view.*
 import kotlinx.android.synthetic.main.fragment_home_head.view.*
 import kotlinx.android.synthetic.main.fragment_home_head.view.home_bookmarked_child_recyclerview
+import kotlinx.android.synthetic.main.fragment_home_head.view.home_header
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.*
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_bookmarked_holder
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_plan_to_watch_btt
@@ -68,6 +70,7 @@ class HomeParentItemAdapterPreview(
     private var resumeWatchingData: List<SearchResponse> = listOf()
     private var bookmarkData: Pair<Boolean, List<SearchResponse>> =
         false to listOf()
+    private var apiName: String = "NONE"
 
     val headItems = 1
 
@@ -80,8 +83,8 @@ class HomeParentItemAdapterPreview(
     }
 
     companion object {
-        private const val VIEW_TYPE_HEADER = 4815
-        private const val VIEW_TYPE_ITEM = 1623
+        private const val VIEW_TYPE_HEADER = 2
+        private const val VIEW_TYPE_ITEM = 1
     }
 
     fun setResumeWatchingData(resumeWatching: List<SearchResponse>) {
@@ -92,6 +95,12 @@ class HomeParentItemAdapterPreview(
     fun setPreviewData(preview: Resource<Pair<Boolean, List<LoadResponse>>>) {
         previewData = preview
         holder?.updatePreview(preview)
+        //notifyItemChanged(0)
+    }
+
+    fun setApiName(name: String) {
+        apiName = name
+        holder?.updateApiName(name)
         //notifyItemChanged(0)
     }
 
@@ -114,6 +123,7 @@ class HomeParentItemAdapterPreview(
                 holder.updateResume(resumeWatchingData)
                 holder.updateBookmarks(bookmarkData)
                 holder.setAvailableWatchStatusTypes(availableWatchStatusTypes)
+                holder.updateApiName(apiName)
             }
             else -> super.onBindViewHolder(holder, position - 1)
         }
@@ -184,7 +194,7 @@ class HomeParentItemAdapterPreview(
     ) : RecyclerView.ViewHolder(itemView) {
         private var previewAdapter: HomeScrollAdapter? = null
         private val previewViewpager: ViewPager2? = itemView.home_preview_viewpager
-        private val previewHeader: LinearLayout? = itemView.home_preview
+        private val previewHeader: FrameLayout? = itemView.home_preview
         private val previewCallback: ViewPager2.OnPageChangeCallback =
             object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -212,10 +222,6 @@ class HomeParentItemAdapterPreview(
                             itemView.home_preview_description?.text =
                                 this.plot ?: ""
                             itemView.home_preview_text?.text = this.name
-                            itemView.home_preview_change_api?.text = apiName
-                            itemView.home_preview_change_api?.setOnClickListener { view ->
-                                changeHomePageCallback(view)
-                            }
                             itemView.home_preview_tags?.apply {
                                 removeAllViews()
                                 tags?.forEach { tag ->
@@ -366,6 +372,13 @@ class HomeParentItemAdapterPreview(
         )
 
         init {
+            itemView.home_preview_change_api?.setOnClickListener { view ->
+                changeHomePageCallback(view)
+            }
+            itemView.home_preview_change_api2?.setOnClickListener { view ->
+                changeHomePageCallback(view)
+            }
+
             previewViewpager?.apply {
                 if (!isTvSettings())
                     setPageTransformer(HomeScrollTransformer())
@@ -538,7 +551,15 @@ class HomeParentItemAdapterPreview(
             })
         }
 
+        fun updateApiName(name: String) {
+            itemView.home_preview_change_api2?.text = name
+            itemView.home_preview_change_api?.text = name
+        }
+
         fun updatePreview(preview: Resource<Pair<Boolean, List<LoadResponse>>>) {
+            itemView.home_header?.isGone = preview is Resource.Loading
+            itemView.home_preview_change_api2?.isGone = preview is Resource.Success
+
             when (preview) {
                 is Resource.Success -> {
                     previewHeader?.isVisible = true
@@ -570,12 +591,17 @@ class HomeParentItemAdapterPreview(
         }
 
         fun setAvailableWatchStatusTypes(availableWatchStatusTypes: Pair<Set<WatchType>, Set<WatchType>>) {
+            var anyVisible = false
             for ((chip, watch) in toggleList) {
                 chip?.apply {
-                    isVisible = availableWatchStatusTypes.second.contains(watch)
+                    isVisible = availableWatchStatusTypes.second.contains(watch).also {
+                        anyVisible = anyVisible || it
+                    }
+                    
                     isChecked = availableWatchStatusTypes.first.contains(watch)
                 }
             }
+            itemView.home_bookmarked_holder?.isVisible = anyVisible
         }
     }
 }

@@ -511,6 +511,9 @@ class HomeFragment : Fragment() {
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
             home_api_fab?.text = apiName
+            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setApiName(
+                apiName
+            )
         }
 
         observe(homeViewModel.page) { data ->
@@ -529,6 +532,7 @@ class HomeFragment : Fragment() {
 
                     home_loading?.isVisible = false
                     home_loading_error?.isVisible = false
+                    home_master_recycler?.isVisible = true
                     //home_loaded?.isVisible = true
                     if (toggleRandomButton) {
                         //Flatten list
@@ -569,6 +573,7 @@ class HomeFragment : Fragment() {
 
                     home_loading?.isVisible = false
                     home_loading_error?.isVisible = true
+                    home_master_recycler?.isVisible = false
                     //home_loaded?.isVisible = false
                 }
                 is Resource.Loading -> {
@@ -576,6 +581,7 @@ class HomeFragment : Fragment() {
                     home_loading_shimmer?.startShimmer()
                     home_loading?.isVisible = true
                     home_loading_error?.isVisible = false
+                    home_master_recycler?.isVisible = false
                     //home_loaded?.isVisible = false
                 }
             }
