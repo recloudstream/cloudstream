@@ -991,7 +991,7 @@ class HomeFragment : Fragment() {
                         home_random?.extend()
                     }
                 }
-                
+
                 super.onScrolled(recyclerView, dx, dy)
             }
         })
