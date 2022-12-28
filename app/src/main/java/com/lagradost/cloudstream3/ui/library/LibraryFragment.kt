@@ -9,14 +9,34 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
+import com.lagradost.cloudstream3.APIHolder.allProviders
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import kotlinx.android.synthetic.main.fragment_library.*
+
+const val LIBRARY_FOLDER = "library_folder"
+
+
+enum class LibraryOpenerType {
+    Provider,
+    Browser,
+}
+
+/** Used to store how the user wants to open said poster */
+class LibraryOpener(
+    val openType: LibraryOpenerType,
+    val data: String?,
+)
 
 class LibraryFragment : Fragment() {
 
@@ -27,8 +47,7 @@ class LibraryFragment : Fragment() {
     private val libraryViewModel: LibraryViewModel by activityViewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_library, container, false)
     }
@@ -38,11 +57,13 @@ class LibraryFragment : Fragment() {
         context?.fixPaddingStatusbar(library_root)
 
         sort_fab?.setOnClickListener {
-            val methods = libraryViewModel.sortingMethods
-                .map { txt(it.stringRes).asString(context ?: view.context) }
+            val methods = libraryViewModel.sortingMethods.map {
+                txt(it.stringRes).asString(
+                    context ?: view.context
+                )
+            }
 
-            activity?.showBottomDialog(
-                methods,
+            activity?.showBottomDialog(methods,
                 libraryViewModel.sortingMethods.indexOf(libraryViewModel.currentSortingMethod),
                 "Sort by",
                 false,
@@ -50,8 +71,7 @@ class LibraryFragment : Fragment() {
                 {
                     val method = libraryViewModel.sortingMethods[it]
                     libraryViewModel.sort(method)
-                }
-            )
+                })
         }
 
         main_search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -72,16 +92,73 @@ class LibraryFragment : Fragment() {
             val items = libraryViewModel.availableApiNames
             val currentItem = libraryViewModel.currentApiName.value
 
-            activity?.showBottomDialog(
-                items,
+            activity?.showBottomDialog(items,
                 items.indexOf(currentItem),
                 "Select library",
                 false,
-                {}
-            ) {
+                {}) {
                 val selectedItem = items.getOrNull(it) ?: return@showBottomDialog
                 libraryViewModel.switchList(selectedItem)
             }
+        }
+
+
+        /**
+         * Shows a plugin selection dialogue and saves the response
+         **/
+        fun showPluginSelectionDialog(key: String, syncId: SyncIdName) {
+            val availableProviders = allProviders.filter {
+                it.supportedSyncNames.contains(syncId)
+            }.map { it.name }
+
+            val baseOptions = listOf(LibraryOpenerType.Browser.name)
+
+            val items = baseOptions + availableProviders
+
+            val savedSelection = getKey<LibraryOpener>(LIBRARY_FOLDER, key)
+            val selectedIndex =
+                when {
+                    savedSelection == null -> -1
+                    // If provider
+                    savedSelection.openType == LibraryOpenerType.Provider
+                            && savedSelection.data != null -> {
+                        availableProviders.indexOf(savedSelection.data).takeIf { it != -1 }
+                            ?.plus(baseOptions.size) ?: -1
+                    }
+                    // Else base option
+                    else -> baseOptions.indexOf(savedSelection.openType.name)
+                }
+
+            activity?.showBottomDialog(
+                items,
+                selectedIndex,
+                "Open with",
+                true,
+                {},
+            ) {
+                val savedData = if (it < baseOptions.size) {
+                    LibraryOpener(
+                        LibraryOpenerType.valueOf(baseOptions[it]),
+                        null
+                    )
+                } else {
+                    LibraryOpener(
+                        LibraryOpenerType.Provider,
+                        items[it]
+                    )
+                }
+
+                setKey(
+                    LIBRARY_FOLDER,
+                    key,
+                    savedData,
+                )
+            }
+        }
+
+        provider_selector?.setOnClickListener {
+            val syncName = libraryViewModel.currentSyncApi?.syncIdName ?: return@setOnClickListener
+            showPluginSelectionDialog(syncName.name, syncName)
         }
 
         viewpager?.setPageTransformer(LibraryScrollTransformer())
@@ -92,10 +169,27 @@ class LibraryFragment : Fragment() {
                 } else {
                     sort_fab?.extend()
                 }
-            }) { searchClickCallback ->
+            }) callback@{ searchClickCallback ->
+
+                // To prevent future accidents
+                debugAssert({
+                    searchClickCallback.card !is LibraryItem
+                }, {
+                    "searchClickCallback ${searchClickCallback.card} is not a LibraryItem"
+                })
+                val syncId = (searchClickCallback.card as LibraryItem).syncId
+
                 println("SEARCH CLICK $searchClickCallback")
-                if (searchClickCallback.action == SEARCH_ACTION_LOAD) {
-                    activity?.loadSearchResult(searchClickCallback.card)
+                when (searchClickCallback.action) {
+                    SEARCH_ACTION_SHOW_METADATA -> {
+                        val syncName =
+                            libraryViewModel.currentSyncApi?.syncIdName ?: return@callback
+                        showPluginSelectionDialog(syncId, syncName)
+                    }
+                    SEARCH_ACTION_LOAD -> {
+                        val savedSelection = getKey<LibraryOpener>(LIBRARY_FOLDER, syncId)
+                        activity?.loadSearchResult(searchClickCallback.card)
+                    }
                 }
             }
         viewpager?.offscreenPageLimit = 2

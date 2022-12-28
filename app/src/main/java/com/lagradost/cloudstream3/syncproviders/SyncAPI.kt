@@ -3,8 +3,17 @@ package com.lagradost.cloudstream3.syncproviders
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.library.LibraryItem
 
+enum class SyncIdName {
+    Anilist,
+    MyAnimeList,
+    Trakt,
+    Imdb
+}
+
 interface SyncAPI : OAuth2API {
     val mainUrl: String
+
+    val syncIdName: SyncIdName
 
     /**
     -1 -> None

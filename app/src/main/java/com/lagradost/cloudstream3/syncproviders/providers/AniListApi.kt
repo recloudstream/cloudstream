@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.library.LibraryItem
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
@@ -29,6 +30,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override val icon = R.drawable.ic_anilist_icon
     override val requiresLogin = false
     override val createAccountUrl = "$mainUrl/signup"
+    override val syncIdName = SyncIdName.Anilist
 
     override fun loginInfo(): AuthAPI.LoginInfo? {
         // context.getUser(true)?.
@@ -603,6 +605,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 ?: this.media.synonyms.firstOrNull()
                 ?: "",
                 "https://anilist.co/anime/${this.media.id}/",
+                this.media.id.toString(),
                 listName?.lowercase()?.capitalize() ?: return null,
                 this.progress,
                 this.media.episodes,

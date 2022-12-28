@@ -42,6 +42,7 @@ data class Page(
 data class LibraryItem(
     override val name: String,
     override val url: String,
+    val syncId: String,
     val listName: String,
     val episodesCompleted: Int?,
     val episodesTotal: Int?,
@@ -51,8 +52,8 @@ data class LibraryItem(
     override var type: TvType?,
     override var posterUrl: String?,
     override var posterHeaders: Map<String, String>?,
-    override var id: Int?,
     override var quality: SearchQuality?,
+    override var id: Int? = null,
 ) : SearchResponse
 
 
@@ -90,7 +91,6 @@ class ViewpagerAdapter(
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 itemViewTest.page_recyclerview.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-                    println("DOWN ${(scrollY - oldScrollY)}")
                     val diff = scrollY - oldScrollY
                     if (diff == 0) return@setOnScrollChangeListener
 

@@ -12,6 +12,7 @@ class SyncRepo(private val repo: SyncAPI) {
     val icon = repo.icon
     val mainUrl = repo.mainUrl
     val requiresLogin = repo.requiresLogin
+    val syncIdName = repo.syncIdName
 
     suspend fun score(id: String, status: SyncAPI.SyncStatus): Resource<Boolean> {
         return safeApiCall { repo.score(id, status) }
@@ -37,5 +38,7 @@ class SyncRepo(private val repo: SyncAPI) {
         return normalSafeApiCall { repo.loginInfo() != null } ?: false
     }
 
-    fun getIdFromUrl(url: String): String = repo.getIdFromUrl(url)
+    fun getIdFromUrl(url: String): String? = normalSafeApiCall {
+        repo.getIdFromUrl(url)
+    }
 }

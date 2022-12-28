@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.library.LibraryItem
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
@@ -35,6 +36,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     val apiUrl = "https://api.myanimelist.net"
     override val icon = R.drawable.mal_logo
     override val requiresLogin = false
+    override val syncIdName = SyncIdName.MyAnimeList
 
     override val createAccountUrl = "$mainUrl/register.php"
 
@@ -388,6 +390,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             return LibraryItem(
                 this.node.title,
                 "https://myanimelist.net/anime/${this.node.id}/",
+                this.node.id.toString(),
                 this.list_status?.status?.lowercase()?.capitalize()?.replace("_", " ") ?: "NONE",
                 this.list_status?.num_episodes_watched,
                 this.node.num_episodes,
@@ -395,7 +398,8 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 "MAL",
                 TvType.Anime,
                 this.node.main_picture?.large ?: this.node.main_picture?.medium,
-                null, null, null
+                null,
+                null,
             )
         }
     }

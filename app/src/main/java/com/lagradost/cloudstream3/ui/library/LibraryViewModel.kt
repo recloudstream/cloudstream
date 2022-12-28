@@ -27,7 +27,10 @@ class LibraryViewModel : ViewModel() {
     val currentApiName: LiveData<String> = _currentApiName
 
     private val availableSyncApis = SyncApis.filter { it.hasAccount() }
-    private var currentSyncApi = availableSyncApis.firstOrNull()
+
+    // TODO REMEMBER SELECTION
+    var currentSyncApi = availableSyncApis.firstOrNull()
+        private set
 
     val availableApiNames: List<String> = availableSyncApis.map { it.name }
 
