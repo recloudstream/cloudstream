@@ -11,6 +11,7 @@
     tools:context=".ui.search.SearchFragment">
 
     <LinearLayout
+        android:layout_marginStart="@dimen/navbar_width"
         android:paddingBottom="10dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -127,6 +128,7 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
+            android:paddingStart="@dimen/navbar_width"
             android:id="@+id/search_history_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

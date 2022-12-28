@@ -128,6 +128,7 @@ class HomeViewModel : ViewModel() {
         currentWatchTypes.remove(WatchType.NONE)
 
         if (currentWatchTypes.size <= 0) {
+            _availableWatchStatusTypes.postValue(setOf<WatchType>() to setOf())
             _bookmarks.postValue(Pair(false, ArrayList()))
             return@launchSafe
         }

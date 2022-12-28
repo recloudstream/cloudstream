@@ -4,34 +4,70 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.ChangeBounds
+import androidx.transition.TransitionManager
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
+import com.lagradost.cloudstream3.APIHolder.getId
+import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.HomePageList
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.result.LinearListLayout
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2
+import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
+import com.lagradost.cloudstream3.utils.AppUtils.loadResult
+import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
+import kotlinx.android.synthetic.main.activity_main_tv.*
+import kotlinx.android.synthetic.main.activity_main_tv.view.*
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.android.synthetic.main.fragment_home_head_tv.*
+import kotlinx.android.synthetic.main.fragment_home_head_tv.view.*
+import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_preview
+import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_preview_viewpager
 import kotlinx.android.synthetic.main.homepage_parent.view.*
 
+class LoadClickCallback(
+    val action: Int = 0,
+    val view: View,
+    val position: Int,
+    val response: LoadResponse
+)
 
-class ParentItemAdapter(
+open class ParentItemAdapter(
     private var items: MutableList<HomeViewModel.ExpandableHomepageList>,
     private val clickCallback: (SearchClickCallback) -> Unit,
     private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
     private val expandCallback: ((String) -> Unit)? = null,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, i: Int): ParentViewHolder {
-        //println("onCreateViewHolder $i")
-        val layout =
-            if (isTvSettings()) R.layout.homepage_parent_tv else R.layout.homepage_parent
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ParentViewHolder(
-            LayoutInflater.from(parent.context).inflate(layout, parent, false),
+            LayoutInflater.from(parent.context).inflate(
+                if (isTvSettings()) R.layout.homepage_parent_tv else R.layout.homepage_parent,
+                parent,
+                false
+            ),
             clickCallback,
             moreInfoClickCallback,
             expandCallback
@@ -39,8 +75,6 @@ class ParentItemAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        //println("onBindViewHolder $position")
-
         when (holder) {
             is ParentViewHolder -> {
                 holder.bind(items[position])
@@ -84,7 +118,10 @@ class ParentItemAdapter(
         val mAdapter = this
         diffResult.dispatchUpdatesTo(object : ListUpdateCallback {
             override fun onInserted(position: Int, count: Int) {
-                mAdapter.notifyItemRangeInserted(position, count)
+                mAdapter.notifyItemRangeChanged(
+                    position,
+                    count
+                )//notifyItemRangeInserted(position, count)
             }
 
             override fun onRemoved(position: Int, count: Int) {
@@ -95,23 +132,32 @@ class ParentItemAdapter(
                 mAdapter.notifyItemMoved(fromPosition, toPosition)
             }
 
-            override fun onChanged(position: Int, count: Int, payload: Any?) {
+            override fun onChanged(_position: Int, count: Int, payload: Any?) {
+                val delta = if (this@ParentItemAdapter is HomeParentItemAdapterPreview) {
+                    headItems
+                } else {
+                    0
+                }
+                val position = _position + delta
+
                 // I know kinda messy, what this does is using the update or bind instead of onCreateViewHolder -> bind
                 recyclerView?.apply {
                     // this loops every viewHolder in the recycle view and checks the position to see if it is within the update range
                     val missingUpdates = (position until (position + count)).toMutableSet()
                     for (i in 0 until itemCount) {
-                        val viewHolder = getChildViewHolder(getChildAt(i))
-                        val absolutePosition = viewHolder.absoluteAdapterPosition
+                        val child = getChildAt(i) ?: continue
+                        val viewHolder = getChildViewHolder(child) ?: continue
+                        if (viewHolder !is ParentViewHolder) continue
+
+                        val absolutePosition = viewHolder.bindingAdapterPosition
                         if (absolutePosition >= position && absolutePosition < position + count) {
-                            val expand = items.getOrNull(absolutePosition) ?: continue
-                            if (viewHolder is ParentViewHolder) {
-                                missingUpdates -= absolutePosition
-                                if (viewHolder.title.text == expand.list.name) {
-                                    viewHolder.update(expand)
-                                } else {
-                                    viewHolder.bind(expand)
-                                }
+                            val expand = items.getOrNull(absolutePosition - delta) ?: continue
+                            missingUpdates -= absolutePosition
+                            //println("Updating ${viewHolder.title.text} ($absolutePosition $position) -> ${expand.list.name}")
+                            if (viewHolder.title.text == expand.list.name) {
+                                viewHolder.update(expand)
+                            } else {
+                                viewHolder.bind(expand)
                             }
                         }
                     }
@@ -120,7 +166,8 @@ class ParentItemAdapter(
                     for (i in missingUpdates) {
                         mAdapter.notifyItemChanged(i, payload)
                     }
-                } ?: run { // in case we don't have a nice
+                } ?: run {
+                    // in case we don't have a nice
                     mAdapter.notifyItemRangeChanged(position, count, payload)
                 }
             }

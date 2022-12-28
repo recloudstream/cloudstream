@@ -921,8 +921,6 @@ open class ResultFragment : ResultTrailerPlayer() {
                         }
 
 
-                    result_tag?.removeAllViews()
-
                     d.comingSoon.let { soon ->
                         result_coming_soon?.isVisible = soon
                         result_data_holder?.isGone = soon
@@ -931,6 +929,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                     val tags = d.tags
                     result_tag_holder?.isVisible = tags.isNotEmpty()
                     result_tag?.apply {
+                        removeAllViews()
                         tags.forEach { tag ->
                             val chip = Chip(context)
                             val chipDrawable = ChipDrawable.createFromAttributes(

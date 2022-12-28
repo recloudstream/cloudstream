@@ -138,7 +138,7 @@ class ExampleInstrumentedTest {
                 }
                 break
             }
-            if(!validResults) {
+            if (!validResults) {
                 System.err.println("Api ${api.name} did not load on any")
             }
 
@@ -183,7 +183,9 @@ class ExampleInstrumentedTest {
             getAllProviders().amap { api ->
                 if (api.hasMainPage) {
                     try {
-                        val homepage = api.getMainPage()
+                        val f = api.mainPage.first()
+                        val homepage =
+                            api.getMainPage(1, MainPageRequest(f.name, f.data, f.horizontalImages))
                         when {
                             homepage == null -> {
                                 System.err.println("Homepage provider ${api.name} did not correctly load homepage!")
@@ -192,7 +194,7 @@ class ExampleInstrumentedTest {
                                 System.err.println("Homepage provider ${api.name} does not contain any items!")
                             }
                             homepage.items.any { it.list.isEmpty() } -> {
-                                System.err.println ("Homepage provider ${api.name} does not have any items on result!")
+                                System.err.println("Homepage provider ${api.name} does not have any items on result!")
                             }
                         }
                     } catch (e: Exception) {
@@ -231,7 +233,7 @@ class ExampleInstrumentedTest {
                     invalidProvider.add(Pair(api, e))
                 }
             }
-            if(invalidProvider.isEmpty()) {
+            if (invalidProvider.isEmpty()) {
                 println("No Invalid providers! :D")
             } else {
                 println("Invalid providers are: ")

@@ -4,16 +4,22 @@ import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import kotlinx.android.synthetic.main.fragment_home_head_tv.*
+import kotlinx.android.synthetic.main.fragment_home_head_tv.view.*
 import kotlinx.android.synthetic.main.home_scroll_view.view.*
 
 
-class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HomeScrollAdapter(
+    @LayoutRes val layout: Int = R.layout.home_scroll_view,
+    private val forceHorizontalPosters: Boolean? = null
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var items: MutableList<LoadResponse> = mutableListOf()
     var hasMoreItems: Boolean = false
 
@@ -40,7 +46,8 @@ class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return CardViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.home_scroll_view, parent, false),
+            LayoutInflater.from(parent.context).inflate(layout, parent, false),
+            forceHorizontalPosters
         )
     }
 
@@ -55,13 +62,15 @@ class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class CardViewHolder
     constructor(
         itemView: View,
+        private val forceHorizontalPosters: Boolean? = null
     ) :
         RecyclerView.ViewHolder(itemView) {
 
         fun bind(card: LoadResponse) {
             card.apply {
                 val isHorizontal =
-                    itemView.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    (forceHorizontalPosters == true) || ((forceHorizontalPosters != false) && itemView.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+
                 val posterUrl = if (isHorizontal) backgroundPosterUrl ?: posterUrl else posterUrl
                     ?: backgroundPosterUrl
                 itemView.home_scroll_preview_tags?.text = tags?.joinToString(" • ") ?: ""

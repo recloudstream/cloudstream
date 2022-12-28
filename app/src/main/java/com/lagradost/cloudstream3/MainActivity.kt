@@ -10,12 +10,18 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.marginRight
+import androidx.core.view.setMargins
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -66,6 +72,7 @@ import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
@@ -89,6 +96,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.nicehttp.Requests
@@ -379,6 +387,27 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_settings_plugins,
         ).contains(destination.id)
 
+
+        val dontPush = listOf(
+            R.id.navigation_home,
+            R.id.navigation_search,
+            R.id.navigation_results_phone,
+            R.id.navigation_results_tv,
+            R.id.navigation_player,
+        ).contains(destination.id)
+
+        nav_host_fragment?.apply {
+            val params = layoutParams as ConstraintLayout.LayoutParams
+
+            params.setMargins(
+                if (!dontPush && isTvSettings()) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0,
+                params.topMargin,
+                params.rightMargin,
+                params.bottomMargin
+            )
+            layoutParams = params
+        }
+
         val landscape = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 true
@@ -619,7 +648,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-
+        updateTv()
         if (isTvSettings()) {
             setContentView(R.layout.activity_main_tv)
         } else {
@@ -743,7 +772,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         nav_view?.setupWithNavController(navController)
         val nav_rail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
         nav_rail?.setupWithNavController(navController)
+        if (isTvSettings()) {
+            nav_rail?.background?.alpha = 200
+        } else {
+            nav_rail?.background?.alpha = 255
 
+        }
         nav_rail?.setOnItemSelectedListener { item ->
             onNavDestinationSelected(
                 item,

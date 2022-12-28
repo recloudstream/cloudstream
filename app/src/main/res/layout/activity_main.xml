@@ -14,10 +14,11 @@
 
         <com.google.android.material.navigationrail.NavigationRailView
             android:id="@+id/nav_rail_view"
-            android:layout_width="62dp"
+            android:layout_width="@dimen/navbar_width"
             android:layout_height="match_parent"
             android:background="?attr/primaryGrayBackground"
             app:itemIconTint="@color/item_select_color"
+            android:descendantFocusability="afterDescendants"
 
             app:itemTextColor="@color/item_select_color"
             app:labelVisibilityMode="unlabeled"

@@ -44,6 +44,7 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageLis
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.updateChips
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -93,7 +94,11 @@ class SearchFragment : Fragment() {
         activity?.window?.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
         )
-        return inflater.inflate(R.layout.fragment_search, container, false)
+        return inflater.inflate(
+            if (isTvSettings()) R.layout.fragment_search_tv else R.layout.fragment_search,
+            container,
+            false
+        )
     }
 
     private fun fixGrid() {
