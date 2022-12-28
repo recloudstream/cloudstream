@@ -597,7 +597,7 @@ class HomeParentItemAdapterPreview(
                     isVisible = availableWatchStatusTypes.second.contains(watch).also {
                         anyVisible = anyVisible || it
                     }
-                    
+
                     isChecked = availableWatchStatusTypes.first.contains(watch)
                 }
             }
