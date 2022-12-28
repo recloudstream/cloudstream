@@ -388,7 +388,7 @@
     <string name="quality_cam_rip">تصوير كام قطع</string>
     <string name="quality_cam_hd">تصوير كام جودة عالية</string>
     <string name="quality_hq">HQ</string>
-    <string name="quality_hd">HD</string>
+    <string name="quality_hd">عالي الدقة</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
     <string name="quality_blueray">بلو راي</string>
@@ -396,10 +396,10 @@
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
     <string name="quality_sd">SD</string>
-    <string name="quality_uhd">UHD</string>
-    <string name="quality_hdr">HDR</string>
+    <string name="quality_uhd">دقة فائقة</string>
+    <string name="quality_hdr">المستوى الديناميكي العالي</string>
     <string name="quality_sdr">SDR</string>
-    <string name="quality_webrip">Web</string>
+    <string name="quality_webrip">الويب</string>
     <string name="poster_image">صورة الملصق</string>
     <string name="category_player">المُشغل</string>
     <string name="resolution_and_title">الأبعاد والعنوان</string>

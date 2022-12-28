@@ -246,4 +246,39 @@
     <string name="torrent_singular">Torrent</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="go_forward_30">+30</string>
+    <string name="provider_info_meta">Metadata är inte givet av sidan, videon kommer inte ladda om den inte existerar på sidan.</string>
+    <string name="automatic_plugin_download">Automatiskt ladda ner plugin</string>
+    <string name="pref_filter_search_quality">Dölj vald videokvalitet i sökresultat</string>
+    <string name="episode_action_download_subtitle">Ladda ner undertexter</string>
+    <string name="movies_singular">Film</string>
+    <string name="tv_series_singular">Serier</string>
+    <string name="skip_update">Skippa denna uppdatering</string>
+    <string name="backup_failed">Lagringsbehörigheter saknas. Var vänlig försök igen.</string>
+    <string name="no_episodes_found">Inga episoder hittade</string>
+    <string name="kitsu_settings">Visa bilder från Kitsu</string>
+    <string name="apk_installer_settings_des">Vissa telefoner stöder inte den nya paketinstallatören. Prova alternativet för äldre versioner om uppdateringarna inte installeras.</string>
+    <string name="apk_installer_settings">APK-installatör</string>
+    <string name="subs_import_text" formatted="true">Importera typsnitt genom att placera filerna i %s</string>
+    <string name="episode_sync_settings_des">Automatiskt uppdatera antalet episoder sedda</string>
+    <string name="backup_settings">Säkerhetskopiera data</string>
+    <string name="restore_success">Läste in säkerhetskopia</string>
+    <string name="restore_failed_format" formatted="true">Misslyckades att återställa data från %s</string>
+    <string name="backup_success">Data lagrad</string>
+    <string name="backup_failed_error_format">Problem att säkerhetskopiera %s</string>
+    <string name="automatic_plugin_download_summary">Installera automatiskt alla ännu inte installerade plugins från tillagda repositories.</string>
+    <string name="redo_setup_process">Gör om installationsprocessen</string>
+    <string name="documentaries">Dokumentärer</string>
+    <string name="asian_drama">Asiatiska draman</string>
+    <string name="others">Andra</string>
+    <string name="cartoons_singular">Tecknade serier</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="documentaries_singular">Dokumentär</string>
+    <string name="asian_drama_singular">Asiatisk drama</string>
+    <string name="other_singular">Video</string>
+    <string name="show_hd">Kvalitetsetikett</string>
+    <string name="show_title">Titel</string>
+    <string name="poster_ui_settings">Växla UI-element på affisch</string>
+    <string name="limit_title_rez">Videospelarens upplösning</string>
+    <string name="history">Historik</string>
+    <string name="action_mark_as_watched">Markera som sedd</string>
 </resources>
